@@ -34,7 +34,7 @@ export default class ImageToHash extends Base {
       throw new X({
         code: 'SERVER_ERROR',
         fields: {
-          infuraNfts: 'SERVER_ERROR',
+          imageToHash: 'SERVER_ERROR',
         },
       });
     }

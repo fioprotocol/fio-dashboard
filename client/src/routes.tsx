@@ -116,6 +116,26 @@ const FioTokensReceivePage = React.lazy(() =>
 const FioTokensGetPage = React.lazy(() =>
   import(/* webpackChunkName: 'fioTokensGetPage' */ './pages/FioTokensGetPage'),
 );
+const FioSocialLinksPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioSocialMediaLinksPage' */ './pages/FioSocialMediaLinksPage'
+  ),
+);
+const AddSocialLinksPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'addSocialMediaLinksPage' */ './pages/AddSocialMediaLinksPage'
+  ),
+);
+const EditSocialLinksPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'editSocialMediaLinksPage' */ './pages/EditSocialMediaLinksPage'
+  ),
+);
+const DeleteSocialLinksPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'deleteSocialMediaLinksPage' */ './pages/DeleteSocialMediaLinksPage'
+  ),
+);
 const TokensRequestPaymentPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'tokensRequestPaymentPage' */ './pages/TokensRequestPaymentPage'
@@ -497,6 +517,27 @@ const Routes = (): React.ReactElement => {
               <PrivateRoute
                 path={ROUTES.PAYMENT_DETAILS}
                 component={TokensRequestPaymentPage}
+                exact
+              />
+
+              <PrivateRoute
+                path={ROUTES.FIO_SOCIAL_MEDIA_LINKS}
+                component={FioSocialLinksPage}
+                exact
+              />
+              <PrivateRoute
+                path={ROUTES.FIO_SOCIAL_MEDIA_LINKS_ADD}
+                component={AddSocialLinksPage}
+                exact
+              />
+              <PrivateRoute
+                path={ROUTES.FIO_SOCIAL_MEDIA_LINKS_EDIT}
+                component={EditSocialLinksPage}
+                exact
+              />
+              <PrivateRoute
+                path={ROUTES.FIO_SOCIAL_MEDIA_LINKS_DELETE}
+                component={DeleteSocialLinksPage}
                 exact
               />
 

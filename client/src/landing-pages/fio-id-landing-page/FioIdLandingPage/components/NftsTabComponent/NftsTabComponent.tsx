@@ -1,13 +1,16 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import Loader from '../../../../../components/Loader/Loader';
+import Modal from '../../../../../components/Modal/Modal';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 import { TabUIContainer } from '../TabUIContainer';
+import { NftItemComponent } from './components/NftItemComponent';
+import { NftItemImageComponent } from './components/NftItemImageComponent';
+
+import { useContext } from './NftsTabComponentContext';
 
 import classes from './NftsTabComponent.module.scss';
-import { useContext } from './NftsTabComponentContext';
-import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 const content = {
   title: 'signed these NFTs',
@@ -25,55 +28,60 @@ type Props = {
 
 export const NftsTabComponent: React.FC<Props> = props => {
   const { fch } = props;
-  const { hasMore, loading, nftsList, loadMore } = useContext({ fch });
+  const {
+    activeNftItem,
+    hasMore,
+    loading,
+    nftsList,
+    showModal,
+    loadMore,
+    onItemClick,
+    onModalClose,
+  } = useContext({ fch });
 
   return (
-    <TabUIContainer
-      {...content}
-      title={`${fch} ${content.title}`}
-      showEmptyState={!nftsList.length && !loading}
-    >
-      <div className={classes.container}>
-        <div className={classes.nftsContainer}>
-          {nftsList.map(nftItem => {
-            const {
-              imageUrl,
-              isImage,
-              hasMultipleSignatures,
-              tokenId,
-              contractAddress,
-            } = nftItem;
-            return (
-              <div className={classes.nftItem} key={tokenId + contractAddress}>
+    <>
+      <TabUIContainer
+        {...content}
+        title={`${fch} ${content.title}`}
+        showEmptyState={!nftsList.length && !loading}
+      >
+        <div className={classes.container}>
+          <div className={classes.nftsContainer}>
+            {nftsList.map(nftItem => {
+              const { tokenId, contractAddress } = nftItem;
+              return (
                 <div
-                  className={classnames(
-                    classes.imageContainer,
-                    !isImage && classes.notImage,
-                  )}
+                  key={tokenId + contractAddress}
+                  onClick={() => onItemClick(nftItem)}
                 >
-                  <img
-                    src={imageUrl}
-                    alt={tokenId + contractAddress}
-                    className={classnames(
-                      classes.image,
-                      !isImage && classes.notImage,
-                      hasMultipleSignatures && classes.hasMultipleSignatures,
-                    )}
-                  />
+                  <NftItemImageComponent {...nftItem} />
                 </div>
-              </div>
-            );
-          })}
-        </div>
-        {loading && (
-          <div className={classes.loader}>
-            <Loader />
+              );
+            })}
           </div>
-        )}
-        {!!hasMore && !loading && (
-          <SubmitButton onClick={loadMore} text="Load more" />
-        )}
-      </div>
-    </TabUIContainer>
+          {loading && (
+            <div className={classes.loader}>
+              <Loader />
+            </div>
+          )}
+          {!!hasMore && !loading && (
+            <SubmitButton onClick={loadMore} text="Load more" />
+          )}
+        </div>
+      </TabUIContainer>
+      <Modal
+        show={showModal}
+        onClose={onModalClose}
+        closeButton
+        isSimple
+        hasDefaultCloseColor
+        title={<div>NFT Signature Information</div>}
+        isWide
+        headerClass={classes.modalTitle}
+      >
+        <NftItemComponent {...activeNftItem} fch={fch} />
+      </Modal>
+    </>
   );
 };

@@ -26,8 +26,10 @@ type Props = {
   isDisabled?: boolean;
   onActionButtonClick: () => void;
   loading?: boolean;
-  fioWallets: FioWalletDoublet[];
-} & LinkTokenResultsProps;
+  fioWallets?: FioWalletDoublet[];
+  link?: string;
+  hasFullWidth?: boolean;
+} & Partial<LinkTokenResultsProps>;
 
 const ActionContainer: React.FC<Props> = props => {
   const {
@@ -36,6 +38,8 @@ const ActionContainer: React.FC<Props> = props => {
     containerName,
     isDisabled,
     fioCryptoHandleObj,
+    link = ROUTES.LINK_TOKEN_LIST,
+    hasFullWidth = true,
     onActionButtonClick,
     loading,
     results,
@@ -68,15 +72,15 @@ const ActionContainer: React.FC<Props> = props => {
     history.push(
       `${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${name}`,
       {
-        backUrl: `${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+        backUrl: `${link}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
       },
     );
 
   return (
     <PseudoModalContainer
       title={CONTAINER_TYPES[containerName].title}
-      link={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
-      fullWidth={true}
+      link={`${link}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
+      fullWidth={hasFullWidth}
     >
       <div className={classes.actionContainer}>
         <FioName name={name} />

@@ -1,0 +1,21 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.checkIcon {
+  color: $baltic-sea;
+  cursor: pointer;
+  font-size: 20px;
+  justify-self: flex-end;
+  align-self: flex-start;
+
+  &.inactiveIcon {
+    color: $manatee;
+    cursor: not-allowed;
+  }
+}
+
+@include lg {
+  .checkIcon {
+    align-self: center;
+  }
+}

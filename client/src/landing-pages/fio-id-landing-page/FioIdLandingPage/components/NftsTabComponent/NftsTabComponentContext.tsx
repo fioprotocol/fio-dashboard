@@ -4,15 +4,16 @@ import apis from '../../../../../api';
 
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
 import { loadImage } from '../../../../../util/general';
+import useEffectOnce from '../../../../../hooks/general';
 
 import noImageIconSrc from '../../../../../assets/images/no-photo.svg';
 import multipleSignatureIconSrc from '../../../../../assets/images/multiple-signature.svg';
-import useEffectOnce from '../../../../../hooks/general';
 
-type NftItem = {
+export type NftItem = {
   contractAddress: string;
   creatorUrl?: string;
   hasMultipleSignatures: boolean;
+  hash?: string;
   imageUrl: string;
   infuraMetadata?: {
     description?: (string | string[])[];
@@ -23,13 +24,18 @@ type NftItem = {
   isAlteredImage?: boolean;
   isImage?: boolean;
   tokenId: string;
+  viewNftLink?: string;
 };
 
 type UseContextProps = {
+  activeNftItem: NftItem;
   hasMore: boolean;
   loading: boolean;
   nftsList: NftItem[];
+  showModal: boolean;
   loadMore: () => void;
+  onItemClick: (nftItem: NftItem) => void;
+  onModalClose: () => void;
 };
 
 const INFURA_HOST_URL = 'ipfs.infura.io';
@@ -70,6 +76,8 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   const [nftsList, setNftsList] = useState<NftItem[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const [hasMore, toggleHasMore] = useState<boolean>(false);
+  const [showModal, toggleModal] = useState<boolean>(false);
+  const [activeNftItem, setActiveNftItem] = useState<NftItem>(null);
 
   const getNftsList = useCallback(async () => {
     toggeLoading(true);
@@ -103,6 +111,10 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         imageUrl: '',
         tokenId: token_id,
       };
+
+      if (hash) {
+        nftItemObj.hash = hash;
+      }
 
       const creatorUrl = (() => {
         try {
@@ -149,6 +161,12 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         nftItemObj.infuraMetadata?.externalUrl,
       );
 
+      const viewNftLink = fioImageUrl || infuraImageUrl || infuraxtenalImageUrl;
+
+      if (viewNftLink) {
+        nftItemObj.viewNftLink = viewNftLink;
+      }
+
       nftItemObj.imageUrl = nftItemObj.hasMultipleSignatures
         ? multipleSignatureIconSrc
         : fioImageUrl ||
@@ -158,7 +176,12 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       nftItemObj.isImage =
         !!fioImageUrl || !!infuraImageUrl || !!infuraxtenalImageUrl;
 
-      if (hash && nftItemObj.imageUrl && nftItemObj.isImage) {
+      if (
+        hash &&
+        nftItemObj.imageUrl &&
+        nftItemObj.isImage &&
+        !nftItemObj.hasMultipleSignatures
+      ) {
         try {
           const imageHash = await apis.general.getImageHash(
             nftItemObj.imageUrl,
@@ -177,6 +200,16 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     toggeLoading(false);
   }, [fch, nftsList, offset]);
 
+  const onModalClose = useCallback(async () => {
+    toggleModal(false);
+    setActiveNftItem(null);
+  }, []);
+
+  const onItemClick = useCallback((nftItem: NftItem) => {
+    setActiveNftItem(nftItem);
+    toggleModal(true);
+  }, []);
+
   const loadMore = useCallback(() => {
     getNftsList();
   }, [getNftsList]);
@@ -185,5 +218,14 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     getNftsList();
   }, [getNftsList]);
 
-  return { hasMore, loading, nftsList, loadMore };
+  return {
+    activeNftItem,
+    hasMore,
+    loading,
+    nftsList,
+    showModal,
+    loadMore,
+    onItemClick,
+    onModalClose,
+  };
 };

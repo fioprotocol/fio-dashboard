@@ -1,0 +1,130 @@
+@import '../../../../../../../assets/styles/colors.scss';
+@import '../../../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin: 20px;
+  width: 100%;
+
+  .contractAddress {
+    color: $light-indigo;
+  }
+
+  .text {
+    font-size: 0.875em;
+    @include proxima-nova-thin;
+
+    .fch {
+      @include proxima-nova-bold;
+    }
+  }
+
+  .contentContainer {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+
+    .imageContainer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      .link {
+        margin-top: 15px;
+        font-size: 16px;
+        @include proxima-nova-semibold;
+      }
+    }
+  }
+
+  .otherContentContainer {
+    .badge {
+      padding: 10px 15px 10px 10px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      display: none;
+
+      &.isImage {
+        display: flex;
+      }
+    }
+  }
+}
+
+.contentItem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 15px;
+  font-size: 0.875em;
+
+  &.withoutTopMargin {
+    margin-top: 0;
+  }
+
+  .contentTitle,
+  .contentValue {
+    margin: 0;
+  }
+
+  .contentTitle {
+    @include proxima-nova-thin;
+  }
+
+  .contentValue {
+    word-break: break-all;
+    @include proxima-nova-bold;
+  }
+
+  .ulList {
+    @include proxima-nova-semibold;
+    padding-left: 30px;
+    & ul {
+      padding-left: 30px;
+      list-style-type: none;
+
+      & > li {
+        text-indent: -10px;
+      }
+
+      & > li:before {
+        content: "-";
+        position: absolute;
+        text-indent: -10px;
+      }
+    }
+    & p {
+      margin: 0;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    margin: 10px 30px 30px 30px;
+    .contentContainer {
+      flex-direction: row;
+      gap: 30px;
+
+      .imageContainer {
+        width: auto;
+      }
+    }
+    .otherContentContainer {
+      .badge {
+        margin-top: 0;
+      }
+    }
+  }
+  .contentItem {
+    flex-flow: row wrap;
+
+    &.description {
+      flex-direction: column;
+    }
+  }
+}

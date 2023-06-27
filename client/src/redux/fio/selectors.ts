@@ -65,6 +65,8 @@ export const fioNamesInitRefreshed = (state: ReduxState): boolean =>
   state[prefix].fioNamesInitRefreshed;
 export const showTokenListInfoBadge = (state: ReduxState): boolean =>
   state[prefix].showTokenListInfoBadge;
+export const showSocialMediaListInfoBadge = (state: ReduxState): boolean =>
+  state[prefix].showSocialMediaListInfoBadge;
 
 export const currentWallet = (
   state: ReduxState,

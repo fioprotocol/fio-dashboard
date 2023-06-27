@@ -1,0 +1,69 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.modalContainer {
+  margin-top: 30px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .dataContainer {
+    width: 100%;
+    max-width: 830px;
+    display: flex;
+    flex-direction: column;
+
+    .actionContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-top: 15px;
+      width: 100%;
+
+      &.columnMobile {
+        flex-direction: column;
+      }
+
+      .subtitle {
+        margin-bottom: 0;
+        font-size: 1em;
+        color: $baltic-sea;
+        line-height: 1em;
+        align-self: center;
+        @include proxima-nova-semibold;
+
+        &.hasMargin {
+          margin: 20px 0;
+        }
+      }
+    }
+  }
+
+  .message {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}
+
+@include lg {
+  .container {
+    .dataContainer {
+      .actionContainer {
+        flex-direction: row;
+        align-items: center;
+  
+        &.columnMobile {
+          flex-direction: row;
+        }
+      }
+  
+      .subtitle {
+        align-self: inherit;
+      }
+    }
+  }
+}

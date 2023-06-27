@@ -4,6 +4,8 @@ import apis from '../../../api';
 import { log } from '../../../../../util/general';
 import { sleep } from '../../../../../utils';
 
+import { CHAIN_CODES } from '../../../../../constants/common';
+
 import defaultImageSrc from '../../../../../assets/images/chain.svg';
 
 import { PublicAddressDoublet } from '../../../../../types';
@@ -45,13 +47,13 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     try {
       const imagesParsed: ImageData = JSON.parse(imagesJSON);
       const pubAddressesRes = await apis.fio.getPublicAddresses(fch);
-      const pubAddresses = pubAddressesRes?.public_addresses.map(
-        pubAddress => ({
+      const pubAddresses = pubAddressesRes?.public_addresses
+        .filter(pubAddress => pubAddress.chain_code !== CHAIN_CODES.SOCIALS)
+        .map(pubAddress => ({
           chainCode: pubAddress.chain_code,
           publicAddress: pubAddress.public_address,
           tokenCode: pubAddress.token_code,
-        }),
-      );
+        }));
       const chainCodesList = pubAddresses.map(
         pubAddress => pubAddress.chainCode,
       );
@@ -68,7 +70,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
               pubAddress.chainCode.toUpperCase(),
           );
 
-          const tokenCodeName = chainCode.tokens?.find(
+          const tokenCodeName = chainCode?.tokens?.find(
             tokenCode => tokenCode.tokenCodeId === pubAddress.tokenCode,
           );
 
@@ -76,7 +78,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
             iconSrc:
               imagesParsed[pubAddress.chainCode + '-' + pubAddress.tokenCode] ||
               defaultImageSrc,
-            chainCodeName: chainCode.chainCodeName,
+            chainCodeName: chainCode?.chainCodeName || pubAddress.chainCode,
             tokenCodeName: tokenCodeName?.tokenCodeName || pubAddress.tokenCode,
             ...pubAddress,
           };

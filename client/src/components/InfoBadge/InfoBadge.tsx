@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { SvgIconProps } from '@mui/material/SvgIcon';
 import ErrorIcon from '@mui/icons-material/Error';
 import classnames from 'classnames';
 
@@ -8,6 +9,7 @@ import classes from './InfoBadge.module.scss';
 export type InfoBadgeProps = {
   hideDash?: boolean;
   iconOnTop?: boolean;
+  icon?: React.ComponentType<SvgIconProps>;
   message: string | ReactElement;
   messageOnNewLine?: boolean;
   messageOnLeft?: boolean;
@@ -17,10 +19,27 @@ export type InfoBadgeProps = {
   hasBoldMessage?: boolean;
 } & CommonBadgeProps;
 
+interface IconComponentProps {
+  icon?: React.ComponentType<SvgIconProps>;
+  iconOnTop?: boolean;
+}
+
+const Icon: React.FC<IconComponentProps> = ({
+  icon: IconComponent = ErrorIcon,
+  iconOnTop,
+}) => {
+  return (
+    <IconComponent
+      className={classnames(classes.icon, iconOnTop && classes.iconOnTop)}
+    />
+  );
+};
+
 const InfoBadge: React.FC<InfoBadgeProps> = props => {
   const {
     hideDash,
     iconOnTop,
+    icon,
     title,
     type,
     show,
@@ -32,9 +51,7 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
   } = props;
   return (
     <Badge type={type} show={show} {...rest}>
-      <ErrorIcon
-        className={classnames(classes.icon, iconOnTop && classes.iconOnTop)}
-      />
+      <Icon iconOnTop={iconOnTop} icon={icon} />
       <div className={classes.textContainer}>
         <span className={classes.title}>{title}</span>
         <span className={hasBoldMessage ? classes.boldMessage : ''}>

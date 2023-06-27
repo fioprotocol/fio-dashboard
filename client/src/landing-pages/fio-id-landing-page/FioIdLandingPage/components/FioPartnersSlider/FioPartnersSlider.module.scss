@@ -96,6 +96,18 @@
     .slider {
       margin-top: 100px;
 
+      & > div {
+        margin-left: 50px;
+        margin-right: -150px;
+        transition: margin 0.5s ease;
+      }
+
+      &.nonFirstElement > div {
+        margin-left: -150px;
+        margin-right: 50px;
+        overflow: inherit;
+      }
+
       .imageContainer, .actionButton {
         width: 100% !important;
         height: 235px;

@@ -64,6 +64,8 @@ export default function configureStore(api: Api, history: History): Store {
         fio: {
           // we should save showTokenListInfoBadge state during session
           showTokenListInfoBadge: store.getState().fio.showTokenListInfoBadge,
+          showSocialMediaListInfoBadge: store.getState().fio
+            .showSocialMediaListInfoBadge,
         },
         fioWalletsData: {
           walletsData: store.getState().fioWalletsData.walletsData,
