@@ -10,66 +10,80 @@ import TelegramSrc from '../assets/images/social-network-icons-rounded-dark-ligh
 import TwitterSrc from '../assets/images/social-network-icons-rounded-dark-light/twitter.svg';
 import WhatsappSrc from '../assets/images/social-network-icons-rounded-dark-light/whatsapp.svg';
 
-type SocialMediaLinkItem = {
+export type SocialMediaLinkItem = {
   iconSrc: string;
   name: string;
   link: string;
 };
 
+export const SOCIAL_MEDIA_NAMES = {
+  DISCORD: 'discord',
+  FACEBOOK: 'facebook',
+  HIVE: 'hive',
+  INSTAGRAM: 'instagram',
+  LINKEDIN: 'linkedin',
+  MASTODON: 'mastodon',
+  NOSTR: 'nostr',
+  REDDIT: 'reddit',
+  TELEGRAM: 'telegram',
+  TWITTER: 'twitter',
+  WHATSAPP: 'whatsapp',
+} as const;
+
 export const SOCIAL_MEDIA_LINKS: SocialMediaLinkItem[] = [
   {
     iconSrc: DiscordSrc,
-    name: 'discord',
+    name: SOCIAL_MEDIA_NAMES.DISCORD,
     link: 'https://discordapp.com/users/',
   },
   {
     iconSrc: FacebookSrc,
-    name: 'facebook',
+    name: SOCIAL_MEDIA_NAMES.FACEBOOK,
     link: 'https://facebook.com/',
   },
   {
     iconSrc: HiveSrc,
-    name: 'hive',
+    name: SOCIAL_MEDIA_NAMES.HIVE,
     link: 'https://peakd.com/@',
   },
   {
     iconSrc: IntsagramSrc,
-    name: 'instagram',
+    name: SOCIAL_MEDIA_NAMES.INSTAGRAM,
     link: 'https://instagram.com/',
   },
   {
     iconSrc: LinkedinSrc,
-    name: 'linkedin',
+    name: SOCIAL_MEDIA_NAMES.LINKEDIN,
     link: 'https://www.linkedin.com/in/',
   },
   {
     iconSrc: MastedonSrc,
-    name: 'mastodon',
+    name: SOCIAL_MEDIA_NAMES.MASTODON,
     link: 'https://mastodon.social/@',
   },
   {
     iconSrc: NostrSrc,
-    name: 'nostr',
+    name: SOCIAL_MEDIA_NAMES.NOSTR,
     link: 'https://iris.to/',
   },
   {
     iconSrc: RedditSrc,
-    name: 'reddit',
-    link: 'https://www.reddit.com/user',
+    name: SOCIAL_MEDIA_NAMES.REDDIT,
+    link: 'https://www.reddit.com/user/',
   },
   {
     iconSrc: TwitterSrc,
-    name: 'twitter',
+    name: SOCIAL_MEDIA_NAMES.TWITTER,
     link: 'https://twitter.com/',
   },
   {
     iconSrc: TelegramSrc,
-    name: 'telegram',
+    name: SOCIAL_MEDIA_NAMES.TELEGRAM,
     link: 'https://t.me/',
   },
   {
     iconSrc: WhatsappSrc,
-    name: 'whatsapp',
+    name: SOCIAL_MEDIA_NAMES.WHATSAPP,
     link: 'https://wa.me/',
   },
 ];

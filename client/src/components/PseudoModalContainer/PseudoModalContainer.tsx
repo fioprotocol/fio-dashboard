@@ -8,6 +8,7 @@ import classes from './PseudoModalContainer.module.scss';
 
 type Props = {
   children?: React.ReactNode;
+  containerClass?: string;
   hasAutoWidth?: boolean;
   fullWidth?: boolean;
   middleWidth?: boolean;
@@ -24,6 +25,7 @@ type Props = {
 const PseudoModalContainer: React.FC<Props> = props => {
   const {
     children,
+    containerClass,
     hasAutoWidth,
     fullWidth,
     link,
@@ -46,6 +48,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
         noVerticalMargin && classes.noVerticalMargin,
         isInfo && classes.info,
         hasDesertStormBackground && classes.hasDesertStormBackground,
+        containerClass,
       )}
     >
       <div className={classes.actionContainer}>

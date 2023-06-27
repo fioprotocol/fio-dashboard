@@ -256,3 +256,24 @@ export const loadImage = async (url?: string): Promise<string | null> => {
     };
   });
 };
+
+export const extractLastValueFormUrl = (url: string) => {
+  const path = new URL(url).pathname;
+
+  const pathWithoutParams = path.split('?')[0];
+  const pathWithoutHashes = pathWithoutParams.split('#')[0];
+
+  let lastValue = pathWithoutHashes.split('/').pop();
+
+  if (lastValue.startsWith('@')) {
+    lastValue = lastValue.substr(1);
+  }
+
+  return lastValue;
+};
+
+export const isURL = (str: string) => {
+  const urlPattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[:?\d]*)\S*$/;
+
+  return urlPattern.test(str);
+};

@@ -3,7 +3,7 @@ import React from 'react';
 import InfoBadge from '../../../../components/Badges/InfoBadge/InfoBadge';
 import Loader from '../../../../components/Loader/Loader';
 
-import { FioSocialMediaLinkItem } from '../FioSocialMediaLinkItem';
+import { SocialMediaLinkItemComponent } from '../../../../components/SocialMediaLinkItemComponent';
 
 import { PublicAddressDoublet } from '../../../../types';
 
@@ -11,7 +11,11 @@ import classes from './FioSocialMediaLinksList.module.scss';
 
 type Props = {
   loading: boolean;
-  socialMediaLinks: PublicAddressDoublet[];
+  socialMediaLinks: ({
+    link: string;
+    iconSrc: string;
+    name: string;
+  } & PublicAddressDoublet)[];
 };
 
 export const FioSocialMediaLinksList: React.FC<Props> = props => {
@@ -32,7 +36,7 @@ export const FioSocialMediaLinksList: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       {socialMediaLinks.map(socialMediaLinkItem => (
-        <FioSocialMediaLinkItem
+        <SocialMediaLinkItemComponent
           {...socialMediaLinkItem}
           key={socialMediaLinkItem.tokenCode}
         />

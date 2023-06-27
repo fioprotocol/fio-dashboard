@@ -1,0 +1,62 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 15px 20px !important;
+  margin-top: 15px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  & > div {
+    margin: 0;
+  }
+
+  .imageContainer {
+    display: flex;
+    flex-direction: row;
+
+    .icon {
+      margin-right: 15px;
+    }
+
+    .name {
+      color: $dark-jungle-green;
+      margin: 0;
+      font-size: 1em;
+      text-transform: capitalize;
+      @include proxima-nova-bold;
+    }
+  }
+
+  .link {
+    color: $dark-jungle-green;
+    margin-top: 15px;
+    margin-bottom: 0;
+    font-size: 1em;
+    @include proxima-nova-bold;
+  }
+
+  .inputContainer {
+    margin-top: 15px;
+    margin-bottom: -30px;
+    width: 100%;
+  }
+}
+
+@include lg {
+  .container {
+    display: grid;
+    grid-template-columns: 120px auto;
+    align-items: center;
+
+    .inputContainer {
+      margin-top: 0;
+    }
+
+    .link {
+      margin: 0;
+    }
+  }
+}
