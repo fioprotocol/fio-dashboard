@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import apis from '../../../api';
+import useEffectOnce from '../../../../../hooks/general';
+
+import { CHAIN_CODES } from '../../../../../constants/common';
+import { SOCIAL_MEDIA_LINKS } from '../../../../../constants/socialMediaLinks';
+
 interface ImageData {
   [key: string]: string;
 }
@@ -15,86 +21,71 @@ type UseContextProps = {
   socialLinks: SocialLinks[];
 };
 
-const mockedData: SocialLinks[] = [
-  {
-    iconSrc: '',
-    name: 'discord',
-    link: 'https://discordapp.com/users/',
-  },
-  {
-    iconSrc: '',
-    name: 'facebook',
-    link: 'https://facebook.com/',
-  },
-  {
-    iconSrc: '',
-    name: 'hive',
-    link: 'https://peakd.com/@',
-  },
-  {
-    iconSrc: '',
-    name: 'instagram',
-    link: 'https://instagram.com/',
-  },
-  {
-    iconSrc: '',
-    name: 'linkedin',
-    link: 'https://www.linkedin.com/in/',
-  },
-  {
-    iconSrc: '',
-    name: 'mastodon',
-    link: 'https://mastodon.social/@',
-  },
-  {
-    iconSrc: '',
-    name: 'nostr',
-    link: 'https://iris.to/',
-  },
-  {
-    iconSrc: '',
-    name: 'reddit',
-    link: 'https://www.reddit.com/user',
-  },
-  {
-    iconSrc: '',
-    name: 'twitter',
-    link: 'https://twitter.com/',
-  },
-  {
-    iconSrc: '',
-    name: 'telegram',
-    link: 'https://t.me/',
-  },
-  {
-    iconSrc: '',
-    name: 'whatsapp',
-    link: 'https://wa.me/',
-  },
-];
+const DEFAULT_LIMIT = 100;
 
 export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   const [loading, toggeLoading] = useState<boolean>(false);
   const [socialLinks, setSocialLinks] = useState<SocialLinks[]>([]);
   const [images, setImages] = useState<ImageData>({});
+  const [offset, setOffset] = useState<number>(0);
+  const [hasMore, toggleHasMore] = useState<boolean>(false);
 
   const imagesJSON = JSON.stringify(images);
 
-  const getSocialLinks = useCallback(() => {
+  const getSocialLinks = useCallback(async () => {
     toggeLoading(true);
     const imagesParsed: ImageData = JSON.parse(imagesJSON);
+
+    const { more, public_addresses } = await apis.fio.getPublicAddresses(
+      fch,
+      DEFAULT_LIMIT,
+      offset,
+    );
+
+    toggleHasMore(more);
+    setOffset(offset + DEFAULT_LIMIT);
+
+    const socialLinksList = public_addresses
+      .filter(publicAddress => publicAddress.chain_code === CHAIN_CODES.SOCIALS)
+      .map(publicAddress => {
+        const socialMediaLinkItem = SOCIAL_MEDIA_LINKS.find(
+          socialMediaItem =>
+            publicAddress.token_code.toLowerCase() ===
+            socialMediaItem.name.toLowerCase(),
+        );
+        return {
+          ...socialMediaLinkItem,
+          link: socialMediaLinkItem.link + publicAddress.public_address,
+        };
+      });
+
+    if (!socialLinksList?.length) {
+      toggeLoading(false);
+      return;
+    }
+
     setSocialLinks(
-      mockedData.map(socialLinkItem => ({
+      socialLinksList.map(socialLinkItem => ({
         ...socialLinkItem,
         iconSrc: imagesParsed[socialLinkItem.name],
       })),
     );
     toggeLoading(false);
-  }, [imagesJSON]);
+  }, [fch, imagesJSON, offset]);
+
+  useEffectOnce(
+    () => {
+      getSocialLinks();
+    },
+    [getSocialLinks],
+    !!Object.keys(images).length,
+  );
 
   useEffect(() => {
-    getSocialLinks();
-  }, [getSocialLinks]);
+    if (hasMore) {
+      getSocialLinks();
+    }
+  }, [hasMore, getSocialLinks]);
 
   useEffect(() => {
     const importImages = async () => {
