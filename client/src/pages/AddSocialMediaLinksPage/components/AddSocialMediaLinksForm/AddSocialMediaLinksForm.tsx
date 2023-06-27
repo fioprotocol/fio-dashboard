@@ -66,9 +66,6 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
           {socialMediaLinksList.map(socialMediaLinkItem => (
             <SocialMediaLinkItemComponent
               {...socialMediaLinkItem}
-              // todo: handle proper type
-              // @ts-ignore
-              publicAddress={values[socialMediaLinkItem.name]}
               input={
                 <Field
                   name={socialMediaLinkItem.name}
@@ -79,6 +76,7 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
                   colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
                   showPasteButton
                   isLowHeight
+                  withoutBottomMargin
                 />
               }
               key={socialMediaLinkItem.name}

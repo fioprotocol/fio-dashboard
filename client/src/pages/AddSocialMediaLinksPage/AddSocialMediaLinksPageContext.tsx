@@ -57,7 +57,9 @@ export const useContext = (): UseContextProps => {
   const queryParams = useQuery();
   const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE);
 
-  const [socialMediaLinksList, setSocialMediaLinksList] = useState<any[]>([]);
+  const [socialMediaLinksList, setSocialMediaLinksList] = useState<
+    SocialMediaLinkItem[]
+  >([]);
   const [processing, setProcessing] = useState<boolean>(false);
   const [submitData, setSubmitData] = useState<
     FormValues | PublicAddressDoublet[] | null
@@ -115,7 +117,11 @@ export const useContext = (): UseContextProps => {
             if (isURL(value)) {
               publicAddress = extractLastValueFormUrl(value);
             } else {
-              publicAddress = value;
+              if (value.startsWith('@')) {
+                publicAddress = value.substr(1);
+              } else {
+                publicAddress = value;
+              }
             }
           }
           return {
