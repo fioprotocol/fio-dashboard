@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
 
   & > div {
     margin: 0;
@@ -35,14 +36,37 @@
     margin-top: 15px;
     margin-bottom: 0;
     font-size: 1em;
+    word-break: break-all;
     @include proxima-nova-bold;
   }
 
   .inputContainer {
     margin-top: 15px;
-    margin-bottom: -30px;
     width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+
+    .input {
+      width: 100%;
+
+      input {
+        width: 100%;
+        font-size: 0.975em;
+        @include proxima-nova-bold;
+      }
+    }
   }
+
+  .actionButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+}
+
+.hasOpacity {
+  opacity: 50%;
 }
 
 @include lg {
@@ -51,12 +75,22 @@
     grid-template-columns: 120px auto;
     align-items: center;
 
+    &.hasActionButton {
+      grid-template-columns: 120px auto 30px;
+    }
+
     .inputContainer {
       margin-top: 0;
+      flex-flow: row nowrap;
     }
 
     .link {
       margin: 0;
+      word-break: normal;
+    }
+
+    .actionButton {
+      position: initial;
     }
   }
 }

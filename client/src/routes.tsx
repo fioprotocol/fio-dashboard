@@ -126,6 +126,11 @@ const AddSocialLinksPage = React.lazy(() =>
     /* webpackChunkName: 'addSocialMediaLinksPage' */ './pages/AddSocialMediaLinksPage'
   ),
 );
+const EditSocialLinksPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'editSocialMediaLinksPage' */ './pages/EditSocialMediaLinksPage'
+  ),
+);
 const TokensRequestPaymentPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'tokensRequestPaymentPage' */ './pages/TokensRequestPaymentPage'
@@ -518,6 +523,11 @@ const Routes = (): React.ReactElement => {
               <PrivateRoute
                 path={ROUTES.FIO_SOCIAL_MEDIA_LINKS_ADD}
                 component={AddSocialLinksPage}
+                exact
+              />
+              <PrivateRoute
+                path={ROUTES.FIO_SOCIAL_MEDIA_LINKS_EDIT}
+                component={EditSocialLinksPage}
                 exact
               />
 
