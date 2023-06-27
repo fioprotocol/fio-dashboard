@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Slider from 'react-slick';
+import classnames from 'classnames';
 
 import aaxSrc from '../../../../../assets/images/ecosystem-simple-logo-icons/aax.svg';
 import airnftsSrc from '../../../../../assets/images/ecosystem-simple-logo-icons/airnfts.svg';
@@ -17,8 +18,6 @@ import whitebitSrc from '../../../../../assets/images/ecosystem-simple-logo-icon
 
 import classes from './FioPartnersSlider.module.scss';
 
-type Props = {};
-
 const PartnersArray = [
   { src: aaxSrc, alt: 'AAX' },
   { src: airnftsSrc, alt: 'AirNFTs' },
@@ -34,7 +33,27 @@ const PartnersArray = [
   { src: whitebitSrc, alt: 'WhiteBIT' },
 ];
 
-export const FioPartnersSlider: React.FC<Props> = props => {
+export const FioPartnersSlider: React.FC = () => {
+  const [activeItem, setActiveItem] = useState(0);
+
+  // This is a hack to set active class for last dot if we have decimal item number from react slick. It mean that we have last element.
+  // For other reason it doesn't work.
+  useEffect(() => {
+    if (activeItem && !Number.isInteger(activeItem)) {
+      const slickSliderElement = document.querySelector('.slick-slider');
+      const ulElement = slickSliderElement.querySelector('ul');
+      const lastLiElement = ulElement.lastElementChild;
+
+      lastLiElement.classList.add('slick-active');
+    } else {
+      const slickSliderElement = document.querySelector('.slick-slider');
+      const ulElement = slickSliderElement.querySelector('ul');
+      const lastLiElement = ulElement.lastElementChild;
+
+      lastLiElement.classList.remove('slick-active');
+    }
+  }, [activeItem]);
+
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>
@@ -44,7 +63,10 @@ export const FioPartnersSlider: React.FC<Props> = props => {
       </h1>
       <Slider
         dots
-        className={classes.slider}
+        className={classnames(
+          classes.slider,
+          activeItem > 0 && classes.nonFirstElement,
+        )}
         infinite={false}
         arrows={false}
         slidesToShow={4.5}
@@ -83,6 +105,9 @@ export const FioPartnersSlider: React.FC<Props> = props => {
         appendDots={dots => <ul className={classes.sliderDots}>{dots}</ul>}
         dotsClass={classes.sliderDots}
         customPaging={() => <div className={classes.dot}></div>}
+        beforeChange={(oldIndex, newIndex) => {
+          setActiveItem(newIndex);
+        }}
       >
         {PartnersArray.map(partner => (
           <div className={classes.imageContainer} key={partner.alt}>
