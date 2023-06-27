@@ -207,7 +207,7 @@ export const useContext = (): UseContextProps => {
         pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
         search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`,
         state: {
-          actionType: SOCIAL_MEDIA_CONTAINER_NAMES.ADD_SOCIAL_MEDIA,
+          actionType: SOCIAL_MEDIA_CONTAINER_NAMES.EDIT_SOCIAL_MEDIA,
         },
       });
     } catch (err) {

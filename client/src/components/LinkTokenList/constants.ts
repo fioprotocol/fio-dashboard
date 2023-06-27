@@ -42,7 +42,7 @@ export const CONTAINER_TYPES = {
     buttonText: 'Edit',
   },
   [CONTAINER_NAMES.DELETE_SOCIAL_MEDIA]: {
-    title: 'Edit Social Media Links',
+    title: 'Delete Social Media Links',
     buttonText: 'Delete',
   },
 };

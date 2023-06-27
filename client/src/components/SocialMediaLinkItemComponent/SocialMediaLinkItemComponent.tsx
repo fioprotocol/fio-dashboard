@@ -54,7 +54,11 @@ export const SocialMediaLinkItemComponent: React.FC<Props> = props => {
             hasOpacity && classes.hasOpacity,
           )}
         >
-          {combineInputAndLink && <p className={classes.link}>{link}</p>}
+          {combineInputAndLink && (
+            <p className={classnames(classes.link, classes.hasNoWardBreak)}>
+              {link}
+            </p>
+          )}
           <div className={classes.input}>{input}</div>
         </div>
       ) : (
