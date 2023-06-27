@@ -1,0 +1,42 @@
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  .actionContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 15px;
+    width: 100%;
+
+    .subtitle {
+      font-size: 1em;
+      @include proxima-nova-semibold;
+    }
+
+    .selectContainer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .label {
+        margin-bottom: 0;
+        font-size: 0.875em;
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .actionContainer {
+      flex-direction: row;
+      align-items: center;
+
+      &.columnMobile {
+        flex-direction: row;
+      }
+    }
+  }
+}

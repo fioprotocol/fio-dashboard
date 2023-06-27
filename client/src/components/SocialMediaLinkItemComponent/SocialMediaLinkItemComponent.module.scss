@@ -66,7 +66,7 @@
 }
 
 .hasOpacity {
-  opacity: 50%;
+  opacity: 0.5;
 }
 
 @include lg {
@@ -86,7 +86,10 @@
 
     .link {
       margin: 0;
-      word-break: normal;
+
+      &.hasNoWardBreak {
+        word-break: normal;
+      }
     }
 
     .actionButton {
