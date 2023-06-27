@@ -70,7 +70,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
               pubAddress.chainCode.toUpperCase(),
           );
 
-          const tokenCodeName = chainCode.tokens?.find(
+          const tokenCodeName = chainCode?.tokens?.find(
             tokenCode => tokenCode.tokenCodeId === pubAddress.tokenCode,
           );
 
@@ -78,7 +78,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
             iconSrc:
               imagesParsed[pubAddress.chainCode + '-' + pubAddress.tokenCode] ||
               defaultImageSrc,
-            chainCodeName: chainCode.chainCodeName,
+            chainCodeName: chainCode?.chainCodeName || pubAddress.chainCode,
             tokenCodeName: tokenCodeName?.tokenCodeName || pubAddress.tokenCode,
             ...pubAddress,
           };
