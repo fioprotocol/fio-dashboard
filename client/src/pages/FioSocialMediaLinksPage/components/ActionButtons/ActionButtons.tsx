@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { Link as RouterLink } from 'react-router-dom';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,10 +13,11 @@ import classes from './ActionButtons.module.scss';
 type Props = {
   search: string;
   isDisabled: boolean;
+  isAddDisabled: boolean;
 };
 
 export const ActionButtons: React.FC<Props> = props => {
-  const { search, isDisabled } = props;
+  const { search, isDisabled, isAddDisabled } = props;
 
   return (
     <div className={classes.container}>
@@ -41,15 +41,16 @@ export const ActionButtons: React.FC<Props> = props => {
           Delete
         </Button>
       </Link>
-      <RouterLink
+      <Link
+        isDisabled={isAddDisabled}
         to={`${ROUTES.FIO_SOCIAL_MEDIA_LINKS_ADD}${search}`}
-        className={classes.link}
+        classname={classes.link}
       >
-        <Button>
+        <Button disabled={isAddDisabled}>
           <AddCircleIcon className={classes.icon} />
           Add
         </Button>
-      </RouterLink>
+      </Link>
     </div>
   );
 };

@@ -70,7 +70,9 @@ export const useContext = (): Props => {
     fioCryptoHandlePub,
     fioCryptoHandleName,
     loading,
-    publicAddresses,
+    publicAddresses: publicAddresses.filter(
+      publicAddress => publicAddress.chainCode !== CHAIN_CODES.SOCIALS,
+    ),
     search,
     showBadge,
     onClose,
