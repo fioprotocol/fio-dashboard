@@ -98,6 +98,12 @@ export type InfuraNftsMetadataResponse = {
     name: string;
     description: string;
     image: string;
+    nft?: {
+      external_url?: string;
+      name: string;
+      description: string;
+      image: string;
+    };
   };
   tokenId: string;
 };
