@@ -1,20 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { Field, FormRenderProps } from 'react-final-form';
 
 import ActionContainer from '../../../../components/LinkTokenList/ActionContainer';
 import { SocialMediaLinkItemComponent } from '../../../../components/SocialMediaLinkItemComponent';
-
-import { ROUTES } from '../../../../constants/routes';
-import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../../constants/fio';
-import { CONTAINER_NAMES } from '../../../../components/LinkTokenList/constants';
-
-import { FormValues } from '../../types';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
 
+import { ROUTES } from '../../../../constants/routes';
+import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../../constants/fio';
+import { CONTAINER_NAMES } from '../../../../components/LinkTokenList/constants';
+
+import { extractLastValueFormUrl, isURL } from '../../../../util/general';
+
+import { FormValues } from '../../types';
 import { SocialMediaLinkItem } from '../../../../constants/socialMediaLinks';
 import {
   FioAddressWithPubAddresses,
@@ -38,6 +39,13 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
     socialMediaLinksList,
     changeBundleCost,
   } = props;
+
+  const formatInputValue = useCallback((value: string) => {
+    if (isURL(value)) return extractLastValueFormUrl(value);
+    if (value && value.startsWith('@')) return value.substr(1);
+
+    return value;
+  }, []);
 
   useEffect(
     () =>
@@ -74,9 +82,11 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
                   placeholder="Enter username"
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                  format={formatInputValue}
                   showPasteButton
                   isLowHeight
                   withoutBottomMargin
+                  formatOnBlur
                 />
               }
               key={socialMediaLinkItem.name}
