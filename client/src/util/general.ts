@@ -263,7 +263,13 @@ export const extractLastValueFormUrl = (url: string) => {
   const pathWithoutParams = path.split('?')[0];
   const pathWithoutHashes = pathWithoutParams.split('#')[0];
 
-  let lastValue = pathWithoutHashes.split('/').pop();
+  const splittedPath = pathWithoutHashes.split('/');
+
+  let lastValue = splittedPath[splittedPath.length - 1];
+
+  if (!lastValue) {
+    lastValue = splittedPath[splittedPath.length - 2];
+  }
 
   if (lastValue.startsWith('@')) {
     lastValue = lastValue.substr(1);

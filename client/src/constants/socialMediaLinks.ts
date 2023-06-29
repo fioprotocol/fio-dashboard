@@ -10,11 +10,7 @@ import TelegramSrc from '../assets/images/social-network-icons-rounded-dark-ligh
 import TwitterSrc from '../assets/images/social-network-icons-rounded-dark-light/twitter.svg';
 import WhatsappSrc from '../assets/images/social-network-icons-rounded-dark-light/whatsapp.svg';
 
-export type SocialMediaLinkItem = {
-  iconSrc: string;
-  name: string;
-  link: string;
-};
+import { SocialMediaLinkItem } from '../types';
 
 export const SOCIAL_MEDIA_NAMES = {
   DISCORD: 'discord',

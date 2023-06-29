@@ -21,6 +21,7 @@ import {
   CONFIRM_FIO_ACTIONS,
   CURRENCY_CODES,
 } from './constants/common';
+import { SOCIAL_MEDIA_NAMES } from './constants/socialMediaLinks';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
 import { DomainsResponse } from './api/responses';
@@ -929,6 +930,14 @@ export type TwitterNotification = {
   type: string;
   message: string;
   title: string;
+};
+
+export type SocialMediaLinkNameProp = typeof SOCIAL_MEDIA_NAMES[keyof typeof SOCIAL_MEDIA_NAMES];
+
+export type SocialMediaLinkItem = {
+  iconSrc: string;
+  name: SocialMediaLinkNameProp;
+  link: string;
 };
 
 declare global {
