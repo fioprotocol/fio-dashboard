@@ -18,10 +18,7 @@ import { log } from '../../util/general';
 
 import { CHAIN_CODES } from '../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-import {
-  SOCIAL_MEDIA_LINKS,
-  SocialMediaLinkItem,
-} from '../../constants/socialMediaLinks';
+import { SOCIAL_MEDIA_LINKS } from '../../constants/socialMediaLinks';
 import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
@@ -31,6 +28,7 @@ import {
   FioWalletDoublet,
   LinkActionResult,
   PublicAddressDoublet,
+  SocialMediaLinkItem,
   WalletKeys,
 } from '../../types';
 import { FormValues } from './types';

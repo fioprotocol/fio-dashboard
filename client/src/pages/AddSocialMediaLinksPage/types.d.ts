@@ -1,5 +1,3 @@
-import { SOCIAL_MEDIA_NAMES } from '../../constants/socialMediaLinks';
+import { SocialMediaLinkNameProp } from '../../types';
 
-type FormValues = {
-  [key: typeof SOCIAL_MEDIA_NAMES[keyof typeof SOCIAL_MEDIA_NAMES]]: string;
-};
+export type FormValues = Record<SocialMediaLinkNameProp, string>;
