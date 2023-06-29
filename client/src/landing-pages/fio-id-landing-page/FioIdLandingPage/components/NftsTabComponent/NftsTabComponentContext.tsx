@@ -46,7 +46,11 @@ const DEFAULT_LIMIT = 6;
 const newObject: { [key: string]: number } = {};
 for (const network in NETWORKS_LIST) {
   const { currency, chainID } = NETWORKS_LIST[network];
-  newObject[currency] = chainID;
+  if (currency === NETWORKS_LIST['Polygon'].currency) {
+    newObject[currency] = NETWORKS_LIST['Polygon'].chainID;
+  } else {
+    newObject[currency] = chainID;
+  }
 }
 
 const convertDescriptionToArray = (
@@ -55,7 +59,7 @@ const convertDescriptionToArray = (
   if (!inputString) return [];
 
   const result: (string | string[])[] = [];
-  const segments = inputString.split('.');
+  const segments = inputString.split(/\.(?=\s|[A-Z]|[^\w\s])/);
 
   for (const segment of segments) {
     if (segment.includes(':')) {
@@ -64,7 +68,10 @@ const convertDescriptionToArray = (
       const nestedArray = [key.trim(), ...valueArray];
       result.push(nestedArray);
     } else {
-      result.push(segment.trim());
+      const trimmedSegment = segment.trim();
+      if (trimmedSegment) {
+        result.push(trimmedSegment);
+      }
     }
   }
 
@@ -138,12 +145,30 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
 
           if (infuraNftMetadata) {
             const {
-              metadata: { description, external_url, image, name },
+              metadata: {
+                description: infuraDescription,
+                external_url: infuraExternalUrl,
+                image: infuraImage,
+                name: infuraName,
+                nft,
+              },
             } = infuraNftMetadata;
+
+            const {
+              description: nftDecription,
+              external_url: nftExternalUrl,
+              image: nftImage,
+              name: nftName,
+            } = nft || {};
+
+            const description = infuraDescription || nftDecription || '';
+            const externalUrl = infuraExternalUrl || nftExternalUrl || '';
+            const image = infuraImage || nftImage || '';
+            const name = infuraName || nftName || '';
 
             nftItemObj.infuraMetadata = {
               description: convertDescriptionToArray(description),
-              externalUrl: external_url,
+              externalUrl,
               imageSrc: image.replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
               name,
             };
