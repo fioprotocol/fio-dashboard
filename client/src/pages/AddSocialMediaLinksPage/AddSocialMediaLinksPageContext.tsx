@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import { updatePublicAddresses } from '../../redux/fio/actions';
 import {
   currentFioAddress as currentFioAddressSelector,
   loading as loadingSelector,
@@ -13,7 +14,7 @@ import useQuery from '../../hooks/useQuery';
 import { usePublicAddresses } from '../../util/hooks';
 import { minWaitTimeFunction } from '../../utils';
 import { linkTokens } from '../../api/middleware/fio';
-import { log, isURL, extractLastValueFormUrl } from '../../util/general';
+import { log } from '../../util/general';
 
 import { CHAIN_CODES } from '../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
@@ -74,6 +75,7 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   usePublicAddresses(fch);
 
@@ -114,20 +116,12 @@ export const useContext = (): UseContextProps => {
         connectList: Object.entries(data).map(([key, value]) => {
           let publicAddress = '';
           if (typeof value !== undefined && typeof value === 'string') {
-            if (isURL(value)) {
-              publicAddress = extractLastValueFormUrl(value);
-            } else {
-              if (value.startsWith('@')) {
-                publicAddress = value.substr(1);
-              } else {
-                publicAddress = value;
-              }
-            }
+            publicAddress = value;
           }
           return {
             chainCode: CHAIN_CODES.SOCIALS,
             tokenCode: key.toUpperCase(),
-            publicAddress,
+            publicAddress: publicAddress,
           };
         }),
         keys,
@@ -139,6 +133,13 @@ export const useContext = (): UseContextProps => {
           TOKEN_LINK_MIN_WAIT_TIME,
         );
         if (actionResults) {
+          setResultsData(actionResults);
+          dispatch(
+            updatePublicAddresses(fch, {
+              addPublicAddresses: [actionResults.connect],
+              deletePublicAddresses: [],
+            }),
+          );
           history.push({
             pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
             search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`,
@@ -147,14 +148,13 @@ export const useContext = (): UseContextProps => {
             },
           });
         }
-        setResultsData(actionResults);
       } catch (err) {
         log.error(err);
       } finally {
         setSubmitData(null);
       }
     },
-    [fch, history],
+    [dispatch, fch, history],
   );
 
   const publicAddressesJson = JSON.stringify(publicAddresses);
