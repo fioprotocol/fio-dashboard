@@ -531,6 +531,8 @@ export type UsersWalletsTxHistory = {
 export type RedirectLinkData = {
   pathname: Path;
   state?: LocationState;
+  search?: string;
+  query?: Record<string, string>;
 };
 
 export type PrivateRedirectLocationState = {
