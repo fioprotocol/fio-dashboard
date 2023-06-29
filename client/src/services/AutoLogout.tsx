@@ -80,7 +80,8 @@ const logEvent = (...params: Unknown[]) => {
 };
 
 const AutoLogout = (
-  props: Props & RouterProps,
+  props: Props &
+    RouterProps & { history: { location: { query: Record<string, string> } } }, // todo: fixed in react router 6.9.1
 ): React.FunctionComponent | null => {
   const {
     tokenCheckResult,
@@ -90,7 +91,7 @@ const AutoLogout = (
     history,
     cartItems,
     history: {
-      location: { pathname, state },
+      location: { pathname, state, search, query },
     },
     checkAuthToken,
     setLastActivity,
@@ -124,7 +125,7 @@ const AutoLogout = (
 
   activityTimeout = useCallback(() => {
     removeActivityListener();
-    setRedirectPath({ pathname, state });
+    setRedirectPath({ pathname, state, search, query });
     cartIsNotEmpty && dispatch(clear(true));
     logout({ history });
     showLoginModal();
@@ -132,8 +133,10 @@ const AutoLogout = (
   }, [
     history,
     pathname,
+    search,
     state,
     cartIsNotEmpty,
+    query,
     logout,
     setRedirectPath,
     showLoginModal,

@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+import { redirectLink as redirectLinkSelector } from '../../redux/navigation/selectors';
 
 import AddressWidget from '../../components/AddressWidget';
 import { FCHBanner } from '../../components/FCHBanner';
@@ -24,6 +27,7 @@ type Props = {
 
 const HomePage: React.FC<Props & RouteComponentProps> = props => {
   const history = useHistory();
+  const redirectLink = useSelector(redirectLinkSelector);
 
   const {
     isAuthenticated,
@@ -40,9 +44,13 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
 
   useEffect(() => {
     if (isAuthenticated && !isContainedFlow) {
-      history.replace(ROUTES.DASHBOARD);
+      if (redirectLink) {
+        history.push(redirectLink);
+        return;
+      }
+      history.push(ROUTES.DASHBOARD);
     }
-  }, [isAuthenticated, isContainedFlow, history]);
+  }, [isAuthenticated, isContainedFlow, history, redirectLink]);
 
   if (isContainedFlow)
     return <AddressWidget isDarkWhite {...addressWidgetContent} />;
