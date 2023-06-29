@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { updatePublicAddresses } from '../../redux/fio/actions';
 import {
   currentFioAddress as currentFioAddressSelector,
   fioWallets as fioWalletsSelector,
@@ -74,6 +75,7 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   usePublicAddresses(fch);
 
@@ -203,6 +205,12 @@ export const useContext = (): UseContextProps => {
           updated: editedSocialLinks,
         },
       });
+      dispatch(
+        updatePublicAddresses(fch, {
+          addPublicAddresses: [actionResults.connect],
+          deletePublicAddresses: [],
+        }),
+      );
       history.push({
         pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
         search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`,
