@@ -24,6 +24,7 @@ import binanceSrc from '../../../assets/images/coin/binance.svg';
 import binanceDarkSrc from '../../../assets/images/coin/binance-dark.svg';
 import ethereumSrc from '../../../assets/images/coin/ethereum.svg';
 import tetherSrc from '../../../assets/images/coin/tether.svg';
+import usdcIconSrc from '../../../assets/images/token-icons/ETH-USDC.svg';
 
 const POPULAR_CURRENCIES: AnyObject[] = [
   {
@@ -68,13 +69,13 @@ const POPULAR_CURRENCIES: AnyObject[] = [
   },
   {
     key: 5,
-    title: 'USDT',
-    chainCode: 'BSC',
-    tokenCode: 'USDT',
-    tokenLogo: tetherSrc,
-    tokenLogoClass: classes.popularListItemLogoUSDT,
-    chainLogo: binanceDarkSrc,
-    chainLogoClass: classes.popularListItemLogoBSC,
+    title: 'USDC',
+    chainCode: 'ETH',
+    tokenCode: 'USDC',
+    tokenLogo: usdcIconSrc,
+    tokenLogoClass: classes.popularListItemLogoUSDC,
+    chainLogo: ethereumSrc,
+    chainLogoClass: classes.popularListItemLogoETH,
   },
 ];
 
