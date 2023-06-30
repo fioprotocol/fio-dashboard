@@ -20,6 +20,7 @@ import {
   TOKEN_LINK_MIN_WAIT_TIME,
 } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { CHAIN_CODES } from '../../constants/common';
 
 import {
   LinkActionResult,
@@ -70,16 +71,18 @@ export const useContext = () => {
   const pubAddressesToDefault = useCallback(() => {
     publicAddresses &&
       changePubAddresses(
-        publicAddresses.map(pubAddress => ({
-          ...pubAddress,
-          isEditing: false,
-          newPublicAddress: '',
-          id: genericTokenId(
-            pubAddress.chainCode,
-            pubAddress.tokenCode,
-            pubAddress.publicAddress,
-          ),
-        })),
+        publicAddresses
+          .filter(pubAddress => pubAddress.chainCode !== CHAIN_CODES.SOCIALS)
+          .map(pubAddress => ({
+            ...pubAddress,
+            isEditing: false,
+            newPublicAddress: '',
+            id: genericTokenId(
+              pubAddress.chainCode,
+              pubAddress.tokenCode,
+              pubAddress.publicAddress,
+            ),
+          })),
       );
   }, [publicAddresses]);
 

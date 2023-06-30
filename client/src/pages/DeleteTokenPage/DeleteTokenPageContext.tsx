@@ -76,15 +76,17 @@ export const useContext = (): DeleteTokenContextProps => {
     () =>
       publicAddresses &&
       changePubAddresses(
-        publicAddresses.map(pubAddress => ({
-          ...pubAddress,
-          isChecked: false,
-          id: genericTokenId(
-            pubAddress.chainCode,
-            pubAddress.tokenCode,
-            pubAddress.publicAddress,
-          ),
-        })),
+        publicAddresses
+          .filter(pubAddress => pubAddress.chainCode !== CHAIN_CODES.SOCIALS)
+          .map(pubAddress => ({
+            ...pubAddress,
+            isChecked: false,
+            id: genericTokenId(
+              pubAddress.chainCode,
+              pubAddress.tokenCode,
+              pubAddress.publicAddress,
+            ),
+          })),
       ),
     [publicAddresses],
   );
@@ -140,7 +142,6 @@ export const useContext = (): DeleteTokenContextProps => {
       fioAddress: string;
       disconnectList: PublicAddressDoublet[];
       keys: WalletKeys;
-      disconnectAll: boolean;
     } = {
       fioAddress: fioCryptoHandleName,
       disconnectList: pubAddressesArr.filter(pubAddress => {
@@ -150,7 +151,6 @@ export const useContext = (): DeleteTokenContextProps => {
         return isChecked && !isFioToken;
       }),
       keys,
-      disconnectAll: allChecked,
     };
     try {
       const actionResults = await minWaitTimeFunction(
