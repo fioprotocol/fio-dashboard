@@ -134,6 +134,12 @@
       &.popularListItemLogoUSDT {
         background: $tradewind;
       }
+
+      &.popularListItemLogoUSDC {
+        img {
+          width: 100%;
+        }
+      }
     }
 
     .popularListItemTitleCheckIcon {
