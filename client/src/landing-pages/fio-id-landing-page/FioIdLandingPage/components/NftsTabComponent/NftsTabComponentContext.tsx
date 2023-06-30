@@ -201,22 +201,23 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       nftItemObj.isImage =
         !!fioImageUrl || !!infuraImageUrl || !!infuraxtenalImageUrl;
 
-      if (
-        hash &&
-        nftItemObj.imageUrl &&
-        nftItemObj.isImage &&
-        !nftItemObj.hasMultipleSignatures
-      ) {
-        try {
-          const imageHash = await apis.general.getImageHash(
-            nftItemObj.imageUrl,
-          );
+      // todo: commented due to DASH-711 task. We hide it until figureout with hash
+      // if (
+      //   hash &&
+      //   nftItemObj.imageUrl &&
+      //   nftItemObj.isImage &&
+      //   !nftItemObj.hasMultipleSignatures
+      // ) {
+      //   try {
+      //     const imageHash = await apis.general.getImageHash(
+      //       nftItemObj.imageUrl,
+      //     );
 
-          nftItemObj.isAlteredImage = imageHash && imageHash !== hash;
-        } catch (error) {
-          //
-        }
-      }
+      //     nftItemObj.isAlteredImage = imageHash && imageHash !== hash;
+      //   } catch (error) {
+      //     //
+      //   }
+      // }
 
       nftsCombined.push(nftItemObj);
     }

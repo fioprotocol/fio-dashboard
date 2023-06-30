@@ -77,9 +77,9 @@ export const NftItemComponent: React.FC<Props> = props => {
     creatorUrl,
     fch,
     hasMultipleSignatures,
-    hash,
+    // hash,
     infuraMetadata,
-    isImage,
+    // isImage,
     isAlteredImage,
     tokenId,
     viewNftLink,
@@ -89,7 +89,8 @@ export const NftItemComponent: React.FC<Props> = props => {
 
   const isDesktop = useCheckIfDesktop();
 
-  const showBage = isImage && !!hash;
+  // todo: show badge false due to DASH-711 task. We hide it until figureout with hash
+  const showBage = false; //isImage && !!hash;
 
   return (
     <div className={classes.container}>
