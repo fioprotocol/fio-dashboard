@@ -9,7 +9,11 @@ import {
   signup,
 } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
-import { setPinEnabled, setPinSetupPostponed } from '../../redux/edge/actions';
+import {
+  setPinEnabled,
+  setPinSetupPostponed,
+  toggleTwoFactorAuth,
+} from '../../redux/edge/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import {
@@ -38,6 +42,7 @@ const actions = {
   setPinEnabled,
   setPinSetupPostponed,
   setRedirectPath,
+  toggleTwoFactorAuth,
 };
 
 const reduxConnect = connect(selector, actions);

@@ -96,6 +96,7 @@ type OwnProps = {
   setPinEnabled: (username: string) => void;
   setPinSetupPostponed: (isPinPostponed: boolean) => void;
   setRedirectPath: ({ pathname }: { pathname: string }) => void;
+  toggleTwoFactorAuth: (hasTwoFactor: boolean) => void;
   onSubmit: (params: {
     username: string;
     email: string;
@@ -371,6 +372,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           setPinEnabled(account.username || emailToUsername(email));
 
           if (!Object.values(errors).length && account && fioWallet) {
+            this.props.toggleTwoFactorAuth(!!account.otpKey);
             await this.confirm(account, fioWallet, values);
           }
         }
