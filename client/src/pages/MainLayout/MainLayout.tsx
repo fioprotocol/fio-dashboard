@@ -127,7 +127,7 @@ const MainLayout: React.FC<Props> = props => {
         </>
       ) : (
         <>
-          {routeName && <PageTitle link={LINKS[routeName]} />}
+          {routeName && <PageTitle link={LINKS[routeName]} shouldFireOnce />}
           <MainHeader />
           <AutoLogout />
           <Ref />
