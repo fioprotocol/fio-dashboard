@@ -116,12 +116,6 @@ const handleFCHItems = async ({
           });
         }
 
-        if (isAddressExist) {
-          fireAnalyticsEventDebounced(
-            ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-          );
-        }
-
         const existingCustomDomainFchCartItem = cartItems.find(
           cartItem =>
             cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&

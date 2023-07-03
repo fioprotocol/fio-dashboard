@@ -39,7 +39,6 @@ export const ANALYTICS_EVENT_ACTIONS = {
   PURCHASE_FINISHED_PARTIAL: 'purchase_partial',
   PURCHASE_FINISHED_FAILED: 'purchase_error',
   SEARCH_ITEM: 'search',
-  SEARCH_ITEM_ALREADY_USED: 'search_not_available',
   RENEW: 'fio_domain_renew',
   TRANSFER: 'fio_transfer',
   TRANSFER_DOMAIN: 'fio_domain_transfer',

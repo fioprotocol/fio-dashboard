@@ -96,12 +96,7 @@ export const checkAddressOrDomainIsExist = async ({
     try {
       fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
-      if (isAvail && isAvail.is_registered === 1) {
-        fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED);
-        return true;
-      } else {
-        return false;
-      }
+      return isAvail && isAvail.is_registered === 1;
     } catch (e) {
       //
     }

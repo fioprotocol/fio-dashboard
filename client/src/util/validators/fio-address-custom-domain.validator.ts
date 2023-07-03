@@ -91,18 +91,10 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
     if (address && isAddressExist) {
       succeeded = false;
       message = FIO_ADDRESS_ALREADY_EXISTS;
-
-      fireAnalyticsEventDebounced(
-        ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-      );
     }
     if (!address && isAddressExist && !existingUserDomain) {
       succeeded = false;
       message = DOMAIN_ALREADY_EXISTS;
-
-      fireAnalyticsEventDebounced(
-        ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-      );
     }
   } catch (e) {
     succeeded = false;

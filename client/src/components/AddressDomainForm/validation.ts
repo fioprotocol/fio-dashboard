@@ -42,16 +42,10 @@ const verifyAddress = async (props: DefaultValidationProps) => {
       ) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
-        fireAnalyticsEventDebounced(
-          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-        );
       }
       if (!isAddress) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
-        fireAnalyticsEventDebounced(
-          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-        );
       }
     }
   }
@@ -62,9 +56,6 @@ const verifyAddress = async (props: DefaultValidationProps) => {
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
         errors.address = 'This FIO Crypto Handle is already registered.';
-        fireAnalyticsEventDebounced(
-          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-        );
       }
     } catch (e) {
       errors.address = 'Server error. Please try later.';
