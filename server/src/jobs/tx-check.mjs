@@ -11,8 +11,9 @@ import CommonJob from './job.mjs';
 import { updateOrderStatus } from '../services/updateOrderStatus.mjs';
 
 import { fioApi } from '../external/fio.mjs';
+import FioHistory from '../external/fio-history.mjs';
 
-import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
+import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS, ERROR_CODES } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -48,6 +49,7 @@ class TxCheckJob extends CommonJob {
           btId,
           params,
           publicKey,
+          txId,
         } = item;
         this.postMessage(`Processing tx item id - ${id}`);
 
@@ -80,6 +82,30 @@ class TxCheckJob extends CommonJob {
 
               if (!btData.checkIteration) btData.checkIteration = 0;
               ++btData.checkIteration;
+
+              if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
+                try {
+                  const resJson = await new FioHistory().getTransaction(txId);
+                  const res = JSON.parse(resJson);
+                  const txRegexpString = `Transaction ${txId} not found`;
+                  const txRegexp = new RegExp(txRegexpString, 'i');
+
+                  if (
+                    res.code &&
+                    res.code === ERROR_CODES.RANGE_NOT_SATISFIABLE &&
+                    res.error &&
+                    res.error.details &&
+                    res.error.details.find(details => !!details.message.match(txRegexp))
+                  ) {
+                    status = BlockchainTransaction.STATUS.EXPIRE;
+                  }
+                } catch (error) {
+                  logger.error(
+                    `TX ITEM GET HISTORY ERROR ${item.id} - txId: ${txId}`,
+                    error,
+                  );
+                }
+              }
 
               if (
                 btData.checkIteration > MAX_CHECK_TIMES &&
