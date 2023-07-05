@@ -1,3 +1,15 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
 .container {
-  margin-top: 30px;
+  margin-top: 0;
+
+  & > div:first-child {
+    margin-top: 0 !important;
+  }
 }
+
+@include lg {
+  .container {
+    margin-top: 30px;
+  }
+} 

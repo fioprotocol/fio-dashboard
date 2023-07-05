@@ -463,6 +463,7 @@ export class Order extends Base {
         [BlockchainTransaction.STATUS.CANCEL]: 0,
         [BlockchainTransaction.STATUS.FAILED]: 0,
         [BlockchainTransaction.STATUS.SUCCESS]: 0,
+        [BlockchainTransaction.STATUS.EXPIRE]: 0,
       };
 
       for (const txStatus of txStatuses) {
@@ -473,7 +474,8 @@ export class Order extends Base {
       if (
         txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] +
           txStatusesMap[BlockchainTransaction.STATUS.FAILED] +
-          txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
+          txStatusesMap[BlockchainTransaction.STATUS.CANCEL] +
+          txStatusesMap[BlockchainTransaction.STATUS.EXPIRE] ===
         txStatuses.length
       )
         orderStatus = Order.STATUS.PARTIALLY_SUCCESS;
@@ -487,7 +489,11 @@ export class Order extends Base {
         orderStatus = Order.STATUS.FAILED;
 
       // All canceled
-      if (txStatusesMap[BlockchainTransaction.STATUS.CANCEL] === txStatuses.length)
+      if (
+        txStatusesMap[BlockchainTransaction.STATUS.CANCEL] +
+          txStatusesMap[BlockchainTransaction.STATUS.EXPIRE] ===
+        txStatuses.length
+      )
         orderStatus = Order.STATUS.CANCELED;
 
       // All success

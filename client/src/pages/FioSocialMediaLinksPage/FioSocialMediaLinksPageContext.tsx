@@ -40,7 +40,19 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const queryParams = useQuery();
-  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE);
+
+  const history = useHistory<{
+    actionType: typeof SOCIAL_MEDIA_CONTAINER_NAMES[keyof typeof SOCIAL_MEDIA_CONTAINER_NAMES];
+  }>();
+
+  const { location: { state, search: searchString } = {} } = history;
+  const searchParams = new URLSearchParams(searchString);
+  const query = Object.fromEntries(searchParams.entries());
+  const fchFromHistoryQuery = query[QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE];
+
+  const fch =
+    queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE) ||
+    fchFromHistoryQuery;
 
   const [successBadgeMessage, setSuccessBadgeMessage] = useState('');
 
@@ -49,12 +61,6 @@ export const useContext = (): UseContextProps => {
     currentFioAddressSelector(state, fch),
   );
   const loading = useSelector(loadingSelector);
-
-  const history = useHistory<{
-    actionType: typeof SOCIAL_MEDIA_CONTAINER_NAMES[keyof typeof SOCIAL_MEDIA_CONTAINER_NAMES];
-  }>();
-
-  const { location: { state } = {} } = history;
 
   const { actionType } = state || {};
 
