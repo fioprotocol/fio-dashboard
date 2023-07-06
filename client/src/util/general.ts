@@ -2,6 +2,8 @@ import { ChangeEvent } from 'react';
 
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
+import config from '../config';
+
 import { AnyObject } from '../types';
 
 export const log = {
@@ -229,4 +231,55 @@ export const reorder = (
   result.splice(endIndex, 0, removed);
 
   return result;
+};
+
+export const transformBaseUrl = () => {
+  const baseUrl = config.baseUrl;
+  return baseUrl.charAt(baseUrl.length - 1) === '/'
+    ? baseUrl.slice(0, -1)
+    : baseUrl;
+};
+
+export const loadImage = async (url?: string): Promise<string | null> => {
+  if (!url) return null;
+
+  const img = new Image();
+  img.src = url;
+
+  return new Promise<string | null>(resolve => {
+    img.onload = () => {
+      resolve(url);
+    };
+
+    img.onerror = () => {
+      resolve(null);
+    };
+  });
+};
+
+export const extractLastValueFormUrl = (url: string) => {
+  const path = new URL(url).pathname;
+
+  const pathWithoutParams = path.split('?')[0];
+  const pathWithoutHashes = pathWithoutParams.split('#')[0];
+
+  const splittedPath = pathWithoutHashes.split('/');
+
+  let lastValue = splittedPath[splittedPath.length - 1];
+
+  if (!lastValue) {
+    lastValue = splittedPath[splittedPath.length - 2];
+  }
+
+  if (lastValue.startsWith('@')) {
+    lastValue = lastValue.substr(1);
+  }
+
+  return lastValue;
+};
+
+export const isURL = (str: string) => {
+  const urlPattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[:?\d]*)\S*$/;
+
+  return urlPattern.test(str);
 };

@@ -26,6 +26,8 @@
     "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
     "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
     "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build:no-snap",
+    "landing-page-fio-id:as:start": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:start",
+    "landing-page-fio-id:as:build": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:build:no-snap",
     "migration:create": "npx sequelize migration:create --name",
     "prepare": "husky install"
   },

@@ -138,6 +138,18 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       </Link>
       {renderFioRequest()}
       {renderLinkToken()}
+      <Link
+        to={{
+          pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
+          search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+        }}
+        className={classes.actionButton}
+      >
+        <Button title={isSmallDesktop ? BUTTONS_TITLE.socialLinks : ''}>
+          <span className={classes.prefixButtonText}>@</span>&nbsp;
+          {!isSmallDesktop && BUTTONS_TITLE.socialLinks}
+        </Button>
+      </Link>
       {renderSettings()}
     </div>
   ) : (

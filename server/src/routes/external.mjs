@@ -5,6 +5,7 @@ import Captcha from '../services/external/Captcha';
 import ValidatePubAddress from '../services/external/ValidatePubAddress';
 import ApiUrls from '../services/external/ApiUrls';
 import InfuraNfts from '../services/external/GetInfuraNfts.mjs';
+import InfuraNftsMetadata from '../services/external/GetInfuraNftsMetadata.mjs';
 
 export default {
   prices: makeServiceRunner(GetPrices, req => req.query),
@@ -12,4 +13,5 @@ export default {
   validatePubAddress: makeServiceRunner(ValidatePubAddress, req => req.query),
   apiUrls: makeServiceRunner(ApiUrls),
   infuraNfts: makeServiceRunner(InfuraNfts, req => req.query),
+  infuraNftsMetadata: makeServiceRunner(InfuraNftsMetadata, req => req.query),
 };

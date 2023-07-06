@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="68px" height="68px" viewBox="0 0 68 68" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>no-photo</title>
+    <defs>
+        <polygon id="path-1" points="0 68 68 68 68 0 0 0"></polygon>
+    </defs>
+    <g id="FINAL-PAYMENT-PROFILE" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO---My-Profile---NFT" transform="translate(-1051.000000, -809.000000)">
+            <g id="Group-5" transform="translate(92.000000, 238.000000)">
+                <g id="Group-4-Copy-2" transform="translate(84.000000, 81.000000)">
+                    <g id="Competitive-Edge" transform="translate(11.000000, 258.000000)">
+                        <g id="Group-2-Copy" transform="translate(730.000000, 98.000000)">
+                            <g id="no-photo" transform="translate(134.000000, 134.000000)">
+                                <g id="g3463-Clipped" transform="translate(34.000000, 34.000000) scale(-1, 1) rotate(-180.000000) translate(-34.000000, -34.000000) translate(0.000000, 0.000000)">
+                                    <mask id="mask-2" fill="white">
+                                        <use xlink:href="#path-1"></use>
+                                    </mask>
+                                    <g id="path3465"></g>
+                                    <g id="g3463" mask="url(#mask-2)">
+                                        <g transform="translate(1.992188, 1.992188)">
+                                            <g id="g3469" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M0,32.0078125 C0,14.3303359 14.3303359,0 32.0078125,0 C49.6852891,0 64.015625,14.3303359 64.015625,32.0078125 C64.015625,49.6852891 49.6852891,64.015625 32.0078125,64.015625 C14.3303359,64.015625 0,49.6852891 0,32.0078125 Z" id="path3471" stroke="#FFFFFF" stroke-width="4.01666657"></path>
+                                            </g>
+                                            <g id="g3473" transform="translate(13.414063, 17.398438)" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M27.890625,26.5625 L27.0654609,29.8630234 C26.7699531,31.0454531 25.7074531,31.875 24.4885,31.875 L12.699,31.875 C11.4800469,31.875 10.4175469,31.0454531 10.1220391,29.8630234 L9.296875,26.5625 L3.984375,26.5625 C1.7839375,26.5625 0,24.7785625 0,22.578125 L0,3.984375 C0,1.7839375 1.7839375,0 3.984375,0 L33.203125,0 C35.4035625,0 37.1875,1.7839375 37.1875,3.984375 L37.1875,22.578125 C37.1875,24.7785625 35.4035625,26.5625 33.203125,26.5625 L27.890625,26.5625 Z" id="path3475" stroke="#FFFFFF" stroke-width="3.9999999"></path>
+                                            </g>
+                                            <g id="g3477" transform="translate(25.367188, 25.367188)" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M13.28125,6.640625 C13.28125,2.97314062 10.3081094,0 6.640625,0 C2.97314062,0 0,2.97314062 0,6.640625 C0,10.3081094 2.97314062,13.28125 6.640625,13.28125 C10.3081094,13.28125 13.28125,10.3081094 13.28125,6.640625 Z" id="path3479" stroke="#FFFFFF" stroke-width="3.9999999"></path>
+                                            </g>
+                                            <g id="g3481" transform="translate(41.968750, 35.328125)">
+                                                <path d="M3.984375,1.9921875 C3.984375,0.89196875 3.09240625,0 1.9921875,0 C0.89196875,0 0,0.89196875 0,1.9921875 C0,3.09240625 0.89196875,3.984375 1.9921875,3.984375 C3.09240625,3.984375 3.984375,3.09240625 3.984375,1.9921875" id="path3483" fill="#FFFFFF" fill-rule="nonzero"></path>
+                                            </g>
+                                            <g id="g3485" transform="translate(9.374916, 9.374823)" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="45.2658203" y1="0" x2="0" y2="45.2659531" id="path3487" stroke="#FFFFFF" stroke-width="4.01666657"></line>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

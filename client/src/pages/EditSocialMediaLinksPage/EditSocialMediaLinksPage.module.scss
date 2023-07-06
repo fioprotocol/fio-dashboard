@@ -1,0 +1,8 @@
+@import '../../assets/styles/fontMixins.scss';
+
+.text {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 1em;
+  @include proxima-nova-semibold;
+}

@@ -1,0 +1,31 @@
+@import '../../../../../../../assets/styles/colors.scss';
+@import '../../../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 20px !important;
+  background-color: $alabaster !important;
+  align-items: center;
+  margin-top: 15px !important;
+  max-width: none;
+
+  &:hover {
+    cursor: pointer;
+
+    .arrow {
+      transform: translateX(4px);
+    }
+  }
+
+  & > div {
+    margin: 0;
+  }
+
+  .arrow {
+    color: $dark-jungle-green;
+    margin-left: auto;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    transform: translateX(0);
+  }
+}

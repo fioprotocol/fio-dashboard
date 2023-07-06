@@ -32,11 +32,19 @@
       background-color: $light-indigo;
       border-color: $light-indigo;
       border-radius: 100px;
+      display: flex;
+      align-items: center;
     }
 
     &.mobileView {
       height: fit-content;
       margin-top: 0;
+    }
+
+    .prefixButtonText {
+      margin-right: 10px;
+      font-size: 1.375em;
+      @include proxima-nova-regular-it;
     }
   }
 
@@ -111,7 +119,7 @@
       min-width: 36px;
       width: 100%;
 
-      img, svg {
+      img, svg, .prefixButtonText {
         margin-right: 0;
       }
 

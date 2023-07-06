@@ -58,6 +58,19 @@ export class ChainCode extends Base {
     });
   }
 
+  static selectedChainCodesList(chainCodes) {
+    const where = {
+      chainCodeId: {
+        [Op.in]: chainCodes,
+      },
+    };
+
+    return this.findAll({
+      where,
+      include: [TokenCode],
+    });
+  }
+
   static format({ chainCodeId, chainCodeName, TokenCodes: tokenCodesList }) {
     const chainCodeItem = {
       chainCodeId,

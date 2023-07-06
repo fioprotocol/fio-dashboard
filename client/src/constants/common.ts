@@ -39,13 +39,10 @@ export const ANALYTICS_EVENT_ACTIONS = {
   PURCHASE_FINISHED_PARTIAL: 'purchase_partial',
   PURCHASE_FINISHED_FAILED: 'purchase_error',
   SEARCH_ITEM: 'search',
-  SEARCH_ITEM_ALREADY_USED: 'search_not_available',
-  RENEW: 'fio_domain_renew',
   TRANSFER: 'fio_transfer',
   TRANSFER_DOMAIN: 'fio_domain_transfer',
   TRANSFER_FCH: 'fch_transfer',
   SET_VISIBILITY: 'fio_domain_status',
-  ADD_BUNDLES: 'fch_add_bundles',
   PAYMENT_DETAILS: 'fio_data_new',
   SEND: 'token_send',
   REQUEST: 'fio_request_new',
@@ -115,6 +112,9 @@ export const CONFIRM_PIN_ACTIONS = {
   SHOW_BACKUP_CODE: 'SHOW_BACKUP_CODE',
   DETAILED_FIO_REQUEST: 'DETAILED_FIO_REQUEST',
   SETUP_PIN: 'SETUP_PIN',
+  ADD_SOCIAL_MEDIA_LINK: 'ADD_SOCIAL_MEDIA_LINK',
+  DELETE_SOCIAL_MEDIA_LINK: 'DELETE_SOCIAL_MEDIA_LINK',
+  EDIT_SOCIAL_MEDIA_LINK: 'EDIT_SOCIAL_MEDIA_LINK',
   ...CONFIRM_FIO_ACTIONS,
 };
 
@@ -176,6 +176,7 @@ export const CHAIN_CODES = {
   FIO: 'FIO',
   BTC: 'BTC',
   ETH: 'ETH',
+  SOCIALS: 'SOCIALS',
 };
 
 export const CURRENCY_CODES = {

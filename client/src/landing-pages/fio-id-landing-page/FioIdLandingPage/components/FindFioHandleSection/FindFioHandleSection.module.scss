@@ -1,0 +1,95 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: $light-indigo;
+  align-items: center;
+  padding: 20px 20px 60px;
+
+  .contentContainer {
+    display: flex;
+    flex-direction: row;
+    padding: 60px 0 0;
+    gap: 50px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .imageContainer {
+    width: 100%;
+
+    .parallax {
+      perspective: 1px;
+      height: 500px;
+      overflow-x: visible;
+      overflow-y: visible;
+      display: flex;
+      justify-content: center;
+    }
+
+    .parallaxLayer {
+      position: relative;
+    }
+
+    .fioCard {
+      z-index: 1;
+    }
+
+    .socialIcon {
+      position: absolute;
+    
+      &:nth-child(2) {
+        top: 50px;
+        right: -30px;
+        transform: translateZ(0) scale(1);
+        z-index: -1;
+      }
+    
+      &:nth-child(3) {
+        bottom: 45px;
+        right: -35px;
+        transform: translateZ(0) scale(1);
+        z-index: -1;
+      }
+    
+      &:nth-child(4) {
+        top: -40px;
+        right: -30px;
+        transform: translateZ(0) scale(1);
+        z-index: 2;
+      }
+    
+      &:nth-child(5) {
+        top: 60px;
+        left: -60px;
+        transform: translateZ(0) scale(1);
+      }
+
+      &:nth-child(6) {
+        top: 200px;
+        left: -80px;
+        transform: translateZ(0) scale(1);
+      }
+    }
+  }
+
+  .mouseDown {
+    margin-top: 40px;
+  }
+}
+
+@include lg {
+  .container {
+    padding: 50px;
+
+    .contentContainer {
+      padding: 110px 50px 30px 50px;
+    }
+
+    .mouseDown {
+      margin-top: 0;
+    }
+  }
+}

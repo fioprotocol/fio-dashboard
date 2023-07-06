@@ -1,0 +1,60 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: space-between;
+  margin-bottom: 30px;
+
+  .link {
+    button {
+      height: 36px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8125rem;
+      line-height: 0;
+      border-radius: 100px;
+      padding: 0 12px;
+      @include sf-pro-display-thin;
+      background-color: $light-indigo;
+      border-color: $light-indigo;
+
+      &:hover {
+        background-color: $iris;
+        border-color: $iris;
+      }
+    }
+
+    .middleButton {
+      margin: 0 20px 0;
+    }
+
+    .icon {
+      font-size: 1rem;
+      line-height: 0;
+      margin-right: 10px;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    margin-top: 0;
+    justify-content: space-between;
+    margin-bottom: 0;
+
+    button,
+    .middleButton {
+      margin-top: 0;
+    }
+
+    .icon {
+      font-size: 1.25rem;
+    }
+  }
+}

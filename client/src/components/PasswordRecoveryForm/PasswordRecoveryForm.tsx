@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Form,
   Field,
@@ -7,6 +7,7 @@ import {
   FieldRenderProps,
   FormRenderProps,
 } from 'react-final-form';
+import { useHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
@@ -86,6 +87,18 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
   const [errorMessage, setError] = useState('');
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [submitData, setSubmitData] = useState<FormValues | null>(null);
+
+  const history = useHistory<{ openSettingsModal: string }>();
+
+  const clearRouterState = useCallback(() => {
+    const state = history.location.state;
+
+    if (state) {
+      delete state.openSettingsModal;
+    }
+
+    history.replace({ ...history.location, state });
+  }, [history]);
 
   useEffectOnce(getRecoveryQuestions, [getRecoveryQuestions]);
 
@@ -177,6 +190,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
   const onSuccess = (results: StatusResponse) => {
     if (results.status) {
       setSubmitData(null);
+      clearRouterState();
     } else {
       onCancel();
     }

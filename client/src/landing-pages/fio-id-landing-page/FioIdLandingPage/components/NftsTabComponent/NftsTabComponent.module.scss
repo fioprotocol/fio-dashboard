@@ -1,0 +1,39 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .nftsContainer {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 335px));
+    grid-gap: 30px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .loader {
+    margin-top: 30px;
+  }
+}
+
+.modalTitle {
+  font-size: 18px;
+  margin-top: -4px;
+  justify-content: flex-start !important;
+  @include proxima-nova-bold;
+}
+
+@include lg {
+  .container {
+    .nftsContainer {
+      margin-top: 30px;
+    }
+  }
+  .modalTitle {
+    font-size: 28px;
+  }
+}

@@ -65,6 +65,9 @@
   &.black {
     background-color: $baltic-sea;
   }
+  &.red {
+    background-color: $warn-red;
+  }
   &.bordered {
     background-color: transparent;
     border-radius: 8px;

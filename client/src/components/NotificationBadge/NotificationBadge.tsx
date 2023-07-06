@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import ClearButton from '@mui/icons-material/Clear';
 import WarningIcon from '@mui/icons-material/Warning';
+import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
@@ -23,6 +24,7 @@ type Props = {
   hasNewDesign?: boolean;
   marginBottomXs?: boolean;
   marginTopZero?: boolean;
+  marginBottomZero?: boolean;
   marginAuto?: boolean;
 };
 
@@ -55,6 +57,7 @@ const NotificationBadge: React.FC<Props> = props => {
     hasNewDesign,
     mainIcon,
     marginBottomXs,
+    marginBottomZero,
     marginTopZero,
     marginAuto,
   } = props;
@@ -64,15 +67,21 @@ const NotificationBadge: React.FC<Props> = props => {
       <Badge
         type={type}
         show={show}
-        className={`${classes.badgeContainer} ${marginBottomXs &&
-          classes.marginBottomXs} ${marginTopZero &&
-          classes.marginTopZero} ${marginAuto && classes.marginAuto}`}
+        className={classnames(
+          classes.badgeContainer,
+          show && classes.show,
+          marginBottomXs && classes.marginBottomXs,
+          marginTopZero && classes.marginTopZero,
+          marginAuto && classes.marginAuto,
+          marginBottomZero && classes.marginBottomZero,
+        )}
       >
         <MainIcon type={type} mainIcon={mainIcon} />
 
         {(type === BADGE_TYPES.ERROR ||
           type === BADGE_TYPES.WARNING ||
-          type === BADGE_TYPES.ALERT) && <WarningIcon />}
+          type === BADGE_TYPES.ALERT ||
+          type === BADGE_TYPES.RED) && <WarningIcon />}
         <div className={classes.contentContainer}>
           <h5 className={classes.title}>{title}</h5>
           <p className={classes.message}>{message}</p>

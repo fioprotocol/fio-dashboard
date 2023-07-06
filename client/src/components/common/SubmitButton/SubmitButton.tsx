@@ -8,6 +8,7 @@ import { ClickEventTypes } from '../../../types';
 import classes from './SubmitButton.module.scss';
 
 type Props = {
+  className?: string;
   disabled?: boolean;
   hasAutoHeight?: boolean;
   hasAutoWidth?: boolean;
@@ -22,10 +23,12 @@ type Props = {
   isCobalt?: boolean;
   isGreen?: boolean;
   isGreenTeal?: boolean;
+  isLightBlack?: boolean;
   isRed?: boolean;
   isTransparent?: boolean;
   isWhite?: boolean;
   isWhiteBordered?: boolean;
+  isWhiteViolet?: boolean;
   loading?: boolean;
   text?: string | React.ReactNode;
   variant?: string;
@@ -37,6 +40,7 @@ type Props = {
 
 export const SubmitButton: React.FC<Props> = props => {
   const {
+    className = '',
     disabled,
     hasAutoHeight,
     hasAutoWidth,
@@ -51,10 +55,12 @@ export const SubmitButton: React.FC<Props> = props => {
     isCobalt,
     isGreen,
     isGreenTeal,
+    isLightBlack,
     isRed,
     isTransparent,
     isWhite,
     isWhiteBordered,
+    isWhiteViolet,
     loading,
     text,
     variant,
@@ -86,14 +92,17 @@ export const SubmitButton: React.FC<Props> = props => {
         isCobalt && classes.isCobalt,
         isGreen && classes.isGreen,
         isGreenTeal && classes.isGreenTeal,
+        isLightBlack && classes.isLightBlack,
         isRed && classes.isRed,
         isTransparent && classes.isTransparent,
         isWhite && classes.isWhite,
         isWhiteBordered && classes.isWhiteBordered,
+        isWhiteViolet && classes.isWhiteViolet,
         loading && classes.loading,
         withBottomMargin && classes.bottomMargin,
         withoutMargin && classes.withoutMargin,
         withTopMargin && classes.topMargin,
+        className,
       )}
     >
       <div />

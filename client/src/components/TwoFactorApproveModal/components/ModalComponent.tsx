@@ -47,11 +47,9 @@ const ModalComponent: React.FC<Props> = props => {
           A new device would like to sign in to you account.
         </p>
         <p className={classes.message}>
-          If you did not make this request, your password may have been stole
-          and you risk losing your funds.
-        </p>
-        <p className={classes.message}>
-          Please deny the request and change your password.
+          If you did not initiate this request, your password may have been
+          compromised and you should deny this request and change your password
+          immediately.
         </p>
         {newDevicesList.map(device => {
           const {
