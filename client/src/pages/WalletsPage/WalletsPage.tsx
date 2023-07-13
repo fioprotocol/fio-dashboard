@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import superagent from 'superagent';
 import isEmpty from 'lodash/isEmpty';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletItem from './components/WalletItem';
@@ -167,7 +168,7 @@ const WalletsPage: React.FC<Props> = props => {
 
           <Link to={ROUTES.IMPORT_WALLET} className={classes.actionButton}>
             <Button>
-              <FontAwesomeIcon icon="download" />
+              <SystemUpdateAltIcon fontSize="small" />
               <span>Import</span>
             </Button>
           </Link>
