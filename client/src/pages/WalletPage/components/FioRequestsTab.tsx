@@ -70,8 +70,10 @@ const FioRequestsTab: React.FC<Props> = props => {
         list={FIO_REQUEST_TABS}
         containerClass={classes.container}
         tabItemClass={classes.tabItem}
+        tabItemPrimaryClass={classes.tabItemPrimary}
         tabContentClass={classes.tabContent}
         tabProps={{ ...props }}
+        tabBorderPrimary
       />
     </TabsContainer>
   );

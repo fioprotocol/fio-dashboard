@@ -17,6 +17,10 @@
   align-items: center;
   justify-content: center;
 
+  &.tabItemPrimary {
+    background: $aqua-blue;
+  }
+
   &:hover {
     color: $white;
     opacity: 0.7;
@@ -24,7 +28,7 @@
 }
 
 .tabContent {
-  &[aria-hidden="false"] {
+  &[aria-hidden='false'] {
     display: flex;
     justify-content: center;
   }
