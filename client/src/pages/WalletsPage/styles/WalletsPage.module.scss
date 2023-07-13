@@ -49,10 +49,8 @@
 }
 
 .actionButton {
-  width: 100%;
-  min-width: 144px;
   background-color: $light-indigo;
-  border-radius: 7px;
+  border-radius: 50px;
   text-align: left;
   flex-direction: row;
   display: flex;
@@ -60,7 +58,29 @@
   justify-content: center;
   min-height: 36px;
   @include sf-pro-display-thin;
-  font-size: 13px;
+
+  span {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .unwrapIcon {
+    width: 20px;
+    margin-right: 9px;
+    margin-bottom: 2px;
+  }
+
+  button {
+    background: none;
+    border: none;
+    width: 100%;
+    border-radius: 50px;
+  }
+
+  svg {
+    margin-right: 10px;
+    margin-left: 3px;
+  }
 }
 
 .totalBalanceContainer {

@@ -4,7 +4,7 @@ import classes from '../styles/Title.module.scss';
 
 type Props = {
   title: string | React.ReactNode;
-  subtitle: string;
+  subtitle?: string;
   children?: React.ReactNode;
 };
 
@@ -14,7 +14,7 @@ const Title: React.FC<Props> = props => {
     <div className={classes.container}>
       <div>
         {title}
-        <p className={classes.subtitle}>{subtitle}</p>
+        {subtitle && <p className={classes.subtitle}>{subtitle}</p>}
       </div>
       {children}
     </div>

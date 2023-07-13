@@ -8,6 +8,10 @@
   padding: 20px;
   color: $white;
 
+  &.noPaddingTop {
+    padding-top: 1px;
+  }
+
   .title {
     font-size: 1.75em;
     margin: 0;
@@ -33,7 +37,11 @@
   .container {
     padding: 40px 100px 40px 40px;
     height: 100%;
-  
+
+    &.noPaddingTop {
+      padding-top: 1px;
+    }
+
     .title {
       font-size: 2.375em;
     }
