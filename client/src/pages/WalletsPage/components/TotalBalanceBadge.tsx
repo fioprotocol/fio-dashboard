@@ -13,10 +13,12 @@ import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 import { UnlockPeriod, WalletBalances } from '../../../types';
 
 import classes from '../styles/TotalBalanceBadge.module.scss';
+import Amount from '../../../components/common/Amount';
 
 type Props = WalletBalances & {
   publicKey?: string;
   isOpenLockedList?: boolean;
+  isNew?: boolean;
 };
 
 const Balance = (props: {
@@ -24,8 +26,9 @@ const Balance = (props: {
   usdc: string;
   title: string;
   viewDetails?: () => void;
+  isNew?: boolean;
 }) => {
-  const { fio, usdc, title, viewDetails } = props;
+  const { fio, usdc, title, viewDetails, isNew = false } = props;
   return (
     <div className="container">
       <div
@@ -41,7 +44,7 @@ const Balance = (props: {
             viewDetails ? 'col-sm-6 mr-3' : 'col-sm-9',
           )}
         >
-          <PriceComponent costFio={fio} costUsdc={usdc} />
+          <PriceComponent costFio={fio} costUsdc={usdc} isNew={isNew} />
         </div>
         {viewDetails ? (
           <Button
@@ -93,6 +96,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     unlockPeriods,
     publicKey,
     isOpenLockedList,
+    isNew = false,
   } = props;
 
   const [showLockedTokensModalView, setShowLockedTokensModalView] = useState(
@@ -112,13 +116,20 @@ const TotalBalanceBadge: React.FC<Props> = props => {
       <div className={classes.totalBadge}>
         <p className={classes.title}>Total FIO Wallets Balance</p>
         <div className={classes.totalFio}>
-          <PriceComponent costFio={total.fio} costUsdc={total.usdc} />
+          <div>
+            <Amount value={total.fio} />{' '}
+            <span className={classes.totalBalanceSuffix}>FIO</span>
+          </div>
+          <div className={classes.usdcTotalBalanceSuffix}>
+            <Amount value={total.usdc} /> <span>USDC</span>
+          </div>
         </div>
         {staked?.nativeFio || locked.nativeFio ? (
           <Balance
             fio={available.fio}
             usdc={available.usdc}
             title="Available"
+            isNew={isNew}
           />
         ) : null}
         {locked.nativeFio ? (
@@ -127,13 +138,24 @@ const TotalBalanceBadge: React.FC<Props> = props => {
             usdc={locked.usdc}
             title="Locked"
             viewDetails={() => setShowLockedTokensModalView(true)}
+            isNew={isNew}
           />
         ) : null}
         {rewards?.nativeFio ? (
-          <Balance fio={rewards.fio} usdc={rewards.usdc} title="Rewards" />
+          <Balance
+            fio={rewards.fio}
+            usdc={rewards.usdc}
+            title="Rewards"
+            isNew={isNew}
+          />
         ) : null}
         {staked?.nativeFio ? (
-          <Balance fio={staked.fio} usdc={staked.usdc} title="Staked" />
+          <Balance
+            fio={staked.fio}
+            usdc={staked.usdc}
+            title="Staked"
+            isNew={isNew}
+          />
         ) : null}
 
         {publicKey ? (
