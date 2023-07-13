@@ -39,6 +39,7 @@ import { isDomainExpired } from '../../util/fio';
 import { log } from '../../util/general';
 
 import {
+  APY_URL,
   WELCOME_COMPONENT_ITEM_CONTENT,
   WelcomeItemProps,
 } from './components/WelcomeComponentItem/constants';
@@ -49,8 +50,6 @@ import {
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { WalletBalancesItem } from '../../types';
-
-const APY_URL = 'https://services-external.fioprotocol.io/staking';
 
 type UseContextProps = {
   fio101Items: Fio101SliderContentProps[];

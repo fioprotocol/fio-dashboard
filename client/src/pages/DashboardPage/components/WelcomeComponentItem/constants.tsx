@@ -171,3 +171,5 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     isActionLinkExternal: true,
   },
 };
+
+export const APY_URL = 'https://services-external.fioprotocol.io/staking';
