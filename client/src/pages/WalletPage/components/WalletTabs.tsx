@@ -64,8 +64,9 @@ const WalletTabs: React.FC<Props> = props => {
         list={WALLET_TABS_LIST.filter(
           item => !props.hasNoTransactions || item.eventKey !== 'transactions',
         )}
-        showTabBorder={true}
         tabProps={props}
+        showTabBorder
+        tabBorderPrimary
       />
     </TabsContainer>
   );
