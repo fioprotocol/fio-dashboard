@@ -143,7 +143,12 @@
     margin-left: 10px;
 
     & button {
-      width: 53px;
+      width: 33px;
+    }
+
+    & svg {
+      position: relative;
+      left: -10px;
     }
   }
 
