@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 
 import Modal from '../../../components/Modal/Modal';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
@@ -17,9 +18,12 @@ import { copyToClipboard } from '../../../util/general';
 import apis from '../../../api';
 
 import { FioWalletDoublet } from '../../../types';
-import { PasswordFormValues } from '../types';
+import { EditWalletNameValues, PasswordFormValues } from '../types';
 
 import classes from '../styles/WalletDetailsModal.module.scss';
+import EditWalletNameForm from './EditWalletNameForm';
+import { updateWalletName } from '../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../redux/modal/actions';
 
 type Props = {
   show: boolean;
@@ -29,9 +33,42 @@ type Props = {
 
 const ShowPrivateKeyModal: React.FC<Props> = props => {
   const { show, fioWallet, onClose } = props;
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
+
+  const [currentValues, setCurrentValues] = useState<EditWalletNameValues>({
+    name: fioWallet.name,
+  });
+  const [processing, setProcessing] = useState(false);
+
+  const onEditSubmit = (values: EditWalletNameValues) => {
+    setCurrentValues(values);
+    edit(values.name);
+  };
+
+  console.log(currentValues, processing, onEditSubmit);
+
+  const edit = async (name: string) => {
+    setProcessing(true);
+    try {
+      const res = await apis.account.updateWallet(fioWallet.publicKey, {
+        name,
+      });
+
+      if (res.success) {
+        dispatch(updateWalletName({ publicKey: fioWallet.publicKey, name }));
+        onClose();
+      } else {
+        dispatch(showGenericErrorModal());
+      }
+    } catch (e) {
+      showGenericErrorModal();
+    }
+
+    setProcessing(false);
+  };
 
   useEffect(() => {
     setKey(null);
@@ -109,9 +146,34 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     return null;
   };
 
-  const renderForm = () => {
+  const renderPasswordForm = () => {
     if (key != null) return null;
-    return <PasswordForm loading={loading} onSubmit={onConfirm} />;
+    return (
+      <>
+        <h6 className={classes.settingTitle}>Show Private Key</h6>
+        <InfoBadge
+          show={true}
+          type={BADGE_TYPES.INFO}
+          title="Warning"
+          message="Never disclose this private key. Anyone with your private keys can steal any assets in your wallet."
+        />
+        <PasswordForm loading={loading} onSubmit={onConfirm} />
+      </>
+    );
+  };
+
+  const renderNameForm = () => {
+    if (key != null) return null;
+    return (
+      <>
+        <h6 className={classes.settingTitle}>Edit Wallet Name</h6>
+        <EditWalletNameForm
+          loading={loading}
+          onSubmit={onEditSubmit}
+          initialValues={{ name: fioWallet.name }}
+        />
+      </>
+    );
   };
 
   const renderCancel = () => {
@@ -135,18 +197,12 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
       hasDefaultCloseColor={true}
     >
       <div className={classes.container}>
-        <h3 className={classes.title}>Show Private Key</h3>
+        <h3 className={classes.title}>Wallet Settings</h3>
 
-        <InfoBadge
-          show={true}
-          type={BADGE_TYPES.INFO}
-          title="Warning"
-          message="Never disclose this private key. Anyone with your private keys can steal any assets in your wallet."
-        />
+        {renderNameForm()}
 
+        {renderPasswordForm()}
         {renderKey()}
-        {renderForm()}
-
         {renderCancel()}
       </div>
     </Modal>
