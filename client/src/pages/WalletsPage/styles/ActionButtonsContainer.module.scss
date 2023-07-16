@@ -6,6 +6,7 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 
   div {
     background-color: $gray-main;

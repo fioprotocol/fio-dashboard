@@ -19,6 +19,7 @@ type Props = WalletBalances & {
   publicKey?: string;
   isOpenLockedList?: boolean;
   isNew?: boolean;
+  isMobile?: boolean;
 };
 
 const Balance = (props: {
@@ -97,6 +98,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     publicKey,
     isOpenLockedList,
     isNew = false,
+    isMobile = false,
   } = props;
 
   const [showLockedTokensModalView, setShowLockedTokensModalView] = useState(
@@ -112,9 +114,14 @@ const TotalBalanceBadge: React.FC<Props> = props => {
   };
 
   return (
-    <div className={classes.actionBadgeContainer}>
+    <div
+      className={classnames(
+        classes.actionBadgeContainer,
+        isMobile && classes.onlyMobile,
+      )}
+    >
       <div className={classes.totalBadge}>
-        <p className={classes.title}>Total FIO Wallets Balance</p>
+        <p className={classes.title}>Total FIO Balance</p>
         <div className={classes.totalFio}>
           <div>
             <Amount value={total.fio} />{' '}
