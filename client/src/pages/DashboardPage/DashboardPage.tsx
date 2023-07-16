@@ -14,10 +14,8 @@ import classes from './DashboardPage.module.scss';
 const DashboardPage: React.FC = () => {
   const {
     fio101Items,
-    firstWelcomeItem,
     isDesktop,
     loading,
-    secondWelcomeItem,
     totalBalance,
     totalBalanceLoading,
   } = useContext();
@@ -29,11 +27,7 @@ const DashboardPage: React.FC = () => {
         loading={totalBalanceLoading}
       />
       <div className={classes.actionContainer}>
-        <WelcomeComponent
-          firstWelcomeItem={firstWelcomeItem}
-          secondWelcomeItem={secondWelcomeItem}
-          loading={loading}
-        />
+        <WelcomeComponent />
         <ItemWrapper
           hasFitContentWidth={isDesktop}
           hasFullWidth={!isDesktop}

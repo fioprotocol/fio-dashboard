@@ -82,51 +82,6 @@
   }
 }
 
-@include md {
-  .container {
-    padding: 30px 20px;
-
-    .actionBadges {
-      margin: 0 20px;
-      width: auto;
-
-      > div {
-        a {
-          button {
-            min-width: auto !important;
-          }
-        }
-      }
-    }
-  }
-}
-
-@include lg {
-  .container {
-    flex-direction: row;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 20px;
-    padding: 0;
-
-    .actionBadges {
-      width: 100%;
-      max-width: 365px;
-      margin: 0 20px 0 10px;
-    }
-  }
-}
-
-@include xlg {
-  .container {
-    margin: 0 80px;
-  }
-
-  .actionBadges {
-    margin: 0 20px 0 30px;
-  }
-}
-
 .actionButton {
   background-color: $light-indigo;
   border-radius: 50px;
@@ -186,4 +141,71 @@
 
 .transactionsTitle {
   margin-top: 40px;
+}
+
+@include sm {
+  .hideTextOnMobile {
+    display: none;
+  }
+
+  .container {
+    flex-wrap: wrap;
+  }
+
+  .actionButton {
+    width: 40vw;
+  }
+}
+
+@include md {
+  .container {
+    padding: 30px 20px;
+    flex-wrap: wrap;
+
+    .actionBadges {
+      margin: 0 20px;
+      width: auto;
+
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
+    }
+    .actionButton {
+      width: 40vw;
+    }
+  }
+
+  .hideTextOnMobile {
+    display: none;
+  }
+}
+
+@include lg {
+  .container {
+    flex-direction: row;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 20px;
+    padding: 0;
+
+    .actionBadges {
+      width: 100%;
+      max-width: 365px;
+      margin: 0 20px 0 10px;
+    }
+  }
+}
+
+@include xlg {
+  .container {
+    margin: 0 80px;
+  }
+
+  .actionBadges {
+    margin: 0 20px 0 30px;
+  }
 }

@@ -12,7 +12,7 @@ const Title: React.FC<Props> = props => {
   const { title, subtitle, children } = props;
   return (
     <div className={classes.container}>
-      <div>
+      <div className={classes.title}>
         {title}
         {subtitle && <p className={classes.subtitle}>{subtitle}</p>}
       </div>

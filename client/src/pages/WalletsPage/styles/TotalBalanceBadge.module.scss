@@ -165,10 +165,27 @@
   }
 }
 
+@include sm {
+  .actionBadgeContainer {
+    display: none;
+  }
+
+  .onlyMobile {
+    display: block;
+    margin-top: 40px;
+  }
+}
+
 @include md {
   .actionBadgeContainer {
     width: 100%;
     margin: 0 0 30px;
+    display: none;
+  }
+
+  .onlyMobile {
+    display: block;
+    margin-top: 40px;
   }
 }
 
@@ -177,5 +194,9 @@
     margin-top: 60px;
     max-width: 365px;
     width: 100%;
+  }
+
+  .onlyMobile {
+    display: none;
   }
 }

@@ -1,4 +1,5 @@
 @import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   display: flex;
@@ -9,5 +10,11 @@
   .subtitle {
     font-size: 0.875rem;
     @include proxima-nova-thin;
+  }
+}
+
+@include sm {
+  .title {
+    margin-bottom: 20px;
   }
 }
