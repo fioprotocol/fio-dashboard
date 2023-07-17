@@ -20,6 +20,7 @@ import {
   NOTIFICATIONS_CONTENT,
   NOTIFICATIONS_CONTENT_TYPE,
 } from '../../constants/notifications';
+import { Types } from '../DashboardPage/components/WelcomeComponentItem/constants';
 
 import useEffectOnce from '../../hooks/general';
 
@@ -140,12 +141,11 @@ const WalletsPage: React.FC<Props> = props => {
             />
           </div>
         )}
-        <TotalBalanceBadge {...balance.total} isNew isMobile />
-
-        <WelcomeComponent onlyActions noPaddingTop />
+        <TotalBalanceBadge {...balance.total} isNew isMobile itTotalWallets />
+        <WelcomeComponent onlyActions noPaddingTop type={Types.TOK} />
       </LayoutContainer>
       <div className={classes.totalBalanceContainer}>
-        <TotalBalanceBadge {...balance.total} isNew />
+        <TotalBalanceBadge {...balance.total} isNew itTotalWallets />
       </div>
     </div>
   );
