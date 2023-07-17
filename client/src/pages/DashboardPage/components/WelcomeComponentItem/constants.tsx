@@ -15,6 +15,15 @@ import OpenseaImgSrc from '../../../../assets/images/opensea.svg';
 import PackageImgSrc from '../../../../assets/images/package.svg';
 import PasswordImgSrc from '../../../../assets/images/password.svg';
 
+/* eslint-disable no-unused-vars */
+
+export enum Types {
+  ALL = 'ALL',
+  DOM = 'DOM',
+  TOK = 'TOK',
+  FCH = 'FCH',
+}
+
 export type WelcomeItemProps = {
   title: string;
   text: ReactNode;
@@ -27,6 +36,7 @@ export type WelcomeItemProps = {
   };
   isRed?: boolean;
   isActionLinkExternal?: boolean;
+  types: Types[];
 };
 
 export const WELCOME_COMPONENT_ITEM_CONTENT: {
@@ -43,6 +53,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       state: { openSettingsModal: PREOPENED_MODALS.RECOVERY },
     },
     isRed: true,
+    types: [Types.ALL],
   },
   EXPIRED_DOMAINS: {
     title: 'Expired Domain(s)',
@@ -53,6 +64,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_DOMAINS,
     },
+    types: [Types.ALL, Types.DOM, Types.FCH],
   },
   NO_FCH: {
     title: 'Get your FREE FIO Crypto Handle',
@@ -63,6 +75,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_ADDRESSES_SELECTION,
     },
+    types: [Types.ALL],
   },
   LINK_FCH_ONE: {
     title: 'Link your Token Addresses',
@@ -73,6 +86,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.ADD_TOKEN,
     },
+    types: [Types.ALL, Types.FCH],
   },
   LINK_FCH: {
     title: 'Link your Token Addresses',
@@ -83,6 +97,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_ADDRESSES,
     },
+    types: [Types.ALL, Types.FCH],
   },
   SETUP_PIN: {
     title: 'Set-up PIN',
@@ -94,6 +109,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       pathname: ROUTES.SETTINGS,
       state: { openSettingsModal: PREOPENED_MODALS.PIN },
     },
+    types: [Types.ALL],
   },
   FIO_BALANCE: {
     title: 'Buy FIO Tokens',
@@ -104,6 +120,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_TOKENS_GET,
     },
+    types: [Types.ALL, Types.TOK],
   },
   GET_CUSTOM_FIO_DOMAIN: {
     title: 'Get a custom FIO Domain',
@@ -114,6 +131,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_DOMAINS_SELECTION,
     },
+    types: [Types.ALL, Types.DOM, Types.FCH],
   },
   STAKING: {
     title: 'Earn Staking Rewards',
@@ -124,6 +142,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.STAKE,
     },
+    types: [Types.ALL, Types.TOK],
   },
   AFFILIATE: {
     title: 'Share FIO Domains with others and earn FIO Tokens',
@@ -138,6 +157,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_AFFILIATE_PROGRAM_LANDING,
     },
+    types: [Types.ALL],
   },
   GET_ANOTHER_FIO_DOMAIN: {
     title: 'Get another FIO Domain',
@@ -148,6 +168,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_DOMAINS_SELECTION,
     },
+    types: [Types.ALL],
   },
   WRAP_DOMAIN: {
     title: 'Wrap your FIO Domain',
@@ -158,6 +179,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.WRAP_DOMAIN,
     },
+    types: [Types.ALL, Types.DOM, Types.FCH],
   },
   OPEN_SEA: {
     title: 'Find great domains on Opensea',
@@ -169,6 +191,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       pathname: 'https://opensea.io/collection/fio-domains',
     },
     isActionLinkExternal: true,
+    types: [Types.ALL, Types.DOM, Types.FCH],
   },
 };
 

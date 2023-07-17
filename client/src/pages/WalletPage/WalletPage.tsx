@@ -19,6 +19,7 @@ import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { Types } from '../DashboardPage/components/WelcomeComponentItem/constants';
 import { ContainerProps, LocationProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
@@ -195,7 +196,7 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           walletData={fioWalletsData[fioWallet.publicKey]}
           walletTxHistory={fioWalletsTxHistory[fioWallet.publicKey]}
         />
-        <WelcomeComponent onlyActions noPaddingTop />
+        <WelcomeComponent onlyActions noPaddingTop type={Types.TOK} />
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge

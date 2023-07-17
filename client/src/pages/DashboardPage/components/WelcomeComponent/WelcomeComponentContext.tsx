@@ -6,6 +6,7 @@ import superagent from 'superagent';
 import { isNewUser as isNewUserSelector } from '../../../../redux/profile/selectors';
 import {
   APY_URL,
+  Types,
   WELCOME_COMPONENT_ITEM_CONTENT,
   WelcomeItemProps,
 } from '../WelcomeComponentItem/constants';
@@ -49,7 +50,7 @@ type UseContextProps = {
   loading: boolean;
 };
 
-export const useContext = (): UseContextProps => {
+export const useContext = (type: Types): UseContextProps => {
   const isNewUser = useSelector(isNewUserSelector);
   const [
     firstWelcomeItem,
@@ -124,7 +125,12 @@ export const useContext = (): UseContextProps => {
     if (!loading) {
       let firstItem = WELCOME_COMPONENT_ITEM_CONTENT.OPEN_SEA;
       let secondItem = null;
-      if (hasDomains) {
+      if (
+        hasDomains &&
+        WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         if (hasOneDomain) {
           firstItem = {
@@ -138,15 +144,31 @@ export const useContext = (): UseContextProps => {
           firstItem = WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN;
         }
       }
-      if (hasDomains) {
+      if (
+        hasDomains &&
+        WELCOME_COMPONENT_ITEM_CONTENT.GET_ANOTHER_FIO_DOMAIN.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.GET_ANOTHER_FIO_DOMAIN;
       }
-      if (hasDomains && !user.affiliateProfile) {
+      if (
+        hasDomains &&
+        !user.affiliateProfile &&
+        WELCOME_COMPONENT_ITEM_CONTENT.AFFILIATE.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.AFFILIATE;
       }
-      if (hasNoStakedTokens) {
+      if (
+        hasNoStakedTokens &&
+        WELCOME_COMPONENT_ITEM_CONTENT.STAKING.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = {
           ...WELCOME_COMPONENT_ITEM_CONTENT.STAKING,
@@ -158,19 +180,41 @@ export const useContext = (): UseContextProps => {
           ),
         };
       }
-      if (hasFCH && !hasDomains) {
+      if (
+        hasFCH &&
+        !hasDomains &&
+        WELCOME_COMPONENT_ITEM_CONTENT.GET_CUSTOM_FIO_DOMAIN.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.GET_CUSTOM_FIO_DOMAIN;
       }
-      if (totalBalance?.nativeFio === 0) {
+      if (
+        totalBalance?.nativeFio === 0 &&
+        WELCOME_COMPONENT_ITEM_CONTENT.FIO_BALANCE.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.FIO_BALANCE;
       }
-      if (!isPinEnabled) {
+      if (
+        !isPinEnabled &&
+        WELCOME_COMPONENT_ITEM_CONTENT.SETUP_PIN.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.SETUP_PIN;
       }
-      if (hasFCH && noMappedPubAddresses) {
+      if (
+        hasFCH &&
+        noMappedPubAddresses &&
+        WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         if (hasOneFCH) {
           firstItem = {
@@ -184,18 +228,35 @@ export const useContext = (): UseContextProps => {
           firstItem = WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH;
         }
       }
-      if (!hasFCH) {
+      if (
+        !hasFCH &&
+        WELCOME_COMPONENT_ITEM_CONTENT.NO_FCH.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.NO_FCH;
       }
-      if (hasDomains && hasExpiredDomains) {
+      if (
+        hasDomains &&
+        hasExpiredDomains &&
+        WELCOME_COMPONENT_ITEM_CONTENT.EXPIRED_DOMAINS.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.EXPIRED_DOMAINS;
       }
-      if (!hasRecoveryQuestions) {
+      if (
+        !hasRecoveryQuestions &&
+        WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD.types.some(
+          itemType => itemType === type,
+        )
+      ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD;
       }
+
       setFirstWelcomeItem(firstItem);
       setSecondWelcomeItem(secondItem);
     }
