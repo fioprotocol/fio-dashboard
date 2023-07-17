@@ -54,7 +54,6 @@ const WalletItem: React.FC<Props> = props => {
                 <PriceComponent
                   costFio={walletBalancesTotal.fio}
                   costUsdc={walletBalancesTotal.usdc}
-                  isNew
                 />
               </div>
             </div>

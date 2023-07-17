@@ -29,7 +29,7 @@ const Balance = (props: {
   viewDetails?: () => void;
   isNew?: boolean;
 }) => {
-  const { fio, usdc, title, viewDetails, isNew = false } = props;
+  const { fio, usdc, title, viewDetails } = props;
   return (
     <div className="container">
       <div
@@ -45,7 +45,7 @@ const Balance = (props: {
             viewDetails ? 'col-sm-6 mr-3' : 'col-sm-9',
           )}
         >
-          <PriceComponent costFio={fio} costUsdc={usdc} isNew={isNew} />
+          <PriceComponent costFio={fio} costUsdc={usdc} />
         </div>
         {viewDetails ? (
           <Button
@@ -97,7 +97,6 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     unlockPeriods,
     publicKey,
     isOpenLockedList,
-    isNew = false,
     isMobile = false,
   } = props;
 
@@ -136,7 +135,6 @@ const TotalBalanceBadge: React.FC<Props> = props => {
             fio={available.fio}
             usdc={available.usdc}
             title="Available"
-            isNew={isNew}
           />
         ) : null}
         {locked.nativeFio ? (
@@ -145,24 +143,13 @@ const TotalBalanceBadge: React.FC<Props> = props => {
             usdc={locked.usdc}
             title="Locked"
             viewDetails={() => setShowLockedTokensModalView(true)}
-            isNew={isNew}
           />
         ) : null}
         {rewards?.nativeFio ? (
-          <Balance
-            fio={rewards.fio}
-            usdc={rewards.usdc}
-            title="Rewards"
-            isNew={isNew}
-          />
+          <Balance fio={rewards.fio} usdc={rewards.usdc} title="Rewards" />
         ) : null}
         {staked?.nativeFio ? (
-          <Balance
-            fio={staked.fio}
-            usdc={staked.usdc}
-            title="Staked"
-            isNew={isNew}
-          />
+          <Balance fio={staked.fio} usdc={staked.usdc} title="Staked" />
         ) : null}
 
         {publicKey ? (
