@@ -5,28 +5,25 @@ import { ItemWrapper } from '../ItemWrapper';
 import { WelcomeComponentItem } from '../WelcomeComponentItem';
 
 import { useContext } from './WelcomeComponentContext';
-
-// import { WelcomeItemProps } from '../WelcomeComponentItem/constants';
+import { Types } from '../WelcomeComponentItem/constants';
 
 import classes from './WelcomeComponent.module.scss';
 
 type Props = {
-  // firstWelcomeItem: WelcomeItemProps | null;
-  // secondWelcomeItem: WelcomeItemProps | null;
-  // loading: boolean;
+  type?: Types;
   onlyActions?: boolean;
   noPaddingTop?: boolean;
 };
 
 export const WelcomeComponent: React.FC<Props> = props => {
-  const { onlyActions = false, noPaddingTop = false } = props;
+  const { onlyActions = false, noPaddingTop = false, type = Types.ALL } = props;
   const {
     text,
     title,
     firstWelcomeItem,
     secondWelcomeItem,
     loading,
-  } = useContext();
+  } = useContext(type);
 
   return (
     <ItemWrapper hasFullWidth hasMarginTop={onlyActions}>

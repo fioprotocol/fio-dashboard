@@ -13,13 +13,13 @@ import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 import { UnlockPeriod, WalletBalances } from '../../../types';
 
 import classes from '../styles/TotalBalanceBadge.module.scss';
-import Amount from '../../../components/common/Amount';
 
 type Props = WalletBalances & {
   publicKey?: string;
   isOpenLockedList?: boolean;
   isNew?: boolean;
   isMobile?: boolean;
+  itTotalWallets?: boolean;
 };
 
 const Balance = (props: {
@@ -98,6 +98,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     publicKey,
     isOpenLockedList,
     isMobile = false,
+    itTotalWallets = false,
   } = props;
 
   const [showLockedTokensModalView, setShowLockedTokensModalView] = useState(
@@ -120,15 +121,11 @@ const TotalBalanceBadge: React.FC<Props> = props => {
       )}
     >
       <div className={classes.totalBadge}>
-        <p className={classes.title}>Total FIO Balance</p>
+        <p className={classes.title}>
+          Total {itTotalWallets && 'Wallets'} FIO Balance
+        </p>
         <div className={classes.totalFio}>
-          <div>
-            <Amount value={total.fio} />{' '}
-            <span className={classes.totalBalanceSuffix}>FIO</span>
-          </div>
-          <div className={classes.usdcTotalBalanceSuffix}>
-            <Amount value={total.usdc} /> <span>USDC</span>
-          </div>
+          <PriceComponent costFio={total.fio} costUsdc={total.usdc} />
         </div>
         {staked?.nativeFio || locked.nativeFio ? (
           <Balance
