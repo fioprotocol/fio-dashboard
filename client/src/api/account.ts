@@ -6,6 +6,7 @@ import {
   AccountSetWalletsResponse,
   AccountUpdateWalletsResponse,
   AccountValidateWalletImportResponse,
+  AccountDeleteWalletResponse,
 } from './responses';
 
 export default class Account extends Base {
@@ -28,6 +29,10 @@ export default class Account extends Base {
     data: { name: string; data?: { name?: string } },
   ): Promise<AccountUpdateWalletsResponse> {
     return this.apiClient.post(`account/wallet/update/${publicKey}`, { data });
+  }
+
+  deleteWallet(publicKey: string): Promise<AccountDeleteWalletResponse> {
+    return this.apiClient.delete(`account/wallet/${publicKey}`);
   }
 
   validateWalletImport(

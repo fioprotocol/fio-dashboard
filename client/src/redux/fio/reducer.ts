@@ -3,7 +3,11 @@ import isEqual from 'lodash/isEqual';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
-import { ADD_WALLET_SUCCESS, UPDATE_WALLET_NAME } from '../account/actions';
+import {
+  ADD_WALLET_SUCCESS,
+  UPDATE_WALLET_NAME,
+  DELETE_WALLET,
+} from '../account/actions';
 import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
@@ -188,6 +192,10 @@ export default combineReducers({
             fioWallet.name = action.data.name;
           }
           return fioWallet;
+        });
+      case DELETE_WALLET:
+        return state.filter(fioWallet => {
+          return fioWallet.publicKey !== action.data.publicKey;
         });
       case LOGOUT_SUCCESS:
         return [];

@@ -38,6 +38,7 @@ export const addWallet = ({
 });
 
 export const UPDATE_WALLET_NAME = `${prefix}/UPDATE_WALLET_NAME`;
+export const DELETE_WALLET = `${prefix}/DELETE_WALLET`;
 
 export const updateWalletName = ({
   name,
@@ -49,6 +50,17 @@ export const updateWalletName = ({
   type: UPDATE_WALLET_NAME,
   data: {
     name,
+    publicKey,
+  },
+});
+
+export const deleteWallet = ({
+  publicKey,
+}: {
+  publicKey: string;
+}): CommonAction => ({
+  type: DELETE_WALLET,
+  data: {
     publicKey,
   },
 });
