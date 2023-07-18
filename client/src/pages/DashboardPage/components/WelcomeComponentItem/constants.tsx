@@ -53,7 +53,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       state: { openSettingsModal: PREOPENED_MODALS.RECOVERY },
     },
     isRed: true,
-    types: [Types.ALL],
+    types: [Types.ALL, Types.DOM, Types.FCH, Types.TOK],
   },
   EXPIRED_DOMAINS: {
     title: 'Expired Domain(s)',
@@ -75,7 +75,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_ADDRESSES_SELECTION,
     },
-    types: [Types.ALL],
+    types: [Types.ALL, Types.DOM, Types.FCH, Types.TOK],
   },
   LINK_FCH_ONE: {
     title: 'Link your Token Addresses',
@@ -109,7 +109,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       pathname: ROUTES.SETTINGS,
       state: { openSettingsModal: PREOPENED_MODALS.PIN },
     },
-    types: [Types.ALL],
+    types: [Types.ALL, Types.DOM, Types.FCH, Types.TOK],
   },
   FIO_BALANCE: {
     title: 'Buy FIO Tokens',
@@ -157,7 +157,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_AFFILIATE_PROGRAM_LANDING,
     },
-    types: [Types.ALL],
+    types: [Types.ALL, Types.DOM, Types.FCH, Types.TOK],
   },
   GET_ANOTHER_FIO_DOMAIN: {
     title: 'Get another FIO Domain',
@@ -168,7 +168,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     actionButtonLink: {
       pathname: ROUTES.FIO_DOMAINS_SELECTION,
     },
-    types: [Types.ALL],
+    types: [Types.ALL, Types.DOM, Types.FCH, Types.TOK],
   },
   WRAP_DOMAIN: {
     title: 'Wrap your FIO Domain',
