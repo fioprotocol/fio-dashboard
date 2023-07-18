@@ -23,6 +23,7 @@ export type AccountGetWalletsResponse = FioWalletDoublet[];
 export type AccountSetWalletsResponse = { success: true };
 export type AccountAddWalletsResponse = FioWalletDoublet;
 export type AccountUpdateWalletsResponse = { success: true };
+export type AccountDeleteWalletResponse = { success: true };
 export type AccountValidateWalletImportResponse = {
   valid: true;
 };
@@ -175,6 +176,7 @@ export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &
   AccountAddWalletsResponse &
   AccountUpdateWalletsResponse &
+  AccountDeleteWalletResponse &
   AccountValidateWalletImportResponse &
   AuthProfileResponse &
   AuthUsernameResponse &

@@ -22,6 +22,10 @@
     margin-top: 30px;
   }
 
+  .deleteText {
+    margin-top: 15px;
+  }
+
   .qrCode {
     margin-top: 30px;
     background-color: $white;
@@ -112,6 +116,10 @@
 
     @include sf-pro-display-medium;
   }
+}
+
+.walletTextInModal {
+  color: black;
 }
 
 @include lg {

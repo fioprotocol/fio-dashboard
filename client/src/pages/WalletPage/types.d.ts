@@ -59,6 +59,11 @@ export type PasswordFormValues = {
   username: string;
 };
 
+export type DeleteWalletFormValues = {
+  password: string;
+  username: string;
+};
+
 export type FioRecordViewProps = {
   from: string;
   to: string;
