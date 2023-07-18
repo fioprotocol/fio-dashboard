@@ -2,28 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import Modal from '../../../components/Modal/Modal';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 import CopyTooltip from '../../../components/CopyTooltip';
-import CancelButton from '../../../components/common/CancelButton/CancelButton';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import PasswordForm from './PasswordForm';
+import DeleteWalletForm from './DeleteWalletForm';
+import EditWalletNameForm from './EditWalletNameForm';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import DangerModal from '../../../components/Modal/DangerModal';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard } from '../../../util/general';
 
+import { ROUTES } from '../../../constants/routes';
+
 import apis from '../../../api';
 
 import { FioWalletDoublet } from '../../../types';
-import { EditWalletNameValues, PasswordFormValues } from '../types';
+import {
+  DeleteWalletFormValues,
+  EditWalletNameValues,
+  PasswordFormValues,
+} from '../types';
+
+import { updateWalletName } from '../../../redux/account/actions';
+import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../redux/modal/actions';
 
 import classes from '../styles/WalletDetailsModal.module.scss';
-import EditWalletNameForm from './EditWalletNameForm';
-import { updateWalletName } from '../../../redux/account/actions';
-import { showGenericErrorModal } from '../../../redux/modal/actions';
 
 type Props = {
   show: boolean;
@@ -34,24 +44,20 @@ type Props = {
 const ShowPrivateKeyModal: React.FC<Props> = props => {
   const { show, fioWallet, onClose } = props;
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
-
-  const [currentValues, setCurrentValues] = useState<EditWalletNameValues>({
-    name: fioWallet.name,
-  });
-  const [processing, setProcessing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [currentDeleteValues, setCurrentDeleteValues] = useState<
+    DeleteWalletFormValues
+  >();
 
   const onEditSubmit = (values: EditWalletNameValues) => {
-    setCurrentValues(values);
     edit(values.name);
   };
 
-  console.log(currentValues, processing, onEditSubmit);
-
   const edit = async (name: string) => {
-    setProcessing(true);
     try {
       const res = await apis.account.updateWallet(fioWallet.publicKey, {
         name,
@@ -66,8 +72,21 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     } catch (e) {
       showGenericErrorModal();
     }
+  };
 
-    setProcessing(false);
+  const deleteWallet = async () => {
+    try {
+      const res = await apis.account.deleteWallet(fioWallet.publicKey);
+      if (res.success) {
+        dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
+        history.push(ROUTES.TOKENS);
+        onClose();
+      } else {
+        dispatch(showGenericErrorModal());
+      }
+    } catch (e) {
+      showGenericErrorModal();
+    }
   };
 
   useEffect(() => {
@@ -106,6 +125,31 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
       setLoading(false);
       return { password: 'Something went wrong, please try again later' };
     }
+  };
+
+  const onDeleteConfirmModal = async (values: DeleteWalletFormValues) => {
+    setCurrentDeleteValues(values);
+    setShowDeleteConfirm(true);
+  };
+
+  const onDeleteConfirm = async () => {
+    setLoading(true);
+
+    const { username, password } = currentDeleteValues;
+    let account;
+    try {
+      account = await apis.edge.login(username, password);
+      if (!account) throw new Error();
+
+      await deleteWallet();
+    } catch (e) {
+      setLoading(false);
+      return {
+        password: 'Invalid Password',
+      };
+    }
+
+    await apis.edge.deleteWallet(account, fioWallet.edgeId);
   };
 
   const onCancel = () => {
@@ -182,30 +226,71 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
         <SubmitButton onClick={onCancel} text="Close" withBottomMargin={true} />
       );
 
+    return;
+  };
+
+  const renderDeleteWalletForm = () => {
+    if (key != null) return null;
     return (
-      <CancelButton onClick={onCancel} isBlack={true} withBottomMargin={true} />
+      <>
+        <h6 className={classes.settingTitle}>Delete Wallet</h6>
+        <InfoBadge
+          show={true}
+          type={BADGE_TYPES.WARNING}
+          title="Warning"
+          message="Record your private key as this wallet will be permanently lost."
+        />
+        <DeleteWalletForm loading={loading} onSubmit={onDeleteConfirmModal} />
+      </>
     );
   };
 
   return (
-    <Modal
-      show={show}
-      isSimple={true}
-      closeButton={true}
-      onClose={onCancel}
-      isMiddleWidth={true}
-      hasDefaultCloseColor={true}
-    >
-      <div className={classes.container}>
-        <h3 className={classes.title}>Wallet Settings</h3>
+    <>
+      <Modal
+        show={show}
+        isSimple={true}
+        closeButton={true}
+        onClose={onCancel}
+        isMiddleWidth={true}
+        hasDefaultCloseColor={true}
+      >
+        <div className={classes.container}>
+          <h3 className={classes.title}>Wallet Settings</h3>
+          {renderNameForm()}
+          {renderPasswordForm()}
+          {renderKey()}
+          {renderCancel()}
+          {renderDeleteWalletForm()}
+        </div>
+      </Modal>
 
-        {renderNameForm()}
-
-        {renderPasswordForm()}
-        {renderKey()}
-        {renderCancel()}
-      </div>
-    </Modal>
+      <DangerModal
+        loading={loading}
+        show={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onActionButtonClick={onDeleteConfirm}
+        buttonText="Yes, Delete This Wallet"
+        title="Are you Sure?"
+        showCancel={true}
+        cancelButtonText="Cancel"
+        subtitle={
+          <>
+            <p>
+              If you permanently delete your wallet, you will no longer have
+              access to it or your crypto/NFT holdings within this wallet.
+            </p>
+            <p>
+              <b>
+                Please make sure that you have recorded your private keys for
+                this <span className={classes.walletTextInModal}>wallet</span>{' '}
+                to prevent loss of those holdings.
+              </b>
+            </p>
+          </>
+        }
+      />
+    </>
   );
 };
 
