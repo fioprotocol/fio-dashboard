@@ -29,12 +29,17 @@ import { Props } from './types';
 import classes from './styles/WalletsPage.module.scss';
 import unwrapIcon from '../../assets/images/unwrap.svg';
 
+interface LocationState {
+  walletDeleted?: boolean;
+}
+
 const WalletsPage: React.FC<Props> = props => {
   const { fioWallets, balance, refreshBalance, location } = props;
 
   const [showCreateWallet, setShowCreateWallet] = useState<boolean>(false);
   const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
   const [showWalletCreated, setShowWalletCreated] = useState<boolean>(false);
+  const [showWalletDeleted, setShowWalletDeleted] = useState<boolean>(false);
 
   useEffectOnce(() => {
     for (const { publicKey } of fioWallets) {
@@ -46,11 +51,16 @@ const WalletsPage: React.FC<Props> = props => {
     if (location.query && location.query.imported) {
       setShowWalletImported(true);
     }
+
+    if (location.state && (location.state as LocationState).walletDeleted) {
+      setShowWalletDeleted(true);
+    }
   }, [location]);
 
   const closeCreateWallet = () => setShowCreateWallet(false);
   const closeImportedWallet = () => setShowWalletImported(false);
   const closeCreatedWallet = () => setShowWalletCreated(false);
+  const closeDeletedWallet = () => setShowWalletDeleted(false);
 
   const onAdd = () => {
     setShowCreateWallet(true);
@@ -102,7 +112,7 @@ const WalletsPage: React.FC<Props> = props => {
       />
       <LayoutContainer title={renderTitle()}>
         <NotificationBadge
-          type={BADGE_TYPES.SUCCESS}
+          type={BADGE_TYPES.INFO}
           show={showWalletImported}
           onClose={closeImportedWallet}
           message={
@@ -114,9 +124,11 @@ const WalletsPage: React.FC<Props> = props => {
               .title
           }
           iconName="check-circle"
+          hasNewDesign
+          marginAuto
         />
         <NotificationBadge
-          type={BADGE_TYPES.SUCCESS}
+          type={BADGE_TYPES.INFO}
           show={showWalletCreated}
           onClose={closeCreatedWallet}
           message={
@@ -128,6 +140,24 @@ const WalletsPage: React.FC<Props> = props => {
               .title
           }
           iconName="check-circle"
+          hasNewDesign
+          marginAuto
+        />
+        <NotificationBadge
+          type={BADGE_TYPES.INFO}
+          show={showWalletDeleted}
+          onClose={closeDeletedWallet}
+          message={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]
+              .message
+          }
+          title={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]
+              .title
+          }
+          iconName="check-circle"
+          hasNewDesign
+          marginAuto
         />
         {fioWallets.length > 0 ? (
           fioWallets.map(wallet => (

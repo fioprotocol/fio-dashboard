@@ -11,6 +11,7 @@ import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import PasswordForm from './PasswordForm';
 import DeleteWalletForm from './DeleteWalletForm';
 import EditWalletNameForm from './EditWalletNameForm';
+import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
@@ -19,6 +20,7 @@ import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard } from '../../../util/general';
 
 import { ROUTES } from '../../../constants/routes';
+import { WALLET_CREATED_FROM } from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -53,6 +55,8 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     DeleteWalletFormValues
   >();
 
+  const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
+
   const onEditSubmit = (values: EditWalletNameValues) => {
     edit(values.name);
   };
@@ -79,7 +83,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
       const res = await apis.account.deleteWallet(fioWallet.publicKey);
       if (res.success) {
         dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
-        history.push(ROUTES.TOKENS);
+        history.push(ROUTES.TOKENS, { walletDeleted: true });
         onClose();
       } else {
         dispatch(showGenericErrorModal());
@@ -233,12 +237,33 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     if (key != null) return null;
     return (
       <>
-        <h6 className={classes.settingTitle}>Delete Wallet</h6>
+        <h6 className={classes.settingTitle}>
+          Delete Wallet
+          {isLedgerWallet && (
+            <span>
+              <LedgerBadge />
+            </span>
+          )}
+        </h6>
         <InfoBadge
           show={true}
-          type={BADGE_TYPES.WARNING}
-          title="Warning"
-          message="Record your private key as this wallet will be permanently lost."
+          type={isLedgerWallet ? BADGE_TYPES.INFO : BADGE_TYPES.WARNING}
+          title={isLedgerWallet ? 'Private Key' : 'Warning'}
+          message={
+            <>
+              {isLedgerWallet ? (
+                <span className={classes.badgeBoldText}>
+                  Your private key for this wallet is stored on you ledger
+                  device. Once Deleted, it can be added back at any time.
+                </span>
+              ) : (
+                <span className={classes.badgeBoldText}>
+                  Record your private key as this wallet will be permanently
+                  lost.
+                </span>
+              )}
+            </>
+          }
         />
         <DeleteWalletForm loading={loading} onSubmit={onDeleteConfirmModal} />
       </>
@@ -276,17 +301,17 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
         cancelButtonText="Cancel"
         subtitle={
           <>
-            <p>
+            <span>
               If you permanently delete your wallet, you will no longer have
               access to it or your crypto/NFT holdings within this wallet.
-            </p>
-            <p>
+            </span>
+            <span className={classes.deleteSecondText}>
               <b>
                 Please make sure that you have recorded your private keys for
                 this <span className={classes.walletTextInModal}>wallet</span>{' '}
                 to prevent loss of those holdings.
               </b>
-            </p>
+            </span>
           </>
         }
       />
