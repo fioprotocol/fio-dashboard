@@ -7,10 +7,6 @@ import {
   refreshBalance,
   refreshFioNames,
 } from '../../redux/fio/actions';
-import {
-  checkRecoveryQuestions,
-  setPinEnabled,
-} from '../../redux/edge/actions';
 
 import {
   fioAddresses as fioAddressesSelector,
@@ -25,8 +21,6 @@ import {
 } from '../../redux/fio/selectors';
 
 import { loading as edgeLoadingSelector } from '../../redux/edge/selectors';
-
-import { user as userSelector } from '../../redux/profile/selectors';
 
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
@@ -55,7 +49,6 @@ export const useContext = (): UseContextProps => {
   const fioAddresses = useSelector(fioAddressesSelector);
   const fioDomains = useSelector(fioDomainsSelector);
   const mappedPublicAddresses = useSelector(mappedPublicAddressesSelector);
-  const user = useSelector(userSelector);
   const edgeLoading = useSelector(edgeLoadingSelector);
   const fioAddressesLoading = useSelector(fioAddressesLoadingSelector);
   const walletsFioAddressesLoading = useSelector(
@@ -103,13 +96,6 @@ export const useContext = (): UseContextProps => {
     [fioWallets, dispatch],
     fioWallets.length > 0,
   );
-
-  useEffect(() => {
-    if (user.username) {
-      dispatch(checkRecoveryQuestions(user.username));
-      dispatch(setPinEnabled(user.username));
-    }
-  }, [dispatch, user.username]);
 
   useEffectOnce(
     () => {
