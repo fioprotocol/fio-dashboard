@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import superagent from 'superagent';
 
@@ -10,6 +10,8 @@ import {
   WELCOME_COMPONENT_ITEM_CONTENT,
   WelcomeItemProps,
 } from '../WelcomeComponentItem/constants';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
+
 import {
   fioAddresses as fioAddressesSelector,
   fioAddressesLoading as fioAddressesLoadingSelector,
@@ -25,10 +27,14 @@ import {
   isPinEnabled as isPinEnabledSelector,
   loading as edgeLoadingSelector,
 } from '../../../../redux/edge/selectors';
+import {
+  checkRecoveryQuestions,
+  setPinEnabled,
+} from '../../../../redux/edge/actions';
+
 import useEffectOnce from '../../../../hooks/general';
 import { isDomainExpired } from '../../../../util/fio';
 import { log } from '../../../../util/general';
-import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 const MAIN_CONTENT = {
   USER_IS_BACK: {
@@ -52,6 +58,9 @@ type UseContextProps = {
 
 export const useContext = (type: Types): UseContextProps => {
   const isNewUser = useSelector(isNewUserSelector);
+
+  const dispatch = useDispatch();
+
   const [
     firstWelcomeItem,
     setFirstWelcomeItem,
@@ -116,6 +125,13 @@ export const useContext = (type: Types): UseContextProps => {
       log.error(error);
     }
   }, []);
+
+  useEffect(() => {
+    if (user.username) {
+      dispatch(checkRecoveryQuestions(user.username));
+      dispatch(setPinEnabled(user.username));
+    }
+  }, [dispatch, user.username]);
 
   useEffectOnce(() => {
     getAPY();
@@ -247,6 +263,7 @@ export const useContext = (type: Types): UseContextProps => {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.EXPIRED_DOMAINS;
       }
+
       if (
         !hasRecoveryQuestions &&
         WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD.types.some(

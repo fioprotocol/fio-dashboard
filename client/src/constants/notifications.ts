@@ -5,6 +5,7 @@ export const NOTIFICATIONS_CONTENT_TYPE = {
   UPDATE_EMAIL: 'UPDATE_EMAIL',
   WALLET_IMPORTED: 'WALLET_IMPORTED',
   WALLET_CREATED: 'WALLET_CREATED',
+  WALLET_DELETED: 'WALLET_DELETED',
   RESET_ADMIN_USER_PASSWORD: 'RESET_ADMIN_USER_PASSWORD',
   DELETE_ADMIN_USER_SUCCESS: 'DELETE_ADMIN_USER_SUCCESS',
 };
@@ -35,6 +36,10 @@ export const NOTIFICATIONS_CONTENT: {
   [NOTIFICATIONS_CONTENT_TYPE.WALLET_CREATED]: {
     title: 'Wallet created',
     message: 'You have successfully created your FIO wallet.',
+  },
+  [NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]: {
+    title: 'Wallet deleted',
+    message: 'Your wallet has been successfully deleted.',
   },
   [NOTIFICATIONS_CONTENT_TYPE.RESET_ADMIN_USER_PASSWORD]: {
     title: 'Reset password',
