@@ -252,7 +252,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
           message={
             <>
               {isLedgerWallet ? (
-                <span className={classes.badgeBoldText}>
+                <span>
                   Your private key for this wallet is stored on you ledger
                   device. Once Deleted, it can be added back at any time.
                 </span>
@@ -283,7 +283,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
         <div className={classes.container}>
           <h3 className={classes.title}>Wallet Settings</h3>
           {renderNameForm()}
-          {renderPasswordForm()}
+          {!isLedgerWallet && renderPasswordForm()}
           {renderKey()}
           {renderCancel()}
           {renderDeleteWalletForm()}
@@ -296,7 +296,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
         onClose={() => setShowDeleteConfirm(false)}
         onActionButtonClick={onDeleteConfirm}
         buttonText="Yes, Delete This Wallet"
-        title="Are you Sure?"
+        title="Are You Sure?"
         showCancel={true}
         cancelButtonText="Cancel"
         subtitle={
@@ -305,13 +305,23 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
               If you permanently delete your wallet, you will no longer have
               access to it or your crypto/NFT holdings within this wallet.
             </span>
-            <span className={classes.deleteSecondText}>
-              <b>
-                Please make sure that you have recorded your private keys for
-                this <span className={classes.walletTextInModal}>wallet</span>{' '}
-                to prevent loss of those holdings.
-              </b>
-            </span>
+            <br />
+            {isLedgerWallet ? (
+              <span className={classes.deleteSecondText}>
+                <b>
+                  However, this wallet’s private keys are stored on your ledger
+                  device and can be import again at any time.
+                </b>
+              </span>
+            ) : (
+              <span className={classes.deleteSecondText}>
+                <b>
+                  Please make sure that you have recorded your private keys for
+                  this <span className={classes.walletTextInModal}>wallet</span>{' '}
+                  to prevent loss of those holdings.
+                </b>
+              </span>
+            )}
           </>
         }
       />

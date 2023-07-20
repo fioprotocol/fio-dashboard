@@ -38,7 +38,7 @@ export const NOTIFICATIONS_CONTENT: {
     message: 'You have successfully created your FIO wallet.',
   },
   [NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]: {
-    title: 'Wallet deleted',
+    title: 'Success',
     message: 'Your wallet has been successfully deleted.',
   },
   [NOTIFICATIONS_CONTENT_TYPE.RESET_ADMIN_USER_PASSWORD]: {

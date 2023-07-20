@@ -33,6 +33,8 @@ interface LocationState {
   walletDeleted?: boolean;
 }
 
+const AUTOCLOSE_TIME = 5000;
+
 const WalletsPage: React.FC<Props> = props => {
   const { fioWallets, balance, refreshBalance, location } = props;
 
@@ -56,6 +58,18 @@ const WalletsPage: React.FC<Props> = props => {
       setShowWalletDeleted(true);
     }
   }, [location]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setShowWalletDeleted(false);
+    }, AUTOCLOSE_TIME);
+
+    if (!showWalletDeleted) {
+      clearTimeout(timeoutId);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [showWalletDeleted]);
 
   const closeCreateWallet = () => setShowCreateWallet(false);
   const closeImportedWallet = () => setShowWalletImported(false);
