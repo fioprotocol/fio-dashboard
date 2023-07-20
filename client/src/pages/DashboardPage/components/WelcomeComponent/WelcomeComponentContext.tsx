@@ -17,6 +17,7 @@ import {
   fioAddressesLoading as fioAddressesLoadingSelector,
   fioDomains as fioDomainsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
+  fioWallets as fioWalletsSelector,
   loading as fioLoadingSelector,
   mappedPublicAddresses as mappedPublicAddressesSelector,
   walletsFioAddressesLoading as walletsFioAddressesLoadingSelector,
@@ -31,6 +32,11 @@ import {
   checkRecoveryQuestions,
   setPinEnabled,
 } from '../../../../redux/edge/actions';
+import {
+  getAllFioPubAddresses,
+  refreshBalance,
+  refreshFioNames,
+} from '../../../../redux/fio/actions';
 
 import useEffectOnce from '../../../../hooks/general';
 import { isDomainExpired } from '../../../../util/fio';
@@ -73,6 +79,7 @@ export const useContext = (type: Types): UseContextProps => {
 
   const [APY, setAPY] = useState<string>(null);
 
+  const fioWallets = useSelector(fioWalletsSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
   const fioLoading = useSelector(fioLoadingSelector);
   const fioAddresses = useSelector(fioAddressesSelector);
@@ -112,6 +119,7 @@ export const useContext = (type: Types): UseContextProps => {
 
   const firstFromListFioAddressName = fioAddresses[0]?.name;
   const firstFromListFioDomainName = fioDomains[0]?.name;
+  const firstFromListFioWalletPublicKey = fioWallets[0]?.publicKey;
 
   const getAPY = useCallback(async () => {
     try {
@@ -125,6 +133,27 @@ export const useContext = (type: Types): UseContextProps => {
       log.error(error);
     }
   }, []);
+
+  useEffectOnce(
+    () => {
+      for (const { publicKey } of fioWallets) {
+        dispatch(refreshBalance(publicKey));
+        dispatch(refreshFioNames(publicKey));
+      }
+    },
+    [fioWallets, dispatch],
+    fioWallets.length > 0,
+  );
+
+  useEffectOnce(
+    () => {
+      for (const fioAddress of fioAddresses) {
+        dispatch(getAllFioPubAddresses(fioAddress.name, 0, 0));
+      }
+    },
+    [dispatch, fioAddresses],
+    fioAddresses.length > 0,
+  );
 
   useEffect(() => {
     if (user.username) {
@@ -186,8 +215,13 @@ export const useContext = (type: Types): UseContextProps => {
         )
       ) {
         secondItem = firstItem;
+
         firstItem = {
           ...WELCOME_COMPONENT_ITEM_CONTENT.STAKING,
+          actionButtonLink: {
+            ...WELCOME_COMPONENT_ITEM_CONTENT.STAKING.actionButtonLink,
+            search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${firstFromListFioWalletPublicKey}`,
+          },
           text: (
             <>
               {WELCOME_COMPONENT_ITEM_CONTENT.STAKING.text}
