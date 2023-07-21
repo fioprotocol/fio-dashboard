@@ -48,7 +48,11 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState({
+    updateWalletName: false,
+    showPrivateKey: false,
+    deleteWallet: false,
+  });
   const [key, setKey] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [currentDeleteValues, setCurrentDeleteValues] = useState<
@@ -103,7 +107,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   }, [show]);
 
   const onConfirm = async (values: PasswordFormValues) => {
-    setLoading(true);
+    setLoading({ ...loading, showPrivateKey: true });
 
     const { username, password } = values;
     let account;
@@ -111,7 +115,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
       account = await apis.edge.login(username, password);
       if (!account) throw new Error();
     } catch (e) {
-      setLoading(false);
+      setLoading({ ...loading, showPrivateKey: false });
       return { password: 'Invalid Password' };
     }
 
@@ -122,11 +126,11 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
         setKey(keys[fioWallet.edgeId].private);
       }
 
-      setLoading(false);
+      setLoading({ ...loading, showPrivateKey: false });
 
       return {};
     } catch (e) {
-      setLoading(false);
+      setLoading({ ...loading, showPrivateKey: false });
       return { password: 'Something went wrong, please try again later' };
     }
   };
@@ -137,7 +141,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   };
 
   const onDeleteConfirm = async () => {
-    setLoading(true);
+    setLoading({ ...loading, deleteWallet: true });
 
     const { username, password } = currentDeleteValues;
     let account;
@@ -147,7 +151,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
 
       await deleteWallet();
     } catch (e) {
-      setLoading(false);
+      setLoading({ ...loading, deleteWallet: false });
       return {
         password: 'Invalid Password',
       };
@@ -157,7 +161,12 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   };
 
   const onCancel = () => {
-    if (!loading) onClose();
+    if (
+      !loading.showPrivateKey &&
+      !loading.deleteWallet &&
+      !loading.updateWalletName
+    )
+      onClose();
   };
 
   const renderKey = () => {
@@ -205,7 +214,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
           title="Warning"
           message="Never disclose this private key. Anyone with your private keys can steal any assets in your wallet."
         />
-        <PasswordForm loading={loading} onSubmit={onConfirm} />
+        <PasswordForm loading={loading.showPrivateKey} onSubmit={onConfirm} />
       </>
     );
   };
@@ -216,7 +225,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
       <>
         <h6 className={classes.settingTitle}>Edit Wallet Name</h6>
         <EditWalletNameForm
-          loading={loading}
+          loading={loading.updateWalletName}
           onSubmit={onEditSubmit}
           initialValues={{ name: fioWallet.name }}
         />
@@ -265,7 +274,10 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
             </>
           }
         />
-        <DeleteWalletForm loading={loading} onSubmit={onDeleteConfirmModal} />
+        <DeleteWalletForm
+          loading={loading.deleteWallet}
+          onSubmit={onDeleteConfirmModal}
+        />
       </>
     );
   };
@@ -291,7 +303,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
       </Modal>
 
       <DangerModal
-        loading={loading}
+        loading={loading.deleteWallet}
         show={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onActionButtonClick={onDeleteConfirm}
