@@ -207,3 +207,21 @@
     margin: 0 20px 0 30px;
   }
 }
+
+@include tablet {
+  .titleContainer {
+    margin-bottom: 25px !important;
+  }
+
+  .actionButton {
+    &.settingsButton {
+      width: 39px !important;
+    }
+  }
+}
+
+@include sds {
+  .titleContainer {
+    margin-bottom: 25px !important;
+  }
+}
