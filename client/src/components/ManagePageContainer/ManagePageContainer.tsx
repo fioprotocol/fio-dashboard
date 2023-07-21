@@ -16,6 +16,7 @@ import InfoBadge from '../Badges/InfoBadge/InfoBadge';
 import { Fio101Component } from '../Fio101Component';
 import ActionButtonsContainer from '../../pages/WalletsPage/components/ActionButtonsContainer';
 import Title from '../../pages/WalletsPage/components/Title';
+import { WelcomeComponent } from '../../pages/DashboardPage/components/WelcomeComponent';
 
 import {
   getAllFioPubAddresses,
@@ -33,7 +34,7 @@ import {
 } from '../../redux/fio/selectors';
 import { loading as edgeLoadingSelector } from '../../redux/edge/selectors';
 
-import { BANNER_DATA, ITEMS_LIMIT, SUBTITLE } from './constants';
+import { BANNER_DATA, ITEMS_LIMIT, PAGE_NAME, SUBTITLE } from './constants';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -42,6 +43,7 @@ import {
 import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
+import { Types } from '../../pages/DashboardPage/components/WelcomeComponentItem/constants';
 
 import {
   fireAnalyticsEvent,
@@ -372,6 +374,11 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
             {renderList()}
           </InfiniteScroll>
         </div>
+        <WelcomeComponent
+          type={pageName === PAGE_NAME.ADDRESS ? Types.FCH : Types.DOM}
+          onlyActions
+          noPaddingTop
+        />
       </LayoutContainer>
       <div className={classes.actionBadge}>
         <Fio101Component
