@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import { Link, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { ManagePageCtaBadge } from './ManagePageCtaBadge';
 import Notifications from './ManagePageComponents/Notifications';
 import DesktopView from './ManagePageComponents/DesktopView';
 import ItemComponent from './ManagePageComponents/ItemComponent';
@@ -13,8 +13,25 @@ import MobileView from './ManagePageComponents/MobileView';
 import SettingsItem from './ManagePageComponents/SettingsItem';
 import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import InfoBadge from '../Badges/InfoBadge/InfoBadge';
+import { Fio101Component } from '../Fio101Component';
 import ActionButtonsContainer from '../../pages/WalletsPage/components/ActionButtonsContainer';
 import Title from '../../pages/WalletsPage/components/Title';
+
+import {
+  getAllFioPubAddresses,
+  refreshBalance,
+  refreshFioNames,
+} from '../../redux/fio/actions';
+
+import {
+  fioAddresses as fioAddressesSelector,
+  fioAddressesLoading as fioAddressesLoadingSelector,
+  fioDomains as fioDomainsSelector,
+  loading as fioLoadingSelector,
+  mappedPublicAddresses as mappedPublicAddressesSelector,
+  walletsFioAddressesLoading as walletsFioAddressesLoadingSelector,
+} from '../../redux/fio/selectors';
+import { loading as edgeLoadingSelector } from '../../redux/edge/selectors';
 
 import { BANNER_DATA, ITEMS_LIMIT, SUBTITLE } from './constants';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
@@ -31,6 +48,7 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { isDomainExpired } from '../../util/fio';
+import useEffectOnce from '../../hooks/general';
 
 import { ContainerProps, HasMore } from './types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
@@ -78,8 +96,37 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [showSettings, handleShowSettings] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<FioNameItemProps>({});
   const [fetchWalletDataIteration, setFetchWalletDataIteration] = useState(0);
+  const edgeLoading = useSelector(edgeLoadingSelector);
+  const fioAddresses = useSelector(fioAddressesSelector);
+  const fioDomains = useSelector(fioDomainsSelector);
+  const fioLoading = useSelector(fioLoadingSelector);
+  const fioAddressesLoading = useSelector(fioAddressesLoadingSelector);
+  const walletsFioAddressesLoading = useSelector(
+    walletsFioAddressesLoadingSelector,
+  );
+  const mappedPublicAddresses = useSelector(mappedPublicAddressesSelector);
 
   const isDesktop = useCheckIfDesktop();
+  const dispatch = useDispatch();
+
+  const hasFCH = fioAddresses?.length > 0;
+  const hasOneFCH = fioAddresses?.length === 1;
+
+  const hasDomains = fioDomains?.length > 0;
+
+  const noMappedPubAddresses =
+    !isEmpty(mappedPublicAddresses) &&
+    Object.values(mappedPublicAddresses).every(
+      mappedPubicAddress => mappedPubicAddress.publicAddresses.length === 0,
+    );
+
+  const firstFromListFioAddressName = fioAddresses[0]?.name;
+
+  const FIO101Loading =
+    fioLoading ||
+    edgeLoading ||
+    fioAddressesLoading ||
+    walletsFioAddressesLoading;
 
   const fioWalletsRef = useRef(fioWallets);
   if (!isEqual(fioWallets, fioWalletsRef)) {
@@ -165,6 +212,27 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     getAllWalletsAddresses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffectOnce(
+    () => {
+      for (const { publicKey } of fioWallets) {
+        dispatch(refreshBalance(publicKey));
+        dispatch(refreshFioNames(publicKey));
+      }
+    },
+    [fioWallets, dispatch],
+    fioWallets.length > 0,
+  );
+
+  useEffectOnce(
+    () => {
+      for (const fioAddress of fioAddresses) {
+        dispatch(getAllFioPubAddresses(fioAddress.name, 0, 0));
+      }
+    },
+    [dispatch, fioAddresses],
+    fioAddresses.length > 0,
+  );
 
   useEffect(() => {
     getAddBundlesFee && getAddBundlesFee();
@@ -306,7 +374,17 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         </div>
       </LayoutContainer>
       <div className={classes.actionBadge}>
-        <ManagePageCtaBadge name={pageName} />
+        <Fio101Component
+          firstFromListFioAddressName={firstFromListFioAddressName}
+          hasFCH={hasFCH}
+          hasOneFCH={hasOneFCH}
+          hasDomains={hasDomains}
+          hideTitle
+          isDesktop={isDesktop}
+          loading={FIO101Loading}
+          noMappedPubAddresses={noMappedPubAddresses}
+          useMobileView
+        />
       </div>
       <Modal
         show={show}

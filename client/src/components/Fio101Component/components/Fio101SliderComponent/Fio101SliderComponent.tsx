@@ -15,11 +15,21 @@ type Props = {
   loading?: boolean;
   title: string;
   text: string;
+  useMobileView?: boolean;
   videoId?: string;
 };
 
 export const Fio101SliderComponent: React.FC<Props> = props => {
-  const { buttonText, imageSrc, link, loading, title, text, videoId } = props;
+  const {
+    buttonText,
+    imageSrc,
+    link,
+    loading,
+    title,
+    text,
+    useMobileView,
+    videoId,
+  } = props;
 
   const [showVideo, toggleShowVideo] = useState<boolean>(false);
 
@@ -28,7 +38,12 @@ export const Fio101SliderComponent: React.FC<Props> = props => {
   }, []);
 
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(
+        classes.container,
+        useMobileView && classes.useMobileView,
+      )}
+    >
       {loading ? (
         <Loader />
       ) : (

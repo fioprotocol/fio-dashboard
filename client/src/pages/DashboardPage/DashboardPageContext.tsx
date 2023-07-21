@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
@@ -25,19 +24,17 @@ import { loading as edgeLoadingSelector } from '../../redux/edge/selectors';
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
 
-import {
-  FIO_101_SLIDER_CONTENT,
-  Fio101SliderContentProps,
-} from './components/Fio101Component/constants';
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-
 import { WalletBalancesItem } from '../../types';
 
 type UseContextProps = {
-  fio101Items: Fio101SliderContentProps[];
+  firstFromListFioAddressName: string;
+  hasFCH: boolean;
+  hasOneFCH: boolean;
+  hasDomains: boolean;
   isDesktop: boolean;
   isFioWalletsBalanceLoading: boolean;
   loading: boolean;
+  noMappedPubAddresses: boolean;
   totalBalance: WalletBalancesItem;
   totalBalanceLoading: boolean;
 };
@@ -59,10 +56,6 @@ export const useContext = (): UseContextProps => {
   );
 
   const dispatch = useDispatch();
-
-  const [fio101Items, setFio101Items] = useState<Fio101SliderContentProps[]>(
-    [],
-  );
 
   const loading =
     fioLoading ||
@@ -107,72 +100,15 @@ export const useContext = (): UseContextProps => {
     fioAddresses.length > 0,
   );
 
-  useEffect(() => {
-    if (!loading) {
-      let fio101ItemsArr = [
-        FIO_101_SLIDER_CONTENT.DEFAULT,
-        FIO_101_SLIDER_CONTENT.NO_FCH,
-        FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
-        FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-      ];
-
-      if (hasFCH && !hasDomains) {
-        fio101ItemsArr = [
-          FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-          FIO_101_SLIDER_CONTENT.DEFAULT,
-          FIO_101_SLIDER_CONTENT.NO_FCH,
-          FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
-        ];
-      }
-
-      if (hasFCH && noMappedPubAddresses) {
-        if (hasOneFCH) {
-          fio101ItemsArr = [
-            {
-              ...FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
-              link:
-                FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES.oneItemLink +
-                `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${firstFromListFioAddressName}`,
-            },
-            FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-            FIO_101_SLIDER_CONTENT.DEFAULT,
-            FIO_101_SLIDER_CONTENT.NO_FCH,
-          ];
-        } else {
-          fio101ItemsArr = [
-            FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
-            FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-            FIO_101_SLIDER_CONTENT.DEFAULT,
-            FIO_101_SLIDER_CONTENT.NO_FCH,
-          ];
-        }
-      }
-
-      if (!hasFCH) {
-        fio101ItemsArr = [
-          FIO_101_SLIDER_CONTENT.NO_FCH,
-          FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
-          FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-          FIO_101_SLIDER_CONTENT.DEFAULT,
-        ];
-      }
-
-      setFio101Items(fio101ItemsArr);
-    }
-  }, [
+  return {
     firstFromListFioAddressName,
-    hasDomains,
     hasFCH,
     hasOneFCH,
+    hasDomains,
+    isDesktop,
+    isFioWalletsBalanceLoading,
     loading,
     noMappedPubAddresses,
-  ]);
-
-  return {
-    isDesktop,
-    fio101Items,
-    loading,
-    isFioWalletsBalanceLoading,
     totalBalance,
     totalBalanceLoading: isFioWalletsBalanceLoading,
   };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Fio101Component } from './components/Fio101Component';
+import { Fio101Component } from '../../components/Fio101Component';
 import { FioRequestActionComponent } from '../../components/FioRequestActionComponent';
 
 import { ItemWrapper } from './components/ItemWrapper';
@@ -13,9 +13,13 @@ import classes from './DashboardPage.module.scss';
 
 const DashboardPage: React.FC = () => {
   const {
-    fio101Items,
+    firstFromListFioAddressName,
+    hasFCH,
+    hasOneFCH,
+    hasDomains,
     isDesktop,
     loading,
+    noMappedPubAddresses,
     totalBalance,
     totalBalanceLoading,
   } = useContext();
@@ -37,9 +41,13 @@ const DashboardPage: React.FC = () => {
         </ItemWrapper>
       </div>
       <Fio101Component
+        firstFromListFioAddressName={firstFromListFioAddressName}
+        hasFCH={hasFCH}
+        hasOneFCH={hasOneFCH}
+        hasDomains={hasDomains}
         isDesktop={isDesktop}
-        fio101Items={fio101Items}
         loading={loading}
+        noMappedPubAddresses={noMappedPubAddresses}
       />
     </div>
   );
