@@ -1,9 +1,9 @@
-import { ROUTES } from '../../../../constants/routes';
+import { ROUTES } from '../../constants/routes';
 
-import FchInRectangleImageSrc from '../../../../assets/images/fch-in-rectangle.svg';
-import FchWithDomainImageSrc from '../../../../assets/images/fch-with-domain.svg';
-import FchWithPlanesImageSrc from '../../../../assets/images/fch-with-planes.svg';
-import MappingImageSrc from '../../../../assets/images/mapping-image.svg';
+import FchInRectangleImageSrc from '../../assets/images/fch-in-rectangle.svg';
+import FchWithDomainImageSrc from '../../assets/images/fch-with-domain.svg';
+import FchWithPlanesImageSrc from '../../assets/images/fch-with-planes.svg';
+import MappingImageSrc from '../../assets/images/mapping-image.svg';
 
 export type Fio101SliderContentProps = {
   buttonText: string;

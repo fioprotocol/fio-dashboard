@@ -96,12 +96,24 @@
     align-items: flex-start;
     gap: 50px;
 
+    &.useMobileView {
+      padding: 30px 30px 104px 30px;
+      flex-direction: column;
+      align-items: center;
+
+      .textContainer {
+        margin-top: 30px;
+        .link {
+          align-self: center;
+        }
+      }
+    }
+
     .textContainer {
       margin-top: 0;
       .link {
         align-self: flex-start;
       }
     }
-    // }
   }
 }
