@@ -13,15 +13,11 @@ import classes from './DashboardPage.module.scss';
 
 const DashboardPage: React.FC = () => {
   const {
-    firstFromListFioAddressName,
-    hasFCH,
-    hasOneFCH,
-    hasDomains,
+    fio101ComponentProps,
     isDesktop,
-    loading,
-    noMappedPubAddresses,
     totalBalance,
     totalBalanceLoading,
+    welcomeComponentProps,
   } = useContext();
 
   return (
@@ -31,7 +27,7 @@ const DashboardPage: React.FC = () => {
         loading={totalBalanceLoading}
       />
       <div className={classes.actionContainer}>
-        <WelcomeComponent />
+        <WelcomeComponent {...welcomeComponentProps} />
         <ItemWrapper
           hasFitContentWidth={isDesktop}
           hasFullWidth={!isDesktop}
@@ -40,15 +36,7 @@ const DashboardPage: React.FC = () => {
           <FioRequestActionComponent />
         </ItemWrapper>
       </div>
-      <Fio101Component
-        firstFromListFioAddressName={firstFromListFioAddressName}
-        hasFCH={hasFCH}
-        hasOneFCH={hasOneFCH}
-        hasDomains={hasDomains}
-        isDesktop={isDesktop}
-        loading={loading}
-        noMappedPubAddresses={noMappedPubAddresses}
-      />
+      <Fio101Component {...fio101ComponentProps} />
     </div>
   );
 };
