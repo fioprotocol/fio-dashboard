@@ -1,30 +1,24 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import { US_LOCALE } from '../../../constants/common';
 
-import { BoolStateFunc, IsExpiredFunc } from '../types';
+import { isDomainExpired } from '../../../util/fio';
 
 import classes from './DateComponent.module.scss';
 
 type Props = {
   domainName: string;
   expiration?: Date;
-  isExpired: IsExpiredFunc;
-  toggleShowWarnBadge: BoolStateFunc;
 };
 
 const DateComponent: React.FC<Props> = props => {
-  const { domainName, expiration, isExpired, toggleShowWarnBadge } = props;
+  const { domainName, expiration } = props;
   return (
     <>
       {expiration && new Date(expiration).toLocaleDateString(US_LOCALE)}{' '}
-      {expiration && isExpired(domainName, expiration) && (
-        <FontAwesomeIcon
-          icon="exclamation-triangle"
-          className={classes.warnIcon}
-          onClick={() => toggleShowWarnBadge(true)}
-        />
+      {expiration && isDomainExpired(domainName, expiration) && (
+        <WarningIcon className={classes.warnIcon} />
       )}
     </>
   );

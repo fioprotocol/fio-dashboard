@@ -1,86 +1,129 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useCallback, useState } from 'react';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import DomainStatusBadge from '../../Badges/DomainStatusBadge/DomainStatusBadge';
+import NotificationBadge from '../../NotificationBadge';
 
-import Notifications from './Notifications';
+import {
+  FchActionButtons,
+  AddBundlesActionButton,
+  DomainActionButtons,
+} from './ActionButtons';
 import DateComponent from './DateComponent';
-import ActionButtons, { RenderAddBundles } from './ActionButtons';
+
+import { isDomainExpired } from '../../../util/fio';
 
 import { DOMAIN_STATUS } from '../../../constants/common';
-import { fioNameLabels } from '../../../constants/labels';
+import { LOW_BUNDLES_THRESHOLD } from '../../../constants/fio';
 
-import { ItemComponentProps, NotificationsProps } from '../types';
+import { FioNameItemProps } from '../../../types';
 
 import classes from './ItemComponent.module.scss';
 
-type Props = ItemComponentProps & NotificationsProps;
+type FchItemComponentProps = {
+  fioNameItem: FioNameItemProps;
+  warningContent: {
+    title: string;
+    message: string;
+  };
+  onAddBundles: (name: string) => void;
+  onSettingsOpen: (data: FioNameItemProps) => void;
+};
 
-const ItemComponent: React.FC<Props> = props => {
-  const {
-    fioNameItem,
-    showWarnBadge,
-    showInfoBadge,
-    toggleShowWarnBadge,
-    toggleShowInfoBadge,
-    pageName,
-    isDomainExpired,
-    isDesktop,
-    onSettingsOpen,
-    showExpired,
-    showStatus,
-    showBundles,
-    onAddBundles,
-    onRenewDomain,
-  } = props;
-  const { name = '', remaining, expiration, isPublic } = fioNameItem || {};
+type DomainItemComponentProps = {
+  fioNameItem: FioNameItemProps;
+  warningContent: {
+    title: string;
+    message: string;
+  };
+  onRenewDomain: (name: string) => void;
+  onSettingsOpen: (data: FioNameItemProps) => void;
+};
+
+export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
+  const { fioNameItem, warningContent, onAddBundles, onSettingsOpen } = props;
+
+  const { name = '', remaining } = fioNameItem || {};
+
+  const [showWarning, toggleShowWarning] = useState(
+    remaining < LOW_BUNDLES_THRESHOLD,
+  );
+
+  const closeWarning = useCallback(() => toggleShowWarning(false), []);
 
   return (
     <div className={classes.itemContainer}>
-      <h4 className={classes.title}>{fioNameLabels[pageName]} Details</h4>
-      <Notifications
-        showWarnBadge={showWarnBadge}
-        showInfoBadge={showInfoBadge}
-        toggleShowWarnBadge={toggleShowWarnBadge}
-        toggleShowInfoBadge={toggleShowInfoBadge}
-        pageName={pageName}
+      <h4 className={classes.title}>FIO Crypto Handle Details</h4>
+      <NotificationBadge
+        type={BADGE_TYPES.WARNING}
+        title={warningContent.title}
+        message={warningContent.message}
+        show={showWarning}
+        onClose={closeWarning}
       />
       <div className={classes.itemNameContainer}>
         <h4 className={classes.itemName}>
-          {pageName && <span className="boldText">{name}</span>}
+          <span className="boldText">{name}</span>
         </h4>
-        {showInfoBadge && (
-          <FontAwesomeIcon
-            icon="exclamation-triangle"
-            className={classes.infoIcon}
-            onClick={() => toggleShowInfoBadge(true)}
-          />
-        )}
       </div>
-      <Badge show={showExpired} type={BADGE_TYPES.WHITE}>
-        <p className={classes.badgeTitle}>Expiration Date</p>
-        <p className={classes.badgeItem}>
-          <DateComponent
-            domainName={name}
-            expiration={expiration}
-            isExpired={isDomainExpired}
-            toggleShowWarnBadge={toggleShowWarnBadge}
-          />
-        </p>
-      </Badge>
-      <Badge show={showBundles} type={BADGE_TYPES.WHITE}>
+      <Badge show type={BADGE_TYPES.WHITE}>
         <div className="d-flex align-items-center w-100">
           <p className={classes.badgeTitle}>Bundled Transactions</p>
           <p className={classes.badgeItem}>{remaining || 0}</p>
-          <RenderAddBundles
+          {showWarning && <WarningIcon className={classes.warnIcon} />}
+          <AddBundlesActionButton
+            isMobileView
             name={name}
-            isMobileView={true}
             onAddBundles={onAddBundles}
           />
         </div>
       </Badge>
-      <Badge show={showStatus} type={BADGE_TYPES.WHITE}>
+      <div className={classes.itemActions}>
+        <h4 className={classes.actionsTitle}>Actions</h4>
+        <FchActionButtons
+          fioNameItem={fioNameItem}
+          name={name}
+          onSettingsOpen={onSettingsOpen}
+        />
+      </div>
+    </div>
+  );
+};
+
+export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => {
+  const { fioNameItem, warningContent, onRenewDomain, onSettingsOpen } = props;
+
+  const { name = '', expiration, isPublic } = fioNameItem || {};
+
+  const [showWarning, toggleShowWarning] = useState(
+    expiration && isDomainExpired(name, expiration),
+  );
+
+  const closeWarning = useCallback(() => toggleShowWarning(false), []);
+
+  return (
+    <div className={classes.itemContainer}>
+      <h4 className={classes.title}>FIO Domain Details</h4>
+      <NotificationBadge
+        type={BADGE_TYPES.WARNING}
+        title={warningContent.title}
+        message={warningContent.message}
+        show={showWarning}
+        onClose={closeWarning}
+      />
+      <div className={classes.itemNameContainer}>
+        <h4 className={classes.itemName}>
+          <span className="boldText">{name}</span>
+        </h4>
+      </div>
+      <Badge show type={BADGE_TYPES.WHITE}>
+        <p className={classes.badgeTitle}>Expiration Date</p>
+        <p className={classes.badgeItem}>
+          <DateComponent domainName={name} expiration={expiration} />
+        </p>
+      </Badge>
+      <Badge show type={BADGE_TYPES.WHITE}>
         <div className={classes.domainStatus}>
           <p className={classes.badgeTitle}>Status</p>
           <div className={classes.domainStatusBadge}>
@@ -92,16 +135,13 @@ const ItemComponent: React.FC<Props> = props => {
       </Badge>
       <div className={classes.itemActions}>
         <h4 className={classes.actionsTitle}>Actions</h4>
-        <ActionButtons
-          pageName={pageName}
-          isDesktop={isDesktop}
-          onSettingsOpen={onSettingsOpen}
+        <DomainActionButtons
           fioNameItem={fioNameItem}
+          name={name}
           onRenewDomain={onRenewDomain}
+          onSettingsOpen={onSettingsOpen}
         />
       </div>
     </div>
   );
 };
-
-export default ItemComponent;

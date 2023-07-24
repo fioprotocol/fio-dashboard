@@ -1,32 +1,12 @@
 import { ROUTES } from '../../constants/routes';
-import { LINKS } from '../../constants/labels';
+import { Types } from '../../pages/DashboardPage/components/WelcomeComponentItem/constants';
+import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import colors from '../../assets/styles/colorsToJs.module.scss';
 
-export const BANNER_DATA = {
-  address: {
-    title: 'Manage My FIO Crypto Handles',
-    warningTitle: 'FIO Crypto Handle Renewal',
-    warningMessage:
-      'One or more FIO Crypto Handles below has expired or is about to expire. Renew today to ensure you do not lose the address.',
-    infoTitle: 'Link to Your Crypto',
-    infoMessage:
-      'One or more FIO Crypto Handles below are not linked to other crypto currencies.',
-  },
-  domain: {
-    title: 'Manage My FIO Domain',
-    warningTitle: 'Domain Renewal',
-    warningMessage:
-      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not lose the domain.',
-    infoTitle: 'FIO Crypto Handle Registration',
-    infoMessage:
-      'Select “Register Address” below to add an address to one of your domains.',
-  },
-};
-
 export const CTA_BADGE_TYPE = {
-  ADDRESS: 'address',
-  DOMAIN: 'domain',
+  ADDRESS: ADDRESS,
+  DOMAIN: DOMAIN,
   TOKENS: 'tokens',
 };
 
@@ -57,10 +37,12 @@ export const CTA_BADGE = {
   },
 } as const;
 
-export const PAGE_NAME = {
-  ADDRESS: 'address',
-  DOMAIN: 'domain',
-};
+export const PAGE_NAME: {
+  [key: string]: typeof ADDRESS | typeof DOMAIN;
+} = {
+  ADDRESS: ADDRESS,
+  DOMAIN: DOMAIN,
+} as const;
 
 export const ITEMS_LIMIT = 25;
 
@@ -76,19 +58,9 @@ export const BUTTONS_TITLE = {
   socialLinks: 'Socials',
 };
 
-export const SUBTITLE = {
-  [PAGE_NAME.ADDRESS]: 'FIO Crypto Handle owned by all your wallets.',
-  [PAGE_NAME.DOMAIN]: 'FIO Domains owned by all your wallets.',
-};
-
 export const TABLE_HEADERS_LIST = {
   [PAGE_NAME.ADDRESS]: ['FIO Crypto Handles', 'Bundles', 'Actions'],
   [PAGE_NAME.DOMAIN]: ['Domain', 'Status', 'Exp. Date', 'Actions'],
-};
-
-export const FIO_OWNERSHIP = {
-  [PAGE_NAME.ADDRESS]: ROUTES.FIO_ADDRESS_OWNERSHIP,
-  [PAGE_NAME.DOMAIN]: ROUTES.FIO_DOMAIN_OWNERSHIP,
 };
 
 export const PLURAL_NAME = {
@@ -96,7 +68,7 @@ export const PLURAL_NAME = {
   [PAGE_NAME.DOMAIN]: 'Domains',
 };
 
-export const SETTING_LINK = {
-  [PAGE_NAME.ADDRESS]: LINKS.FIO_ADDRESSES_SETTINGS,
-  [PAGE_NAME.DOMAIN]: LINKS.FIO_DOMAINS_SETTINGS,
+export const WELCOME_COMPONENT_TYPE = {
+  [PAGE_NAME.ADDRESS]: Types.FCH,
+  [PAGE_NAME.DOMAIN]: Types.DOM,
 };

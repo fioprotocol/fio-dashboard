@@ -6,8 +6,6 @@
   .tableHeader {
     @include sf-pro-display-medium;
     font-size: 0.875em;
-  }
-  .tableHeader {
     position: sticky;
     top: 0;
     background-color: $white;
@@ -101,6 +99,13 @@
       .remaining {
         width: 20px;
         margin: 0 15px 0 0;
+      }
+      .warnIcon {
+        margin-right: 10px;
+        margin-left: -15px;
+        color: $simple-orange;
+        width: 18px;
+        height: 18px;
       }
     }
 
