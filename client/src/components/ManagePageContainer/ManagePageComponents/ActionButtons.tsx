@@ -1,17 +1,20 @@
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import GestureIcon from '@mui/icons-material/Gesture';
+import LinkIcon from '@mui/icons-material/Link';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import SettingsIcon from '@mui/icons-material/Settings';
+import TimelapseIcon from '@mui/icons-material/Timelapse';
 
 import { BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
-
-import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
-import wrapIcon from '../../../assets/images/wrap.svg';
 
 import { FioNameItemProps } from '../../../types';
 
@@ -43,7 +46,7 @@ export const AddBundlesActionButton: React.FC<{
         )}
       >
         <Button title={isSmallDesktop ? BUTTONS_TITLE.addBundles : ''}>
-          <FontAwesomeIcon icon="plus-square" className={classes.linkIcon} />
+          <AddCircleIcon className={classes.linkIcon} />
           {!isSmallDesktop && BUTTONS_TITLE.addBundles}
         </Button>
       </div>
@@ -63,7 +66,7 @@ const RenewActionButton: React.FC<{
   return (
     <div onClick={handleRenewDomain} className={classes.actionButton}>
       <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
-        <img src={icon} alt="timelapse" />
+        <TimelapseIcon />
         {!isSmallDesktop && BUTTONS_TITLE.renew}
       </Button>
     </div>
@@ -78,7 +81,7 @@ const WrapActionButton: React.FC<DefautProps> = props => {
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
-        <img src={wrapIcon} alt="wrap" />
+        <RefreshIcon />
         {!isSmallDesktop && BUTTONS_TITLE.wrap}
       </Button>
     </Link>
@@ -102,7 +105,7 @@ const FchCustomSelection: React.FC<DefautProps> = props => {
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
-        <FontAwesomeIcon icon="at" className={classes.atIcon} />
+        <span className={classes.prefixButtonText}>@</span>&nbsp;
         {!isSmallDesktop && BUTTONS_TITLE.register}
       </Button>
     </Link>
@@ -121,7 +124,7 @@ const SettingsActionButton: React.FC<{
         onSettingsOpen && onSettingsOpen(fioNameItem);
       }}
     >
-      <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
+      <SettingsIcon className={classes.settingsIcon} />
     </Button>
   );
 };
@@ -134,7 +137,7 @@ const LinkTokenActionButton: React.FC<DefautProps> = props => {
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
-        <FontAwesomeIcon icon="link" className={classes.linkIcon} />{' '}
+        <LinkIcon className={classes.linkIcon} />{' '}
         {!isSmallDesktop && BUTTONS_TITLE.link}
       </Button>
     </Link>
@@ -155,7 +158,7 @@ const FioRequestActionButton: React.FC<DefautProps> = props => {
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.request : ''}>
-        <FontAwesomeIcon icon="arrow-down" className={classes.linkIcon} />
+        <ArrowDownwardIcon className={classes.linkIcon} />
         {!isSmallDesktop && BUTTONS_TITLE.request}
       </Button>
     </Link>
@@ -173,7 +176,7 @@ const NftSignatureActionButton: React.FC<DefautProps> = props => {
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
-        <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
+        <GestureIcon className={classes.atIcon} />{' '}
         {!isSmallDesktop && BUTTONS_TITLE.nft}
       </Button>
     </Link>
