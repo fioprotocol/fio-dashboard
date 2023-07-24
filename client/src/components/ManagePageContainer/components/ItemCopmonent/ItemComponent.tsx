@@ -1,23 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import WarningIcon from '@mui/icons-material/Warning';
 
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
-import DomainStatusBadge from '../../Badges/DomainStatusBadge/DomainStatusBadge';
-import NotificationBadge from '../../NotificationBadge';
+import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBadge';
+import NotificationBadge from '../../../NotificationBadge';
 
 import {
   FchActionButtons,
   AddBundlesActionButton,
   DomainActionButtons,
-} from './ActionButtons';
-import DateComponent from './DateComponent';
+} from '../ActionButtons';
+import { DateComponent } from '../DateComponent';
 
-import { isDomainExpired } from '../../../util/fio';
+import { isDomainExpired } from '../../../../util/fio';
 
-import { DOMAIN_STATUS } from '../../../constants/common';
-import { LOW_BUNDLES_THRESHOLD } from '../../../constants/fio';
+import { DOMAIN_STATUS } from '../../../../constants/common';
+import { LOW_BUNDLES_THRESHOLD } from '../../../../constants/fio';
 
-import { FioNameItemProps } from '../../../types';
+import { FioNameItemProps } from '../../../../types';
 
 import classes from './ItemComponent.module.scss';
 
