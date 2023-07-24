@@ -10,13 +10,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import SettingsIcon from '@mui/icons-material/Settings';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 
-import { BUTTONS_TITLE } from '../constants';
-import { ROUTES } from '../../../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
+import { BUTTONS_TITLE } from '../../constants';
+import { ROUTES } from '../../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
-import { useCheckIfSmallDesktop } from '../../../screenType';
+import { useCheckIfSmallDesktop } from '../../../../screenType';
 
-import { FioNameItemProps } from '../../../types';
+import { FioNameItemProps } from '../../../../types';
 
 import classes from './ActionButtons.module.scss';
 

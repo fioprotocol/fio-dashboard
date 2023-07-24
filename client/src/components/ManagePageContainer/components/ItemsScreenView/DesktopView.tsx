@@ -2,22 +2,22 @@ import React from 'react';
 import classnames from 'classnames';
 import WarningIcon from '@mui/icons-material/Warning';
 
-import DateComponent from './DateComponent';
+import { DateComponent } from '../DateComponent';
 import {
   AddBundlesActionButton,
   FchActionButtons,
   DomainActionButtons,
-} from './ActionButtons';
-import FioAddress from './FioAddress';
+} from '../ActionButtons';
+import { FioAddress } from '../FioAddress';
 
-import DomainStatusBadge from '../../Badges/DomainStatusBadge/DomainStatusBadge';
+import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBadge';
 
-import { TABLE_HEADERS_LIST } from '../constants';
-import { DOMAIN_STATUS } from '../../../constants/common';
-import { LOW_BUNDLES_THRESHOLD } from '../../../constants/fio';
+import { TABLE_HEADERS_LIST } from '../../constants';
+import { DOMAIN_STATUS } from '../../../../constants/common';
+import { LOW_BUNDLES_THRESHOLD } from '../../../../constants/fio';
 
-import { ModalOpenActionType } from '../types';
-import { FioNameItemProps, FioNameType } from '../../../types';
+import { ModalOpenActionType } from '../../types';
+import { FioNameItemProps, FioNameType } from '../../../../types';
 
 import classes from './UIView.module.scss';
 
