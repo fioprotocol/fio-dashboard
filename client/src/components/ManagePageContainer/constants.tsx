@@ -1,5 +1,5 @@
 import { ROUTES } from '../../constants/routes';
-import { Types } from '../../pages/DashboardPage/components/WelcomeComponentItem/constants';
+import { PAGE_TYPES } from '../../pages/DashboardPage/components/WelcomeComponentItem/constants';
 import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import colors from '../../assets/styles/colorsToJs.module.scss';
@@ -69,6 +69,6 @@ export const PLURAL_NAME = {
 };
 
 export const WELCOME_COMPONENT_TYPE = {
-  [PAGE_NAME.ADDRESS]: Types.FCH,
-  [PAGE_NAME.DOMAIN]: Types.DOM,
+  [PAGE_NAME.ADDRESS]: PAGE_TYPES.FCH,
+  [PAGE_NAME.DOMAIN]: PAGE_TYPES.DOM,
 };
