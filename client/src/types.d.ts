@@ -947,8 +947,10 @@ export type AllFioNamesAndWalletsProps = {
   firstFromListFioDomainName: string;
   firstFromListFioWalletPublicKey: string;
   fioAddresses: FioAddressDoublet[];
+  fioDomains: FioDomainDoublet[];
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
+  isFioWalletsBalanceLoading: boolean;
   hasAffiliate: boolean;
   hasDomains: boolean;
   hasExpiredDomains: boolean;
