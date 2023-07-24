@@ -4,7 +4,8 @@
 .warnIcon {
   margin-left: 10px;
   color: $simple-orange;
-  cursor: pointer;
+  width: 18px !important;
+  height: 18px !important;
   
   @include lg {
     margin-left: 5px;

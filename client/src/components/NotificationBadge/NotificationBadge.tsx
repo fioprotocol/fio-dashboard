@@ -26,6 +26,7 @@ type Props = {
   marginTopZero?: boolean;
   marginBottomZero?: boolean;
   marginAuto?: boolean;
+  withoutMargin?: boolean;
 };
 
 type MainIconProps = {
@@ -60,6 +61,7 @@ const NotificationBadge: React.FC<Props> = props => {
     marginBottomZero,
     marginTopZero,
     marginAuto,
+    withoutMargin,
   } = props;
 
   if (hasNewDesign) {
@@ -94,7 +96,7 @@ const NotificationBadge: React.FC<Props> = props => {
   }
 
   return (
-    <Badge type={type} show={show}>
+    <Badge type={type} show={show} withoutMargin={withoutMargin}>
       <FontAwesomeIcon
         icon={iconName || 'exclamation-circle'}
         className={classes.icon}

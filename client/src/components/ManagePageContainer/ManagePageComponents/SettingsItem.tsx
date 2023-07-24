@@ -5,19 +5,28 @@ import { Button } from 'react-bootstrap';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import PageTitle from '../../PageTitle/PageTitle';
 
-import { FIO_OWNERSHIP, SETTING_LINK } from '../constants';
-import { fioNameLabels } from '../../../constants/labels';
+import { LINKS } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
-import { FioWalletDoublet } from '../../../types';
-import { SettingsProps } from '../types';
+import { FioNameItemProps, FioWalletDoublet } from '../../../types';
 
 import classes from './SettingsItem.module.scss';
 
-const SettingsItem: React.FC<SettingsProps> = props => {
-  const { fioNameItem, pageName, fioWallets, showStatus } = props;
-  const { name: fioName } = fioNameItem;
+type FchSettingsItemProps = {
+  fioNameItem: FioNameItemProps;
+  fioWallets: FioWalletDoublet[];
+};
+
+type DomainSettingsItemProps = {
+  fioNameItem: FioNameItemProps;
+  fioWallets: FioWalletDoublet[];
+};
+
+export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
+  const { fioNameItem, fioWallets } = props;
+
+  const { name } = fioNameItem;
   const { publicKey, name: walletName } =
     fioWallets.find(
       (fioWallet: FioWalletDoublet) =>
@@ -26,9 +35,9 @@ const SettingsItem: React.FC<SettingsProps> = props => {
 
   return (
     <div className={classes.settingsContainer}>
-      <PageTitle link={SETTING_LINK[pageName]} isVirtualPage />
+      <PageTitle link={LINKS.FIO_ADDRESSES_SETTINGS} isVirtualPage />
       <h3 className={classes.title}>Advanced Settings</h3>
-      <h5 className={classes.subtitle}>{fioNameLabels[pageName]} Ownership</h5>
+      <h5 className={classes.subtitle}>FIO Crypto Handle Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
           <p className={classes.badgeTitle}>FIO Wallet</p>
@@ -41,35 +50,77 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           <p className={classes.badgeItem}>{publicKey}</p>
         </div>
       </Badge>
-      {showStatus && (
-        <div>
-          <h5 className={classes.actionTitle}>Domain Access</h5>
-          <p className={classes.text}>
-            If you would like your domain to be publicly giving users the
-            ability to register FIO Crypto Handles on it, please set the domain
-            to public.
-          </p>
-          <Link
-            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
-            className={classes.buttonLink}
-          >
-            <Button className={classes.button}>
-              Make Domain {fioNameItem.isPublic ? 'Private' : 'Public'}
-            </Button>
-          </Link>
-        </div>
-      )}
       <div>
         <h5 className={classes.actionTitle}>
-          Transfer {fioNameLabels[pageName]} Ownership
+          Transfer FIO Crypto Handle Ownership
         </h5>
         <p className={classes.text}>
-          Transferring your {fioNameLabels[pageName]} to a new Owner is easy,
-          Simply enter or paste the new owner public key, submit the request and
-          verify the transaction.
+          Transferring your FIO Crypto Handle to a new Owner is easy, Simply
+          enter or paste the new owner public key, submit the request and verify
+          the transaction.
         </p>
         <Link
-          to={`${FIO_OWNERSHIP[pageName]}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
+          to={`${ROUTES.FIO_ADDRESS_OWNERSHIP}?${QUERY_PARAMS_NAMES.NAME}=${name}`}
+          className={classes.buttonLink}
+        >
+          <Button className={classes.button}>Start Transfer</Button>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
+  const { fioNameItem, fioWallets } = props;
+
+  const { name: fioName } = fioNameItem;
+  const { publicKey, name: walletName } =
+    fioWallets.find(
+      (fioWallet: FioWalletDoublet) =>
+        fioWallet.publicKey === fioNameItem.walletPublicKey,
+    ) || {};
+
+  return (
+    <div className={classes.settingsContainer}>
+      <PageTitle link={LINKS.FIO_DOMAINS_SETTINGS} isVirtualPage />
+      <h3 className={classes.title}>Advanced Settings</h3>
+      <h5 className={classes.subtitle}>FIO Domain Ownership</h5>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classes.badgeContainer}>
+          <p className={classes.badgeTitle}>FIO Wallet</p>
+          <p className={classes.badgeItem}>{walletName}</p>
+        </div>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classes.badgeContainer}>
+          <p className={classes.badgeTitle}>Public Key</p>
+          <p className={classes.badgeItem}>{publicKey}</p>
+        </div>
+      </Badge>
+      <div>
+        <h5 className={classes.actionTitle}>Domain Access</h5>
+        <p className={classes.text}>
+          If you would like your domain to be publicly giving users the ability
+          to register FIO Crypto Handles on it, please set the domain to public.
+        </p>
+        <Link
+          to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
+          className={classes.buttonLink}
+        >
+          <Button className={classes.button}>
+            Make Domain {fioNameItem.isPublic ? 'Private' : 'Public'}
+          </Button>
+        </Link>
+      </div>
+      <div>
+        <h5 className={classes.actionTitle}>Transfer FIO Domain Ownership</h5>
+        <p className={classes.text}>
+          Transferring your FIO Domain to a new Owner is easy, Simply enter or
+          paste the new owner public key, submit the request and verify the
+          transaction.
+        </p>
+        <Link
+          to={`${ROUTES.FIO_DOMAIN_OWNERSHIP}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
           className={classes.buttonLink}
         >
           <Button className={classes.button}>Start Transfer</Button>
@@ -102,5 +153,3 @@ const SettingsItem: React.FC<SettingsProps> = props => {
     </div>
   );
 };
-
-export default SettingsItem;
