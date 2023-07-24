@@ -19,12 +19,6 @@
     margin-bottom: 0;
     padding-left: 20px;
   }
-
-  .infoIcon {
-    margin-left: 10px;
-    color: $blue;
-    cursor: pointer;
-  }
 }
 .domainStatus {
   display: flex;
@@ -48,6 +42,7 @@
   color: $baltic-sea;
   margin-right: 20px;
   margin-bottom: 0;
+  display: flex;
 }
 
 .itemActions {
@@ -58,4 +53,12 @@
     margin-bottom: 15px;
     @include proxima-nova-semibold;
   }
+}
+
+.warnIcon {
+  margin-right: 10px;
+  margin-left: -15px;
+  color: $simple-orange;
+  width: 18px;
+  height: 18px;
 }

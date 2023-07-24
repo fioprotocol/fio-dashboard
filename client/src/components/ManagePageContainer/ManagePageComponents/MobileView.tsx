@@ -5,19 +5,20 @@ import FioAddress from './FioAddress';
 
 import { PLURAL_NAME } from '../constants';
 
-import { DefaultProps } from '../types';
+import { ModalOpenActionType } from '../types';
+import { FioNameItemProps, FioNameType } from '../../../types';
 
 import classes from './UIView.module.scss';
 
-const MobileView: React.FC<DefaultProps> = props => {
-  const {
-    fioNameList,
-    pageName,
-    showInfoBadge,
-    toggleShowInfoBadge,
-    onItemModalOpen,
-    showFioAddressName,
-  } = props;
+type MobileViewProps = {
+  fioNameList: FioNameItemProps[];
+  isAddress: boolean;
+  pageName: FioNameType;
+  onItemModalOpen: ModalOpenActionType;
+};
+
+export const MobileView: React.FC<MobileViewProps> = props => {
+  const { fioNameList, isAddress, pageName, onItemModalOpen } = props;
 
   return (
     <div className={classes.container}>
@@ -31,15 +32,7 @@ const MobileView: React.FC<DefaultProps> = props => {
               key={name}
               onClick={() => onItemModalOpen && onItemModalOpen(fioNameItem)}
             >
-              {showFioAddressName ? (
-                <FioAddress
-                  name={name}
-                  showInfoBadge={showInfoBadge}
-                  toggleShowInfoBadge={toggleShowInfoBadge}
-                />
-              ) : (
-                name
-              )}
+              {isAddress ? <FioAddress name={name} /> : name}
               <FontAwesomeIcon
                 icon="chevron-right"
                 className={classes.openIcon}
@@ -50,5 +43,3 @@ const MobileView: React.FC<DefaultProps> = props => {
     </div>
   );
 };
-
-export default MobileView;

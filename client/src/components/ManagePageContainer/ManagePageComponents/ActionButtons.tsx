@@ -1,23 +1,28 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { BUTTONS_TITLE, PAGE_NAME } from '../constants';
+import { BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
 
-import { ActionButtonProps } from '../types';
-
-import classes from './ActionButtons.module.scss';
-
 import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
 import wrapIcon from '../../../assets/images/wrap.svg';
 
-export const RenderAddBundles: React.FC<{
+import { FioNameItemProps } from '../../../types';
+
+import classes from './ActionButtons.module.scss';
+
+type DefautProps = {
+  isSmallDesktop: boolean;
+  name: string;
+};
+
+export const AddBundlesActionButton: React.FC<{
   name: string;
   isMobileView?: boolean;
   onAddBundles: (name: string) => void;
@@ -46,22 +51,16 @@ export const RenderAddBundles: React.FC<{
   );
 };
 
-const ActionButtons: React.FC<ActionButtonProps> = props => {
-  const {
-    pageName,
-    isDesktop,
-    onSettingsOpen,
-    fioNameItem,
-    onRenewDomain,
-  } = props;
-  const { name = '' } = fioNameItem;
+const RenewActionButton: React.FC<{
+  onRenewDomain: (name: string) => void;
+} & DefautProps> = props => {
+  const { isSmallDesktop, name, onRenewDomain } = props;
 
-  const isSmallDesktop = useCheckIfSmallDesktop();
-  const handleRenewDomain = () => {
+  const handleRenewDomain = useCallback(() => {
     onRenewDomain(name);
-  };
+  }, [name, onRenewDomain]);
 
-  const renderRenew = () => (
+  return (
     <div onClick={handleRenewDomain} className={classes.actionButton}>
       <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
         <img src={icon} alt="timelapse" />
@@ -69,8 +68,11 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       </Button>
     </div>
   );
+};
 
-  const renderWrap = () => (
+const WrapActionButton: React.FC<DefautProps> = props => {
+  const { isSmallDesktop, name } = props;
+  return (
     <Link
       to={`${ROUTES.WRAP_DOMAIN}?name=${name}`}
       className={classes.actionButton}
@@ -81,8 +83,38 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       </Button>
     </Link>
   );
+};
 
-  const renderSettings = () => (
+const FchCustomSelection: React.FC<DefautProps> = props => {
+  const { isSmallDesktop, name } = props;
+
+  return (
+    <Link
+      to={{
+        pathname: ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
+        search: `${QUERY_PARAMS_NAMES.DOMAIN}=${name}`,
+        state: {
+          shouldPrependUserDomains: true,
+          closedInitialDropdown: true,
+          removeFilter: true,
+        },
+      }}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
+        <FontAwesomeIcon icon="at" className={classes.atIcon} />
+        {!isSmallDesktop && BUTTONS_TITLE.register}
+      </Button>
+    </Link>
+  );
+};
+
+const SettingsActionButton: React.FC<{
+  fioNameItem: FioNameItemProps;
+  onSettingsOpen: (data: FioNameItemProps) => void;
+}> = props => {
+  const { fioNameItem, onSettingsOpen } = props;
+  return (
     <Button
       className={classes.settingsButton}
       onClick={() => {
@@ -92,8 +124,11 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
     </Button>
   );
+};
 
-  const renderLinkToken = () => (
+const LinkTokenActionButton: React.FC<DefautProps> = props => {
+  const { isSmallDesktop, name } = props;
+  return (
     <Link
       to={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
       className={classes.actionButton}
@@ -104,8 +139,12 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       </Button>
     </Link>
   );
+};
 
-  const renderFioRequest = () => (
+const FioRequestActionButton: React.FC<DefautProps> = props => {
+  const { isSmallDesktop, name } = props;
+
+  return (
     <Link
       to={{
         pathname: ROUTES.FIO_TOKENS_REQUEST,
@@ -121,62 +160,99 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       </Button>
     </Link>
   );
+};
 
-  return pageName === PAGE_NAME.ADDRESS ? (
-    <div className={classes.actionButtonsContainer}>
-      <Link
-        to={{
-          pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
-          search: `${QUERY_PARAMS_NAMES.ADDRESS}=${name}`,
-        }}
-        className={classes.actionButton}
-      >
-        <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
-          <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
-          {!isSmallDesktop && BUTTONS_TITLE.nft}
-        </Button>
-      </Link>
-      {renderFioRequest()}
-      {renderLinkToken()}
-      <Link
-        to={{
-          pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-          search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
-        }}
-        className={classes.actionButton}
-      >
-        <Button title={isSmallDesktop ? BUTTONS_TITLE.socialLinks : ''}>
-          <span className={classes.prefixButtonText}>@</span>&nbsp;
-          {!isSmallDesktop && BUTTONS_TITLE.socialLinks}
-        </Button>
-      </Link>
-      {renderSettings()}
-    </div>
-  ) : (
-    <div className={classes.actionButtonsContainer}>
-      {renderRenew()}
-      {renderWrap()}
-      <Link
-        to={{
-          pathname: ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
-          search: `${QUERY_PARAMS_NAMES.DOMAIN}=${name}`,
-          state: {
-            shouldPrependUserDomains: true,
-            closedInitialDropdown: true,
-            removeFilter: true,
-          },
-        }}
-        className={classes.actionButton}
-      >
-        <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
-          <FontAwesomeIcon icon="at" className={classes.atIcon} />
-          {!isSmallDesktop &&
-            (isDesktop ? BUTTONS_TITLE.register : 'Register FIO Crypto Handle')}
-        </Button>
-      </Link>
-      {renderSettings()}
-    </div>
+const NftSignatureActionButton: React.FC<DefautProps> = props => {
+  const { isSmallDesktop, name } = props;
+  return (
+    <Link
+      to={{
+        pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
+        search: `${QUERY_PARAMS_NAMES.ADDRESS}=${name}`,
+      }}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
+        <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
+        {!isSmallDesktop && BUTTONS_TITLE.nft}
+      </Button>
+    </Link>
   );
 };
 
-export default ActionButtons;
+const SocialLinksActionButton: React.FC<DefautProps> = props => {
+  const { isSmallDesktop, name } = props;
+
+  return (
+    <Link
+      to={{
+        pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
+        search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+      }}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.socialLinks : ''}>
+        <span className={classes.prefixButtonText}>@</span>&nbsp;
+        {!isSmallDesktop && BUTTONS_TITLE.socialLinks}
+      </Button>
+    </Link>
+  );
+};
+
+const ActionButtonsContainer: React.FC = props => (
+  <div className={classes.actionButtonsContainer}>{props.children}</div>
+);
+
+export const FchActionButtons: React.FC<{
+  fioNameItem: FioNameItemProps;
+  name: string;
+  onSettingsOpen: (data: FioNameItemProps) => void;
+}> = props => {
+  const { fioNameItem, name, onSettingsOpen } = props;
+  const isSmallDesktop = useCheckIfSmallDesktop();
+
+  const defaultProps = {
+    isSmallDesktop,
+    name,
+  };
+
+  return (
+    <ActionButtonsContainer>
+      <NftSignatureActionButton {...defaultProps} />
+      <FioRequestActionButton {...defaultProps} />
+      <LinkTokenActionButton {...defaultProps} />
+      <SocialLinksActionButton {...defaultProps} />
+      <SettingsActionButton
+        fioNameItem={fioNameItem}
+        onSettingsOpen={onSettingsOpen}
+      />
+    </ActionButtonsContainer>
+  );
+};
+
+export const DomainActionButtons: React.FC<{
+  fioNameItem: FioNameItemProps;
+  name: string;
+  onRenewDomain: (name: string) => void;
+  onSettingsOpen: (data: FioNameItemProps) => void;
+}> = props => {
+  const { fioNameItem, name, onRenewDomain, onSettingsOpen } = props;
+  const isSmallDesktop = useCheckIfSmallDesktop();
+
+  const defaultProps = {
+    isSmallDesktop,
+    name,
+  };
+
+  return (
+    <ActionButtonsContainer>
+      <RenewActionButton {...defaultProps} onRenewDomain={onRenewDomain} />
+      <WrapActionButton {...defaultProps} />
+      <FchCustomSelection {...defaultProps} />
+      <SettingsActionButton
+        fioNameItem={fioNameItem}
+        onSettingsOpen={onSettingsOpen}
+      />
+    </ActionButtonsContainer>
+  );
+};
