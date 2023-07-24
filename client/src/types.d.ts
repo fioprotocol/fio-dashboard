@@ -942,6 +942,26 @@ export type SocialMediaLinkItem = {
   link: string;
 };
 
+export type AllFioNamesAndWalletsProps = {
+  firstFromListFioAddressName: string;
+  firstFromListFioDomainName: string;
+  firstFromListFioWalletPublicKey: string;
+  fioAddresses: FioAddressDoublet[];
+  fioWallets: FioWalletDoublet[];
+  fioWalletsBalances: WalletsBalances;
+  hasAffiliate: boolean;
+  hasDomains: boolean;
+  hasExpiredDomains: boolean;
+  hasFCH: boolean;
+  hasOneDomain: boolean;
+  hasOneFCH: boolean;
+  hasNoStakedTokens: boolean;
+  hasZeroTotalBalance: boolean;
+  loading: boolean;
+  noMappedPubAddresses: boolean;
+  userId: string;
+};
+
 declare global {
   interface Window {
     dataLayer: AnyObject[];
