@@ -1,46 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import isEmpty from 'lodash/isEmpty';
+import { useSelector } from 'react-redux';
 import superagent from 'superagent';
 
 import { isNewUser as isNewUserSelector } from '../../../../redux/profile/selectors';
 import {
   APY_URL,
-  Types,
+  PAGE_TYPES,
   WELCOME_COMPONENT_ITEM_CONTENT,
   WelcomeItemProps,
 } from '../WelcomeComponentItem/constants';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 import {
-  fioAddresses as fioAddressesSelector,
-  fioAddressesLoading as fioAddressesLoadingSelector,
-  fioDomains as fioDomainsSelector,
-  fioWalletsBalances as fioWalletsBalancesSelector,
-  fioWallets as fioWalletsSelector,
-  loading as fioLoadingSelector,
-  mappedPublicAddresses as mappedPublicAddressesSelector,
-  walletsFioAddressesLoading as walletsFioAddressesLoadingSelector,
-} from '../../../../redux/fio/selectors';
-import { user as userSelector } from '../../../../redux/profile/selectors';
-import {
   hasRecoveryQuestions as hasRecoveryQuestionsSelector,
   isPinEnabled as isPinEnabledSelector,
-  loading as edgeLoadingSelector,
 } from '../../../../redux/edge/selectors';
-import {
-  checkRecoveryQuestions,
-  setPinEnabled,
-} from '../../../../redux/edge/actions';
-import {
-  getAllFioPubAddresses,
-  refreshBalance,
-  refreshFioNames,
-} from '../../../../redux/fio/actions';
 
 import useEffectOnce from '../../../../hooks/general';
-import { isDomainExpired } from '../../../../util/fio';
 import { log } from '../../../../util/general';
+
+import { DefaultWelcomeComponentProps } from './types';
 
 const MAIN_CONTENT = {
   USER_IS_BACK: {
@@ -62,10 +41,26 @@ type UseContextProps = {
   loading: boolean;
 };
 
-export const useContext = (type: Types): UseContextProps => {
+export const useContext = (
+  props: DefaultWelcomeComponentProps,
+): UseContextProps => {
+  const {
+    firstFromListFioAddressName,
+    firstFromListFioDomainName,
+    firstFromListFioWalletPublicKey,
+    hasAffiliate,
+    hasDomains,
+    hasExpiredDomains,
+    hasFCH,
+    hasNoStakedTokens,
+    hasOneDomain,
+    hasOneFCH,
+    hasZeroTotalBalance,
+    loading,
+    noMappedPubAddresses,
+    pageType = PAGE_TYPES.ALL,
+  } = props;
   const isNewUser = useSelector(isNewUserSelector);
-
-  const dispatch = useDispatch();
 
   const [
     firstWelcomeItem,
@@ -79,47 +74,8 @@ export const useContext = (type: Types): UseContextProps => {
 
   const [APY, setAPY] = useState<string>(null);
 
-  const fioWallets = useSelector(fioWalletsSelector);
-  const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
-  const fioLoading = useSelector(fioLoadingSelector);
-  const fioAddresses = useSelector(fioAddressesSelector);
-  const fioDomains = useSelector(fioDomainsSelector);
-  const mappedPublicAddresses = useSelector(mappedPublicAddressesSelector);
-  const user = useSelector(userSelector);
   const hasRecoveryQuestions = useSelector(hasRecoveryQuestionsSelector);
   const isPinEnabled = useSelector(isPinEnabledSelector);
-  const edgeLoading = useSelector(edgeLoadingSelector);
-  const fioAddressesLoading = useSelector(fioAddressesLoadingSelector);
-  const walletsFioAddressesLoading = useSelector(
-    walletsFioAddressesLoadingSelector,
-  );
-
-  const hasFCH = fioAddresses?.length > 0;
-  const hasOneFCH = fioAddresses?.length === 1;
-  const hasDomains = fioDomains?.length > 0;
-  const hasOneDomain = fioDomains?.length === 1;
-  const hasNoStakedTokens = fioWalletsBalances.total?.staked?.nativeFio === 0;
-  const hasExpiredDomains = fioDomains.some(fioDomain =>
-    isDomainExpired(fioDomain.name, fioDomain.expiration),
-  );
-
-  const loading =
-    fioLoading ||
-    edgeLoading ||
-    fioAddressesLoading ||
-    walletsFioAddressesLoading;
-
-  const totalBalance = fioWalletsBalances?.total?.total;
-
-  const noMappedPubAddresses =
-    !isEmpty(mappedPublicAddresses) &&
-    Object.values(mappedPublicAddresses).every(
-      mappedPubicAddress => mappedPubicAddress.publicAddresses.length === 0,
-    );
-
-  const firstFromListFioAddressName = fioAddresses[0]?.name;
-  const firstFromListFioDomainName = fioDomains[0]?.name;
-  const firstFromListFioWalletPublicKey = fioWallets[0]?.publicKey;
 
   const getAPY = useCallback(async () => {
     try {
@@ -134,34 +90,6 @@ export const useContext = (type: Types): UseContextProps => {
     }
   }, []);
 
-  useEffectOnce(
-    () => {
-      for (const { publicKey } of fioWallets) {
-        dispatch(refreshBalance(publicKey));
-        dispatch(refreshFioNames(publicKey));
-      }
-    },
-    [fioWallets, dispatch],
-    fioWallets.length > 0,
-  );
-
-  useEffectOnce(
-    () => {
-      for (const fioAddress of fioAddresses) {
-        dispatch(getAllFioPubAddresses(fioAddress.name, 0, 0));
-      }
-    },
-    [dispatch, fioAddresses],
-    fioAddresses.length > 0,
-  );
-
-  useEffect(() => {
-    if (user.username) {
-      dispatch(checkRecoveryQuestions(user.username));
-      dispatch(setPinEnabled(user.username));
-    }
-  }, [dispatch, user.username]);
-
   useEffectOnce(() => {
     getAPY();
   }, []);
@@ -173,7 +101,7 @@ export const useContext = (type: Types): UseContextProps => {
       if (
         hasDomains &&
         WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -192,7 +120,7 @@ export const useContext = (type: Types): UseContextProps => {
       if (
         hasDomains &&
         WELCOME_COMPONENT_ITEM_CONTENT.GET_ANOTHER_FIO_DOMAIN.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -200,9 +128,9 @@ export const useContext = (type: Types): UseContextProps => {
       }
       if (
         hasDomains &&
-        !user.affiliateProfile &&
+        !hasAffiliate &&
         WELCOME_COMPONENT_ITEM_CONTENT.AFFILIATE.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -211,7 +139,7 @@ export const useContext = (type: Types): UseContextProps => {
       if (
         hasNoStakedTokens &&
         WELCOME_COMPONENT_ITEM_CONTENT.STAKING.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -234,16 +162,16 @@ export const useContext = (type: Types): UseContextProps => {
         hasFCH &&
         !hasDomains &&
         WELCOME_COMPONENT_ITEM_CONTENT.GET_CUSTOM_FIO_DOMAIN.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.GET_CUSTOM_FIO_DOMAIN;
       }
       if (
-        totalBalance?.nativeFio === 0 &&
+        hasZeroTotalBalance &&
         WELCOME_COMPONENT_ITEM_CONTENT.FIO_BALANCE.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -252,7 +180,7 @@ export const useContext = (type: Types): UseContextProps => {
       if (
         !isPinEnabled &&
         WELCOME_COMPONENT_ITEM_CONTENT.SETUP_PIN.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -262,7 +190,7 @@ export const useContext = (type: Types): UseContextProps => {
         hasFCH &&
         noMappedPubAddresses &&
         WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -281,7 +209,7 @@ export const useContext = (type: Types): UseContextProps => {
       if (
         !hasFCH &&
         WELCOME_COMPONENT_ITEM_CONTENT.NO_FCH.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -291,7 +219,7 @@ export const useContext = (type: Types): UseContextProps => {
         hasDomains &&
         hasExpiredDomains &&
         WELCOME_COMPONENT_ITEM_CONTENT.EXPIRED_DOMAINS.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -301,7 +229,7 @@ export const useContext = (type: Types): UseContextProps => {
       if (
         !hasRecoveryQuestions &&
         WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD.types.some(
-          itemType => itemType === type,
+          itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
@@ -315,6 +243,8 @@ export const useContext = (type: Types): UseContextProps => {
     APY,
     firstFromListFioAddressName,
     firstFromListFioDomainName,
+    firstFromListFioWalletPublicKey,
+    hasAffiliate,
     hasDomains,
     hasExpiredDomains,
     hasFCH,
@@ -322,11 +252,11 @@ export const useContext = (type: Types): UseContextProps => {
     hasOneDomain,
     hasOneFCH,
     hasRecoveryQuestions,
+    hasZeroTotalBalance,
     isPinEnabled,
     loading,
     noMappedPubAddresses,
-    totalBalance?.nativeFio,
-    user.affiliateProfile,
+    pageType,
   ]);
 
   const content = isNewUser
