@@ -96,15 +96,12 @@
   &.settingsButton {
     width: 39px;
     margin-left: 10px;
-
-    & button {
-      width: 39px;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     & svg {
-      position: relative;
-      left: -7px;
-      top: -0.8px;
+      margin: 0;
     }
   }
 
