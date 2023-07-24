@@ -1,12 +1,12 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import FioAddress from './FioAddress';
+import { FioAddress } from '../FioAddress';
 
-import { PLURAL_NAME } from '../constants';
+import { PLURAL_NAME } from '../../constants';
 
-import { ModalOpenActionType } from '../types';
-import { FioNameItemProps, FioNameType } from '../../../types';
+import { ModalOpenActionType } from '../../types';
+import { FioNameItemProps, FioNameType } from '../../../../types';
 
 import classes from './UIView.module.scss';
 

@@ -2,14 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
-import PageTitle from '../../PageTitle/PageTitle';
+import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import PageTitle from '../../../PageTitle/PageTitle';
 
-import { LINKS } from '../../../constants/labels';
-import { ROUTES } from '../../../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
+import { LINKS } from '../../../../constants/labels';
+import { ROUTES } from '../../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
-import { FioNameItemProps, FioWalletDoublet } from '../../../types';
+import { FioNameItemProps, FioWalletDoublet } from '../../../../types';
 
 import classes from './SettingsItem.module.scss';
 

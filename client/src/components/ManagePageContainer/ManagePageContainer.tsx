@@ -7,22 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import { Fio101Component } from '../Fio101Component';
 import { WelcomeComponent } from '../../pages/DashboardPage/components/WelcomeComponent';
-import { ListItemsComponent } from './ManagePageComponents/ListItemsComponent';
+import { ListItemsComponent } from './components/ListItemsComponent';
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
 import NotificationBadge from '../NotificationBadge';
 import { BADGE_TYPES } from '../Badge/Badge';
 
-import { DesktopView } from './ManagePageComponents/DesktopView';
+import { DesktopView } from './components/ItemsScreenView';
 import {
   DomainItemComponent,
   FchItemComponent,
-} from './ManagePageComponents/ItemComponent';
-import { MobileView } from './ManagePageComponents/MobileView';
-import {
-  FchSettingsItem,
-  DomainSettingsItem,
-} from './ManagePageComponents/SettingsItem';
+} from './components/ItemCopmonent';
+import { MobileView } from './components/ItemsScreenView';
+import { FchSettingsItem, DomainSettingsItem } from './components/SettingsItem';
 
 import {
   getAllFioPubAddresses,

@@ -6,7 +6,7 @@ type Props = {
   name: string;
 };
 
-const FioAddress: React.FC<Props> = props => {
+export const FioAddress: React.FC<Props> = props => {
   const { name } = props;
   return (
     <div className={classes.nameContainer}>
@@ -14,5 +14,3 @@ const FioAddress: React.FC<Props> = props => {
     </div>
   );
 };
-
-export default FioAddress;

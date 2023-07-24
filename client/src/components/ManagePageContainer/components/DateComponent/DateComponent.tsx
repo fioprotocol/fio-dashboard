@@ -1,9 +1,9 @@
 import React from 'react';
 import WarningIcon from '@mui/icons-material/Warning';
 
-import { US_LOCALE } from '../../../constants/common';
+import { US_LOCALE } from '../../../../constants/common';
 
-import { isDomainExpired } from '../../../util/fio';
+import { isDomainExpired } from '../../../../util/fio';
 
 import classes from './DateComponent.module.scss';
 
@@ -12,7 +12,7 @@ type Props = {
   expiration?: Date;
 };
 
-const DateComponent: React.FC<Props> = props => {
+export const DateComponent: React.FC<Props> = props => {
   const { domainName, expiration } = props;
   return (
     <>
@@ -23,5 +23,3 @@ const DateComponent: React.FC<Props> = props => {
     </>
   );
 };
-
-export default DateComponent;
