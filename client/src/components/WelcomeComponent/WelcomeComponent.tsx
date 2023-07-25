@@ -12,10 +12,11 @@ import classes from './WelcomeComponent.module.scss';
 type Props = {
   onlyActions?: boolean;
   noPaddingTop?: boolean;
+  withoutMarginTop?: boolean;
 } & DefaultWelcomeComponentProps;
 
 export const WelcomeComponent: React.FC<Props> = props => {
-  const { onlyActions = false, noPaddingTop = false } = props;
+  const { onlyActions = false, noPaddingTop = false, withoutMarginTop } = props;
   const {
     text,
     title,
@@ -28,14 +29,21 @@ export const WelcomeComponent: React.FC<Props> = props => {
     <div
       className={classnames(
         classes.container,
-        noPaddingTop && classes.noPaddingTop,
+        withoutMarginTop && classes.withoutMarginTop,
       )}
     >
-      {!onlyActions && <h2 className={classes.title}>{title}</h2>}
-      {!onlyActions && <p className={classes.text}>{text}</p>}
-      <div className={classes.actionItemContainer}>
-        <WelcomeComponentItem content={firstWelcomeItem} loading={loading} />
-        <WelcomeComponentItem content={secondWelcomeItem} loading={loading} />
+      <div
+        className={classnames(
+          classes.contentContainer,
+          noPaddingTop && classes.noPaddingTop,
+        )}
+      >
+        {!onlyActions && <h2 className={classes.title}>{title}</h2>}
+        {!onlyActions && <p className={classes.text}>{text}</p>}
+        <div className={classes.actionItemContainer}>
+          <WelcomeComponentItem content={firstWelcomeItem} loading={loading} />
+          <WelcomeComponentItem content={secondWelcomeItem} loading={loading} />
+        </div>
       </div>
     </div>
   );

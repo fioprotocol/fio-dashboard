@@ -30,6 +30,7 @@ type UseContextProps = {
     hasZeroTotalBalance: boolean;
     loading: boolean;
     noMappedPubAddresses: boolean;
+    withoutMarginTop: boolean;
   };
 };
 
@@ -65,6 +66,6 @@ export const useContext = (): UseContextProps => {
     isDesktop,
     totalBalance,
     totalBalanceLoading: isFioWalletsBalanceLoading,
-    welcomeComponentProps: allFioNamesAndWallets,
+    welcomeComponentProps: { ...allFioNamesAndWallets, withoutMarginTop: true },
   };
 };
