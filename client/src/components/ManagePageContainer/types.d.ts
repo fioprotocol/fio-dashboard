@@ -15,6 +15,7 @@ export interface ContainerProps {
     title: string;
     message: string;
   };
+  listNameTitle?: React.ReactElement;
   pageName: FioNameType;
   title: React.ReactElement;
   warningContent?: {
