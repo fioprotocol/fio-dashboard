@@ -17,7 +17,7 @@ import useQuery from '../../hooks/useQuery';
 import {
   PAGE_TYPES,
   PAGE_TYPES_PROPS,
-} from '../DashboardPage/components/WelcomeComponentItem/constants';
+} from '../../components/WelcomeComponent/constants';
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import {

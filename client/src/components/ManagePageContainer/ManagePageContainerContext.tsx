@@ -17,7 +17,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import { isDomainExpired } from '../../util/fio';
 
 import { FioNameItemProps, FioNameType, FioWalletDoublet } from '../../types';
-import { PAGE_TYPES_PROPS } from '../../pages/DashboardPage/components/WelcomeComponentItem/constants';
+import { PAGE_TYPES_PROPS } from '../WelcomeComponent/constants';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 
 type Props = {

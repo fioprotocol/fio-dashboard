@@ -1,4 +1,4 @@
-import { PAGE_TYPES_PROPS } from '../WelcomeComponentItem/constants';
+import { PAGE_TYPES_PROPS } from './constants';
 
 export type DefaultWelcomeComponentProps = {
   firstFromListFioAddressName: string;
