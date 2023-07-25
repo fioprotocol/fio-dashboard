@@ -13,10 +13,7 @@ import classes from './TitleComponent.module.scss';
 
 export const TitleComponent: React.FC = props => {
   return (
-    <Title
-      title="Manage My FIO Domain"
-      subtitle="FIO Domains owned by all your wallets."
-    >
+    <Title title="Manage My FIO Domain">
       <ActionButtonsContainer>
         <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.link}>
           <div>
