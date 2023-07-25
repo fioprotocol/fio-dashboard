@@ -29,7 +29,9 @@ import classes from './ManagePageContainer.module.scss';
 
 export const ManagePageContainer: React.FC<ContainerProps> = props => {
   const {
+    children,
     emptyStateContent,
+    listNameTitle,
     pageName,
     title,
     warningContent,
@@ -65,6 +67,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
   return (
     <div className={classes.container}>
       <LayoutContainer title={title}>
+        {listNameTitle}
         <div className={classes.dataContainer}>
           <NotificationBadge
             type={BADGE_TYPES.WARNING}
@@ -100,6 +103,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
             />
           </InfiniteScroll>
         </div>
+        {children}
         <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>
       <div className={classes.actionBadge}>
