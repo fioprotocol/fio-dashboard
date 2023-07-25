@@ -1,19 +1,19 @@
 import { ReactNode } from 'react';
 
-import { ROUTES } from '../../../../constants/routes';
-import { PREOPENED_MODALS } from '../../../SettingsPage/SettingsPage';
+import { ROUTES } from '../../constants/routes';
+import { PREOPENED_MODALS } from '../../pages/SettingsPage/SettingsPage';
 
-import Addbox from '../../../../assets/images/add-box.svg';
-import ExclamationCircleImgSrc from '../../../../assets/images/exclamation-circle.svg';
-import FreeImgSrc from '../../../../assets/images/free.svg';
-import GroupImgSrc from '../../../../assets/images/group.svg';
-import GrowthImgSrc from '../../../../assets/images/growth.svg';
-import LocationPinImgSrc from '../../../../assets/images/location-pin.svg';
-import NetworkImgSrc from '../../../../assets/images/network.svg';
-import NotsetupImgSrc from '../../../../assets/images/notsetup.svg';
-import OpenseaImgSrc from '../../../../assets/images/opensea.svg';
-import PackageImgSrc from '../../../../assets/images/package.svg';
-import PasswordImgSrc from '../../../../assets/images/password.svg';
+import Addbox from '../../assets/images/add-box.svg';
+import ExclamationCircleImgSrc from '../../assets/images/exclamation-circle.svg';
+import FreeImgSrc from '../../assets/images/free.svg';
+import GroupImgSrc from '../../assets/images/group.svg';
+import GrowthImgSrc from '../../assets/images/growth.svg';
+import LocationPinImgSrc from '../../assets/images/location-pin.svg';
+import NetworkImgSrc from '../../assets/images/network.svg';
+import NotsetupImgSrc from '../../assets/images/notsetup.svg';
+import OpenseaImgSrc from '../../assets/images/opensea.svg';
+import PackageImgSrc from '../../assets/images/package.svg';
+import PasswordImgSrc from '../../assets/images/password.svg';
 
 export const PAGE_TYPES = {
   ALL: 'ALL',

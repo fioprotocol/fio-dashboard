@@ -1,5 +1,5 @@
 import { ROUTES } from '../../constants/routes';
-import { PAGE_TYPES } from '../../pages/DashboardPage/components/WelcomeComponentItem/constants';
+import { PAGE_TYPES } from '../WelcomeComponent/constants';
 import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import colors from '../../assets/styles/colorsToJs.module.scss';

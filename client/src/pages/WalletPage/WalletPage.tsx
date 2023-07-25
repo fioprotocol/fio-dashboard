@@ -14,7 +14,7 @@ import Title from '../WalletsPage/components/Title';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
-import { WelcomeComponent } from '../DashboardPage/components/WelcomeComponent';
+import { WelcomeComponent } from '../../components/WelcomeComponent';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';

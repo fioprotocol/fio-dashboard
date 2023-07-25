@@ -8,7 +8,7 @@ import { fioWalletsBalances as fioWalletsBalancesSelector } from '../../redux/fi
 import {
   PAGE_TYPES,
   PAGE_TYPES_PROPS,
-} from '../DashboardPage/components/WelcomeComponentItem/constants';
+} from '../../components/WelcomeComponent/constants';
 
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 import {

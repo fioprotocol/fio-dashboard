@@ -8,7 +8,6 @@ type Props = {
   hasFullWidth?: boolean;
   hasSmallBorderRadius?: boolean;
   isShrinked?: boolean;
-  hasMarginTop?: boolean;
 };
 
 export const ItemWrapper: React.FC<Props> = props => {
@@ -18,7 +17,6 @@ export const ItemWrapper: React.FC<Props> = props => {
     hasFullWidth,
     hasSmallBorderRadius,
     isShrinked,
-    hasMarginTop,
   } = props;
   return (
     <div
@@ -28,7 +26,6 @@ export const ItemWrapper: React.FC<Props> = props => {
         hasFullWidth && classes.hasFullWidth,
         hasSmallBorderRadius && classes.hasSmallBorderRadius,
         isShrinked && classes.isShrinked,
-        hasMarginTop && classes.marginTop,
       )}
     >
       {children}

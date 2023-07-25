@@ -2,22 +2,22 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import superagent from 'superagent';
 
-import { isNewUser as isNewUserSelector } from '../../../../redux/profile/selectors';
+import { isNewUser as isNewUserSelector } from '../../redux/profile/selectors';
 import {
   APY_URL,
   PAGE_TYPES,
   WELCOME_COMPONENT_ITEM_CONTENT,
   WelcomeItemProps,
-} from '../WelcomeComponentItem/constants';
-import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
+} from './constants';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import {
   hasRecoveryQuestions as hasRecoveryQuestionsSelector,
   isPinEnabled as isPinEnabledSelector,
-} from '../../../../redux/edge/selectors';
+} from '../../redux/edge/selectors';
 
-import useEffectOnce from '../../../../hooks/general';
-import { log } from '../../../../util/general';
+import useEffectOnce from '../../hooks/general';
+import { log } from '../../util/general';
 
 import { DefaultWelcomeComponentProps } from './types';
 
