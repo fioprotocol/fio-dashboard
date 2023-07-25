@@ -27,9 +27,7 @@ const DashboardPage: React.FC = () => {
         loading={totalBalanceLoading}
       />
       <div className={classes.actionContainer}>
-        <ItemWrapper hasFullWidth>
-          <WelcomeComponent {...welcomeComponentProps} />
-        </ItemWrapper>
+        <WelcomeComponent {...welcomeComponentProps} />
         <ItemWrapper
           hasFitContentWidth={isDesktop}
           hasFullWidth={!isDesktop}
