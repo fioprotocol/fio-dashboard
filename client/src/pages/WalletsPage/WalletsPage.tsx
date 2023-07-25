@@ -12,7 +12,7 @@ import TotalBalanceBadge from './components/TotalBalanceBadge';
 import Title from './components/Title';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NotificationBadge from '../../components/NotificationBadge/NotificationBadge';
-import { WelcomeComponent } from '../DashboardPage/components/WelcomeComponent';
+import { WelcomeComponent } from '../../components/WelcomeComponent';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';

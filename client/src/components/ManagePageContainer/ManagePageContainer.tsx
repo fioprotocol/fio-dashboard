@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import { Fio101Component } from '../Fio101Component';
-import { WelcomeComponent } from '../../pages/DashboardPage/components/WelcomeComponent';
+import { WelcomeComponent } from '../WelcomeComponent';
 import { ListItemsComponent } from './components/ListItemsComponent';
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';

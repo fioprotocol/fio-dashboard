@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import Loader from '../../../../components/Loader/Loader';
+import SubmitButton from '../../../common/SubmitButton/SubmitButton';
+import Loader from '../../../Loader/Loader';
 
 import classes from './WelcomeComponentItem.module.scss';
 
