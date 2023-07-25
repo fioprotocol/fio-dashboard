@@ -4,56 +4,69 @@
 
 .container {
   border-radius: 24px;
-  background-image: $black-gradient;
-  padding: 20px;
-  color: $white;
+  border: 10px solid $vista-white;
+  background-color: $vista-white;
+  margin-top: 40px;
 
-  &.noPaddingTop {
-    padding-top: 1px;
+  &.withoutMarginTop {
+    margin-top: 0;
   }
 
-  .title {
-    font-size: 1.75em;
-    margin: 0;
-    @include comfortaa-bold;
-  }
+  .contentContainer {
+    border-radius: 24px;
+    background-image: $black-gradient;
+    padding: 20px;
+    color: $white;
 
-  .text {
-    font-size: 1.0625em;
-    margin-top: 20px;
-    margin-bottom: 0;
-    @include proxima-nova-thin;
-  }
-
-  .actionItemContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    margin-top: 20px;
+    &.noPaddingTop {
+      padding-top: 1px;
+    }
+  
+    .title {
+      font-size: 1.75em;
+      margin: 0;
+      @include comfortaa-bold;
+    }
+  
+    .text {
+      font-size: 1.0625em;
+      margin-top: 20px;
+      margin-bottom: 0;
+      @include proxima-nova-thin;
+    }
+  
+    .actionItemContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-top: 20px;
+    }
   }
 }
 
 @include lg {
   .container {
-    padding: 40px 100px 40px 40px;
-    height: 100%;
+    .contentContainer {
+      padding: 40px 100px 40px 40px;
+      height: 100%;
 
-    &.noPaddingTop {
-      padding-top: 1px;
-    }
+      &.noPaddingTop {
+        padding-top: 1px;
+      }
 
-    .title {
-      font-size: 2.375em;
-    }
+      .title {
+        font-size: 2.375em;
+      }
 
-    .text {
-      font-size: 10px;
-      font-size: 1em;
-    }
+      .text {
+        font-size: 10px;
+        font-size: 1em;
+      }
 
-    .actionItemContainer {
-      flex-direction: row;
-      margin-top: 40px;
+      .actionItemContainer {
+        flex-direction: row;
+        margin-top: 40px;
+      }
     }
   }
 }
