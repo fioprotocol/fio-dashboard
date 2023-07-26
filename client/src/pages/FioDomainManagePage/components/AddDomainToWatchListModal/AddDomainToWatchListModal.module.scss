@@ -1,0 +1,60 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.modalContainer {
+  padding: 0 10px 20px;
+
+  .title {
+    margin-top: -20px;
+    color: $dark-gunmetal;
+  }
+
+  .subtitle {
+    margin-top: 15px;
+    margin-bottom: 0;
+    color: $black;
+  }
+
+  .formTitle {
+    margin-top: 20px;
+    margin-bottom: 0;
+    color: $dark-jungle-green;
+    font-size: 0.875em;
+    @include proxima-nova-semibold;
+  }
+
+  .form {
+     margin-top: 20px;
+
+     .purchaseConntainer {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .formTitle {
+          margin: 0;
+          color: $dark-jungle-green;
+          font-size: 0.875em;
+          @include proxima-nova-semibold;
+        }
+
+        .badgeContainer {
+          margin-top: 20px;
+          margin-bottom: 30px;
+          color: $black;
+          gap: 20px;
+
+          & > div {
+            margin: 0;
+          }
+
+          .text {
+            font-size: 10px;
+            line-height: 10px;
+            color: $white;
+          }
+        }
+     }
+  }
+}

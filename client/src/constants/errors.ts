@@ -41,3 +41,6 @@ export const NON_VAILD_DOMAIN =
 
 export const INTERNAL_SERVER_ERROR_CODE = 500;
 export const NOT_FOUND = 404;
+
+export const DOMAIN_IS_NOT_EXIST =
+  'This domain doesn’t exist and is eligible for purchase below.';
