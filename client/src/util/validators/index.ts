@@ -2,6 +2,7 @@ export * from './match-field.validator';
 export * from './fio-address-exists.validator';
 export * from './fio-domain.validator';
 export * from './fio-domain-is-not-exist.validator';
+export * from './fio-domain-is-already-present-on-watchlist';
 export * from './is-fio-address.validator';
 export * from './is-number.validator';
 export * from './is-valid-pub-address.validator';

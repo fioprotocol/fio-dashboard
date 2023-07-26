@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Form, Field } from 'react-final-form';
 
@@ -18,20 +18,44 @@ import { formValidation } from './validation';
 import { DOMAIN_TYPE, DOMAIN_TYPE_PARAMS } from '../../../../constants/fio';
 import { DOMAIN_IS_NOT_EXIST } from '../../../../constants/errors';
 
+import { DomainWatchlistItem } from '../../../../types';
+
 import classes from './AddDomainToWatchListModal.module.scss';
 
 type Props = {
+  domainsWatchlistList: DomainWatchlistItem[];
+  loading: boolean;
   prices: {
     costFio: string;
     costUsdc: string;
   };
   showModal: boolean;
+  domainWatchlistItemCreate: (domain: string) => void;
   onClose: () => void;
   onPurchaseButtonClick: (domain: string) => void;
 };
 
+type FormProps = {
+  domain: string;
+};
+
 export const AddDomainToWatchListModal: React.FC<Props> = props => {
-  const { prices, showModal, onClose, onPurchaseButtonClick } = props;
+  const {
+    domainsWatchlistList,
+    loading,
+    prices,
+    showModal,
+    domainWatchlistItemCreate,
+    onClose,
+    onPurchaseButtonClick,
+  } = props;
+
+  const onSubmit = useCallback(
+    (values: FormProps) => {
+      domainWatchlistItemCreate(values.domain);
+    },
+    [domainWatchlistItemCreate],
+  );
 
   return (
     <Modal
@@ -45,11 +69,19 @@ export const AddDomainToWatchListModal: React.FC<Props> = props => {
       <div className={classes.modalContainer}>
         <h3 className={classes.title}>Add to Watchlist</h3>
         <p className={classes.subtitle}>
-          Add a domain to you watchlist by simply entering or pasting the domain
-          name.
+          Add a domain to your watchlist by simply entering or pasting the
+          domain name.
         </p>
         <h4 className={classes.formTitle}>Domain Name</h4>
-        <Form onSubmit={() => null} validate={formValidation.validateForm}>
+        <Form
+          onSubmit={onSubmit}
+          validate={values =>
+            formValidation.validateForm({
+              ...values,
+              domainsWatchlistList: domainsWatchlistList,
+            })
+          }
+        >
           {formProps => {
             const {
               dirtyFields,
@@ -59,6 +91,7 @@ export const AddDomainToWatchListModal: React.FC<Props> = props => {
               visited,
               validating,
               values,
+              handleSubmit,
             } = formProps;
             const domainIsNotExist = errors.domain === DOMAIN_IS_NOT_EXIST;
 
@@ -69,7 +102,7 @@ export const AddDomainToWatchListModal: React.FC<Props> = props => {
               dirtyFields.domain;
 
             return (
-              <form className={classes.form}>
+              <form className={classes.form} onSubmit={handleSubmit}>
                 <Field
                   colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_GRAY}
                   component={TextInput}
@@ -109,6 +142,7 @@ export const AddDomainToWatchListModal: React.FC<Props> = props => {
                   <SubmitButton
                     text="Add to Watchlist"
                     disabled={hasValidationErrors}
+                    loading={loading}
                   />
                 )}
               </form>

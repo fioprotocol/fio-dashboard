@@ -13,19 +13,36 @@ import { useContext } from './WatchListDomainsComponentContext';
 
 import { ROUTES } from '../../../../constants/routes';
 
+import { DomainWatchlistItem } from '../../../../types';
+
 import classes from './WatchListDomainsComponent.module.scss';
 
 type Props = {
+  domainsWatchlistList: DomainWatchlistItem[];
+  domainWatchlistLoading: boolean;
   prices: {
     costFio: string;
     costUsdc: string;
   };
+  showAddDomainWatchlistModal: boolean;
+  closeDomainWatchlistModal: () => void;
+  domainWatchlistItemCreate: (domain: string) => void;
   onPurchaseButtonClick: (domain: string) => void;
+  openDomainWatchlistModal: () => void;
 };
 
 export const WatchListDomainsComponent: React.FC<Props> = props => {
-  const { prices, onPurchaseButtonClick } = props;
-  const { isSmallDesktop, showModal, closeModal, openModal } = useContext();
+  const {
+    domainsWatchlistList,
+    domainWatchlistLoading,
+    prices,
+    showAddDomainWatchlistModal,
+    closeDomainWatchlistModal,
+    domainWatchlistItemCreate,
+    onPurchaseButtonClick,
+    openDomainWatchlistModal,
+  } = props;
+  const { isSmallDesktop } = useContext();
 
   return (
     <>
@@ -60,15 +77,18 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
                   {!isSmallDesktop && 'Add to Watchlist'}
                 </>
               }
-              onClick={openModal}
+              onClick={openDomainWatchlistModal}
             />
           </div>
         </div>
       </div>
       <AddDomainToWatchListModal
-        showModal={showModal}
-        onClose={closeModal}
+        domainsWatchlistList={domainsWatchlistList}
+        loading={domainWatchlistLoading}
+        showModal={showAddDomainWatchlistModal}
+        onClose={closeDomainWatchlistModal}
         prices={prices}
+        domainWatchlistItemCreate={domainWatchlistItemCreate}
         onPurchaseButtonClick={onPurchaseButtonClick}
       />
     </>

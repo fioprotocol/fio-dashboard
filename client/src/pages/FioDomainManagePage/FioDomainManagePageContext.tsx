@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -31,7 +31,8 @@ import {
 import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 
-import { CartItem } from '../../types';
+import { CartItem, DomainWatchlistItem } from '../../types';
+import useEffectOnce from '../../hooks/general';
 
 const EMPTY_STATE_CONTENT = {
   title: 'No FIO Domains',
@@ -46,7 +47,14 @@ const WARNING_CONTENT = {
   },
 };
 
+const SUCCESS_MESSAGES = {
+  CREATE_DOMAIN_WATCHLIST_ITEM: 'The domain was added to your watchlist',
+  DELETE_DOMAIN_WATCHLIST_ITEM: 'The domain was deleted from your watchlist',
+};
+
 type UseContextProps = {
+  domainWatchlistLoading: boolean;
+  domainsWatchlistList: DomainWatchlistItem[];
   emptyStateContent: {
     title: string;
     message: string;
@@ -55,12 +63,23 @@ type UseContextProps = {
     costFio: string;
     costUsdc: string;
   };
+  selectedDomainWatchlistItem: DomainWatchlistItem;
+  showAddDomainWatchlistModal: boolean;
+  successMessage: string | null;
   warningContent: {
     title: string;
     message: string;
   };
+  closeDomainWatchlistModal: () => void;
+  domainWatchlistItemCreate: (domain: string) => void;
+  domainWatchlistItemDelete: (id: string) => void;
   handleRenewDomain: (name: string) => void;
+  onBagdeClose: () => void;
   onPurchaseButtonClick: (domain: string) => void;
+  openDomainWatchlistModal: () => void;
+  setSelectedDomainWatchlistItem: (
+    domainWatchlistItem: DomainWatchlistItem,
+  ) => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -71,6 +90,23 @@ export const useContext = (): UseContextProps => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const [domainWatchlistLoading, toggleDomainWatchlistLoading] = useState<
+    boolean
+  >(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [domainsWatchlistList, setDomainsWatchlistList] = useState<
+    DomainWatchlistItem[]
+  >([]);
+  const [
+    selectedDomainWatchlistItem,
+    setSelectedDomainWatchlistItem,
+  ] = useState<DomainWatchlistItem | null>(null);
+
+  const [
+    showAddDomainWatchlistModal,
+    toggleShowAddDomainWatchlistModal,
+  ] = useState<boolean>(false);
 
   const cartItemsJSON = JSON.stringify(cartItems);
 
@@ -116,6 +152,17 @@ export const useContext = (): UseContextProps => {
     ],
   );
 
+  const onBagdeClose = useCallback(() => {
+    setSuccessMessage(null);
+  }, []);
+
+  const openDomainWatchlistModal = useCallback(() => {
+    toggleShowAddDomainWatchlistModal(true);
+  }, []);
+  const closeDomainWatchlistModal = useCallback(() => {
+    toggleShowAddDomainWatchlistModal(false);
+  }, []);
+
   const onPurchaseButtonClick = useCallback(
     domain => {
       const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
@@ -142,18 +189,81 @@ export const useContext = (): UseContextProps => {
     [cartItemsJSON, fio, history, nativeFioDomainPrice, usdc],
   );
 
+  const getDomainsWatchlistList = useCallback(async () => {
+    try {
+      toggleDomainWatchlistLoading(true);
+
+      const domainsWatchlist = await apis.domainsWatchlist.list();
+
+      setDomainsWatchlistList(domainsWatchlist);
+
+      toggleDomainWatchlistLoading(false);
+    } catch (err) {
+      toggleDomainWatchlistLoading(false);
+    }
+  }, []);
+
+  const domainWatchlistItemCreate = useCallback(
+    async domain => {
+      toggleDomainWatchlistLoading(true);
+      try {
+        await apis.domainsWatchlist.create(domain);
+        await getDomainsWatchlistList();
+
+        toggleDomainWatchlistLoading(false);
+        setSuccessMessage(SUCCESS_MESSAGES.CREATE_DOMAIN_WATCHLIST_ITEM);
+        closeDomainWatchlistModal();
+      } catch (err) {
+        toggleDomainWatchlistLoading(false);
+      }
+    },
+    [closeDomainWatchlistModal, getDomainsWatchlistList],
+  );
+
+  const domainWatchlistItemDelete = useCallback(
+    async (id: string) => {
+      toggleDomainWatchlistLoading(true);
+
+      try {
+        await apis.domainsWatchlist.delete(id);
+        await getDomainsWatchlistList();
+
+        toggleDomainWatchlistLoading(false);
+        setSuccessMessage(SUCCESS_MESSAGES.DELETE_DOMAIN_WATCHLIST_ITEM);
+      } catch (err) {
+        toggleDomainWatchlistLoading(false);
+      }
+    },
+    [getDomainsWatchlistList],
+  );
+
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.renewFioDomain));
   }, [dispatch]);
 
+  useEffectOnce(() => {
+    getDomainsWatchlistList();
+  }, []);
+
   return {
+    domainWatchlistLoading,
+    domainsWatchlistList,
     emptyStateContent: EMPTY_STATE_CONTENT,
     prices: {
       costFio: fio,
       costUsdc: usdc,
     },
+    selectedDomainWatchlistItem,
+    showAddDomainWatchlistModal,
+    successMessage,
     warningContent: WARNING_CONTENT.DOMAIN_RENEW,
+    closeDomainWatchlistModal,
+    domainWatchlistItemCreate,
+    domainWatchlistItemDelete,
     handleRenewDomain,
+    onBagdeClose,
     onPurchaseButtonClick,
+    openDomainWatchlistModal,
+    setSelectedDomainWatchlistItem,
   };
 };
