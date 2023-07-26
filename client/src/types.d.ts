@@ -964,6 +964,12 @@ export type AllFioNamesAndWalletsProps = {
   userId: string;
 };
 
+export type DomainWatchlistItem = {
+  id: string;
+  domain: string;
+  createdAt: string;
+};
+
 declare global {
   interface Window {
     dataLayer: AnyObject[];
