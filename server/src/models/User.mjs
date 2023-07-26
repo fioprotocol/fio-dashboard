@@ -10,6 +10,7 @@ import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
 import { ReferrerProfile } from './ReferrerProfile';
 import { Order } from './Order';
 import { LockedFch } from './LockedFch.mjs';
+import { DomainsWatchlist } from './DomainsWatchlist.mjs';
 
 import { USER_STATUS } from '../config/constants';
 
@@ -83,6 +84,11 @@ export class User extends Base {
       foreignKey: 'userId',
       sourceKey: 'id',
       as: 'lockedFch',
+    });
+    this.hasMany(DomainsWatchlist, {
+      foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'domainsWatchlist',
     });
   }
 
