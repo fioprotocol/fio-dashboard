@@ -132,12 +132,14 @@ export const DesktopView: React.FC<DesktopViewProps> = props => {
           isAddress ? (
             <AddressItemComponent
               fioNameItem={fioNameItem}
+              key={fioNameItem.name}
               onAddBundles={onAddBundles}
               onSettingsOpen={onSettingsOpen}
             />
           ) : (
             <DomainItemComponent
               fioNameItem={fioNameItem}
+              key={fioNameItem.name}
               onSettingsOpen={onSettingsOpen}
               onRenewDomain={onRenewDomain}
             />
