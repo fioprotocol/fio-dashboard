@@ -4,18 +4,19 @@ import adminUsers from './adminUsers';
 import auth from './auth';
 import chainCodes from './chainCodes';
 import contacts from './contacts';
-import registration from './registration.mjs';
+import domainsWatchlist from './domainsWatchlist.mjs';
 import external from './external';
 import general from './general';
 import generatePdf from './generatePdf';
+import history from './wrapStatus.mjs';
 import newDeviceTwoFactor from './newDeviceTwoFactor';
 import notifications from './notifications';
 import orders from './orders';
 import payments from './payments';
 import refProfiles from './refProfiles';
+import registration from './registration.mjs';
 import twitter from './twitter.mjs';
 import users from './users';
-import history from './wrapStatus.mjs';
 import vars from './vars.mjs';
 
 export default {
@@ -25,17 +26,18 @@ export default {
   auth,
   chainCodes,
   contacts,
-  registration,
+  domainsWatchlist,
   external,
   general,
   generatePdf,
+  history,
   newDeviceTwoFactor,
   notifications,
   orders,
   payments,
   refProfiles,
+  registration,
   twitter,
   users,
-  history,
   vars,
 };
