@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import BlockIcon from '@mui/icons-material/Block';
 
 import InfoBadge from '../InfoBadge/InfoBadge';
 
@@ -33,6 +34,7 @@ type Props = {
   title?: string;
   type?: string;
   color?: string;
+  useBlockIcon?: boolean;
 };
 
 export const ErrorBadge: React.FC<Props> = props => {
@@ -47,6 +49,7 @@ export const ErrorBadge: React.FC<Props> = props => {
     title = DEFAULT_ERROR_BADGE_TITLE,
     type = ERROR_UI_TYPE.TEXT,
     color = COLOR_TYPE.WHITE,
+    useBlockIcon,
   } = props;
 
   const message = error || data.error || submitError;
@@ -63,7 +66,11 @@ export const ErrorBadge: React.FC<Props> = props => {
     >
       {(useVisibility || hasError) && (
         <>
-          <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
+          {useBlockIcon ? (
+            <BlockIcon className={classes.errorIcon} />
+          ) : (
+            <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
+          )}
           {message}
         </>
       )}
