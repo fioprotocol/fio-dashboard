@@ -33,10 +33,13 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     emptyStateContent,
     listNameTitle,
     pageName,
+    showTopBadge,
     title,
+    topBadgeContent,
     warningContent,
     handleAddBundles,
     handleRenewDomain,
+    onTopBadgeClose,
   } = props;
 
   const {
@@ -66,48 +69,60 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   return (
     <div className={classes.container}>
-      <LayoutContainer title={title}>
-        {listNameTitle}
-        <div className={classes.dataContainer}>
-          <NotificationBadge
-            type={BADGE_TYPES.WARNING}
-            title={warningContent.title}
-            message={warningContent.message}
-            show={showWarnBadge}
-            withoutMargin
-            onClose={() => toggleShowWarnBadge(false)}
-          />
-          <InfiniteScroll
-            loading={loading}
-            hasNextPage={hasNextPage}
-            onLoadMore={loadMore}
-          >
-            <ListItemsComponent
-              isEmpty={isEmptyList && !loading}
-              emptyStateContent={emptyStateContent}
-              listItems={
-                isDesktop ? (
-                  <DesktopView
-                    {...listItemsDefaultProps}
-                    onAddBundles={handleAddBundles}
-                    onSettingsOpen={onSettingsOpen}
-                    onRenewDomain={handleRenewDomain}
-                  />
-                ) : (
-                  <MobileView
-                    {...listItemsDefaultProps}
-                    onItemModalOpen={onItemModalOpen}
-                  />
-                )
-              }
+      <NotificationBadge
+        hasNewDesign
+        type={topBadgeContent?.type}
+        show={showTopBadge}
+        message={topBadgeContent?.message}
+        title={topBadgeContent?.title}
+        marginBottomZero
+        onClose={onTopBadgeClose}
+        className={classes.topBadge}
+      />
+      <div className={classes.contentContainer}>
+        <LayoutContainer title={title}>
+          {listNameTitle}
+          <div className={classes.dataContainer}>
+            <NotificationBadge
+              type={BADGE_TYPES.WARNING}
+              title={warningContent.title}
+              message={warningContent.message}
+              show={showWarnBadge}
+              withoutMargin
+              onClose={() => toggleShowWarnBadge(false)}
             />
-          </InfiniteScroll>
+            <InfiniteScroll
+              loading={loading}
+              hasNextPage={hasNextPage}
+              onLoadMore={loadMore}
+            >
+              <ListItemsComponent
+                isEmpty={isEmptyList && !loading}
+                emptyStateContent={emptyStateContent}
+                listItems={
+                  isDesktop ? (
+                    <DesktopView
+                      {...listItemsDefaultProps}
+                      onAddBundles={handleAddBundles}
+                      onSettingsOpen={onSettingsOpen}
+                      onRenewDomain={handleRenewDomain}
+                    />
+                  ) : (
+                    <MobileView
+                      {...listItemsDefaultProps}
+                      onItemModalOpen={onItemModalOpen}
+                    />
+                  )
+                }
+              />
+            </InfiniteScroll>
+          </div>
+          {children}
+          <WelcomeComponent {...welcomeComponentProps} />
+        </LayoutContainer>
+        <div className={classes.actionBadge}>
+          <Fio101Component {...fio101ComponentProps} />
         </div>
-        {children}
-        <WelcomeComponent {...welcomeComponentProps} />
-      </LayoutContainer>
-      <div className={classes.actionBadge}>
-        <Fio101Component {...fio101ComponentProps} />
       </div>
       <Modal
         show={showItemModal}
