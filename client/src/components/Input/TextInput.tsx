@@ -32,11 +32,13 @@ import metamaskIcon from '../../assets/images/metamask.svg';
 
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
+  BLACK_GRAY: 'blackGray',
   BLACK_WHITE: 'blackWhite',
   INDIGO_WHITE: 'indigoWhite',
 };
 
 export const INPUT_COLOR_SCHEMA = {
+  BLACK_AND_GRAY: 'black_and_gray',
   BLACK_AND_WHITE: 'black_and_white',
   INDIGO_AND_WHITE: 'indigo_and_white',
 };
@@ -76,6 +78,7 @@ export type TextInputProps = {
   hasItalicLabel?: boolean;
   hasErrorForced?: boolean;
   isMiddleHeight?: boolean;
+  useErrorBlockIcon?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -116,6 +119,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     hasRegularHeight,
     hasItalicLabel,
     hasErrorForced,
+    useErrorBlockIcon,
     ...rest
   } = props;
   const {
@@ -131,6 +135,7 @@ export const TextInput: React.ForwardRefRenderFunction<
 
   const { type, value, onChange } = input;
 
+  const isBG = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_GRAY;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
   const isIW = colorSchema === INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE;
 
@@ -215,6 +220,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             uiType && classes[uiType],
             isBW && classes.bw,
             isIW && classes.iw,
+            isBG && classes.bg,
             hasRegularHeight && classes.hasRegularHeight,
             prefix && classes.prefixSpace,
             suffix && classes.suffixSpace,
@@ -286,6 +292,7 @@ export const TextInput: React.ForwardRefRenderFunction<
           inputType={type}
           isBW={isBW}
           isIW={isIW}
+          isBG={isBG}
           isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
           disabled={isWalletConnected ? false : disabled}
           uiType={isWalletConnected ? 'whiteBlack' : uiType}
@@ -319,6 +326,7 @@ export const TextInput: React.ForwardRefRenderFunction<
         type={errorType}
         color={errorColor}
         submitError={submitError}
+        useBlockIcon={useErrorBlockIcon}
       />
     </div>
   );
