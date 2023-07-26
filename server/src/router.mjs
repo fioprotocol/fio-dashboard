@@ -205,6 +205,10 @@ router.get('/infura-nfts-metadata', routes.external.infuraNftsMetadata);
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
 
+router.post('/domains-watchlist', checkAuth, routes.domainsWatchlist.create);
+router.delete('/domains-watchlist', checkAuth, routes.domainsWatchlist.delete);
+router.get('/domains-watchlist', checkAuth, routes.domainsWatchlist.list);
+
 router.get('/vars/:key', routes.vars.get);
 router.post('/vars/update/:key', routes.vars.update);
 router.post(
