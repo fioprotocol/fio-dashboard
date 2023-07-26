@@ -6,54 +6,71 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import { UnwrapIcon } from '../../../../components/UnwrapIcon';
 
+import { AddDomainToWatchListModal } from '../AddDomainToWatchListModal';
 import { ListNameTitle } from '../ListNameTitle';
 
-import { useCheckIfSmallDesktop } from '../../../../screenType';
+import { useContext } from './WatchListDomainsComponentContext';
 
 import { ROUTES } from '../../../../constants/routes';
 
 import classes from './WatchListDomainsComponent.module.scss';
 
-type Props = {};
+type Props = {
+  prices: {
+    costFio: string;
+    costUsdc: string;
+  };
+  onPurchaseButtonClick: (domain: string) => void;
+};
 
 export const WatchListDomainsComponent: React.FC<Props> = props => {
-  const isSmallDesktop = useCheckIfSmallDesktop();
+  const { prices, onPurchaseButtonClick } = props;
+  const { isSmallDesktop, showModal, closeModal, openModal } = useContext();
 
   return (
-    <div className={classes.container}>
-      <div className={classes.headerContainer}>
-        <ListNameTitle title="Domain Watchlist" className={classes.title} />
-        <div className={classes.actionButtons}>
-          <Link to={ROUTES.UNWRAP_DOMAIN}>
+    <>
+      <div className={classes.container}>
+        <div className={classes.headerContainer}>
+          <ListNameTitle title="Domain Watchlist" className={classes.title} />
+          <div className={classes.actionButtons}>
+            <Link to={ROUTES.UNWRAP_DOMAIN}>
+              <SubmitButton
+                hasAutoWidth
+                withoutMargin
+                hasNoSidePaddings
+                className={classes.button}
+                title="Unwrap"
+                text={
+                  <>
+                    <UnwrapIcon />
+                    {!isSmallDesktop && 'Unwrap Domain'}
+                  </>
+                }
+              />
+            </Link>
             <SubmitButton
               hasAutoWidth
               withoutMargin
               hasNoSidePaddings
               className={classes.button}
-              title="Unwrap"
+              title="Add to Watchlist"
               text={
                 <>
-                  <UnwrapIcon />
-                  {!isSmallDesktop && 'Unwrap Domain'}
+                  <AddCircleIcon />
+                  {!isSmallDesktop && 'Add to Watchlist'}
                 </>
               }
+              onClick={openModal}
             />
-          </Link>
-          <SubmitButton
-            hasAutoWidth
-            withoutMargin
-            hasNoSidePaddings
-            className={classes.button}
-            title="Add to Watchlist"
-            text={
-              <>
-                <AddCircleIcon />
-                {!isSmallDesktop && 'Add to Watchlist'}
-              </>
-            }
-          />
+          </div>
         </div>
       </div>
-    </div>
+      <AddDomainToWatchListModal
+        showModal={showModal}
+        onClose={closeModal}
+        prices={prices}
+        onPurchaseButtonClick={onPurchaseButtonClick}
+      />
+    </>
   );
 };

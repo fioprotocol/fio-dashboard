@@ -156,6 +156,7 @@ export default class Fio {
 
   isFioAddressValid = (value: string): boolean =>
     FIOSDK.isFioAddressValid(value);
+  isFioDomainValid = (value: string): boolean => FIOSDK.isFioDomainValid(value);
   isFioPublicKeyValid = (value: string): boolean =>
     FIOSDK.isFioPublicKeyValid(value);
   isChainCodeValid = (value: string): boolean => FIOSDK.isChainCodeValid(value);
