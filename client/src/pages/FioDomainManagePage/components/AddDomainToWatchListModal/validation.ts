@@ -4,6 +4,7 @@ import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 import {
   isFioDomainValidator,
   fioDomainIsNotExistValidator,
+  fioDomainWatchlistValidator,
 } from '../../../../util/validators';
 
 import { DOMAIN_IS_NOT_EXIST } from '../../../../constants/errors';
@@ -18,6 +19,10 @@ const validationSchema: ValidationSchema = {
       {
         validator: isFioDomainValidator,
         message: 'Invalid Domain name. Please enter again.',
+      },
+      {
+        validator: fioDomainWatchlistValidator,
+        message: 'Domain is already present in watchlist',
       },
       {
         validator: fioDomainIsNotExistValidator,

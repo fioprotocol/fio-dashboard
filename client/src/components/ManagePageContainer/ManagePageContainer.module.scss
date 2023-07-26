@@ -9,6 +9,17 @@
   flex-direction: column;
   width: 100%;
 
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topBadge {
+    align-self: center;
+    margin: 0 20px;
+    width: calc(100% - 40px);
+  }
+
   .subtitle {
     @include proxima-nova-thin;
     font-size: 0.875rem;
@@ -88,10 +99,14 @@
 
 @include lg {
   .container {
-    flex-direction: row;
     max-width: 1200px;
     width: 100%;
     margin: 0 80px;
+
+    .contentContainer {
+      display: flex;
+      flex-direction: row;
+    }
 
     .actionBadge {
       margin-top: 60px;

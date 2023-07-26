@@ -13,6 +13,7 @@ import classes from './NotificationBadge.module.scss';
 
 type Props = {
   arrowAction?: () => void;
+  className?: string;
   noDash?: boolean;
   message: string | React.ReactNode;
   onClose?: () => void | void;
@@ -48,6 +49,7 @@ const MainIcon: React.FC<MainIconProps> = props => {
 const NotificationBadge: React.FC<Props> = props => {
   const {
     arrowAction,
+    className,
     noDash,
     message,
     onClose,
@@ -76,6 +78,7 @@ const NotificationBadge: React.FC<Props> = props => {
           marginTopZero && classes.marginTopZero,
           marginAuto && classes.marginAuto,
           marginBottomZero && classes.marginBottomZero,
+          className,
         )}
       >
         <MainIcon type={type} mainIcon={mainIcon} />
@@ -96,7 +99,12 @@ const NotificationBadge: React.FC<Props> = props => {
   }
 
   return (
-    <Badge type={type} show={show} withoutMargin={withoutMargin}>
+    <Badge
+      type={type}
+      show={show}
+      withoutMargin={withoutMargin}
+      className={className}
+    >
       <FontAwesomeIcon
         icon={iconName || 'exclamation-circle'}
         className={classes.icon}
