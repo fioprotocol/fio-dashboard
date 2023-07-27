@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import PageTitle from '../../../PageTitle/PageTitle';
+import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 
 import { LINKS } from '../../../../constants/labels';
 import { ROUTES } from '../../../../constants/routes';
@@ -21,6 +24,15 @@ type FchSettingsItemProps = {
 type DomainSettingsItemProps = {
   fioNameItem: FioNameItemProps;
   fioWallets: FioWalletDoublet[];
+};
+
+type DomainsWatchlistSettingsItemProps = {
+  account?: string;
+  domainsWatchlistItemId: string;
+  name: string;
+  publicKey?: string;
+  loading: boolean;
+  domainWatchlistItemDelete: (id: string) => void;
 };
 
 export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
@@ -86,15 +98,41 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
       <h3 className={classes.title}>Advanced Settings</h3>
       <h5 className={classes.subtitle}>FIO Domain Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.withLink)}>
+          <p className={classes.badgeTitle}>Domain</p>
+          <p className={classnames(classes.badgeItem, classes.withLink)}>
+            {fioName}
+          </p>
+          <a
+            href={`${process.env.REACT_APP_FIO_BLOCKS_BASE_URL}domain/${fioName}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.link}
+          >
+            <ExitToAppIcon />
+          </a>
+        </div>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
           <p className={classes.badgeTitle}>FIO Wallet</p>
           <p className={classes.badgeItem}>{walletName}</p>
         </div>
       </Badge>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classes.badgeContainer}>
+        <div className={classnames(classes.badgeContainer, classes.withLink)}>
           <p className={classes.badgeTitle}>Public Key</p>
-          <p className={classes.badgeItem}>{publicKey}</p>
+          <p className={classnames(classes.badgeItem, classes.withLink)}>
+            {publicKey}
+          </p>
+          <a
+            href={`${process.env.REACT_APP_FIO_BLOCKS_BASE_URL}key/${publicKey}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.link}
+          >
+            <ExitToAppIcon />
+          </a>
         </div>
       </Badge>
       <div>
@@ -149,6 +187,88 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
         <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.buttonLink}>
           <Button className={classes.button}>Start Unwrapping</Button>
         </Link>
+      </div>
+    </div>
+  );
+};
+
+export const DomainsWatchlistSettingsItem: React.FC<DomainsWatchlistSettingsItemProps> = props => {
+  const {
+    account,
+    domainsWatchlistItemId,
+    name,
+    loading,
+    publicKey,
+    domainWatchlistItemDelete,
+  } = props;
+
+  const onClick = useCallback(() => {
+    domainWatchlistItemDelete(domainsWatchlistItemId);
+  }, [domainsWatchlistItemId, domainWatchlistItemDelete]);
+
+  return (
+    <div className={classes.settingsContainer}>
+      <PageTitle link={LINKS.FIO_DOMAINS_SETTINGS} isVirtualPage />
+      <h3 className={classes.title}>Advanced Settings</h3>
+      <h5 className={classes.subtitle}>FIO Domain Ownership</h5>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.withLink)}>
+          <p className={classes.badgeTitle}>Domain</p>
+          <p className={classnames(classes.badgeItem, classes.withLink)}>
+            {name}
+          </p>
+          <a
+            href={`${process.env.REACT_APP_FIO_BLOCKS_BASE_URL}domain/${name}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.link}
+          >
+            <ExitToAppIcon />
+          </a>
+        </div>
+      </Badge>
+      <Badge show={!!publicKey} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.withLink)}>
+          <p className={classes.badgeTitle}>Public Key</p>
+          <p className={classnames(classes.badgeItem, classes.withLink)}>
+            {publicKey}
+          </p>
+          <a
+            href={`${process.env.REACT_APP_FIO_BLOCKS_BASE_URL}key/${publicKey}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.link}
+          >
+            <ExitToAppIcon />
+          </a>
+        </div>
+      </Badge>
+      <Badge show={!!account} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.withLink)}>
+          <p className={classes.badgeTitle}>Account</p>
+          <p className={classnames(classes.badgeItem, classes.withLink)}>
+            {account}
+          </p>
+          <a
+            href={`${process.env.REACT_APP_FIO_BLOCKS_BASE_URL}account/${account}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.link}
+          >
+            <ExitToAppIcon />
+          </a>
+        </div>
+      </Badge>
+      <div>
+        <h5 className={classes.actionTitle}>Domain Watchlist</h5>
+        <p className={classes.text}>Remove this domain from your watchlist.</p>
+        <SubmitButton
+          text="Remove Now"
+          loading={loading}
+          onClick={onClick}
+          hasAutoWidth
+          withBottomMargin
+        />
       </div>
     </div>
   );

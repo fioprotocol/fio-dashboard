@@ -59,6 +59,7 @@ const SUCCESS_MESSAGES = {
 };
 
 type UseContextProps = {
+  domainWatchlistIsDeleting: boolean;
   domainWatchlistLoading: boolean;
   domainsWatchlistList: FioNameItemProps[];
   emptyStateContent: {
@@ -71,6 +72,7 @@ type UseContextProps = {
     costUsdc: string;
   };
   selectedDomainWatchlistItem: FioNameItemProps;
+  selectedDomainWatchlistSettingsItem: Partial<FioNameItemProps>;
   showDomainWatchlistItemModal: boolean;
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
@@ -87,8 +89,10 @@ type UseContextProps = {
   onDomainWatchlistItemModalClose: () => void;
   onDomainWatchlistItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
-  onSettingsClose: () => void;
-  onDomainWatchlistItemSettingsOpen: (fioNameItem: FioNameItemProps) => void;
+  onDomainWatchlistItemSettingsClose: () => void;
+  onDomainWatchlistItemSettingsOpen: (
+    domainWatchilstItem: Partial<FioNameItemProps>,
+  ) => void;
   openDomainWatchlistModal: () => void;
   setSelectedDomainWatchlistItem: (
     domainWatchlistItem: DomainWatchlistItem,
@@ -119,11 +123,17 @@ export const useContext = (): UseContextProps => {
   const [showDomainWatchlistSettingsModal, handleShowSettings] = useState(
     false,
   );
-
   const [
     showAddDomainWatchlistModal,
     toggleShowAddDomainWatchlistModal,
   ] = useState<boolean>(false);
+  const [
+    selectedDomainWatchlistSettingsItem,
+    setSelectedDomainWatchlistSettingsItem,
+  ] = useState<Partial<FioNameItemProps> | null>(null);
+  const [domainWatchlistIsDeleting, toggleDomainWatchlistIsDeleting] = useState<
+    boolean
+  >(false);
 
   const isDesktop = useCheckIfDesktop();
 
@@ -184,14 +194,14 @@ export const useContext = (): UseContextProps => {
   );
 
   const onDomainWatchlistItemSettingsOpen = useCallback(
-    (fioNameItem: FioNameItemProps) => {
-      setSelectedDomainWatchlistItem(fioNameItem);
+    (domainWatchlistItem: Partial<FioNameItemProps>) => {
+      setSelectedDomainWatchlistSettingsItem(domainWatchlistItem);
       handleShowModal(false);
       handleShowSettings(true);
     },
     [],
   );
-  const onSettingsClose = useCallback(() => {
+  const onDomainWatchlistItemSettingsClose = useCallback(() => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
   }, [isDesktop]);
@@ -257,8 +267,10 @@ export const useContext = (): UseContextProps => {
             const { account, expiration, name, is_public } = rows[0];
 
             let walletPublicKey = '';
-            const domainsWatchlistItem = {
+            const domainsWatchlistItemToAdd = {
+              account: '',
               id: name,
+              domainsWatchlistItemId: domainsWatchlistItem.id,
               expiration,
               name,
               isPublic: is_public,
@@ -270,8 +282,12 @@ export const useContext = (): UseContextProps => {
               walletPublicKey = publicKey;
             }
 
-            domainsWatchlistItem.walletPublicKey = walletPublicKey;
-            domainsWatchlistItems.push(domainsWatchlistItem);
+            if (!walletPublicKey) {
+              domainsWatchlistItemToAdd.account = account;
+            }
+
+            domainsWatchlistItemToAdd.walletPublicKey = walletPublicKey;
+            domainsWatchlistItems.push(domainsWatchlistItemToAdd);
           }
         } catch (err) {
           log.error(err);
@@ -305,16 +321,17 @@ export const useContext = (): UseContextProps => {
 
   const domainWatchlistItemDelete = useCallback(
     async (id: string) => {
-      toggleDomainWatchlistLoading(true);
+      toggleDomainWatchlistIsDeleting(true);
 
       try {
         await apis.domainsWatchlist.delete(id);
         await getDomainsWatchlistList();
 
-        toggleDomainWatchlistLoading(false);
+        toggleDomainWatchlistIsDeleting(false);
         setSuccessMessage(SUCCESS_MESSAGES.DELETE_DOMAIN_WATCHLIST_ITEM);
+        handleShowSettings(false);
       } catch (err) {
-        toggleDomainWatchlistLoading(false);
+        toggleDomainWatchlistIsDeleting(false);
       }
     },
     [getDomainsWatchlistList],
@@ -329,6 +346,7 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   return {
+    domainWatchlistIsDeleting,
     domainWatchlistLoading,
     domainsWatchlistList,
     emptyStateContent: EMPTY_STATE_CONTENT,
@@ -338,6 +356,7 @@ export const useContext = (): UseContextProps => {
       costUsdc: usdc,
     },
     selectedDomainWatchlistItem,
+    selectedDomainWatchlistSettingsItem,
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
@@ -351,7 +370,7 @@ export const useContext = (): UseContextProps => {
     onDomainWatchlistItemModalClose,
     onDomainWatchlistItemModalOpen,
     onPurchaseButtonClick,
-    onSettingsClose,
+    onDomainWatchlistItemSettingsClose,
     onDomainWatchlistItemSettingsOpen,
     openDomainWatchlistModal,
     setSelectedDomainWatchlistItem,

@@ -12,6 +12,7 @@ import {
 } from '../../../../components/ManagePageContainer/components/ItemsScreenView';
 import Modal from '../../../../components/Modal/Modal';
 import { DomainItemComponent } from '../../../../components/ManagePageContainer/components/ItemCopmonent';
+import { DomainsWatchlistSettingsItem } from '../../../../components/ManagePageContainer/components/SettingsItem';
 
 import { AddDomainToWatchListModal } from '../AddDomainToWatchListModal';
 import { ListNameTitle } from '../ListNameTitle';
@@ -28,45 +29,55 @@ type Props = {
   domainsWatchlistList: FioNameItemProps[];
   domainWatchlistLoading: boolean;
   isDesktop: boolean;
+  domainWatchlistIsDeleting: boolean;
   pageName: FioNameType;
   prices: {
     costFio: string;
     costUsdc: string;
   };
   selectedFioNameItem: FioNameItemProps;
+  selectedDomainWatchlistSettingsItem: Partial<FioNameItemProps>;
   showAddDomainWatchlistModal: boolean;
   showItemModal: boolean;
+  showSettingsModal: boolean;
   warningContent: {
     title: string;
     message: string;
   };
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
+  domainWatchlistItemDelete: (id: string) => void;
   handleRenewDomain?: (name: string) => void;
   onItemModalClose: () => void;
   onItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
-  onSettingsOpen: (fioNameItem: FioNameItemProps) => void;
+  onSettingsClose: () => void;
+  onSettingsOpen: (domainsWatchlistItem: Partial<FioNameItemProps>) => void;
   openDomainWatchlistModal: () => void;
 };
 
 export const WatchListDomainsComponent: React.FC<Props> = props => {
   const {
+    domainWatchlistIsDeleting,
     domainsWatchlistList,
     domainWatchlistLoading,
     isDesktop,
     pageName,
     prices,
     selectedFioNameItem,
+    selectedDomainWatchlistSettingsItem,
     showAddDomainWatchlistModal,
     showItemModal,
+    showSettingsModal,
     warningContent,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
+    domainWatchlistItemDelete,
     handleRenewDomain,
     onItemModalClose,
     onItemModalOpen,
     onPurchaseButtonClick,
+    onSettingsClose,
     onSettingsOpen,
     openDomainWatchlistModal,
   } = props;
@@ -159,7 +170,7 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
           onSettingsOpen={onSettingsOpen}
         />
       </Modal>
-      {/* <Modal
+      <Modal
         show={showSettingsModal}
         onClose={onSettingsClose}
         hideCloseButton={false}
@@ -168,11 +179,17 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
         isWide={isDesktop}
         hasDefaultCloseColor
       >
-        <DomainSettingsItem
-          fioNameItem={selectedFioNameItem}
-          fioWallets={fioWallets}
+        <DomainsWatchlistSettingsItem
+          account={selectedDomainWatchlistSettingsItem?.account}
+          domainsWatchlistItemId={
+            selectedDomainWatchlistSettingsItem?.domainsWatchlistItemId
+          }
+          name={selectedDomainWatchlistSettingsItem?.name}
+          publicKey={selectedDomainWatchlistSettingsItem?.walletPublicKey}
+          loading={domainWatchlistIsDeleting}
+          domainWatchlistItemDelete={domainWatchlistItemDelete}
         />
-      </Modal> */}
+      </Modal>
     </>
   );
 };
