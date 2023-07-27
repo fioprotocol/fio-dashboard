@@ -74,7 +74,7 @@ export const useContext = (): UseContextProps => {
         costUsdc: addBundlesFeePrice.usdc,
       };
 
-      addItemToCart(newCartItem);
+      dispatch(addItemToCart(newCartItem));
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -90,6 +90,7 @@ export const useContext = (): UseContextProps => {
       addBundlesFeePrice?.nativeFio,
       addBundlesFeePrice.usdc,
       cartItems,
+      dispatch,
       history,
     ],
   );
