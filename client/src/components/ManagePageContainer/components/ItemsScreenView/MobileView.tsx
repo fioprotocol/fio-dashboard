@@ -12,17 +12,26 @@ import classes from './UIView.module.scss';
 
 type MobileViewProps = {
   fioNameList: FioNameItemProps[];
-  isAddress: boolean;
+  hideTableHeader?: boolean;
+  isAddress?: boolean;
   pageName: FioNameType;
   onItemModalOpen: ModalOpenActionType;
 };
 
 export const MobileView: React.FC<MobileViewProps> = props => {
-  const { fioNameList, isAddress, pageName, onItemModalOpen } = props;
+  const {
+    fioNameList,
+    hideTableHeader,
+    isAddress,
+    pageName,
+    onItemModalOpen,
+  } = props;
 
   return (
     <div className={classes.container}>
-      <h5 className={classes.tableHeader}>{PLURAL_NAME[pageName]}</h5>
+      <h5 className={classes.tableHeader}>
+        {!hideTableHeader && PLURAL_NAME[pageName]}
+      </h5>
       {fioNameList &&
         fioNameList.map(fioNameItem => {
           const { name = '' } = fioNameItem;

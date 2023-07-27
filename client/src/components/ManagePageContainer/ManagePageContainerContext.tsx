@@ -15,10 +15,10 @@ import { LOW_BUNDLES_THRESHOLD } from '../../constants/fio';
 
 import { useCheckIfDesktop } from '../../screenType';
 import { isDomainExpired } from '../../util/fio';
+import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 
 import { FioNameItemProps, FioNameType, FioWalletDoublet } from '../../types';
 import { PAGE_TYPES_PROPS } from '../WelcomeComponent/constants';
-import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 
 type Props = {
   pageName: FioNameType;

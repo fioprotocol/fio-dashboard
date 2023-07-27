@@ -184,7 +184,7 @@ export type NewFioWalletDoublet = {
 
 export type FioAddressDoublet = {
   name: string;
-  expiration: Date;
+  expiration: number | string;
   remaining: number;
   walletPublicKey: string;
   walletName?: string;
@@ -198,7 +198,7 @@ export type FioAddressWithPubAddresses = FioNameItemProps & {
 
 export type FioDomainDoublet = {
   name: string;
-  expiration: Date;
+  expiration: number | string;
   isPublic: number;
   walletPublicKey: string;
   walletName?: string;
@@ -254,7 +254,7 @@ export type LastAuthData = {
 export type FioNameType = 'address' | 'domain';
 
 export type FioNameItemProps = Partial<FioAddressDoublet> &
-  Partial<FioDomainDoublet>;
+  Partial<FioDomainDoublet> & { id?: string };
 
 export type LinkResult = {
   updated: PublicAddressDoublet[];
