@@ -74,6 +74,8 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
 
   const listItemsDefaultProps = {
     fioNameList: domainsWatchlistList,
+    isDesktop,
+    isDomainWatchlist: true,
     pageName,
   };
 
@@ -150,6 +152,8 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
       >
         <DomainItemComponent
           fioNameItem={selectedFioNameItem}
+          isDesktop={isDesktop}
+          isDomainWatchlist
           warningContent={warningContent}
           onRenewDomain={handleRenewDomain}
           onSettingsOpen={onSettingsOpen}

@@ -23,12 +23,16 @@ import classes from './UIView.module.scss';
 
 type ItemComponentProps = {
   fioNameItem: FioNameItemProps;
+  isDesktop?: boolean;
+  isDomainWatchlist?: boolean;
   onSettingsOpen: (data: FioNameItemProps) => void;
 };
 
 type DesktopViewProps = {
   fioNameList: FioNameItemProps[];
   isAddress?: boolean;
+  isDesktop?: boolean;
+  isDomainWatchlist?: boolean;
   pageName: FioNameType;
   onSettingsOpen: ModalOpenActionType;
   onAddBundles?: (name: string) => void;
@@ -62,7 +66,6 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <FchActionButtons
           fioNameItem={fioNameItem}
-          name={name}
           onSettingsOpen={onSettingsOpen}
         />
       </div>
@@ -73,7 +76,13 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
 const DomainItemComponent: React.FC<ItemComponentProps & {
   onRenewDomain: (name: string) => void;
 }> = props => {
-  const { fioNameItem, onSettingsOpen, onRenewDomain } = props;
+  const {
+    fioNameItem,
+    isDesktop,
+    isDomainWatchlist,
+    onSettingsOpen,
+    onRenewDomain,
+  } = props;
   const { name, isPublic, expiration } = fioNameItem;
   return (
     <React.Fragment key={name}>
@@ -93,7 +102,8 @@ const DomainItemComponent: React.FC<ItemComponentProps & {
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <DomainActionButtons
           fioNameItem={fioNameItem}
-          name={name}
+          isDesktop={isDesktop}
+          isDomainWatchlist={isDomainWatchlist}
           onRenewDomain={onRenewDomain}
           onSettingsOpen={onSettingsOpen}
         />
@@ -106,6 +116,8 @@ export const DesktopView: React.FC<DesktopViewProps> = props => {
   const {
     fioNameList,
     isAddress,
+    isDesktop,
+    isDomainWatchlist,
     pageName,
     onSettingsOpen,
     onAddBundles,
@@ -139,6 +151,8 @@ export const DesktopView: React.FC<DesktopViewProps> = props => {
           ) : (
             <DomainItemComponent
               fioNameItem={fioNameItem}
+              isDesktop={isDesktop}
+              isDomainWatchlist={isDomainWatchlist}
               key={fioNameItem.name}
               onSettingsOpen={onSettingsOpen}
               onRenewDomain={onRenewDomain}

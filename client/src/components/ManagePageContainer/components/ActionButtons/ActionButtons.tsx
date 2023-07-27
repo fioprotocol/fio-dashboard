@@ -73,12 +73,14 @@ const RenewActionButton: React.FC<{
   );
 };
 
-const WrapActionButton: React.FC<DefautProps> = props => {
-  const { isSmallDesktop, name } = props;
+const WrapActionButton: React.FC<DefautProps & {
+  isHidden?: boolean;
+}> = props => {
+  const { isHidden, isSmallDesktop, name } = props;
   return (
     <Link
       to={`${ROUTES.WRAP_DOMAIN}?name=${name}`}
-      className={classes.actionButton}
+      className={classnames(classes.actionButton, isHidden && classes.isHidden)}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
         <RefreshIcon />
@@ -88,8 +90,10 @@ const WrapActionButton: React.FC<DefautProps> = props => {
   );
 };
 
-const FchCustomSelection: React.FC<DefautProps> = props => {
-  const { isSmallDesktop, name } = props;
+const FchCustomSelection: React.FC<DefautProps & {
+  isHidden?: boolean;
+}> = props => {
+  const { isHidden, isSmallDesktop, name } = props;
 
   return (
     <Link
@@ -102,7 +106,7 @@ const FchCustomSelection: React.FC<DefautProps> = props => {
           removeFilter: true,
         },
       }}
-      className={classes.actionButton}
+      className={classnames(classes.actionButton, isHidden && classes.isHidden)}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
         <span className={classes.prefixButtonText}>@</span>&nbsp;
@@ -208,10 +212,10 @@ const ActionButtonsContainer: React.FC = props => (
 
 export const FchActionButtons: React.FC<{
   fioNameItem: FioNameItemProps;
-  name: string;
   onSettingsOpen: (data: FioNameItemProps) => void;
 }> = props => {
-  const { fioNameItem, name, onSettingsOpen } = props;
+  const { fioNameItem, onSettingsOpen } = props;
+  const { name } = fioNameItem;
   const isSmallDesktop = useCheckIfSmallDesktop();
 
   const defaultProps = {
@@ -235,17 +239,49 @@ export const FchActionButtons: React.FC<{
 
 export const DomainActionButtons: React.FC<{
   fioNameItem: FioNameItemProps;
-  name: string;
+  isDesktop?: boolean;
+  isDomainWatchlist?: boolean;
   onRenewDomain: (name: string) => void;
   onSettingsOpen: (data: FioNameItemProps) => void;
 }> = props => {
-  const { fioNameItem, name, onRenewDomain, onSettingsOpen } = props;
+  const {
+    fioNameItem,
+    isDesktop,
+    isDomainWatchlist,
+    onRenewDomain,
+    onSettingsOpen,
+  } = props;
+
+  const { isPublic, name } = fioNameItem;
+
   const isSmallDesktop = useCheckIfSmallDesktop();
 
   const defaultProps = {
     isSmallDesktop,
     name,
   };
+
+  const hideCustomSelection = isDomainWatchlist && !isPublic;
+
+  if (isDomainWatchlist) {
+    return (
+      <ActionButtonsContainer>
+        <RenewActionButton {...defaultProps} onRenewDomain={onRenewDomain} />
+        {(isDesktop || (!isDesktop && !hideCustomSelection)) && (
+          <FchCustomSelection
+            {...defaultProps}
+            isHidden={hideCustomSelection}
+          />
+        )}
+
+        {isDesktop ? <WrapActionButton {...defaultProps} isHidden /> : null}
+        <SettingsActionButton
+          fioNameItem={fioNameItem}
+          onSettingsOpen={onSettingsOpen}
+        />
+      </ActionButtonsContainer>
+    );
+  }
 
   return (
     <ActionButtonsContainer>
