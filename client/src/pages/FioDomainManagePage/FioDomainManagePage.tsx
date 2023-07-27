@@ -12,23 +12,28 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 const FioDomainManagePage: React.FC = () => {
   const {
+    domainWatchlistIsDeleting,
     domainsWatchlistList,
     domainWatchlistLoading,
     emptyStateContent,
     isDesktop,
     prices,
     selectedDomainWatchlistItem,
+    selectedDomainWatchlistSettingsItem,
     showAddDomainWatchlistModal,
     showDomainWatchlistItemModal,
+    showDomainWatchlistSettingsModal,
     successMessage,
     warningContent,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
+    domainWatchlistItemDelete,
     handleRenewDomain,
     onBagdeClose,
     onDomainWatchlistItemModalClose,
     onDomainWatchlistItemModalOpen,
     onPurchaseButtonClick,
+    onDomainWatchlistItemSettingsClose,
     onDomainWatchlistItemSettingsOpen,
     openDomainWatchlistModal,
   } = useContext();
@@ -51,20 +56,27 @@ const FioDomainManagePage: React.FC = () => {
     >
       <WatchListDomainsComponent
         domainsWatchlistList={domainsWatchlistList}
+        domainWatchlistIsDeleting={domainWatchlistIsDeleting}
         domainWatchlistLoading={domainWatchlistLoading}
         isDesktop={isDesktop}
         pageName={PAGE_NAME.DOMAIN}
         prices={prices}
         selectedFioNameItem={selectedDomainWatchlistItem}
+        selectedDomainWatchlistSettingsItem={
+          selectedDomainWatchlistSettingsItem
+        }
         showAddDomainWatchlistModal={showAddDomainWatchlistModal}
         showItemModal={showDomainWatchlistItemModal}
+        showSettingsModal={showDomainWatchlistSettingsModal}
         warningContent={warningContent}
         closeDomainWatchlistModal={closeDomainWatchlistModal}
         domainWatchlistItemCreate={domainWatchlistItemCreate}
+        domainWatchlistItemDelete={domainWatchlistItemDelete}
         handleRenewDomain={handleRenewDomain}
         onItemModalClose={onDomainWatchlistItemModalClose}
         onItemModalOpen={onDomainWatchlistItemModalOpen}
         onPurchaseButtonClick={onPurchaseButtonClick}
+        onSettingsClose={onDomainWatchlistItemSettingsClose}
         onSettingsOpen={onDomainWatchlistItemSettingsOpen}
         openDomainWatchlistModal={openDomainWatchlistModal}
       />

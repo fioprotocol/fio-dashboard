@@ -254,7 +254,11 @@ export type LastAuthData = {
 export type FioNameType = 'address' | 'domain';
 
 export type FioNameItemProps = Partial<FioAddressDoublet> &
-  Partial<FioDomainDoublet> & { id?: string };
+  Partial<FioDomainDoublet> & {
+    account?: string;
+    id?: string;
+    domainsWatchlistItemId?: string;
+  };
 
 export type LinkResult = {
   updated: PublicAddressDoublet[];

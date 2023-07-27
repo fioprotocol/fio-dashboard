@@ -1,6 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 
 import { FioNameItemProps, FioNameType } from '../../types';
+import { SelectedDomainWatchlistItem } from '../../pages/FioDomainManagePage/FioDomainManagePageContext';
 
 export type HasMore = { [key: string]: number };
 type GetWalletAddresses = (
@@ -34,5 +35,5 @@ export interface ContainerProps {
 }
 
 type ModalOpenActionType = (
-  data: FioNameItemProps,
+  data: FioNameItemProps | SelectedDomainWatchlistItem,
 ) => MouseEventHandler<HTMLDivElement> | void;
