@@ -150,8 +150,7 @@ export const useContext = (): UseContextProps => {
         costFio: renewDomainFeePrice.fio,
         costUsdc: renewDomainFeePrice.usdc,
       };
-
-      addItemToCart(newCartItem);
+      dispatch(addItemToCart(newCartItem));
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -164,6 +163,7 @@ export const useContext = (): UseContextProps => {
     },
     [
       cartItems,
+      dispatch,
       history,
       renewDomainFeePrice.fio,
       renewDomainFeePrice?.nativeFio,
