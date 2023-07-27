@@ -3,8 +3,8 @@ import React from 'react';
 import InfoBadge from '../../Badges/InfoBadge/InfoBadge';
 
 type Props = {
-  isEmpty: boolean;
-  emptyStateContent: {
+  isEmpty?: boolean;
+  emptyStateContent?: {
     title: string;
     message: string;
   };

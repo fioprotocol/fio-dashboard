@@ -731,4 +731,30 @@ export default class Fio {
 
     return { fee: resultRows.rows[0].suf_amount };
   };
+
+  getAccountPubKey = async (account: string): Promise<string> => {
+    // TODO: move to getAccountPubKey after update to fio_sdk to 1.9
+    try {
+      const { rows } = await this.getTableRows({
+        json: true,
+        code: 'fio.address',
+        scope: 'fio.address',
+        table: 'accountmap',
+        lower_bound: account,
+        upper_bound: account,
+        index_position: '1',
+        key_type: '',
+        limit: 1,
+        reverse: false,
+      });
+
+      if (rows.length > 0) {
+        return rows[0].clientkey;
+      }
+
+      return '';
+    } catch (err) {
+      this.logError(err);
+    }
+  };
 }

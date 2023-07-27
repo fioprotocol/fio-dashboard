@@ -28,7 +28,7 @@ type ItemComponentProps = {
 
 type DesktopViewProps = {
   fioNameList: FioNameItemProps[];
-  isAddress: boolean;
+  isAddress?: boolean;
   pageName: FioNameType;
   onSettingsOpen: ModalOpenActionType;
   onAddBundles?: (name: string) => void;

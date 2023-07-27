@@ -18,12 +18,12 @@ import { formValidation } from './validation';
 import { DOMAIN_TYPE, DOMAIN_TYPE_PARAMS } from '../../../../constants/fio';
 import { DOMAIN_IS_NOT_EXIST } from '../../../../constants/errors';
 
-import { DomainWatchlistItem } from '../../../../types';
+import { FioNameItemProps } from '../../../../types';
 
 import classes from './AddDomainToWatchListModal.module.scss';
 
 type Props = {
-  domainsWatchlistList: DomainWatchlistItem[];
+  domainsWatchlistList: FioNameItemProps[];
   loading: boolean;
   prices: {
     costFio: string;

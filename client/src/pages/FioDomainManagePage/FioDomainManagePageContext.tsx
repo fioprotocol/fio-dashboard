@@ -20,19 +20,25 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-
 import { checkIsDomainItemExistsOnCart } from '../../util/fio';
 import { addCartItem } from '../../util/cart';
+import { log } from '../../util/general';
+import useEffectOnce from '../../hooks/general';
+import { useCheckIfDesktop } from '../../screenType';
 
 import {
   CART_ITEM_TYPE,
   ANALYTICS_EVENT_ACTIONS,
 } from '../../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import {
+  ACTIONS,
+  DOMAIN_TYPE,
+  FIO_ORACLE_ACCOUNT_NAME,
+} from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 
-import { CartItem, DomainWatchlistItem } from '../../types';
-import useEffectOnce from '../../hooks/general';
+import { CartItem, DomainWatchlistItem, FioNameItemProps } from '../../types';
+import { FioDomainDoubletResponse } from '../../api/responses';
 
 const EMPTY_STATE_CONTENT = {
   title: 'No FIO Domains',
@@ -54,16 +60,19 @@ const SUCCESS_MESSAGES = {
 
 type UseContextProps = {
   domainWatchlistLoading: boolean;
-  domainsWatchlistList: DomainWatchlistItem[];
+  domainsWatchlistList: FioNameItemProps[];
   emptyStateContent: {
     title: string;
     message: string;
   };
+  isDesktop: boolean;
   prices: {
     costFio: string;
     costUsdc: string;
   };
-  selectedDomainWatchlistItem: DomainWatchlistItem;
+  selectedDomainWatchlistItem: FioNameItemProps;
+  showDomainWatchlistItemModal: boolean;
+  showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
   successMessage: string | null;
   warningContent: {
@@ -75,7 +84,11 @@ type UseContextProps = {
   domainWatchlistItemDelete: (id: string) => void;
   handleRenewDomain: (name: string) => void;
   onBagdeClose: () => void;
+  onDomainWatchlistItemModalClose: () => void;
+  onDomainWatchlistItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
+  onSettingsClose: () => void;
+  onDomainWatchlistItemSettingsOpen: (fioNameItem: FioNameItemProps) => void;
   openDomainWatchlistModal: () => void;
   setSelectedDomainWatchlistItem: (
     domainWatchlistItem: DomainWatchlistItem,
@@ -96,17 +109,23 @@ export const useContext = (): UseContextProps => {
   >(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [domainsWatchlistList, setDomainsWatchlistList] = useState<
-    DomainWatchlistItem[]
+    FioNameItemProps[]
   >([]);
   const [
     selectedDomainWatchlistItem,
     setSelectedDomainWatchlistItem,
-  ] = useState<DomainWatchlistItem | null>(null);
+  ] = useState<FioNameItemProps | null>(null);
+  const [showDomainWatchlistItemModal, handleShowModal] = useState(false);
+  const [showDomainWatchlistSettingsModal, handleShowSettings] = useState(
+    false,
+  );
 
   const [
     showAddDomainWatchlistModal,
     toggleShowAddDomainWatchlistModal,
   ] = useState<boolean>(false);
+
+  const isDesktop = useCheckIfDesktop();
 
   const cartItemsJSON = JSON.stringify(cartItems);
 
@@ -152,6 +171,31 @@ export const useContext = (): UseContextProps => {
     ],
   );
 
+  const onDomainWatchlistItemModalOpen = useCallback(
+    (fioNameItem: FioNameItemProps) => {
+      setSelectedDomainWatchlistItem(fioNameItem);
+      handleShowModal(true);
+    },
+    [],
+  );
+  const onDomainWatchlistItemModalClose = useCallback(
+    () => handleShowModal(false),
+    [],
+  );
+
+  const onDomainWatchlistItemSettingsOpen = useCallback(
+    (fioNameItem: FioNameItemProps) => {
+      setSelectedDomainWatchlistItem(fioNameItem);
+      handleShowModal(false);
+      handleShowSettings(true);
+    },
+    [],
+  );
+  const onSettingsClose = useCallback(() => {
+    !isDesktop && handleShowModal(true);
+    handleShowSettings(false);
+  }, [isDesktop]);
+
   const onBagdeClose = useCallback(() => {
     setSuccessMessage(null);
   }, []);
@@ -195,7 +239,46 @@ export const useContext = (): UseContextProps => {
 
       const domainsWatchlist = await apis.domainsWatchlist.list();
 
-      setDomainsWatchlistList(domainsWatchlist);
+      const domainsWatchlistItems: FioNameItemProps[] = [];
+
+      for (const domainsWatchlistItem of domainsWatchlist) {
+        const tableRowsParams = apis.fio.setTableRowsParams(
+          domainsWatchlistItem.domain,
+        );
+
+        try {
+          const {
+            rows,
+          }: { rows: FioDomainDoubletResponse[] } = await apis.fio.getTableRows(
+            tableRowsParams,
+          );
+
+          if (rows.length) {
+            const { account, expiration, name, is_public } = rows[0];
+
+            let walletPublicKey = '';
+            const domainsWatchlistItem = {
+              id: name,
+              expiration,
+              name,
+              isPublic: is_public,
+              walletPublicKey: '',
+            };
+
+            if (account !== FIO_ORACLE_ACCOUNT_NAME) {
+              const publicKey = await apis.fio.getAccountPubKey(account);
+              walletPublicKey = publicKey;
+            }
+
+            domainsWatchlistItem.walletPublicKey = walletPublicKey;
+            domainsWatchlistItems.push(domainsWatchlistItem);
+          }
+        } catch (err) {
+          log.error(err);
+        }
+      }
+
+      setDomainsWatchlistList(domainsWatchlistItems);
 
       toggleDomainWatchlistLoading(false);
     } catch (err) {
@@ -249,11 +332,14 @@ export const useContext = (): UseContextProps => {
     domainWatchlistLoading,
     domainsWatchlistList,
     emptyStateContent: EMPTY_STATE_CONTENT,
+    isDesktop,
     prices: {
       costFio: fio,
       costUsdc: usdc,
     },
     selectedDomainWatchlistItem,
+    showDomainWatchlistItemModal,
+    showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
     successMessage,
     warningContent: WARNING_CONTENT.DOMAIN_RENEW,
@@ -262,7 +348,11 @@ export const useContext = (): UseContextProps => {
     domainWatchlistItemDelete,
     handleRenewDomain,
     onBagdeClose,
+    onDomainWatchlistItemModalClose,
+    onDomainWatchlistItemModalOpen,
     onPurchaseButtonClick,
+    onSettingsClose,
+    onDomainWatchlistItemSettingsOpen,
     openDomainWatchlistModal,
     setSelectedDomainWatchlistItem,
   };
