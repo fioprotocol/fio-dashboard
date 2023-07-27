@@ -1,6 +1,6 @@
 import { FieldValidationFunctionAsync } from '@lemoncode/fonk';
 
-import { DomainWatchlistItem } from '../../types';
+import { FioNameItemProps } from '../../types';
 
 interface MatchFieldArgs {
   fieldId?: string;
@@ -11,14 +11,14 @@ export const fioDomainWatchlistValidator: FieldValidationFunctionAsync<MatchFiel
 
   const { domain } = values;
 
-  const domainsWatchlistList = values.domainsWatchlistList as DomainWatchlistItem[];
+  const domainsWatchlistList = values.domainsWatchlistList as FioNameItemProps[];
 
   let succeeded = true;
   let errorMessage = '';
 
   if (
     domainsWatchlistList.find(
-      domainsWatchlistItem => domainsWatchlistItem.domain === domain,
+      domainsWatchlistItem => domainsWatchlistItem.name === domain,
     )
   ) {
     succeeded = false;
