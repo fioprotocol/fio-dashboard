@@ -21,6 +21,17 @@
   .badgeContainer {
     display: flex;
     flex-direction: row;
+
+    &.withLink {
+      width: 100%;
+      margin-right: 0;
+      position: relative;
+    }
+
+    .link {
+      position: absolute;
+      right: 0;
+    }
   }
 
   .badgeTitle, .badgeItem {
@@ -39,6 +50,10 @@
   .badgeItem {
     margin-left: 15px;
     word-break: break-all;
+
+    &.withLink {
+      color: $light-indigo;
+    }
   }
 
   .text {
@@ -95,5 +110,16 @@
 @include lg {
    .settingsContainer {
     padding: 0 10px;
+
+    .badgeContainer {
+      &.withLink {
+        align-items: center;
+        width: 100%;
+        margin-right: 0;
+      }
+      .link {
+        margin-left: auto;
+      }
+    }
   }
 }
