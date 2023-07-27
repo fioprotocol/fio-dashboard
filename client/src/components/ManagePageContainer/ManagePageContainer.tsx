@@ -141,6 +141,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
         ) : (
           <DomainItemComponent
             fioNameItem={selectedFioNameItem}
+            isDesktop={isDesktop}
             warningContent={warningContent}
             onRenewDomain={handleRenewDomain}
             onSettingsOpen={onSettingsOpen}

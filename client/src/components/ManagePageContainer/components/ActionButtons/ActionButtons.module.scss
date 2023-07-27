@@ -20,6 +20,10 @@
       margin-right: 10px;
     }
 
+    &.isHidden {
+      visibility: hidden;
+    }
+
     &:hover {
       background-color: $iris;
       border-color: $iris;

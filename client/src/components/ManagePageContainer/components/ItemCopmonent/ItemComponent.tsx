@@ -33,6 +33,8 @@ type FchItemComponentProps = {
 
 type DomainItemComponentProps = {
   fioNameItem: FioNameItemProps;
+  isDesktop?: boolean;
+  isDomainWatchlist?: boolean;
   warningContent: {
     title: string;
     message: string;
@@ -83,7 +85,6 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
         <h4 className={classes.actionsTitle}>Actions</h4>
         <FchActionButtons
           fioNameItem={fioNameItem}
-          name={name}
           onSettingsOpen={onSettingsOpen}
         />
       </div>
@@ -92,7 +93,14 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
 };
 
 export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => {
-  const { fioNameItem, warningContent, onRenewDomain, onSettingsOpen } = props;
+  const {
+    fioNameItem,
+    isDesktop,
+    isDomainWatchlist,
+    warningContent,
+    onRenewDomain,
+    onSettingsOpen,
+  } = props;
 
   const { name = '', expiration, isPublic } = fioNameItem || {};
 
@@ -137,7 +145,8 @@ export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => 
         <h4 className={classes.actionsTitle}>Actions</h4>
         <DomainActionButtons
           fioNameItem={fioNameItem}
-          name={name}
+          isDesktop={isDesktop}
+          isDomainWatchlist={isDomainWatchlist}
           onRenewDomain={onRenewDomain}
           onSettingsOpen={onSettingsOpen}
         />
