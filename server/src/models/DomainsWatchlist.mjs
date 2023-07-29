@@ -70,11 +70,22 @@ export class DomainsWatchlist extends Base {
     });
   }
 
-  static format({ id, domain, createdAt }) {
+  static async listAll() {
+    const domainsWatchlist = await this.findAll({
+      order: [['id', 'DESC']],
+    });
+
+    return domainsWatchlist.map(domainsWatchlistItem =>
+      this.format(domainsWatchlistItem),
+    );
+  }
+
+  static format({ id, domain, createdAt, userId }) {
     return {
       id,
       domain,
       createdAt,
+      userId,
     };
   }
 }
