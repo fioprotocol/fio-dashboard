@@ -1,3 +1,7 @@
+import crypto from 'crypto';
+
+import superagent from 'superagent';
+
 import fiosdkLib from '@fioprotocol/fiosdk';
 import entities from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import fetch from 'node-fetch';
@@ -12,8 +16,10 @@ import {
   FIO_ACTIONS_TO_END_POINT_KEYS,
   FIO_ADDRESS_DELIMITER,
   DEFAULT_BUNDLE_SET_VALUE,
+  GET_TABLE_ROWS_URL,
 } from '../config/constants.js';
 
+import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
 
@@ -375,6 +381,48 @@ class Fio {
   async getActor(publicKey) {
     const publicFioSDK = await this.getPublicFioSDK();
     return publicFioSDK.transactions.getActor(publicKey);
+  }
+
+  async getTableRows(params) {
+    try {
+      const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
+
+      const { rows, more } = response.body;
+
+      return { rows, more };
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  }
+
+  setTableRowsParams(fioName) {
+    const hash = crypto.createHash('sha1');
+    const bound =
+      '0x' +
+      hash
+        .update(fioName)
+        .digest()
+        .slice(0, 16)
+        .reverse()
+        .toString('hex');
+
+    const params = {
+      code: 'fio.address',
+      scope: 'fio.address',
+      table: 'fionames',
+      lower_bound: bound,
+      upper_bound: bound,
+      key_type: 'i128',
+      index_position: '5',
+      json: true,
+    };
+    if (isDomain(fioName)) {
+      params.table = 'domains';
+      params.index_position = '4';
+    }
+
+    return params;
   }
 }
 
