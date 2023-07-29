@@ -222,6 +222,8 @@ const ANALYTICS_EVENT_ACTIONS = {
   PURCHASE_FINISHED_FAILED: 'purchase_error',
 };
 
+const GET_TABLE_ROWS_URL = `${process.env.FIO_BASE_URL}chain/get_table_rows`;
+
 module.exports = {
   ANALYTICS_EVENT_ACTIONS,
   WALLET_CREATED_FROM,
@@ -258,4 +260,5 @@ module.exports = {
   PASSWORDS,
   FIO_CHAIN_ID,
   EXPIRED_LOCKED_PERIOD,
+  GET_TABLE_ROWS_URL,
 };
