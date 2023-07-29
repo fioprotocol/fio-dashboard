@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { useHistory } from 'react-router';
 
@@ -35,6 +35,7 @@ import {
 } from '../../types';
 
 import classes from '../../styles/WrapDomainPage.module.scss';
+import { log } from '../../../../util/general';
 
 const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
   o => o.chain_code === 'MATIC',
@@ -64,6 +65,14 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
   const [walletFioAddresses] = useFioAddresses(currentWallet?.publicKey);
 
   const balance = useWalletBalances(currentWallet?.publicKey);
+
+  const addDomainToWatchlist = useCallback(async (domain: string) => {
+    try {
+      await apis.domainsWatchlist.create(domain);
+    } catch (err) {
+      log.error(err);
+    }
+  }, []);
 
   useEffectOnce(() => {
     getFee();
@@ -108,6 +117,7 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
       },
     });
     refreshWalletDataPublicKey(currentWallet.publicKey);
+    addDomainToWatchlist(sendData.name);
   };
 
   const onResultsRetry = () => {
