@@ -455,8 +455,9 @@ export default combineReducers({
   },
   getMappedPubAddressError(state: string | null = null, action) {
     switch (action.type) {
-      case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
-        return action.error.errorCode;
+      case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE: {
+        return action.error?.errorCode || action.error?.code;
+      }
       case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
       case actions.RESET_MAPPED_PUB_ADDRESS_ERROR:
