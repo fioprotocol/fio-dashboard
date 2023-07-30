@@ -3,10 +3,13 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { getFee } from '../../redux/fio/actions';
+import { getFee, toggleFchBundleWarningBadge } from '../../redux/fio/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
-import { fees as feesSelector } from '../../redux/fio/selectors';
+import {
+  fees as feesSelector,
+  showFchBundleWarningBagde as showFchBundleWarningBagdeSelector,
+} from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 
 import apis from '../../api';
@@ -43,16 +46,19 @@ type UseContextProps = {
     title: string;
     message: string;
   };
+  showWarningMessage: boolean;
   warningContent: {
     title: string;
     message: string;
   };
   handleAddBundles: (name: string) => void;
+  sessionBadgeClose: () => void;
 };
 
 export const useContext = (): UseContextProps => {
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
+  const showWarningMessage = useSelector(showFchBundleWarningBagdeSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -95,13 +101,19 @@ export const useContext = (): UseContextProps => {
     ],
   );
 
+  const sessionBadgeClose = useCallback(() => {
+    dispatch(toggleFchBundleWarningBadge(false));
+  }, [dispatch]);
+
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.addBundledTransactions));
   }, [dispatch]);
 
   return {
     emptyStateContent: EMPTY_STATE_CONTENT,
+    showWarningMessage,
     warningContent: WARNING_CONTENT.LOW_BUNDLES,
     handleAddBundles,
+    sessionBadgeClose,
   };
 };

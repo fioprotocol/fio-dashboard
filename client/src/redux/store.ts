@@ -66,6 +66,10 @@ export default function configureStore(api: Api, history: History): Store {
           showTokenListInfoBadge: store.getState().fio.showTokenListInfoBadge,
           showSocialMediaListInfoBadge: store.getState().fio
             .showSocialMediaListInfoBadge,
+          showFchBundleWarningBagde: store.getState().fio
+            .showFchBundleWarningBagde,
+          showExpiredDomainWarningBadge: store.getState().fio
+            .showExpiredDomainWarningBadge,
         },
         fioWalletsData: {
           walletsData: store.getState().fioWalletsData.walletsData,

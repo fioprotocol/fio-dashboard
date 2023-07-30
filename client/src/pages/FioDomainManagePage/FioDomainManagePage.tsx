@@ -23,6 +23,7 @@ const FioDomainManagePage: React.FC = () => {
     showAddDomainWatchlistModal,
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
+    showWarningMessage,
     successMessage,
     warningContent,
     closeDomainWatchlistModal,
@@ -36,6 +37,7 @@ const FioDomainManagePage: React.FC = () => {
     onDomainWatchlistItemSettingsClose,
     onDomainWatchlistItemSettingsOpen,
     openDomainWatchlistModal,
+    sessionBadgeClose,
   } = useContext();
 
   return (
@@ -44,6 +46,7 @@ const FioDomainManagePage: React.FC = () => {
       listNameTitle={<ListNameTitle title="My Domains" />}
       pageName={PAGE_NAME.DOMAIN}
       showTopBadge={!!successMessage}
+      showWarningMessage={showWarningMessage}
       title={<Title title="Manage My FIO Domain" />}
       topBadgeContent={{
         message: successMessage,
@@ -53,6 +56,7 @@ const FioDomainManagePage: React.FC = () => {
       warningContent={warningContent}
       handleRenewDomain={handleRenewDomain}
       onTopBadgeClose={onBagdeClose}
+      sessionBadgeClose={sessionBadgeClose}
     >
       <WatchListDomainsComponent
         domainsWatchlistList={domainsWatchlistList}
