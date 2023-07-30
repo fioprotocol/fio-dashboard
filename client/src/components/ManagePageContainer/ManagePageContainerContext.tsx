@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
@@ -22,6 +16,8 @@ import { PAGE_TYPES_PROPS } from '../WelcomeComponent/constants';
 
 type Props = {
   pageName: FioNameType;
+  showWarningMessage: boolean;
+  sessionBadgeClose: () => void;
 };
 
 type UseContextProps = {
@@ -75,11 +71,11 @@ type UseContextProps = {
   onItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onSettingsClose: () => void;
   onSettingsOpen: (fioNameItem: FioNameItemProps) => void;
-  toggleShowWarnBadge: Dispatch<SetStateAction<boolean>>;
+  onWarningBadgeClose: () => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { pageName } = props;
+  const { pageName, showWarningMessage, sessionBadgeClose } = props;
 
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
 
@@ -164,10 +160,16 @@ export const useContext = (props: Props): UseContextProps => {
     handleShowSettings(false);
   }, [isDesktop]);
 
+  const onWarningBadgeClose = useCallback(() => {
+    toggleShowWarnBadge(false);
+    sessionBadgeClose();
+  }, [sessionBadgeClose]);
+
   useEffect(() => {
     if (isAddress) {
       toggleShowWarnBadge(
-        !!fioAddresses &&
+        showWarningMessage &&
+          !!fioAddresses &&
           fioAddresses.some(
             fioAddress => fioAddress.remaining < LOW_BUNDLES_THRESHOLD,
           ),
@@ -175,7 +177,8 @@ export const useContext = (props: Props): UseContextProps => {
     }
     if (isDomain) {
       toggleShowWarnBadge(
-        !!fioDomains &&
+        showWarningMessage &&
+          !!fioDomains &&
           fioDomains.some(
             fioDomain =>
               fioDomain.expiration &&
@@ -183,7 +186,7 @@ export const useContext = (props: Props): UseContextProps => {
           ),
       );
     }
-  }, [fioAddresses, fioDomains, isAddress, isDomain]);
+  }, [fioAddresses, fioDomains, isAddress, isDomain, showWarningMessage]);
 
   return {
     fio101ComponentProps,
@@ -205,6 +208,6 @@ export const useContext = (props: Props): UseContextProps => {
     onItemModalOpen,
     onSettingsClose,
     onSettingsOpen,
-    toggleShowWarnBadge,
+    onWarningBadgeClose,
   };
 };

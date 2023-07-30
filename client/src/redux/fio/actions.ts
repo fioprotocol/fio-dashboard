@@ -239,6 +239,22 @@ export const toggleTokenListInfoBadge = (enabled: boolean): CommonAction => ({
   enabled,
 });
 
+export const TOGGLE_FCH_BUNDLE_WARNING_BADGE = `${prefix}/TOGGLE_FCH_BUNDLE_WARNING_BADGE`;
+
+export const toggleFchBundleWarningBadge = (
+  enabled: boolean,
+): CommonAction => ({
+  type: TOGGLE_FCH_BUNDLE_WARNING_BADGE,
+  enabled,
+});
+
+export const TOGGLE_EXPIRED_DOMAIN_WARNING_BADGE = `${prefix}/TOGGLE_EXPIRED_DOMAIN_WARNING_BADGE`;
+
+export const toggleExpiredDomainBadge = (enabled: boolean): CommonAction => ({
+  type: TOGGLE_EXPIRED_DOMAIN_WARNING_BADGE,
+  enabled,
+});
+
 export const TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE = `${prefix}/TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE`;
 
 export const toggleSocialMediaListInfoBadge = (

@@ -3,10 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { getFee } from '../../redux/fio/actions';
+import { getFee, toggleExpiredDomainBadge } from '../../redux/fio/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
-import { fees as feesSelector } from '../../redux/fio/selectors';
+import {
+  fees as feesSelector,
+  showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector,
+} from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
@@ -76,6 +79,7 @@ type UseContextProps = {
   showDomainWatchlistItemModal: boolean;
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
+  showWarningMessage: boolean;
   successMessage: string | null;
   warningContent: {
     title: string;
@@ -97,6 +101,7 @@ type UseContextProps = {
   setSelectedDomainWatchlistItem: (
     domainWatchlistItem: DomainWatchlistItem,
   ) => void;
+  sessionBadgeClose: () => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -104,6 +109,7 @@ export const useContext = (): UseContextProps => {
   const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
+  const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -337,6 +343,10 @@ export const useContext = (): UseContextProps => {
     [getDomainsWatchlistList],
   );
 
+  const sessionBadgeClose = useCallback(() => {
+    dispatch(toggleExpiredDomainBadge(false));
+  }, [dispatch]);
+
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.renewFioDomain));
   }, [dispatch]);
@@ -360,6 +370,7 @@ export const useContext = (): UseContextProps => {
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
+    showWarningMessage,
     successMessage,
     warningContent: WARNING_CONTENT.DOMAIN_RENEW,
     closeDomainWatchlistModal,
@@ -374,5 +385,6 @@ export const useContext = (): UseContextProps => {
     onDomainWatchlistItemSettingsOpen,
     openDomainWatchlistModal,
     setSelectedDomainWatchlistItem,
+    sessionBadgeClose,
   };
 };
