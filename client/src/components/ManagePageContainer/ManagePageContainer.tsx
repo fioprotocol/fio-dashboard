@@ -81,7 +81,9 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
       />
       <div className={classes.contentContainer}>
         <LayoutContainer title={title}>
-          {listNameTitle}
+          {listNameTitle && (
+            <div className={classes.listNameTitle}>{listNameTitle}</div>
+          )}
           <div className={classes.dataContainer}>
             <NotificationBadge
               type={BADGE_TYPES.WARNING}
