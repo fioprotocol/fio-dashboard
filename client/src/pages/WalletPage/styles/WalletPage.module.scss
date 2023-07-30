@@ -94,7 +94,7 @@
   @include sf-pro-display-thin;
 
   &.settingsButton {
-    width: 39px;
+    width: 39px !important;
     margin-left: 10px;
     display: flex;
     align-items: center;
@@ -206,23 +206,5 @@
 
   .actionBadges {
     margin: 0 20px 0 30px;
-  }
-}
-
-@include tablet {
-  .titleContainer {
-    margin-bottom: 25px !important;
-  }
-
-  .actionButton {
-    &.settingsButton {
-      width: 39px !important;
-    }
-  }
-}
-
-@include sds {
-  .titleContainer {
-    margin-bottom: 25px !important;
   }
 }
