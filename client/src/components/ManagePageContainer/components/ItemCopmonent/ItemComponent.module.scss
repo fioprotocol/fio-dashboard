@@ -20,13 +20,16 @@
     padding-left: 20px;
   }
 }
-.domainStatus {
+
+.badgeContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 20px;
+  padding: 20px 30px !important;
 
-  .domainStatusBadge {
-    margin-left: 20px;
+  & > div {
+    margin: 0;
   }
 }
 
@@ -40,7 +43,6 @@
 }
 .badgeItem {
   color: $baltic-sea;
-  margin-right: 20px;
   margin-bottom: 0;
   display: flex;
 }
