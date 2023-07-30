@@ -90,6 +90,9 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
               show={showWarnBadge}
               withoutMargin
               onClose={() => toggleShowWarnBadge(false)}
+              className={
+                listNameTitle && classes.warningBadgeContainerWithMarginTop
+              }
             />
             <InfiniteScroll
               loading={loading}

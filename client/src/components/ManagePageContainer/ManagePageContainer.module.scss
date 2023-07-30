@@ -12,6 +12,10 @@
   .contentContainer {
     display: flex;
     flex-direction: column;
+
+    .warningBadgeContainerWithMarginTop {
+      margin-top: 15px;
+    }
   }
 
   .topBadge {
