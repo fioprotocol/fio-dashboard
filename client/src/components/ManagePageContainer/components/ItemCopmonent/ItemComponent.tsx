@@ -69,17 +69,15 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
           <span className="boldText">{name}</span>
         </h4>
       </div>
-      <Badge show type={BADGE_TYPES.WHITE}>
-        <div className="d-flex align-items-center w-100">
-          <p className={classes.badgeTitle}>Bundled Transactions</p>
-          <p className={classes.badgeItem}>{remaining || 0}</p>
-          {showWarning && <WarningIcon className={classes.warnIcon} />}
-          <AddBundlesActionButton
-            isMobileView
-            name={name}
-            onAddBundles={onAddBundles}
-          />
-        </div>
+      <Badge show type={BADGE_TYPES.WHITE} className={classes.badgeContainer}>
+        <p className={classes.badgeTitle}>Bundled Transactions</p>
+        <p className={classes.badgeItem}>{remaining || 0}</p>
+        {showWarning && <WarningIcon className={classes.warnIcon} />}
+        <AddBundlesActionButton
+          isMobileView
+          name={name}
+          onAddBundles={onAddBundles}
+        />
       </Badge>
       <div className={classes.itemActions}>
         <h4 className={classes.actionsTitle}>Actions</h4>
@@ -125,21 +123,17 @@ export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => 
           <span className="boldText">{name}</span>
         </h4>
       </div>
-      <Badge show type={BADGE_TYPES.WHITE}>
+      <Badge show type={BADGE_TYPES.WHITE} className={classes.badgeContainer}>
         <p className={classes.badgeTitle}>Expiration Date</p>
         <p className={classes.badgeItem}>
           <DateComponent domainName={name} expiration={expiration} />
         </p>
       </Badge>
-      <Badge show type={BADGE_TYPES.WHITE}>
-        <div className={classes.domainStatus}>
-          <p className={classes.badgeTitle}>Status</p>
-          <div className={classes.domainStatusBadge}>
-            <DomainStatusBadge
-              status={isPublic ? DOMAIN_STATUS.PUBLIC : DOMAIN_STATUS.PRIVATE}
-            />
-          </div>
-        </div>
+      <Badge show type={BADGE_TYPES.WHITE} className={classes.badgeContainer}>
+        <p className={classes.badgeTitle}>Status</p>
+        <DomainStatusBadge
+          status={isPublic ? DOMAIN_STATUS.PUBLIC : DOMAIN_STATUS.PRIVATE}
+        />
       </Badge>
       <div className={classes.itemActions}>
         <h4 className={classes.actionsTitle}>Actions</h4>
