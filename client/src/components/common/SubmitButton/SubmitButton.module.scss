@@ -20,6 +20,10 @@
   align-items: center;
   justify-content: center;
 
+  &:focus {
+    box-shadow: none;
+  }
+
   & > div {
     min-width: 30px;
     padding-left: 5px;
