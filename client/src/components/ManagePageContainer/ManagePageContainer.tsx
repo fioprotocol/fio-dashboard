@@ -34,12 +34,14 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     listNameTitle,
     pageName,
     showTopBadge,
+    showWarningMessage,
     title,
     topBadgeContent,
     warningContent,
     handleAddBundles,
     handleRenewDomain,
     onTopBadgeClose,
+    sessionBadgeClose,
   } = props;
 
   const {
@@ -62,8 +64,8 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     onItemModalOpen,
     onSettingsClose,
     onSettingsOpen,
-    toggleShowWarnBadge,
-  } = useContext({ pageName });
+    onWarningBadgeClose,
+  } = useContext({ pageName, showWarningMessage, sessionBadgeClose });
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
 
@@ -91,7 +93,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
               message={warningContent.message}
               show={showWarnBadge}
               withoutMargin
-              onClose={() => toggleShowWarnBadge(false)}
+              onClose={onWarningBadgeClose}
               className={
                 listNameTitle && classes.warningBadgeContainerWithMarginTop
               }

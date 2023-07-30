@@ -25,6 +25,7 @@ export interface ContainerProps {
     type: string;
   };
   showTopBadge?: boolean;
+  showWarningMessage: boolean;
   warningContent?: {
     title: string;
     message: string;
@@ -32,6 +33,7 @@ export interface ContainerProps {
   handleAddBundles?: (name: string) => void;
   handleRenewDomain?: (name: string) => void;
   onTopBadgeClose?: () => void;
+  sessionBadgeClose: () => void;
 }
 
 type ModalOpenActionType = (
