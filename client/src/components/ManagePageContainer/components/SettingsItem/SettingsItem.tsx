@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -28,11 +28,10 @@ type DomainSettingsItemProps = {
 
 type DomainsWatchlistSettingsItemProps = {
   account?: string;
-  domainsWatchlistItemId: string;
   name: string;
   publicKey?: string;
   loading: boolean;
-  domainWatchlistItemDelete: (id: string) => void;
+  onDomainDeleteAction: () => void;
 };
 
 export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
@@ -193,18 +192,7 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
 };
 
 export const DomainsWatchlistSettingsItem: React.FC<DomainsWatchlistSettingsItemProps> = props => {
-  const {
-    account,
-    domainsWatchlistItemId,
-    name,
-    loading,
-    publicKey,
-    domainWatchlistItemDelete,
-  } = props;
-
-  const onClick = useCallback(() => {
-    domainWatchlistItemDelete(domainsWatchlistItemId);
-  }, [domainsWatchlistItemId, domainWatchlistItemDelete]);
+  const { account, name, loading, publicKey, onDomainDeleteAction } = props;
 
   return (
     <div className={classes.settingsContainer}>
@@ -265,7 +253,7 @@ export const DomainsWatchlistSettingsItem: React.FC<DomainsWatchlistSettingsItem
         <SubmitButton
           text="Remove Now"
           loading={loading}
-          onClick={onClick}
+          onClick={onDomainDeleteAction}
           hasAutoWidth
           withBottomMargin
         />

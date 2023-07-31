@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Link } from 'react-router-dom';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -11,6 +11,7 @@ import {
   MobileView,
 } from '../../../../components/ManagePageContainer/components/ItemsScreenView';
 import Modal from '../../../../components/Modal/Modal';
+import DangerModal from '../../../../components/Modal/DangerModal';
 import { DomainItemComponent } from '../../../../components/ManagePageContainer/components/ItemCopmonent';
 import { DomainsWatchlistSettingsItem } from '../../../../components/ManagePageContainer/components/SettingsItem';
 
@@ -38,6 +39,7 @@ type Props = {
   selectedFioNameItem: FioNameItemProps;
   selectedDomainWatchlistSettingsItem: Partial<FioNameItemProps>;
   showAddDomainWatchlistModal: boolean;
+  showDangerModal: boolean;
   showItemModal: boolean;
   showSettingsModal: boolean;
   warningContent: {
@@ -46,8 +48,10 @@ type Props = {
   };
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
-  domainWatchlistItemDelete: (id: string) => void;
   handleRenewDomain?: (name: string) => void;
+  onDangerModalAction: (id: string) => void;
+  onDangerModalClose: () => void;
+  onDangerModalOpen: () => void;
   onItemModalClose: () => void;
   onItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
@@ -67,13 +71,16 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
     selectedFioNameItem,
     selectedDomainWatchlistSettingsItem,
     showAddDomainWatchlistModal,
+    showDangerModal,
     showItemModal,
     showSettingsModal,
     warningContent,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
-    domainWatchlistItemDelete,
     handleRenewDomain,
+    onDangerModalAction,
+    onDangerModalClose,
+    onDangerModalOpen,
     onItemModalClose,
     onItemModalOpen,
     onPurchaseButtonClick,
@@ -89,6 +96,15 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
     isDomainWatchlist: true,
     pageName,
   };
+
+  const onDangerModalActionClick = useCallback(() => {
+    onDangerModalAction(
+      selectedDomainWatchlistSettingsItem?.domainsWatchlistItemId,
+    );
+  }, [
+    onDangerModalAction,
+    selectedDomainWatchlistSettingsItem?.domainsWatchlistItemId,
+  ]);
 
   return (
     <>
@@ -181,15 +197,22 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
       >
         <DomainsWatchlistSettingsItem
           account={selectedDomainWatchlistSettingsItem?.account}
-          domainsWatchlistItemId={
-            selectedDomainWatchlistSettingsItem?.domainsWatchlistItemId
-          }
           name={selectedDomainWatchlistSettingsItem?.name}
           publicKey={selectedDomainWatchlistSettingsItem?.walletPublicKey}
           loading={domainWatchlistIsDeleting}
-          domainWatchlistItemDelete={domainWatchlistItemDelete}
+          onDomainDeleteAction={onDangerModalOpen}
         />
       </Modal>
+      <DangerModal
+        show={showDangerModal}
+        onClose={onDangerModalClose}
+        onActionButtonClick={onDangerModalActionClick}
+        buttonText="Yes, remove domain"
+        title="Are you Sure?"
+        showCancel={true}
+        cancelButtonText="Cancel"
+        subtitle={`You are removing ${selectedDomainWatchlistSettingsItem?.name} domain from watchlist`}
+      />
     </>
   );
 };
