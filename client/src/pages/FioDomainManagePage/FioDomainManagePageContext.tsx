@@ -76,6 +76,7 @@ type UseContextProps = {
   };
   selectedDomainWatchlistItem: FioNameItemProps;
   selectedDomainWatchlistSettingsItem: Partial<FioNameItemProps>;
+  showDangerModal: boolean;
   showDomainWatchlistItemModal: boolean;
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
@@ -87,9 +88,11 @@ type UseContextProps = {
   };
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
-  domainWatchlistItemDelete: (id: string) => void;
   handleRenewDomain: (name: string) => void;
   onBagdeClose: () => void;
+  onDangerModalAction: (id: string) => void;
+  onDangerModalClose: () => void;
+  onDangerModalOpen: () => void;
   onDomainWatchlistItemModalClose: () => void;
   onDomainWatchlistItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
@@ -140,6 +143,7 @@ export const useContext = (): UseContextProps => {
   const [domainWatchlistIsDeleting, toggleDomainWatchlistIsDeleting] = useState<
     boolean
   >(false);
+  const [showDangerModal, toggleDangerModal] = useState<boolean>(false);
 
   const isDesktop = useCheckIfDesktop();
 
@@ -347,6 +351,22 @@ export const useContext = (): UseContextProps => {
     dispatch(toggleExpiredDomainBadge(false));
   }, [dispatch]);
 
+  const onDangerModalOpen = useCallback(() => {
+    toggleDangerModal(true);
+  }, []);
+
+  const onDangerModalClose = useCallback(() => {
+    toggleDangerModal(false);
+  }, []);
+
+  const onDangerModalAction = useCallback(
+    (id: string) => {
+      onDangerModalClose();
+      domainWatchlistItemDelete(id);
+    },
+    [domainWatchlistItemDelete, onDangerModalClose],
+  );
+
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.renewFioDomain));
   }, [dispatch]);
@@ -367,6 +387,7 @@ export const useContext = (): UseContextProps => {
     },
     selectedDomainWatchlistItem,
     selectedDomainWatchlistSettingsItem,
+    showDangerModal,
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
@@ -375,9 +396,11 @@ export const useContext = (): UseContextProps => {
     warningContent: WARNING_CONTENT.DOMAIN_RENEW,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
-    domainWatchlistItemDelete,
     handleRenewDomain,
     onBagdeClose,
+    onDangerModalAction,
+    onDangerModalClose,
+    onDangerModalOpen,
     onDomainWatchlistItemModalClose,
     onDomainWatchlistItemModalOpen,
     onPurchaseButtonClick,
