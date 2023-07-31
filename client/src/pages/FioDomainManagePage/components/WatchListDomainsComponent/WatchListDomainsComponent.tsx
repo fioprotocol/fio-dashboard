@@ -208,7 +208,7 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
         onClose={onDangerModalClose}
         onActionButtonClick={onDangerModalActionClick}
         buttonText="Yes, remove domain"
-        title="Are you Sure?"
+        title="Are You Sure?"
         showCancel={true}
         cancelButtonText="Cancel"
         subtitle={`You are removing ${selectedDomainWatchlistSettingsItem?.name} domain from watchlist`}
