@@ -58,7 +58,7 @@ const OutboundSwitch: React.FC = () => {
           setShowModal(false);
         }}
         buttonText={`Yes, ${isOutbound ? 'start' : 'stop'} outbound emails`}
-        title="Are you Sure?"
+        title="Are You Sure?"
         showCancel={true}
         cancelButtonText="Cancel"
         subtitle={`You are ${
