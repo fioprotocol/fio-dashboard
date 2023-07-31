@@ -115,8 +115,20 @@ const AdminOrdersPage: React.FC<Props> = props => {
       <div className={classes.tableContainer}>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div className="mr-4">
-            <Button onClick={handleExportOrderData}>
-              <FontAwesomeIcon icon="download" className="mr-2" /> Export
+            <Button
+              onClick={handleExportOrderData}
+              disabled={loading}
+              className="mb-4 d-flex flex-direction-row align-items-center"
+            >
+              <FontAwesomeIcon icon="download" className="mr-2" />{' '}
+              {loading ? (
+                <>
+                  <span className="mr-3">Exporting...</span>
+                  <Loader isWhite hasInheritFontSize hasSmallSize />
+                </>
+              ) : (
+                'Export'
+              )}
             </Button>
           </div>
 
