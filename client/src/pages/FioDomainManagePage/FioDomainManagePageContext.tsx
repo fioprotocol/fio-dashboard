@@ -319,9 +319,9 @@ export const useContext = (): UseContextProps => {
         await apis.domainsWatchlist.create(domain);
         await getDomainsWatchlistList();
 
+        closeDomainWatchlistModal();
         toggleDomainWatchlistLoading(false);
         setSuccessMessage(SUCCESS_MESSAGES.CREATE_DOMAIN_WATCHLIST_ITEM);
-        closeDomainWatchlistModal();
       } catch (err) {
         toggleDomainWatchlistLoading(false);
       }

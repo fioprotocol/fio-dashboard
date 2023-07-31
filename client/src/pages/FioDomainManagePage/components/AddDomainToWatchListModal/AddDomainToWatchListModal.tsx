@@ -141,7 +141,7 @@ export const AddDomainToWatchListModal: React.FC<Props> = props => {
                 ) : (
                   <SubmitButton
                     text="Add to Watchlist"
-                    disabled={hasValidationErrors}
+                    disabled={hasValidationErrors || loading}
                     loading={loading}
                   />
                 )}
