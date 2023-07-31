@@ -83,7 +83,7 @@ export const useContext = (): UseContextProps => {
     ? fioWalletsData[userId][fioWallet.publicKey]
     : null;
   const fioWalletTxHistory =
-    userId && fioWalletsTxHistory
+    userId && fioWalletsTxHistory && fioWalletsTxHistory[userId]
       ? fioWalletsTxHistory[userId][fioWallet.publicKey]
       : null;
 

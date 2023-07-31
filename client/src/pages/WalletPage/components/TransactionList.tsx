@@ -39,8 +39,9 @@ const TransactionList: React.FC<Props> = props => {
 
   // when no history fetched yet
   if (
-    typeof walletTxHistory.highestTxHeight === 'undefined' ||
-    walletTxHistory.highestTxHeight < 0
+    walletTxHistory &&
+    (typeof walletTxHistory.highestTxHeight === 'undefined' ||
+      walletTxHistory.highestTxHeight < 0)
   )
     return (
       <div className={classes.loader}>
