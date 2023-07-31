@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Fio101Component } from './components/Fio101Component';
+import { Fio101Component } from '../../components/Fio101Component';
 import { FioRequestActionComponent } from '../../components/FioRequestActionComponent';
 
 import { ItemWrapper } from './components/ItemWrapper';
 import { TotalBalanceComponent } from './components/TotalBalanceComponent';
-import { WelcomeComponent } from './components/WelcomeComponent';
+import { WelcomeComponent } from '../../components/WelcomeComponent';
 
 import { useContext } from './DashboardPageContext';
 
@@ -13,13 +13,11 @@ import classes from './DashboardPage.module.scss';
 
 const DashboardPage: React.FC = () => {
   const {
-    fio101Items,
-    firstWelcomeItem,
+    fio101ComponentProps,
     isDesktop,
-    loading,
-    secondWelcomeItem,
     totalBalance,
     totalBalanceLoading,
+    welcomeComponentProps,
   } = useContext();
 
   return (
@@ -29,11 +27,7 @@ const DashboardPage: React.FC = () => {
         loading={totalBalanceLoading}
       />
       <div className={classes.actionContainer}>
-        <WelcomeComponent
-          firstWelcomeItem={firstWelcomeItem}
-          secondWelcomeItem={secondWelcomeItem}
-          loading={loading}
-        />
+        <WelcomeComponent {...welcomeComponentProps} />
         <ItemWrapper
           hasFitContentWidth={isDesktop}
           hasFullWidth={!isDesktop}
@@ -42,11 +36,7 @@ const DashboardPage: React.FC = () => {
           <FioRequestActionComponent />
         </ItemWrapper>
       </div>
-      <Fio101Component
-        isDesktop={isDesktop}
-        fio101Items={fio101Items}
-        loading={loading}
-      />
+      <Fio101Component {...fio101ComponentProps} />
     </div>
   );
 };

@@ -1,0 +1,135 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-top: 50px;
+
+  &.hideTitle {
+    margin-top: 0;
+  
+    .sliderContainer {
+      margin-top: 0;
+    }
+  }
+
+  .title {
+    margin: 0 30px;
+    color: $baltic-sea;
+    @include comfortaa-bold;
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    margin-left: 30px;
+    font-size: 1.125em;
+    @include proxima-nova-thin;
+  }
+
+  .sliderContainer {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-radius: 24px;
+    border: 10px solid $vista-white;
+    background-color: $vista-white;
+
+    .sliderComponentContainer {
+      background-image: $beige-gradient;
+      border-radius: 24px;
+    }
+  }
+}
+
+.sliderDots {
+  display: flex !important;
+  padding: 0;
+  gap: 12px;
+  list-style-type: none;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  bottom: 43px;
+  margin-bottom: 0;
+
+  & > li {
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+
+    & > div {
+      width: 10px;
+      height: 10px;
+      background-color: $gainsboro;
+      border-radius: 10px;
+    }
+
+    &[class="slick-active"] {
+      width: 32px;
+      & > div {
+        width: 32px;
+        background-color: $light-indigo;
+      }
+    }
+  }
+}
+
+.arrowLeft, .arrowRight {
+  width: 34px;
+  height: 34px;
+  border-radius: 34px;
+  background-color: $baltic-sea;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: absolute;
+  z-index: 2;
+  bottom: 30px;
+
+  &:hover {
+    background-color: $mine-shaft;
+  }
+
+  .arrowIcon {
+    color: $white;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.arrowRight {
+  right: calc(50% - 47px);
+}
+
+.arrowLeft {
+  left: calc(50% - 47px);
+}
+
+@include lg {
+  .arrowLeft, .arrowRight {
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  .arrowRight {
+    right: -17px;
+
+    &.useMobileView {
+      top: inherit;
+      bottom: 30px;
+      right: calc(50% - 47px);
+      transform: translate(0, 0);
+    }
+  }
+
+  .arrowLeft {
+    left: -17px;
+
+    &.useMobileView {
+      top: inherit;
+      bottom: 30px;
+      left: calc(50% - 47px);
+      transform: translate(0, 0);
+    }
+  }
+}

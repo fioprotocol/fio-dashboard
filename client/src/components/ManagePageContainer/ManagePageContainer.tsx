@@ -1,344 +1,179 @@
-import React, { useEffect, useRef, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
-import { Link, Redirect } from 'react-router-dom';
+import React from 'react';
 
+import { Redirect } from 'react-router-dom';
+
+import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
+import { Fio101Component } from '../Fio101Component';
+import { WelcomeComponent } from '../WelcomeComponent';
+import { ListItemsComponent } from './components/ListItemsComponent';
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { ManagePageCtaBadge } from './ManagePageCtaBadge';
-import Notifications from './ManagePageComponents/Notifications';
-import DesktopView from './ManagePageComponents/DesktopView';
-import ItemComponent from './ManagePageComponents/ItemComponent';
-import MobileView from './ManagePageComponents/MobileView';
-import SettingsItem from './ManagePageComponents/SettingsItem';
-import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
-import InfoBadge from '../Badges/InfoBadge/InfoBadge';
-import ActionButtonsContainer from '../../pages/WalletsPage/components/ActionButtonsContainer';
-import Title from '../../pages/WalletsPage/components/Title';
+import NotificationBadge from '../NotificationBadge';
+import { BADGE_TYPES } from '../Badge/Badge';
 
-import { BANNER_DATA, ITEMS_LIMIT, SUBTITLE } from './constants';
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import { DesktopView } from './components/ItemsScreenView';
 import {
-  ANALYTICS_EVENT_ACTIONS,
-  CART_ITEM_TYPE,
-} from '../../constants/common';
-import { useCheckIfDesktop } from '../../screenType';
+  DomainItemComponent,
+  FchItemComponent,
+} from './components/ItemCopmonent';
+import { MobileView } from './components/ItemsScreenView';
+import { FchSettingsItem, DomainSettingsItem } from './components/SettingsItem';
+
 import { ROUTES } from '../../constants/routes';
-import { ACTIONS } from '../../constants/fio';
 
-import {
-  fireAnalyticsEvent,
-  getCartItemsDataForAnalytics,
-} from '../../util/analytics';
-import { isDomainExpired } from '../../util/fio';
+import { useContext } from './ManagePageContainerContext';
 
-import { ContainerProps, HasMore } from './types';
-import { FioNameItemProps, FioWalletDoublet } from '../../types';
-
-import unwrapIcon from '../../assets/images/unwrap.svg';
+import { ContainerProps } from './types';
 
 import classes from './ManagePageContainer.module.scss';
 
-const INFO_BADGE_CONTENT = {
-  address: {
-    title: 'No FIO Crypto Handles',
-    message: 'There are no FIO Crypto Handles in all your wallets',
-  },
-  domain: {
-    title: 'No FIO Domains',
-    message: 'There are no FIO Domains in all your wallets',
-  },
-};
-
-const ManagePageContainer: React.FC<ContainerProps> = props => {
+export const ManagePageContainer: React.FC<ContainerProps> = props => {
   const {
+    children,
+    emptyStateContent,
+    listNameTitle,
     pageName,
-    fioNameList,
+    showTopBadge,
+    showWarningMessage,
+    title,
+    topBadgeContent,
+    warningContent,
+    handleAddBundles,
+    handleRenewDomain,
+    onTopBadgeClose,
+    sessionBadgeClose,
+  } = props;
+
+  const {
+    fio101ComponentProps,
     fioWallets,
-    getWalletAddresses,
-    hasMore,
+    hasNextPage,
+    isAddress,
+    isDesktop,
+    isEmptyList,
+    listItemsDefaultProps,
     loading,
     noProfileLoaded,
-    showExpired,
-    showBundles,
-    showStatus,
-    showFioAddressName,
-    addBundlesFeePrice,
-    renewDomainFeePrice,
-    getAddBundlesFee,
-    getRenewDomainFee,
-    cartItems,
-    addItemToCart,
-    history,
-  } = props;
-  const [showWarnBadge, toggleShowWarnBadge] = useState<boolean>(false);
-  const [showInfoBadge, toggleShowInfoBadge] = useState<boolean>(false);
-  const [offset, changeOffset] = useState<HasMore>({});
-  const [show, handleShowModal] = useState(false);
-  const [showSettings, handleShowSettings] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState<FioNameItemProps>({});
-  const [fetchWalletDataIteration, setFetchWalletDataIteration] = useState(0);
-
-  const isDesktop = useCheckIfDesktop();
-
-  const fioWalletsRef = useRef(fioWallets);
-  if (!isEqual(fioWallets, fioWalletsRef)) {
-    fioWalletsRef.current = fioWallets;
-  }
-
-  const hasMoreItems = Object.keys(hasMore).some(key => hasMore[key] > 0);
-
-  // Get and handle Fio Crypto Handles or Fio Domains for one specific wallet (public key)
-  const handleWalletAddresses = (wallet: FioWalletDoublet, limit: number) => {
-    const { publicKey } = wallet;
-    const currentOffset = offset[publicKey] || 0;
-    getWalletAddresses(publicKey, limit, currentOffset);
-    !!hasMore[publicKey] &&
-      changeOffset({
-        ...offset,
-        [publicKey]: currentOffset + Math.round(limit),
-      });
-  };
-
-  // Get Fio Crypto Handles or Fio Domains from all wallets (public keys) on initial and lazy load
-  const getAllWalletsAddresses = () => {
-    if (!isEmpty(fioWallets)) {
-      let wallets = fioWallets;
-      if (fetchWalletDataIteration > 0 && fioWallets.length > 1)
-        wallets = fioWallets.filter(
-          fioWallet => hasMore[fioWallet.publicKey] > 0,
-        );
-      for (const wallet of wallets) {
-        handleWalletAddresses(wallet, Math.round(ITEMS_LIMIT / wallets.length));
-      }
-      setFetchWalletDataIteration(fetchWalletDataIteration + 1);
-    }
-  };
-
-  // Handle loading more Fio Crypto Handles or Fio Domains on initial or lazy load if we have less loaded items than limit count
-  useEffect(() => {
-    if (
-      fetchWalletDataIteration > 0 &&
-      hasMoreItems &&
-      fioNameList.length % ITEMS_LIMIT !== 0 &&
-      fioNameList.length - ITEMS_LIMIT * fetchWalletDataIteration < 0
-    ) {
-      // Set loading more new limit count to rich the limit count for initial load or lazy load
-      const extraLimitCount = ITEMS_LIMIT - (fioNameList.length % ITEMS_LIMIT);
-      const hasMoreAddressesWallets = fioWallets.filter(
-        fioWallet => hasMore[fioWallet.publicKey] > 0,
-      );
-      for (const hasMoreWallet of hasMoreAddressesWallets) {
-        handleWalletAddresses(
-          hasMoreWallet,
-          Math.round(extraLimitCount / hasMoreAddressesWallets.length),
-        );
-      }
-    }
-  }, [fetchWalletDataIteration, fioNameList.length, hasMoreItems]);
-
-  useEffect(() => {
-    toggleShowWarnBadge(
-      !!fioNameList &&
-        !!showExpired &&
-        fioNameList.some(
-          dataItem =>
-            dataItem.expiration &&
-            isDomainExpired(dataItem.name, dataItem.expiration),
-        ),
-    );
-    toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
-  }, [fioWalletsRef.current]);
-
-  useEffect(() => {
-    if (!isEmpty(hasMore)) {
-      const offsetObj: HasMore = {};
-
-      Object.keys(hasMore).forEach(key => {
-        offsetObj[key] = 0;
-      });
-      changeOffset(offsetObj);
-    }
-  }, [fioWalletsRef.current]);
-
-  useEffect(() => {
-    getAllWalletsAddresses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getAddBundlesFee && getAddBundlesFee();
-    getRenewDomainFee && getRenewDomainFee();
-  }, [getAddBundlesFee, getRenewDomainFee]);
-
-  const onItemModalOpen = (fioNameItem: FioNameItemProps) => {
-    setCurrentAddress(fioNameItem);
-    handleShowModal(true);
-  };
-  const onItemModalClose = () => handleShowModal(false);
-
-  const onSettingsOpen = (fioNameItem: FioNameItemProps) => {
-    setCurrentAddress(fioNameItem);
-    handleShowModal(false);
-    handleShowSettings(true);
-  };
-  const onSettingsClose = () => {
-    !isDesktop && handleShowModal(true);
-    handleShowSettings(false);
-  };
-  const handleAddBundles = (name: string) => {
-    const [address, domain] = name.split(FIO_ADDRESS_DELIMITER);
-    const newCartItem = {
-      address,
-      domain,
-      type: CART_ITEM_TYPE.ADD_BUNDLES,
-      id: `${name}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
-      allowFree: false,
-      costNativeFio: addBundlesFeePrice?.nativeFio,
-      costFio: addBundlesFeePrice.fio,
-      costUsdc: addBundlesFeePrice.usdc,
-    };
-
-    addItemToCart(newCartItem);
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-      getCartItemsDataForAnalytics([newCartItem]),
-    );
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
-      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
-    );
-    history.push(ROUTES.CART);
-  };
-
-  const handleRenewDomain = (domain: string) => {
-    const newCartItem = {
-      domain,
-      type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-      id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
-      allowFree: false,
-      period: 1,
-      costNativeFio: renewDomainFeePrice?.nativeFio,
-      costFio: renewDomainFeePrice.fio,
-      costUsdc: renewDomainFeePrice.usdc,
-    };
-
-    addItemToCart(newCartItem);
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-      getCartItemsDataForAnalytics([newCartItem]),
-    );
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
-      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
-    );
-    history.push(ROUTES.CART);
-  };
-
-  const propsToComponents = {
-    fioNameList,
-    isDesktop,
-    pageName,
-    showInfoBadge,
-    isDomainExpired,
-    toggleShowInfoBadge,
-    toggleShowWarnBadge,
+    selectedFioNameItem,
+    showWarnBadge,
+    showItemModal,
+    showSettingsModal,
+    welcomeComponentProps,
+    loadMore,
+    onItemModalClose,
     onItemModalOpen,
+    onSettingsClose,
     onSettingsOpen,
-    showExpired,
-    showBundles,
-    showStatus,
-    showFioAddressName,
-    onAddBundles: handleAddBundles,
-    onRenewDomain: handleRenewDomain,
-  };
+    onWarningBadgeClose,
+  } = useContext({ pageName, showWarningMessage, sessionBadgeClose });
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
 
-  const renderTitle = () => {
-    return (
-      <Title title={BANNER_DATA[pageName].title} subtitle={SUBTITLE[pageName]}>
-        {pageName === 'domain' ? (
-          <ActionButtonsContainer>
-            <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.link}>
-              <div>
-                <img src={unwrapIcon} alt="unwrap" />
-              </div>
-            </Link>
-          </ActionButtonsContainer>
-        ) : null}
-      </Title>
-    );
-  };
-
-  const renderList = () => {
-    if ((!fioNameList || fioNameList.length === 0) && !loading)
-      return (
-        <InfoBadge
-          title={INFO_BADGE_CONTENT[pageName].title}
-          message={INFO_BADGE_CONTENT[pageName].message}
-        />
-      );
-    if (isDesktop) return <DesktopView {...propsToComponents} />;
-    return <MobileView {...propsToComponents} />;
-  };
-
   return (
     <div className={classes.container}>
-      <LayoutContainer title={renderTitle()}>
-        <div className={classes.dataContainer}>
-          {isDesktop && (
-            <Notifications
-              showWarnBadge={showWarnBadge}
-              showInfoBadge={showInfoBadge}
-              toggleShowWarnBadge={toggleShowWarnBadge}
-              toggleShowInfoBadge={toggleShowInfoBadge}
-              pageName={pageName}
-            />
+      <NotificationBadge
+        hasNewDesign
+        type={topBadgeContent?.type}
+        show={showTopBadge}
+        message={topBadgeContent?.message}
+        title={topBadgeContent?.title}
+        marginBottomZero
+        onClose={onTopBadgeClose}
+        className={classes.topBadge}
+      />
+      <div className={classes.contentContainer}>
+        <LayoutContainer title={title}>
+          {listNameTitle && (
+            <div className={classes.listNameTitle}>{listNameTitle}</div>
           )}
-          <InfiniteScroll
-            loading={loading}
-            hasNextPage={hasMoreItems}
-            onLoadMore={getAllWalletsAddresses}
-          >
-            {renderList()}
-          </InfiniteScroll>
+          <div className={classes.dataContainer}>
+            <NotificationBadge
+              type={BADGE_TYPES.WARNING}
+              title={warningContent.title}
+              message={warningContent.message}
+              show={showWarnBadge}
+              withoutMargin
+              onClose={onWarningBadgeClose}
+              className={classes.warningBadgeContainerWithMarginTop}
+            />
+            <InfiniteScroll
+              loading={loading}
+              hasNextPage={hasNextPage}
+              onLoadMore={loadMore}
+            >
+              <ListItemsComponent
+                isEmpty={isEmptyList && !loading}
+                emptyStateContent={emptyStateContent}
+                listItems={
+                  isDesktop ? (
+                    <DesktopView
+                      {...listItemsDefaultProps}
+                      onAddBundles={handleAddBundles}
+                      onSettingsOpen={onSettingsOpen}
+                      onRenewDomain={handleRenewDomain}
+                    />
+                  ) : (
+                    <MobileView
+                      {...listItemsDefaultProps}
+                      onItemModalOpen={onItemModalOpen}
+                    />
+                  )
+                }
+              />
+            </InfiniteScroll>
+          </div>
+          {children}
+          <WelcomeComponent {...welcomeComponentProps} />
+        </LayoutContainer>
+        <div className={classes.actionBadge}>
+          <Fio101Component {...fio101ComponentProps} />
         </div>
-      </LayoutContainer>
-      <div className={classes.actionBadge}>
-        <ManagePageCtaBadge name={pageName} />
       </div>
       <Modal
-        show={show}
+        show={showItemModal}
         onClose={onItemModalClose}
         hideCloseButton={false}
-        closeButton={true}
-        isSimple={true}
+        closeButton
+        isSimple
       >
-        <ItemComponent
-          {...propsToComponents}
-          fioNameItem={currentAddress}
-          showWarnBadge={showWarnBadge}
-        />
+        {isAddress ? (
+          <FchItemComponent
+            fioNameItem={selectedFioNameItem}
+            warningContent={warningContent}
+            onAddBundles={handleAddBundles}
+            onSettingsOpen={onSettingsOpen}
+          />
+        ) : (
+          <DomainItemComponent
+            fioNameItem={selectedFioNameItem}
+            isDesktop={isDesktop}
+            warningContent={warningContent}
+            onRenewDomain={handleRenewDomain}
+            onSettingsOpen={onSettingsOpen}
+          />
+        )}
       </Modal>
       <Modal
-        show={showSettings}
+        show={showSettingsModal}
         onClose={onSettingsClose}
         hideCloseButton={false}
-        closeButton={true}
-        isSimple={true}
+        closeButton
+        isSimple
         isWide={isDesktop}
-        hasDefaultCloseColor={true}
+        hasDefaultCloseColor
       >
-        <SettingsItem
-          fioNameItem={currentAddress}
-          pageName={pageName}
-          fioWallets={fioWallets}
-          showStatus={showStatus}
-        />
+        {isAddress ? (
+          <FchSettingsItem
+            fioNameItem={selectedFioNameItem}
+            fioWallets={fioWallets}
+          />
+        ) : (
+          <DomainSettingsItem
+            fioNameItem={selectedFioNameItem}
+            fioWallets={fioWallets}
+          />
+        )}
       </Modal>
     </div>
   );
 };
-
-export default ManagePageContainer;

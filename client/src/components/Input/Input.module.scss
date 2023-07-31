@@ -86,6 +86,7 @@
   width: 100%;
 
   &.blackLight,
+  &.blackGray,
   &.blackWhite,
   &.indigoWhite {
     color: $dark-jungle-green;
@@ -106,6 +107,7 @@
   color: $gray-main;
 
   &.blackLight,
+  &.blackGray,
   &.blackWhite {
     color: $baltic-sea;
   }
@@ -224,6 +226,7 @@
     height: 20px;
 
     &.bw,
+    &.blackGray,
     &.blackWhite {
       color: $dark-gray;
     }
@@ -348,6 +351,20 @@
       }
     }
 
+    &.bg {
+      background-color: $aqua-haze;
+      border-color: $aqua-haze;
+      color: $gray-main !important;
+
+      input {
+        color: $gray-main !important;
+    
+        &::placeholder {
+          @include proxima-nova-regular-it;
+        }
+      }
+    }
+
     &.error {
       border-color: $warn-red;
     }
@@ -365,6 +382,7 @@
     }
 
     &.blackLight,
+    &.blackGray,
     &.blackWhite {
       border-color: transparent;
       color: $baltic-sea;
@@ -394,6 +412,10 @@
 
     &.blackLight {
       background-color: $light-gray;
+    }
+
+    &.blackGray {
+      background-color: $aqua-haze;
     }
 
     &.blackWhite {

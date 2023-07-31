@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button } from 'react-bootstrap';
+import SettingsIcon from '@mui/icons-material/Settings';
+import classnames from 'classnames';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import ShowPrivateKeyModal from './components/ShowPrivateKeyModal';
-import { ManagePageCtaBadge } from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
@@ -12,58 +14,113 @@ import Title from '../WalletsPage/components/Title';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
+import { WelcomeComponent } from '../../components/WelcomeComponent';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { WALLET_CREATED_FROM } from '../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-import { CTA_BADGE_TYPE } from '../../components/ManagePageContainer/constants';
 
-import { ContainerProps, LocationProps } from './types';
+import { useContext } from './WalletPageContext';
 
-import classes from './styles/WalletPage.module.scss';
 import wrapIcon from '../../assets/images/wrap.svg';
 import unwrapIcon from '../../assets/images/unwrap.svg';
 
-const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
+import classes from './styles/WalletPage.module.scss';
+
+type TitleComponentProps = {
+  publicKey: string;
+  walletName: string;
+  onKeyShow: () => void;
+};
+
+const TitleComponent: React.FC<TitleComponentProps> = props => {
+  const { publicKey, walletName, onKeyShow } = props;
+
+  const title = (
+    <div className={classes.titleContainer}>
+      <h3 className={classes.title}>{walletName}</h3>
+      <div className={classes.titleActionButtons}>
+        <Button
+          className={classnames(classes.actionButton, classes.settingsButton)}
+          onClick={onKeyShow}
+        >
+          <SettingsIcon />
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <Title title={title}>
+      <ActionButtonsContainer>
+        <Link
+          to={{
+            pathname: ROUTES.FIO_TOKENS_RECEIVE,
+            search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
+          }}
+          className={classes.actionButton}
+        >
+          <Button>
+            <FontAwesomeIcon icon="arrow-down" />
+            <span>Receive</span>
+          </Button>
+        </Link>
+
+        <Link
+          to={{
+            pathname: ROUTES.SEND,
+            search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
+          }}
+          className={classes.actionButton}
+        >
+          <Button>
+            <FontAwesomeIcon icon="arrow-up" />
+            <span>Send</span>
+          </Button>
+        </Link>
+
+        <Link
+          to={`${ROUTES.WRAP_TOKENS}?publicKey=${publicKey}`}
+          className={classes.actionButton}
+        >
+          <Button>
+            <img src={wrapIcon} alt="wrap" />
+            <span>Wrap</span>
+          </Button>
+        </Link>
+
+        <Link
+          to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${publicKey}`}
+          className={classes.actionButton}
+        >
+          <Button>
+            <img src={unwrapIcon} alt="unwrap" />
+            <span>Unwrap</span>
+          </Button>
+        </Link>
+      </ActionButtonsContainer>
+    </Title>
+  );
+};
+
+const WalletPage: React.FC = () => {
   const {
-    fioWallet,
+    error,
     fioCryptoHandles,
-    balance,
-    profileRefreshed,
-    refreshBalance,
-    fioWalletsData = {},
-    fioWalletsTxHistory,
-    location: {
-      query: { publicKey } = {},
-      state: { isOpenLockedList = false } = {},
-    },
-  } = props;
-
-  const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
-  const [showPrivateKeyModal, setShowPrivateKeyModal] = useState(false);
-  const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
-  const [error, setError] = useState<string>('');
-
-  useEffect(() => {
-    if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet, refreshBalance]);
-
-  useEffect(() => {
-    if (publicKey && profileRefreshed && !fioWallet)
-      setError(`FIO Wallet (${publicKey}) is not available`);
-  }, [publicKey, fioWallet, profileRefreshed]);
-
-  const onShowPrivateModalClose = () => setShowPrivateKeyModal(false);
-  const closeWalletNameEdit = () => setShowWalletNameEdit(false);
-
-  const onKeyShow = () => setShowPrivateKeyModal(true);
-  const onWalletEdit = () => {
-    setShowWalletNameEdit(true);
-  };
-  const onWalletUpdated = () => {
-    closeWalletNameEdit();
-  };
+    fioWallet,
+    fioWalletBalance,
+    fioWalletData,
+    fioWalletTxHistory,
+    hasNoTransactions,
+    isOpenLockedList,
+    showPrivateKeyModal,
+    showWalletNameEdit,
+    welcomeComponentProps,
+    closeWalletNameEdit,
+    onKeyShow,
+    onShowPrivateModalClose,
+    onWalletUpdated,
+  } = useContext();
 
   if (error)
     return (
@@ -78,82 +135,8 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
         </LayoutContainer>
       </div>
     );
-  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
-  const renderTitle = () => {
-    const title = (
-      <div className={classes.titleContainer}>
-        <h3 className={classes.title}>{fioWallet.name}</h3>
-        <div className={classes.titleActionButtons}>
-          <FontAwesomeIcon
-            icon="pen"
-            onClick={onWalletEdit}
-            className={classes.editIcon}
-          />
-          {!isLedgerWallet && (
-            <div className={classes.privateKeyIcon}>
-              <FontAwesomeIcon
-                icon={{ prefix: 'fas', iconName: 'key' }}
-                onClick={onKeyShow}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-    return (
-      <Title title={title} subtitle="Manage your FIO tokens">
-        <ActionButtonsContainer>
-          <Link
-            to={{
-              pathname: ROUTES.FIO_TOKENS_RECEIVE,
-              search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
-            }}
-            className={classes.firstLink}
-            title="Receive tokens"
-            aria-label="Receive tokens"
-          >
-            <div>
-              <FontAwesomeIcon icon="arrow-down" />
-            </div>
-          </Link>
-          <Link
-            to={{
-              pathname: ROUTES.SEND,
-              search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
-            }}
-            title="Send tokens"
-            aria-label="Send tokens"
-          >
-            <div>
-              <FontAwesomeIcon icon="arrow-up" />
-            </div>
-          </Link>
-          <Link
-            to={`${ROUTES.WRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}
-            title="Wrap tokens"
-            aria-label="Wrap tokens"
-          >
-            <div>
-              <img src={wrapIcon} alt="wrap" />
-            </div>
-          </Link>
-          <Link
-            to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}
-            title="Unwrap tokens"
-            aria-label="Unwrap tokens"
-          >
-            <div>
-              <img src={unwrapIcon} alt="unwrap" />
-            </div>
-          </Link>
-        </ActionButtonsContainer>
-      </Title>
-    );
-  };
-  const hasNoTransactions =
-    balance.total.nativeFio === 0 &&
-    fioWalletsTxHistory[fioWallet.publicKey]?.txs.length === 0;
+  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   return (
     <div className={classes.container}>
@@ -168,7 +151,29 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
         onSuccess={onWalletUpdated}
         onClose={closeWalletNameEdit}
       />
-      <LayoutContainer title={renderTitle()}>
+      <LayoutContainer
+        title={
+          <TitleComponent
+            publicKey={fioWallet.publicKey}
+            walletName={fioWallet.name}
+            onKeyShow={onKeyShow}
+          />
+        }
+      >
+        <h6 className={classes.transactionsTitle}>Recent Transactions</h6>
+        <hr />
+        <InfoBadge
+          message={
+            <span>
+              Only FIO Requests are displayed below. Please visit the{' '}
+              <b style={{ fontFamily: 'Proxima Nova Bold' }}>Explore</b> to view
+              you total transaction history.
+            </span>
+          }
+          show={true}
+          title="Transaction Display"
+          type={BADGE_TYPES.INFO}
+        />
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>
@@ -176,19 +181,17 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           fioWallet={fioWallet}
           fioCryptoHandles={fioCryptoHandles}
           hasNoTransactions={hasNoTransactions}
-          walletData={fioWalletsData[fioWallet.publicKey]}
-          walletTxHistory={fioWalletsTxHistory[fioWallet.publicKey]}
+          walletData={fioWalletData}
+          walletTxHistory={fioWalletTxHistory}
         />
+        <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge
-          {...balance}
+          {...fioWalletBalance}
           publicKey={fioWallet.publicKey}
           isOpenLockedList={isOpenLockedList}
         />
-        {!hasNoTransactions && (
-          <ManagePageCtaBadge name={CTA_BADGE_TYPE.TOKENS} />
-        )}
       </div>
     </div>
   );

@@ -344,4 +344,16 @@ export default class Edge {
       throw e;
     }
   }
+
+  async deleteWallet(account: EdgeAccount, walletId: string): Promise<void> {
+    try {
+      await account.changeWalletStates({
+        [walletId]: { deleted: true },
+      });
+      log.info(`Wallet with id: ${walletId} marked as deleted.`);
+    } catch (e) {
+      this.logError(e);
+      throw e;
+    }
+  }
 }

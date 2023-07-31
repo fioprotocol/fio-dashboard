@@ -4,6 +4,7 @@ import WalletsList from '../services/wallets/List';
 import WalletsUpdateList from '../services/wallets/UpdateList';
 import WalletsAdd from '../services/wallets/Add';
 import WalletsUpdate from '../services/wallets/Update';
+import WalletsDelete from '../services/wallets/Delete';
 import WalletsImportValidate from '../services/wallets/ImportValidate';
 
 export default {
@@ -11,6 +12,10 @@ export default {
   setWallets: makeServiceRunner(WalletsUpdateList, req => req.body),
   addWallet: makeServiceRunner(WalletsAdd, req => req.body),
   editWallet: makeServiceRunner(WalletsUpdate, req => ({
+    ...req.params,
+    ...req.body.data,
+  })),
+  deleteWallet: makeServiceRunner(WalletsDelete, req => ({
     ...req.params,
     ...req.body.data,
   })),

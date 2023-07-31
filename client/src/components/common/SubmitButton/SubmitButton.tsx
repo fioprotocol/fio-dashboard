@@ -31,6 +31,7 @@ type Props = {
   isWhiteViolet?: boolean;
   loading?: boolean;
   text?: string | React.ReactNode;
+  title?: string;
   variant?: string;
   withBottomMargin?: boolean;
   withoutMargin?: boolean;
@@ -63,6 +64,7 @@ export const SubmitButton: React.FC<Props> = props => {
     isWhiteViolet,
     loading,
     text,
+    title,
     variant,
     withBottomMargin,
     withoutMargin,
@@ -75,6 +77,7 @@ export const SubmitButton: React.FC<Props> = props => {
       type={onClick != null || isButtonType ? 'button' : 'submit'}
       variant={variant}
       disabled={disabled}
+      title={title}
       onClick={onClick}
       className={classnames(
         classes.button,

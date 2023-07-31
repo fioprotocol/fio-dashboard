@@ -5,8 +5,11 @@
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 20px;
 
   .subtitle {
+    margin-top: 5px;
+    margin-bottom: 0;
     font-size: 0.875rem;
     @include proxima-nova-thin;
   }

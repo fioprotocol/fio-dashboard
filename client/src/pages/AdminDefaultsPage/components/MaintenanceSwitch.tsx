@@ -53,7 +53,7 @@ const MaintenanceSwitch: React.FC = () => {
           setShowModal(false);
         }}
         buttonText="Yes, switch maintenance mode"
-        title="Are you Sure?"
+        title="Are You Sure?"
         showCancel={true}
         cancelButtonText="Cancel"
         subtitle={`You are switching ${

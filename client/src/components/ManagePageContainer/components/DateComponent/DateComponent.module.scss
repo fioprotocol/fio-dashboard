@@ -1,0 +1,13 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../../assets/styles/colors.scss';
+
+.warnIcon {
+  margin-left: 10px;
+  color: $simple-orange;
+  width: 18px !important;
+  height: 18px !important;
+  
+  @include lg {
+    margin-left: 5px;
+  }
+}

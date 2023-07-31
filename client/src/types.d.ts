@@ -184,7 +184,7 @@ export type NewFioWalletDoublet = {
 
 export type FioAddressDoublet = {
   name: string;
-  expiration: Date;
+  expiration: number | string;
   remaining: number;
   walletPublicKey: string;
   walletName?: string;
@@ -198,7 +198,7 @@ export type FioAddressWithPubAddresses = FioNameItemProps & {
 
 export type FioDomainDoublet = {
   name: string;
-  expiration: Date;
+  expiration: number | string;
   isPublic: number;
   walletPublicKey: string;
   walletName?: string;
@@ -254,7 +254,11 @@ export type LastAuthData = {
 export type FioNameType = 'address' | 'domain';
 
 export type FioNameItemProps = Partial<FioAddressDoublet> &
-  Partial<FioDomainDoublet>;
+  Partial<FioDomainDoublet> & {
+    account?: string;
+    id?: string;
+    domainsWatchlistItemId?: string;
+  };
 
 export type LinkResult = {
   updated: PublicAddressDoublet[];
@@ -940,6 +944,34 @@ export type SocialMediaLinkItem = {
   iconSrc: string;
   name: SocialMediaLinkNameProp;
   link: string;
+};
+
+export type AllFioNamesAndWalletsProps = {
+  firstFromListFioAddressName: string;
+  firstFromListFioDomainName: string;
+  firstFromListFioWalletPublicKey: string;
+  fioAddresses: FioAddressDoublet[];
+  fioDomains: FioDomainDoublet[];
+  fioWallets: FioWalletDoublet[];
+  fioWalletsBalances: WalletsBalances;
+  isFioWalletsBalanceLoading: boolean;
+  hasAffiliate: boolean;
+  hasDomains: boolean;
+  hasExpiredDomains: boolean;
+  hasFCH: boolean;
+  hasOneDomain: boolean;
+  hasOneFCH: boolean;
+  hasNoStakedTokens: boolean;
+  hasZeroTotalBalance: boolean;
+  loading: boolean;
+  noMappedPubAddresses: boolean;
+  userId: string;
+};
+
+export type DomainWatchlistItem = {
+  id: string;
+  domain: string;
+  createdAt: string;
 };
 
 declare global {

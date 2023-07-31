@@ -82,9 +82,83 @@
   }
 }
 
+.actionButton {
+  background-color: $light-indigo;
+  border-radius: 50px;
+  text-align: left;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  @include sf-pro-display-thin;
+
+  &.settingsButton {
+    width: 39px !important;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & svg {
+      position: relative;
+      width: 53px;
+      margin: 0;
+    }
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .unwrapIcon {
+    width: 20px;
+    margin-right: 9px;
+    margin-bottom: 2px;
+  }
+
+  button {
+    background: none;
+    border: none;
+    width: 100%;
+    border-radius: 50px;
+  }
+
+  svg {
+    margin-right: 10px;
+    margin-left: 3px;
+  }
+
+  img {
+    margin-bottom: 2px;
+    margin-right: 4px;
+    width: 20px;
+  }
+}
+
+.transactionsTitle {
+  margin-top: 40px;
+}
+
+@include sm {
+  .hideTextOnMobile {
+    display: none;
+  }
+
+  .container {
+    flex-wrap: wrap;
+  }
+
+  .actionButton {
+    width: 40vw;
+  }
+}
+
 @include md {
   .container {
     padding: 30px 20px;
+    flex-wrap: wrap;
 
     .actionBadges {
       margin: 0 20px;
@@ -98,6 +172,13 @@
         }
       }
     }
+    .actionButton {
+      width: 40vw;
+    }
+  }
+
+  .hideTextOnMobile {
+    display: none;
   }
 }
 

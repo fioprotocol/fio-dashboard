@@ -17,6 +17,9 @@ import classes from '../styles/TotalBalanceBadge.module.scss';
 type Props = WalletBalances & {
   publicKey?: string;
   isOpenLockedList?: boolean;
+  isNew?: boolean;
+  isMobile?: boolean;
+  itTotalWallets?: boolean;
 };
 
 const Balance = (props: {
@@ -24,6 +27,7 @@ const Balance = (props: {
   usdc: string;
   title: string;
   viewDetails?: () => void;
+  isNew?: boolean;
 }) => {
   const { fio, usdc, title, viewDetails } = props;
   return (
@@ -93,6 +97,8 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     unlockPeriods,
     publicKey,
     isOpenLockedList,
+    isMobile = false,
+    itTotalWallets = false,
   } = props;
 
   const [showLockedTokensModalView, setShowLockedTokensModalView] = useState(
@@ -108,9 +114,16 @@ const TotalBalanceBadge: React.FC<Props> = props => {
   };
 
   return (
-    <div className={classes.actionBadgeContainer}>
+    <div
+      className={classnames(
+        classes.actionBadgeContainer,
+        isMobile && classes.onlyMobile,
+      )}
+    >
       <div className={classes.totalBadge}>
-        <p className={classes.title}>Total FIO Wallets Balance</p>
+        <p className={classes.title}>
+          Total {itTotalWallets && 'Wallets'} FIO Balance
+        </p>
         <div className={classes.totalFio}>
           <PriceComponent costFio={total.fio} costUsdc={total.usdc} />
         </div>

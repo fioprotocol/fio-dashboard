@@ -129,6 +129,7 @@ router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);
 router.post('/account/wallet', checkAuth, routes.account.addWallet);
 router.post('/account/wallet/update/:publicKey', checkAuth, routes.account.editWallet);
+router.delete('/account/wallet/:publicKey', checkAuth, routes.account.deleteWallet);
 router.post(
   '/account/wallet/import/validate/:publicKey',
   checkAuth,
@@ -203,6 +204,10 @@ router.get('/infura-nfts', routes.external.infuraNfts);
 router.get('/infura-nfts-metadata', routes.external.infuraNftsMetadata);
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
+
+router.post('/domains-watchlist', checkAuth, routes.domainsWatchlist.create);
+router.delete('/domains-watchlist', checkAuth, routes.domainsWatchlist.delete);
+router.get('/domains-watchlist', checkAuth, routes.domainsWatchlist.list);
 
 router.get('/vars/:key', routes.vars.get);
 router.post('/vars/update/:key', routes.vars.update);

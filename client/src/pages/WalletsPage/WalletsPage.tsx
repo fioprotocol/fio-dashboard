@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletItem from './components/WalletItem';
@@ -10,7 +12,7 @@ import TotalBalanceBadge from './components/TotalBalanceBadge';
 import Title from './components/Title';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NotificationBadge from '../../components/NotificationBadge/NotificationBadge';
-import { ManagePageCtaBadge } from '../../components/ManagePageContainer/ManagePageCtaBadge';
+import { WelcomeComponent } from '../../components/WelcomeComponent';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
@@ -18,67 +20,63 @@ import {
   NOTIFICATIONS_CONTENT,
   NOTIFICATIONS_CONTENT_TYPE,
 } from '../../constants/notifications';
-import { CTA_BADGE_TYPE } from '../../components/ManagePageContainer/constants';
 
-import useEffectOnce from '../../hooks/general';
+import { useContext } from './WalletsPageContext';
 
 import { Props } from './types';
 
 import classes from './styles/WalletsPage.module.scss';
 import unwrapIcon from '../../assets/images/unwrap.svg';
 
-const WalletsPage: React.FC<Props> = props => {
-  const { fioWallets, balance, refreshBalance, location } = props;
+type TitleComponentProps = {
+  onAdd: () => void;
+};
 
-  const [showCreateWallet, setShowCreateWallet] = useState<boolean>(false);
-  const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
-  const [showWalletCreated, setShowWalletCreated] = useState<boolean>(false);
+const TitleComponent: React.FC<TitleComponentProps> = props => {
+  const { onAdd } = props;
 
-  useEffectOnce(() => {
-    for (const { publicKey } of fioWallets) {
-      refreshBalance(publicKey);
-    }
-  }, [fioWallets, refreshBalance]);
+  return (
+    <Title title="FIO Wallets">
+      <ActionButtonsContainer>
+        <Link to={ROUTES.UNWRAP_TOKENS} className={classes.actionButton}>
+          <Button>
+            <img src={unwrapIcon} alt="unwrap" className={classes.unwrapIcon} />
+            <span>Unwrap Tokens</span>
+          </Button>
+        </Link>
 
-  useEffect(() => {
-    if (location.query && location.query.imported) {
-      setShowWalletImported(true);
-    }
-  }, [location]);
+        <Link to={ROUTES.IMPORT_WALLET} className={classes.actionButton}>
+          <Button>
+            <SystemUpdateAltIcon fontSize="small" />
+            <span>Import</span>
+          </Button>
+        </Link>
 
-  const closeCreateWallet = () => setShowCreateWallet(false);
-  const closeImportedWallet = () => setShowWalletImported(false);
-  const closeCreatedWallet = () => setShowWalletCreated(false);
+        <Button onClick={onAdd} className={classes.actionButton}>
+          <FontAwesomeIcon icon="plus-circle" />
+          <span>Add</span>
+        </Button>
+      </ActionButtonsContainer>
+    </Title>
+  );
+};
 
-  const onAdd = () => {
-    setShowCreateWallet(true);
-  };
-  const onWalletCreated = () => {
-    setShowCreateWallet(false);
-    setShowWalletCreated(true);
-  };
-
-  const renderTitle = () => {
-    return (
-      <Title title="FIO Wallets" subtitle="Manage your wallets">
-        <ActionButtonsContainer>
-          <Link to={ROUTES.UNWRAP_TOKENS} className={classes.link}>
-            <div>
-              <img src={unwrapIcon} alt="unwrap" />
-            </div>
-          </Link>
-          <Link to={ROUTES.IMPORT_WALLET} className={classes.link}>
-            <div>
-              <FontAwesomeIcon icon="download" />
-            </div>
-          </Link>
-          <div onClick={onAdd}>
-            <FontAwesomeIcon icon="plus-circle" />
-          </div>
-        </ActionButtonsContainer>
-      </Title>
-    );
-  };
+const WalletsPage: React.FC<Props> = () => {
+  const {
+    fioWallets,
+    fioWalletsBalances,
+    showCreateWallet,
+    showWalletCreated,
+    showWalletDeleted,
+    showWalletImported,
+    welcomeComponentProps,
+    closeCreateWallet,
+    closeCreatedWallet,
+    closeImportedWallet,
+    closeDeletedWallet,
+    onAdd,
+    onWalletCreated,
+  } = useContext();
 
   return (
     <div className={classes.container}>
@@ -87,9 +85,9 @@ const WalletsPage: React.FC<Props> = props => {
         onClose={closeCreateWallet}
         onWalletCreated={onWalletCreated}
       />
-      <LayoutContainer title={renderTitle()}>
+      <LayoutContainer title={<TitleComponent onAdd={onAdd} />}>
         <NotificationBadge
-          type={BADGE_TYPES.SUCCESS}
+          type={BADGE_TYPES.INFO}
           show={showWalletImported}
           onClose={closeImportedWallet}
           message={
@@ -101,9 +99,11 @@ const WalletsPage: React.FC<Props> = props => {
               .title
           }
           iconName="check-circle"
+          hasNewDesign
+          marginAuto
         />
         <NotificationBadge
-          type={BADGE_TYPES.SUCCESS}
+          type={BADGE_TYPES.INFO}
           show={showWalletCreated}
           onClose={closeCreatedWallet}
           message={
@@ -115,6 +115,24 @@ const WalletsPage: React.FC<Props> = props => {
               .title
           }
           iconName="check-circle"
+          hasNewDesign
+          marginAuto
+        />
+        <NotificationBadge
+          type={BADGE_TYPES.INFO}
+          show={showWalletDeleted}
+          onClose={closeDeletedWallet}
+          message={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]
+              .message
+          }
+          title={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]
+              .title
+          }
+          iconName="check-circle"
+          hasNewDesign
+          marginAuto
         />
         {fioWallets.length > 0 ? (
           fioWallets.map(wallet => (
@@ -128,10 +146,16 @@ const WalletsPage: React.FC<Props> = props => {
             />
           </div>
         )}
+        <TotalBalanceBadge
+          {...fioWalletsBalances.total}
+          isNew
+          isMobile
+          itTotalWallets
+        />
+        <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>
       <div className={classes.totalBalanceContainer}>
-        <TotalBalanceBadge {...balance.total} />
-        <ManagePageCtaBadge name={CTA_BADGE_TYPE.TOKENS} />
+        <TotalBalanceBadge {...fioWalletsBalances.total} isNew itTotalWallets />
       </div>
     </div>
   );

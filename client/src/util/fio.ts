@@ -12,7 +12,7 @@ import {
 import apis from '../api';
 import { AdminDomain } from '../api/responses';
 import { setFioName } from '../utils';
-import { log } from '../util/general';
+import { convertToNewDate, log } from '../util/general';
 import MathOp from './math';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
@@ -302,7 +302,7 @@ export const transformCustomDomains = (
 
 export const isDomainExpired = (
   domainName: string,
-  expiration: Date,
+  expiration: number | string,
 ): boolean => {
   const today = new Date();
 
@@ -315,7 +315,7 @@ export const isDomainExpired = (
 
   return (
     expiration &&
-    new Date(expiration) <
+    convertToNewDate(expiration) <
       new Date(today.setDate(today.getDate() + DOMAIN_EXPIRED_DAYS))
   );
 };

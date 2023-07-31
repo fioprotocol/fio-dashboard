@@ -9,6 +9,25 @@
   flex-direction: column;
   width: 100%;
 
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+
+    .warningBadgeContainerWithMarginTop {
+      margin-top: 20px;
+    }
+
+    .listNameTitle {
+      margin-top: 15px;
+    }
+  }
+
+  .topBadge {
+    align-self: center;
+    margin: 0 20px;
+    width: calc(100% - 40px);
+  }
+
   .subtitle {
     @include proxima-nova-thin;
     font-size: 0.875rem;
@@ -73,6 +92,7 @@
     .actionBadge {
       width: 100%;
       margin: 0 0 30px;
+      padding: 0 20px;
 
       .badgeContainer {
         .link {
@@ -87,15 +107,19 @@
 
 @include lg {
   .container {
-    flex-direction: row;
     max-width: 1200px;
     width: 100%;
     margin: 0 80px;
 
+    .contentContainer {
+      display: flex;
+      flex-direction: row;
+    }
+
     .actionBadge {
       margin-top: 60px;
       margin-left: 60px;
-      max-width: 285px;
+      max-width: 315px;
       width: 100%;
     }
 
