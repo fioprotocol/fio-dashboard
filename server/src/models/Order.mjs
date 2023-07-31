@@ -205,7 +205,7 @@ export class Order extends Base {
     status = null,
     freeStatus = null,
   ) {
-    const [orders] = await this.sequelize.query(`
+    const query = `
         SELECT 
           o.id, 
           o.roe, 
@@ -240,7 +240,10 @@ export class Order extends Base {
         ORDER BY o.id DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}
-      `);
+      `;
+    const orders = await this.sequelize.query(query, {
+      type: this.sequelize.QueryTypes.SELECT,
+    });
 
     return orders;
   }
