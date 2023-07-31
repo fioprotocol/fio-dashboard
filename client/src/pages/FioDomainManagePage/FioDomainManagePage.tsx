@@ -21,6 +21,7 @@ const FioDomainManagePage: React.FC = () => {
     selectedDomainWatchlistItem,
     selectedDomainWatchlistSettingsItem,
     showAddDomainWatchlistModal,
+    showDangerModal,
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showWarningMessage,
@@ -28,9 +29,11 @@ const FioDomainManagePage: React.FC = () => {
     warningContent,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
-    domainWatchlistItemDelete,
     handleRenewDomain,
     onBagdeClose,
+    onDangerModalAction,
+    onDangerModalClose,
+    onDangerModalOpen,
     onDomainWatchlistItemModalClose,
     onDomainWatchlistItemModalOpen,
     onPurchaseButtonClick,
@@ -70,13 +73,16 @@ const FioDomainManagePage: React.FC = () => {
           selectedDomainWatchlistSettingsItem
         }
         showAddDomainWatchlistModal={showAddDomainWatchlistModal}
+        showDangerModal={showDangerModal}
         showItemModal={showDomainWatchlistItemModal}
         showSettingsModal={showDomainWatchlistSettingsModal}
         warningContent={warningContent}
         closeDomainWatchlistModal={closeDomainWatchlistModal}
         domainWatchlistItemCreate={domainWatchlistItemCreate}
-        domainWatchlistItemDelete={domainWatchlistItemDelete}
         handleRenewDomain={handleRenewDomain}
+        onDangerModalAction={onDangerModalAction}
+        onDangerModalClose={onDangerModalClose}
+        onDangerModalOpen={onDangerModalOpen}
         onItemModalClose={onDomainWatchlistItemModalClose}
         onItemModalOpen={onDomainWatchlistItemModalOpen}
         onPurchaseButtonClick={onPurchaseButtonClick}
