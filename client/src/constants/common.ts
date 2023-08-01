@@ -736,3 +736,34 @@ export const ORDER_STATUS_FILTER_OPTIONS = [
       PURCHASE_RESULTS_STATUS_LABELS[PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS],
   },
 ];
+
+export const ORDER_DATE_FILTER_OPTIONS = [
+  {
+    id: '',
+    name: 'All',
+  },
+  {
+    id: 'today',
+    name: 'Today',
+  },
+  {
+    id: 'yesterday',
+    name: 'Yesterday',
+  },
+  {
+    id: 'last7days',
+    name: 'Last 7 days',
+  },
+  {
+    id: 'lastMonth',
+    name: 'Last month',
+  },
+  {
+    id: 'lastHalfOfYear',
+    name: 'Last half year',
+  },
+  {
+    id: 'custom',
+    name: 'Custom Dates',
+  },
+];

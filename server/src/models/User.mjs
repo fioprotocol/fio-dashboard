@@ -10,8 +10,11 @@ import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
 import { ReferrerProfile } from './ReferrerProfile';
 import { Order } from './Order';
 import { LockedFch } from './LockedFch.mjs';
+import { DomainsWatchlist } from './DomainsWatchlist.mjs';
 
 import { USER_STATUS } from '../config/constants';
+
+import { convertToNewDate } from '../utils/general.mjs';
 
 const { DataTypes: DT, Op } = Sequelize;
 
@@ -83,6 +86,11 @@ export class User extends Base {
       foreignKey: 'userId',
       sourceKey: 'id',
       as: 'lockedFch',
+    });
+    this.hasMany(DomainsWatchlist, {
+      foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'domainsWatchlist',
     });
   }
 
@@ -181,7 +189,8 @@ export class User extends Base {
 
   static async formatDateWithTimeZone(id, date = undefined) {
     const user = await this.findById(id);
-    return (date ? new Date(date) : new Date()).toLocaleDateString([], {
+
+    return (date ? convertToNewDate(date) : new Date()).toLocaleDateString([], {
       timeZone: user.timeZone,
       year: 'numeric',
       month: '2-digit',

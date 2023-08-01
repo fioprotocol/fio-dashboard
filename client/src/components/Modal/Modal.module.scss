@@ -35,6 +35,10 @@
   &.indigo {
     background-color: $light-indigo;
   }
+  &.isWhite {
+    background-color: $white;
+    color: $baltic-sea;
+  }
 
   &.enableOverflow {
     overflow: visible;

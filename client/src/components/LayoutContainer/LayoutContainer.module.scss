@@ -11,6 +11,7 @@
   color: $baltic-sea;
 
   .title {
+    margin-bottom: 0;
     @include proxima-nova-semibold;
   }
 }

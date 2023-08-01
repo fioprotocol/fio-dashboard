@@ -29,7 +29,7 @@ const PasswordForm: React.FC<{
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           <Field name="username" type="hidden" component={Input} />
           <Field
-            label="Enter your password to access and display your private key"
+            label="Enter your password and click show private key to display"
             name="password"
             type="password"
             placeholder="Enter Your Password"
@@ -47,6 +47,7 @@ const PasswordForm: React.FC<{
             }
             loading={loading}
             withBottomMargin={true}
+            text="Show Private Key"
           />
         </form>
       )}

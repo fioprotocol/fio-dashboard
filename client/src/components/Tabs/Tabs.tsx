@@ -17,6 +17,8 @@ type Props = {
   showTabBorder?: boolean;
   tabProps?: AnyObject;
   defaultActiveKey?: string;
+  tabItemPrimaryClass?: string;
+  tabBorderPrimary?: boolean;
 };
 
 const Tabs: React.FC<Props> = props => {
@@ -30,6 +32,8 @@ const Tabs: React.FC<Props> = props => {
     showTabBorder,
     tabProps,
     defaultActiveKey,
+    tabItemPrimaryClass,
+    tabBorderPrimary,
   } = props;
 
   const [activeEventKey, setActiveEventKey] = useState(defaultActiveKey);
@@ -46,11 +50,19 @@ const Tabs: React.FC<Props> = props => {
                 className={classnames(
                   tabItemClass || classes.tabItem,
                   classes.active,
+                  tabItemPrimaryClass,
                 )}
               >
                 {tab.title}
               </Nav.Link>
-              {showTabBorder && <div className={classes.tabBorder} />}
+              {showTabBorder && (
+                <div
+                  className={classnames(
+                    classes.tabBorder,
+                    tabBorderPrimary && classes.tabBorderPrimary,
+                  )}
+                />
+              )}
             </div>
           </Nav.Item>
         ))}

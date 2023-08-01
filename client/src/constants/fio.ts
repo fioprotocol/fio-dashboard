@@ -16,6 +16,8 @@ export const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 
 export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 
+export const FIO_ORACLE_ACCOUNT_NAME = 'fio.oracle';
+
 export const ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
@@ -49,8 +51,8 @@ export const TRANSACTION_ACTION_NAMES = {
 };
 
 export const TRANSACTION_ACCOUNT_NAMES = {
-  [ACTIONS.wrapFioTokens]: 'fio.oracle',
-  [ACTIONS.wrapFioDomain]: 'fio.oracle',
+  [ACTIONS.wrapFioTokens]: FIO_ORACLE_ACCOUNT_NAME,
+  [ACTIONS.wrapFioDomain]: FIO_ORACLE_ACCOUNT_NAME,
 };
 
 export const ACTIONS_TO_END_POINT_KEYS = {
@@ -237,3 +239,5 @@ export const FIO_PROXY_LIST = {
 };
 
 export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';
+
+export const LOW_BUNDLES_THRESHOLD = 25;

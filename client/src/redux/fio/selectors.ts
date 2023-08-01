@@ -67,6 +67,10 @@ export const showTokenListInfoBadge = (state: ReduxState): boolean =>
   state[prefix].showTokenListInfoBadge;
 export const showSocialMediaListInfoBadge = (state: ReduxState): boolean =>
   state[prefix].showSocialMediaListInfoBadge;
+export const showFchBundleWarningBagde = (state: ReduxState): boolean =>
+  state[prefix].showFchBundleWarningBagde;
+export const showExpiredDomainWarningBadge = (state: ReduxState): boolean =>
+  state[prefix].showExpiredDomainWarningBadge;
 
 export const currentWallet = (
   state: ReduxState,

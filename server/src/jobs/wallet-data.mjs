@@ -1,10 +1,18 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { Notification, PublicWalletData, User, Var, Wallet } from '../models/index.mjs';
+import {
+  DomainsWatchlist,
+  Notification,
+  PublicWalletData,
+  User,
+  Var,
+  Wallet,
+} from '../models/index.mjs';
 import { sleep } from '../tools.mjs';
 import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
+import { convertToNewDate } from '../utils/general.mjs';
 
 import { fioApi } from '../external/fio.mjs';
 import { getROE } from '../external/roe.mjs';
@@ -211,6 +219,72 @@ class WalletDataJob extends CommonJob {
     }
   }
 
+  async handleDomainExpiration({ domainExpiration, domainName, userId }) {
+    const timePeriod =
+      convertToNewDate(domainExpiration).getTime() - new Date().getTime();
+    let domainExpPeriod =
+      DOMAIN_EXP_TABLE[Math.floor((returnDayRange(timePeriod) + DAYS_30 * 4) / DAYS_30)];
+
+    if (
+      process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED === 'true' &&
+      domainName.includes(DOMAIN_EXP_DEBUG_AFFIX)
+    ) {
+      Object.keys(DOMAIN_EXP_DEBUG_TABLE).forEach(key => {
+        if (domainName.includes(key)) {
+          domainExpPeriod = DOMAIN_EXP_DEBUG_TABLE[key];
+        }
+      });
+    }
+
+    if (domainExpPeriod) {
+      const existingNotification = await Notification.findOneWhere({
+        contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
+        userId,
+        data: {
+          emailData: {
+            name: domainName,
+            date: await User.formatDateWithTimeZone(userId, domainExpiration),
+            domainExpPeriod,
+          },
+        },
+      });
+      if (!existingNotification)
+        await Notification.create({
+          type: Notification.TYPE.INFO,
+          contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
+          userId,
+          data: {
+            pagesToShow: ['/'],
+            emailData: {
+              name: domainName,
+              date: await User.formatDateWithTimeZone(userId, domainExpiration),
+              domainExpPeriod,
+            },
+          },
+        });
+    }
+  }
+
+  async checkDomainsWatchlist(domainsWatchlistItem) {
+    const { domain, userId } = domainsWatchlistItem;
+
+    if (domain) {
+      const tableRowsParams = fioApi.setTableRowsParams(domain);
+
+      const { rows } = await fioApi.getTableRows(tableRowsParams);
+
+      if (rows.length) {
+        const { expiration } = rows[0];
+
+        this.handleDomainExpiration({
+          domainExpiration: expiration,
+          domainName: domain,
+          userId,
+        });
+      }
+    }
+  }
+
   async checkFioNames(wallet) {
     try {
       const {
@@ -304,56 +378,11 @@ class WalletDataJob extends CommonJob {
           continue;
         }
 
-        const timePeriod = new Date(domain.expiration).getTime() - new Date().getTime();
-        let domainExpPeriod =
-          DOMAIN_EXP_TABLE[
-            Math.floor((returnDayRange(timePeriod) + DAYS_30 * 4) / DAYS_30)
-          ];
-
-        if (
-          process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED === 'true' &&
-          domain.fio_domain.includes(DOMAIN_EXP_DEBUG_AFFIX)
-        ) {
-          Object.keys(DOMAIN_EXP_DEBUG_TABLE).forEach(key => {
-            if (domain.fio_domain.includes(key)) {
-              domainExpPeriod = DOMAIN_EXP_DEBUG_TABLE[key];
-            }
-          });
-        }
-
-        if (domainExpPeriod) {
-          const existingNotification = await Notification.findOneWhere({
-            contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
-            userId: wallet.User.id,
-            data: {
-              emailData: {
-                name: domain.fio_domain,
-                date: await User.formatDateWithTimeZone(
-                  wallet.User.id,
-                  domain.expiration,
-                ),
-                domainExpPeriod,
-              },
-            },
-          });
-          if (!existingNotification)
-            await Notification.create({
-              type: Notification.TYPE.INFO,
-              contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
-              userId: wallet.User.id,
-              data: {
-                pagesToShow: ['/'],
-                emailData: {
-                  name: domain.fio_domain,
-                  date: await User.formatDateWithTimeZone(
-                    wallet.User.id,
-                    domain.expiration,
-                  ),
-                  domainExpPeriod,
-                },
-              },
-            });
-        }
+        this.handleDomainExpiration({
+          domainExpiration: domain.expiration,
+          domainName: domain.fio_domain,
+          userId: wallet.User.id,
+        });
       }
 
       if (
@@ -529,6 +558,7 @@ class WalletDataJob extends CommonJob {
     }
 
     let offset = 0;
+    let domainsWatchlistOffset = 0;
 
     const processWallet = wallet => async () => {
       if (this.isCancelled) return false;
@@ -568,7 +598,54 @@ class WalletDataJob extends CommonJob {
       return true;
     };
 
+    const processDomainWatchlist = domainsWatchlistItem => async () => {
+      if (this.isCancelled) return false;
+
+      if (DEBUG_INFO)
+        this.postMessage(`Process domain watchlist - ${domainsWatchlistItem.id}`);
+
+      try {
+        await Promise.allSettled([this.checkDomainsWatchlist(domainsWatchlistItem)]);
+      } catch (e) {
+        logger.error(`DOMAINS WATCHLIST PROCESSING ERROR`, e);
+      }
+
+      return true;
+    };
+
     let wallets = await this.getWallets();
+    let domainsWatchlist = await DomainsWatchlist.listAll();
+
+    while (domainsWatchlist.length) {
+      if (DEBUG_INFO)
+        this.postMessage(
+          `Process domains watchlist - ${domainsWatchlist.length} / ${domainsWatchlistOffset}`,
+        );
+
+      const methods = domainsWatchlist.map(domainsWatchlistItem =>
+        processDomainWatchlist(domainsWatchlistItem),
+      );
+
+      let chunks = [];
+      for (const method of methods) {
+        chunks.push(method);
+        if (chunks.length === CHUNKS_LIMIT) {
+          if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
+          await this.executeActions(chunks);
+          await sleep(CHUNKS_TIMEOUT);
+          chunks = [];
+        }
+      }
+
+      if (chunks.length) {
+        if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
+        await this.executeActions(chunks);
+      }
+
+      domainsWatchlistOffset += ITEMS_PER_FETCH;
+      domainsWatchlist = await this.getWallets(domainsWatchlistOffset);
+    }
+
     while (wallets.length) {
       if (DEBUG_INFO) this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
 

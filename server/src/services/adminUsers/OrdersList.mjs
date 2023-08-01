@@ -14,6 +14,15 @@ export default class OrdersList extends Base {
       filters: [
         {
           nested_object: {
+            createdAt: 'string',
+            dateRange: [
+              {
+                nested_object: {
+                  startDate: 'integer',
+                  endDate: 'integer',
+                },
+              },
+            ],
             status: 'integer',
             total: 'integer',
           },
@@ -23,7 +32,11 @@ export default class OrdersList extends Base {
   }
 
   async execute({ limit = 25, offset = 0, filters }) {
-    const ordersList = await Order.listAll(limit, offset, filters.status, filters.total);
+    const ordersList = await Order.listAll({
+      limit,
+      offset,
+      filters,
+    });
 
     return {
       data: {

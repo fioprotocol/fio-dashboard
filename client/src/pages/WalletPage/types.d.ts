@@ -1,47 +1,9 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 
-import {
-  FioWalletData,
-  FioWalletDoublet,
-  WalletBalances,
-  DecryptedFioRecordContent,
-  FioWalletTxHistory,
-  FioAddressDoublet,
-} from '../../types';
+import { DecryptedFioRecordContent } from '../../types';
 
-type MatchProps = {
-  publicKey: string;
-};
-
-type LocationProps = {
-  location: {
-    state: {
-      isOpenLockedList?: boolean;
-    };
-    query?: {
-      publicKey?: string;
-    };
-  };
-};
-
-export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
+export interface ContainerOwnProps {
   children?: React.ReactNode;
-}
-
-export interface ContainerProps extends ContainerOwnProps {
-  fioWallet: FioWalletDoublet | null;
-  fioCryptoHandles: FioAddressDoublet[];
-  loading: boolean;
-  profileRefreshed: boolean;
-  refreshBalance: (publicKey: string) => void;
-  balance: WalletBalances;
-  fioWalletsData: {
-    [publicKey: string]: FioWalletData;
-  };
-  fioWalletsTxHistory: {
-    [publicKey: string]: FioWalletTxHistory;
-  };
 }
 
 export type EditWalletNameValues = {
@@ -55,6 +17,11 @@ export type EditWalletNameProps = {
 };
 
 export type PasswordFormValues = {
+  password: string;
+  username: string;
+};
+
+export type DeleteWalletFormValues = {
   password: string;
   username: string;
 };

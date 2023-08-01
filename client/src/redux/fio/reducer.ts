@@ -3,7 +3,11 @@ import isEqual from 'lodash/isEqual';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
-import { ADD_WALLET_SUCCESS, UPDATE_WALLET_NAME } from '../account/actions';
+import {
+  ADD_WALLET_SUCCESS,
+  UPDATE_WALLET_NAME,
+  DELETE_WALLET,
+} from '../account/actions';
 import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
@@ -188,6 +192,10 @@ export default combineReducers({
             fioWallet.name = action.data.name;
           }
           return fioWallet;
+        });
+      case DELETE_WALLET:
+        return state.filter(fioWallet => {
+          return fioWallet.publicKey !== action.data.publicKey;
         });
       case LOGOUT_SUCCESS:
         return [];
@@ -447,8 +455,9 @@ export default combineReducers({
   },
   getMappedPubAddressError(state: string | null = null, action) {
     switch (action.type) {
-      case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
-        return action.error.errorCode;
+      case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE: {
+        return action.error?.errorCode || action.error?.code;
+      }
       case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
       case actions.RESET_MAPPED_PUB_ADDRESS_ERROR:
@@ -491,6 +500,28 @@ export default combineReducers({
   showTokenListInfoBadge(state: boolean = true, action) {
     switch (action.type) {
       case actions.TOGGLE_TOKEN_LIST_INFO_BADGE: {
+        return action.enabled;
+      }
+      case LOGOUT_SUCCESS:
+        return true;
+      default:
+        return state;
+    }
+  },
+  showFchBundleWarningBagde(state: boolean = true, action) {
+    switch (action.type) {
+      case actions.TOGGLE_FCH_BUNDLE_WARNING_BADGE: {
+        return action.enabled;
+      }
+      case LOGOUT_SUCCESS:
+        return true;
+      default:
+        return state;
+    }
+  },
+  showExpiredDomainWarningBadge(state: boolean = true, action) {
+    switch (action.type) {
+      case actions.TOGGLE_EXPIRED_DOMAIN_WARNING_BADGE: {
         return action.enabled;
       }
       case LOGOUT_SUCCESS:

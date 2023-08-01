@@ -1,13 +1,7 @@
-import React, { Dispatch, SetStateAction, MouseEventHandler } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import React, { MouseEventHandler } from 'react';
 
-import {
-  FioNameItemProps,
-  FioWalletDoublet,
-  FioNameType,
-  FeePrice,
-  CartItem,
-} from '../../types';
+import { FioNameItemProps, FioNameType } from '../../types';
+import { SelectedDomainWatchlistItem } from '../../pages/FioDomainManagePage/FioDomainManagePageContext';
 
 export type HasMore = { [key: string]: number };
 type GetWalletAddresses = (
@@ -16,80 +10,32 @@ type GetWalletAddresses = (
   offset: number,
 ) => void;
 
-export interface ContainerProps extends RouteComponentProps {
+export interface ContainerProps {
   children?: React.ReactNode;
-  fioNameList: FioNameItemProps[];
-  fioWallets: FioWalletDoublet[];
-  hasMore: HasMore;
-  noProfileLoaded?: boolean;
-  loading: boolean;
+  emptyStateContent: {
+    title: string;
+    message: string;
+  };
+  listNameTitle?: React.ReactElement;
   pageName: FioNameType;
-  getWalletAddresses: GetWalletAddresses;
-  showExpired?: boolean;
-  showBundles?: boolean;
-  showStatus?: boolean;
-  showFioAddressName?: boolean;
-  cartItems: CartItem[];
-  addItemToCart: (data: CartItem) => void;
-  addBundlesFeePrice?: FeePrice;
-  renewDomainFeePrice?: FeePrice;
-  getAddBundlesFee: () => void;
-  getRenewDomainFee: () => void;
+  title: React.ReactElement;
+  topBadgeContent?: {
+    message: string;
+    title: string;
+    type: string;
+  };
+  showTopBadge?: boolean;
+  showWarningMessage: boolean;
+  warningContent?: {
+    title: string;
+    message: string;
+  };
+  handleAddBundles?: (name: string) => void;
+  handleRenewDomain?: (name: string) => void;
+  onTopBadgeClose?: () => void;
+  sessionBadgeClose: () => void;
 }
 
-export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
-
-export type IsExpiredFunc = (domainName: string, expiration: Date) => boolean;
 type ModalOpenActionType = (
-  data: FioNameItemProps,
+  data: FioNameItemProps | SelectedDomainWatchlistItem,
 ) => MouseEventHandler<HTMLDivElement> | void;
-
-export type DefaultProps = {
-  fioNameList: FioNameItemProps[];
-  isDesktop: boolean;
-  pageName: FioNameType;
-  showInfoBadge: boolean;
-  toggleShowInfoBadge: BoolStateFunc;
-  toggleShowWarnBadge: BoolStateFunc;
-  isDomainExpired: IsExpiredFunc;
-  onItemModalOpen?: ModalOpenActionType;
-  onSettingsOpen?: ModalOpenActionType;
-  showFioAddressName?: boolean;
-  onAddBundles?: (name: string) => void;
-  onRenewDomain?: (name: string) => void;
-};
-
-export type NotificationsProps = {
-  pageName: FioNameType;
-  showInfoBadge: boolean;
-  showWarnBadge: boolean;
-  toggleShowInfoBadge: BoolStateFunc;
-  toggleShowWarnBadge: BoolStateFunc;
-};
-
-export type ItemComponentProps = {
-  fioNameItem: FioNameItemProps;
-  isDomainExpired: IsExpiredFunc;
-  isDesktop: boolean;
-  onSettingsOpen: ModalOpenActionType;
-  showExpired?: boolean;
-  showStatus?: boolean;
-  showBundles?: boolean;
-  onAddBundles?: (name: string) => void;
-  onRenewDomain?: (name: string) => void;
-};
-
-export type SettingsProps = {
-  fioNameItem: FioNameItemProps;
-  pageName: FioNameType;
-  fioWallets: FioWalletDoublet[];
-  showStatus?: boolean;
-};
-
-export type ActionButtonProps = {
-  pageName: FioNameType;
-  isDesktop: boolean;
-  onSettingsOpen?: ModalOpenActionType;
-  fioNameItem: FioNameItemProps;
-  onRenewDomain?: (domain: string) => void;
-};

@@ -304,7 +304,7 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
       <DangerModal
         show={showDeleteModal}
         title="Warning!"
-        subtitle={`You are trying to delete ${editProfileData?.name} account profile. Are you sure?`}
+        subtitle={`You are trying to delete ${editProfileData?.name} account profile. Are You Sure?`}
         onClose={onDeleteClose}
         buttonText="Yes"
         cancelButtonText="No"

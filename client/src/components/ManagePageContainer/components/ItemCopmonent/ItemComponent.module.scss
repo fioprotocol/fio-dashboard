@@ -1,0 +1,66 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.title {
+  font-size: 1.25em;
+  color: $gray-main;
+  margin-left: 20px;
+}
+
+.itemNameContainer {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+
+  .itemName {
+    font-size: 1em;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin-bottom: 0;
+    padding-left: 20px;
+  }
+}
+
+.badgeContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 30px !important;
+
+  & > div {
+    margin: 0;
+  }
+}
+
+.badgeTitle, .badgeItem {
+  font-size: 0.875em;
+  @include proxima-nova-semibold;
+}
+.badgeTitle {
+  color: $manatee;
+  margin: 0 auto 0 0 !important;
+}
+.badgeItem {
+  color: $baltic-sea;
+  margin-bottom: 0;
+  display: flex;
+}
+
+.itemActions {
+  margin-top: 30px;
+  .actionsTitle {
+    font-size: 1em;
+    margin-left: 20px;
+    margin-bottom: 15px;
+    @include proxima-nova-semibold;
+  }
+}
+
+.warnIcon {
+  margin-right: 10px;
+  margin-left: -15px;
+  color: $simple-orange;
+  width: 18px;
+  height: 18px;
+}

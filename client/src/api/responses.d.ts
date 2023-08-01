@@ -19,10 +19,15 @@ import {
   OrderDetails,
 } from '../types';
 
+export type DefaultSuccessResponse = { success: true };
+
+export type DefaultNotFoundResponse = { success: false; message: 'Not Found' };
+
 export type AccountGetWalletsResponse = FioWalletDoublet[];
-export type AccountSetWalletsResponse = { success: true };
+export type AccountSetWalletsResponse = DefaultSuccessResponse;
 export type AccountAddWalletsResponse = FioWalletDoublet;
-export type AccountUpdateWalletsResponse = { success: true };
+export type AccountUpdateWalletsResponse = DefaultSuccessResponse;
+export type AccountDeleteWalletResponse = DefaultSuccessResponse;
 export type AccountValidateWalletImportResponse = {
   valid: true;
 };
@@ -40,24 +45,30 @@ export type AuthConfirmResponse = {
 } & User;
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;
-export type AuthResendRecoveryResponse = { success: true };
-export type AuthUpdateEmailResponse = { success: true };
+export type AuthResendRecoveryResponse = DefaultSuccessResponse;
+export type AuthUpdateEmailResponse = DefaultSuccessResponse;
 export type AuthCreateNewDeviceRequestResponse = null;
 export type AuthDeleteNewDeviceRequestResponse =
-  | { success: true }
-  | { success: false; message: 'Not Found' };
+  | DefaultSuccessResponse
+  | DefaultNotFoundResponse;
 export type AuthUpdateNewDeviceResponse = null;
-export type AuthProfileSendEvent = { success: true };
+export type AuthProfileSendEvent = DefaultSuccessResponse;
 export type AuthCheckRejectedResponse = boolean;
 export type AdminAuthLoginResponse = { jwt: string };
 export type AdminResetPasswordResponse =
-  | { success: true }
-  | { success: false; message: 'Not Found' };
+  | DefaultSuccessResponse
+  | DefaultNotFoundResponse;
 
 export type ChainCodesListResults = ChainCodeProps[] | null;
 
 export type ContactsListResponse = string[];
 export type ContactsCreateResponse = string;
+
+export type DomainsWatchlistListResponse = {
+  id: string;
+  domain: string;
+  createdAt: string;
+}[];
 
 export type FioRegPricesResponse = {
   pricing: {
@@ -123,7 +134,7 @@ export type UsersShowResponse = User;
 
 export type OrdersCreateResponse = Order;
 export type OrderGetResponse = OrderDetailed;
-export type OrdersUpdateResponse = { success: true };
+export type OrdersUpdateResponse = DefaultSuccessResponse;
 export type UserOrdersListResponse = {
   data: {
     orders: UserOrderDetails;
@@ -154,15 +165,15 @@ export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = OrderDetails;
 export type AdminFioApiUrlsListResponse = FioApiUrls;
-export type AdminFioApiUrlsListUpdateResponse = { success: true };
+export type AdminFioApiUrlsListUpdateResponse = DefaultSuccessResponse;
 export type RemoveAdminResponse =
-  | { success: true }
-  | { success: false; message: 'Not Found' };
+  | DefaultSuccessResponse
+  | DefaultNotFoundResponse;
 export type SendResetAdminPasswordResponse =
-  | { success: true }
-  | { success: false; message: 'Not Found' };
+  | DefaultSuccessResponse
+  | DefaultNotFoundResponse;
 export type AdminGeneralCreateResponse =
-  | { success: true }
+  | DefaultSuccessResponse
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
 export type AdminSearchResponse = AdminSearchResult;
@@ -175,6 +186,7 @@ export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &
   AccountAddWalletsResponse &
   AccountUpdateWalletsResponse &
+  AccountDeleteWalletResponse &
   AccountValidateWalletImportResponse &
   AuthProfileResponse &
   AuthUsernameResponse &
