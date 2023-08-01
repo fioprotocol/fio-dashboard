@@ -17,7 +17,7 @@ import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
-import { copyToClipboard } from '../../../util/general';
+import { copyToClipboard, log } from '../../../util/general';
 
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
@@ -82,11 +82,11 @@ const WalletSettings: React.FC<Props> = props => {
     }
   };
 
-  const deleteWallet = async () => {
+  const deleteWallet = async (publicKey: string) => {
     try {
-      const res = await apis.account.deleteWallet(fioWallet.publicKey);
+      const res = await apis.account.deleteWallet(publicKey);
       if (res.success) {
-        dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
+        dispatch(deleteWalletAction({ publicKey }));
         history.push(ROUTES.TOKENS, { walletDeleted: true });
         onClose();
       } else {
@@ -144,20 +144,16 @@ const WalletSettings: React.FC<Props> = props => {
     setLoading({ ...loading, deleteWallet: true });
 
     const { username, password } = currentDeleteValues;
-    let account;
+
     try {
-      account = await apis.edge.login(username, password);
-      if (!account) throw new Error();
+      const account = await apis.edge.login(username, password);
+      await apis.edge.deleteWallet(account, fioWallet.edgeId);
 
-      await deleteWallet();
-    } catch (e) {
+      await deleteWallet(fioWallet.publicKey);
+    } catch (err) {
       setLoading({ ...loading, deleteWallet: false });
-      return {
-        password: 'Invalid Password',
-      };
+      log.error(err);
     }
-
-    await apis.edge.deleteWallet(account, fioWallet.edgeId);
   };
 
   const onCancel = () => {
