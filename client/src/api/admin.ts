@@ -61,13 +61,13 @@ export default class Admin extends Base {
   ordersList(
     limit: number,
     offset: number,
-    filters?: Partial<OrderDetails>,
+    filters?: Partial<OrderDetails> & { startDate: number; endDate: number },
   ): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders', { limit, offset, filters });
   }
 
   exportOrdersData(
-    filters: Partial<OrderDetails>,
+    filters: Partial<OrderDetails> & { startDate: number; endDate: number },
   ): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders/export', { filters });
   }

@@ -199,12 +199,73 @@ export class Order extends Base {
     return this.count(query);
   }
 
-  static async listAll(
-    limit = DEFAULT_ORDERS_LIMIT,
-    offset = 0,
-    status = null,
-    freeStatus = null,
-  ) {
+  static async listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
+    const { createdAt, dateRange, total: freeStatus, status } = filters;
+
+    const convertDataToIsoString = dateString => {
+      const isoDate = dateString.toISOString();
+      return isoDate.slice(0, 19).replace('T', ' ');
+    };
+    const parseDate = dateString => {
+      const date = new Date(dateString);
+      return convertDataToIsoString(date); // Remove the 'Z' from the end of the ISO string
+    };
+
+    const dateRangeConditions = {
+      today: {
+        gte: convertDataToIsoString(new Date(new Date().setHours(0, 0, 0, 0))),
+      },
+      yesterday: {
+        gte: convertDataToIsoString(
+          new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date().getDate() - 1),
+          ),
+        ),
+        lt: convertDataToIsoString(new Date(new Date().setHours(0, 0, 0, 0))),
+      },
+      last7days: {
+        gte: convertDataToIsoString(
+          new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date().getDate() - 7),
+          ),
+        ),
+      },
+      lastMonth: {
+        gte: convertDataToIsoString(
+          new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setMonth(new Date().getMonth() - 1),
+          ),
+        ),
+      },
+      lastHalfOfYear: {
+        gte: convertDataToIsoString(
+          new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setMonth(new Date().getMonth() - 6),
+          ),
+        ),
+      },
+    };
+
+    const predefinedDateFilter = createdAt ? dateRangeConditions[createdAt] : {};
+
+    const customDateFilter =
+      dateRange && dateRange.startDate && dateRange.endDate
+        ? {
+            gte: parseDate(
+              new Date(new Date(dateRange.startDate).setUTCHours(0, 0, 0, 0)),
+            ),
+            lt: parseDate(
+              new Date(new Date(dateRange.endDate).setUTCHours(23, 59, 59, 999)),
+            ),
+          }
+        : {};
+
+    const dateFilter = createdAt
+      ? { ...predefinedDateFilter }
+      : dateRange
+      ? { ...customDateFilter }
+      : {};
+
     const query = `
         SELECT 
           o.id, 
@@ -237,6 +298,8 @@ export class Order extends Base {
                 : `AND o."total"::numeric > 0`
               : ``
           }
+          ${dateFilter.gte ? `AND o."createdAt" >= '${dateFilter.gte}'` : ``}
+          ${dateFilter.lt ? `AND o."createdAt" < '${dateFilter.lt}'` : ``}
         ORDER BY o.id DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}

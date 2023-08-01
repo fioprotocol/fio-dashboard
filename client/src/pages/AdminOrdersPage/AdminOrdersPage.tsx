@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { useLocation } from 'react-router';
+import DatePicker from 'react-datepicker';
 
 import Loader from '../../components/Loader/Loader';
 import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
@@ -22,17 +22,24 @@ import {
 } from '../../constants/purchase';
 import {
   ORDER_AMOUNT_FILTER_OPTIONS,
+  ORDER_DATE_FILTER_OPTIONS,
   ORDER_STATUS_FILTER_OPTIONS,
 } from '../../constants/common';
 
 import { AdminUser, OrderDetails } from '../../types';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 import classes from './styles/AdminOrdersListPage.module.scss';
 
 type Props = {
   loading: boolean;
   getOrdersList: (limit?: number, offset?: number) => Promise<void>;
-  exportOrdersData: (filters: Partial<OrderDetails>) => void;
+  exportOrdersData: (
+    filters: Partial<OrderDetails> & {
+      dateRange: { startDate: number; endDate: number } | null;
+    },
+  ) => void;
   adminUser: AdminUser;
   ordersList: OrderDetails[];
   orderItem: OrderDetails;
@@ -54,14 +61,39 @@ const AdminOrdersPage: React.FC<Props> = props => {
   const location = useLocation<{ orderId?: string }>();
   const orderId = location?.state?.orderId;
 
-  const [filters, setFilters] = useState<Partial<OrderDetails>>({
+  const [filters, setFilters] = useState<
+    Partial<OrderDetails> & {
+      dateRange: { startDate: number; endDate: number } | null;
+    }
+  >({
+    createdAt: null,
+    dateRange: null,
     status: null,
     total: '',
   });
-  const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
+  const [showOrderDetailsModal, setShowOrderDetailsModal] = useState<boolean>(
+    false,
+  );
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
     null,
   );
+  const [dateRange, setDateRange] = useState<[Date, Date]>([null, null]);
+  const [showDatePicker, toggleShowDatePicker] = useState<boolean>(false);
+
+  const [startDate, endDate] = dateRange;
+
+  const openDatePicker = useCallback(() => {
+    toggleShowDatePicker(true);
+  }, []);
+
+  const closeDatePicker = useCallback(() => {
+    toggleShowDatePicker(false);
+    setFilters(filters => ({
+      ...filters,
+      createdAt: null,
+      dateRange: null,
+    }));
+  }, []);
 
   const handleChangeStatusFilter = useCallback((newValue: string) => {
     setFilters(filters => ({
@@ -76,6 +108,32 @@ const AdminOrdersPage: React.FC<Props> = props => {
       total: newValue,
     }));
   }, []);
+
+  const handleChangeDateFilter = useCallback(
+    (newValue: string) => {
+      if (newValue === 'custom') {
+        openDatePicker();
+      } else {
+        setFilters(filters => ({
+          ...filters,
+          createdAt: newValue,
+          dateRange: null,
+        }));
+      }
+    },
+    [openDatePicker],
+  );
+
+  const setFilterWithDateRange = useCallback(() => {
+    setFilters(filters => ({
+      ...filters,
+      createdAt: null,
+      dateRange: {
+        startDate: new Date(dateRange[0]).setHours(0, 0, 0, 0),
+        endDate: new Date(dateRange[1]).setHours(23, 59, 59, 999),
+      },
+    }));
+  }, [dateRange]);
 
   const { paginationComponent, range } = usePagination(
     getOrdersList,
@@ -146,7 +204,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                 placeholder="All"
               />
             </div>
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center mr-2">
               Filter Status:&nbsp;
               <CustomDropdown
                 value={filters.status ? filters.status.toString() : ''}
@@ -158,6 +216,42 @@ const AdminOrdersPage: React.FC<Props> = props => {
                 isSmall
                 placeholder="All"
               />
+            </div>
+            <div className="d-flex align-items-center">
+              Filter Date:&nbsp;
+              {showDatePicker ? (
+                <div className={classes.datePickerContainer}>
+                  <DatePicker
+                    selectsRange={true}
+                    startDate={startDate}
+                    endDate={endDate}
+                    onChange={update => {
+                      setDateRange(update);
+                    }}
+                    isClearable={true}
+                  />
+                  <Button
+                    className="btn btn-primary ml-2 mr-2"
+                    onClick={setFilterWithDateRange}
+                  >
+                    Set Date
+                  </Button>
+                  <Button className="btn btn-danger" onClick={closeDatePicker}>
+                    Close
+                  </Button>
+                </div>
+              ) : (
+                <CustomDropdown
+                  value={filters.createdAt}
+                  options={ORDER_DATE_FILTER_OPTIONS}
+                  onChange={handleChangeDateFilter}
+                  isDark
+                  withoutMarginBottom
+                  fitContentWidth
+                  isSmall
+                  placeholder="All"
+                />
+              )}
             </div>
           </div>
         </div>

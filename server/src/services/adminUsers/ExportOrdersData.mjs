@@ -16,6 +16,15 @@ export default class ExportOrdersData extends Base {
       filters: [
         {
           nested_object: {
+            createdAt: 'string',
+            dateRange: [
+              {
+                nested_object: {
+                  startDate: 'integer',
+                  endDate: 'integer',
+                },
+              },
+            ],
             status: 'integer',
             total: 'integer',
           },
@@ -25,7 +34,10 @@ export default class ExportOrdersData extends Base {
   }
 
   async execute({ filters }) {
-    const ordersList = await Order.listAll(0, null, filters.status, filters.total);
+    const ordersList = await Order.listAll({
+      limit: 0,
+      filters,
+    });
 
     const ordersIds = ordersList.map(order => order.id);
 
