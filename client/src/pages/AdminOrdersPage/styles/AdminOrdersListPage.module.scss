@@ -8,4 +8,17 @@
   }
 
   .orderItem { cursor: pointer }
+
+  .datePickerContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    & > div > div[class="react-datepicker__input-container"] {
+      padding-right: 30px;
+
+      input {
+        width: 200px;
+      }
+    }
+  }
 }

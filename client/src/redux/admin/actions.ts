@@ -44,9 +44,9 @@ export const GET_ORDERS_LIST_BY_ADMIN_SUCCESS = `${prefix}/GET_ORDERS_LIST_BY_AD
 export const GET_ORDERS_LIST_BY_ADMIN_FAILURE = `${prefix}/GET_ORDERS_LIST_BY_ADMIN_FAILURE`;
 
 export const getOrdersList = (
-  limit = DEFAULT_LIMIT,
-  offset = DEFAULT_OFFSET,
-  filters = {},
+  limit: number | null = DEFAULT_LIMIT,
+  offset: number | null = DEFAULT_OFFSET,
+  filters: Partial<OrderDetails> & { startDate: number; endDate: number },
 ): CommonPromiseAction => ({
   types: [
     GET_ORDERS_LIST_BY_ADMIN_REQUEST,
@@ -61,7 +61,7 @@ export const EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS = `${prefix}/EXPORT_ORDERS_DATA
 export const EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE`;
 
 export const exportOrdersData = (
-  filters: Partial<OrderDetails>,
+  filters: Partial<OrderDetails> & { startDate: number; endDate: number },
 ): CommonPromiseAction => ({
   types: [
     EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST,
