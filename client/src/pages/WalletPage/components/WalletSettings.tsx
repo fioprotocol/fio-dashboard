@@ -17,7 +17,7 @@ import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
-import { copyToClipboard } from '../../../util/general';
+import { copyToClipboard, log } from '../../../util/general';
 
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
@@ -43,7 +43,7 @@ type Props = {
   onClose: () => void;
 };
 
-const ShowPrivateKeyModal: React.FC<Props> = props => {
+const WalletSettings: React.FC<Props> = props => {
   const { show, fioWallet, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -82,11 +82,11 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     }
   };
 
-  const deleteWallet = async () => {
+  const deleteWallet = async (publicKey: string) => {
     try {
-      const res = await apis.account.deleteWallet(fioWallet.publicKey);
+      const res = await apis.account.deleteWallet(publicKey);
       if (res.success) {
-        dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
+        dispatch(deleteWalletAction({ publicKey }));
         history.push(ROUTES.TOKENS, { walletDeleted: true });
         onClose();
       } else {
@@ -144,20 +144,16 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     setLoading({ ...loading, deleteWallet: true });
 
     const { username, password } = currentDeleteValues;
-    let account;
+
     try {
-      account = await apis.edge.login(username, password);
-      if (!account) throw new Error();
+      const account = await apis.edge.login(username, password);
+      await apis.edge.deleteWallet(account, fioWallet.edgeId);
 
-      await deleteWallet();
-    } catch (e) {
+      await deleteWallet(fioWallet.publicKey);
+    } catch (err) {
       setLoading({ ...loading, deleteWallet: false });
-      return {
-        password: 'Invalid Password',
-      };
+      log.error(err);
     }
-
-    await apis.edge.deleteWallet(account, fioWallet.edgeId);
   };
 
   const onCancel = () => {
@@ -315,13 +311,13 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
           <>
             <span>
               If you permanently delete your wallet, you will no longer have
-              access to it or your crypto/NFT holdings within this wallet.
+              access to it from the Dashboard.
             </span>
             <br />
             {isLedgerWallet ? (
               <span className={classes.deleteSecondText}>
                 <b>
-                  However, this wallet’s private keys are stored on your ledger
+                  However, this wallet’s private keys are stored on your Ledger
                   device and can be import again at any time.
                 </b>
               </span>
@@ -329,8 +325,11 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
               <span className={classes.deleteSecondText}>
                 <b>
                   Please make sure that you have recorded your private keys for
-                  this <span className={classes.walletTextInModal}>wallet</span>{' '}
-                  to prevent loss of those holdings.
+                  this{' '}
+                  <span className={classes.walletTextInModal}>
+                    {fioWallet?.name || 'wallet'}
+                  </span>{' '}
+                  to prevent loss of your holdings.
                 </b>
               </span>
             )}
@@ -341,4 +340,4 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   );
 };
 
-export default ShowPrivateKeyModal;
+export default WalletSettings;

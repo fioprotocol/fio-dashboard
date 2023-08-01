@@ -38,7 +38,7 @@ type UseContextProps = {
   fioWalletTxHistory: FioWalletTxHistory;
   hasNoTransactions: boolean;
   isOpenLockedList: boolean;
-  showPrivateKeyModal: boolean;
+  showWalletSettings: boolean;
   showWalletNameEdit: boolean;
   welcomeComponentProps: {
     noPaddingTop: boolean;
@@ -56,7 +56,7 @@ export const useContext = (): UseContextProps => {
   const fioWalletsTxHistory = useSelector(fioWalletsTxHistorySelector);
   const profileRefreshed = useSelector(profileRefreshedSelector);
 
-  const [showPrivateKeyModal, setShowPrivateKeyModal] = useState(false);
+  const [showWalletSettings, toggleShowWalletSettings] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -77,18 +77,19 @@ export const useContext = (): UseContextProps => {
     fioAddress => fioAddress.walletPublicKey === publicKey,
   );
   const fioWallet = fioWallets.find(
-    fioWallet => fioWallet.publicKey === publicKey,
+    fioWallet => fioWallet?.publicKey === publicKey,
   );
-  const fioWalletData = userId
-    ? fioWalletsData[userId][fioWallet.publicKey]
-    : null;
+  const fioWalletData =
+    userId && fioWalletsData[userId]
+      ? fioWalletsData[userId][fioWallet?.publicKey]
+      : null;
   const fioWalletTxHistory =
     userId && fioWalletsTxHistory && fioWalletsTxHistory[userId]
-      ? fioWalletsTxHistory[userId][fioWallet.publicKey]
+      ? fioWalletsTxHistory[userId][fioWallet?.publicKey]
       : null;
 
   const fioWalletBalance =
-    fioWalletsBalances.wallets[fioWallet.publicKey] || DEFAULT_BALANCES;
+    fioWalletsBalances.wallets[fioWallet?.publicKey] || DEFAULT_BALANCES;
 
   const hasNoTransactions =
     fioWalletBalance.total.nativeFio === 0 &&
@@ -100,7 +101,7 @@ export const useContext = (): UseContextProps => {
   }, [publicKey, fioWallet, profileRefreshed]);
 
   const onShowPrivateModalClose = useCallback(
-    () => setShowPrivateKeyModal(false),
+    () => toggleShowWalletSettings(false),
     [],
   );
   const closeWalletNameEdit = useCallback(
@@ -108,7 +109,7 @@ export const useContext = (): UseContextProps => {
     [],
   );
 
-  const onKeyShow = useCallback(() => setShowPrivateKeyModal(true), []);
+  const onKeyShow = useCallback(() => toggleShowWalletSettings(true), []);
 
   const onWalletUpdated = useCallback(() => {
     closeWalletNameEdit();
@@ -130,7 +131,7 @@ export const useContext = (): UseContextProps => {
     fioWalletTxHistory,
     hasNoTransactions,
     isOpenLockedList,
-    showPrivateKeyModal,
+    showWalletSettings,
     showWalletNameEdit,
     welcomeComponentProps,
     closeWalletNameEdit,
