@@ -94,10 +94,10 @@ export const useContext = (): UseContextProps => {
     try {
       new ExportToCsv({
         showLabels: true,
-        filename: `Users-List-Total-${
+        filename: `Users-List_Total-${
           usersList.maxCount
-        }-${currentDate.getFullYear()}-${currentDate.getMonth() +
-          1}-${currentDate.getDate()}-${currentDate.getHours()}-${currentDate.getMinutes()}`,
+        }_${currentDate.getFullYear()}-${currentDate.getMonth() +
+          1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
         headers: [
           '#',
           'Email',
