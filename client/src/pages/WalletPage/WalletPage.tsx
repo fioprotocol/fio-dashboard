@@ -161,19 +161,6 @@ const WalletPage: React.FC = () => {
         }
       >
         <h6 className={classes.transactionsTitle}>Recent Transactions</h6>
-        <hr />
-        <InfoBadge
-          message={
-            <span>
-              Only FIO Requests are displayed below. Please visit the{' '}
-              <b style={{ fontFamily: 'Proxima Nova Bold' }}>Explore</b> to view
-              you total transaction history.
-            </span>
-          }
-          show={true}
-          title="Transaction Display"
-          type={BADGE_TYPES.INFO}
-        />
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>
