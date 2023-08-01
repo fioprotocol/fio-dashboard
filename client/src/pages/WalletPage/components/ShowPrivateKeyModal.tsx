@@ -47,6 +47,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   const { show, fioWallet, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+  console.log(fioWallet);
 
   const [loading, setLoading] = useState({
     updateWalletName: false,
@@ -315,13 +316,13 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
           <>
             <span>
               If you permanently delete your wallet, you will no longer have
-              access to it or your crypto/NFT holdings within this wallet.
+              access to it from the Dashboard.
             </span>
             <br />
             {isLedgerWallet ? (
               <span className={classes.deleteSecondText}>
                 <b>
-                  However, this wallet’s private keys are stored on your ledger
+                  However, this wallet’s private keys are stored on your Ledger
                   device and can be import again at any time.
                 </b>
               </span>
@@ -329,8 +330,11 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
               <span className={classes.deleteSecondText}>
                 <b>
                   Please make sure that you have recorded your private keys for
-                  this <span className={classes.walletTextInModal}>wallet</span>{' '}
-                  to prevent loss of those holdings.
+                  this{' '}
+                  <span className={classes.walletTextInModal}>
+                    {fioWallet?.name || 'wallet'}
+                  </span>{' '}
+                  to prevent loss of your holdings.
                 </b>
               </span>
             )}
