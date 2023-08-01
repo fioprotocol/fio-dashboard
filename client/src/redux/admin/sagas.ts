@@ -56,9 +56,13 @@ export function* exportOrdersDataSuccess(): Generator {
   yield takeEvery(EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS, function(
     action: Action,
   ) {
+    const currentDate = new Date();
+
     new ExportToCsv({
       showLabels: true,
-      filename: 'orders',
+      filename: `OrdersList_Total-${action.data.orders
+        .length as number}_${currentDate.getFullYear()}-${currentDate.getMonth() +
+        1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
       headers: [
         'Order ID',
         'Date',
@@ -83,7 +87,9 @@ export function* exportOrdersDataSuccess(): Generator {
 
     new ExportToCsv({
       showLabels: true,
-      filename: 'items',
+      filename: `ItemsList_Total-${action.data.orderItems
+        .length as number}_${currentDate.getFullYear()}-${currentDate.getMonth() +
+        1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
       headers: [
         'Order ID',
         'Item Type',
