@@ -43,11 +43,10 @@ type Props = {
   onClose: () => void;
 };
 
-const ShowPrivateKeyModal: React.FC<Props> = props => {
+const WalletSettings: React.FC<Props> = props => {
   const { show, fioWallet, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
-  console.log(fioWallet);
 
   const [loading, setLoading] = useState({
     updateWalletName: false,
@@ -345,4 +344,4 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
   );
 };
 
-export default ShowPrivateKeyModal;
+export default WalletSettings;
