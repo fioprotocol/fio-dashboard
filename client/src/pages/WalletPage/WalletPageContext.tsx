@@ -77,18 +77,19 @@ export const useContext = (): UseContextProps => {
     fioAddress => fioAddress.walletPublicKey === publicKey,
   );
   const fioWallet = fioWallets.find(
-    fioWallet => fioWallet.publicKey === publicKey,
+    fioWallet => fioWallet?.publicKey === publicKey,
   );
-  const fioWalletData = userId
-    ? fioWalletsData[userId][fioWallet.publicKey]
-    : null;
+  const fioWalletData =
+    userId && fioWalletsData[userId]
+      ? fioWalletsData[userId][fioWallet?.publicKey]
+      : null;
   const fioWalletTxHistory =
     userId && fioWalletsTxHistory && fioWalletsTxHistory[userId]
-      ? fioWalletsTxHistory[userId][fioWallet.publicKey]
+      ? fioWalletsTxHistory[userId][fioWallet?.publicKey]
       : null;
 
   const fioWalletBalance =
-    fioWalletsBalances.wallets[fioWallet.publicKey] || DEFAULT_BALANCES;
+    fioWalletsBalances.wallets[fioWallet?.publicKey] || DEFAULT_BALANCES;
 
   const hasNoTransactions =
     fioWalletBalance.total.nativeFio === 0 &&
