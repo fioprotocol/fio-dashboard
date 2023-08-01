@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import classnames from 'classnames';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
-import ShowPrivateKeyModal from './components/ShowPrivateKeyModal';
+import WalletSettings from './components/WalletSettings';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
@@ -113,7 +113,7 @@ const WalletPage: React.FC = () => {
     fioWalletTxHistory,
     hasNoTransactions,
     isOpenLockedList,
-    showPrivateKeyModal,
+    showWalletSettings,
     showWalletNameEdit,
     welcomeComponentProps,
     closeWalletNameEdit,
@@ -140,8 +140,8 @@ const WalletPage: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <ShowPrivateKeyModal
-        show={showPrivateKeyModal}
+      <WalletSettings
+        show={showWalletSettings}
         fioWallet={fioWallet}
         onClose={onShowPrivateModalClose}
       />

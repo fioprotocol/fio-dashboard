@@ -8,7 +8,7 @@ import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import CopyTooltip from '../../../components/CopyTooltip';
-import ShowPrivateKeyModal from './ShowPrivateKeyModal';
+import WalletSettings from './WalletSettings';
 import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 import ViewPubAddressLedgerWallet from './ViewPubAddress/ViewPubAddressLedgerWallet';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
@@ -41,7 +41,7 @@ const WalletDetailsModal: React.FC<Props> = props => {
   } = props;
 
   const isLedgerWallet = from === WALLET_CREATED_FROM.LEDGER;
-  const [showPrivateKeyModal, setShowPrivateKeyModal] = useState(false);
+  const [showWalletSettings, toggleShowWalletSettings] = useState(false);
   const [showLedgerPubKey, setShowLedgerPubKey] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [exportedPubAddress, setExportedPubAddress] = useState<string | null>(
@@ -72,8 +72,8 @@ const WalletDetailsModal: React.FC<Props> = props => {
     shareData({
       text: publicKey,
     });
-  const onKeyShow = () => setShowPrivateKeyModal(true);
-  const onShowPrivateModalClose = () => setShowPrivateKeyModal(false);
+  const onKeyShow = () => toggleShowWalletSettings(true);
+  const onShowPrivateModalClose = () => toggleShowWalletSettings(false);
   const onLedgerViewPubKey = () => {
     setExportedPubAddress(null);
     setShowLedgerPubKey(true);
@@ -129,7 +129,7 @@ const WalletDetailsModal: React.FC<Props> = props => {
       <Modal
         show={
           show &&
-          !showPrivateKeyModal &&
+          !showWalletSettings &&
           (!showLedgerPubKey || viewingAddressInLedger)
         }
         isSimple={true}
@@ -205,8 +205,8 @@ const WalletDetailsModal: React.FC<Props> = props => {
           </div>
         </div>
       </Modal>
-      <ShowPrivateKeyModal
-        show={showPrivateKeyModal}
+      <WalletSettings
+        show={showWalletSettings}
         fioWallet={props.fioWallet}
         onClose={onShowPrivateModalClose}
       />
