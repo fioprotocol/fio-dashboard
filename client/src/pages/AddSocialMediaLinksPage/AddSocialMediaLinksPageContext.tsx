@@ -13,7 +13,7 @@ import {
 import useQuery from '../../hooks/useQuery';
 import { usePublicAddresses } from '../../util/hooks';
 import { minWaitTimeFunction } from '../../utils';
-import { linkTokens } from '../../api/middleware/fio';
+import { linkTokensEdge } from '../../api/middleware/fio';
 import { log } from '../../util/general';
 
 import { CHAIN_CODES } from '../../constants/common';
@@ -127,7 +127,7 @@ export const useContext = (): UseContextProps => {
 
       try {
         const actionResults = await minWaitTimeFunction(
-          () => linkTokens(params),
+          () => linkTokensEdge(params),
           TOKEN_LINK_MIN_WAIT_TIME,
         );
         if (actionResults) {
