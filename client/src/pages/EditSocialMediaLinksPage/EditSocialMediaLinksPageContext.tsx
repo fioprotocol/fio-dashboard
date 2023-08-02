@@ -8,7 +8,7 @@ import {
   fioWallets as fioWalletsSelector,
 } from '../../redux/fio/selectors';
 
-import { linkTokens } from '../../api/middleware/fio';
+import { linkTokensEdge } from '../../api/middleware/fio';
 import {
   ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
   TOKEN_LINK_MIN_WAIT_TIME,
@@ -201,7 +201,7 @@ export const useContext = (): UseContextProps => {
     };
     try {
       const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
+        () => linkTokensEdge(params),
         TOKEN_LINK_MIN_WAIT_TIME,
       );
       setResultsData({

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import CheckedDropdown from '../DeleteTokenPage/components/CheckedDropdown';
@@ -63,12 +62,13 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
         />
       ) : null}
 
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
+      {/* TODO: handle ledger action */}
+      {/* {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
         />
-      ) : null}
+      ) : null} */}
 
       {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
         <DeleteSocialMediaLinkMetamaskWallet

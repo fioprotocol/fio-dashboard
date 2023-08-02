@@ -1,7 +1,6 @@
 import React from 'react';
 
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 
@@ -57,12 +56,13 @@ const EditSocialMediaLinksPage: React.FC = () => {
         />
       ) : null}
 
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
+      {/* TODO: handle ledger action */}
+      {/* {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
         />
-      ) : null}
+      ) : null} */}
 
       {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
         <EditSocialMediaLinksMetamaskWallet

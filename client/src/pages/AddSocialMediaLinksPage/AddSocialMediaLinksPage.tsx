@@ -3,7 +3,6 @@ import React from 'react';
 import { Form } from 'react-final-form';
 
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { AddSocialMediaLinksForm } from './components/AddSocialMediaLinksForm';
 import { AddSocialMediaLinksMetamaskWallet } from './components/AddSocialMediaLinksMetamaskWallet';
 
@@ -49,12 +48,13 @@ const AddSocialMediaLinkPage: React.FC = () => {
         />
       ) : null}
 
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
+      {/* TODO: handle ledger action */}
+      {/* {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
         />
-      ) : null}
+      ) : null} */}
 
       {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
         <AddSocialMediaLinksMetamaskWallet
