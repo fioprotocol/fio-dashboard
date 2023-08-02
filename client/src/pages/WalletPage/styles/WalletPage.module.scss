@@ -147,10 +147,6 @@
     display: none;
   }
 
-  .container {
-    flex-wrap: wrap;
-  }
-
   .actionButton {
     width: 40vw;
   }
@@ -159,7 +155,6 @@
 @include md {
   .container {
     padding: 30px 20px;
-    flex-wrap: wrap;
 
     .actionBadges {
       margin: 0 20px;

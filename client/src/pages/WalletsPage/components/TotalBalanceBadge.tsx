@@ -31,35 +31,18 @@ const Balance = (props: {
 }) => {
   const { fio, usdc, title, viewDetails } = props;
   return (
-    <div className="container">
-      <div
-        className={classnames(
-          classes.balanceContainer,
-          'row flex align-items-center',
-        )}
-      >
-        <p className={classnames(classes.balanceTitle, 'col-sm-3')}>{title}</p>
-        <div
-          className={classnames(
-            classes.balanceValues,
-            viewDetails ? 'col-sm-6 mr-3' : 'col-sm-9',
-          )}
-        >
+    <div className={classes.balanceContainer}>
+      <div className={classes.balanceContentContainer}>
+        <p className={classes.balanceTitle}>{title}</p>
+        <div className={classes.balanceValues}>
           <PriceComponent costFio={fio} costUsdc={usdc} />
         </div>
-        {viewDetails ? (
-          <Button
-            onClick={viewDetails}
-            className={classnames(
-              classes.link,
-              classes.detailsButton,
-              'col-sm-3',
-            )}
-          >
-            View
-          </Button>
-        ) : null}
       </div>
+      {viewDetails ? (
+        <Button onClick={viewDetails} className={classes.detailsButton}>
+          View
+        </Button>
+      ) : null}
     </div>
   );
 };

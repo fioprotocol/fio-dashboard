@@ -63,8 +63,10 @@
 }
 
 .actionBadgeContainer {
-  margin: 0 0 30px;
   width: auto;
+  border-radius: 24px;
+  border: 10px solid $vista-white;
+  background-color: $vista-white;
 
   & .totalBalanceSuffix {
     font-family: 'Proxima Nova Thin';
@@ -99,21 +101,27 @@
         background-color: $honey-flower;
       }
     }
+  }
 
-    &.detailsButton {
-      width: 50px;
-      height: 25px;
+  .detailsButton {
+    width: 65px;
+    height: 25px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    line-height: 13px;
 
-      &:focus {
-        outline: none !important;
-        box-shadow: none !important;
-      }
+    &:focus {
+      outline: none !important;
+      box-shadow: none !important;
     }
   }
 
   .totalBadge {
     background-color: $baltic-sea;
-    border-radius: 12px;
+    border-radius: 24px;
     padding: 25px;
     color: $white;
     width: 100%;
@@ -122,6 +130,7 @@
       margin-top: 15px;
       display: flex;
       justify-content: space-between;
+      gap: 15px;
     }
 
     .title {
@@ -138,38 +147,48 @@
     }
 
     .balanceContainer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 10px;
       background-color: $tuna;
       border-radius: 7px;
       margin-top: 15px;
+      gap: 10px;
 
-      .balanceTitle,
-      .balanceValues {
-        @include sf-pro-display-medium;
-        font-size: 0.75em;
-        padding: 0;
-      }
+      .balanceContentContainer {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: flex-start;
+        gap: 10px;
+        .balanceTitle,
+        .balanceValues {
+            @include sf-pro-display-medium;
+            font-size: 0.75em;
+            padding: 0;
+          }
 
-      .balanceTitle {
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-      .balanceValues {
-        font-size: 0.75em;
-        margin-top: 0;
-        margin-bottom: 0;
-        flex: 1;
-        width: auto;
+        .balanceTitle {
+          margin-top: 0;
+          margin-bottom: 0;
+          width: 70px;
+        }
+
+        .balanceValues {
+          font-size: 0.75em;
+          margin-top: 0;
+          margin-bottom: 0;
+          width: auto;
+          & > div {
+            flex-flow: row wrap;
+          }
+        }
       }
     }
   }
 }
 
 @include sm {
-  .actionBadgeContainer {
-    display: none;
-  }
-
   .onlyMobile {
     display: block;
     margin-top: 40px;
@@ -179,8 +198,6 @@
 @include md {
   .actionBadgeContainer {
     width: 100%;
-    margin: 0 0 30px;
-    display: none;
   }
 
   .onlyMobile {
