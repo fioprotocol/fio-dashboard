@@ -1,4 +1,4 @@
-import { SocialMediaLinkItem } from '../../constants/socialMediaLinks';
+import { SocialMediaLinkItem } from '../../types';
 
 export type EditSocialLinkItem = {
   isEditing: boolean;
