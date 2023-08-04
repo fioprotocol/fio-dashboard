@@ -2,13 +2,13 @@ import React from 'react';
 
 import { Form } from 'react-final-form';
 
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import { AddSocialMediaLinksForm } from './components/AddSocialMediaLinksForm';
+import WalletAction from '../../components/WalletAction/WalletAction';
 
-import {
-  WALLET_CREATED_FROM,
-  CONFIRM_PIN_ACTIONS,
-} from '../../constants/common';
+import { AddSocialMediaLinksForm } from './components/AddSocialMediaLinksForm';
+import { AddSocialMediaLinksEdgeWallet } from './components/AddSocialMediaLinksEdgeWallet';
+import { AddSocialMediaLinksLedgerWallet } from './components/AddSocialMediaLinksLedgerWallet';
+
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { useContext } from './AddSocialMediaLinksPageContext';
 
@@ -17,41 +17,31 @@ const AddSocialMediaLinkPage: React.FC = () => {
     bundleCost,
     fioCryptoHandleObj,
     fioWallet,
-    onSuccess,
-    onCancel,
-    submit,
-    submitData,
     processing,
-    setProcessing,
-    edgeWalletId,
-    onSubmit,
-    changeBundleCost,
-    onRetry,
     socialMediaLinksList,
+    submitData,
+    changeBundleCost,
+    onCancel,
+    onRetry,
+    onSuccess,
+    onSubmit,
+    setProcessing,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.ADD_SOCIAL_MEDIA_LINK}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.ADD_SOCIAL_MEDIA_LINK}
+        FioActionWallet={AddSocialMediaLinksEdgeWallet}
+        LedgerActionWallet={AddSocialMediaLinksLedgerWallet}
+      />
 
-      {/* TODO: handle ledger action */}
-      {/* {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null} */}
       <Form
         onSubmit={onSubmit}
         render={formProps => (

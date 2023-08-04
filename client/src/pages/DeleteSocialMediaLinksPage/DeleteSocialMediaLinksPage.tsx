@@ -1,19 +1,18 @@
 import React from 'react';
 
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import CheckedDropdown from '../DeleteTokenPage/components/CheckedDropdown';
+import WalletAction from '../../components/WalletAction/WalletAction';
 
 import { DeleteSocialMediaLinkItem } from './components/DeleteSocialMediaLinkItem';
+import { DeleteSocialMediaLinkEdgeWallet } from './components/DeleteSocialMediaLinkEdgeWallet';
+import { DeleteSocialMediaLinkLedgerWallet } from './components/DeleteSocialMediaLinkLedgerWallet';
 
 import { useContext } from './DeleteSocialMediaLinksPageContext';
 
 import { ROUTES } from '../../constants/routes';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
-import {
-  WALLET_CREATED_FROM,
-  CONFIRM_PIN_ACTIONS,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './DeleteSocialMediaLinksPage.module.scss';
 
@@ -21,7 +20,6 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
   const {
     allChecked,
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     hasLowBalance,
@@ -39,31 +37,21 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    submit,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {/* TODO: handle ledger action */}
-      {/* {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null} */}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.DELETE_SOCIAL_MEDIA_LINK}
+        FioActionWallet={DeleteSocialMediaLinkEdgeWallet}
+        LedgerActionWallet={DeleteSocialMediaLinkLedgerWallet}
+      />
 
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE_SOCIAL_MEDIA}

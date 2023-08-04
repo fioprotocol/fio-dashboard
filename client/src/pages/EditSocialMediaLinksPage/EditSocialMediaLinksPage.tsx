@@ -1,15 +1,14 @@
 import React from 'react';
 
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
+import WalletAction from '../../components/WalletAction/WalletAction';
 
 import { EditSocialMediaLinkItem } from './components/EditSocialMediaLinkItem';
+import { EditSocialMediaLinksEdgeWallet } from './components/EditSocialMediaLinksEdgeWallet';
+import { EditSocialMediaLinksLedgerWallet } from './components/EditSocialMediaLinksLedgerWallet';
 
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 
 import { useContext } from './EditSocialMediaLinksPageContext';
@@ -19,7 +18,6 @@ import classes from './EditSocialMediaLinksPage.module.scss';
 const EditSocialMediaLinksPage: React.FC = () => {
   const {
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     hasLowBalance,
@@ -35,31 +33,21 @@ const EditSocialMediaLinksPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    submit,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.EDIT_SOCIAL_MEDIA_LINK}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {/* TODO: handle ledger action */}
-      {/* {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null} */}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.EDIT_SOCIAL_MEDIA_LINK}
+        FioActionWallet={EditSocialMediaLinksEdgeWallet}
+        LedgerActionWallet={EditSocialMediaLinksLedgerWallet}
+      />
 
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT_SOCIAL_MEDIA}
