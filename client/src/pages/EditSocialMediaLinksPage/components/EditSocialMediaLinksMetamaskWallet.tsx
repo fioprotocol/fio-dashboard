@@ -28,7 +28,11 @@ import { handleFioServerResponseActionData } from '../../../util/fio';
 import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
-import { FioWalletDoublet, LinkActionResult } from '../../../types';
+import {
+  FioWalletDoublet,
+  LinkActionResult,
+  PublicAddressDoublet,
+} from '../../../types';
 import { EditSocialLinkItem } from '../types';
 
 type Props = {
@@ -36,7 +40,10 @@ type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
   socialMediaLinksList: EditSocialLinkItem[];
-  submitData: boolean | null;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
+  } | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -45,7 +52,12 @@ type Props = {
       disconnect: { updated: EditSocialLinkItem[] };
     },
   ) => void;
-  setSubmitData: (submitData: boolean | null) => void;
+  setSubmitData: (
+    submitData: {
+      fch: string;
+      socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
+    } | null,
+  ) => void;
 };
 
 export const EditSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {

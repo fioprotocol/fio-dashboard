@@ -24,7 +24,11 @@ import { handleFioServerResponseActionData } from '../../../util/fio';
 import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
-import { FioWalletDoublet, LinkActionResult } from '../../../types';
+import {
+  FioWalletDoublet,
+  LinkActionResult,
+  PublicAddressDoublet,
+} from '../../../types';
 import { CheckedSocialMediaLinkType } from '../types';
 import { updatePublicAddresses } from '../../../redux/fio/actions';
 
@@ -34,12 +38,22 @@ type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
   checkedSocialMediaLinks: CheckedSocialMediaLinkType[];
-  submitData: boolean | null;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: CheckedSocialMediaLinkType[] | PublicAddressDoublet[];
+  } | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   setResultsData: (result: LinkActionResult) => void;
-  setSubmitData: (submitData: boolean | null) => void;
+  setSubmitData: (
+    submitData: {
+      fch: string;
+      socialMediaLinksList:
+        | CheckedSocialMediaLinkType[]
+        | PublicAddressDoublet[];
+    } | null,
+  ) => void;
 };
 
 export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -11,14 +11,10 @@ import {
 
 import useQuery from '../../hooks/useQuery';
 import { usePublicAddresses } from '../../util/hooks';
-import { minWaitTimeFunction } from '../../utils';
-import { linkTokensEdge } from '../../api/middleware/fio';
-import { log } from '../../util/general';
 
 import { CHAIN_CODES } from '../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { SOCIAL_MEDIA_LINKS } from '../../constants/socialMediaLinks';
-import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 
@@ -28,9 +24,9 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
   SocialMediaLinkItem,
-  WalletKeys,
 } from '../../types';
 import { FormValues } from './types';
+import { updatePublicAddresses } from '../../redux/fio/actions';
 
 type UseContextProps = {
   bundleCost: number;
@@ -40,16 +36,21 @@ type UseContextProps = {
   loading: boolean;
   processing: boolean;
   results: LinkActionResult;
-  submitData: FormValues;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: FormValues | PublicAddressDoublet[];
+  };
   changeBundleCost: (bundle: number) => void;
   onCancel: () => void;
   onRetry: (resultsData: LinkActionResult) => void;
   onSubmit: (values: FormValues) => void;
-  onSuccess: () => void;
+  onSuccess: (resultsData: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
   setResultsData: (results: LinkActionResult) => void;
-  setSubmitData: (submitData: FormValues | null) => void;
-  submit: (params: { keys: WalletKeys; data: FormValues }) => Promise<void>;
+  setSubmitData: (subtmiData: {
+    fch: string;
+    socialMediaLinksList: FormValues | PublicAddressDoublet[];
+  }) => void;
   socialMediaLinksList: SocialMediaLinkItem[];
 };
 
@@ -61,7 +62,10 @@ export const useContext = (): UseContextProps => {
     SocialMediaLinkItem[]
   >([]);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<FormValues | null>(null);
+  const [submitData, setSubmitData] = useState<{
+    fch: string;
+    socialMediaLinksList: FormValues | PublicAddressDoublet[];
+  } | null>(null);
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [results, setResultsData] = useState<LinkActionResult>(null);
 
@@ -72,6 +76,7 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   usePublicAddresses(fch);
 
@@ -85,11 +90,26 @@ export const useContext = (): UseContextProps => {
   const fioCryptoHandleObj = currentFioAddress;
 
   const onSubmit = (values: FormValues) => {
-    setSubmitData(values);
+    setSubmitData({ fch, socialMediaLinksList: values });
   };
 
-  const onSuccess = () => {
+  const onSuccess = (resultsData: LinkActionResult) => {
+    setResultsData(resultsData);
+    dispatch(
+      updatePublicAddresses(fch, {
+        addPublicAddresses: resultsData.connect.updated,
+        deletePublicAddresses: [],
+      }),
+    );
+    history.push({
+      pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
+      search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
+      state: {
+        actionType: SOCIAL_MEDIA_CONTAINER_NAMES.ADD_SOCIAL_MEDIA,
+      },
+    });
     setProcessing(false);
+    setSubmitData(null);
   };
 
   const onCancel = () => {
@@ -98,54 +118,8 @@ export const useContext = (): UseContextProps => {
   };
 
   const onRetry = (resultsData: LinkActionResult) => {
-    setSubmitData(resultsData.connect.failed as any);
+    setSubmitData({ fch, socialMediaLinksList: resultsData.connect.failed });
   };
-
-  const submit = useCallback(
-    async ({ keys, data }: { keys: WalletKeys; data: FormValues }) => {
-      const params: {
-        fioAddress: string;
-        connectList: PublicAddressDoublet[];
-        keys: WalletKeys;
-      } = {
-        fioAddress: fch,
-        connectList: Object.entries(data).map(([key, value]) => {
-          let publicAddress = '';
-          if (typeof value !== undefined && typeof value === 'string') {
-            publicAddress = value;
-          }
-          return {
-            chainCode: CHAIN_CODES.SOCIALS,
-            tokenCode: key.toUpperCase(),
-            publicAddress: publicAddress,
-          };
-        }),
-        keys,
-      };
-
-      try {
-        const actionResults = await minWaitTimeFunction(
-          () => linkTokensEdge(params),
-          TOKEN_LINK_MIN_WAIT_TIME,
-        );
-        if (actionResults) {
-          setResultsData(actionResults);
-          history.push({
-            pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-            search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
-            state: {
-              actionType: SOCIAL_MEDIA_CONTAINER_NAMES.ADD_SOCIAL_MEDIA,
-            },
-          });
-        }
-      } catch (err) {
-        log.error(err);
-      } finally {
-        setSubmitData(null);
-      }
-    },
-    [fch, history],
-  );
 
   const publicAddressesJson = JSON.stringify(publicAddresses);
 
@@ -188,6 +162,5 @@ export const useContext = (): UseContextProps => {
     setProcessing,
     setResultsData,
     setSubmitData,
-    submit,
   };
 };
