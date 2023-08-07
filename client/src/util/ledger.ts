@@ -52,14 +52,14 @@ export const handleLedgerError = ({
   showGenericErrorModal: (
     msg: string,
     title: string,
-    buttonText?: string,
+    buttonText?: string | null,
   ) => void;
 }): void => {
   fireActionAnalyticsEventError(action);
   log.error(error, error.code ? error.code.toString() : null);
   let title = 'Something went wrong';
   let msg = 'Try to reconnect your ledger device.';
-  let buttonText = null;
+  let buttonText = '';
 
   const deviceVersionUnsupportedRegexp = new RegExp(
     UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
