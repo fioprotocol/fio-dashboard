@@ -14,10 +14,14 @@ import {
   fireActionAnalyticsEventError,
 } from '../../util/analytics';
 
+import {
+  DISCONNECTED_DEVICE_DURING_OPERATION_ERROR,
+  UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
+  UNSUPPORTED_LEDGER_APP_VERSION_NAME,
+} from '../../constants/errors';
+
 import { AnyObject, AnyType, FioWalletDoublet } from '../../types';
 
-const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
-  'DisconnectedDeviceDuringOperation';
 const FIO_APP_INIT_TIMEOUT = 2000;
 
 type Props = {
@@ -203,13 +207,29 @@ const LedgerConnect: React.FC<Props> = props => {
       log.error(e, e.code);
       let title = 'Something went wrong';
       let msg = 'Try to reconnect your ledger device.';
+      let buttonText = null;
+
+      const deviceVersionUnsupportedRegexp = new RegExp(
+        UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
+        'i',
+      );
 
       if (e.code === DeviceStatusCodes.ERR_REJECTED_BY_USER) {
         title = 'Rejected';
         msg = 'Action rejected by user';
       }
 
-      showGenericErrorModal(msg, title);
+      if (
+        e.name === UNSUPPORTED_LEDGER_APP_VERSION_NAME ||
+        deviceVersionUnsupportedRegexp.test(e.message)
+      ) {
+        title = 'FIO Ledger App version not supported';
+        msg =
+          'Please go to Ledger Live and install the latest version of the FIO Ledger App on your device.';
+        buttonText = 'OK';
+      }
+
+      showGenericErrorModal(msg, title, buttonText);
       onCancel();
     }
   };
