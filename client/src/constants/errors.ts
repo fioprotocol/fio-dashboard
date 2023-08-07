@@ -44,3 +44,10 @@ export const NOT_FOUND = 404;
 
 export const DOMAIN_IS_NOT_EXIST =
   'This domain doesn’t exist and is eligible for purchase below.';
+
+// Ledger Errors
+export const UNSUPPORTED_LEDGER_APP_VERSION_NAME = 'DeviceVersionUnsupported';
+export const UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE =
+  'Device app version unsupported';
+export const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
+  'DisconnectedDeviceDuringOperation';
