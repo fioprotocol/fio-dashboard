@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import Transport from '@ledgerhq/hw-transport';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
@@ -7,18 +7,10 @@ import { DeviceStatusCodes } from 'ledgerjs-hw-app-fio/dist/errors/deviceStatusE
 import ConnectionModal from '../Modal/ConnectionModal';
 
 import useEffectOnce from '../../hooks/general';
-import { getPubKeyFromLedger } from '../../util/ledger';
-import { log } from '../../util/general';
-import {
-  fireActionAnalyticsEvent,
-  fireActionAnalyticsEventError,
-} from '../../util/analytics';
+import { getPubKeyFromLedger, handleLedgerError } from '../../util/ledger';
+import { fireActionAnalyticsEvent } from '../../util/analytics';
 
-import {
-  DISCONNECTED_DEVICE_DURING_OPERATION_ERROR,
-  UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
-  UNSUPPORTED_LEDGER_APP_VERSION_NAME,
-} from '../../constants/errors';
+import { DISCONNECTED_DEVICE_DURING_OPERATION_ERROR } from '../../constants/errors';
 
 import { AnyObject, AnyType, FioWalletDoublet } from '../../types';
 
@@ -65,7 +57,7 @@ const LedgerConnect: React.FC<Props> = props => {
   const [fioApp, setFioApp] = useState<LedgerFioApp | null>(null);
   const [transport, setTransport] = useState<Transport | null>(null);
 
-  const closeConnection = async () => {
+  const closeConnection = useCallback(async () => {
     try {
       if (transport != null) {
         await transport.close();
@@ -78,9 +70,9 @@ const LedgerConnect: React.FC<Props> = props => {
     setAwaitingUnlock(false);
     setAwaitingFioApp(false);
     onCancel();
-  };
+  }, [onCancel, transport]);
 
-  const connect = async () => {
+  const connect = useCallback(async () => {
     const isTransportSupported = await TransportWebUSB.isSupported();
 
     if (!isTransportSupported) {
@@ -100,9 +92,9 @@ const LedgerConnect: React.FC<Props> = props => {
     } catch (e) {
       onCancel();
     }
-  };
+  }, [closeConnection, onCancel, showGenericErrorModal]);
 
-  const connectFioApp = async () => {
+  const connectFioApp = useCallback(async () => {
     if (!transport || fioApp) {
       connectFioAppIntervalRef.current = setTimeout(() => {
         connectFioApp();
@@ -141,20 +133,37 @@ const LedgerConnect: React.FC<Props> = props => {
     connectFioAppIntervalRef.current = null;
 
     if (fioWallet != null && fioWallet.publicKey) {
-      const publicKeyWIF = await getPubKeyFromLedger(
-        newFioApp,
-        fioWallet.data.derivationIndex,
-      );
-      if (publicKeyWIF !== fioWallet.publicKey) {
-        showGenericErrorModal('Your device does not have selected wallet');
-        onCancel();
-        return;
+      try {
+        const publicKeyWIF = await getPubKeyFromLedger(
+          newFioApp,
+          fioWallet.data.derivationIndex,
+        );
+        if (publicKeyWIF !== fioWallet.publicKey) {
+          showGenericErrorModal('Your device does not have selected wallet');
+          onCancel();
+          return;
+        }
+      } catch (err) {
+        handleLedgerError({
+          error: err,
+          action,
+          onCancel,
+          showGenericErrorModal,
+        });
       }
     }
 
     setAwaitingFioApp(false);
     setFioApp(newFioApp);
-  };
+  }, [
+    action,
+    connect,
+    fioApp,
+    fioWallet,
+    onCancel,
+    showGenericErrorModal,
+    transport,
+  ]);
 
   const onContinue = awaitingUnlock
     ? () => {
@@ -164,16 +173,35 @@ const LedgerConnect: React.FC<Props> = props => {
       }
     : null;
 
-  useEffect(() => {
-    return () => {
-      connectFioAppIntervalRef.current &&
-        clearInterval(connectFioAppIntervalRef.current);
-    };
-  }, []);
+  const afterConnect = useCallback(
+    async (appFio: LedgerFioApp) => {
+      try {
+        setProcessing(true);
+        const result = await onConnect(appFio);
+        fireActionAnalyticsEvent(action, data);
 
-  useEffectOnce(() => {
-    connect();
-  }, [connect]);
+        setConnecting(false);
+
+        onSuccess(result);
+      } catch (e) {
+        handleLedgerError({
+          error: e,
+          action,
+          onCancel,
+          showGenericErrorModal,
+        });
+      }
+    },
+    [
+      action,
+      data,
+      onCancel,
+      onConnect,
+      onSuccess,
+      setProcessing,
+      showGenericErrorModal,
+    ],
+  );
 
   // Handle fioApp connection set
   useEffect(() => {
@@ -181,7 +209,7 @@ const LedgerConnect: React.FC<Props> = props => {
       setAwaitingLedger(true);
       afterConnect(fioApp);
     }
-  }, [fioApp]);
+  }, [afterConnect, fioApp]);
 
   // Handle transport created
   useEffectOnce(
@@ -193,46 +221,16 @@ const LedgerConnect: React.FC<Props> = props => {
     transport != null && connecting,
   );
 
-  const afterConnect = async (appFio: LedgerFioApp) => {
-    try {
-      setProcessing(true);
-      const result = await onConnect(appFio);
-      fireActionAnalyticsEvent(action, data);
+  useEffect(() => {
+    return () => {
+      connectFioAppIntervalRef.current &&
+        clearInterval(connectFioAppIntervalRef.current);
+    };
+  }, []);
 
-      setConnecting(false);
-
-      onSuccess(result);
-    } catch (e) {
-      fireActionAnalyticsEventError(action);
-      log.error(e, e.code);
-      let title = 'Something went wrong';
-      let msg = 'Try to reconnect your ledger device.';
-      let buttonText = null;
-
-      const deviceVersionUnsupportedRegexp = new RegExp(
-        UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
-        'i',
-      );
-
-      if (e.code === DeviceStatusCodes.ERR_REJECTED_BY_USER) {
-        title = 'Rejected';
-        msg = 'Action rejected by user';
-      }
-
-      if (
-        e.name === UNSUPPORTED_LEDGER_APP_VERSION_NAME ||
-        deviceVersionUnsupportedRegexp.test(e.message)
-      ) {
-        title = 'FIO Ledger App version not supported';
-        msg =
-          'Please go to Ledger Live and install the latest version of the FIO Ledger App on your device.';
-        buttonText = 'OK';
-      }
-
-      showGenericErrorModal(msg, title, buttonText);
-      onCancel();
-    }
-  };
+  useEffectOnce(() => {
+    connect();
+  }, [connect]);
 
   let message = 'Please connect your Ledger device and confirm';
   if (awaitingLedger) message = 'Please confirm action in your Ledger device';
