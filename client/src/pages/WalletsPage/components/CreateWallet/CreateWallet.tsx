@@ -1,8 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { useDispatch, useSelector } from 'react-redux';
 
 import CreateWalletModal from '../CreateWalletModal';
 import CreateEdgeWallet from './CreateEdgeWallet';
 import CreateLedgerWallet from './CreateLedgerWallet';
+
+import { addWallet } from '../../../../redux/account/actions';
+
+import { fioWallets as fioWalletsSelector } from '../../../../redux/fio/selectors';
+import { addWalletLoading as addWalletLoadingSelector } from '../../../../redux/account/selectors';
+import {
+  showGenericError as showGenericErrorSelector,
+  showPinConfirm as showPinConfirmSelector,
+} from '../../../../redux/modal/selectors';
+import { isWalletCreated as isWalletCreatedSelector } from '../../../../redux/account/selectors';
 
 import {
   WALLET_CREATED_FROM,
@@ -10,30 +22,22 @@ import {
 } from '../../../../constants/common';
 
 import { CreateWalletValues } from '../../types';
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
+import { NewFioWalletDoublet } from '../../../../types';
 
 type Props = {
   show: boolean;
-  genericErrorModalIsActive: boolean;
-  addWalletLoading: boolean;
-  pinModalIsOpen: boolean;
-  fioWallets: FioWalletDoublet[];
   onClose: () => void;
   onWalletCreated: () => void;
-  addWallet: (data: NewFioWalletDoublet) => void;
 };
 
-const CreateWallet: React.FC<Props> = props => {
-  const {
-    show,
-    genericErrorModalIsActive,
-    addWalletLoading,
-    pinModalIsOpen,
-    onClose,
-    addWallet,
-    fioWallets,
-    onWalletCreated,
-  } = props;
+export const CreateWallet: React.FC<Props> = props => {
+  const { show, onClose, onWalletCreated } = props;
+
+  const addWalletLoading = useSelector(addWalletLoadingSelector);
+  const fioWallets = useSelector(fioWalletsSelector);
+  const isWalletCreated = useSelector(isWalletCreatedSelector);
+  const showGenericError = useSelector(showGenericErrorSelector);
+  const showPinConfirm = useSelector(showPinConfirmSelector);
 
   const walletsAmount = fioWallets.length;
 
@@ -43,6 +47,7 @@ const CreateWallet: React.FC<Props> = props => {
     name: '',
     ledger: false,
   });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (show) {
@@ -57,34 +62,37 @@ const CreateWallet: React.FC<Props> = props => {
   }, [show, walletsAmount]);
 
   useEffect(() => {
-    if (processing && !addWalletLoading) {
+    if (isWalletCreated && !addWalletLoading && !showGenericError) {
       onWalletCreated();
       setProcessing(false);
     }
-  }, [addWalletLoading, processing, onWalletCreated]);
+  }, [isWalletCreated, addWalletLoading, showGenericError, onWalletCreated]);
 
-  const onCreateSubmit = (values: CreateWalletValues) => {
+  const onCreateSubmit = useCallback((values: CreateWalletValues) => {
     setCurrentValues(values);
     setCreationType(
       values.ledger ? WALLET_CREATED_FROM.LEDGER : WALLET_CREATED_FROM.EDGE,
     );
-  };
+  }, []);
 
-  const onWalletDataPrepared = (walletData: NewFioWalletDoublet) => {
-    addWallet(walletData);
-    setCreationType(null);
-  };
+  const onWalletDataPrepared = useCallback(
+    (walletData: NewFioWalletDoublet) => {
+      dispatch(addWallet(walletData));
+      setCreationType(null);
+    },
+    [dispatch],
+  );
 
-  const onOptionCancel = () => {
+  const onOptionCancel = useCallback(() => {
     setCreationType(null);
     setProcessing(false);
-  };
+  }, []);
 
-  const onModalClose = () => {
+  const onModalClose = useCallback(() => {
     if (!processing && !addWalletLoading) {
       onClose();
     }
-  };
+  }, [addWalletLoading, onClose, processing]);
 
   return (
     <>
@@ -100,6 +108,7 @@ const CreateWallet: React.FC<Props> = props => {
       ) : null}
       {creationType === WALLET_CREATED_FROM.LEDGER ? (
         <CreateLedgerWallet
+          fioWallets={fioWallets}
           setProcessing={setProcessing}
           values={currentValues}
           onWalletDataPrepared={onWalletDataPrepared}
@@ -110,8 +119,8 @@ const CreateWallet: React.FC<Props> = props => {
       <CreateWalletModal
         show={
           show &&
-          !pinModalIsOpen &&
-          !genericErrorModalIsActive &&
+          !showPinConfirm &&
+          !showGenericError &&
           creationType !== WALLET_CREATED_FROM.LEDGER
         }
         onClose={onModalClose}
@@ -122,5 +131,3 @@ const CreateWallet: React.FC<Props> = props => {
     </>
   );
 };
-
-export default CreateWallet;

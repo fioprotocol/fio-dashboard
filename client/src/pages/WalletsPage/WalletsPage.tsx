@@ -6,7 +6,7 @@ import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletItem from './components/WalletItem';
-import CreateWallet from './components/CreateWallet';
+import { CreateWallet } from './components/CreateWallet';
 import ActionButtonsContainer from './components/ActionButtonsContainer';
 import TotalBalanceBadge from './components/TotalBalanceBadge';
 import Title from './components/Title';
