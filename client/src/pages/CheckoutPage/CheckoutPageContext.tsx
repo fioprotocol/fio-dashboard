@@ -293,12 +293,6 @@ export const useContext = (): {
 
   const paymentAssignmentWallets = fioWallets
     .filter(wallet => {
-      if (
-        paymentWallet &&
-        paymentWallet?.from !== wallet.from &&
-        paymentOption === PAYMENT_OPTIONS.CREDIT_CARD
-      )
-        return false;
       if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
       if (
         cartHasItemsWithPrivateDomain &&
