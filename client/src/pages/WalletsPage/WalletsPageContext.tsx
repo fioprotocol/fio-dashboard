@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useSelector } from 'react-redux';
 
+import { toggleIsWalletCreated } from '../../redux/account/actions';
+
 import { fioWalletsBalances as fioWalletsBalancesSelector } from '../../redux/fio/selectors';
 import { user as userSelector } from '../../redux/profile/selectors';
 
@@ -73,7 +75,10 @@ export const useContext = (): UseContextProps => {
     () => setShowWalletImported(false),
     [],
   );
-  const closeCreatedWallet = useCallback(() => setShowWalletCreated(false), []);
+  const closeCreatedWallet = useCallback(() => {
+    toggleIsWalletCreated(false);
+    setShowWalletCreated(false);
+  }, []);
   const closeDeletedWallet = useCallback(() => setShowWalletDeleted(false), []);
 
   const onAdd = useCallback(() => {
