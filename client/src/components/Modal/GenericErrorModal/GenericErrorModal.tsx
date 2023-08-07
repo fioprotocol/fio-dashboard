@@ -6,7 +6,11 @@ import PageTitle from '../../PageTitle/PageTitle';
 import { LINKS } from '../../../constants/labels';
 
 type Props = {
-  genericErrorData?: { message: string; title?: string; buttonText?: string };
+  genericErrorData?: {
+    message: string;
+    title?: string;
+    buttonText?: string | null;
+  };
   closeGenericErrorModal: () => void;
   showGenericError: boolean;
 };
@@ -16,14 +20,15 @@ const GenericErrorModal: React.FC<Props> = props => {
   const {
     message = "We've experienced something unexpected.",
     title = 'Something Went Wrong',
-    buttonText = 'Try Again',
+    buttonText,
   } = genericErrorData || {};
+
   return (
     <>
       {showGenericError && <PageTitle link={LINKS.ERROR} isVirtualPage />}
       <DangerModal
         title={title}
-        buttonText={buttonText}
+        buttonText={buttonText || 'Try Again'}
         subtitle={message}
         show={showGenericError}
         onActionButtonClick={closeGenericErrorModal}
