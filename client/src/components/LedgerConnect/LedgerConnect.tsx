@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import Transport from '@ledgerhq/hw-transport';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
@@ -57,7 +57,7 @@ const LedgerConnect: React.FC<Props> = props => {
   const [fioApp, setFioApp] = useState<LedgerFioApp | null>(null);
   const [transport, setTransport] = useState<Transport | null>(null);
 
-  const closeConnection = useCallback(async () => {
+  const closeConnection = async () => {
     try {
       if (transport != null) {
         await transport.close();
@@ -70,9 +70,9 @@ const LedgerConnect: React.FC<Props> = props => {
     setAwaitingUnlock(false);
     setAwaitingFioApp(false);
     onCancel();
-  }, [onCancel, transport]);
+  };
 
-  const connect = useCallback(async () => {
+  const connect = async () => {
     const isTransportSupported = await TransportWebUSB.isSupported();
 
     if (!isTransportSupported) {
@@ -97,9 +97,9 @@ const LedgerConnect: React.FC<Props> = props => {
       );
       onCancel();
     }
-  }, [closeConnection, onCancel, showGenericErrorModal]);
+  };
 
-  const connectFioApp = useCallback(async () => {
+  const connectFioApp = async () => {
     if (!transport || fioApp) {
       connectFioAppIntervalRef.current = setTimeout(() => {
         connectFioApp();
@@ -160,15 +160,7 @@ const LedgerConnect: React.FC<Props> = props => {
 
     setAwaitingFioApp(false);
     setFioApp(newFioApp);
-  }, [
-    action,
-    connect,
-    fioApp,
-    fioWallet,
-    onCancel,
-    showGenericErrorModal,
-    transport,
-  ]);
+  };
 
   const onContinue = awaitingUnlock
     ? () => {
@@ -178,35 +170,24 @@ const LedgerConnect: React.FC<Props> = props => {
       }
     : null;
 
-  const afterConnect = useCallback(
-    async (appFio: LedgerFioApp) => {
-      try {
-        setProcessing(true);
-        const result = await onConnect(appFio);
-        fireActionAnalyticsEvent(action, data);
+  const afterConnect = async (appFio: LedgerFioApp) => {
+    try {
+      setProcessing(true);
+      const result = await onConnect(appFio);
+      fireActionAnalyticsEvent(action, data);
 
-        setConnecting(false);
+      setConnecting(false);
 
-        onSuccess(result);
-      } catch (e) {
-        handleLedgerError({
-          error: e,
-          action,
-          onCancel,
-          showGenericErrorModal,
-        });
-      }
-    },
-    [
-      action,
-      data,
-      onCancel,
-      onConnect,
-      onSuccess,
-      setProcessing,
-      showGenericErrorModal,
-    ],
-  );
+      onSuccess(result);
+    } catch (e) {
+      handleLedgerError({
+        error: e,
+        action,
+        onCancel,
+        showGenericErrorModal,
+      });
+    }
+  };
 
   // Handle fioApp connection set
   useEffect(() => {
@@ -214,7 +195,8 @@ const LedgerConnect: React.FC<Props> = props => {
       setAwaitingLedger(true);
       afterConnect(fioApp);
     }
-  }, [afterConnect, fioApp]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fioApp]);
 
   // Handle transport created
   useEffectOnce(
