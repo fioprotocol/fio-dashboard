@@ -65,7 +65,7 @@ const WalletsPage: React.FC<Props> = () => {
   const {
     fioWallets,
     fioWalletsBalances,
-    showCreateWallet,
+    showCreateWalletModal,
     showWalletCreated,
     showWalletDeleted,
     showWalletImported,
@@ -81,7 +81,7 @@ const WalletsPage: React.FC<Props> = () => {
   return (
     <div className={classes.container}>
       <CreateWallet
-        show={showCreateWallet}
+        show={showCreateWalletModal}
         onClose={closeCreateWallet}
         onWalletCreated={onWalletCreated}
       />

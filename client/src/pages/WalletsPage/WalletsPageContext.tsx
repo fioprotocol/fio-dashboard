@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useLocation } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { LocationState } from 'history';
 
 import { toggleIsWalletCreated } from '../../redux/account/actions';
 
@@ -26,7 +27,7 @@ const AUTOCLOSE_TIME = 5000;
 type UseContextProps = {
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
-  showCreateWallet: boolean;
+  showCreateWalletModal: boolean;
   showWalletCreated: boolean;
   showWalletDeleted: boolean;
   showWalletImported: boolean;
@@ -45,12 +46,17 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
-  const [showCreateWallet, setShowCreateWallet] = useState<boolean>(false);
+  const [showCreateWalletModal, setShowCreateWalletModal] = useState<boolean>(
+    false,
+  );
   const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
   const [showWalletCreated, setShowWalletCreated] = useState<boolean>(false);
   const [showWalletDeleted, setShowWalletDeleted] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   const queryParams = useQuery();
+  const history = useHistory();
   const importedWallet = queryParams.get(QUERY_PARAMS_NAMES.IMPORTED);
   const location = useLocation<{ walletDeleted: boolean }>();
   const { walletDeleted } = location?.state || {};
@@ -65,22 +71,25 @@ export const useContext = (): UseContextProps => {
     pageType: PAGE_TYPES.TOK,
   };
 
-  const closeCreateWallet = useCallback(() => setShowCreateWallet(false), []);
+  const closeCreateWallet = useCallback(
+    () => setShowCreateWalletModal(false),
+    [],
+  );
   const closeImportedWallet = useCallback(
     () => setShowWalletImported(false),
     [],
   );
   const closeCreatedWallet = useCallback(() => {
-    toggleIsWalletCreated(false);
+    dispatch(toggleIsWalletCreated(false));
     setShowWalletCreated(false);
-  }, []);
+  }, [dispatch]);
   const closeDeletedWallet = useCallback(() => setShowWalletDeleted(false), []);
 
   const onAdd = useCallback(() => {
-    setShowCreateWallet(true);
+    setShowCreateWalletModal(true);
   }, []);
   const onWalletCreated = useCallback(() => {
-    setShowCreateWallet(false);
+    setShowCreateWalletModal(false);
     setShowWalletCreated(true);
   }, []);
 
@@ -108,10 +117,21 @@ export const useContext = (): UseContextProps => {
     return () => clearTimeout(timeoutId);
   }, [showWalletDeleted]);
 
+  useEffect(() => {
+    return () => {
+      toggleIsWalletCreated(false);
+      const newLocation = {
+        ...history.location,
+        state: null as LocationState,
+      };
+      history.push(newLocation);
+    };
+  }, [history]);
+
   return {
     fioWallets,
     fioWalletsBalances,
-    showCreateWallet,
+    showCreateWalletModal,
     showWalletCreated,
     showWalletDeleted,
     showWalletImported,
