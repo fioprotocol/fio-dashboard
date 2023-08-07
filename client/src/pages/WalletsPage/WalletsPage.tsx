@@ -69,7 +69,7 @@ const WalletsPage: React.FC<Props> = () => {
     fioWallets,
     fioWalletsBalances,
     isAlternativeAccountType,
-    showCreateWallet,
+    showCreateWalletModal,
     showWalletCreated,
     showWalletDeleted,
     showWalletImported,
@@ -87,7 +87,7 @@ const WalletsPage: React.FC<Props> = () => {
       <CreateWallet
         fioWallets={fioWallets}
         isAlternativeAccountType={isAlternativeAccountType}
-        show={showCreateWallet}
+        show={showCreateWalletModal}
         onClose={closeCreateWallet}
         onWalletCreated={onWalletCreated}
       />
