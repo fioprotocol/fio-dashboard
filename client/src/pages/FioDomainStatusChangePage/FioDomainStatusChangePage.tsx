@@ -32,7 +32,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   } = props;
   const { name } = location.query;
 
-  const domainStatus: string = selectedFioDomain.isPublic
+  const domainStatus: string = selectedFioDomain?.isPublic
     ? DOMAIN_STATUS.PUBLIC
     : DOMAIN_STATUS.PRIVATE;
   const statusToChange =
