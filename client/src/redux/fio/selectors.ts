@@ -174,7 +174,7 @@ export const fioWalletForDomain = createSelector(
       fioDomain &&
       wallets.find(
         (walletItem: FioWalletDoublet) =>
-          walletItem.publicKey === fioDomain.walletPublicKey,
+          walletItem.publicKey === fioDomain?.walletPublicKey,
       );
 
     return wallet || emptyWallet;
