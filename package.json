@@ -132,7 +132,7 @@
     "big.js": "6.2.1",
     "bip39": "3.0.4",
     "bitcoin-address-validation": "2.2.1",
-    "bitpay-sdk": "git@github.com:bitpay/nodejs-bitpay-client#035e3fc9e7534a07c7c4c4d1b263d288e69f08f5",
+    "bitpay-sdk": "github:bitpay/nodejs-bitpay-client#035e3fc9e7534a07c7c4c4d1b263d288e69f08f5",
     "body-parser": "1.20.1",
     "bootstrap": "4.6.2",
     "bree": "8.0.5",
