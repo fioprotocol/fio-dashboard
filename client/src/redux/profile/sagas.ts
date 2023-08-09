@@ -23,6 +23,7 @@ import {
 
 import { closeLoginModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
+import { clearOldCartItems } from '../cart/actions';
 
 import {
   locationState as locationStateSelector,
@@ -113,6 +114,7 @@ export function* profileSuccess(): Generator {
 export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     api.client.removeToken();
+    yield put<Action>(clearOldCartItems());
 
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);
