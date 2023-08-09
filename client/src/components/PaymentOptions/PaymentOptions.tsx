@@ -63,10 +63,12 @@ const PAYMENT_OPTIONS_PROPS = {
     cartItems,
     selectedPaymentProvider,
     disabled,
+    totlaCartUsdcAmount,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
     disabled: cartItems?.length === 0 || disabled,
+    hideButton: new MathOp(totlaCartUsdcAmount).lt(0.5),
     provider: PAYMENT_PROVIDER.STRIPE,
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.STRIPE,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
