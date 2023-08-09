@@ -122,11 +122,13 @@ const NotificationBadge: React.FC<Props> = props => {
           />
         )}
       </div>
-      <FontAwesomeIcon
-        icon="times-circle"
-        className={classes.closeIcon}
-        onClick={onClose}
-      />
+      {onClose && (
+        <FontAwesomeIcon
+          icon="times-circle"
+          className={classes.closeIcon}
+          onClick={onClose}
+        />
+      )}
     </Badge>
   );
 };
