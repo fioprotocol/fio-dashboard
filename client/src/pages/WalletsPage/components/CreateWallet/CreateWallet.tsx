@@ -36,6 +36,8 @@ const CreateWallet: React.FC<Props> = props => {
   } = props;
 
   const walletsAmount = fioWallets.length;
+  const existingWalletNames = fioWallets.map(fioWallet => fioWallet.name);
+  const existingWalletNamesJSON = JSON.stringify(existingWalletNames);
 
   const [creationType, setCreationType] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -46,15 +48,31 @@ const CreateWallet: React.FC<Props> = props => {
 
   useEffect(() => {
     if (show) {
-      const newWalletCount = walletsAmount + 1;
-      const defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
+      const parsedExistingWalletNames = JSON.parse(existingWalletNamesJSON);
+
+      const generateUniqueDefaultName = (existingNames: string[]) => {
+        const walletsAmount = existingNames.length;
+        let newWalletCount = walletsAmount + 1;
+        let defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
+
+        while (existingNames.includes(defaultName)) {
+          newWalletCount++;
+          defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
+        }
+
+        return defaultName;
+      };
+
+      const newDefaultName = generateUniqueDefaultName(
+        parsedExistingWalletNames,
+      );
 
       setCurrentValues({
-        name: defaultName,
+        name: newDefaultName,
         ledger: false,
       });
     }
-  }, [show, walletsAmount]);
+  }, [existingWalletNamesJSON, show, walletsAmount]);
 
   useEffect(() => {
     if (processing && !addWalletLoading) {
