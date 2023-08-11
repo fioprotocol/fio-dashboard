@@ -54,11 +54,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_DOMAIN_TRANSFER_RESULTS: '/fio-domain-transfer-results',
   FIO_DOMAIN_STATUS_CHANGE_RESULTS: '/fio-domain-status-results',
   FIO_ADDRESS_ADD_BUNDLES: '/add-bundles',
-  FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION: '/add-bundles-confirmation',
-  FIO_ADDRESS_ADD_BUNDLES_OLD: '/add-bundles/:name',
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
-  FIO_DOMAIN_RENEW_CONFIRMATION: '/fio-domain-renew-confirmation',
-  FIO_DOMAIN_RENEW_OLD: '/fio-domain-renew/:name',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
   FIO_ADDRESS_SIGNATURES: '/nft-signatures', // ?address=
   FIO_ADDRESS_SIGN: '/sign-nft', // ?address= (not required)
