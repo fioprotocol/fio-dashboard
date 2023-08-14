@@ -26,6 +26,7 @@
     align-items: center;
     padding: 10px;
     font-size: 0.8125em;
+    position: relative;
   }
 
   .firstCol {
@@ -98,7 +99,7 @@
     .tableCol {
       .remaining {
         width: 20px;
-        margin: 0 15px 0 0;
+        margin: 0 20px 0 0;
       }
       .warnIcon {
         margin-right: 10px;
@@ -106,6 +107,8 @@
         color: $simple-orange;
         width: 18px;
         height: 18px;
+        position: absolute;
+        left: 41px;
       }
     }
 
