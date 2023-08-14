@@ -64,7 +64,7 @@ const FioDomainRenewPage: React.FC = () => {
     if (feeLoading[renewFioDomain]) return;
 
     if (feeLoadingFinished && !renewDomainFeePrice) {
-      history.push(ROUTES.FIO_DOMAINS);
+      history.replace(ROUTES.FIO_DOMAINS);
       return;
     }
 
@@ -90,7 +90,7 @@ const FioDomainRenewPage: React.FC = () => {
       ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
       getCartItemsDataForAnalytics([...cartItems, newCartItem]),
     );
-    history.push(ROUTES.CART);
+    history.replace(ROUTES.CART);
   }, [
     cartItems,
     domain,

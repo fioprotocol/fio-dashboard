@@ -66,7 +66,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
     if (feeLoading[addBundledTransactions]) return;
 
     if (feeLoadingFinished && !addBundlesFeePrice) {
-      history.push(ROUTES.FIO_DOMAINS);
+      history.replace(ROUTES.FIO_DOMAINS);
       return;
     }
 
@@ -94,7 +94,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
       ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
       getCartItemsDataForAnalytics([...cartItems, newCartItem]),
     );
-    history.push(ROUTES.CART);
+    history.replace(ROUTES.CART);
   }, [
     addBundledTransactions,
     addBundlesFeePrice,
