@@ -14,7 +14,7 @@ export const FioCryptoHandlesTable: React.FC<Props> = props => {
     <TableWrapper title="FIO Addresses">
       <thead>
         <tr>
-          <th scope="col">FIO Crypto Handle</th>
+          <th scope="col">FIO Handle</th>
           <th scope="col">Bundled tx</th>
           <th scope="col">Wallet</th>
         </tr>

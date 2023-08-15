@@ -32,12 +32,12 @@ const validationSchema: ValidationSchema = {
       {
         validator: matchFieldValidator,
         customArgs: { fieldId: 'payeeFioAddress', isMatch: false },
-        message: 'FIO Crypto Handle cannot be same.',
+        message: 'FIO Handle cannot be same.',
       },
       {
         validator: isFioAddressValidator,
         customArgs: { onlyFioAddress: true },
-        message: 'Please enter valid FIO Crypto Handle.',
+        message: 'Please enter valid FIO Handle.',
       },
     ],
     amount: [

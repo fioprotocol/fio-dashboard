@@ -82,7 +82,7 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
       >
         <>
           <p className={classes.text}>
-            Link social media accounts to your FIO Crypto Handle
+            Link social media accounts to your FIO Handle
           </p>
           {socialMediaLinksList.map(socialMediaLinkItem => (
             <div key={socialMediaLinkItem.name}>

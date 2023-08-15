@@ -27,11 +27,11 @@ const validationSchema: ValidationSchema = {
       {
         validator: matchFieldValidator,
         customArgs: { fieldId: 'from', isMatch: false },
-        message: 'FIO Crypto Handle cannot be same.',
+        message: 'FIO Handle cannot be same.',
       },
       {
         validator: isFioAddressValidator,
-        message: 'Please enter valid FIO Crypto Handle / Public Key.',
+        message: 'Please enter valid FIO Handle / Public Key.',
       },
     ],
     amount: [

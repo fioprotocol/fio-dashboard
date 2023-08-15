@@ -30,13 +30,13 @@ export class OrderItem extends Base {
         address: {
           type: DT.STRING,
           allowNull: true,
-          comment: 'Crypto Handle name, optional',
+          comment: 'FIO Handle name, optional',
           defaultValue: null,
         },
         domain: {
           type: DT.STRING,
           allowNull: true,
-          comment: 'Crypto handle domain, optional',
+          comment: 'FIO handle domain, optional',
           defaultValue: null,
         },
         params: { type: DT.JSON, comment: 'Params needed for the action' },
@@ -135,7 +135,7 @@ export class OrderItem extends Base {
     return orderItems.map(orderItem => this.format(orderItem));
   }
 
-  // todo: one of the usage is to get amount of crypto handle registrations by fio domains to check if there is no limit reached
+  // todo: one of the usage is to get amount of FIO Handle registrations by fio domains to check if there is no limit reached
   static async amount(action, refProfileId, statuses, paramsWhere) {
     const statusesWhere =
       statuses.length > 1

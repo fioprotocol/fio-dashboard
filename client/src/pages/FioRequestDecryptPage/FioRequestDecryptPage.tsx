@@ -131,7 +131,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
           },
       );
       setError(
-        `We could not find your FIO request (${fioRequestId}). FIO crypto handle or wallet is not available.`,
+        `We could not find your FIO request (${fioRequestId}). FIO Handle or wallet is not available.`,
       );
     }
   }, [fioWalletsData, fioRequest, fioRequestId, publicKey]);

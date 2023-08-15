@@ -26,7 +26,7 @@ export const AffiliateSelectFCHModal: React.FC<Props> = props => {
     <div className={classes.container}>
       <h4 className={classes.title}>Getting Started is Easy!</h4>
       <p className={classes.subtitle}>
-        Select a FIO crypto Handle to receive your referral fee earnings.
+        Select a FIO Handle to receive your referral fee earnings.
       </p>
 
       <Form
@@ -40,7 +40,7 @@ export const AffiliateSelectFCHModal: React.FC<Props> = props => {
               name="fch"
               component={Dropdown}
               errorColor={COLOR_TYPE.WARN}
-              placeholder="Select FIO Crypto Handle"
+              placeholder="Select FIO Handle"
               options={fioAddresses.map(({ name }) => ({
                 id: name,
                 name,

@@ -11,13 +11,13 @@ export const AffiliateNoFCHModal: React.FC = () => {
   return (
     <div className={classes.container}>
       <FontAwesomeIcon icon="info-circle" className={classes.icon} />
-      <h4 className={classes.title}>Missing FIO Crypto Handle</h4>
+      <h4 className={classes.title}>Missing FIO Handle</h4>
       <p className={classes.subtitle}>
-        To complete your activation, you will need a FIO Crypto Handle to
-        receive all your rewards.
+        To complete your activation, you will need a FIO Handle to receive all
+        your rewards.
       </p>
       <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-        <Button className={classes.button}>Get a FREE Crypto Handle Now</Button>
+        <Button className={classes.button}>Get a FREE FIO Handle Now</Button>
       </Link>
     </div>
   );

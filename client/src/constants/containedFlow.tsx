@@ -27,7 +27,7 @@ export const CONTAINED_FLOW_STEPS = {
 
 export const CONTAINED_FLOW_NOTIFICATION_MESSAGES = {
   [CONTAINED_FLOW_ACTIONS.SIGNNFT]:
-    'please add your FIO Crypto Handle again, and purchase in order to complete your NFT signing',
+    'please add your FIO Handle again, and purchase in order to complete your NFT signing',
 };
 
 export const CONTAINED_FLOW_LOGIN_SUBTITLES = {

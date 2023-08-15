@@ -56,7 +56,7 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
 
   return (
     <div className={classes.itemContainer}>
-      <h4 className={classes.title}>FIO Crypto Handle Details</h4>
+      <h4 className={classes.title}>FIO Handle Details</h4>
       <NotificationBadge
         type={BADGE_TYPES.WARNING}
         title={warningContent.title}

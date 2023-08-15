@@ -22,7 +22,7 @@ const accordionContent = [
   {
     title: 'How will I receive the payment?',
     text:
-      'Payments are automatically processed by the FIO Chain in FIO Tokens and are sent to the FIO Crypto Handle provided, once minimum of 100 FIO Tokens have been accrued.',
+      'Payments are automatically processed by the FIO Chain in FIO Tokens and are sent to the FIO Handle provided, once minimum of 100 FIO Tokens have been accrued.',
   },
   {
     title: 'How will I know if someone has purchased a FIO Domain?',

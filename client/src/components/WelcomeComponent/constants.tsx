@@ -67,7 +67,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     types: [PAGE_TYPES.ALL, PAGE_TYPES.DOM, PAGE_TYPES.FCH],
   },
   NO_FCH: {
-    title: 'Get your FREE FIO Crypto Handle',
+    title: 'Get your FREE FIO Handle',
     text:
       'It will replace all your complicated public addresses across all tokens and coins in your wallets.',
     imageSrc: FreeImgSrc,
@@ -80,7 +80,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
   LINK_FCH_ONE: {
     title: 'Link your Token Addresses',
     text:
-      'You will then be able to receive crypto using a single FIO Crypto Handle instead of multiple complicated public addresses.',
+      'You will then be able to receive crypto using a single FIO Handle instead of multiple complicated public addresses.',
     imageSrc: LocationPinImgSrc,
     actionButtonText: 'Map Now',
     actionButtonLink: {
@@ -91,7 +91,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
   LINK_FCH: {
     title: 'Link your Token Addresses',
     text:
-      'You will then be able to receive crypto using a single FIO Crypto Handle instead of multiple complicated public addresses.',
+      'You will then be able to receive crypto using a single FIO Handle instead of multiple complicated public addresses.',
     imageSrc: LocationPinImgSrc,
     actionButtonText: 'Map Now',
     actionButtonLink: {
@@ -125,7 +125,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
   GET_CUSTOM_FIO_DOMAIN: {
     title: 'Get a custom FIO Domain',
     text:
-      'Personalize your FIO Crypto Handle! Get a FIO Domain, which lets you control who can register handles on it. It’s also an NFT which can be traded on NFT exchanges such as Opensea.',
+      'Personalize your FIO Handle! Get a FIO Domain, which lets you control who can register handles on it. It’s also an NFT which can be traded on NFT exchanges such as Opensea.',
     imageSrc: GroupImgSrc,
     actionButtonText: 'Buy a Domain',
     actionButtonLink: {

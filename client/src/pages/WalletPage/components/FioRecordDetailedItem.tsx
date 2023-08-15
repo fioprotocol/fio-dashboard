@@ -54,9 +54,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
       const address = walletFioAddresses.find(({ name }) => name === fch);
       setSelectedAddress(address);
       setError(
-        !address
-          ? 'This FIO Crypto Handle no longer exists in current wallet.'
-          : null,
+        !address ? 'This FIO Handle no longer exists in current wallet.' : null,
       );
     }
   }, [fioRecordDecrypted, fioRecordType, walletFioAddresses, isLoading]);

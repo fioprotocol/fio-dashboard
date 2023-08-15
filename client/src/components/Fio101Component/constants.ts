@@ -19,12 +19,12 @@ export const FIO_101_SLIDER_CONTENT: {
   [key: string]: Fio101SliderContentProps;
 } = {
   NO_FCH: {
-    buttonText: 'Get a FIO Crypto Handle',
+    buttonText: 'Get a FIO Handle',
     imageSrc: FchInRectangleImageSrc,
     link: ROUTES.FIO_ADDRESSES_SELECTION,
-    title: 'What’s a FIO crypto handle & why it’s useful?',
+    title: 'What’s a FIO Handle & why it’s useful?',
     text:
-      'A FIO crypto handle is a human readable identifier that works across every token and coin in your wallet and eliminates the need to see or interact with public addresses.',
+      'A FIO Handle is a human readable identifier that works across every token and coin in your wallet and eliminates the need to see or interact with public addresses.',
     videoId: 'ih9oVckc2bU',
   },
   NO_MAPPED_PUBLIC_ADDRESSES: {
@@ -32,9 +32,9 @@ export const FIO_101_SLIDER_CONTENT: {
     imageSrc: MappingImageSrc,
     link: ROUTES.FIO_ADDRESSES,
     oneItemLink: ROUTES.ADD_TOKEN,
-    title: 'Why map your FIO Crypto Handle?',
+    title: 'Why map your FIO Handle?',
     text:
-      'By mapping your FIO Crypto Handle, users are presented with a simple to understand replacement for complicated public addresses across tokens and chains. This allows users to utilize a single crypto handle to send, recieve or request any type of crypto.',
+      'By mapping your FIO Handle, users are presented with a simple to understand replacement for complicated public addresses across tokens and chains. This allows users to utilize a single FIO Handle to send, recieve or request any type of crypto.',
   },
   NO_DOMAINS: {
     buttonText: 'Get a FIO Domain',
@@ -42,7 +42,7 @@ export const FIO_101_SLIDER_CONTENT: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     title: 'What’s a FIO domain & why it’s useful?',
     text:
-      'The FIO domain is the second part of the user’s FIO crypto handle. Once bought and registered, it is unavailable to another user and can be used  to create a unique FIO crypto handle for the owner.',
+      'The FIO domain is the second part of the user’s FIO Handle. Once bought and registered, it is unavailable to another user and can be used  to create a unique FIO Handle for the owner.',
   },
   DEFAULT: {
     buttonText: 'Send a FIO Request',
@@ -50,6 +50,6 @@ export const FIO_101_SLIDER_CONTENT: {
     link: ROUTES.FIO_TOKENS_REQUEST,
     title: 'FIO requests .. What’s the deal?',
     text:
-      'A FIO Request is a secure, decentralized, and private method of requesting a crypto payment from another user using their FIO Crypto Handle. No need to send a public address and no confusion on type or amount you want to receive.',
+      'A FIO Request is a secure, decentralized, and private method of requesting a crypto payment from another user using their FIO Handle. No need to send a public address and no confusion on type or amount you want to receive.',
   },
 };

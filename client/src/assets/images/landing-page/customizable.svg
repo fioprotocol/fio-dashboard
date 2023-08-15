@@ -43,8 +43,8 @@
                     <g id="bracket" transform="translate(122.905823, 114.000000) rotate(-90.000000) translate(-122.905823, -114.000000) translate(110.405823, 0.732252)" fill="#FFFFFF" fill-rule="nonzero">
                         <path d="M22.9166178,4.17384499 C24.0666089,4.17384499 25,3.23882389 25,2.08682467 C25,0.934825452 24.0666089,0 22.9166178,0 C14.8750791,0 8.33333333,6.55297381 8.33333333,14.6087509 L8.33333333,111.775002 L2.08338216,111.775002 C0.933391145,111.775002 0,112.710023 0,113.862023 C0,115.014022 0.933391145,115.948847 2.08338216,115.948847 L8.33333333,115.948847 L8.33333333,211.926744 C8.33333333,219.982326 14.8748838,226.535495 22.9166178,226.535495 C24.0666089,226.535495 25,225.600474 25,224.448475 C25,223.296476 24.0666089,222.361454 22.9166178,222.361454 C17.1707643,222.361454 12.5000977,217.682436 12.5000977,211.926744 L12.5000977,14.6087509 C12.5000977,8.85286355 17.1707643,4.17384499 22.9166178,4.17384499 Z" id="Path"></path>
                     </g>
-                    <text id="FIO-Crypto-Handle" font-family="ProximaNova-Light, Proxima Nova" font-size="18" font-weight="300" line-spacing="27" fill="#FFFFFF">
-                        <tspan x="50" y="152">FIO Crypto Handle</tspan>
+                    <text id="FIO-Handle" font-family="ProximaNova-Light, Proxima Nova" font-size="18" font-weight="300" line-spacing="27" fill="#FFFFFF">
+                        <tspan x="50" y="152">FIO Handle</tspan>
                     </text>
                     <text id="domain" font-family="ProximaNova-Extrabld, Proxima Nova" font-size="36" font-weight="700" line-spacing="27" fill="#4C186E">
                         <tspan x="262" y="64">domain</tspan>

@@ -19,7 +19,7 @@ export const isFioAddressValidator: FieldValidationFunctionSync<OnlyFioAddressFi
     message:
       typeof message === 'string'
         ? message
-        : message?.[0] || 'FIO Crypto Handle is not valid',
+        : message?.[0] || 'FIO Handle is not valid',
   };
 
   try {

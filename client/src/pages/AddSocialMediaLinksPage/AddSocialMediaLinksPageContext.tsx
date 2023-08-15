@@ -54,7 +54,7 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const queryParams = useQuery();
-  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE);
+  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const [socialMediaLinksList, setSocialMediaLinksList] = useState<
     SocialMediaLinkItem[]
@@ -140,7 +140,7 @@ export const useContext = (): UseContextProps => {
           );
           history.push({
             pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-            search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`,
+            search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
             state: {
               actionType: SOCIAL_MEDIA_CONTAINER_NAMES.ADD_SOCIAL_MEDIA,
             },

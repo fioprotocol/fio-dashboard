@@ -131,7 +131,7 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     // Custom title and message for crypto provider
     if (paymentProvider === PAYMENT_PROVIDER.BITPAY) {
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO) {
-        message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+        message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens. You can use these tokens to register FIO Handle or Domain.`;
       } else {
         message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount?.usdcTotalPrice} back to your crypto wallet. Click close and try purchase again.`;
       }
@@ -146,7 +146,7 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
           'The payment was not accepted and as a result the transaction was not processed.';
       } else {
         if (failedTxsTotalCurrency === CURRENCY_CODES.FIO) {
-          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}). You can use these tokens to register FIO Crypto Handle or Domain.`;
+          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}). You can use these tokens to register FIO Handle or Domain.`;
         } else {
           message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount?.usdcTotalPrice} back to your credit card. Click close and try purchase again.`;
         }

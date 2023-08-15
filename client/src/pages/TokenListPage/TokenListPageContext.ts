@@ -29,9 +29,7 @@ type Props = {
 
 export const useContext = (): Props => {
   const queryParams = useQuery();
-  const fioCryptoHandleName = queryParams.get(
-    QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE,
-  );
+  const fioCryptoHandleName = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const currentFioAddress = useSelector(state =>
     currentFioAddressSelector(state, fioCryptoHandleName),
@@ -58,7 +56,7 @@ export const useContext = (): Props => {
   }, [publicAddresses, showTokenListInfoBadge]);
 
   const onClose = () => dispatch(toggleTokenListInfoBadge(false));
-  const search = `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fioCryptoHandleName}`;
+  const search = `?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fioCryptoHandleName}`;
 
   const fioCryptoHandlePub = {
     chainCode: CHAIN_CODES.FIO,

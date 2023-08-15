@@ -25,8 +25,7 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
   [DOMAIN_EXP_PERIOD.EXPIRED]: 'FIO Domain(s) have been burned',
 };
 
-const USER_HAS_FREE_ADDRESS_MESSAGE =
-  'You have already registered a free FIO Crypto Handle';
+const USER_HAS_FREE_ADDRESS_MESSAGE = 'You have already registered a free FIO Handle';
 
 const FIO_ACTIONS = {
   transferTokens: 'transferTokens',
@@ -71,9 +70,9 @@ const FIO_ACTIONS_TO_END_POINT_KEYS = {
 };
 
 const FIO_ACTIONS_LABEL = {
-  [FIO_ACTIONS.registerFioAddress]: 'FIO Crypto Handle Registration',
+  [FIO_ACTIONS.registerFioAddress]: 'FIO Handle Registration',
   [FIO_ACTIONS.registerFioDomain]: 'FIO Domain Registration',
-  [`${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`]: 'FIO Crypto Handle and Domain Registration',
+  [`${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`]: 'FIO Handle and Domain Registration',
   [FIO_ACTIONS.renewFioDomain]: 'FIO Domain Renewal',
   [FIO_ACTIONS.addBundledTransactions]: 'Add Bundled Transactions',
 };

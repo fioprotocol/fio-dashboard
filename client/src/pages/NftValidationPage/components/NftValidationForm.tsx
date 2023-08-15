@@ -31,7 +31,7 @@ const validate = (
       try {
         apis.fio.isFioAddressValid(values.fioAddress);
       } catch (e) {
-        errors.fioAddress = 'FIO Crypto Handle is not valid';
+        errors.fioAddress = 'FIO Handle is not valid';
       }
     }
   }

@@ -125,10 +125,10 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               {fioAddresses.length > 1 ? (
                 <Field
                   name="payeeFioAddress"
-                  label="Your Requesting FIO Crypto Handle"
+                  label="Your Requesting FIO Handle"
                   component={Dropdown}
                   errorColor={COLOR_TYPE.WARN}
-                  placeholder="Select FIO Crypto Handle"
+                  placeholder="Select FIO Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
                     name,
@@ -146,7 +146,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={TextInput}
                   disabled={true}
-                  label="Your Requesting FIO Crypto Handle"
+                  label="Your Requesting FIO Handle"
                 />
               )}
             </>
@@ -214,10 +214,10 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             <Field
               name="payerFioAddress"
               placeholder="Enter or select FIO request Address"
-              modalPlaceholder="Enter or select FIO Crypto Handle"
-              title="Choose FIO Crypto Handle"
-              subTitle="Enter or select a FIO Crypto Handle to request tokens from"
-              notFoundText="No FIO Crypto Handles found"
+              modalPlaceholder="Enter or select FIO Handle"
+              title="Choose FIO Handle"
+              subTitle="Enter or select a FIO Handle to request tokens from"
+              notFoundText="No FIO Handles found"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
@@ -295,8 +295,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               messageText="Not enough bundles"
             />
             <Badge show={noPayeeFioAddress} type={BADGE_TYPES.ERROR}>
-              You should have a FIO Crypto Handle in order to be able to sent
-              request
+              You should have a FIO Handle in order to be able to sent request
             </Badge>
 
             <SubmitButton

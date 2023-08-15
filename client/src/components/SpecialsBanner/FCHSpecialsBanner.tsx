@@ -21,7 +21,7 @@ export const FCHSpecialsBanner: React.FC<Props> = ({
 }) => {
   return (
     <div className={classes.container}>
-      <div className={classes.title}>What makes FIO Crypto Handle special?</div>
+      <div className={classes.title}>What makes FIO Handle special?</div>
 
       <SpecialsBannerBadge
         icon={customSendReceiveIcon ? customSendReceiveIcon : sendReceiveIcon}

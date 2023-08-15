@@ -53,7 +53,7 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
           onClick={onClick}
           loading={loading}
         />
-        <h5 className={classes.subtitle}>Suggested FIO Crypto Handles</h5>
+        <h5 className={classes.subtitle}>Suggested FIO Handles</h5>
         <div className={classes.infoBadgeContainer}>
           <InfoBadge
             title="Try again!"
@@ -75,7 +75,7 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
             show={!addressValue}
             type={BADGE_TYPES.INFO}
             title="Enter Username"
-            message="Please enter a username in order to register a FIO Crypto Handle."
+            message="Please enter a username in order to register a FIO Handle."
           />
         </div>
         <AdditionalItemsList

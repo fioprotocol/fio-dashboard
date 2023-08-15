@@ -7,8 +7,7 @@ interface FieldArgs {
   sameWalletMessage?: string;
 }
 
-const defaultMessage =
-  'FIO Crypto Handle is not valid / not exist / domain expired';
+const defaultMessage = 'FIO Handle is not valid / not exist / domain expired';
 
 export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,
@@ -21,7 +20,7 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
 
   if (!value)
     return {
-      type: 'FIO_CRYPTO_HANDLE_EXISTS',
+      type: 'FIO_HANDLE_EXISTS',
       succeeded: true,
       message: '',
     };
@@ -29,12 +28,12 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
   let transferAddress = value;
 
   const validationResult = {
-    type: 'FIO_CRYPTO_HANDLE_EXISTS',
+    type: 'FIO_HANDLE_EXISTS',
     succeeded: false,
     message:
       typeof message === 'string'
         ? message
-        : message?.[0] || 'FIO Crypto Handle is not valid',
+        : message?.[0] || 'FIO Handle is not valid',
   };
 
   try {

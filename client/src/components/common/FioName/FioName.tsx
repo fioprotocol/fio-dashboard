@@ -11,7 +11,7 @@ const FioName: React.FC<Props> = props => {
 
   return (
     <div className={classes.addressContainer}>
-      <h5 className={classes.title}>FIO Crypto Handle:</h5>
+      <h5 className={classes.title}>FIO Handle:</h5>
       <h5 className={classes.name}>{name}</h5>
     </div>
   );

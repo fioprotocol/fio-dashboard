@@ -74,16 +74,14 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                   <InfoBadge
                     type={BADGE_TYPES.WARNING}
                     show={hasFioCryptoHandleError}
-                    title="FIO Crypto Handle Error"
+                    title="FIO Handle Error"
                     message={
                       <>
                         <div>One of the issues could cause the error:</div>
+                        <div>- FIO Handle or wallet public key is missing.</div>
                         <div>
-                          - FIO Crypto Handle or wallet public key is missing.
-                        </div>
-                        <div>
-                          - FIO Crypto Handle and wallet public key missmatch.
-                          Please choose another FIO Crypto Handle.
+                          - FIO Handle and wallet public key missmatch. Please
+                          choose another FIO Handle.
                         </div>
                       </>
                     }
@@ -97,7 +95,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                         className={`${classes.fioAddress} d-flex justify-content-start`}
                       >
                         <div className={classes.fioAddressLabel}>
-                          FIO Crypto Handle
+                          FIO Handle
                         </div>
                         <CustomDropdown
                           value={selectedFioAddressName}

@@ -66,13 +66,13 @@ module.exports = {
       address: {
         type: DT.STRING,
         allowNull: true,
-        comment: 'Crypto Handle name, optional',
+        comment: 'FIO Handle name, optional',
         defaultValue: null,
       },
       domain: {
         type: DT.STRING,
         allowNull: true,
-        comment: 'Crypto handle domain, optional',
+        comment: 'FIO handle domain, optional',
         defaultValue: null,
       },
       params: { type: DT.JSON, comment: 'Params needed for the action' },

@@ -12,9 +12,7 @@ export const ContainedFlowSignNftTitle: React.FC = () => {
 };
 
 export const ContainedFlowRegTitle: React.FC = () => {
-  return (
-    <h1 className={classes.title}>Get your decentralized FIO Crypto Handle</h1>
-  );
+  return <h1 className={classes.title}>Get your decentralized FIO Handle</h1>;
 };
 
 const TitleComponent: React.FC<Props> = props => {
