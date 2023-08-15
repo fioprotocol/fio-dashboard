@@ -47,6 +47,11 @@ router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
 router.post('/users/update-email', checkAuth, routes.users.updateEmail);
+router.put(
+  '/users/update-email-notification-params',
+  checkAuth,
+  routes.users.updateEmailNotificationParams,
+);
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);

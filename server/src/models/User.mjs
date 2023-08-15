@@ -45,6 +45,16 @@ export class User extends Base {
         affiliateProfileId: { type: DT.BIGINT, allowNull: true },
         timeZone: { type: DT.STRING, defaultValue: 'America/New_York' },
         isOptIn: { type: DT.BOOLEAN, defaultValue: false },
+        emailNotificationParams: {
+          type: DT.JSON,
+          defaultValue: {
+            fioDomainExpiration: true,
+            fioRequest: true,
+            fioBalanceChange: true,
+            lowBundles: true,
+          },
+          allowNull: false,
+        },
       },
       {
         sequelize,
@@ -112,6 +122,7 @@ export class User extends Base {
         'createdAt',
         'timeZone',
         'orders',
+        'emailNotificationParams',
       ],
     };
 
