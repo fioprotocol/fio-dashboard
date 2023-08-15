@@ -45,7 +45,6 @@ export class DomainsWatchlist extends Base {
     this.belongsTo(User, {
       foreignKey: 'userId',
       targetKey: 'id',
-      as: 'domainsWatchlist',
     });
   }
 
@@ -70,9 +69,10 @@ export class DomainsWatchlist extends Base {
     });
   }
 
-  static async listAll() {
+  static async listAll(params) {
     const domainsWatchlist = await this.findAll({
       order: [['id', 'DESC']],
+      ...params,
     });
 
     return domainsWatchlist.map(domainsWatchlistItem =>
@@ -80,12 +80,13 @@ export class DomainsWatchlist extends Base {
     );
   }
 
-  static format({ id, domain, createdAt, userId }) {
+  static format({ id, domain, createdAt, userId, User }) {
     return {
       id,
       domain,
       createdAt,
       userId,
+      User,
     };
   }
 }

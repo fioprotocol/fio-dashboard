@@ -105,7 +105,7 @@ class WalletDataJob extends CommonJob {
             Number(fetchedRequest.fio_request_id) === Number(request.fio_request_id) &&
             fetchedRequest.status !== request.status,
         );
-        if (fetchedItem) {
+        if (fetchedItem && wallet.User.emailNotificationParams.fioRequest) {
           changed = true;
           await Notification.create({
             type: Notification.TYPE.INFO,
@@ -176,7 +176,10 @@ class WalletDataJob extends CommonJob {
               status: fetchedItem.status,
             });
 
-            if (fetchedItem.status === 'requested')
+            if (
+              fetchedItem.status === 'requested' &&
+              wallet.User.emailNotificationParams.fioRequest
+            )
               await Notification.create({
                 type: Notification.TYPE.INFO,
                 contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
@@ -219,7 +222,12 @@ class WalletDataJob extends CommonJob {
     }
   }
 
-  async handleDomainExpiration({ domainExpiration, domainName, userId }) {
+  async handleDomainExpiration({
+    domainExpiration,
+    domainName,
+    userId,
+    enableSendDomainExpireEmails,
+  }) {
     const timePeriod =
       convertToNewDate(domainExpiration).getTime() - new Date().getTime();
     let domainExpPeriod =
@@ -248,7 +256,7 @@ class WalletDataJob extends CommonJob {
           },
         },
       });
-      if (!existingNotification)
+      if (!existingNotification && enableSendDomainExpireEmails)
         await Notification.create({
           type: Notification.TYPE.INFO,
           contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
@@ -280,6 +288,8 @@ class WalletDataJob extends CommonJob {
           domainExpiration: expiration,
           domainName: domain,
           userId,
+          enableSendDomainExpireEmails:
+            domainsWatchlistItem.User.emailNotificationParams.fioDomainExpiration,
         });
       }
     }
@@ -314,7 +324,8 @@ class WalletDataJob extends CommonJob {
         if (fetched) {
           if (
             fetched.remaining_bundled_tx < LOW_BUNDLES_THRESHOLD &&
-            cryptoHandle.remaining_bundled_tx >= LOW_BUNDLES_THRESHOLD
+            cryptoHandle.remaining_bundled_tx >= LOW_BUNDLES_THRESHOLD &&
+            wallet.User.emailNotificationParams.lowBundles
           ) {
             changed = true;
             await Notification.create({
@@ -343,7 +354,7 @@ class WalletDataJob extends CommonJob {
                 },
               },
             });
-            if (!existingNotification) {
+            if (!existingNotification && wallet.User.emailNotificationParams.lowBundles) {
               await Notification.create({
                 type: Notification.TYPE.INFO,
                 contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
@@ -382,6 +393,8 @@ class WalletDataJob extends CommonJob {
           domainExpiration: domain.expiration,
           domainName: domain.fio_domain,
           userId: wallet.User.id,
+          enableSendDomainExpireEmails:
+            wallet.User.emailNotificationParams.fioDomainExpiration,
         });
       }
 
@@ -502,22 +515,24 @@ class WalletDataJob extends CommonJob {
             },
           });
         } else {
-          await Notification.create({
-            type: Notification.TYPE.INFO,
-            contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
-            userId: wallet.User.id,
-            data: {
-              pagesToShow: ['/'],
-              emailData: {
-                fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
-                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
-                )} FIO)`,
-                newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(balance)} FIO)`,
-                wallet: wallet.publicKey,
-                date: await User.formatDateWithTimeZone(wallet.User.id),
+          if (wallet.User.emailNotificationParams.fioBalanceChange) {
+            await Notification.create({
+              type: Notification.TYPE.INFO,
+              contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+              userId: wallet.User.id,
+              data: {
+                pagesToShow: ['/'],
+                emailData: {
+                  fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
+                    new MathOp(fioNativeChangeBalance).abs().toNumber(),
+                  )} FIO)`,
+                  newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(balance)} FIO)`,
+                  wallet: wallet.publicKey,
+                  date: await User.formatDateWithTimeZone(wallet.User.id),
+                },
               },
-            },
-          });
+            });
+          }
         }
 
         await PublicWalletData.update(
@@ -614,7 +629,11 @@ class WalletDataJob extends CommonJob {
     };
 
     let wallets = await this.getWallets();
-    let domainsWatchlist = await DomainsWatchlist.listAll();
+    let domainsWatchlist = await DomainsWatchlist.listAll({
+      include: {
+        model: User,
+      },
+    });
 
     while (domainsWatchlist.length) {
       if (DEBUG_INFO)
