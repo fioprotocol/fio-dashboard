@@ -42,10 +42,10 @@ export const AffiliateModal: React.FC<Props> = props => {
       hasDefaultCloseColor
     >
       <div className={classes.container}>
-        <h4 className={classes.title}>Select FIO Crypto Handle!</h4>
+        <h4 className={classes.title}>Select FIO Handle!</h4>
         <p className={classes.subtitle}>
-          Please select a FIO Crypto Handle for receipt of domain affiliate
-          program earnings.
+          Please select a FIO Handle for receipt of domain affiliate program
+          earnings.
         </p>
 
         <Form
@@ -62,7 +62,7 @@ export const AffiliateModal: React.FC<Props> = props => {
                 name="fch"
                 component={Dropdown}
                 errorColor={COLOR_TYPE.WARN}
-                placeholder="Select FIO Crypto Handle"
+                placeholder="Select FIO Handle"
                 options={fioAddresses.map(({ name }) => ({
                   id: name,
                   name,

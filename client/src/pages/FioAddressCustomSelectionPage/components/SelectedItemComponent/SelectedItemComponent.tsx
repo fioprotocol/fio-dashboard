@@ -41,7 +41,7 @@ export const SelectedItemComponent: React.FC<SelectedItemComponentProps> = props
       />
       <InfoBadge
         title="Premium"
-        message="The domain for this FIO Crypto Handle is already registered but you are still able to register one as a premium FIO Crypto Handle."
+        message="The domain for this FIO Handle is already registered but you are still able to register one as a premium FIO Handle."
         show={showPremiumInfoBadge}
         type={BADGE_TYPES.INFO}
       />

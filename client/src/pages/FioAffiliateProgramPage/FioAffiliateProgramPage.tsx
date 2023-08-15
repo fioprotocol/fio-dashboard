@@ -60,7 +60,7 @@ const FioAffiliateProgramPage: React.FC = () => {
             </div>
           </div>
           <div className={classes.field}>
-            <div className={classes.label}>FIO Crypto Handle</div>
+            <div className={classes.label}>FIO Handle</div>
             <div className={classes.description}>
               Your affiliate program earnings are being paid to this handle
             </div>
@@ -76,7 +76,7 @@ const FioAffiliateProgramPage: React.FC = () => {
           type={BADGE_TYPES.INFO}
           show
           title="Transaction Payments"
-          message="Earnings are paid out every time you reach 100 FIO. These will be paid and displayed in your wallet associated with the FIO Crypto Handle selected above."
+          message="Earnings are paid out every time you reach 100 FIO. These will be paid and displayed in your wallet associated with the FIO Handle selected above."
         />
       </div>
       <div className={classes.videoContainer} />

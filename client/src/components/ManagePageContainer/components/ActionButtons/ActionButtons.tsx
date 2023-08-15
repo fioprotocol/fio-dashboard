@@ -137,7 +137,7 @@ const LinkTokenActionButton: React.FC<DefautProps> = props => {
   const { isSmallDesktop, name } = props;
   return (
     <Link
-      to={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
+      to={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
@@ -194,7 +194,7 @@ const SocialLinksActionButton: React.FC<DefautProps> = props => {
     <Link
       to={{
         pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-        search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+        search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${name}`,
       }}
       className={classes.actionButton}
     >

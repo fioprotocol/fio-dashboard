@@ -52,7 +52,7 @@ export const useContext = (props: {
               ...FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
               link:
                 FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES.oneItemLink +
-                `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${firstFromListFioAddressName}`,
+                `?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${firstFromListFioAddressName}`,
             },
             FIO_101_SLIDER_CONTENT.NO_DOMAINS,
             FIO_101_SLIDER_CONTENT.DEFAULT,

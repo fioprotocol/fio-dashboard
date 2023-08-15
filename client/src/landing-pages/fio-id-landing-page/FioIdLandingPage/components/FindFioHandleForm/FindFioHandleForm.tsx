@@ -48,7 +48,7 @@ export const FindFioHandleForm: React.FC<Props> = props => {
           setFch(fch);
           return;
         } else {
-          return { [FORM_ERROR]: 'FIO Crypto Handle is not registered' };
+          return { [FORM_ERROR]: 'FIO Handle is not registered' };
         }
       } catch (error) {
         errors = error;

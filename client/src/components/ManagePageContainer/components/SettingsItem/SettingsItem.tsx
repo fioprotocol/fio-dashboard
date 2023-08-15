@@ -48,7 +48,7 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
     <div className={classes.settingsContainer}>
       <PageTitle link={LINKS.FIO_ADDRESSES_SETTINGS} isVirtualPage />
       <h3 className={classes.title}>Advanced Settings</h3>
-      <h5 className={classes.subtitle}>FIO Crypto Handle Ownership</h5>
+      <h5 className={classes.subtitle}>FIO Handle Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
           <p className={classes.badgeTitle}>FIO Wallet</p>
@@ -62,13 +62,11 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
         </div>
       </Badge>
       <div>
-        <h5 className={classes.actionTitle}>
-          Transfer FIO Crypto Handle Ownership
-        </h5>
+        <h5 className={classes.actionTitle}>Transfer FIO Handle Ownership</h5>
         <p className={classes.text}>
-          Transferring your FIO Crypto Handle to a new Owner is easy, Simply
-          enter or paste the new owner public key, submit the request and verify
-          the transaction.
+          Transferring your FIO Handle to a new Owner is easy, Simply enter or
+          paste the new owner public key, submit the request and verify the
+          transaction.
         </p>
         <Link
           to={`${ROUTES.FIO_ADDRESS_OWNERSHIP}?${QUERY_PARAMS_NAMES.NAME}=${name}`}
@@ -138,7 +136,7 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
         <h5 className={classes.actionTitle}>Domain Access</h5>
         <p className={classes.text}>
           If you would like your domain to be publicly giving users the ability
-          to register FIO Crypto Handles on it, please set the domain to public.
+          to register FIO Handles on it, please set the domain to public.
         </p>
         <Link
           to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}

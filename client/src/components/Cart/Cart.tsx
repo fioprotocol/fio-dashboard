@@ -122,7 +122,7 @@ const Cart: React.FC<Props> = props => {
             <FontAwesomeIcon icon="search" className={classes.ctaIcon} />
           </div>
           <p className={classnames(classes.ctaText, 'boldText')}>
-            Search for more FIO Crypto Handles?
+            Search for more FIO Handles?
           </p>
         </Link>
       </div>

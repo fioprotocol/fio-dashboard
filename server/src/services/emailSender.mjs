@@ -281,7 +281,7 @@ class EmailSender {
        * @param successedOrderItems.domain example 'testdomain'
        * @param successedOrderItems.hasCustomDomain example 'true'
        * @param successedOrderItems.priceAmount example '$17.36 (378.97 FIO)'
-       * @param successedOrderItems.descriptor example 'FIO Crypto Handle Registration'
+       * @param successedOrderItems.descriptor example 'FIO Handle Registration'
        *
        * @param successedOrderPaymentInfo {}
        * @param successedOrderPaymentInfo.total example '$17.36 (378.97 FIO)'
@@ -297,7 +297,7 @@ class EmailSender {
        * @param failedOrderItems.domain example 'testdomain'
        * @param failedOrderItems.hasCustomDomain example 'true'
        * @param failedOrderItems.priceAmount example '$17.36 (378.97 FIO)'
-       * @param failedOrderItems.descriptor example 'FIO Crypto Handle Registration'
+       * @param failedOrderItems.descriptor example 'FIO Handle Registration'
        *
        * @param failedOrderPaymentInfo {}
        * @param failedOrderPaymentInfo.total example '$17.36 (378.97 FIO)'

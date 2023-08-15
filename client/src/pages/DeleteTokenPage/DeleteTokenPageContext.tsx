@@ -32,9 +32,7 @@ import {
 
 export const useContext = (): DeleteTokenContextProps => {
   const queryParams = useQuery();
-  const fioCryptoHandleName = queryParams.get(
-    QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE,
-  );
+  const fioCryptoHandleName = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const fioCryptoHandleObj = useSelector(state =>
     currentFioAddress(state, fioCryptoHandleName),

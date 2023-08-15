@@ -25,14 +25,14 @@ export const AdditionalItemsList: React.FC<Props> = props => {
   if (loading)
     return (
       <>
-        <h5 className={classes.subtitle}>Additional FIO Crypto Handles</h5>
+        <h5 className={classes.subtitle}>Additional FIO Handles</h5>
         <Loader />
       </>
     );
 
   return (
     <div>
-      <h5 className={classes.subtitle}>Additional FIO Crypto Handles</h5>
+      <h5 className={classes.subtitle}>Additional FIO Handles</h5>
       {list.map(listItem => (
         <div className={classes.itemContainer} key={listItem.id}>
           <SelectionItem

@@ -81,10 +81,10 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               {fioAddresses.length > 1 ? (
                 <Field
                   name="from"
-                  label="Your Sending FIO Crypto Handle"
+                  label="Your Sending FIO Handle"
                   component={Dropdown}
                   errorColor={COLOR_TYPE.WARN}
-                  placeholder="Select FIO Crypto Handle"
+                  placeholder="Select FIO Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
                     name,
@@ -102,7 +102,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
                   disabled={true}
-                  label="Your Sending FIO Crypto Handle"
+                  label="Your Sending FIO Handle"
                 />
               )}
             </>
@@ -153,8 +153,8 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
             <Field
               name="to"
-              placeholder="FIO Crypto Handle or Public Key"
-              modalPlaceholder="Enter or select FIO Crypto Handle or Public Key"
+              placeholder="FIO Handle or Public Key"
+              modalPlaceholder="Enter or select FIO Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
@@ -163,7 +163,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Send to Address"
-              notFoundText="No FIO Crypto Handles found"
+              notFoundText="No FIO Handles found"
               onChangeFormat={formatReceiverValue}
               handleConfirmValidate={(value: string) =>
                 minWaitTimeFunction(

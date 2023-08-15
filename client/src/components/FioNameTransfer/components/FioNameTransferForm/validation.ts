@@ -44,6 +44,6 @@ export const validate = async (values: {
   if (isValid) return true;
 
   throw new Error(
-    'Unfortunately that FIO Crypto Handle or FIO Public Key is incorrect',
+    'Unfortunately that FIO Handle or FIO Public Key is incorrect',
   );
 };

@@ -26,7 +26,7 @@ export const STEPS = {
 export const ADDRESS_WIDGET_CONTENT = {
   title: 'Your Twitter handle can now receive crypto',
   subtitle:
-    'Set-up yourhandle@twitter FIO Crypto Handle and map it to your wallet address.',
+    'Set-up yourhandle@twitter FIO Handle and map it to your wallet address.',
   initialValues: {
     domain: 'twitter',
   },
@@ -39,7 +39,7 @@ export const ADDRESS_WIDGET_CONTENT = {
 
 export const TWITTER_SHARE_CONTENT = {
   text:
-    'My name@domain Twitter handle can now receive crypto. #CRYPTO Get your own $FIO Crypto Handle for free now! ',
+    'My name@domain Twitter handle can now receive crypto. #CRYPTO Get your own $FIO Handle for free now! ',
   url: `${document.location.href}`,
   hashtags: ['#CRYPTO'],
   via: 'joinfio',

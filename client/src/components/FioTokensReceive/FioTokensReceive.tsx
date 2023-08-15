@@ -53,7 +53,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
       <p className={classes.subtitle}>Send FIO Tokens</p>
       <p className={classes.text}>
         Send FIO Tokens to your wallet by QR code capture or copying your public
-        address / FIO Crypto Handle to an external wallet.
+        address / FIO Handle to an external wallet.
       </p>
 
       <div className={classes.walletDetails}>
@@ -71,9 +71,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
           {fioCryptoHandles.length > 0 && (
             <Badge type={BADGE_TYPES.WHITE} show>
               <div className={classes.dataContainer}>
-                <div className={classes.title}>
-                  Associated FIO Crypto Handles
-                </div>
+                <div className={classes.title}>Associated FIO Handles</div>
                 {fioCryptoHandles.map(({ name }) => (
                   <div key={name} className={classes.dataContainerValue}>
                     <DataValue value={name} />
@@ -112,7 +110,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
 
       <p className={classes.text}>
         FIO tokens are used to pay fees for certain transaction types such as
-        FIO Domain and Crypto Handle registrations or adding bundles.
+        FIO Domain and FIO Handle registrations or adding bundles.
       </p>
 
       <p className={classnames(classes.text, classes.textMedium)}>

@@ -72,14 +72,14 @@ const ActionContainer: React.FC<Props> = props => {
     history.push(
       `${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${name}`,
       {
-        backUrl: `${link}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+        backUrl: `${link}?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${name}`,
       },
     );
 
   return (
     <PseudoModalContainer
       title={CONTAINER_TYPES[containerName].title}
-      link={`${link}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
+      link={`${link}?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${name}`}
       fullWidth={hasFullWidth}
     >
       <div className={classes.actionContainer}>

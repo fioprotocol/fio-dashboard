@@ -30,7 +30,7 @@ const TokenListPage: React.FC = () => {
 
   return (
     <PseudoModalContainer
-      title="FIO Crypto Handle Linking"
+      title="FIO Handle Linking"
       link={ROUTES.FIO_ADDRESSES}
       hasAutoWidth={true}
     >

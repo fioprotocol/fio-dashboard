@@ -181,7 +181,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
           results={resultsData}
           title={resultsData.error ? 'Request not Sent' : 'Request Sent'}
           titleTo="Request Sent To"
-          titleFrom="Requesting FIO Crypto Handle"
+          titleFrom="Requesting FIO Handle"
           titleAmount="Amount Requested"
           roe={roe}
           onClose={onBack}
@@ -223,8 +223,8 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
           <InfoBadge
             type={BADGE_TYPES.INFO}
             show={true}
-            title="Requesting FIO Crypto Handle "
-            message="You may use any of your FIO Crypto Handles associated with the wallet to create a FIO token request."
+            title="Requesting FIO Handle "
+            message="You may use any of your FIO Handles associated with the wallet to create a FIO token request."
           />
         </div>
 

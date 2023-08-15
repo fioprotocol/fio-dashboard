@@ -48,11 +48,10 @@ export const useContext = (): UseContextProps => {
   const { location: { state, search: searchString } = {} } = history;
   const searchParams = new URLSearchParams(searchString);
   const query = Object.fromEntries(searchParams.entries());
-  const fchFromHistoryQuery = query[QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE];
+  const fchFromHistoryQuery = query[QUERY_PARAMS_NAMES.FIO_HANDLE];
 
   const fch =
-    queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE) ||
-    fchFromHistoryQuery;
+    queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE) || fchFromHistoryQuery;
 
   const [successBadgeMessage, setSuccessBadgeMessage] = useState('');
 
@@ -68,7 +67,7 @@ export const useContext = (): UseContextProps => {
 
   usePublicAddresses(fch);
 
-  const search = `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`;
+  const search = `?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`;
 
   const { publicAddresses = [] } = currentFioAddress || {};
 
