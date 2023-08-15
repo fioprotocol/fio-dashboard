@@ -10,6 +10,7 @@ import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersResendRecovery from '../services/users/ResendRecovery';
 import UsersList from '../services/users/List';
 import UsersUpdateEmail from '../services/users/UpdateEmail';
+import UsersUpdateEmailNotificationParams from '../services/users/UpdateEmailNotificationParams';
 import ActivateAffiliate from '../services/users/ActivateAffiliate';
 import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
@@ -29,6 +30,10 @@ export default {
   show: makeServiceRunner(ShowInfo, req => req.params),
   freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
   updateEmail: makeServiceRunner(UsersUpdateEmail, req => req.body),
+  updateEmailNotificationParams: makeServiceRunner(
+    UsersUpdateEmailNotificationParams,
+    req => req.body,
+  ),
   activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
   updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
   sendEvent: makeServiceRunner(UsersSendEvent, req => req.body),
