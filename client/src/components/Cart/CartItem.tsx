@@ -127,8 +127,8 @@ const CartItem: React.FC<Props> = props => {
               className={classes.infoIcon}
             />
             <p className={classes.infoText}>
-              <span className="boldText">FIO Crypto Handle Cost</span> - Your
-              account already has a free FIO Crypto Handle associated with it.
+              <span className="boldText">FIO Handle Cost</span> - Your account
+              already has a free FIO Handle associated with it.
             </p>
           </div>
         </Badge>

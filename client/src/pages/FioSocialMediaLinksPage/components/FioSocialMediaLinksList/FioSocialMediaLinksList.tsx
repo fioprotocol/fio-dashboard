@@ -28,7 +28,7 @@ export const FioSocialMediaLinksList: React.FC<Props> = props => {
       <div className={classes.container}>
         <InfoBadge
           title="No Social Media Links"
-          message="You have no linked Social Media Links for this FIO Crypto Handle"
+          message="You have no linked Social Media Links for this FIO Handle"
         />
       </div>
     );

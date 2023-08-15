@@ -14,15 +14,15 @@ const content = {
   [ADDRESS]: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Purchase Domain',
-    title: 'Want to register a FIO Crypto Handle with a custom domain?',
+    title: 'Want to register a FIO Handle with a custom domain?',
     text: '',
   },
   [DOMAIN]: {
     link: ROUTES.FIO_ADDRESSES_SELECTION,
-    button: 'Register a FIO Crypto Handle',
-    title: 'Need a FIO Crypto Handle?',
+    button: 'Register a FIO Handle',
+    title: 'Need a FIO Handle?',
     text:
-      'Get a FIO Crypto Handle on a public domain or add a FIO Crypto Handle to your custom domain.',
+      'Get a FIO Handle on a public domain or add a FIO Handle to your custom domain.',
   },
 };
 

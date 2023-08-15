@@ -20,7 +20,7 @@ import { FormProps } from '../../types';
 
 import classes from '../../FioNameTransferContainer.module.scss';
 
-const PLACEHOLDER = 'Enter FIO Crypto Handle or FIO Public Key of New Owner';
+const PLACEHOLDER = 'Enter FIO Handle or FIO Public Key of New Owner';
 
 export const TransferForm: React.FC<FormProps> = props => {
   const {

@@ -58,7 +58,7 @@ export const vaildateFioDomain = (domain: string) => {
 
 export const validateFioAddress = async (address: string, domain: string) => {
   if (!address) {
-    return 'FIO Crypto Handle Field Should Be Filled';
+    return 'FIO Handle Field Should Be Filled';
   }
 
   if (!domain) {
@@ -66,7 +66,7 @@ export const validateFioAddress = async (address: string, domain: string) => {
   }
 
   if (address && domain && address.length + domain.length > 63) {
-    return 'FIO Crypto Handle should be less than 63 characters';
+    return 'FIO Handle should be less than 63 characters';
   }
 
   const addressValidation = validate(
@@ -75,7 +75,7 @@ export const validateFioAddress = async (address: string, domain: string) => {
   );
 
   if (!addressValidation.isValid) {
-    return 'FIO Crypto Handle only allows letters, numbers and dash in the middle';
+    return 'FIO Handle only allows letters, numbers and dash in the middle';
   }
 
   vaildateFioDomain(domain);

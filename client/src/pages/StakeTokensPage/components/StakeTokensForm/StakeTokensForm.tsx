@@ -68,30 +68,28 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     walletAvailableAmount,
   ]);
 
-  // temporary added while fio stake api can't allow accounts without crypto handles
+  // temporary added while fio stake api can't allow accounts without FIO Handles
   const renderFioAddressWarningBadge = () => {
     if (fioAddresses.length) return null;
 
     return (
       <>
         <Label
-          label="FIO Crypto Handle for Staking"
+          label="FIO Handle for Staking"
           uiType={INPUT_UI_STYLES.BLACK_WHITE}
         />
         <InfoBadge
           className={classes.infoBadge}
           type={BADGE_TYPES.ERROR}
           show={true}
-          title="No Crypto Handle"
+          title="No FIO Handle"
           message={
             <>
-              You do not have a crypto handle associated with this wallet.
-              Please get one and try again
+              You do not have a FIO handle associated with this wallet. Please
+              get one and try again
               <br />
               <br />
-              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                Get FIO Crypto Handle
-              </Link>
+              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>Get FIO Handle</Link>
             </>
           }
         />
@@ -104,12 +102,12 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
 
     return renderFioAddressWarningBadge();
 
-    // temporary added while fio stake api can't allow accounts without crypto handles
+    // temporary added while fio stake api can't allow accounts without FIO Handles
     // eslint-disable-next-line no-unreachable
     return (
       <>
         <Label
-          label="FIO Crypto Handle for Staking"
+          label="FIO Handle for Staking"
           uiType={INPUT_UI_STYLES.BLACK_WHITE}
         />
         <InfoBadge
@@ -119,14 +117,12 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           title="No Address"
           message={
             <>
-              You do not have a crypto handle associated with this wallet. You
-              will need to pay a fee to stake your tokens.
+              You do not have a FIO handle associated with this wallet. You will
+              need to pay a fee to stake your tokens.
               <br />
               <br />
               Want to use a bundle transaction instead of paying fee?{' '}
-              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                Get FIO Crypto Handle
-              </Link>
+              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>Get FIO Handle</Link>
             </>
           }
         />
@@ -157,10 +153,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               {fioAddresses.length > 1 ? (
                 <Field
                   name="fioAddress"
-                  label="FIO Crypto Handle for Staking"
+                  label="FIO Handle for Staking"
                   component={Dropdown}
                   errorColor={COLOR_TYPE.WARN}
-                  placeholder="Select FIO Crypto Handle"
+                  placeholder="Select FIO Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
                     name,
@@ -178,7 +174,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
                   disabled={true}
-                  label="FIO Crypto Handle for Staking"
+                  label="FIO Handle for Staking"
                 />
               )}
             </>
@@ -209,7 +205,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           hasLowBalance ||
           (!!selectedAddress && notEnoughBundles) ||
           isWalletFioAddressesLoading ||
-          !fioAddresses.length; // temporary added while fio stake api can't allow accounts without crypto handles
+          !fioAddresses.length; // temporary added while fio stake api can't allow accounts without FIO Handles
 
         return (
           <form

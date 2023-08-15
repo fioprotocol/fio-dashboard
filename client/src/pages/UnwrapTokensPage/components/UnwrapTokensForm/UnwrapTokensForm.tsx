@@ -94,12 +94,12 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
 
             <Field
               name="fioAddress"
-              placeholder="Enter or select FIO Crypto Handle"
-              modalPlaceholder="Enter FIO Crypto Handle"
-              title="Choose FIO Crypto Handle"
-              subTitle="Select or manually enter a FIO Crypto Handle to receive your tokens."
-              footerTitle="Available FIO Crypto Handles"
-              notFoundText="No FIO Crypto Handles found"
+              placeholder="Enter or select FIO Handle"
+              modalPlaceholder="Enter FIO Handle"
+              title="Choose FIO Handle"
+              subTitle="Select or manually enter a FIO Handle to receive your tokens."
+              footerTitle="Available FIO Handles"
+              notFoundText="No FIO Handles found"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
@@ -108,7 +108,7 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               lowerCased={true}
               disabled={loading}
               loading={validating}
-              label="FIO Crypto Handle"
+              label="FIO Handle"
             />
 
             <Field

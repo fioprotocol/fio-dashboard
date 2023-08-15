@@ -12,7 +12,7 @@ const validationSchema: ValidationSchema = {
     address: [
       {
         validator: Validators.required,
-        message: 'FIO Crypto Handle Field Should Be Filled',
+        message: 'FIO Handle Field Should Be Filled',
       },
       {
         validator: fioAddressFieldValidator,
@@ -26,7 +26,7 @@ const validationSchema: ValidationSchema = {
       {
         validator: fioAddressCustomDomainValidator,
         message:
-          'FIO Crypto Handle only allows letters, numbers and dash in the middle',
+          'FIO Handle only allows letters, numbers and dash in the middle',
       },
     ],
   },

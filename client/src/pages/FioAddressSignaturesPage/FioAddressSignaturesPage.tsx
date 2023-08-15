@@ -49,7 +49,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
       <div className={classes.container}>
         <p className={classes.subTitleSection}>
           Introducing NFT Signatures. You can now sign your NFT with your FIO
-          Crypto Handle to prevent forgeries.
+          Handle to prevent forgeries.
           <a
             href="https://fioprotocol.atlassian.net/wiki/spaces/FC/pages/113606966/NFT+Digital+Signature"
             target="_blank"

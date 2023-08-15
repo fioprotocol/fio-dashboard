@@ -162,12 +162,12 @@ const FormContainer: React.FC<FormContainerProps> = props => {
             prices={prices}
             tooltip={
               <>
-                <span className="boldText">FIO Crypto Handle Cost</span>
+                <span className="boldText">FIO Handle Cost</span>
                 <span>
                   {' '}
-                  - FIO Crypto Handle Cost will fluctuate based on market
-                  condition. In addition, if you are already have a free public
-                  address, there will be cost associated with another address
+                  - FIO Handle Cost will fluctuate based on market condition. In
+                  addition, if you are already have a free public address, there
+                  will be cost associated with another address
                 </span>
               </>
             }

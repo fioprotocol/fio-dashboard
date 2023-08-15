@@ -98,7 +98,7 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
     }
   } catch (e) {
     succeeded = false;
-    message = 'Something went wrong on FIO Crypto Handle validation';
+    message = 'Something went wrong on FIO Handle validation';
   }
 
   try {
@@ -118,6 +118,6 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   return {
     succeeded,
     message,
-    type: 'FIO_CRYPTO_HANDLE_VALID',
+    type: 'FIO_HANDLE_VALID',
   };
 };

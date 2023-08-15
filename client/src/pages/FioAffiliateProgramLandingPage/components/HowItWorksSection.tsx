@@ -44,10 +44,10 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
             {isAuthenticated ? (
               <div className={classes.instructionRowInfoText}>
                 <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                  Get yourself a FIO Crypto Handle
+                  Get yourself a FIO Handle
                 </Link>{' '}
-                and activate affiliate link. Already have a FIO Crypto Handle?
-                Even simpler, just{' '}
+                and activate affiliate link. Already have a FIO Handle? Even
+                simpler, just{' '}
                 {/* eslint-disable-next-line no-script-url,jsx-a11y/anchor-is-valid */}
                 <a href="javascript:void(0);" onClick={showAffiliateModal}>
                   activate your link
@@ -56,8 +56,8 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
             ) : (
               <div className={classes.instructionRowInfoText}>
                 <Link to={ROUTES.CREATE_ACCOUNT}>Create an account</Link>, get
-                yourself a FIO Crypto Handle and activate affiliate link.
-                Already have an account? Even simpler,{' '}
+                yourself a FIO Handle and activate affiliate link. Already have
+                an account? Even simpler,{' '}
                 {/* eslint-disable-next-line no-script-url,jsx-a11y/anchor-is-valid */}
                 <a href="javascript:void(0);" onClick={showLogin}>
                   sign in

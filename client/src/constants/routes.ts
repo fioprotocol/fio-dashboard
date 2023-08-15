@@ -62,10 +62,10 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_NFT_EDIT: '/nft-signatures-edit',
   FIO_REQUEST: '/fio-request',
   FIO_REQUEST_OLD: '/fio-wallet/:publicKey/fio-request/:id',
-  FIO_SOCIAL_MEDIA_LINKS: '/fio-social-media', // fioCryptoHandle=
-  FIO_SOCIAL_MEDIA_LINKS_ADD: '/fio-social-media/add-social-media', // fioCryptoHandle=
-  FIO_SOCIAL_MEDIA_LINKS_EDIT: '/fio-social-media/edit-social-media', // fioCryptoHandle=
-  FIO_SOCIAL_MEDIA_LINKS_DELETE: '/fio-social-media/delete-social-media', // fioCryptoHandle=
+  FIO_SOCIAL_MEDIA_LINKS: '/fio-social-media', // fioHandle=
+  FIO_SOCIAL_MEDIA_LINKS_ADD: '/fio-social-media/add-social-media', // fioHandle=
+  FIO_SOCIAL_MEDIA_LINKS_EDIT: '/fio-social-media/edit-social-media', // fioHandle=
+  FIO_SOCIAL_MEDIA_LINKS_DELETE: '/fio-social-media/delete-social-media', // fioHandle=
 
   SEND: '/send', // ?publicKey=
   SEND_CONFIRMATION: '/send-confirmation',
@@ -80,11 +80,11 @@ const ROUTES: { [route: string]: string } = {
   UNWRAP_DOMAIN: '/unwrap-domain',
   UNWRAP_TOKENS: '/unwrap-tokens', // ?publicKey=
 
-  LINK_TOKEN_LIST: '/link-token-list', // ?fioCryptoHandle=
-  ADD_TOKEN: '/link-token-list/add-token', // ?fioCryptoHandle=
+  LINK_TOKEN_LIST: '/link-token-list', // ?fioHandle=
+  ADD_TOKEN: '/link-token-list/add-token', // ?fioHandle=
   ADD_TOKEN_CONFIRMATION: '/link-token-list/add-token-confirmation',
-  EDIT_TOKEN: '/link-token-list/edit-token', // ?fioCryptoHandle=
-  DELETE_TOKEN: '/link-token-list/delete-token', // ?fioCryptoHandle=
+  EDIT_TOKEN: '/link-token-list/edit-token', // ?fioHandle=
+  DELETE_TOKEN: '/link-token-list/delete-token', // ?fioHandle=
   SETTINGS: '/settings',
   ACCOUNT_RECOVERY: '/account-recovery',
   NFT_VALIDATION: '/nft-validation',

@@ -3,7 +3,7 @@ export const QUERY_PARAMS_NAMES = {
   DOMAIN: 'domain',
   EMAIL: 'email',
   ENDPOINT: 'endpoint',
-  FIO_CRYPTO_HANDLE: 'fioCryptoHandle',
+  FIO_HANDLE: 'fioHandle',
   FIO_REQUEST_ID: 'fioRequestId',
   HASH: 'hash',
   ID: 'id',

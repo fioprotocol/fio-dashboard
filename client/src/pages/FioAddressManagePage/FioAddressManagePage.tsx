@@ -23,8 +23,8 @@ const FioAddressManagePage: React.FC = () => {
       showWarningMessage={showWarningMessage}
       title={
         <Title
-          title="Manage My FIO Crypto Handles"
-          subtitle="FIO Crypto Handles owned by all your wallets."
+          title="Manage My FIO Handles"
+          subtitle="FIO Handles owned by all your wallets."
         />
       }
       warningContent={warningContent}
