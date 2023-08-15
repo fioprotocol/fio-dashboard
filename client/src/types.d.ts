@@ -331,8 +331,19 @@ export type WalletsBalances = {
 
 export type DomainStatusType = 'private' | 'public';
 
+export type EmailNotificationParamsNamesType =
+  | 'fioDomainExpiration'
+  | 'fioRequest'
+  | 'fioBalanceChange'
+  | 'lowBundles';
+
+export type EmailNotificationParamsType = {
+  [key: EmailNotificationParamsNamesType]: boolean;
+};
+
 export type User = {
   email: string;
+  emailNotificationParams: EmailNotificationParamsType;
   username: string;
   fioWallets: FioWalletDoublet[];
   freeAddresses: { name: string }[];

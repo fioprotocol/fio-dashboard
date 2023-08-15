@@ -11,6 +11,7 @@ import PasswordRecovery from './components/PasswordRecovery';
 import ChangeEmail from './components/ChangeEmail';
 import TwoFactorAuth from './components/TwoFactorAuth';
 import DeleteMyAccount from './components/DeleteMyAccount';
+import { EmailNotifications } from './components/EmailNotifications';
 
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { changeRecoveryQuestionsOpen } from '../../redux/edge/actions';
@@ -65,9 +66,11 @@ const SettingsPage: React.FC = () => {
 
   return (
     <LayoutContainer title="Settings">
-      <div className={`${classes.settingsContainer} mb-4`}>
+      <div className={`${classes.settingsContainer} mb-4 mt-4`}>
         <h5 className={classes.title}>Email Address</h5>
         <ChangeEmail />
+        <h5 className={`${classes.title} mt-4`}>Email Notifications</h5>
+        <EmailNotifications />
       </div>
       <div className={`${classes.settingsContainer} mb-4`}>
         <h5 className={classes.title}>Security</h5>
