@@ -37,7 +37,7 @@ export class BlockchainTransaction extends Base {
       FAILED: 4,
       CANCEL: 5, // not used now
       RETRY: 6, // not used now
-      EXPIRE: 7, // not used now
+      EXPIRE: 7,
       RETRY_PROCESSED: 8, // not used now
     };
   }
