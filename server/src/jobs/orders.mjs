@@ -363,11 +363,15 @@ class OrdersJob extends CommonJob {
         .mul(100)
         .toNumber();
 
-      const priceChangeSign = new MathOp(percentageChange).gt(0)
+      const priceChangePercentage = new MathOp(percentageChange).gt(0)
         ? `-${percentageChange}`
         : `+${new MathOp(percentageChange).abs()}`;
 
-      const errorMessage = `PRICES_CHANGED on ${priceChangeSign}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
+      const errorMessage = `PRICES_CHANGED on ${priceChangePercentage.toFixed(
+        2,
+      )}% - (current/previous) - order price: $${currentPrice}/$${
+        orderItem.price
+      } - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
       await this.handleFail(orderItem, errorMessage);
       await this.refundUser({ ...orderItem, roe: currentRoe });
@@ -455,6 +459,35 @@ class OrdersJob extends CommonJob {
     // todo:
     this.postMessage(`Checking tokens received for ${publicKey} - ${txId}`);
     await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+
+  async checkIfDomainOnOrderRegistered(orderItem) {
+    const { domain, orderId } = orderItem;
+    const domainOnOrder = await OrderItem.findOne({
+      where: {
+        action: FIO_ACTIONS.registerFioDomain,
+        domain,
+        orderId,
+      },
+      include: [{ model: OrderItemStatus }],
+    });
+
+    if (domainOnOrder) {
+      const ordersDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
+
+      if (
+        ordersDomain &&
+        ordersDomain.orderItemStatus &&
+        (ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
+          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL ||
+          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.EXPIRE)
+      ) {
+        const errorMessage = `RenewDomain has been canceled because domain - ${domain} - from this order has not been registered`;
+
+        await this.handleFail(orderItem, errorMessage);
+        throw new Error(errorMessage);
+      }
+    }
   }
 
   async submitSignedTx(orderItem, auth, balanceDifference = null) {
@@ -547,6 +580,7 @@ class OrdersJob extends CommonJob {
 
     if (action === FIO_ACTIONS.renewFioDomain) {
       await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      await this.checkIfDomainOnOrderRegistered(orderItem);
     }
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
@@ -683,6 +717,7 @@ class OrdersJob extends CommonJob {
 
       if (action === FIO_ACTIONS.renewFioDomain) {
         await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+        await this.checkIfDomainOnOrderRegistered(orderItem);
       }
       result = await fioApi.executeAction(
         action,
