@@ -173,6 +173,7 @@ export class OrderItem extends Base {
           oi.params, 
           oi.data, 
           oi.price,
+          oi."nativeFio",
           o.id "orderId", 
           o.roe, 
           o."publicKey", 

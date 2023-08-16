@@ -357,13 +357,22 @@ class OrdersJob extends CommonJob {
       new MathOp(topThreshold).lt(currentPrice) ||
       new MathOp(bottomThreshold).gt(currentPrice)
     ) {
-      await this.handleFail(
-        orderItem,
-        `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`,
-      );
+      const percentageChange = new MathOp(orderItem.price)
+        .sub(currentPrice)
+        .div(orderItem.price)
+        .mul(100)
+        .toNumber();
+
+      const priceChangeSign = new MathOp(percentageChange).gt(0)
+        ? `-${percentageChange}`
+        : `+${new MathOp(percentageChange).abs()}`;
+
+      const errorMessage = `PRICES_CHANGED on ${priceChangeSign}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
+
+      await this.handleFail(orderItem, errorMessage);
       await this.refundUser({ ...orderItem, roe: currentRoe });
 
-      throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
+      throw new Error(errorMessage);
     }
   }
 
