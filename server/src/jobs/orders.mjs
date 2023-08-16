@@ -364,14 +364,10 @@ class OrdersJob extends CommonJob {
         .toNumber();
 
       const priceChangePercentage = new MathOp(percentageChange).gt(0)
-        ? `-${percentageChange}`
-        : `+${new MathOp(percentageChange).abs()}`;
+        ? `-${percentageChange.toFixed(2)}`
+        : `+${new MathOp(percentageChange).abs().toFixed(2)}`;
 
-      const errorMessage = `PRICES_CHANGED on ${priceChangePercentage.toFixed(
-        2,
-      )}% - (current/previous) - order price: $${currentPrice}/$${
-        orderItem.price
-      } - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
+      const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
       await this.handleFail(orderItem, errorMessage);
       await this.refundUser({ ...orderItem, roe: currentRoe });
