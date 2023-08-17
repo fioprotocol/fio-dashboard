@@ -45,7 +45,7 @@ export const AddTokenCryptocurrencyForm: React.FC<Props> = props => {
             />
             <p className={classes.modalText}>
               {initialValues?.isCustom
-                ? 'To link a custom cryptocurrency to your FIO Cryptohandle, type in the token & chain codes and enter or pasted your public address.'
+                ? 'To link a custom cryptocurrency to your FIO Handle, type in the token & chain codes and enter or pasted your public address.'
                 : 'We have preselected your chain and token codes. All you need to do is enter or paster your public address and click add.'}
             </p>
 

@@ -17,11 +17,11 @@ const ROUTES: { [route: string]: string } = {
   CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP: '/create-account-secret-questions-skip',
   CREATE_ACCOUNT_SECRET_ANSWERS: '/create-account-secret-answers',
 
-  FIO_ADDRESSES_SELECTION: '/fio-crypto-handles-selection', //?address= (not required)
-  FIO_ADDRESSES_CUSTOM_SELECTION: '/fio-crypto-handles-custom', //?address= (not required)
+  FIO_ADDRESSES_SELECTION: '/fio-handles-selection', //?address= (not required)
+  FIO_ADDRESSES_CUSTOM_SELECTION: '/fio-handles-custom', //?address= (not required)
   FIO_DOMAINS_SELECTION: '/fio-domains-selection',
-  FIO_ADDRESSES: '/fio-crypto-handles',
-  FIO_ADDRESSES_SETTINGS: '/fio-crypto-handles-settings',
+  FIO_ADDRESSES: '/fio-handles',
+  FIO_ADDRESSES_SETTINGS: '/fio-handles-settings',
   FIO_DOMAINS: '/fio-domains',
   FIO_DOMAINS_SETTINGS: '/fio-domains-settings',
   FIO_DOMAIN: '/fio-domain',
@@ -43,14 +43,14 @@ const ROUTES: { [route: string]: string } = {
   CHECKOUT: '/checkout',
   PURCHASE: '/purchase',
 
-  FIO_ADDRESS_OWNERSHIP: '/fio-crypto-handle-ownership',
-  FIO_ADDRESS_OWNERSHIP_CONFIRMATION: '/fio-crypto-handle-confirmation',
+  FIO_ADDRESS_OWNERSHIP: '/fio-handle-ownership',
+  FIO_ADDRESS_OWNERSHIP_CONFIRMATION: '/fio-handle-confirmation',
   FIO_DOMAIN_OWNERSHIP: '/fio-domain-ownership',
   FIO_DOMAIN_OWNERSHIP_CONFIRMATION: '/fio-domain-ownership-confirmation',
   FIO_DOMAIN_STATUS_CHANGE: '/fio-domain-status-change',
   FIO_DOMAIN_STATUS_CHANGE_CONFIRMATION:
     '/fio-domain-status-change-confirmation',
-  FIO_ADDRESS_TRANSFER_RESULTS: '/fio-crypto-handle-transfer-results',
+  FIO_ADDRESS_TRANSFER_RESULTS: '/fio-handle-transfer-results',
   FIO_DOMAIN_TRANSFER_RESULTS: '/fio-domain-transfer-results',
   FIO_DOMAIN_STATUS_CHANGE_RESULTS: '/fio-domain-status-results',
   FIO_ADDRESS_ADD_BUNDLES: '/add-bundles',
