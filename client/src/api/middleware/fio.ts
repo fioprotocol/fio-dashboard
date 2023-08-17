@@ -151,7 +151,7 @@ export const linkTokens = async ({
         disconnectAll
           ? ACTIONS.removeAllPublicAddresses
           : ACTIONS.removePublicAddresses,
-        true,
+        disconnectAll,
       );
 
       const disconnectionsFailed: PublicAddressDoublet[] = [];
