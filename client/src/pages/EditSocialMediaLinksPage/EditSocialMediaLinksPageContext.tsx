@@ -207,8 +207,12 @@ export const useContext = (): UseContextProps => {
       });
       dispatch(
         updatePublicAddresses(fch, {
-          addPublicAddresses: [actionResults.connect],
-          deletePublicAddresses: [],
+          addPublicAddresses: actionResults.connect.updated,
+          deletePublicAddresses: editedSocialLinks.map(editedSocialLink => ({
+            publicAddress: editedSocialLink.username,
+            chainCode: CHAIN_CODES.SOCIALS,
+            tokenCode: editedSocialLink.name.toUpperCase(),
+          })),
         }),
       );
       history.push({
