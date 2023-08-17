@@ -20,6 +20,7 @@ import { useGetMappedErrorRedirect } from '../../hooks/fio';
 import {
   TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
+  FIO_CHAIN_CODE,
 } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
@@ -99,6 +100,12 @@ export const useContext = (): UseContextProps => {
 
   const hasChecked = socialMediaLinksList.some(
     socialMediaLinkItem => socialMediaLinkItem.isChecked,
+  );
+
+  const hasTokenLinks = publicAddresses.some(
+    publicAddress =>
+      publicAddress.chainCode !== CHAIN_CODES.SOCIALS &&
+      publicAddress.chainCode !== FIO_CHAIN_CODE,
   );
 
   const fioWallet = fioWallets.find(
@@ -190,10 +197,12 @@ export const useContext = (): UseContextProps => {
       fioAddress: string;
       disconnectList: PublicAddressDoublet[];
       keys: WalletKeys;
+      disconnectAll?: boolean;
     } = {
       fioAddress: fch,
       disconnectList,
       keys,
+      disconnectAll: allChecked && !hasTokenLinks,
     };
     try {
       const actionResults = await minWaitTimeFunction(
