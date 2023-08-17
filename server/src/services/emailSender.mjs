@@ -233,7 +233,7 @@ class EmailSender {
             link: `${
               sendData.fioCryptoHandles.length === 1
                 ? `${sendData.mainUrl}add-bundles?${QUERY_PARAMS_NAMES.NAME}=${sendData.fioCryptoHandles[0].name}`
-                : `${sendData.mainUrl}fio-crypto-handles`
+                : `${sendData.mainUrl}fio-handles`
             }`,
             ...sendData,
           }),
