@@ -134,7 +134,7 @@ export const useContext = (): UseContextProps => {
           setResultsData(actionResults);
           dispatch(
             updatePublicAddresses(fch, {
-              addPublicAddresses: [actionResults.connect],
+              addPublicAddresses: actionResults.connect.updated,
               deletePublicAddresses: [],
             }),
           );
