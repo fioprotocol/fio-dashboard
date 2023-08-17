@@ -21,6 +21,8 @@ import logger from '../logger.mjs';
 
 import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
 
+const { Op } = Sequelize;
+
 const CHUNKS_LIMIT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_LIMIT) || 1;
 const CHUNKS_TIMEOUT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT) || 1500;
 const LOW_BUNDLES_THRESHOLD = 25;
@@ -43,6 +45,12 @@ const DOMAIN_EXP_DEBUG_TABLE = {
   exp90plus: DOMAIN_EXP_PERIOD.EXPIRED,
 };
 const LOW_BUNDLE_COUNT_DEBUG_AFFIX = 'testlowbundlecount';
+const FIO_REQUEST_STATUSES = {
+  REJECTED: 'rejected',
+  PAID: 'sent_to_blockchain',
+  PENDING: 'requested',
+  CANCELED: 'cancelled',
+};
 
 const returnDayRange = timePeriod => {
   if (timePeriod > DAYS_30) return DAYS_30 + 1;
@@ -61,6 +69,30 @@ class WalletDataJob extends CommonJob {
 
       logger.error(e);
     }
+  }
+
+  async createSentFioRequestNotification({ sentRequestItem, wallet }) {
+    await Notification.create({
+      type: Notification.TYPE.INFO,
+      contentType:
+        sentRequestItem.status === FIO_REQUEST_STATUSES.REJECTED
+          ? Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED
+          : Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
+      userId: wallet.User.id,
+      data: {
+        pagesToShow: ['/'],
+        emailData: {
+          requestingFioCryptoHandle: sentRequestItem.payee_fio_address,
+          requestSentTo: sentRequestItem.payer_fio_address,
+          wallet: wallet.publicKey,
+          fioRequestId: sentRequestItem.fio_request_id,
+          date: await User.formatDateWithTimeZone(
+            wallet.User.id,
+            sentRequestItem.time_stamp,
+          ),
+        },
+      },
+    });
   }
 
   async checkRequests(wallet) {
@@ -91,12 +123,6 @@ class WalletDataJob extends CommonJob {
 
       if (!sent.length && sentRequests.length) {
         changed = true;
-        sent.push(
-          ...sentRequests.map(({ fio_request_id, status }) => ({
-            fio_request_id,
-            status,
-          })),
-        );
       }
 
       for (const request of sent) {
@@ -105,28 +131,54 @@ class WalletDataJob extends CommonJob {
             Number(fetchedRequest.fio_request_id) === Number(request.fio_request_id) &&
             fetchedRequest.status !== request.status,
         );
+
         if (fetchedItem && wallet.User.emailNotificationParams.fioRequest) {
           changed = true;
-          await Notification.create({
-            type: Notification.TYPE.INFO,
-            contentType:
-              fetchedItem.status === 'rejected'
-                ? Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED
-                : Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
-            userId: wallet.User.id,
-            data: {
-              pagesToShow: ['/'],
-              emailData: {
-                requestingFioCryptoHandle: fetchedItem.payee_fio_address,
-                requestSentTo: fetchedItem.payer_fio_address,
-                wallet: wallet.publicKey,
-                fioRequestId: fetchedItem.fio_request_id,
-                date: await User.formatDateWithTimeZone(
-                  wallet.User.id,
-                  fetchedItem.time_stamp,
-                ),
-              },
+          await this.createSentFioRequestNotification({
+            sentRequestItem: fetchedItem,
+            wallet,
+          });
+        }
+      }
+
+      const newRequests = sentRequests.filter(
+        sentRequest =>
+          !sent.some(
+            sentItem =>
+              Number(sentItem.fio_request_id) === Number(sentRequest.fio_request_id),
+          ) &&
+          (sentRequest.status === FIO_REQUEST_STATUSES.REJECTED ||
+            sentRequest.status === FIO_REQUEST_STATUSES.PAID),
+      );
+
+      for (const newRequest of newRequests) {
+        const existingNotification = await Notification.findOneWhere({
+          contentType: {
+            [Op.or]: [
+              Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED,
+              Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
+            ],
+          },
+          userId: wallet.User.id,
+          data: {
+            emailData: {
+              requestingFioCryptoHandle: newRequest.payee_fio_address,
+              requestSentTo: newRequest.payer_fio_address,
+              wallet: wallet.publicKey,
+              fioRequestId: newRequest.fio_request_id,
+              date: await User.formatDateWithTimeZone(
+                wallet.User.id,
+                newRequest.time_stamp,
+              ),
             },
+          },
+        });
+
+        if (!existingNotification && wallet.User.emailNotificationParams.fioRequest) {
+          changed = true;
+          await this.createSentFioRequestNotification({
+            sentRequestItem: newRequest,
+            wallet,
           });
         }
       }
@@ -149,18 +201,7 @@ class WalletDataJob extends CommonJob {
         this.logFioError(e, wallet, 'getReceivedFioRequests');
       }
 
-      if (!received.length && receivedRequests.length) {
-        changed = true;
-        meta.receivedRequestsOffset = receivedRequestsOffset;
-        received.push(
-          ...receivedRequests.map(({ fio_request_id, status }) => ({
-            fio_request_id,
-            status,
-          })),
-        );
-      }
-
-      if (received.length && receivedRequests.length) {
+      if (receivedRequests.length) {
         changed = true;
 
         meta.receivedRequestsOffset = receivedRequestsOffset;
@@ -170,6 +211,7 @@ class WalletDataJob extends CommonJob {
             request =>
               Number(fetchedItem.fio_request_id) === Number(request.fio_request_id),
           );
+
           if (!existed) {
             received.push({
               fio_request_id: fetchedItem.fio_request_id,
@@ -177,7 +219,7 @@ class WalletDataJob extends CommonJob {
             });
 
             if (
-              fetchedItem.status === 'requested' &&
+              fetchedItem.status === FIO_REQUEST_STATUSES.PENDING &&
               wallet.User.emailNotificationParams.fioRequest
             )
               await Notification.create({
