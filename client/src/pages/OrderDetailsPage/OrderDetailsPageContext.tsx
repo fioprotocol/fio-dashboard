@@ -74,6 +74,13 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     disabled,
   };
 
+  const errorBadgesToShow = { ...errorBadges };
+  if (errorBadges?.SINGED_TX_XTOKENS_REFUND_SKIP && errorBadges?.default) {
+    // SINGED_TX_XTOKENS_REFUND_SKIP and default errors has the same error message. We want to show just one error instead 2.
+    // In case if SINGED_TX_XTOKENS_REFUND_SKIP will have it's own message then remove this filtering.
+    delete errorBadgesToShow.SINGED_TX_XTOKENS_REFUND_SKIP;
+  }
+
   return {
     actionButtonProps,
     infoBadgeData,
@@ -83,7 +90,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     orderItemsToRender,
     partialErrorItems,
     partialErrorTotalCost,
-    errorBadges,
+    errorBadges: errorBadgesToShow,
     title,
     paymentInfo,
   };
