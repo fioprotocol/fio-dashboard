@@ -241,3 +241,5 @@ export const FIO_PROXY_LIST = {
 export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';
 
 export const LOW_BUNDLES_THRESHOLD = 25;
+
+export const DEFAULT_FIO_RECORDS_LIMIT = 100;
