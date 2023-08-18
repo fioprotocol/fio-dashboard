@@ -77,7 +77,7 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
         isDisabled={!valid}
         containerName={CONTAINER_NAMES.ADD_SOCIAL_MEDIA}
         link={ROUTES.FIO_SOCIAL_MEDIA_LINKS}
-        hasFullWidth={false}
+        hasFullWidth
         {...props}
       >
         <>
