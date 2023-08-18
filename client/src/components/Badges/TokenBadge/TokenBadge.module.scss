@@ -120,6 +120,10 @@
       .title {
         @include sf-pro-display-thin;
       }
+
+      .publicAddressItem {
+        word-break: break-all;
+      }
     }
     &.containerOpen {
       max-height: 200px;
@@ -136,6 +140,7 @@
 }
 
 input {
+  width: 100%;
   border: none;
   outline: none;
   padding: 0;
