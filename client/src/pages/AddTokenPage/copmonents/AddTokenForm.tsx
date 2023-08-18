@@ -214,9 +214,9 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
             index={index}
             onRemove={removeTokenRow}
             key={genericTokenId(
-              token.chainCode,
-              token.tokenCode,
-              token.publicAddress,
+              token?.chainCode,
+              token?.tokenCode,
+              token?.publicAddress,
             )}
           />
         ))}
