@@ -50,7 +50,7 @@ const ActionContainer: React.FC<Props> = props => {
 
   const history = useHistory();
   const { name, remaining } = fioCryptoHandleObj || {};
-  const hasLowBalance = remaining - bundleCost < 0;
+  const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
 
   if (results)
     return (
