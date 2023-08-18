@@ -92,7 +92,7 @@ export const useContext = (): UseContextProps => {
 
   const fioCryptoHandleObj = currentFioAddress;
 
-  const hasLowBalance = remaining - bundleCost < 0;
+  const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
   const hasEdited = socialMediaLinksList.some(
     socialMediaLinkItem => socialMediaLinkItem.newUsername,
   );

@@ -56,7 +56,7 @@ export const useContext = () => {
     walletPublicKey = '',
   } = fioCryptoHandleObj || {};
 
-  const hasLowBalance = remaining - bundleCost < 0;
+  const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
   const hasEdited = pubAddressesArr.some(
     pubAddress => pubAddress.newPublicAddress,
   );
