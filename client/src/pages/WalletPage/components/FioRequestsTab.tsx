@@ -9,6 +9,7 @@ import { FIO_RECORD_TYPES } from '../constants';
 
 import {
   FioAddressDoublet,
+  FioRecord,
   FioWalletData,
   FioWalletDoublet,
 } from '../../../types';
@@ -19,6 +20,9 @@ type Props = {
   fioWallet: FioWalletDoublet;
   fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
+  receivedFioRequests: FioRecord[];
+  sentFioRequests: FioRecord[];
+  obtData: FioRecord[];
 };
 
 type Location = {
@@ -35,8 +39,11 @@ const FIO_REQUEST_TABS = [
     title: 'Sent',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.walletData?.sentFioRequests}
-        paymentDataList={props.walletData?.obtData}
+        fioDataList={props.sentFioRequests?.reverse()}
+        paymentDataList={props.obtData?.sort(
+          (a: FioRecord, b: FioRecord) =>
+            new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
+        )}
         fioRecordType={FIO_RECORD_TYPES.SENT}
         loading={false}
         {...props}
@@ -48,8 +55,11 @@ const FIO_REQUEST_TABS = [
     title: 'Received',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.walletData?.receivedFioRequests}
-        paymentDataList={props.walletData?.obtData}
+        fioDataList={props.receivedFioRequests?.reverse()}
+        paymentDataList={props.obtData?.sort(
+          (a: FioRecord, b: FioRecord) =>
+            new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
+        )}
         fioRecordType={FIO_RECORD_TYPES.RECEIVED}
         loading={false}
         {...props}

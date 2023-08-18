@@ -19,6 +19,7 @@ type Props = {
   defaultActiveKey?: string;
   tabItemPrimaryClass?: string;
   tabBorderPrimary?: boolean;
+  getFioRequests?: () => void;
 };
 
 const Tabs: React.FC<Props> = props => {
@@ -34,6 +35,7 @@ const Tabs: React.FC<Props> = props => {
     defaultActiveKey,
     tabItemPrimaryClass,
     tabBorderPrimary,
+    getFioRequests,
   } = props;
 
   const [activeEventKey, setActiveEventKey] = useState(defaultActiveKey);
@@ -45,7 +47,10 @@ const Tabs: React.FC<Props> = props => {
           <Nav.Item key={tab.eventKey + 'tab'}>
             <div className={tabItemContainerClass || classes.tabItemContainer}>
               <Nav.Link
-                onSelect={() => setActiveEventKey(tab.eventKey)}
+                onSelect={() => {
+                  setActiveEventKey(tab.eventKey);
+                  getFioRequests && getFioRequests();
+                }}
                 eventKey={tab.eventKey}
                 className={classnames(
                   tabItemClass || classes.tabItem,
