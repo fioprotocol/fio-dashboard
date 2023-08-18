@@ -6,6 +6,7 @@ import { FIO_RECORD_TYPES } from '../constants';
 
 import {
   FioAddressDoublet,
+  FioRecord,
   FioWalletData,
   FioWalletDoublet,
 } from '../../../types';
@@ -14,12 +15,16 @@ type Props = {
   fioWallet: FioWalletDoublet;
   fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
+  obtData: FioRecord[];
 };
 
 const FioObtDataTab: React.FC<Props> = props => {
   return (
     <FioRecordsList
-      fioDataList={props.walletData?.obtData}
+      fioDataList={props.obtData?.sort(
+        (a: FioRecord, b: FioRecord) =>
+          new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
+      )}
       fioRecordType={FIO_RECORD_TYPES.DATA}
       loading={false}
       {...props}

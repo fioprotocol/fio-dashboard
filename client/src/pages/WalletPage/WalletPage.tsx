@@ -115,11 +115,15 @@ const WalletPage: React.FC = () => {
     isOpenLockedList,
     showWalletSettings,
     showWalletNameEdit,
+    receivedFioRequests,
+    sentFioRequests,
+    obtData,
     welcomeComponentProps,
     closeWalletNameEdit,
     onKeyShow,
     onShowPrivateModalClose,
     onWalletUpdated,
+    getFioRequests,
   } = useContext();
 
   if (error)
@@ -170,6 +174,10 @@ const WalletPage: React.FC = () => {
           hasNoTransactions={hasNoTransactions}
           walletData={fioWalletData}
           walletTxHistory={fioWalletTxHistory}
+          receivedFioRequests={receivedFioRequests}
+          sentFioRequests={sentFioRequests}
+          obtData={obtData}
+          getFioRequests={getFioRequests}
         />
         <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>

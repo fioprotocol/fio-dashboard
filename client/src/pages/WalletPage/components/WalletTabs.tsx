@@ -9,6 +9,7 @@ import TransactionList from './TransactionList';
 
 import {
   FioAddressDoublet,
+  FioRecord,
   FioWalletData,
   FioWalletDoublet,
   FioWalletTxHistory,
@@ -20,6 +21,10 @@ type Props = {
   walletData: FioWalletData;
   walletTxHistory: FioWalletTxHistory;
   hasNoTransactions: boolean;
+  receivedFioRequests: FioRecord[];
+  sentFioRequests: FioRecord[];
+  obtData: FioRecord[];
+  getFioRequests: () => void;
 };
 
 type Location = {
@@ -65,6 +70,7 @@ const WalletTabs: React.FC<Props> = props => {
         tabProps={props}
         showTabBorder
         tabBorderPrimary
+        getFioRequests={props.getFioRequests}
       />
     </TabsContainer>
   );
