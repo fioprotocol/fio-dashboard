@@ -21,6 +21,7 @@ import {
   TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
   FIO_CHAIN_CODE,
+  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
 } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
@@ -102,6 +103,10 @@ export const useContext = (): UseContextProps => {
     socialMediaLinkItem => socialMediaLinkItem.isChecked,
   );
 
+  const checkedSocialMediaLinks = socialMediaLinksList.filter(
+    socialMediaLinkItem => socialMediaLinkItem.isChecked,
+  );
+
   const hasTokenLinks = publicAddresses.some(
     publicAddress =>
       publicAddress.chainCode !== CHAIN_CODES.SOCIALS &&
@@ -143,10 +148,20 @@ export const useContext = (): UseContextProps => {
   }, [pubAddressesToDefault]);
 
   useEffect(() => {
-    hasChecked
-      ? changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS)
-      : changeBundleCost(0);
-  }, [hasChecked]);
+    if (allChecked && !hasTokenLinks) {
+      return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
+    }
+
+    if (hasChecked) {
+      return changeBundleCost(
+        Math.ceil(
+          checkedSocialMediaLinks.length /
+            ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+        ),
+      );
+    }
+    return changeBundleCost(0);
+  }, [allChecked, checkedSocialMediaLinks.length, hasChecked, hasTokenLinks]);
 
   useEffect(() => {
     toggleAllChecked(
@@ -189,10 +204,6 @@ export const useContext = (): UseContextProps => {
   };
 
   const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const disconnectList = socialMediaLinksList.filter(
-      socialMediaLinkItem => socialMediaLinkItem.isChecked,
-    );
-
     const params: {
       fioAddress: string;
       disconnectList: PublicAddressDoublet[];
@@ -200,7 +211,7 @@ export const useContext = (): UseContextProps => {
       disconnectAll?: boolean;
     } = {
       fioAddress: fch,
-      disconnectList,
+      disconnectList: checkedSocialMediaLinks,
       keys,
       disconnectAll: allChecked && !hasTokenLinks,
     };
@@ -213,7 +224,7 @@ export const useContext = (): UseContextProps => {
       dispatch(
         updatePublicAddresses(fch, {
           addPublicAddresses: [],
-          deletePublicAddresses: disconnectList,
+          deletePublicAddresses: checkedSocialMediaLinks,
         }),
       );
       history.push({
