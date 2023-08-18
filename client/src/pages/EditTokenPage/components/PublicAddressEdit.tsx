@@ -58,14 +58,16 @@ const PublicAddressEdit: React.FC<Props> = props => {
   };
 
   const inputComponent = (
-    <input
-      type="text"
-      value={editedPubAddress}
-      onChange={onInputChange}
-      autoFocus={true}
-      onBlur={onInputBlur}
-      maxLength={MAX_PUBLIC_ADDRESS_LENGTH}
-    />
+    <div className={classes.inputContainer}>
+      <input
+        type="text"
+        value={editedPubAddress}
+        onChange={onInputChange}
+        autoFocus={true}
+        onBlur={onInputBlur}
+        maxLength={MAX_PUBLIC_ADDRESS_LENGTH}
+      />
+    </div>
   );
 
   const actionButton = (
