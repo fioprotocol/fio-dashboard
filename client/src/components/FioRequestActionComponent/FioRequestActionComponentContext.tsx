@@ -1,33 +1,66 @@
-import { useSelector } from 'react-redux';
-import isEmpty from 'lodash/isEmpty';
+import { useCallback, useEffect, useState } from 'react';
 
-import { fioWalletsData as fioWalletsDataSelector } from '../../redux/fioWalletsData/selectors';
-import { user as userSelector } from '../../redux/profile/selectors';
+import { useSelector } from 'react-redux';
+
+import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+
+import apis from '../../api';
+import { log } from '../../util/general';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../../constants/fio';
+
+import { FioRecord } from '../../types';
 
 type UseContextProps = {
   fioPublicKeyHasRequest: string | undefined;
 };
 
 export const useContext = (): UseContextProps => {
-  const fioWalletsData = useSelector(fioWalletsDataSelector);
-  const user = useSelector(userSelector);
+  const fioWallets = useSelector(fioWalletsSelector);
 
-  const fioPublicKeyHasRequest =
-    !isEmpty(fioWalletsData) &&
-    user?.id &&
-    fioWalletsData[user.id] &&
-    Object.keys(fioWalletsData[user.id]).find(fioWalletKey => {
-      const fioRequests =
-        fioWalletsData[user.id][fioWalletKey].receivedFioRequests || [];
-      return (
-        fioRequests.length > 0 &&
-        fioRequests.some(
-          fioRequest => fioRequest.status === FIO_REQUEST_STATUS_TYPES.PENDING,
-        )
-      );
-    });
+  const [receivedFioRequests, setReceivedFioRequests] = useState<{
+    [key: string]: FioRecord[];
+  }>({});
+  const [fioPublicKeyHasRequest, setFioPublicKeyHasRequest] = useState<
+    string | null
+  >(null);
+
+  const getReceivedFioRequestsForWallet = useCallback(
+    async (publicKey: string) => {
+      try {
+        const fetchedReceivedFioRequests =
+          (await apis.fio.getReceivedFioRequests(publicKey)) || [];
+        setReceivedFioRequests({ [publicKey]: fetchedReceivedFioRequests });
+      } catch (err) {
+        log.error(err);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    for (const wallet of fioWallets) {
+      getReceivedFioRequestsForWallet(wallet.publicKey);
+    }
+  }, [fioWallets, getReceivedFioRequestsForWallet]);
+
+  useEffect(() => {
+    Object.entries(receivedFioRequests).forEach(
+      ([publicKey, receivedFioRequest]) => {
+        if (receivedFioRequest.length) {
+          const lastRequest = receivedFioRequest.find(
+            receivedFioRequestItem =>
+              receivedFioRequestItem.status ===
+              FIO_REQUEST_STATUS_TYPES.PENDING,
+          );
+
+          if (lastRequest) {
+            setFioPublicKeyHasRequest(publicKey);
+          }
+        }
+      },
+    );
+  }, [receivedFioRequests]);
 
   return {
     fioPublicKeyHasRequest,
