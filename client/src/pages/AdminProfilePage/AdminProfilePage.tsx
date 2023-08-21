@@ -1,7 +1,7 @@
 import React from 'react';
 
-import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import { AdminChangePasswrod } from './components/AdminChangePassword';
+import { AdminChangeTfaToken } from './components/AdminChangeTfaToken';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import { AdminUser } from '../../types';
@@ -56,10 +56,7 @@ const AdminPage: React.FC<Props> = props => {
           <hr />
           <div className={classes.actions}>
             <AdminChangePasswrod />
-            <div className={classes.actionItem}>
-              <h5>2 FA</h5>
-              <SubmitButton text="Change 2FA" onClick={() => {}} />
-            </div>
+            <AdminChangeTfaToken />
           </div>
         </div>
       </div>

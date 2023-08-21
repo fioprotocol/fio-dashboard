@@ -44,3 +44,6 @@ export const NOT_FOUND = 404;
 
 export const DOMAIN_IS_NOT_EXIST =
   'This domain doesn’t exist and is eligible for purchase below.';
+
+export const AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED';
+export const TWOFA_TOKEN_IS_NOT_VALID = '2FA_TOKEN_IS_NOT_VALID';

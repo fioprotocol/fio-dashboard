@@ -1,6 +1,7 @@
 import Base from './base';
 
 import {
+  AdminChange2Fa,
   AdminChangePasswordResponse,
   AdminDefaults,
   AdminFioAccountsProfilesListResponse,
@@ -200,5 +201,13 @@ export default class Admin extends Base {
     return this.apiClient.put(`admin/change-passowrd`, {
       data,
     });
+  }
+
+  changeAdmin2FA(data: {
+    tfaSecret: string;
+    tfaToken: string;
+    oldTfaToken: string;
+  }): Promise<AdminChange2Fa> {
+    return this.apiClient.put(`admin/change-two-fa`, { data });
   }
 }

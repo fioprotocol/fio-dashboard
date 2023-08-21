@@ -67,6 +67,8 @@ router.post(
   routes.adminUsers.sendResetPassword,
 );
 router.put('/admin/change-passowrd', checkAdminAuth, routes.adminUsers.changePassword);
+router.put('/admin/change-two-fa', checkAdminAuth, routes.adminUsers.change2FA);
+
 router.post('/admin/invite', checkAdminAuth, routes.adminUsers.invite);
 router.get('/admin/roles', checkAdminAuth, routes.adminUsers.rolesList);
 router.get('/admin/statuses', checkAdminAuth, routes.adminUsers.statusesList);

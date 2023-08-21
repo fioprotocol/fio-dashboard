@@ -1,0 +1,28 @@
+@import '../../../../assets/styles/colors.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form {
+  color: $dark-jungle-green;
+
+  .tfaContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    .downloadSecret2FA {
+      cursor: pointer;
+      color: $cyan-blue;
+    }
+  }
+
+  .errorBadge {
+    margin-top: -20px;
+    width: 100%;
+  }
+}
