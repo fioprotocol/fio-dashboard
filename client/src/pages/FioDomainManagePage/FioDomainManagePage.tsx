@@ -25,6 +25,7 @@ const FioDomainManagePage: React.FC = () => {
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showWarningMessage,
+    showWarningDomainWatchListBadge,
     successMessage,
     warningContent,
     closeDomainWatchlistModal,
@@ -50,6 +51,7 @@ const FioDomainManagePage: React.FC = () => {
       pageName={PAGE_NAME.DOMAIN}
       showTopBadge={!!successMessage}
       showWarningMessage={showWarningMessage}
+      showWarningDomainWatchListBadge={showWarningDomainWatchListBadge}
       title={<Title title="Manage My FIO Domain" />}
       topBadgeContent={{
         message: successMessage,
