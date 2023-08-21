@@ -61,6 +61,7 @@ export type AdminResetPasswordResponse =
 export type AdminChangePasswordResponse =
   | DefaultSuccessResponse
   | DefaultNotFoundResponse;
+export type AdminChange2Fa = DefaultSuccessResponse | DefaultNotFoundResponse;
 
 export type ChainCodesListResults = ChainCodeProps[] | null;
 
