@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Field, Form } from 'react-final-form';
-import { OnFocus } from 'react-final-form-listeners';
+import { OnChange, OnFocus } from 'react-final-form-listeners';
 
 import SuccessModal from '../../../../components/Modal/SuccessModal';
 import Modal from '../../../../components/Modal/Modal';
@@ -16,11 +16,13 @@ import {
   ErrorBadge,
 } from '../../../../components/Input/ErrorBadge';
 
+import { AUTHENTICATION_FAILED } from '../../../../constants/errors';
+
 import { useContext } from './AdminChangePasswordContext';
 
 import classes from './AdminChangePassword.module.scss';
 
-export const AdminChangePasswrod: React.FC = props => {
+export const AdminChangePasswrod: React.FC = () => {
   const {
     error,
     loading,
@@ -58,7 +60,7 @@ export const AdminChangePasswrod: React.FC = props => {
 
             const hasValues = newPassword && oldPassword;
 
-            const isValidationError = error === 'AUTHENTICATION_FAILED';
+            const isValidationError = error === AUTHENTICATION_FAILED;
 
             return (
               <>
@@ -111,6 +113,8 @@ export const AdminChangePasswrod: React.FC = props => {
                 </form>
                 <OnFocus name="newPassword">{() => resetError()}</OnFocus>
                 <OnFocus name="oldPassword">{() => resetError()}</OnFocus>
+                <OnChange name="newPassword">{() => resetError()}</OnChange>
+                <OnChange name="oldPassword">{() => resetError()}</OnChange>
               </>
             );
           }}
