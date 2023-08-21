@@ -3,4 +3,20 @@
   justify-content: center;
   width: auto;
   margin-top: 30px;
+  margin-bottom: 30px;
+  flex-direction: column;
+
+  .profileContainer {
+    max-width: 500px;
+  }
+
+  .actionContainer {
+    margin-top: 30px;
+  
+    .actions {
+      display: flex;
+      flex-flow: row wrap;
+      gap: 70px;
+    }
+  }
 }

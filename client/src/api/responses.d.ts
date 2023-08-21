@@ -58,6 +58,9 @@ export type AdminAuthLoginResponse = { jwt: string };
 export type AdminResetPasswordResponse =
   | DefaultSuccessResponse
   | DefaultNotFoundResponse;
+export type AdminChangePasswordResponse =
+  | DefaultSuccessResponse
+  | DefaultNotFoundResponse;
 
 export type ChainCodesListResults = ChainCodeProps[] | null;
 
