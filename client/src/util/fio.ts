@@ -22,7 +22,7 @@ import {
   FIO_REQUEST_STATUS_TYPES,
 } from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
-import { EXPIRED_DOMAINS_TEST_REGEX } from '../constants/regExps';
+import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/regExps';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
 
 import {
@@ -304,14 +304,14 @@ export const isDomainExpired = (
   domainName: string,
   expiration: number | string,
 ): boolean => {
-  const today = new Date();
-
   if (
-    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE &&
-    EXPIRED_DOMAINS_TEST_REGEX.test(domainName)
+    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE === 'true' &&
+    DOMAIN_EXP_DEBUG_AFFIX.test(domainName)
   ) {
     return true;
   }
+
+  const today = new Date();
 
   return (
     expiration &&

@@ -35,6 +35,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     pageName,
     showTopBadge,
     showWarningMessage,
+    showWarningDomainWatchListBadge,
     title,
     topBadgeContent,
     warningContent,
@@ -65,7 +66,12 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     onSettingsClose,
     onSettingsOpen,
     onWarningBadgeClose,
-  } = useContext({ pageName, showWarningMessage, sessionBadgeClose });
+  } = useContext({
+    pageName,
+    showWarningMessage,
+    showWarningDomainWatchListBadge,
+    sessionBadgeClose,
+  });
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
 
