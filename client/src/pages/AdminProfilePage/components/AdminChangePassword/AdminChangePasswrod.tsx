@@ -18,6 +18,8 @@ import {
 
 import { AUTHENTICATION_FAILED } from '../../../../constants/errors';
 
+import validation from './validation';
+
 import { useContext } from './AdminChangePasswordContext';
 
 import classes from './AdminChangePassword.module.scss';
@@ -52,9 +54,9 @@ export const AdminChangePasswrod: React.FC = () => {
         isSimple
         hasDefaultCloseColor
       >
-        <Form onSubmit={changePassword}>
+        <Form onSubmit={changePassword} validate={validation}>
           {formProps => {
-            const { handleSubmit, submitting, values } = formProps;
+            const { handleSubmit, valid, submitting, values } = formProps;
 
             const { newPassword, oldPassword } = values;
 
@@ -67,19 +69,6 @@ export const AdminChangePasswrod: React.FC = () => {
                 <form onSubmit={handleSubmit} className={classes.form}>
                   <h3 className={classes.title}>Change Password</h3>
                   <Label
-                    label="New Password"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  />
-                  <Field
-                    type="password"
-                    name="newPassword"
-                    component={TextInput}
-                    placeholder="Set new password"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    hasErrorForced={isValidationError}
-                    hideError
-                  />
-                  <Label
                     label="Current Password"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   />
@@ -90,7 +79,36 @@ export const AdminChangePasswrod: React.FC = () => {
                     placeholder="Current password"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     hasErrorForced={isValidationError}
-                    hideError
+                    hideError={isValidationError}
+                    errorColor={COLOR_TYPE.WARN}
+                  />
+                  <Label
+                    label="New Password"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                  />
+                  <Field
+                    type="password"
+                    name="newPassword"
+                    component={TextInput}
+                    placeholder="Set new password"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    hasErrorForced={isValidationError}
+                    hideError={isValidationError}
+                    errorColor={COLOR_TYPE.WARN}
+                  />
+                  <Label
+                    label="Confirm New Password"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                  />
+                  <Field
+                    type="password"
+                    name="confirmNewPassword"
+                    component={TextInput}
+                    placeholder="Confirm new password"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    hasErrorForced={isValidationError}
+                    hideError={isValidationError}
+                    errorColor={COLOR_TYPE.WARN}
                   />
                   {isValidationError && (
                     <div className={classes.errorBadge}>
@@ -103,7 +121,7 @@ export const AdminChangePasswrod: React.FC = () => {
                     </div>
                   )}
                   <SubmitButton
-                    disabled={submitting || loading || !hasValues}
+                    disabled={submitting || loading || !hasValues || !valid}
                     text={
                       loading ? 'Changing...' : error ? 'Try Again' : 'Change'
                     }
@@ -113,8 +131,14 @@ export const AdminChangePasswrod: React.FC = () => {
                 </form>
                 <OnFocus name="newPassword">{() => resetError()}</OnFocus>
                 <OnFocus name="oldPassword">{() => resetError()}</OnFocus>
+                <OnFocus name="confirmNewPassword">
+                  {() => resetError()}
+                </OnFocus>
                 <OnChange name="newPassword">{() => resetError()}</OnChange>
                 <OnChange name="oldPassword">{() => resetError()}</OnChange>
+                <OnChange name="confirmNewPassword">
+                  {() => resetError()}
+                </OnChange>
               </>
             );
           }}
