@@ -202,6 +202,7 @@ router.get('/selected-chain-codes', routes.chainCodes.selectedList);
 router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
 
 router.post('/verify-twitter', routes.twitter.verify);
+router.get('/verify-abstract-email', routes.external.abstractEmailVerification);
 
 router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
 router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);

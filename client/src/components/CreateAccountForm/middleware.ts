@@ -8,6 +8,7 @@ import {
   FIO_WALLET_TYPE,
 } from '../../constants/common';
 import { FIO_CHAIN_CODE } from '../../constants/fio';
+import { ABSTRACT_EMAIL_VERIFICATION_RESULTS_STATUS } from '../../constants/abstract-emaiverification';
 
 type CreateAccountRes = {
   errors: { email?: string; username?: string };
@@ -101,11 +102,17 @@ export const checkPassword = async (
   return result;
 };
 
-export const checkUsernameAndPassword = async (
-  username: string,
-  password: string,
-  passwordRepeat: string,
-): Promise<{ errors: { email?: string; password?: string } }> => {
+export const checkUsernameAndPassword = async ({
+  email,
+  username,
+  password,
+  passwordRepeat,
+}: {
+  email: string;
+  username: string;
+  password: string;
+  passwordRepeat: string;
+}): Promise<{ errors: { email?: string; password?: string } }> => {
   const result: { errors: { email?: string; password?: string } } = {
     errors: {},
   };
@@ -114,11 +121,28 @@ export const checkUsernameAndPassword = async (
     password,
     passwordRepeat,
   );
+  const abstractEmailVerificationRes = await apis.general.abstractEmailVerification(
+    email,
+  );
+
   if (usernameError) {
     result.errors.email = usernameError;
   }
   if (passwordError) {
     result.errors.password = passwordError;
+  }
+  if (
+    abstractEmailVerificationRes &&
+    abstractEmailVerificationRes.deliverability
+  ) {
+    if (
+      ![
+        ABSTRACT_EMAIL_VERIFICATION_RESULTS_STATUS.DELIVERABLE,
+        ABSTRACT_EMAIL_VERIFICATION_RESULTS_STATUS.UNKNOWN,
+      ].includes(abstractEmailVerificationRes.deliverability)
+    ) {
+      result.errors.email = 'Invalid Email Address';
+    }
   }
 
   return result;
