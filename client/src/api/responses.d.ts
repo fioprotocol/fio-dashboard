@@ -17,6 +17,7 @@ import {
   RefProfileDomain,
   FioApiUrls,
   OrderDetails,
+  AnyObject,
 } from '../types';
 
 export type DefaultSuccessResponse = { success: true };
@@ -62,6 +63,12 @@ export type AdminChangePasswordResponse =
   | DefaultSuccessResponse
   | DefaultNotFoundResponse;
 export type AdminChange2Fa = DefaultSuccessResponse | DefaultNotFoundResponse;
+
+export type AbstractEmailVerificationResponse = Partial<{
+  email: string;
+  deliverability: string;
+}> &
+  Partial<{ success: false; error: AnyObject }>;
 
 export type ChainCodesListResults = ChainCodeProps[] | null;
 
