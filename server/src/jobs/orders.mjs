@@ -486,6 +486,12 @@ class OrdersJob extends CommonJob {
     }
   }
 
+  async enableCheckBalanceNotificationCreate(currentWallet) {
+    await currentWallet.update({
+      data: { ...currentWallet.data, isChangeBalanceNotificationCreateStopped: false },
+    });
+  }
+
   async submitSignedTx(orderItem, auth, balanceDifference = null) {
     const { address, domain, action, orderId, paymentId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
@@ -504,8 +510,19 @@ class OrdersJob extends CommonJob {
       data: { roe, sendingFioTokens: true },
     });
 
+    const currentWallet = await Wallet.findOne({
+      where: { publicKey: data.signingWalletPubKey || orderItem.publicKey },
+    });
+
     if (!isFIO) {
       // Send tokens to customer
+
+      if (currentWallet) {
+        await currentWallet.update({
+          data: { ...currentWallet.data, isChangeBalanceNotificationCreateStopped: true },
+        });
+      }
+
       try {
         const transferRes = await fioApi.executeAction(
           FIO_ACTIONS.transferTokens,
@@ -563,6 +580,8 @@ class OrdersJob extends CommonJob {
           notes: e.message,
         });
 
+        currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
+
         return {
           message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
             e,
@@ -582,6 +601,8 @@ class OrdersJob extends CommonJob {
 
     if (!result.transaction_id) {
       const { notes } = fioApi.checkTxError(result);
+
+      currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
 
       if (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE && !balanceDifference) {
         const updatedFee = await this.getFeeForAction(orderItem.action, true);
@@ -618,7 +639,17 @@ class OrdersJob extends CommonJob {
       };
     }
 
-    !isFIO && (await this.updateWalletDataBalance(orderItem.publicKey));
+    if (!isFIO) {
+      await this.updateWalletDataBalance(orderItem.publicKey);
+      currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
+    }
+
+    if (
+      currentWallet.data &&
+      currentWallet.data.isChangeBalanceNotificationCreateStopped
+    ) {
+      await this.enableCheckBalanceNotificationCreate(currentWallet);
+    }
 
     return result;
   }
