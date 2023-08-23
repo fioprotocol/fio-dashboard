@@ -1,7 +1,15 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { User, Order, OrderItem, Notification, Var, Action } from '../models/index.mjs';
+import {
+  User,
+  Order,
+  OrderItem,
+  Notification,
+  Var,
+  Action,
+  Payment,
+} from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
@@ -71,14 +79,22 @@ class EmailsJob extends CommonJob {
           [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.PAYMENT_PENDING],
         },
       },
-      include: [OrderItem],
+      include: [OrderItem, Payment],
     });
 
     if (nearestOrder) {
+      const payments = await nearestOrder.getPayments({
+        where: { spentType: Payment.SPENT_TYPE.ORDER },
+      });
+
+      const paymentProcessor = payments[0] && payments[0].processor;
+
       for (const orderItem of nearestOrder.OrderItems) {
         if (orderItem.data && orderItem.data.signedTx) {
-          await Notification.destroy({ where: { id } });
-          return false;
+          if (paymentProcessor !== Payment.PROCESSOR.FIO) {
+            await Notification.destroy({ where: { id } });
+            return false;
+          }
         }
       }
     }
