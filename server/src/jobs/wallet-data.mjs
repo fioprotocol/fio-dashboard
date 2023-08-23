@@ -464,6 +464,10 @@ class WalletDataJob extends CommonJob {
   }
 
   async checkBalance(wallet) {
+    if (wallet.data.isChangeBalanceNotificationCreateStopped) {
+      return;
+    }
+
     try {
       let balance = 0;
       try {

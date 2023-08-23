@@ -1,15 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import {
-  User,
-  Order,
-  OrderItem,
-  Notification,
-  Var,
-  Action,
-  Payment,
-} from '../models/index.mjs';
+import { User, Notification, Var, Action } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
@@ -19,7 +11,7 @@ import sendEmailSenderErrorNotification from '../services/fallback-email-sender-
 
 import logger from '../logger.mjs';
 
-import { HOUR_MS, VARS_KEYS } from '../config/constants.js';
+import { VARS_KEYS } from '../config/constants.js';
 
 const NOTIFICATION_LIMIT_PER_JOB = 100;
 const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
@@ -35,73 +27,6 @@ const OPT_IN_STATUS_SYNCED = 'OPT_IN_STATUS_SYNCED';
 const USER_EMAIL_RE_SENT = 'USER_EMAIL_RE_SENT';
 
 class EmailsJob extends CommonJob {
-  async allowToSendBalanceChangedEmail(notification) {
-    const { id, userId, createdAt, data } = notification;
-
-    const previousNotification = await Notification.findOne({
-      where: {
-        id: {
-          [Sequelize.Op.notIn]: [id],
-        },
-        type: Notification.TYPE.INFO,
-        contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
-        userId: userId,
-        data: {
-          emailData: {
-            wallet: data.emailData.wallet,
-          },
-        },
-        createdAt: {
-          [Sequelize.Op.lt]: createdAt,
-        },
-      },
-      order: [['createdAt', 'DESC']],
-    });
-    if (
-      previousNotification &&
-      !Var.updateRequired(
-        previousNotification.emailDate || previousNotification.createdAt,
-        HOUR_MS,
-      )
-    ) {
-      return false;
-    }
-
-    const CHECK_PERIOD = 1000 * 60 * 10; // 10 min
-
-    const nearestOrder = await Order.findOne({
-      where: {
-        userId,
-        createdAt: {
-          [Sequelize.Op.gte]: new Date(new Date(createdAt).getTime() - CHECK_PERIOD),
-        },
-        status: {
-          [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.PAYMENT_PENDING],
-        },
-      },
-      include: [OrderItem, Payment],
-    });
-
-    if (nearestOrder) {
-      const payments = await nearestOrder.getPayments({
-        where: { spentType: Payment.SPENT_TYPE.ORDER },
-      });
-
-      const paymentProcessor = payments[0] && payments[0].processor;
-
-      for (const orderItem of nearestOrder.OrderItems) {
-        if (orderItem.data && orderItem.data.signedTx) {
-          if (paymentProcessor !== Payment.PROCESSOR.FIO) {
-            await Notification.destroy({ where: { id } });
-            return false;
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
   async execute() {
     const varsData = await Var.getByKey(VARS_KEYS.IS_OUTBOUND_EMAIL_STOP);
     const isOutboundStop = varsData.dataValues.value === 'false' ? false : true;
@@ -167,13 +92,6 @@ class EmailsJob extends CommonJob {
               domains: notifications.map(n => n.data.emailData),
               expiringStatus: data.emailData.domainExpPeriod,
             };
-          }
-
-          if (
-            contentType === Notification.CONTENT_TYPE.BALANCE_CHANGED &&
-            !(await this.allowToSendBalanceChangedEmail(notifications[0]))
-          ) {
-            return false;
           }
 
           const emailResult = await emailSender.send(
