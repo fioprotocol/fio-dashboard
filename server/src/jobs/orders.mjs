@@ -618,7 +618,7 @@ class OrdersJob extends CommonJob {
       };
     }
 
-    await this.updateWalletDataBalance(orderItem.publicKey);
+    !isFIO && (await this.updateWalletDataBalance(orderItem.publicKey));
 
     return result;
   }
