@@ -206,7 +206,6 @@ export default class Admin extends Base {
   changeAdmin2FA(data: {
     tfaSecret: string;
     tfaToken: string;
-    oldTfaToken: string;
   }): Promise<AdminChange2Fa> {
     return this.apiClient.put(`admin/change-two-fa`, { data });
   }

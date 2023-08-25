@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
 
 .container {
   display: flex;
@@ -9,15 +10,26 @@
 .form {
   color: $dark-jungle-green;
 
-  .tfaContainer {
+  .badgeContainer {
+    margin-top: 0px;
+    padding: 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    gap: 20px;
 
-    .downloadSecret2FA {
+    .tfaSecret {
+      color: $dark-jungle-green;
+      margin: 0;
+      word-break: break-all;
+      @include proxima-nova-semibold;
+    }
+
+    .iconContainer {
+      padding: 12px;
+      border-radius: 7px;
+      background-color: $gray-main;
       cursor: pointer;
-      color: $cyan-blue;
     }
   }
 

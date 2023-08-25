@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Field, Form } from 'react-final-form';
 import { OnChange, OnFocus } from 'react-final-form-listeners';
-import QRCode from 'qrcode.react';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
@@ -17,6 +17,8 @@ import {
   ERROR_UI_TYPE,
   ErrorBadge,
 } from '../../../../components/Input/ErrorBadge';
+import CopyTooltip from '../../../../components/CopyTooltip';
+import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import {
   AUTHENTICATION_FAILED,
@@ -37,7 +39,7 @@ export const AdminChangeTfaToken: React.FC = () => {
     change2FA,
     closeChange2FAModal,
     closeSuccessModal,
-    downloadRecovery2FaSecret,
+    onCopy,
     openChange2FAModal,
     resetError,
   } = useContext();
@@ -67,7 +69,7 @@ export const AdminChangeTfaToken: React.FC = () => {
                 error === AUTHENTICATION_FAILED ||
                 error === TWOFA_TOKEN_IS_NOT_VALID;
 
-              const hasValues = values.tfaToken && values.oldTfaToken;
+              const hasValues = values.tfaToken;
 
               return (
                 <>
@@ -75,26 +77,27 @@ export const AdminChangeTfaToken: React.FC = () => {
                     <h3 className={classes.title}>Change 2 FA</h3>
                     {tfaSecretInstance ? (
                       <>
-                        <div className={classes.tfaContainer}>
-                          <QRCode value={tfaSecretInstance.otpauth_url} />
-                          <div>
-                            Scan image with your app. You will see 6-digit code
-                            on your screen enter the code below to verify your
-                            phone and complete the setup. (If you refresh the
-                            page you will need to delete scanned secret key in
-                            your app and scan image again, because we generating
-                            unique secret key on every visitation of this page.)
-                          </div>
-
-                          <div>
-                            <b
-                              className={classes.downloadSecret2FA}
-                              onClick={downloadRecovery2FaSecret}
+                        <Label
+                          label="2FA Secret"
+                          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                        />
+                        <Badge
+                          show
+                          type={BADGE_TYPES.WHITE}
+                          className={classes.badgeContainer}
+                        >
+                          <p className={classes.tfaSecret}>
+                            {tfaSecretInstance.base32}
+                          </p>
+                          <CopyTooltip>
+                            <div
+                              className={classes.iconContainer}
+                              onClick={onCopy}
                             >
-                              <b>Download recovery Key</b>
-                            </b>
-                          </div>
-                        </div>
+                              <ContentCopyIcon className={classes.icon} />
+                            </div>
+                          </CopyTooltip>
+                        </Badge>
                         <br />
                         <Label
                           label="Enter new 2FA code"
@@ -111,19 +114,6 @@ export const AdminChangeTfaToken: React.FC = () => {
                         />
                       </>
                     ) : null}
-                    <Label
-                      label="Current Enter 2FA code"
-                      uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    />
-                    <Field
-                      type="text"
-                      name="oldTfaToken"
-                      component={TextInput}
-                      placeholder="Current 2 FA Token"
-                      uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                      hasErrorForced={isValidationError}
-                      hideError
-                    />
                     {isValidationError && (
                       <div className={classes.errorBadge}>
                         <ErrorBadge
@@ -143,9 +133,7 @@ export const AdminChangeTfaToken: React.FC = () => {
                       withTopMargin={isValidationError}
                     />
                   </form>
-                  <OnFocus name="oldTfaToken">{() => resetError()}</OnFocus>
                   <OnFocus name="tfaToken">{() => resetError()}</OnFocus>
-                  <OnChange name="oldTfaToken">{() => resetError()}</OnChange>
                   <OnChange name="tfaToken">{() => resetError()}</OnChange>
                 </>
               );
