@@ -18,8 +18,8 @@ import { changeRecoveryQuestionsOpen } from '../../redux/edge/actions';
 
 import { showRecovery as showRecoverySelector } from '../../redux/modal/selectors';
 import {
+  isAuthenticated as isAuthenticatedSelector,
   loading as loadingSelector,
-  user as userSelector,
 } from '../../redux/profile/selectors';
 
 import useEffectOnce from '../../hooks/general';
@@ -32,9 +32,9 @@ export const PREOPENED_MODALS = {
 };
 
 const SettingsPage: React.FC = () => {
-  const user = useSelector(userSelector);
   const loading = useSelector(loadingSelector);
   const showRecovery = useSelector(showRecoverySelector);
+  const isAuthenticated = useSelector(isAuthenticatedSelector);
 
   const dispatch = useDispatch();
 
@@ -55,7 +55,7 @@ const SettingsPage: React.FC = () => {
     }
   }, [dispatch, openSettingsModal, showRecovery]);
 
-  if (loading || user == null)
+  if (loading && !isAuthenticated)
     return (
       <LayoutContainer title="Settings">
         <div className="d-flex justify-content-center align-items-center h-100 pt-5 pb-5">
