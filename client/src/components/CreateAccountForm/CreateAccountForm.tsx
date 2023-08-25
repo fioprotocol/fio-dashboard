@@ -476,6 +476,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
                 !confirmEmailFieldActive &&
                 confirmEmailFieldTouched
               }
+              hasSubmitError={hasSubmitErrors && submitErrors.email}
+              submitting={submitting}
               showInfoBadge={showInfoBadge}
             />
           </Wizard.Page>
