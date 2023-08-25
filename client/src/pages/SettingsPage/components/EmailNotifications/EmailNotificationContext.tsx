@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { log } from '../../../../util/general';
 import apis from '../../../../api';
+
+import { loadProfile } from '../../../../redux/profile/actions';
 
 import { user as userSelector } from '../../../../redux/profile/selectors';
 
@@ -54,6 +56,8 @@ export const useContext = (): UseContextProps => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showSuccessModal, toggleSuccessModal] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   const toggleCheckClick = useCallback(
     (emailNotificationType: EmailNotificationParamsNamesType) => {
       setEmailNotificationParams(prevValue => {
@@ -79,6 +83,7 @@ export const useContext = (): UseContextProps => {
 
       if (updateNotificationsRes?.success) {
         toggleSuccessModal(true);
+        dispatch(loadProfile());
       }
       hasError && setHasError(false);
     } catch (err) {
@@ -87,7 +92,7 @@ export const useContext = (): UseContextProps => {
     } finally {
       setLoading(false);
     }
-  }, [emailNotificationParams, hasError]);
+  }, [dispatch, emailNotificationParams, hasError]);
 
   const onSuccessClose = useCallback(() => toggleSuccessModal(false), []);
 
