@@ -1,5 +1,6 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
 import { Constants as sdkConstants } from '@fioprotocol/fiosdk/lib/utils/constants';
+import { Transactions as sdkTransactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { createHash } from 'crypto-browserify';
 import superagent from 'superagent';
 import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
@@ -852,5 +853,18 @@ export default class Fio {
       publicKey,
       action: 'getObtData',
     });
+  };
+
+  getRawAbi = async (): Promise<void> => {
+    for (const accountName of sdkConstants.rawAbiAccountName) {
+      try {
+        if (!sdkTransactions.abiMap.get(accountName)) {
+          const abiResponse = await this.publicFioSDK.getAbi(accountName);
+          sdkTransactions.abiMap.set(abiResponse.account_name, abiResponse);
+        }
+      } catch (e) {
+        log.error('Raw Abi Error:', e);
+      }
+    }
   };
 }
