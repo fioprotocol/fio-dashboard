@@ -1,0 +1,40 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form {
+  color: $dark-jungle-green;
+
+  .badgeContainer {
+    margin-top: 0px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .tfaSecret {
+      color: $dark-jungle-green;
+      margin: 0;
+      word-break: break-all;
+      @include proxima-nova-semibold;
+    }
+
+    .iconContainer {
+      padding: 12px;
+      border-radius: 7px;
+      background-color: $gray-main;
+      cursor: pointer;
+    }
+  }
+
+  .errorBadge {
+    margin-top: -20px;
+    width: 100%;
+  }
+}

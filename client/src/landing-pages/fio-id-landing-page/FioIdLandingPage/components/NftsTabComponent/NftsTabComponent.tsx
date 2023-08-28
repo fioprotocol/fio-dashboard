@@ -14,8 +14,7 @@ import classes from './NftsTabComponent.module.scss';
 
 const content = {
   title: 'signed these NFTs',
-  subtitle:
-    'The following NFT Signatures are associated with this FIO Crypto Handle.',
+  subtitle: 'The following NFT Signatures are associated with this FIO Handle.',
   emptyState: {
     title: 'No NFT SIgnatures',
     message: 'There are no NFT signatures for this FIO Handle.',

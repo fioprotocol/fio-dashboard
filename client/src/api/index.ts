@@ -21,6 +21,7 @@ import Payments from './payments';
 import RefProfile from './ref-profile';
 import Registration from './registration';
 import Twitter from './twitter';
+import Users from './users';
 import Vars from './vars';
 import WrapStatus from './wrap-status';
 
@@ -64,6 +65,7 @@ export type Api = {
   refProfile: RefProfile;
   registration: Registration;
   twitter: Twitter;
+  users: Users;
   vars: Vars;
   wrapStatus: WrapStatus;
 };
@@ -90,6 +92,7 @@ const apis = {
   refProfile: new RefProfile(apiClient),
   registration: new Registration(apiClient),
   twitter: new Twitter(apiClient),
+  users: new Users(apiClient),
   vars: new Vars(apiClient),
   wrapStatus: new WrapStatus(apiClient),
 };

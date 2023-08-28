@@ -55,7 +55,7 @@ const verifyAddress = async (props: DefaultValidationProps) => {
       fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
-        errors.address = 'This FIO Crypto Handle is already registered.';
+        errors.address = 'This FIO Handle is already registered.';
       }
     } catch (e) {
       errors.address = 'Server error. Please try later.';
@@ -99,7 +99,7 @@ export const addressValidation = async (
   }
 
   if (!address) {
-    errors.address = 'FIO Crypto Handle Field Should Be Filled';
+    errors.address = 'FIO Handle Field Should Be Filled';
   }
 
   if (!domain && !modified.domain) {
@@ -112,7 +112,7 @@ export const addressValidation = async (
   );
   if (!addressValidation.isValid) {
     errors.address =
-      'FIO Crypto Handle only allows letters, numbers and dash in the middle';
+      'FIO Handle only allows letters, numbers and dash in the middle';
   }
 
   if (!domain && modified.domain) {
@@ -131,7 +131,7 @@ export const addressValidation = async (
   }
 
   if (address && domain && address.length + domain.length > 63) {
-    errors.address = 'FIO Crypto Handle should be less than 63 characters';
+    errors.address = 'FIO Handle should be less than 63 characters';
   }
 
   if (!isEmpty(errors)) {

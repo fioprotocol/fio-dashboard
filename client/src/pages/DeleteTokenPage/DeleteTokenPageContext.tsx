@@ -19,6 +19,7 @@ import { useGetMappedErrorRedirect } from '../../hooks/fio';
 import {
   TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
+  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
 } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
@@ -32,9 +33,7 @@ import {
 
 export const useContext = (): DeleteTokenContextProps => {
   const queryParams = useQuery();
-  const fioCryptoHandleName = queryParams.get(
-    QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE,
-  );
+  const fioCryptoHandleName = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const fioCryptoHandleObj = useSelector(state =>
     currentFioAddress(state, fioCryptoHandleName),
@@ -66,6 +65,17 @@ export const useContext = (): DeleteTokenContextProps => {
 
   const hasChecked = pubAddressesArr.some(pubAddress => pubAddress.isChecked);
 
+  const checkedPubAddresses = pubAddressesArr.filter(pubAddress => {
+    const { isChecked, chainCode, tokenCode } = pubAddress;
+    const isFioToken =
+      chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO;
+    return isChecked && !isFioToken;
+  });
+
+  const hasSocialMediaLinks = publicAddresses.some(
+    publicAddress => publicAddress.chainCode === CHAIN_CODES.SOCIALS,
+  );
+
   const fioWallet = fioWallets.find(
     ({ publicKey }) => publicKey === walletPublicKey,
   );
@@ -96,10 +106,37 @@ export const useContext = (): DeleteTokenContextProps => {
   }, [pubAddressesToDefault]);
 
   useEffect(() => {
-    hasChecked
-      ? changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS)
-      : changeBundleCost(0);
-  }, [hasChecked]);
+    if (allChecked && !hasSocialMediaLinks) {
+      return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
+    }
+
+    if (hasChecked) {
+      return changeBundleCost(
+        Math.ceil(
+          checkedPubAddresses.length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+        ),
+      );
+    }
+
+    if (resultsData?.disconnect?.updated) {
+      if (allChecked && !hasSocialMediaLinks) {
+        return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
+      }
+      return changeBundleCost(
+        Math.ceil(
+          resultsData.disconnect.updated.length /
+            ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+        ),
+      );
+    }
+    return changeBundleCost(0);
+  }, [
+    allChecked,
+    checkedPubAddresses.length,
+    hasChecked,
+    hasSocialMediaLinks,
+    resultsData?.disconnect?.updated,
+  ]);
 
   useEffect(() => {
     toggleAllChecked(pubAddressesArr.every(pubAddress => pubAddress.isChecked));
@@ -142,15 +179,12 @@ export const useContext = (): DeleteTokenContextProps => {
       fioAddress: string;
       disconnectList: PublicAddressDoublet[];
       keys: WalletKeys;
+      disconnectAll?: boolean;
     } = {
       fioAddress: fioCryptoHandleName,
-      disconnectList: pubAddressesArr.filter(pubAddress => {
-        const { isChecked, chainCode, tokenCode } = pubAddress;
-        const isFioToken =
-          chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO;
-        return isChecked && !isFioToken;
-      }),
+      disconnectList: checkedPubAddresses,
       keys,
+      disconnectAll: allChecked && !hasSocialMediaLinks,
     };
     try {
       const actionResults = await minWaitTimeFunction(

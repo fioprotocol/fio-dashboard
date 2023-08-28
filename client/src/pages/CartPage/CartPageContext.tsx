@@ -154,7 +154,7 @@ export const useContext = (): UseContextReturnType => {
     .toFixed(2);
 
   const error = isCartPrivateDomainsError
-    ? 'Some FIO Crypto Handles in your cart are on private FIO Domains controlled by different FIO Wallets and therefore cannot be purchased in a single transaction. Please purchase them one at a time.'
+    ? 'Some FIO Handles in your cart are on private FIO Domains controlled by different FIO Wallets and therefore cannot be purchased in a single transaction. Please purchase them one at a time.'
     : null;
 
   const {

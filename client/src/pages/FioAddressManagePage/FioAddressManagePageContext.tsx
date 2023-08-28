@@ -29,8 +29,8 @@ import { ACTIONS } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 
 const EMPTY_STATE_CONTENT = {
-  title: 'No FIO Crypto Handles',
-  message: 'There are no FIO Crypto Handles in all your wallets',
+  title: 'No FIO Handles',
+  message: 'There are no FIO Handles in all your wallets',
 };
 
 const WARNING_CONTENT = {

@@ -29,6 +29,8 @@ import FioApiUrlCreate from '../services/adminUsers/FioApiUrlCreate';
 import FioApiUrlUpdate from '../services/adminUsers/FioApiUrlUpdate';
 import FioApiUrlDelete from '../services/adminUsers/FioApiUrlDelete';
 import FioApiUrlsUpdate from '../services/adminUsers/FioApiUrlsListUpdate';
+import AdminChangePassword from '../services/adminUsers/AdminChangePassword.mjs';
+import AdminUserChange2FA from '../services/adminUsers/AdminChange2FA.mjs';
 
 export default {
   personalInfo: makeServiceRunner(PersonalInfo),
@@ -69,4 +71,6 @@ export default {
   })),
   updateFioApiUrlsList: makeServiceRunner(FioApiUrlsUpdate, req => req.body),
   deleteFioApiUrlsList: makeServiceRunner(FioApiUrlDelete, req => req.params),
+  changePassword: makeServiceRunner(AdminChangePassword, req => req.body),
+  change2FA: makeServiceRunner(AdminUserChange2FA, req => req.body),
 };

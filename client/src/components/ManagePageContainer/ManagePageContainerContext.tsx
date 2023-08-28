@@ -17,6 +17,7 @@ import { PAGE_TYPES_PROPS } from '../WelcomeComponent/constants';
 type Props = {
   pageName: FioNameType;
   showWarningMessage: boolean;
+  showWarningDomainWatchListBadge?: boolean;
   sessionBadgeClose: () => void;
 };
 
@@ -75,7 +76,12 @@ type UseContextProps = {
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { pageName, showWarningMessage, sessionBadgeClose } = props;
+  const {
+    pageName,
+    showWarningMessage,
+    showWarningDomainWatchListBadge,
+    sessionBadgeClose,
+  } = props;
 
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
 
@@ -178,15 +184,23 @@ export const useContext = (props: Props): UseContextProps => {
     if (isDomain) {
       toggleShowWarnBadge(
         showWarningMessage &&
-          !!fioDomains &&
-          fioDomains.some(
-            fioDomain =>
-              fioDomain.expiration &&
-              isDomainExpired(fioDomain.name, fioDomain.expiration),
-          ),
+          ((!!fioDomains &&
+            fioDomains.some(
+              fioDomain =>
+                fioDomain.expiration &&
+                isDomainExpired(fioDomain.name, fioDomain.expiration),
+            )) ||
+            showWarningDomainWatchListBadge),
       );
     }
-  }, [fioAddresses, fioDomains, isAddress, isDomain, showWarningMessage]);
+  }, [
+    fioAddresses,
+    fioDomains,
+    isAddress,
+    isDomain,
+    showWarningDomainWatchListBadge,
+    showWarningMessage,
+  ]);
 
   return {
     fio101ComponentProps,

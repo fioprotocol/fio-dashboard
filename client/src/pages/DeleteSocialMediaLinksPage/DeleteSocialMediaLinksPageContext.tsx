@@ -20,6 +20,8 @@ import { useGetMappedErrorRedirect } from '../../hooks/fio';
 import {
   TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
+  FIO_CHAIN_CODE,
+  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
 } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
@@ -64,7 +66,7 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const queryParams = useQuery();
-  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE);
+  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const fioCryptoHandleObj = useSelector(state =>
     currentFioAddress(state, fch),
@@ -99,6 +101,16 @@ export const useContext = (): UseContextProps => {
 
   const hasChecked = socialMediaLinksList.some(
     socialMediaLinkItem => socialMediaLinkItem.isChecked,
+  );
+
+  const checkedSocialMediaLinks = socialMediaLinksList.filter(
+    socialMediaLinkItem => socialMediaLinkItem.isChecked,
+  );
+
+  const hasTokenLinks = publicAddresses.some(
+    publicAddress =>
+      publicAddress.chainCode !== CHAIN_CODES.SOCIALS &&
+      publicAddress.chainCode !== FIO_CHAIN_CODE,
   );
 
   const fioWallet = fioWallets.find(
@@ -136,10 +148,20 @@ export const useContext = (): UseContextProps => {
   }, [pubAddressesToDefault]);
 
   useEffect(() => {
-    hasChecked
-      ? changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS)
-      : changeBundleCost(0);
-  }, [hasChecked]);
+    if (allChecked && !hasTokenLinks) {
+      return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
+    }
+
+    if (hasChecked) {
+      return changeBundleCost(
+        Math.ceil(
+          checkedSocialMediaLinks.length /
+            ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+        ),
+      );
+    }
+    return changeBundleCost(0);
+  }, [allChecked, checkedSocialMediaLinks.length, hasChecked, hasTokenLinks]);
 
   useEffect(() => {
     toggleAllChecked(
@@ -182,18 +204,16 @@ export const useContext = (): UseContextProps => {
   };
 
   const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const disconnectList = socialMediaLinksList.filter(
-      socialMediaLinkItem => socialMediaLinkItem.isChecked,
-    );
-
     const params: {
       fioAddress: string;
       disconnectList: PublicAddressDoublet[];
       keys: WalletKeys;
+      disconnectAll?: boolean;
     } = {
       fioAddress: fch,
-      disconnectList,
+      disconnectList: checkedSocialMediaLinks,
       keys,
+      disconnectAll: allChecked && !hasTokenLinks,
     };
     try {
       const actionResults = await minWaitTimeFunction(
@@ -204,12 +224,12 @@ export const useContext = (): UseContextProps => {
       dispatch(
         updatePublicAddresses(fch, {
           addPublicAddresses: [],
-          deletePublicAddresses: disconnectList,
+          deletePublicAddresses: checkedSocialMediaLinks,
         }),
       );
       history.push({
         pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-        search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`,
+        search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
         state: {
           actionType: SOCIAL_MEDIA_CONTAINER_NAMES.DELETE_SOCIAL_MEDIA,
         },

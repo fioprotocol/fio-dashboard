@@ -77,12 +77,12 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
         isDisabled={!valid}
         containerName={CONTAINER_NAMES.ADD_SOCIAL_MEDIA}
         link={ROUTES.FIO_SOCIAL_MEDIA_LINKS}
-        hasFullWidth={false}
+        hasFullWidth
         {...props}
       >
         <>
           <p className={classes.text}>
-            Link social media accounts to your FIO Crypto Handle
+            Link social media accounts to your FIO Handle
           </p>
           {socialMediaLinksList.map(socialMediaLinkItem => (
             <div key={socialMediaLinkItem.name}>

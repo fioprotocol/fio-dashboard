@@ -23,7 +23,7 @@ import { COIN_PAYMENTS_STATUSES } from '../../../src/external/payment-processor/
 //     "status": 100 // completed, check COIN_PAYMENTS_STATUSES
 //   }
 // }
-import webhooksOptions from './webhook-options.json' assert { type: 'json' };
+import webhooksOptions from './webhook-options.json';
 
 class Api {
   constructor() {
@@ -115,7 +115,7 @@ const paymentWebhook = async ({
     ipn_type: 'simple',
     ipn_version: '1.0',
     item_amount: '1.73',
-    item_desc: 'FIO Crypto Handles: ...',
+    item_desc: 'FIO Handles: ...',
     item_name: 'FIO Dashboard cart',
     last_name: 'Test Last Name',
     merchant: process.env.COIN_PAYMENTS_MERCHANT_ID,

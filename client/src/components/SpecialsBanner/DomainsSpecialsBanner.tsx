@@ -28,7 +28,7 @@ export const DomainsSpecialsBanner: React.FC = () => {
         icon={controlIcon}
         mobileIcon={controlMobileIcon}
         title="CONTROL"
-        subtitle="Decide who can register FIO crypto handles on your domain"
+        subtitle="Decide who can register FIO Handles on your domain"
         isBigImage
       />
       <SpecialsBannerBadge

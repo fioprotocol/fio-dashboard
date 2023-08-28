@@ -1,0 +1,46 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.text {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.checkContainer {
+  margin-top: 15px;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 250px));
+  gap: 15px;
+
+  .itemContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    .title {
+      margin: 0;
+      font-size: 0.875em;
+    }
+
+    .checkIcon {
+      cursor: pointer;
+    }
+  }
+}
+
+.actionButton {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 250px;
+}
+
+@include sm {
+  .checkContainer {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .actionButton {
+    max-width: none;
+  }
+}

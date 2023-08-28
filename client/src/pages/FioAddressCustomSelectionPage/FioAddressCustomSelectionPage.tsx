@@ -56,8 +56,8 @@ const FioAddressCustomSelectionPage: React.FC = () => {
       <div className={classes.container}>
         <h4 className={classes.title}>Add Custom Ending</h4>
         <p className={classes.subtitle}>
-          Want to create your own unique FIO Crypto Handle? Enter a custom
-          ending to get started.
+          Want to create your own unique FIO Handle? Enter a custom ending to
+          get started.
         </p>
         <Form
           onSubmit={() => null}

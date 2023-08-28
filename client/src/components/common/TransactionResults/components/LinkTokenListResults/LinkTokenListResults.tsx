@@ -154,7 +154,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const onClose = () =>
     history.push({
       pathname: ROUTES.LINK_TOKEN_LIST,
-      search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+      search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${name}`,
     });
   const handleOnRetry = () => onRetry(results);
 

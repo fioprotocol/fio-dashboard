@@ -8,6 +8,7 @@ import {
   setCartItems,
   clear as clearCart,
   addToOldCart,
+  clearOldCartItems,
 } from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
@@ -102,6 +103,10 @@ export const useContext = (
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [noProfile, history]);
+
+  useEffect(() => {
+    return () => dispatch(clearOldCartItems());
+  }, [dispatch]);
 
   useEffect(() => {
     if (status === PURCHASE_RESULTS_STATUS.SUCCESS) {

@@ -21,8 +21,6 @@ export const LINKS: { [linkKey: string]: string } = {
   FIO_ADDRESSES_CUSTOM_SELECTION: 'FIO_ADDRESSES_CUSTOM_SELECTION',
   FIO_ADDRESSES: 'FIO_ADDRESSES',
   FIO_ADDRESSES_SETTINGS: 'FIO_ADDRESSES_SETTINGS',
-  FIO_ADDRESS_ADD_BUNDLES: 'FIO_ADDRESS_ADD_BUNDLES',
-  FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION: 'FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION',
   FIO_ADDRESS_SIGNATURES: 'FIO_ADDRESS_SIGNATURES',
   FIO_ADDRESS_SIGN: 'FIO_ADDRESS_SIGN',
   FIO_ADDRESS_SIGN_CONFIRMATION: 'FIO_ADDRESS_SIGN_CONFIRMATION',
@@ -33,7 +31,6 @@ export const LINKS: { [linkKey: string]: string } = {
   FIO_DOMAIN: 'FIO_DOMAIN',
   FIO_DOMAINS_SETTINGS: 'FIO_DOMAINS_SETTINGS',
   FIO_DOMAIN_RENEW: 'FIO_DOMAIN_RENEW',
-  FIO_DOMAIN_RENEW_CONFIRMATION: 'FIO_DOMAIN_RENEW_CONFIRMATION',
   FIO_DOMAIN_OWNERSHIP: 'FIO_DOMAIN_OWNERSHIP',
   FIO_DOMAIN_OWNERSHIP_CONFIRMATION: 'FIO_DOMAIN_OWNERSHIP_CONFIRMATION',
   FIO_DOMAIN_STATUS_CHANGE: 'FIO_DOMAIN_STATUS_CHANGE',
@@ -113,9 +110,9 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.PROFILE]: 'My profile',
   [LINKS.ABOUT_US]: 'About Us',
   [LINKS.CONTACT_US]: 'Contact Us',
-  [LINKS.FIO_ADDRESSES_SELECTION]: 'FIO Crypto Handles Selection',
+  [LINKS.FIO_ADDRESSES_SELECTION]: 'FIO Handles Selection',
   [LINKS.FIO_DOMAINS_SELECTION]: 'FIO Domains Selection',
-  [LINKS.FIO_ADDRESSES]: 'FIO Crypto Handles',
+  [LINKS.FIO_ADDRESSES]: 'FIO Handles',
   [LINKS.FIO_DOMAINS]: 'FIO Domains',
   [LINKS.FIO_REQUESTS]: 'FIO Requests',
   [LINKS.FIO_WALLET]: 'FIO Wallet',
@@ -152,20 +149,19 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.CREATE_ACCOUNT_SECRET_ANSWERS]: 'Create Account Secret Answers',
   [LINKS.IS_NEW_USER]: 'Confirm email',
   [LINKS.ACCOUNT_RECOVERY]: 'Recover Account',
-  [LINKS.FIO_ADDRESSES_SELECTION]: 'Crypto Handle Registration',
+  [LINKS.FIO_ADDRESSES_SELECTION]: 'FIO Handle Registration',
   [LINKS.FIO_ADDRESSES_CUSTOM_SELECTION]:
-    'Crypto Handle Registration on Custom Domain',
-  [LINKS.FIO_ADDRESSES]: 'Crypto Handles',
-  [LINKS.FIO_ADDRESSES_SETTINGS]: 'Crypto Handle Settings',
-  [LINKS.FIO_ADDRESS_OWNERSHIP]: 'Crypto Handle Ownership Transfer',
+    'FIO Handle Registration on Custom Domain',
+  [LINKS.FIO_ADDRESSES]: 'FIO Handles',
+  [LINKS.FIO_ADDRESSES_SETTINGS]: 'FIO Handle Settings',
+  [LINKS.FIO_ADDRESS_OWNERSHIP]: 'FIO Handle Ownership Transfer',
   [LINKS.FIO_ADDRESS_OWNERSHIP_CONFIRMATION]:
-    'Crypto Handle Ownership Transfer Confirmation',
+    'FIO Handle Ownership Transfer Confirmation',
   [LINKS.FIO_DOMAINS_SELECTION]: 'Domain Registration',
   [LINKS.FIO_DOMAINS]: 'Domains',
   [LINKS.FIO_DOMAIN]: 'Domain',
   [LINKS.FIO_DOMAINS_SETTINGS]: 'Domain Settings',
   [LINKS.FIO_DOMAIN_RENEW]: 'Renew Domain',
-  [LINKS.FIO_DOMAIN_RENEW_CONFIRMATION]: 'Renew Domain Confirmation',
   [LINKS.FIO_DOMAIN_OWNERSHIP]: 'Domain Ownership Transfer',
   [LINKS.FIO_DOMAIN_OWNERSHIP_CONFIRMATION]:
     'Domain Ownership Transfer Confirmation',
@@ -191,8 +187,6 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.CANCEL_FIO_REQUEST_CONFIRMATION]: 'Cancel FIO Request Confirmation',
   [LINKS.PAYMENT_DETAILS]: 'Send FIO Data',
   [LINKS.PAYMENT_DETAILS_CONFIRMATION]: 'Send FIO Data Confirmation',
-  [LINKS.FIO_ADDRESS_ADD_BUNDLES]: 'Add Bundles',
-  [LINKS.FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION]: 'Add Bundles Confirmation',
   [LINKS.FIO_ADDRESS_SIGNATURES]: 'NFT Signatures',
   [LINKS.FIO_ADDRESS_SIGN]: 'Sign NFT',
   [LINKS.FIO_ADDRESS_SIGN_CONFIRMATION]: 'Sign NFT Confirmation',
@@ -231,18 +225,8 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {
-  [ADDRESS]: 'FIO Crypto Handle',
+  [ADDRESS]: 'FIO Handle',
   [DOMAIN]: 'FIO Domain',
-};
-
-export const RENEW_PAGE_LINK = {
-  [DOMAIN]: LINKS.FIO_DOMAIN_RENEW,
-  [ADDRESS]: '',
-};
-
-export const RENEW_PAGE_CONFIRMATION_LINK = {
-  [DOMAIN]: LINKS.FIO_DOMAIN_RENEW_CONFIRMATION,
-  [ADDRESS]: '',
 };
 
 export const TRANSFER_PAGE_LINK = {
@@ -256,10 +240,10 @@ export const TRANSFER_PAGE_CONFIRMATION_LINK = {
 };
 
 export const CART_ITEM_DESCRIPTOR = {
-  [CART_ITEM_TYPE.ADDRESS]: 'FIO Crypto Handle Registration',
+  [CART_ITEM_TYPE.ADDRESS]: 'FIO Handle Registration',
   [CART_ITEM_TYPE.DOMAIN]: 'FIO Domain Registration',
   [CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN]:
-    'FIO Crypto Handle and Domain Registration',
+    'FIO Handle and Domain Registration',
   [CART_ITEM_TYPE.DOMAIN_RENEWAL]: 'FIO Domain Renewal',
   [CART_ITEM_TYPE.ADD_BUNDLES]: 'Add Bundled Transactions',
 };

@@ -59,7 +59,7 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const queryParams = useQuery();
-  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE);
+  const fch = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const [socialMediaLinksList, setSocialMediaLinksList] = useState<
     EditSocialLinkItem[]
@@ -92,7 +92,7 @@ export const useContext = (): UseContextProps => {
 
   const fioCryptoHandleObj = currentFioAddress;
 
-  const hasLowBalance = remaining - bundleCost < 0;
+  const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
   const hasEdited = socialMediaLinksList.some(
     socialMediaLinkItem => socialMediaLinkItem.newUsername,
   );
@@ -207,13 +207,17 @@ export const useContext = (): UseContextProps => {
       });
       dispatch(
         updatePublicAddresses(fch, {
-          addPublicAddresses: [actionResults.connect],
-          deletePublicAddresses: [],
+          addPublicAddresses: actionResults.connect.updated,
+          deletePublicAddresses: editedSocialLinks.map(editedSocialLink => ({
+            publicAddress: editedSocialLink.username,
+            chainCode: CHAIN_CODES.SOCIALS,
+            tokenCode: editedSocialLink.name.toUpperCase(),
+          })),
         }),
       );
       history.push({
         pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-        search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fch}`,
+        search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
         state: {
           actionType: SOCIAL_MEDIA_CONTAINER_NAMES.EDIT_SOCIAL_MEDIA,
         },

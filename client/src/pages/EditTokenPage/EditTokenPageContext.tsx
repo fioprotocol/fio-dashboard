@@ -31,9 +31,7 @@ import { EditTokenElement } from './types';
 
 export const useContext = () => {
   const queryParams = useQuery();
-  const fioCryptoHandleName = queryParams.get(
-    QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE,
-  );
+  const fioCryptoHandleName = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
   const fioCryptoHandleObj = useSelector(state =>
     currentFioAddress(state, fioCryptoHandleName),
@@ -58,7 +56,7 @@ export const useContext = () => {
     walletPublicKey = '',
   } = fioCryptoHandleObj || {};
 
-  const hasLowBalance = remaining - bundleCost < 0;
+  const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
   const hasEdited = pubAddressesArr.some(
     pubAddress => pubAddress.newPublicAddress,
   );

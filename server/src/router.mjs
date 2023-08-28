@@ -47,6 +47,11 @@ router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
 router.post('/users/update-email', checkAuth, routes.users.updateEmail);
+router.put(
+  '/users/update-email-notification-params',
+  checkAuth,
+  routes.users.updateEmailNotificationParams,
+);
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
@@ -61,6 +66,9 @@ router.post(
   checkAdminAuth,
   routes.adminUsers.sendResetPassword,
 );
+router.put('/admin/change-passowrd', checkAdminAuth, routes.adminUsers.changePassword);
+router.put('/admin/change-two-fa', checkAdminAuth, routes.adminUsers.change2FA);
+
 router.post('/admin/invite', checkAdminAuth, routes.adminUsers.invite);
 router.get('/admin/roles', checkAdminAuth, routes.adminUsers.rolesList);
 router.get('/admin/statuses', checkAdminAuth, routes.adminUsers.statusesList);
@@ -194,6 +202,7 @@ router.get('/selected-chain-codes', routes.chainCodes.selectedList);
 router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
 
 router.post('/verify-twitter', routes.twitter.verify);
+router.get('/verify-abstract-email', routes.external.abstractEmailVerification);
 
 router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
 router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);

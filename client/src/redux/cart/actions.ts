@@ -60,3 +60,9 @@ export const setCartDate = (date: number): CommonAction => ({
   type: SET_CART_DATE,
   data: date,
 });
+
+export const CLEAR_OLD_CART = `${prefix}/CLEAR_OLD_CART`;
+
+export const clearOldCartItems = (): CommonAction => ({
+  type: CLEAR_OLD_CART,
+});

@@ -23,7 +23,7 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { checkIsDomainItemExistsOnCart } from '../../util/fio';
+import { checkIsDomainItemExistsOnCart, isDomainExpired } from '../../util/fio';
 import { addCartItem } from '../../util/cart';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
@@ -81,6 +81,7 @@ type UseContextProps = {
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
   showWarningMessage: boolean;
+  showWarningDomainWatchListBadge: boolean;
   successMessage: string | null;
   warningContent: {
     title: string;
@@ -144,6 +145,10 @@ export const useContext = (): UseContextProps => {
     boolean
   >(false);
   const [showDangerModal, toggleDangerModal] = useState<boolean>(false);
+  const [
+    showWarningDomainWatchListBadge,
+    toggleShowWarningDomainWatchListBadge,
+  ] = useState<boolean>(false);
 
   const isDesktop = useCheckIfDesktop();
 
@@ -375,6 +380,20 @@ export const useContext = (): UseContextProps => {
     getDomainsWatchlistList();
   }, []);
 
+  useEffect(() => {
+    if (domainsWatchlistList.length) {
+      const domainWatchListHasExpiredDomain = domainsWatchlistList.some(
+        domainWatchListItem =>
+          isDomainExpired(
+            domainWatchListItem.name,
+            domainWatchListItem.expiration,
+          ),
+      );
+
+      toggleShowWarningDomainWatchListBadge(domainWatchListHasExpiredDomain);
+    }
+  }, [domainsWatchlistList]);
+
   return {
     domainWatchlistIsDeleting,
     domainWatchlistLoading,
@@ -392,6 +411,7 @@ export const useContext = (): UseContextProps => {
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
     showWarningMessage,
+    showWarningDomainWatchListBadge,
     successMessage,
     warningContent: WARNING_CONTENT.DOMAIN_RENEW,
     closeDomainWatchlistModal,

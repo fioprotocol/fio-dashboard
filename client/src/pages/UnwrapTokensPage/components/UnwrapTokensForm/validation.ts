@@ -28,7 +28,7 @@ const validationSchema: ValidationSchema = {
       },
       {
         validator: isFioAddressValidator,
-        message: 'Please enter valid FIO Crypto Handle.',
+        message: 'Please enter valid FIO Handle.',
         customArgs: { onlyFioAddress: true },
       },
     ],

@@ -20,7 +20,7 @@ const OrdersPage: React.FC = () => {
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
           <p className={classes.subtitle}>
-            View your order history and status of tokens, crypto handles and
+            View your order history and status of tokens, FIO Handles and
             domains.
           </p>
           <OrdersList {...renderProps} />

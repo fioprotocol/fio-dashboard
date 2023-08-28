@@ -207,18 +207,16 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
             Add
           </Button>
         </div>
-        <h5 className={classes.subtitle}>
-          FIO Crypto Handle Linking Information
-        </h5>
+        <h5 className={classes.subtitle}>FIO Handle Linking Information</h5>
         {tokens.map((token, index) => (
           <AddTokenBadge
             token={token}
             index={index}
             onRemove={removeTokenRow}
             key={genericTokenId(
-              token.chainCode,
-              token.tokenCode,
-              token.publicAddress,
+              token?.chainCode,
+              token?.tokenCode,
+              token?.publicAddress,
             )}
           />
         ))}

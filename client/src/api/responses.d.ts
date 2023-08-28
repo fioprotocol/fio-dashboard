@@ -58,6 +58,14 @@ export type AdminAuthLoginResponse = { jwt: string };
 export type AdminResetPasswordResponse =
   | DefaultSuccessResponse
   | DefaultNotFoundResponse;
+export type AdminChangePasswordResponse =
+  | DefaultSuccessResponse
+  | DefaultNotFoundResponse;
+export type AdminChange2Fa = DefaultSuccessResponse | DefaultNotFoundResponse;
+
+export type AbstractEmailVerificationResponse = {
+  isValid: boolean;
+};
 
 export type ChainCodesListResults = ChainCodeProps[] | null;
 
@@ -142,7 +150,7 @@ export type UserOrdersListResponse = {
   };
   status: number;
 };
-
+export type UserUpdateEmailNotificationResponse = DefaultSuccessResponse;
 export type HealthCheckResponse = { success: boolean };
 export type VerifyTwitterResponse = {
   verified?: boolean;

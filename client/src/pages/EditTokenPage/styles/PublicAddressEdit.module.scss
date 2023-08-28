@@ -15,6 +15,10 @@
   }
 }
 
+.inputContainer {
+  flex: 1;
+}
+
 @include lg {
   .editIcon {
     align-self: center;

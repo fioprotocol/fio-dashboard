@@ -199,7 +199,7 @@ export const useContext = (
             ...WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE,
             actionButtonLink: {
               ...WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE.actionButtonLink,
-              search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${firstFromListFioAddressName}`,
+              search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${firstFromListFioAddressName}`,
             },
           };
         } else {

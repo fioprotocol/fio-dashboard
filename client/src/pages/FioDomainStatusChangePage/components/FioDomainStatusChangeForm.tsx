@@ -18,9 +18,9 @@ import classes from '../FioDomainStatusChangePage.module.scss';
 
 const INFO_MESSAGE_TEXT = {
   [DOMAIN_STATUS.PUBLIC]:
-    'making your domain public will allow anyone to register a FIO Crypto Handle on that domain',
+    'making your domain public will allow anyone to register a FIO Handle on that domain',
   [DOMAIN_STATUS.PRIVATE]:
-    'making your domain private will only allow the owner of the domain to register FIO Crypto Handles on it.',
+    'making your domain private will only allow the owner of the domain to register FIO Handles on it.',
 };
 
 const FioDomainStatusChangeForm: React.FC<FormProps> = props => {

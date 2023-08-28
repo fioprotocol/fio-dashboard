@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { AdminChangePasswrod } from './components/AdminChangePassword';
+import { AdminChangeTfaToken } from './components/AdminChangeTfaToken';
+
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import { AdminUser } from '../../types';
 
@@ -16,7 +19,7 @@ const AdminPage: React.FC<Props> = props => {
   if (adminUser)
     return (
       <div className={classes.container}>
-        <div>
+        <div className={classes.profileContainer}>
           <div className="d-flex justify-content-between">
             <div className="mr-3">
               <b>Email</b>
@@ -46,6 +49,14 @@ const AdminPage: React.FC<Props> = props => {
               <b>Status:</b>
             </div>
             <div>{adminUser.status.status}</div>
+          </div>
+        </div>
+        <div className={classes.actionContainer}>
+          <h4>Actions</h4>
+          <hr />
+          <div className={classes.actions}>
+            <AdminChangePasswrod />
+            <AdminChangeTfaToken />
           </div>
         </div>
       </div>

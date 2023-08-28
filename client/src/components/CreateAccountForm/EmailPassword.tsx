@@ -97,6 +97,7 @@ export const validate = (
 };
 
 type Props = {
+  hasSubmitError: boolean;
   isEmailChecked: boolean;
   isConfirmEmailChecked: boolean;
   isConfirmEmailError: boolean;
@@ -104,10 +105,12 @@ type Props = {
   loading: boolean;
   passwordValidation: PasswordValidationState;
   showInfoBadge: boolean;
+  submitting: boolean;
   onEmailChange: () => void;
 };
 
 type LocalState = {
+  hasSubmitError: boolean;
   passwordValidation: PasswordValidationState;
   usernameAvailableLoading: boolean;
   showValidationRules: boolean;
@@ -125,11 +128,23 @@ export default class EmailPassword extends Component<Props, LocalState> {
       },
       usernameAvailableLoading: props.usernameAvailableLoading,
       showValidationRules: false,
+      hasSubmitError: false,
     };
   }
 
   handleFocus = () => {
     this.setState({ showValidationRules: true });
+  };
+
+  resetHasSubmitErrorState = () => {
+    this.state.hasSubmitError && this.setState({ hasSubmitError: false });
+  };
+
+  handleSubmitError = (hasSubmitError: boolean) => {
+    if (hasSubmitError && !this.state.hasSubmitError) {
+      this.setState({ hasSubmitError: true });
+      window.scrollTo(0, 0);
+    }
   };
 
   renderPassValidBadge = () => {
@@ -173,8 +188,18 @@ export default class EmailPassword extends Component<Props, LocalState> {
       onEmailChange,
       loading,
       showInfoBadge,
+      submitting,
+      hasSubmitError,
       usernameAvailableLoading,
     } = this.props;
+
+    if (submitting) {
+      this.resetHasSubmitErrorState();
+    }
+
+    if (hasSubmitError) {
+      this.handleSubmitError(hasSubmitError);
+    }
 
     return (
       <>

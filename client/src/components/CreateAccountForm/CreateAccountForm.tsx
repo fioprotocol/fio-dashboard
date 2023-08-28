@@ -355,11 +355,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           return errors;
         }
 
-        const { errors } = await checkUsernameAndPassword(
-          emailToUsername(email),
-          password,
-          confirmPassword,
-        );
+        const { errors } = await checkUsernameAndPassword({
+          email,
+          username: emailToUsername(email),
+          password: password,
+          passwordRepeat: confirmPassword,
+        });
 
         if (!Object.values(errors).length) {
           this.setState({ step: STEPS.SUCCESS });
@@ -475,6 +476,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
                 !confirmEmailFieldActive &&
                 confirmEmailFieldTouched
               }
+              hasSubmitError={hasSubmitErrors && submitErrors.email}
+              submitting={submitting}
               showInfoBadge={showInfoBadge}
             />
           </Wizard.Page>

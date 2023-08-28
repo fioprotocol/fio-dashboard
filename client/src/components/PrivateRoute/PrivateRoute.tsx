@@ -10,6 +10,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
+  isAuthenticated as isAuthenticatedSelector,
   loading as loadingSelector,
   noProfileLoaded as noProfileLoadedSelector,
 } from '../../redux/profile/selectors';
@@ -29,12 +30,13 @@ export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
 }) => {
   const loading = useSelector(loadingSelector);
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
+  const isAuthenticated = useSelector(isAuthenticatedSelector);
 
   return (
     <Route
       {...rest}
       render={(props: RouteComponentProps) => {
-        if (loading) {
+        if (loading && !isAuthenticated) {
           return (
             <FontAwesomeIcon
               icon={faSpinner}

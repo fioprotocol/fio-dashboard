@@ -11,14 +11,15 @@ import PasswordRecovery from './components/PasswordRecovery';
 import ChangeEmail from './components/ChangeEmail';
 import TwoFactorAuth from './components/TwoFactorAuth';
 import DeleteMyAccount from './components/DeleteMyAccount';
+import { EmailNotifications } from './components/EmailNotifications';
 
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { changeRecoveryQuestionsOpen } from '../../redux/edge/actions';
 
 import { showRecovery as showRecoverySelector } from '../../redux/modal/selectors';
 import {
+  isAuthenticated as isAuthenticatedSelector,
   loading as loadingSelector,
-  user as userSelector,
 } from '../../redux/profile/selectors';
 
 import useEffectOnce from '../../hooks/general';
@@ -31,9 +32,9 @@ export const PREOPENED_MODALS = {
 };
 
 const SettingsPage: React.FC = () => {
-  const user = useSelector(userSelector);
   const loading = useSelector(loadingSelector);
   const showRecovery = useSelector(showRecoverySelector);
+  const isAuthenticated = useSelector(isAuthenticatedSelector);
 
   const dispatch = useDispatch();
 
@@ -54,7 +55,7 @@ const SettingsPage: React.FC = () => {
     }
   }, [dispatch, openSettingsModal, showRecovery]);
 
-  if (loading || user == null)
+  if (loading && !isAuthenticated)
     return (
       <LayoutContainer title="Settings">
         <div className="d-flex justify-content-center align-items-center h-100 pt-5 pb-5">
@@ -65,9 +66,11 @@ const SettingsPage: React.FC = () => {
 
   return (
     <LayoutContainer title="Settings">
-      <div className={`${classes.settingsContainer} mb-4`}>
+      <div className={`${classes.settingsContainer} mb-4 mt-4`}>
         <h5 className={classes.title}>Email Address</h5>
         <ChangeEmail />
+        <h5 className={`${classes.title} mt-4`}>Email Notifications</h5>
+        <EmailNotifications />
       </div>
       <div className={`${classes.settingsContainer} mb-4`}>
         <h5 className={classes.title}>Security</h5>

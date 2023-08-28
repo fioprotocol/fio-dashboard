@@ -21,9 +21,7 @@ export const FioRequestActionComponent: React.FC = () => {
     <div className={classes.container}>
       <img src={SendCopyImgSrc} alt="Send copy icon" className={classes.icon} />
       <h5 className={classes.title}>FIO Requests</h5>
-      <p className={classes.subtitle}>
-        Request crypto using your FIO Crypto Handle.
-      </p>
+      <p className={classes.subtitle}>Request crypto using your FIO Handle.</p>
       <Link to={ROUTES.FIO_TOKENS_REQUEST} className={classes.button}>
         <SubmitButton
           text="Send a FIO Request"

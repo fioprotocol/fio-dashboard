@@ -1,6 +1,8 @@
 import Base from './base';
 
 import {
+  AdminChange2Fa,
+  AdminChangePasswordResponse,
   AdminDefaults,
   AdminFioAccountsProfilesListResponse,
   AdminFioApiUrlsListResponse,
@@ -190,5 +192,21 @@ export default class Admin extends Base {
 
   deleteFioApiUrl(data: { id: string }): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.delete(`admin/api-urls/${data.id}`, {});
+  }
+
+  changeAdminPassword(data: {
+    newPassword: string;
+    oldPassword: string;
+  }): Promise<AdminChangePasswordResponse> {
+    return this.apiClient.put(`admin/change-passowrd`, {
+      data,
+    });
+  }
+
+  changeAdmin2FA(data: {
+    tfaSecret: string;
+    tfaToken: string;
+  }): Promise<AdminChange2Fa> {
+    return this.apiClient.put(`admin/change-two-fa`, { data });
   }
 }

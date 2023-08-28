@@ -101,11 +101,17 @@ export const checkPassword = async (
   return result;
 };
 
-export const checkUsernameAndPassword = async (
-  username: string,
-  password: string,
-  passwordRepeat: string,
-): Promise<{ errors: { email?: string; password?: string } }> => {
+export const checkUsernameAndPassword = async ({
+  email,
+  username,
+  password,
+  passwordRepeat,
+}: {
+  email: string;
+  username: string;
+  password: string;
+  passwordRepeat: string;
+}): Promise<{ errors: { email?: string; password?: string } }> => {
   const result: { errors: { email?: string; password?: string } } = {
     errors: {},
   };
@@ -114,11 +120,18 @@ export const checkUsernameAndPassword = async (
     password,
     passwordRepeat,
   );
+  const isAbstractEmailVerified = await apis.general.abstractEmailVerification(
+    email,
+  );
+
   if (usernameError) {
     result.errors.email = usernameError;
   }
   if (passwordError) {
     result.errors.password = passwordError;
+  }
+  if (!isAbstractEmailVerified.isValid) {
+    result.errors.email = 'Invalid Email Address';
   }
 
   return result;

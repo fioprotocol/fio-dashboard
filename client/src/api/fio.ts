@@ -1,5 +1,6 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
 import { Constants as sdkConstants } from '@fioprotocol/fiosdk/lib/utils/constants';
+import { Transactions as sdkTransactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { createHash } from 'crypto-browserify';
 import superagent from 'superagent';
 import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
@@ -13,11 +14,14 @@ import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 import { BalanceResponse } from '@fioprotocol/fiosdk/src/entities/BalanceResponse';
 import { Action } from 'ledgerjs-hw-app-fio/dist/types/public';
+import { ReceivedFioRequestsResponse } from '@fioprotocol/fiosdk/src/entities/ReceivedFioRequestsResponse';
+import { SentFioRequestResponse } from '@fioprotocol/fiosdk/src/entities/SentFioRequestsResponse';
+import { GetObtDataResponse } from '@fioprotocol/fiosdk/src/entities/GetObtDataResponse';
 
 import MathOp from '../util/math';
 import { log } from '../util/general';
 
-import { isDomain } from '../utils';
+import { camelizeFioRequestsData, isDomain } from '../utils';
 
 import {
   ACTIONS,
@@ -26,13 +30,16 @@ import {
   FIO_PROXY_LIST,
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
+  DEFAULT_FIO_RECORDS_LIMIT,
 } from '../constants/fio';
 
 import {
   AnyObject,
   FioBalanceRes,
+  FioRecord,
   NFTTokenDoublet,
   Proxy,
+  ResponseFioRecord,
   WalletKeys,
 } from '../types';
 
@@ -755,6 +762,109 @@ export default class Fio {
       return '';
     } catch (err) {
       this.logError(err);
+    }
+  };
+
+  getFioRequests = async ({
+    publicKey,
+    action,
+  }: {
+    publicKey: string;
+    action: string;
+  }): Promise<FioRecord[]> => {
+    let fioRequestsArr: FioRecord[] = [];
+
+    try {
+      const walletFioSdk = this.createPublicWalletFioSdk({
+        public: publicKey,
+      });
+
+      const getFioRequests = async ({
+        limit = 100,
+        offset = 0,
+      }): Promise<
+        | ReceivedFioRequestsResponse
+        | SentFioRequestResponse
+        | GetObtDataResponse
+      > => {
+        return await walletFioSdk.genericAction(action, {
+          limit,
+          offset,
+          includeEncrypted: true,
+        });
+      };
+
+      const getAllFioRequests = async ({
+        limit = DEFAULT_FIO_RECORDS_LIMIT,
+        offset,
+      }: {
+        limit?: number;
+        offset?: number;
+      }) => {
+        const fioRequests = await getFioRequests({
+          limit,
+          offset,
+        });
+
+        let fioRequestsItems: ResponseFioRecord[] = [];
+
+        if ('requests' in fioRequests) {
+          fioRequestsItems = fioRequests.requests;
+        }
+
+        if ('obt_data_records' in fioRequests) {
+          fioRequestsItems = fioRequests.obt_data_records;
+        }
+
+        fioRequestsArr = [
+          ...fioRequestsArr,
+          ...camelizeFioRequestsData(fioRequestsItems),
+        ];
+
+        if (fioRequests.more) {
+          await getAllFioRequests({ offset: offset + limit });
+        }
+      };
+
+      await getAllFioRequests({});
+
+      return fioRequestsArr;
+    } catch (err) {
+      log.error(err);
+    }
+  };
+
+  getReceivedFioRequests = async (publicKey: string): Promise<FioRecord[]> => {
+    return await this.getFioRequests({
+      publicKey,
+      action: 'getReceivedFioRequests',
+    });
+  };
+
+  getSentFioRequests = async (publicKey: string): Promise<FioRecord[]> => {
+    return await this.getFioRequests({
+      publicKey,
+      action: 'getSentFioRequests',
+    });
+  };
+
+  getObtData = async (publicKey: string): Promise<FioRecord[]> => {
+    return await this.getFioRequests({
+      publicKey,
+      action: 'getObtData',
+    });
+  };
+
+  getRawAbi = async (): Promise<void> => {
+    for (const accountName of sdkConstants.rawAbiAccountName) {
+      try {
+        if (!sdkTransactions.abiMap.get(accountName)) {
+          const abiResponse = await this.publicFioSDK.getAbi(accountName);
+          sdkTransactions.abiMap.set(abiResponse.account_name, abiResponse);
+        }
+      } catch (e) {
+        log.error('Raw Abi Error:', e);
+      }
     }
   };
 }

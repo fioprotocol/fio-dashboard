@@ -282,22 +282,6 @@ const Routes = (): React.ReactElement => {
           ) : (
             <Switch>
               <Route
-                path={ROUTES.FIO_ADDRESS_ADD_BUNDLES_OLD}
-                component={(props: RouteComponentProps<{ name?: string }>) => (
-                  <Redirect
-                    to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${props.match.params.name}`}
-                  />
-                )}
-              />
-              <Route
-                path={ROUTES.FIO_DOMAIN_RENEW_OLD}
-                component={(props: RouteComponentProps<{ name?: string }>) => (
-                  <Redirect
-                    to={`${ROUTES.FIO_DOMAIN_RENEW}?${QUERY_PARAMS_NAMES.NAME}=${props.match.params.name}`}
-                  />
-                )}
-              />
-              <Route
                 path={ROUTES.FIO_REQUEST_OLD}
                 component={(
                   props: RouteComponentProps<{

@@ -21,7 +21,7 @@ const NOTIFICATION_BADGE = {
   title: 'Why link your social media accounts?',
   message: (
     <p className={classes.message}>
-      When you link your FIO Crypto Handles to your social media accounts, that
+      When you link your FIO Handles to your social media accounts, that
       information is recorded on chain.This ensures, that all of your socila
       media accounts are connected, vierified and controlled by you.
     </p>
@@ -52,7 +52,7 @@ const FioSocialMediaLinksPage: React.FC = () => {
         type={BADGE_TYPES.INFO}
       />
       <PseudoModalContainer
-        title="FIO Crypto Handle Social Media Linking"
+        title="FIO Handle Social Media Linking"
         link={ROUTES.FIO_ADDRESSES}
         hasAutoWidth
         containerClass={successBadgeMessage && classes.modalContainer}

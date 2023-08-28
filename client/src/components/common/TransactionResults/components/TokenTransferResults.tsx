@@ -88,9 +88,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       </Badge>
       <Badge show={!!fromFioAddress} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>
-            {titleFrom || 'Sending FIO Crypto Handle'}
-          </p>
+          <p className={classes.title}>{titleFrom || 'Sending FIO Handle'}</p>
           <p className={classes.item}>{fromFioAddress}</p>
         </div>
       </Badge>
@@ -102,9 +100,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       </Badge>
       <Badge show={!!toFioAddress} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>
-            {titleTo || 'Send to FIO Crypto Handle'}
-          </p>
+          <p className={classes.title}>{titleTo || 'Send to FIO Handle'}</p>
           <p className={classes.item}>{toFioAddress}</p>
         </div>
       </Badge>

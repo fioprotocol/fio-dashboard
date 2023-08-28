@@ -28,7 +28,7 @@ export const UsersItemsList: React.FC<Props> = props => {
   if (loading)
     return (
       <div className={classes.container}>
-        <h5 className={classes.subtitle}>My Domain FIO Crypto Handle</h5>
+        <h5 className={classes.subtitle}>My Domain FIO Handle</h5>
         <div className={classes.loaderContainer}>
           <Loader />
         </div>
@@ -37,7 +37,7 @@ export const UsersItemsList: React.FC<Props> = props => {
 
   return (
     <div className={classes.container}>
-      <h5 className={classes.subtitle}>My Domain FIO Crypto Handle</h5>
+      <h5 className={classes.subtitle}>My Domain FIO Handle</h5>
       <div className={classes.listContainer}>
         {list.map(listItem => (
           <SelectionItem

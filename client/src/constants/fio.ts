@@ -128,30 +128,30 @@ export const DOMAIN_TYPE_PARAMS: {
   [DOMAIN_TYPE.CUSTOM]: {
     title: 'Custom',
     isRed: true,
-    modalTitle: 'Custom FIO Crypto Handle',
+    modalTitle: 'Custom FIO Handle',
     modalBodyText:
-      'When you register a Custom FIO Crypto Handle you also get your own FIO Domain (@domain). By default this domain is private, meaning only you can create new handles on it.',
+      'When you register a Custom FIO Handle you also get your own FIO Domain (@domain). By default this domain is private, meaning only you can create new handles on it.',
   },
   [DOMAIN_TYPE.FREE]: {
     title: 'Free',
     isRose: true,
-    modalTitle: 'Free FIO Crypto Handle',
+    modalTitle: 'Free FIO Handle',
     modalBodyText:
-      'Please enjoy this free FIO Crypto Handle for life. Limit: one free handle per user.',
+      'Please enjoy this free FIO Handle for life. Limit: one free handle per user.',
   },
   [DOMAIN_TYPE.PREMIUM]: {
     title: 'Premium',
     isBlue: true,
-    modalTitle: 'Premium FIO Crypto Handle',
+    modalTitle: 'Premium FIO Handle',
     modalBodyText:
-      'Premium FIO Crypto Handles are on hand-picked FIO Domains (@domain), which are reserved for users who want to stand out from the crowd.',
+      'Premium FIO Handles are on hand-picked FIO Domains (@domain), which are reserved for users who want to stand out from the crowd.',
   },
   [DOMAIN_TYPE.USERS]: {
     title: 'My Domain',
     isOrange: true,
     modalTitle: 'My Domain',
     modalBodyText:
-      'You already own the FIO Domain, now get a FIO Crypto Handle on it.',
+      'You already own the FIO Domain, now get a FIO Handle on it.',
   },
 };
 
@@ -241,3 +241,5 @@ export const FIO_PROXY_LIST = {
 export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';
 
 export const LOW_BUNDLES_THRESHOLD = 25;
+
+export const DEFAULT_FIO_RECORDS_LIMIT = 100;

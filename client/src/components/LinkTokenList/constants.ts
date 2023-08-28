@@ -30,7 +30,7 @@ export const CONTAINER_TYPES = {
     buttonText: 'Edit',
   },
   [CONTAINER_NAMES.ADD]: {
-    title: 'Link your FIO Crypto Handle',
+    title: 'Link your FIO Handle',
     buttonText: 'Link Now',
   },
   [CONTAINER_NAMES.ADD_SOCIAL_MEDIA]: {

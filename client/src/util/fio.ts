@@ -22,7 +22,7 @@ import {
   FIO_REQUEST_STATUS_TYPES,
 } from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
-import { EXPIRED_DOMAINS_TEST_REGEX } from '../constants/regExps';
+import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/regExps';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
 
 import {
@@ -58,7 +58,7 @@ export const vaildateFioDomain = (domain: string) => {
 
 export const validateFioAddress = async (address: string, domain: string) => {
   if (!address) {
-    return 'FIO Crypto Handle Field Should Be Filled';
+    return 'FIO Handle Field Should Be Filled';
   }
 
   if (!domain) {
@@ -66,7 +66,7 @@ export const validateFioAddress = async (address: string, domain: string) => {
   }
 
   if (address && domain && address.length + domain.length > 63) {
-    return 'FIO Crypto Handle should be less than 63 characters';
+    return 'FIO Handle should be less than 63 characters';
   }
 
   const addressValidation = validate(
@@ -75,7 +75,7 @@ export const validateFioAddress = async (address: string, domain: string) => {
   );
 
   if (!addressValidation.isValid) {
-    return 'FIO Crypto Handle only allows letters, numbers and dash in the middle';
+    return 'FIO Handle only allows letters, numbers and dash in the middle';
   }
 
   vaildateFioDomain(domain);
@@ -304,14 +304,14 @@ export const isDomainExpired = (
   domainName: string,
   expiration: number | string,
 ): boolean => {
-  const today = new Date();
-
   if (
-    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE &&
-    EXPIRED_DOMAINS_TEST_REGEX.test(domainName)
+    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE === 'true' &&
+    DOMAIN_EXP_DEBUG_AFFIX.test(domainName)
   ) {
     return true;
   }
+
+  const today = new Date();
 
   return (
     expiration &&

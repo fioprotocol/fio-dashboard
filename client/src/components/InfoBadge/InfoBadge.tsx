@@ -55,7 +55,7 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
       <div className={classes.textContainer}>
         <span className={classes.title}>{title}</span>
         <span className={hasBoldMessage ? classes.boldMessage : ''}>
-          {title && hideDash ? ' ' : ' - '}
+          {hideDash ? ' ' : title ? ' - ' : ' '}
         </span>
         <span
           className={classnames(

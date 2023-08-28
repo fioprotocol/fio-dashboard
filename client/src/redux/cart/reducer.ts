@@ -47,6 +47,8 @@ export default combineReducers({
     switch (action.type) {
       case actions.SET_OLD_CART:
         return { ...state, [action.data.orderId]: action.data.cart };
+      case actions.CLEAR_OLD_CART:
+        return {};
       default:
         return state;
     }

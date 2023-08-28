@@ -357,13 +357,22 @@ class OrdersJob extends CommonJob {
       new MathOp(topThreshold).lt(currentPrice) ||
       new MathOp(bottomThreshold).gt(currentPrice)
     ) {
-      await this.handleFail(
-        orderItem,
-        `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`,
-      );
+      const percentageChange = new MathOp(orderItem.price)
+        .sub(currentPrice)
+        .div(orderItem.price)
+        .mul(100)
+        .toNumber();
+
+      const priceChangePercentage = new MathOp(percentageChange).gt(0)
+        ? `-${percentageChange.toFixed(2)}`
+        : `+${new MathOp(percentageChange).abs().toFixed(2)}`;
+
+      const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
+
+      await this.handleFail(orderItem, errorMessage);
       await this.refundUser({ ...orderItem, roe: currentRoe });
 
-      throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
+      throw new Error(errorMessage);
     }
   }
 
@@ -448,6 +457,41 @@ class OrdersJob extends CommonJob {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
+  async checkIfDomainOnOrderRegistered(orderItem) {
+    const { domain, orderId } = orderItem;
+    const domainOnOrder = await OrderItem.findOne({
+      where: {
+        action: FIO_ACTIONS.registerFioDomain,
+        domain,
+        orderId,
+      },
+      include: [{ model: OrderItemStatus }],
+    });
+
+    if (domainOnOrder) {
+      const ordersDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
+
+      if (
+        ordersDomain &&
+        ordersDomain.orderItemStatus &&
+        (ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
+          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL ||
+          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.EXPIRE)
+      ) {
+        const errorMessage = `RenewDomain has been canceled because domain - ${domain} - from this order has not been registered`;
+
+        await this.handleFail(orderItem, errorMessage);
+        throw new Error(errorMessage);
+      }
+    }
+  }
+
+  async enableCheckBalanceNotificationCreate(currentWallet) {
+    await currentWallet.update({
+      data: { ...currentWallet.data, isChangeBalanceNotificationCreateStopped: false },
+    });
+  }
+
   async submitSignedTx(orderItem, auth, balanceDifference = null) {
     const { address, domain, action, orderId, paymentId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
@@ -466,8 +510,19 @@ class OrdersJob extends CommonJob {
       data: { roe, sendingFioTokens: true },
     });
 
+    const currentWallet = await Wallet.findOne({
+      where: { publicKey: data.signingWalletPubKey || orderItem.publicKey },
+    });
+
     if (!isFIO) {
       // Send tokens to customer
+
+      if (currentWallet) {
+        await currentWallet.update({
+          data: { ...currentWallet.data, isChangeBalanceNotificationCreateStopped: true },
+        });
+      }
+
       try {
         const transferRes = await fioApi.executeAction(
           FIO_ACTIONS.transferTokens,
@@ -525,6 +580,8 @@ class OrdersJob extends CommonJob {
           notes: e.message,
         });
 
+        currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
+
         return {
           message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
             e,
@@ -538,11 +595,14 @@ class OrdersJob extends CommonJob {
 
     if (action === FIO_ACTIONS.renewFioDomain) {
       await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      await this.checkIfDomainOnOrderRegistered(orderItem);
     }
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
     if (!result.transaction_id) {
       const { notes } = fioApi.checkTxError(result);
+
+      currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
 
       if (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE && !balanceDifference) {
         const updatedFee = await this.getFeeForAction(orderItem.action, true);
@@ -579,7 +639,17 @@ class OrdersJob extends CommonJob {
       };
     }
 
-    await this.updateWalletDataBalance(orderItem.publicKey);
+    if (!isFIO) {
+      await this.updateWalletDataBalance(orderItem.publicKey);
+      currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
+    }
+
+    if (
+      currentWallet.data &&
+      currentWallet.data.isChangeBalanceNotificationCreateStopped
+    ) {
+      await this.enableCheckBalanceNotificationCreate(currentWallet);
+    }
 
     return result;
   }
@@ -674,6 +744,7 @@ class OrdersJob extends CommonJob {
 
       if (action === FIO_ACTIONS.renewFioDomain) {
         await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+        await this.checkIfDomainOnOrderRegistered(orderItem);
       }
       result = await fioApi.executeAction(
         action,
