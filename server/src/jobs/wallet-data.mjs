@@ -464,7 +464,7 @@ class WalletDataJob extends CommonJob {
   }
 
   async checkBalance(wallet) {
-    if (wallet.data.isChangeBalanceNotificationCreateStopped) {
+    if (wallet.data && wallet.data.isChangeBalanceNotificationCreateStopped) {
       return;
     }
 
@@ -608,6 +608,16 @@ class WalletDataJob extends CommonJob {
     });
   }
 
+  async getDomainsWatchList(offset = 0) {
+    return DomainsWatchlist.listAll({
+      include: {
+        model: User,
+      },
+      offset,
+      limit: ITEMS_PER_FETCH,
+    });
+  }
+
   async execute() {
     await fioApi.getRawAbi();
 
@@ -675,11 +685,7 @@ class WalletDataJob extends CommonJob {
     };
 
     let wallets = await this.getWallets();
-    let domainsWatchlist = await DomainsWatchlist.listAll({
-      include: {
-        model: User,
-      },
-    });
+    let domainsWatchlist = await this.getDomainsWatchList();
 
     while (domainsWatchlist.length) {
       if (DEBUG_INFO)
@@ -708,7 +714,7 @@ class WalletDataJob extends CommonJob {
       }
 
       domainsWatchlistOffset += ITEMS_PER_FETCH;
-      domainsWatchlist = await this.getWallets(domainsWatchlistOffset);
+      domainsWatchlist = await this.getDomainsWatchList(domainsWatchlistOffset);
     }
 
     while (wallets.length) {
