@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { GeneratedSecret } from 'speakeasy';
 
-import { log } from '../../../../util/general';
+import { copyToClipboard, log } from '../../../../util/general';
 import apis from '../../../../api';
 import useEffectOnce from '../../../../hooks/general';
 import TFAHelper from '../../../../helpers/tfa';
@@ -16,13 +16,12 @@ type UseContextProps = {
   change2FA: (values: FormValuesProps) => void;
   closeChange2FAModal: () => void;
   closeSuccessModal: () => void;
-  downloadRecovery2FaSecret: () => void;
+  onCopy: () => void;
   openChange2FAModal: () => void;
   resetError: () => void;
 };
 
 type FormValuesProps = {
-  oldTfaToken: string;
   tfaToken: string;
 };
 
@@ -56,7 +55,6 @@ export const useContext = (): UseContextProps => {
         await apis.admin.changeAdmin2FA({
           tfaSecret: tfaSecretInstance.base32,
           tfaToken: values.tfaToken,
-          oldTfaToken: values.oldTfaToken,
         });
         closeChange2FAModal();
         toggleSuccessModal(true);
@@ -76,12 +74,9 @@ export const useContext = (): UseContextProps => {
     setError(null);
   }, []);
 
-  const downloadRecovery2FaSecret = useCallback(async () => {
-    const qrCodeSrc = await TFAHelper.generateSrcImageDataFromSecretOtpauthUrl(
-      tfaSecretInstance.otpauth_url,
-    );
-    return TFAHelper.downloadSecretQr(qrCodeSrc);
-  }, [tfaSecretInstance?.otpauth_url]);
+  const onCopy = useCallback(() => {
+    copyToClipboard(tfaSecretInstance?.base32);
+  }, [tfaSecretInstance?.base32]);
 
   useEffectOnce(() => {
     const generatedTfaSecretInstance = TFAHelper.createSecret();
@@ -97,7 +92,7 @@ export const useContext = (): UseContextProps => {
     change2FA,
     closeChange2FAModal,
     closeSuccessModal,
-    downloadRecovery2FaSecret,
+    onCopy,
     openChange2FAModal,
     resetError,
   };

@@ -17,7 +17,6 @@ export default class AdminUserChange2FA extends Base {
         'required',
         {
           nested_object: {
-            oldTfaToken: ['string'],
             tfaSecret: ['string'],
             tfaToken: ['string'],
           },
@@ -27,7 +26,7 @@ export default class AdminUserChange2FA extends Base {
   }
 
   async execute({ data }) {
-    const { oldTfaToken, tfaSecret, tfaToken } = data;
+    const { tfaSecret, tfaToken } = data;
 
     const adminUser = await AdminUser.findActive(this.context.adminId);
 
@@ -46,13 +45,6 @@ export default class AdminUserChange2FA extends Base {
         fields: {
           tfaToken: 'INVALID',
         },
-      });
-    }
-
-    if (!adminUser.tfaValidate(oldTfaToken)) {
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: 'INVALID',
       });
     }
 
