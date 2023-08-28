@@ -476,7 +476,7 @@ class WalletDataJob extends CommonJob {
         balance = balanceResponse.balance;
       } catch (e) {
         if (
-          e.errorCode === ERROR_CODES.NOT_FOUND &&
+          (e.errorCode === ERROR_CODES.NOT_FOUND || e.code === ERROR_CODES.NOT_FOUND) &&
           e.json &&
           e.json.message &&
           /Public key not found/i.test(e.json.message)
