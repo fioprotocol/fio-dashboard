@@ -464,6 +464,7 @@ class WalletDataJob extends CommonJob {
   }
 
   async checkBalance(wallet) {
+    logger.info('WALLET', wallet);
     if (wallet.data && wallet.data.isChangeBalanceNotificationCreateStopped) {
       return;
     }
@@ -497,9 +498,10 @@ class WalletDataJob extends CommonJob {
         throw new Error(e);
       }
       const { publicWalletData } = wallet;
-
+      logger.info('PUBLIC WALLET DATA', publicWalletData);
       if (publicWalletData.balance === null) {
         publicWalletData.balance = balance;
+        logger.info('UPDATING BALANCE');
         await PublicWalletData.update(
           { balance },
           { where: { id: publicWalletData.id } },
@@ -507,6 +509,8 @@ class WalletDataJob extends CommonJob {
       }
 
       let previousBalance = publicWalletData.balance;
+      logger.info('NEW BALANCE', balance);
+      logger.info('PREV BALANCE', previousBalance);
       if (!new MathOp(previousBalance).eq(balance)) {
         const existsNotification = await Notification.findOne({
           where: {
@@ -521,6 +525,7 @@ class WalletDataJob extends CommonJob {
           },
           order: [['createdAt', 'DESC']],
         });
+        logger.info('EXISTONG NOTIFICATION', existsNotification);
         const alreadyHasPendingNotification =
           existsNotification &&
           !Var.updateRequired(
@@ -528,6 +533,8 @@ class WalletDataJob extends CommonJob {
             HOUR_MS,
           ) &&
           !existsNotification.emailDate;
+
+        logger.info('ALREADY HAS PENDING NOTIFICATION', alreadyHasPendingNotification);
         if (alreadyHasPendingNotification) {
           previousBalance = fioApi.amountToSUF(
             parseFloat(existsNotification.data.emailData.newFioBalance) -
@@ -561,6 +568,10 @@ class WalletDataJob extends CommonJob {
             },
           });
         } else {
+          logger.info(
+            'HAS EMAIL PARAMS',
+            wallet.User.emailNotificationParams.fioBalanceChange,
+          );
           if (wallet.User.emailNotificationParams.fioBalanceChange) {
             await Notification.create({
               type: Notification.TYPE.INFO,
