@@ -729,28 +729,33 @@ class WalletDataJob extends CommonJob {
     }
 
     while (wallets.length) {
-      if (DEBUG_INFO) this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
+      try {
+        if (DEBUG_INFO)
+          this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
 
-      const methods = wallets.map(wallet => processWallet(wallet));
+        const methods = wallets.map(wallet => processWallet(wallet));
 
-      let chunks = [];
-      for (const method of methods) {
-        chunks.push(method);
-        if (chunks.length === CHUNKS_LIMIT) {
+        let chunks = [];
+        for (const method of methods) {
+          chunks.push(method);
+          if (chunks.length === CHUNKS_LIMIT) {
+            if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
+            await this.executeActions(chunks);
+            await sleep(CHUNKS_TIMEOUT);
+            chunks = [];
+          }
+        }
+
+        if (chunks.length) {
           if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
           await this.executeActions(chunks);
-          await sleep(CHUNKS_TIMEOUT);
-          chunks = [];
         }
-      }
 
-      if (chunks.length) {
-        if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
-        await this.executeActions(chunks);
+        offset += ITEMS_PER_FETCH;
+        wallets = await this.getWallets(offset);
+      } catch (err) {
+        logger.error('PROCESS WALLETS LOOP ERROR', err);
       }
-
-      offset += ITEMS_PER_FETCH;
-      wallets = await this.getWallets(offset);
     }
 
     this.finish();
