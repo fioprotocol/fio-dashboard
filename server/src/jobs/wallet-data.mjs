@@ -500,12 +500,8 @@ class WalletDataJob extends CommonJob {
       const { publicWalletData } = wallet;
       logger.info('PUBLIC WALLET DATA', publicWalletData);
       if (publicWalletData.balance === null) {
-        publicWalletData.balance = balance;
+        publicWalletData.balance = 0;
         logger.info('UPDATING BALANCE');
-        await PublicWalletData.update(
-          { balance },
-          { where: { id: publicWalletData.id } },
-        );
       }
 
       let previousBalance = publicWalletData.balance;
