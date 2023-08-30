@@ -61,7 +61,7 @@ const returnDayRange = timePeriod => {
 
 class WalletDataJob extends CommonJob {
   logFioError(e, wallet, action = '-') {
-    if (e && e.errorCode !== 404) {
+    if (e && (e.errorCode !== 404 || e.code !== 404)) {
       if (wallet && wallet.id)
         this.postMessage(
           `Process wallet error - id: ${wallet.id} - error - ${e.message} - action - ${action}`,
@@ -476,7 +476,7 @@ class WalletDataJob extends CommonJob {
         balance = balanceResponse.balance;
       } catch (e) {
         if (
-          e.errorCode === ERROR_CODES.NOT_FOUND &&
+          (e.errorCode === ERROR_CODES.NOT_FOUND || e.code === ERROR_CODES.NOT_FOUND) &&
           e.json &&
           e.json.message &&
           /Public key not found/i.test(e.json.message)
@@ -499,11 +499,7 @@ class WalletDataJob extends CommonJob {
       const { publicWalletData } = wallet;
 
       if (publicWalletData.balance === null) {
-        publicWalletData.balance = balance;
-        await PublicWalletData.update(
-          { balance },
-          { where: { id: publicWalletData.id } },
-        );
+        publicWalletData.balance = 0;
       }
 
       let previousBalance = publicWalletData.balance;
@@ -521,6 +517,7 @@ class WalletDataJob extends CommonJob {
           },
           order: [['createdAt', 'DESC']],
         });
+
         const alreadyHasPendingNotification =
           existsNotification &&
           !Var.updateRequired(
@@ -528,6 +525,7 @@ class WalletDataJob extends CommonJob {
             HOUR_MS,
           ) &&
           !existsNotification.emailDate;
+
         if (alreadyHasPendingNotification) {
           previousBalance = fioApi.amountToSUF(
             parseFloat(existsNotification.data.emailData.newFioBalance) -
@@ -718,28 +716,33 @@ class WalletDataJob extends CommonJob {
     }
 
     while (wallets.length) {
-      if (DEBUG_INFO) this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
+      try {
+        if (DEBUG_INFO)
+          this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
 
-      const methods = wallets.map(wallet => processWallet(wallet));
+        const methods = wallets.map(wallet => processWallet(wallet));
 
-      let chunks = [];
-      for (const method of methods) {
-        chunks.push(method);
-        if (chunks.length === CHUNKS_LIMIT) {
+        let chunks = [];
+        for (const method of methods) {
+          chunks.push(method);
+          if (chunks.length === CHUNKS_LIMIT) {
+            if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
+            await this.executeActions(chunks);
+            await sleep(CHUNKS_TIMEOUT);
+            chunks = [];
+          }
+        }
+
+        if (chunks.length) {
           if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
           await this.executeActions(chunks);
-          await sleep(CHUNKS_TIMEOUT);
-          chunks = [];
         }
-      }
 
-      if (chunks.length) {
-        if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
-        await this.executeActions(chunks);
+        offset += ITEMS_PER_FETCH;
+        wallets = await this.getWallets(offset);
+      } catch (err) {
+        logger.error('PROCESS WALLETS LOOP ERROR', err);
       }
-
-      offset += ITEMS_PER_FETCH;
-      wallets = await this.getWallets(offset);
     }
 
     this.finish();

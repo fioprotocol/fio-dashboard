@@ -14,7 +14,20 @@ export default class GetInfuraNfts extends Base {
 
   async execute({ account, chainId }) {
     try {
-      const res = await infuraNftApi.getAllNftsFromAccount({ account, chainId });
+      let res = await infuraNftApi.getAllNftsFromAccount({
+        account,
+        chainId,
+      });
+
+      if (res.some(nftItem => nftItem.metadata == null)) {
+        res = await await infuraNftApi.getAllNftsFromAccount({
+          account,
+          chainId,
+          params: {
+            resyncMetadata: true,
+          },
+        });
+      }
 
       return {
         data: res.filter(
