@@ -118,12 +118,15 @@ const WalletPage: React.FC = () => {
     receivedFioRequests,
     sentFioRequests,
     obtData,
+    obtDataLoading,
+    sentFioRequestsLoading,
+    receivedFioRequestsLoading,
     welcomeComponentProps,
     closeWalletNameEdit,
     onKeyShow,
     onShowPrivateModalClose,
     onWalletUpdated,
-    getFioRequests,
+    tabAction,
   } = useContext();
 
   if (error)
@@ -139,6 +142,8 @@ const WalletPage: React.FC = () => {
         </LayoutContainer>
       </div>
     );
+
+  console.log(fioWallet);
 
   if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
@@ -177,7 +182,10 @@ const WalletPage: React.FC = () => {
           receivedFioRequests={receivedFioRequests}
           sentFioRequests={sentFioRequests}
           obtData={obtData}
-          getFioRequests={getFioRequests}
+          obtDataLoading={obtDataLoading}
+          sentFioRequestsLoading={sentFioRequestsLoading}
+          receivedFioRequestsLoading={receivedFioRequestsLoading}
+          tabAction={tabAction}
         />
         <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>

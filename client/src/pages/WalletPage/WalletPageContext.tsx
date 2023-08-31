@@ -13,11 +13,16 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 import useQuery from '../../hooks/useQuery';
+import useEffectOnce from '../../hooks/general';
+import { log } from '../../util/general';
 
 import {
   PAGE_TYPES,
   PAGE_TYPES_PROPS,
 } from '../../components/WelcomeComponent/constants';
+import { WALLET_TABS_LIST } from './components/WalletTabs';
+import { FIO_RECORD_TYPES } from './constants';
+
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import apis from '../../api';
@@ -46,6 +51,9 @@ type UseContextProps = {
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
   obtData: FioRecord[];
+  obtDataLoading: boolean;
+  sentFioRequestsLoading: boolean;
+  receivedFioRequestsLoading: boolean;
   welcomeComponentProps: {
     noPaddingTop: boolean;
     onlyActions: boolean;
@@ -55,7 +63,7 @@ type UseContextProps = {
   onKeyShow: () => void;
   onShowPrivateModalClose: () => void;
   onWalletUpdated: () => void;
-  getFioRequests: () => void;
+  tabAction: (tabKey: string) => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -71,9 +79,22 @@ export const useContext = (): UseContextProps => {
   );
   const [sentFioRequests, setSentFioRequests] = useState<FioRecord[]>([]);
   const [obtData, setObtData] = useState<FioRecord[]>([]);
+  const [sentFioRequestsLoading, toggleSentFioRequestsLoading] = useState<
+    boolean
+  >(false);
+  const [
+    receivedFioRequestsLoading,
+    toggleReceivedFioRequestsLoading,
+  ] = useState<boolean>(false);
+  const [obtDataLoading, toggleObtDataLoading] = useState<boolean>(false);
 
   const queryParams = useQuery();
-  const publicKey = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+  const publicKey =
+    queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY) ||
+    (window.location.search &&
+      window.location.search
+        .split(`${QUERY_PARAMS_NAMES.PUBLIC_KEY}=`)[1]
+        .split('&')[0]);
   const location = useLocation<{ isOpenLockedList: boolean }>();
   const { isOpenLockedList = false } = location?.state || {};
 
@@ -88,6 +109,7 @@ export const useContext = (): UseContextProps => {
   const fioCryptoHandles = fioAddresses.filter(
     fioAddress => fioAddress.walletPublicKey === publicKey,
   );
+
   const fioWallet = fioWallets.find(
     fioWallet => fioWallet?.publicKey === publicKey,
   );
@@ -108,21 +130,68 @@ export const useContext = (): UseContextProps => {
     fioWalletTxHistory?.txs.length === 0;
 
   const getReceivedFioRequests = useCallback(async () => {
-    const receivedFioRequests = await apis.fio.getReceivedFioRequests(
-      publicKey,
-    );
-    setReceivedFioRequests(receivedFioRequests);
+    try {
+      toggleReceivedFioRequestsLoading(true);
+
+      const receivedFioRequests = await apis.fio.getReceivedFioRequests(
+        publicKey,
+      );
+
+      setReceivedFioRequests(receivedFioRequests?.reverse());
+    } catch (err) {
+      log.error(err);
+    } finally {
+      toggleReceivedFioRequestsLoading(false);
+    }
   }, [publicKey]);
 
   const getSentFioRequests = useCallback(async () => {
-    const sentFioRequests = await apis.fio.getSentFioRequests(publicKey);
-    setSentFioRequests(sentFioRequests);
+    try {
+      toggleSentFioRequestsLoading(true);
+      const sentFioRequests = await apis.fio.getSentFioRequests(publicKey);
+      setSentFioRequests(sentFioRequests?.reverse());
+    } catch (err) {
+      log.error(err);
+    } finally {
+      toggleSentFioRequestsLoading(false);
+    }
   }, [publicKey]);
 
   const getObtData = useCallback(async () => {
-    const obtData = await apis.fio.getObtData(publicKey);
-    setObtData(obtData);
+    try {
+      toggleObtDataLoading(true);
+      const obtData = await apis.fio.getObtData(publicKey);
+      setObtData(
+        obtData?.sort(
+          (a: FioRecord, b: FioRecord) =>
+            new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
+        ),
+      );
+    } catch (err) {
+      log.error(err);
+    } finally {
+      toggleObtDataLoading(false);
+    }
   }, [publicKey]);
+
+  const tabAction = useCallback(
+    async (tabKey: string) => {
+      if (tabKey === WALLET_TABS_LIST[1].eventKey) {
+        await getObtData();
+      }
+
+      if (tabKey === FIO_RECORD_TYPES.SENT) {
+        await getObtData();
+        await getSentFioRequests();
+      }
+
+      if (tabKey === FIO_RECORD_TYPES.RECEIVED) {
+        await getObtData();
+        await getReceivedFioRequests();
+      }
+    },
+    [getObtData, getReceivedFioRequests, getSentFioRequests],
+  );
 
   const getFioRequests = useCallback(() => {
     getReceivedFioRequests();
@@ -135,7 +204,7 @@ export const useContext = (): UseContextProps => {
       setError(`FIO Wallet (${publicKey}) is not available`);
   }, [publicKey, fioWallet, profileRefreshed]);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     getFioRequests();
   }, [getFioRequests]);
 
@@ -175,11 +244,14 @@ export const useContext = (): UseContextProps => {
     receivedFioRequests,
     sentFioRequests,
     obtData,
+    obtDataLoading,
+    sentFioRequestsLoading,
+    receivedFioRequestsLoading,
     welcomeComponentProps,
     closeWalletNameEdit,
     onKeyShow,
     onShowPrivateModalClose,
     onWalletUpdated,
-    getFioRequests,
+    tabAction,
   };
 };
