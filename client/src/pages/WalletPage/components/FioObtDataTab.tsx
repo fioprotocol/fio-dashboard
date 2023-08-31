@@ -16,6 +16,7 @@ type Props = {
   fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
   obtData: FioRecord[];
+  obtDataLoading: boolean;
 };
 
 const FioObtDataTab: React.FC<Props> = props => {
@@ -26,7 +27,7 @@ const FioObtDataTab: React.FC<Props> = props => {
           new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
       )}
       fioRecordType={FIO_RECORD_TYPES.DATA}
-      loading={false}
+      loading={props.obtDataLoading}
       {...props}
     />
   );
