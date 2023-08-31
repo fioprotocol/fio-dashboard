@@ -24,7 +24,10 @@ type Props = {
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
   obtData: FioRecord[];
-  getFioRequests: () => void;
+  obtDataLoading: boolean;
+  sentFioRequestsLoading: boolean;
+  receivedFioRequestsLoading: boolean;
+  tabAction: (tabKey: string) => void;
 };
 
 type Location = {
@@ -35,7 +38,7 @@ type Location = {
   };
 };
 
-const WALLET_TABS_LIST = [
+export const WALLET_TABS_LIST = [
   {
     eventKey: 'fioRequests',
     title: 'FIO Requests',
@@ -70,7 +73,7 @@ const WalletTabs: React.FC<Props> = props => {
         tabProps={props}
         showTabBorder
         tabBorderPrimary
-        getFioRequests={props.getFioRequests}
+        tabAction={props.tabAction}
       />
     </TabsContainer>
   );
