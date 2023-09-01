@@ -3,7 +3,7 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  height: 400px;
+  min-height: 400px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -78,7 +78,7 @@
 @include sm {
   .container {
     padding: 70px 52px;
-    height: 660px;
+    min-height: 660px;
 
     .row {
       flex-direction: column;
