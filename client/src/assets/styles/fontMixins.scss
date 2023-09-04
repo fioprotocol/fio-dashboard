@@ -1,38 +1,5 @@
-@mixin code-pro {
-  font-family: 'CodeProLC';
-}
-
-@mixin gotha-pro-med {
-  font-family: 'GothaProMed';
-}
-
-@mixin myriad-pro-regular {
-  font-family: 'MyriadProRegular';
-}
-
-@mixin helvetica {
-  font-family: 'Helvetica';
-}
-
-
-@mixin helvetica-bold {
-  font-family: 'Helvetica Bold';
-}
-
 @mixin helvetica-neue {
   font-family: 'HelveticaNeue';
-}
-
-@mixin helvetica-neue-light {
-  font-family: 'HelveticaNeue Light';
-}
-
-@mixin helvetica-neue-medium {
-  font-family: 'HelveticaNeue Medium';
-}
-
-@mixin helvetica-neue-bold {
-  font-family: 'HelveticaNeue Bold';
 }
 
 @mixin proxima-nova-regular {
