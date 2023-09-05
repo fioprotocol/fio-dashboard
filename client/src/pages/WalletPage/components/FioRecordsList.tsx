@@ -181,7 +181,7 @@ const FioRecordsList: React.FC<Props> = props => {
     );
   };
 
-  const hasNextPage = visibleTransactionsCount < fioDataList.length;
+  const hasNextPage = visibleTransactionsCount < fioDataList?.length;
 
   return (
     <div className={classes.container}>
@@ -192,7 +192,7 @@ const FioRecordsList: React.FC<Props> = props => {
         hasReverseLoading={loading}
       >
         {fioDataList
-          .slice(
+          ?.slice(
             0,
             !hasNextPage ? fioDataList.length : visibleTransactionsCount,
           )
