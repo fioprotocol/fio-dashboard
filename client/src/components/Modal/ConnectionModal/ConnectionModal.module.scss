@@ -6,11 +6,18 @@
   font-size: 40px;
 }
 
-.title, .transactionTitle {
+.connectIcon {
+  margin-top: 20px;
+  font-size: 56px;
+  transform: rotate(270deg) scale(-1, 1.5);
+}
+
+.transactionTitle {
   margin-top: 30px;
 }
 
 .title {
+  margin-top: 10px;
   font-size: 1.25em;
 }
 
@@ -31,6 +38,7 @@
   margin-top: 15px;
   margin-bottom: 30px;
   max-width: 290px;
+  text-align: center;
   @include sf-pro-display-medium;
 }
 

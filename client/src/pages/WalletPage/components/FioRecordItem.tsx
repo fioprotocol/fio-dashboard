@@ -1,5 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import FioRequestStatusBadge from '../../../components/Badges/FioRequestStatusBadge/FioRequestStatusBadge';
 
@@ -9,7 +11,7 @@ import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { commonFormatTime } from '../../../util/general';
 import { transformFioRecord } from '../util';
 
-import { CONTENT_TYPE } from '../constants';
+import { CONTENT_TYPE, FIO_RECORD_TYPES } from '../constants';
 
 import { FioRecord } from '../../../types';
 
@@ -67,10 +69,12 @@ const FioRecordItem: React.FC<Props> = props => {
                 isGreen={CONTENT_TYPE[fioTxType].isGreen}
               >
                 <div className={classes.iconContainer}>
-                  <FontAwesomeIcon
-                    icon={CONTENT_TYPE[fioTxType].icon}
-                    className={classes.icon}
-                  />
+                  {fioTxType === FIO_RECORD_TYPES.SENT && (
+                    <ArrowUpwardIcon className={classes.icon} />
+                  )}
+                  {fioTxType === FIO_RECORD_TYPES.RECEIVED && (
+                    <ArrowDownwardIcon className={classes.icon} />
+                  )}
                 </div>
               </CommonBadge>
               <p className={classes.fioTxType}>{fioTxType}</p>
@@ -83,7 +87,7 @@ const FioRecordItem: React.FC<Props> = props => {
               <FioRequestStatusBadge status={status} />
             </div>
           )}
-          <FontAwesomeIcon icon="chevron-right" className={classes.iconArrow} />
+          <ChevronRightIcon className={classes.iconArrow} />
         </div>
       </Badge>
     </div>

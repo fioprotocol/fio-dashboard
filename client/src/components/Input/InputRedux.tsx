@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
+import Loader from '../Loader/Loader';
 
 import { ErrorBadge, COLOR_TYPE } from './ErrorBadge';
 import {
@@ -121,6 +121,7 @@ const InputRedux: React.FC<Props> = props => {
             uiType && classes[uiType],
             prefix && classes.prefixSpace,
             type === 'password' && classes.doubleIconInput,
+            showPasteButton && classes.hasPasteButton,
           )}
           {...input}
           {...rest}
@@ -158,9 +159,8 @@ const InputRedux: React.FC<Props> = props => {
           uiType={uiType}
         />
         {loading && (
-          <FontAwesomeIcon
-            icon={faSpinner}
-            spin
+          <Loader
+            hasSmallSize
             className={classnames(classes.inputIcon, classes.inputSpinnerIcon)}
           />
         )}

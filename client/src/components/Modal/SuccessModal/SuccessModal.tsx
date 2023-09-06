@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CheckIcon from '@mui/icons-material/Check';
 
 import Modal from '../Modal';
 
@@ -25,7 +25,7 @@ const SuccessModal: React.FC<Props> = props => {
       onClose={onClose}
     >
       <div className={classes.container}>
-        <FontAwesomeIcon icon="check" className={classes.icon} />
+        <CheckIcon className={classes.icon} />
         <h4 className={classes.title}>{title}</h4>
         <p className={classes.subtitle}>{subtitle}</p>
         <Button className={classes.button} onClick={onClose}>

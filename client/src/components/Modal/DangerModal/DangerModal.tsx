@@ -1,7 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import BlockIcon from '@mui/icons-material/Block';
 
 import Modal from '../Modal';
+import Loader from '../../Loader/Loader';
 import CancelButton from '../../common/CancelButton/CancelButton';
 
 import classes from './DangerModal.module.scss';
@@ -36,7 +37,7 @@ const DangerModal: React.FC<Props> = props => {
   } = props;
   return (
     <Modal show={show} onClose={onClose} isDanger={true} closeButton={!loading}>
-      <FontAwesomeIcon icon="ban" className={classes.icon} />
+      <BlockIcon className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
       {notice}
@@ -45,10 +46,8 @@ const DangerModal: React.FC<Props> = props => {
         className={classes.actionButton}
         disabled={loading}
       >
-        {buttonText}
-        {loading && (
-          <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
-        )}
+        <p className={classes.buttonText}>{buttonText}</p>
+        {loading && <Loader className={classes.spinner} />}
       </button>
       {showCancel && (
         <div className={classes.cancelButton}>

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import TokenBadge from '../../../components/Badges/TokenBadge/TokenBadge';
 
@@ -24,11 +24,7 @@ export const AddTokenBadge: React.FC<Props> = props => {
     <TokenBadge
       {...token}
       actionButton={
-        <FontAwesomeIcon
-          icon="times-circle"
-          className={classes.closeIcon}
-          onClick={handleRemove}
-        />
+        <CancelIcon className={classes.closeIcon} onClick={handleRemove} />
       }
     />
   );

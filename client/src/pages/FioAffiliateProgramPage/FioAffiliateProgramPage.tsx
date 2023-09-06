@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import { DataValue } from '../../components/FioTokensReceive/components/DataValue';
@@ -66,7 +66,7 @@ const FioAffiliateProgramPage: React.FC = () => {
             </div>
             <div className={classes.input} onClick={onOpenModal}>
               {tpid}
-              <FontAwesomeIcon className={classes.icon} icon="chevron-right" />
+              <ChevronRightOutlinedIcon className={classes.icon} />
             </div>
           </div>
         </div>

@@ -48,6 +48,7 @@
     flex-flow: wrap;
     justify-content: space-between;
     margin-bottom: 30px;
+    gap: 20px;
 
     .link {
       button {
@@ -68,9 +69,6 @@
           background-color: $iris;
           border-color: $iris;
         }
-      }
-      .middleButton {
-        margin: 0 20px 0;
       }
       .icon {
         font-size: 1rem;

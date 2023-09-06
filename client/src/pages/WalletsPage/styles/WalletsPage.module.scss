@@ -57,6 +57,7 @@
   align-items: center;
   justify-content: center;
   min-height: 36px;
+  gap: 10px;
   @include sf-pro-display-thin;
 
   span {
@@ -64,22 +65,15 @@
     font-weight: bold;
   }
 
-  .unwrapIcon {
-    width: 20px;
-    margin-right: 9px;
-    margin-bottom: 2px;
-  }
-
   button {
     background: none;
     border: none;
     width: 100%;
     border-radius: 50px;
-  }
-
-  svg {
-    margin-right: 10px;
-    margin-left: 3px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
   }
 }
 

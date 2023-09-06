@@ -1,9 +1,10 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconName } from '@fortawesome/fontawesome-svg-core';
 import ClearButton from '@mui/icons-material/Clear';
 import WarningIcon from '@mui/icons-material/Warning';
 import classnames from 'classnames';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ErrorIcon from '@mui/icons-material/Error';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
@@ -20,7 +21,6 @@ type Props = {
   show: boolean;
   title: string | React.ReactNode;
   type: string;
-  iconName?: IconName;
   mainIcon?: React.ReactElement | null;
   hasNewDesign?: boolean;
   marginBottomXs?: boolean;
@@ -56,7 +56,6 @@ const NotificationBadge: React.FC<Props> = props => {
     show,
     title,
     type,
-    iconName,
     hasNewDesign,
     mainIcon,
     marginBottomXs,
@@ -105,29 +104,17 @@ const NotificationBadge: React.FC<Props> = props => {
       withoutMargin={withoutMargin}
       className={className}
     >
-      <FontAwesomeIcon
-        icon={iconName || 'exclamation-circle'}
-        className={classes.icon}
-      />
-
+      <ErrorIcon className={classes.icon} />
       <div className={classes.textContainer}>
         <span className={classes.title}>{title}</span>
         {!noDash && ' - '}
         {message}
         {arrowAction && (
-          <FontAwesomeIcon
-            icon="arrow-right"
-            className={classes.arrow}
-            onClick={arrowAction}
-          />
+          <ArrowForwardIcon className={classes.arrow} onClick={arrowAction} />
         )}
       </div>
       {onClose && (
-        <FontAwesomeIcon
-          icon="times-circle"
-          className={classes.closeIcon}
-          onClick={onClose}
-        />
+        <CancelIcon className={classes.closeIcon} onClick={onClose} />
       )}
     </Badge>
   );

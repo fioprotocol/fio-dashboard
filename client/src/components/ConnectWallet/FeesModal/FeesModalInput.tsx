@@ -4,7 +4,6 @@ import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { ethers } from 'ethers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { ErrorBadge } from '../../Input/ErrorBadge';
 import Modal from '../../Modal/Modal';
@@ -14,6 +13,7 @@ import TabsContainer from '../../Tabs/TabsContainer';
 import Tabs from '../../Tabs/Tabs';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import { ClearButton } from '../../Input/InputActionButtons';
+import Loader from '../../Loader/Loader';
 
 import useLoadFeePriceSuggestions from '../../../hooks/externalWalletsConnection/useLoadFeesSuggestions';
 import MathOp from '../../../util/math';
@@ -306,11 +306,7 @@ const TabsList = [
         ) : (
           <div>
             {isSuggestionsLoading ? (
-              <FontAwesomeIcon
-                className="w-100 d-flex text-center mb-3"
-                icon="spinner"
-                spin
-              />
+              <Loader className="w-100 d-flex text-center mb-3" />
             ) : (
               <div className={classes.notFound}>No Data Loaded</div>
             )}

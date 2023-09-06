@@ -1,8 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import TokenBadge from '../../../components/Badges/TokenBadge/TokenBadge';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
+import Loader from '../../../components/Loader/Loader';
 
 import { genericTokenId } from '../../../util/fio';
 
@@ -18,8 +18,7 @@ type Props = {
 const PublicAddresses: React.FC<Props> = props => {
   const { publicAddresses, loading } = props;
 
-  if (loading)
-    return <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />;
+  if (loading) return <Loader className="mt-4" />;
 
   if (!publicAddresses || publicAddresses.length === 0)
     return (

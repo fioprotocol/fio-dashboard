@@ -2,11 +2,10 @@ import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import isEmpty from 'lodash/isEmpty';
 import { OnChange } from 'react-final-form-listeners';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import classnames from 'classnames';
+import BlockIcon from '@mui/icons-material/Block';
 
 import Link from '../Link/Link';
 import Input from '../Input/Input';
@@ -39,7 +38,6 @@ type OwnProps = {
   loginFailure: LoginFailure;
   edgeLoginFailure: { name?: string; type?: string };
   title: string;
-  headerIcon?: IconProp | null;
   initialValues: { email?: string; password?: string };
 };
 type Props = OwnProps;
@@ -54,7 +52,6 @@ const UsernamePassword: React.FC<Props> = props => {
     edgeLoginFailure,
     toggleForgotPass,
     title,
-    headerIcon,
     initialValues,
   } = props;
 
@@ -141,16 +138,6 @@ const UsernamePassword: React.FC<Props> = props => {
     toggleForgotPass(false);
   };
 
-  const renderIcon = () => {
-    if (!headerIcon) return null;
-
-    return (
-      <div className="mb-4">
-        <FontAwesomeIcon icon={headerIcon} className={classes.headerIcon} />
-      </div>
-    );
-  };
-
   const renderCreateAccount = () => {
     return (
       <p className="regular-text">
@@ -170,7 +157,7 @@ const UsernamePassword: React.FC<Props> = props => {
   const renderForgotPass = () => (
     <div className={classes.forgotPass}>
       {isForgotPass && <PageTitle link={LINKS.RESET_PASSWORD} isVirtualPage />}
-      <FontAwesomeIcon icon="ban" className={classes.icon} />
+      <BlockIcon className={classes.icon} />
       <FormHeader
         title="Forgot Password?"
         subtitle={
@@ -197,7 +184,6 @@ const UsernamePassword: React.FC<Props> = props => {
     currentForm = form;
     return (
       <form onSubmit={login}>
-        {renderIcon()}
         <FormHeader title={title} />
         <Field
           name="email"
