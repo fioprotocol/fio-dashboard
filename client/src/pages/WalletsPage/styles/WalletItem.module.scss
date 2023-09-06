@@ -58,18 +58,17 @@
     }
     .detailsButton {
       display: block;
-      font-size: 1em;
       color: $baltic-sea;
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      right: 0;
+      right: -15px;
       transition: 0.2s ease-in-out;
     }
 
     &:hover {
       .detailsButton {
-        transform: translateY(-51%);
+        right: -22px;
       }
     }
   }

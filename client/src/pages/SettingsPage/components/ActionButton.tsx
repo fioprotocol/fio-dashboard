@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Loader from '../../../components/Loader/Loader';
 
 import classes from '../styles/ActionButton.module.scss';
 
@@ -27,10 +28,8 @@ const ActionButton: React.FC<Props> = props => {
       )}
       disabled={loading}
     >
-      {title}
-      {loading && (
-        <FontAwesomeIcon icon="spinner" spin className={classes.loading} />
-      )}
+      <p className={classes.title}>{title}</p>
+      {loading && <Loader className={classes.loading} />}
     </Button>
   );
 };

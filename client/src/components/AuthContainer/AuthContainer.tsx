@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
+import Loader from '../Loader/Loader';
 
 import CreateAccount from '../../pages/CreateAccountPage';
 import { ROUTES } from '../../constants/routes';
@@ -26,9 +26,7 @@ const AuthContainer: React.FC<Props & RouteComponentProps> = props => {
 
   return (
     <div className={styles.container}>
-      {(loading || !edgeContextSet) && (
-        <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
-      )}
+      {(loading || !edgeContextSet) && <Loader className={styles.spinner} />}
       {!isAuthenticated && edgeContextSet && (
         <Switch>
           <Route path={ROUTES.CREATE_ACCOUNT} component={CreateAccount} exact />

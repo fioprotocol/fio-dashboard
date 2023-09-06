@@ -1,5 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import { FioAddress } from '../FioAddress';
 
@@ -42,10 +42,7 @@ export const MobileView: React.FC<MobileViewProps> = props => {
               onClick={() => onItemModalOpen && onItemModalOpen(fioNameItem)}
             >
               {isAddress ? <FioAddress name={name} /> : name}
-              <FontAwesomeIcon
-                icon="chevron-right"
-                className={classes.openIcon}
-              />
+              <ChevronRightIcon className={classes.openIcon} />
             </div>
           );
         })}

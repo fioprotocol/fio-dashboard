@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 
+import Loader from '../../Loader/Loader';
 import Modal from '../Modal';
 
 import ledgerIcon from '../../../assets/images/ledger-logo-svg-vector.svg';
@@ -43,7 +44,7 @@ const ConnectionModal: React.FC<Props> = props => {
 
   const renderRegular = () => (
     <>
-      <FontAwesomeIcon icon="exchange-alt" className={classes.icon} />
+      <ImportExportIcon className={classes.connectIcon} />
       <h4 className={classes.title}>Connect</h4>
       <p className={classes.text}>
         {message
@@ -68,11 +69,7 @@ const ConnectionModal: React.FC<Props> = props => {
           : 'Please connect your Ledger device, open FIO App and confirm your transactions.'}
       </p>
       {renderContinue()}
-      {awaitingLedger ? (
-        <p>
-          <FontAwesomeIcon icon="spinner" spin={true} />
-        </p>
-      ) : null}
+      {awaitingLedger ? <Loader isWhite hasSmallSize className="mb-4" /> : null}
     </>
   );
 

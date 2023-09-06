@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import { FieldRenderProps } from 'react-final-form';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ImageIcon from '@mui/icons-material/Image';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import { ErrorBadge } from './ErrorBadge';
 import { CheckedIcon, PasteButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
+import Loader from '../Loader/Loader';
 import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
@@ -177,8 +182,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           />
         </div>
         {(clearInput || onClose) && !disabled && !loading && (
-          <FontAwesomeIcon
-            icon="times-circle"
+          <CancelIcon
             className={classnames(
               classes.inputIcon,
               (type === 'password' || showCheckIcon) && classes.doubleIcon,
@@ -195,17 +199,27 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             }}
           />
         )}
-        {clearInput && type === 'password' && (
-          <FontAwesomeIcon
-            icon={!showPass ? 'eye' : 'eye-slash'}
-            className={classnames(
-              classes.inputIcon,
-              disabled && classes.disabled,
-              uiType && classes[uiType],
-            )}
-            onClick={() => !disabled && toggleShowPass(!showPass)}
-          />
-        )}
+        {clearInput &&
+          type === 'password' &&
+          (showPass ? (
+            <VisibilityOffIcon
+              className={classnames(
+                classes.inputIcon,
+                disabled && classes.disabled,
+                uiType && classes[uiType],
+              )}
+              onClick={() => !disabled && toggleShowPass(!showPass)}
+            />
+          ) : (
+            <VisibilityIcon
+              className={classnames(
+                classes.inputIcon,
+                disabled && classes.disabled,
+                uiType && classes[uiType],
+              )}
+              onClick={() => !disabled && toggleShowPass(!showPass)}
+            />
+          ))}
         <CheckedIcon isVisible={showCheckIcon && !loading} />
         <PasteButton
           isVisible={showPasteButton && !value}
@@ -219,9 +233,8 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           uiType={uiType}
         />
         {loading && (
-          <FontAwesomeIcon
-            icon={faSpinner}
-            spin
+          <Loader
+            hasSmallSize
             className={classnames(
               classes.inputIcon,
               classes.inputSpinnerIcon,
@@ -280,7 +293,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           <img className={classes.image} src={previewUrl} alt="preview" />
         ) : (
           <>
-            <FontAwesomeIcon icon="image" className={classes.icon} />
+            <ImageIcon className={classes.icon} />
             <p className={classes.text}>Drop Image Here</p>
           </>
         )}
@@ -311,16 +324,14 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     return (
       <label className={classnames(classes.checkboxContainer, wrapperClasses)}>
         <input disabled={disabled} {...rest} {...input} />
-        <FontAwesomeIcon
-          icon="check-square"
+        <CheckBoxIcon
           className={classnames(
             classes.checked,
             uiType && classes[uiType],
             hasSmallText && classes.smallText,
           )}
         />
-        <FontAwesomeIcon
-          icon={{ prefix: 'far', iconName: 'square' }}
+        <CheckBoxOutlineBlankIcon
           className={classnames(
             classes.unchecked,
             uiType && classes[uiType],

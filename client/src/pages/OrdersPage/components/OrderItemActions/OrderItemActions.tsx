@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classnames from 'classnames';
+import PrintIcon from '@mui/icons-material/Print';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
+import Loader from '../../../../components/Loader/Loader';
 
 import { ORDER_NUMBER_PARAM_NAME } from '../../../../constants/order';
 import { ROUTES } from '../../../../constants/routes';
@@ -53,24 +56,21 @@ export const OrderItemActions: React.FC<Props> = props => {
       >
         <Button className={classes.button}>VIEW</Button>
       </Link>
-
-      <FontAwesomeIcon
-        icon="print"
+      <PrintIcon
         className={classnames(
           classes.icon,
           disablePrintButton && classes.disabledButton,
         )}
         onClick={handlePrintClick}
       />
-      <FontAwesomeIcon
-        icon={pdfLoading ? 'circle-notch' : 'download'}
-        spin={pdfLoading}
-        className={classnames(
-          classes.icon,
-          disablePdfButton && classes.disabledButton,
-        )}
-        onClick={handleDownloadClick}
-      />
+      {pdfLoading ? (
+        <Loader className={classes.loader} />
+      ) : (
+        <FileDownloadIcon
+          className={classes.icon}
+          onClick={handleDownloadClick}
+        />
+      )}
     </div>
   );
 };

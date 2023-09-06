@@ -40,7 +40,6 @@
   }
 
   .icon {
-    font-size: 1rem;
     line-height: 0;
     margin-right: 10px;
   }
@@ -50,7 +49,6 @@
   color: $dark-gray;
   cursor: pointer;
   transition: all 0.2s ease-in;
-  font-size: 1.25rem;
 
   &:hover {
     transform: rotate(90deg);
@@ -78,6 +76,8 @@
       .popularListItemTitleCheckIcon {
         color: $green;
         display: inline;
+        width: 16px;
+        height: 16px;
       }
     }
 
@@ -176,10 +176,6 @@
     margin: 20px 0;
     @include proxima-nova-regular;
     color: $baltic-sea;
-  }
-
-  .modalBadgeIcon {
-    font-size: 20px;
   }
 
   .modalBadgeTextContainer {

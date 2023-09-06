@@ -5,7 +5,6 @@
   position: relative;
 
   .allChecked {
-    font-size: 20px;
     position: absolute;
     left: 12px;
     z-index: 1002; //show over dropdown
@@ -20,7 +19,7 @@
   }
   .dropdown {
     .icon {
-      font-size: 13px;
+      font-size: 20px;
       line-height: 0;
     }
   }

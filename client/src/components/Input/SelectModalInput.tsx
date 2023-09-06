@@ -2,7 +2,7 @@ import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import { ErrorBadge } from './ErrorBadge';
 import Modal from '../Modal/Modal';
@@ -392,13 +392,8 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
           />
         </div>
         {!loading && (
-          <FontAwesomeIcon
-            icon="chevron-right"
-            className={classnames(
-              classes.inputIcon,
-              uiType && classes[uiType],
-              classes.medium,
-            )}
+          <ChevronRightIcon
+            className={classnames(classes.inputIcon, uiType && classes[uiType])}
           />
         )}
         <LoadingIcon isVisible={loading} uiType={uiType} />

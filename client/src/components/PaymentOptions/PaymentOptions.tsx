@@ -1,6 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import has from 'lodash/has';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 import { PaymentButton } from './components/PaymentButton';
 import { BitPayButtonText, BITPAY_LOGO_WIDTH } from '../BitPayButton';
@@ -50,7 +51,7 @@ const PAYMENT_OPTIONS_PROPS = {
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
-    icon: <FontAwesomeIcon icon="wallet" />,
+    icon: <AccountBalanceWalletIcon className={classes.icon} />,
     disabled:
       paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.FIO,
@@ -66,7 +67,7 @@ const PAYMENT_OPTIONS_PROPS = {
     totlaCartUsdcAmount,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
-    icon: <FontAwesomeIcon icon="credit-card" />,
+    icon: <CreditCardIcon className={classes.icon} />,
     disabled: cartItems?.length === 0 || disabled,
     hideButton: new MathOp(totlaCartUsdcAmount).lt(0.5),
     provider: PAYMENT_PROVIDER.STRIPE,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import { TokenBadgeProps } from './types';
@@ -57,8 +57,7 @@ const TokenBadgeMobile: React.FC<TokenBadgeProps> = props => {
             {actionButton ? (
               actionButton
             ) : (
-              <FontAwesomeIcon
-                icon="chevron-down"
+              <ExpandMoreIcon
                 className={classnames(classes.icon, isOpen && classes.open)}
               />
             )}

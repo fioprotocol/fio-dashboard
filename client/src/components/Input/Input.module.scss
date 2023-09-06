@@ -43,8 +43,8 @@
     transition: max-height 0.3s ease-out;
 
     .errorIcon {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       margin-right: 10px;
       max-height: inherit;
     }
@@ -176,7 +176,10 @@
   }
 
   .exchangeIconItem {
-    height: 14px;
+    width: 16px;
+    margin-right: -4px;
+    stroke: $manatee;
+    stroke-width: 1;
   }
 
   .exchangeTextItem {
@@ -235,10 +238,6 @@
       color: $light-indigo;
     }
 
-    &.medium {
-      height: 13px;
-    }
-
     &.disabled {
       cursor: default;
     }
@@ -254,7 +253,6 @@
   }
 
   .inputSpinnerIcon {
-    margin-top: -10px;
     cursor: default;
 
     &.indigoWhite {

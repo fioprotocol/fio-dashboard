@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Loader from '../../../../components/Loader/Loader';
 
 import {
   PURCHASE_RESULTS_STATUS,
@@ -21,7 +21,7 @@ const DefaultTitle: React.FC<DefaultTitleProps> = props => {
   return (
     <div className={classes.container}>
       <div className={classes.iconContainer}>
-        <FontAwesomeIcon icon="circle-notch" spin className={classes.icon} />
+        <Loader className={classes.icon} />
       </div>
       {props.title}
     </div>

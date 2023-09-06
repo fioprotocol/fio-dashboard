@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import BlockIcon from '@mui/icons-material/Block';
+import InfoIcon from '@mui/icons-material/Info';
 
 import InfoBadge from '../InfoBadge/InfoBadge';
 
@@ -69,7 +69,7 @@ export const ErrorBadge: React.FC<Props> = props => {
           {useBlockIcon ? (
             <BlockIcon className={classes.errorIcon} />
           ) : (
-            <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
+            <InfoIcon className={classes.errorIcon} />
           )}
           {message}
         </>

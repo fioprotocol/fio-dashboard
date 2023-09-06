@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import InfoIcon from '@mui/icons-material/Info';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
@@ -31,7 +32,7 @@ const LowBalanceBadge: React.FC<Props> = props => {
     if (onActionClick == null) return null;
     return (
       <Button className={classes.button} onClick={onActionClick}>
-        <FontAwesomeIcon icon="plus-circle" className={classes.buttonIcon} />
+        <AddCircleIcon className={classes.buttonIcon} />
         <p className={classes.buttonText}>{buttonText}</p>
       </Button>
     );
@@ -41,7 +42,7 @@ const LowBalanceBadge: React.FC<Props> = props => {
     <Badge type={BADGE_TYPES.ERROR} show={hasLowBalance}>
       <div className={classes.errorContainer}>
         <div className={classes.textContainer}>
-          <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
+          <InfoIcon className={classes.icon} />
           <p className={classes.text}>
             <span className="boldText">Low Balance!</span> - {messageText}
           </p>

@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
@@ -164,8 +165,7 @@ const AddressDomainCart: React.FC<Props> = props => {
                   </div>
                 </div>
 
-                <FontAwesomeIcon
-                  icon="trash"
+                <DeleteIcon
                   className={classes.deleteIcon}
                   onClick={() => handleDeleteItem(item.id)}
                 />
@@ -183,10 +183,7 @@ const AddressDomainCart: React.FC<Props> = props => {
             </>
           )}
           <Button className={classes.button} onClick={handleCheckout}>
-            <FontAwesomeIcon
-              icon="shopping-cart"
-              className={classes.cartIcon}
-            />{' '}
+            <ShoppingCartIcon className={classes.cartIcon} />{' '}
             <p>Checkout now</p>
           </Button>
         </div>

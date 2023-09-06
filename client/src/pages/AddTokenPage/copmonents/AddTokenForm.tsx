@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import ActionContainer from '../../../components/LinkTokenList/ActionContainer';
 import Modal from '../../../components/Modal/Modal';
@@ -203,7 +203,7 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
             className={classes.addCustomButton}
             onClick={onAddCustomCurrency}
           >
-            <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
+            <AddCircleIcon className={classes.icon} />
             Add
           </Button>
         </div>

@@ -6,7 +6,7 @@ import {
   useAccordionToggle,
 } from 'react-bootstrap';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AddIcon from '@mui/icons-material/Add';
 
 import { LinksSection } from './LinksSection';
 
@@ -58,13 +58,12 @@ const CustomToggle = ({
       >
         {children}
       </h5>
-      <FontAwesomeIcon
-        icon="plus"
+      <AddIcon
+        onClick={decoratedOnClick}
         className={classnames(
           classes.titleIcon,
           isActive && classes.isActiveIcon,
         )}
-        onClick={decoratedOnClick}
       />
     </div>
   );

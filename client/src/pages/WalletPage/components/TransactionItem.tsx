@@ -1,5 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import CommonBadge from '../../../components/Badges/CommonBadge/CommonBadge';
@@ -35,16 +38,13 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
               {isReceive ? (
                 <CommonBadge isBlue={true}>
                   <div className={classes.iconContainer}>
-                    <FontAwesomeIcon
-                      icon="arrow-down"
-                      className={classes.icon}
-                    />
+                    <ArrowDownwardIcon className={classes.icon} />
                   </div>
                 </CommonBadge>
               ) : (
                 <CommonBadge isGreen={true}>
                   <div className={classes.iconContainer}>
-                    <FontAwesomeIcon icon="arrow-up" className={classes.icon} />
+                    <ArrowUpwardIcon className={classes.icon} />
                   </div>
                 </CommonBadge>
               )}
@@ -60,10 +60,9 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
             <p className={classes.title}>ID: </p>
             <p className={classes.txId}>{truncateTextInMiddle(txId)}</p>
             <CopyTooltip placement="top">
-              <FontAwesomeIcon
-                className={classes.actionButton}
-                icon={{ prefix: 'far', iconName: 'copy' }}
+              <ContentCopyIcon
                 onClick={onCopyClick}
+                className={classes.actionButton}
               />
             </CopyTooltip>
             <a
@@ -71,9 +70,8 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
               target="_blank"
               rel="noreferrer"
             >
-              <FontAwesomeIcon
+              <OpenInNewIcon
                 className={classes.actionButton}
-                icon="external-link-square-alt"
                 onClick={onCopyClick}
               />
             </a>

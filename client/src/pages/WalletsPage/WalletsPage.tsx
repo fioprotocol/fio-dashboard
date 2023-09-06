@@ -1,8 +1,9 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletItem from './components/WalletItem';
@@ -26,7 +27,6 @@ import { useContext } from './WalletsPageContext';
 import { Props } from './types';
 
 import classes from './styles/WalletsPage.module.scss';
-import unwrapIcon from '../../assets/images/unwrap.svg';
 
 type TitleComponentProps = {
   onAdd: () => void;
@@ -40,7 +40,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
       <ActionButtonsContainer>
         <Link to={ROUTES.UNWRAP_TOKENS} className={classes.actionButton}>
           <Button>
-            <img src={unwrapIcon} alt="unwrap" className={classes.unwrapIcon} />
+            <ReplayIcon />
             <span>Unwrap Tokens</span>
           </Button>
         </Link>
@@ -53,7 +53,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
         </Link>
 
         <Button onClick={onAdd} className={classes.actionButton}>
-          <FontAwesomeIcon icon="plus-circle" />
+          <AddCircleIcon />
           <span>Add</span>
         </Button>
       </ActionButtonsContainer>
@@ -98,7 +98,6 @@ const WalletsPage: React.FC<Props> = () => {
             NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_IMPORTED]
               .title
           }
-          iconName="check-circle"
           hasNewDesign
           marginAuto
         />
@@ -114,7 +113,6 @@ const WalletsPage: React.FC<Props> = () => {
             NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_CREATED]
               .title
           }
-          iconName="check-circle"
           hasNewDesign
           marginAuto
         />
@@ -130,7 +128,6 @@ const WalletsPage: React.FC<Props> = () => {
             NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_DELETED]
               .title
           }
-          iconName="check-circle"
           hasNewDesign
           marginAuto
         />

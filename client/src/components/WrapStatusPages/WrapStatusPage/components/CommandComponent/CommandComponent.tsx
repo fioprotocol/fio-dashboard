@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import CopyTooltip from '../../../../CopyTooltip';
 
@@ -27,11 +26,7 @@ export const CommandComponent: React.FC<Props> = props => {
       <p className="mb-0">{commandString}</p>
       <div className={classes.copyButton}>
         <CopyTooltip>
-          <FontAwesomeIcon
-            className={classes.icon}
-            icon={{ prefix: 'far', iconName: 'copy' }}
-            onClick={onClick}
-          />
+          <ContentCopyIcon className={classes.icon} onClick={onClick} />
         </CopyTooltip>
       </div>
     </div>

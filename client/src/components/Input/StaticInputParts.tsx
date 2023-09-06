@@ -1,6 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import classnames from 'classnames';
+
+import Loader from '../Loader/Loader';
 
 import classes from './Input.module.scss';
 
@@ -23,9 +25,8 @@ export const LoadingIcon: React.FC<LoadingIconProps> = ({
   if (!isVisible) return null;
 
   return (
-    <FontAwesomeIcon
-      icon="spinner"
-      spin
+    <Loader
+      hasSmallSize
       className={classnames(
         classes.inputIcon,
         classes.inputSpinnerIcon,

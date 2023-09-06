@@ -1,7 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
+
+import Loader from '../../Loader/Loader';
 
 import { ClickEventTypes } from '../../../types';
 
@@ -110,7 +111,7 @@ export const SubmitButton: React.FC<Props> = props => {
     >
       <div />
       <div>{text || 'Confirm'}</div>
-      <div>{loading && <FontAwesomeIcon icon="spinner" spin />}</div>
+      <div>{loading && <Loader className={classes.loader} />}</div>
     </Button>
   );
 };

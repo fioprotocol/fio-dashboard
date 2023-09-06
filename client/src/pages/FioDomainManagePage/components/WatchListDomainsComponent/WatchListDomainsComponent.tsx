@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 
 import { Link } from 'react-router-dom';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import { UnwrapIcon } from '../../../../components/UnwrapIcon';
 import { ListItemsComponent } from '../../../../components/ManagePageContainer/components/ListItemsComponent';
 import {
   DesktopView,
@@ -121,7 +121,7 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
                 title="Unwrap"
                 text={
                   <>
-                    <UnwrapIcon />
+                    <ReplayIcon />
                     {!isSmallDesktop && 'Unwrap Domain'}
                   </>
                 }

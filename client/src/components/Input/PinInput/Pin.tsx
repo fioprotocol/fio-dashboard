@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import InfoIcon from '@mui/icons-material/Info';
 
 import PinDots from './PinDots';
 import NumericKeyboard from './NumericKeyboard';
@@ -111,7 +111,7 @@ const PinInput: React.FC<PinProps> = props => {
 
       {error && (
         <div className={classes.pinError}>
-          <FontAwesomeIcon icon="info-circle" className={classes.icon} />
+          <InfoIcon className={classes.icon} />
           {error}
         </div>
       )}

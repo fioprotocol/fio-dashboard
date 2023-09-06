@@ -1,6 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import { SocialMediaLinkItemComponent } from '../../../../components/SocialMediaLinkItemComponent';
 
@@ -52,9 +53,16 @@ const voidAction: () => void = () => null;
 const DeleteSocialMediaLinkActionButton: React.FC<ActionProps> = props => {
   const { isChecked, isInactive, onClick } = props;
 
-  return (
-    <FontAwesomeIcon
-      icon={isChecked ? 'check-square' : { prefix: 'far', iconName: 'square' }}
+  return isChecked ? (
+    <CheckBoxIcon
+      className={classnames(
+        classes.checkIcon,
+        isInactive && classes.inactiveIcon,
+      )}
+      onClick={isInactive ? voidAction : onClick}
+    />
+  ) : (
+    <CheckBoxOutlineBlankIcon
       className={classnames(
         classes.checkIcon,
         isInactive && classes.inactiveIcon,

@@ -8,6 +8,7 @@
   flex-flow: wrap;
   justify-content: space-between;
   margin-bottom: 30px;
+  gap: 20px;
 
   .link {
     button {
@@ -30,9 +31,9 @@
       }
     }
 
-    .middleButton {
-      margin: 0 20px 0;
-    }
+    // .middleButton {
+    //   margin: 0 20px 0;
+    // }
 
     .icon {
       font-size: 1rem;
@@ -48,8 +49,7 @@
     justify-content: space-between;
     margin-bottom: 0;
 
-    button,
-    .middleButton {
+    button {
       margin-top: 0;
     }
 

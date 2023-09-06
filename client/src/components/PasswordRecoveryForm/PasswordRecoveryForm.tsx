@@ -9,10 +9,12 @@ import {
 } from 'react-final-form';
 import { useHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import BlockIcon from '@mui/icons-material/Block';
 
 import EdgeConfirmAction from '../EdgeConfirmAction';
 import { ErrorBadge } from '../Input/ErrorBadge';
@@ -214,7 +216,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
         isVirtualPage
         shouldFireOnce
       />
-      <FontAwesomeIcon icon="ban" className={classes.icon} />
+      <BlockIcon className={classes.icon} />
       <FormHeader
         title="Sure You Want to Skip"
         subtitle={
@@ -249,7 +251,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
             ? value || 'Choose Recovery Question 2'
             : null}
         </div>
-        <FontAwesomeIcon icon="chevron-right" className={classes.icon} />
+        <ChevronRightIcon />
       </div>
     );
   };
@@ -334,19 +336,13 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
             {errorMessage && (
               <ErrorBadge error={errorMessage} hasError={true} data={{}} wrap />
             )}
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-100"
+            <SubmitButton
               onClick={handleSubmit}
+              text="NEXT"
+              loading={edgeAuthLoading || submitting || processing}
               disabled={edgeAuthLoading || !valid || processing}
-            >
-              {edgeAuthLoading || submitting || processing ? (
-                <FontAwesomeIcon icon="spinner" spin />
-              ) : (
-                'NEXT'
-              )}
-            </Button>
+              withBottomMargin
+            />
             {!isSettings && (
               <p className={classes.skipButton} onClick={showSkip}>
                 Skip
@@ -411,10 +407,9 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
           closeButton={!isQuestions}
           title={
             (isQuestions || isSkip) && (
-              <FontAwesomeIcon
-                icon="arrow-left"
-                className={classes.arrow}
+              <ArrowBackIcon
                 onClick={isQuestions ? hideQuestions : hideSkip}
+                className={classes.arrow}
               />
             )
           }

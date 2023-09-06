@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -12,6 +11,7 @@ import ChangeEmail from './components/ChangeEmail';
 import TwoFactorAuth from './components/TwoFactorAuth';
 import DeleteMyAccount from './components/DeleteMyAccount';
 import { EmailNotifications } from './components/EmailNotifications';
+import Loader from '../../components/Loader/Loader';
 
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { changeRecoveryQuestionsOpen } from '../../redux/edge/actions';
@@ -59,7 +59,7 @@ const SettingsPage: React.FC = () => {
     return (
       <LayoutContainer title="Settings">
         <div className="d-flex justify-content-center align-items-center h-100 pt-5 pb-5">
-          <FontAwesomeIcon icon="spinner" spin />
+          <Loader />
         </div>
       </LayoutContainer>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
@@ -64,10 +64,7 @@ const WalletItem: React.FC<Props> = props => {
             ) : null}
           </div>
 
-          <FontAwesomeIcon
-            icon="chevron-right"
-            className={classes.detailsButton}
-          />
+          <ChevronRightIcon className={classes.detailsButton} />
         </div>
       </Badge>
     </div>

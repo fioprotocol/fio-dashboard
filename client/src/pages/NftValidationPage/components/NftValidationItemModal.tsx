@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
 import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 
 import { TITLE_NAME } from '../constant';
 import { NFT_TOKEN_ITEM_PROPS_ORDER } from '../../../constants/common';
@@ -93,6 +93,7 @@ const NftValidationItemModal: React.FC<Props> = props => {
       onClose={onClose}
       isSimple={true}
       isWide={true}
+      hasDefaultCloseColor
     >
       <div className={classes.container}>
         <h3 className={classes.title}>NFT Signature Information</h3>
@@ -108,9 +109,13 @@ const NftValidationItemModal: React.FC<Props> = props => {
           <p className={classes.searchParam}>{searchValue}</p>
         </div>
         <div className={classes.itemContainer}>{renderBadge()}</div>
-        <Button onClick={onClose} className={classes.button}>
-          Close
-        </Button>
+        <SubmitButton
+          onClick={onClose}
+          className={classes.button}
+          text="Close"
+          withTopMargin
+          withBottomMargin
+        />
       </div>
     </Modal>
   );

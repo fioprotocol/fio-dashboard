@@ -1,7 +1,8 @@
 import React from 'react';
 import Dropdown from 'react-dropdown';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import 'react-dropdown/style.css';
 import classes from './CustomDropdown.module.scss';
@@ -124,8 +125,7 @@ const CustomDropdown: React.FC<Props> = props => {
       )}
       menuClassName={classes.menu}
       arrowClosed={
-        <FontAwesomeIcon
-          icon="chevron-down"
+        <ExpandMoreIcon
           className={classnames(
             classes.icon,
             isWhiteIcon && classes.isWhiteIcon,
@@ -133,8 +133,7 @@ const CustomDropdown: React.FC<Props> = props => {
         />
       }
       arrowOpen={
-        <FontAwesomeIcon
-          icon="chevron-up"
+        <ExpandLessIcon
           className={classnames(
             classes.icon,
             isWhiteIcon && classes.isWhiteIcon,
