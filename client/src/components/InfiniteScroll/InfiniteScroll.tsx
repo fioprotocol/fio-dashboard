@@ -1,6 +1,5 @@
 import React from 'react';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Loader from '../../components/Loader/Loader';
 
@@ -42,11 +41,7 @@ const InfiniteScroll: React.FC<Props> = props => {
       {children}
       {(loading || hasNextPage) && !hasReverseLoading && (
         <div className={classes.loader} ref={sentryRef}>
-          <FontAwesomeIcon
-            icon="spinner"
-            spin={true}
-            className={classes.loaderIcon}
-          />
+          <Loader className={classes.loaderIcon} />
         </div>
       )}
     </div>

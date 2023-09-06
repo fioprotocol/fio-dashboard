@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import isEmpty from 'lodash/isEmpty';
+import EditIcon from '@mui/icons-material/Edit';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import FioName from '../../components/common/FioName/FioName';
 import NFTTokenBadge from '../../components/Badges/TokenBadge/NFTTokenBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
+import Loader from '../../components/Loader/Loader';
 
 import { ROUTES } from '../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
@@ -36,9 +37,10 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     loading,
     location: { query: { address } = {} },
   } = props;
+
   useEffect(() => {
     getNFTSignatures({ fioAddress: address });
-  }, [getNFTSignatures]);
+  }, [address, getNFTSignatures]);
 
   return (
     <PseudoModalContainer
@@ -71,7 +73,8 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
               className={classes.link}
             >
               <Button>
-                <FontAwesomeIcon icon="pen" className={classes.icon} /> Sign NFT
+                <EditIcon className={classes.icon} />
+                Sign NFT
               </Button>
             </Link>
           </div>
@@ -95,7 +98,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
               );
             })
           ) : loading ? (
-            <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
+            <Loader className={classes.spinner} />
           ) : (
             <div className={classes.infoBadgeContainer}>
               <InfoBadge

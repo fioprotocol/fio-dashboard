@@ -11,14 +11,23 @@
     border-radius: 7px;
     margin-bottom: 0;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     @include sm {
       max-width: none;
     }
 
     .loader {
-      font-size: 1.2em;
+      width: auto;
       position: absolute;
-      right: 25px;
+      right: 20px;
+
+      & > span {
+        width: 18px !important;
+        height: 18px !important;
+        color: inherit;
+      }
     }
   }
 }

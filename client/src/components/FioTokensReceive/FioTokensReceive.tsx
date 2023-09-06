@@ -1,9 +1,10 @@
 import React from 'react';
 import QRCode from 'qrcode.react';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import Badge from '../../components/Badge/Badge';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
@@ -61,7 +62,11 @@ export const FioTokensReceive: React.FC<Props> = props => {
           <QRCode value={fioWallet.publicKey} size={96} />
         </div>
         <div>
-          <Badge type={BADGE_TYPES.WHITE} show>
+          <Badge
+            type={BADGE_TYPES.WHITE}
+            show
+            className={classes.badgeContainer}
+          >
             <div className={classes.dataContainer}>
               <div className={classes.title}>Public Address</div>
               <DataValue value={fioWallet.publicKey} />
@@ -99,7 +104,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
         className={classes.actionButton}
       >
         <Button>
-          <FontAwesomeIcon icon="arrow-down" />
+          <ArrowDownwardIcon />
           FIO Request
         </Button>
       </Link>
@@ -124,7 +129,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
         className={classes.actionButton}
       >
         <Button>
-          <FontAwesomeIcon icon="shopping-cart" />
+          <AddShoppingCartIcon />
           Get FIO Tokens
         </Button>
       </Link>

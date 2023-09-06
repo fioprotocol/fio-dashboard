@@ -1,5 +1,5 @@
 import React, { MouseEvent, useCallback, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import { copyToClipboard } from '../../../util/general';
 
@@ -31,11 +31,7 @@ export const DataValue: React.FC<Props> = ({ value }) => {
   return (
     <div className={classes.value} onClick={onClick} ref={valueRef}>
       {value}
-      <FontAwesomeIcon
-        className={classes.icon}
-        icon={{ prefix: 'far', iconName: 'copy' }}
-        onClick={onCopy}
-      />
+      <ContentCopyIcon className={classes.icon} onClick={onCopy} />
     </div>
   );
 };

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { Link as RouterLink } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 import Link from '../../../components/Link/Link';
 
@@ -25,7 +27,7 @@ const ActionButtons: React.FC<Props> = props => {
         classname={classes.link}
       >
         <Button disabled={isDisabled}>
-          <FontAwesomeIcon icon="pen" className={classes.icon} />
+          <EditIcon className={classes.icon} />
           Edit
         </Button>
       </Link>
@@ -35,13 +37,13 @@ const ActionButtons: React.FC<Props> = props => {
         classname={classes.link}
       >
         <Button className={classes.middleButton} disabled={isDisabled}>
-          <FontAwesomeIcon icon="trash" className={classes.icon} />
+          <DeleteIcon className={classes.icon} />
           Delete Link
         </Button>
       </Link>
       <RouterLink to={`${ROUTES.ADD_TOKEN}${search}`} className={classes.link}>
         <Button>
-          <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
+          <AddCircleIcon className={classes.icon} />
           Add Link
         </Button>
       </RouterLink>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import NftValidationItemModal from './NftValidationItemModal';
@@ -51,10 +51,7 @@ const GenericNftItemResult: React.FC<Props> = props => {
                 </div>
               ))}
             </div>
-            <FontAwesomeIcon
-              icon="chevron-right"
-              className={classes.actionIcon}
-            />
+            <ChevronRightIcon className={classes.actionIcon} />
           </div>
         </Badge>
       </div>

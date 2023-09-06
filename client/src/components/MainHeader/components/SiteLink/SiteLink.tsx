@@ -1,6 +1,6 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { REF_PROFILE_TYPE } from '../../../../constants/common';
 
@@ -38,10 +38,7 @@ export const SiteLink: React.FC<SiteLinkProps> = props => {
   return (
     <div className={classnames(classes.link, classes.siteLink)}>
       <a href={link} target={target} rel="noopener noreferrer">
-        <FontAwesomeIcon
-          icon="arrow-left"
-          className={classnames(classes.arrow, 'mr-2')}
-        />
+        <ArrowBackIcon className={classnames(classes.arrow, 'mr-2')} />
         {text}
       </a>
     </div>

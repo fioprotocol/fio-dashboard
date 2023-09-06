@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Field } from 'react-final-form';
 import validator from 'email-validator';
 import { OnChange, OnFocus } from 'react-final-form-listeners';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import FormHeader from '../FormHeader/FormHeader';
 import Input, { INPUT_UI_STYLES } from '../Input/Input';
@@ -162,8 +162,7 @@ export default class EmailPassword extends Component<Props, LocalState> {
             key={VALIDATION_TITLES[key as keyof PasswordValidationState]}
             className={classes.validationWrapper}
           >
-            <FontAwesomeIcon
-              icon="check-circle"
+            <CheckCircleIcon
               className={classnames(
                 classes.icon,
                 classes.checkedIcon,

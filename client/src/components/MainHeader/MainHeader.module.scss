@@ -59,8 +59,6 @@
   color: $baltic-sea !important;
 
   .icon {
-    width: 20px;
-    height: 20px;
     color: inherit;
   }
 
@@ -72,7 +70,7 @@
 
     .notifActiveWrapper {
       position: absolute;
-      top: -6px;
+      top: -8px;
     }
 
     .notifActive {
@@ -82,21 +80,21 @@
 
     .notifActiveWrapperRight {
       width: 100%;
-      right: -15px;
+      right: -18px;
     }
   }
 
   .settings {
     background-color: $white;
-    padding: 3px;
+    padding: 2px;
     border-radius: 2px;
     display: flex;
     justify-content: center;
     align-items: center;
 
     .settingsIcon {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       color: $baltic-sea;
       transition: transform 0.4s ease-in-out;
     }
@@ -135,6 +133,23 @@
   background-color: $light-indigo;
   border: 1px solid $light-indigo;
   border-radius: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
+  .buttonText {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .buttonLoader {
+    width: auto;
+    & > span {
+      width: 14px !important;
+      height: 14px !important;
+    }
+  }
 
   &.hasVioletColor {
     color: $light-indigo;
@@ -186,6 +201,24 @@
         background-color: $light-indigo;
         border: none;
         border-radius: 100px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        .buttonText {
+          margin: 0;
+          flex-shrink: 0;
+        }
+      
+        .buttonLoader {
+          width: auto;
+          & > span {
+            width: 14px !important;
+            height: 14px !important;
+          }
+        }
 
         &:hover {
           background-color: $iris;
@@ -194,6 +227,10 @@
       }
     }
   }
+}
+
+.loader {
+  width: auto;
 }
 
 @keyframes bellshake {
@@ -210,7 +247,7 @@
 
 @keyframes cartscale {
   0% { transform: scale(1.0); }
-  100% { transform: scale(1.1);; }
+  100% { transform: scale(1.08); }
 }
 
 @include lg {

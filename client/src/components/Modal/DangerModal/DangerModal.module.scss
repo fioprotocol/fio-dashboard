@@ -3,7 +3,8 @@
 
 .icon {
   margin-top: 30px;
-  font-size: 64px;
+  width: 77px !important;
+  height: 77px !important;
 }
 
 .title {
@@ -28,6 +29,15 @@
   border-radius: 100px;
   color: $white;
   @include proxima-nova-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  .buttonText {
+    margin: 0;
+    flex-shrink: 0;
+  }
 
   &:hover:enabled {
     border: $dark-jungle-green;
@@ -46,5 +56,10 @@
 }
 
 .spinner {
-  margin-left: 10px;
+  width: auto;
+  & > span {
+    color: inherit;
+    width: 16px !important;
+    height: 16px !important;
+  }
 }

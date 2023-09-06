@@ -1,5 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import EmailIcon from '@mui/icons-material/Email';
 
 import Modal from '../Modal';
 
@@ -17,7 +17,7 @@ const EmailModal: React.FC<Props> = props => {
   const { children, show, title, subtitle, onClose } = props;
   return (
     <Modal show={show} isInfo={true} closeButton={true} onClose={onClose}>
-      <FontAwesomeIcon icon="envelope" className={classes.icon} />
+      <EmailIcon className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
       {children}

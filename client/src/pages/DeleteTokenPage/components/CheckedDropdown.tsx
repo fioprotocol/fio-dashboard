@@ -1,7 +1,10 @@
 import React from 'react';
 import Dropdown from 'react-dropdown';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import classes from '../styles/CheckedDropdown.module.scss';
 
@@ -52,16 +55,23 @@ const CheckedDropdown: React.FC<Props> = props => {
 
   return (
     <div className={classes.dropdownContainer}>
-      <FontAwesomeIcon
-        icon={
-          allChecked ? 'check-square' : { prefix: 'far', iconName: 'square' }
-        }
-        onClick={onCheckboxClick}
-        className={classnames(
-          classes.allChecked,
-          isDisabledCheckbox && classes.isDisabled,
-        )}
-      />
+      {allChecked ? (
+        <CheckBoxIcon
+          className={classnames(
+            classes.allChecked,
+            isDisabledCheckbox && classes.isDisabled,
+          )}
+          onClick={onCheckboxClick}
+        />
+      ) : (
+        <CheckBoxOutlineBlankIcon
+          className={classnames(
+            classes.allChecked,
+            isDisabledCheckbox && classes.isDisabled,
+          )}
+          onClick={onCheckboxClick}
+        />
+      )}
       <Dropdown
         options={styledOptions}
         onChange={onDropdownChange}
@@ -69,12 +79,8 @@ const CheckedDropdown: React.FC<Props> = props => {
         controlClassName={classes.control}
         placeholderClassName={classes.placeholder}
         menuClassName={classes.menu}
-        arrowClosed={
-          <FontAwesomeIcon icon="chevron-down" className={classes.icon} />
-        }
-        arrowOpen={
-          <FontAwesomeIcon icon="chevron-up" className={classes.icon} />
-        }
+        arrowClosed={<ExpandMoreIcon className={classes.icon} />}
+        arrowOpen={<ExpandLessIcon className={classes.icon} />}
       />
     </div>
   );

@@ -1,7 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classnames from 'classnames';
+import InfoIcon from '@mui/icons-material/Info';
+import SearchIcon from '@mui/icons-material/Search';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
@@ -86,10 +87,7 @@ const Cart: React.FC<Props> = props => {
           type={BADGE_TYPES.ERROR}
         >
           <div className={classnames(classes.infoBadge, classes.priceBadge)}>
-            <FontAwesomeIcon
-              icon="exclamation-circle"
-              className={classes.infoIcon}
-            />
+            <InfoIcon className={classes.infoIcon} />
 
             <p className={classes.infoText}>
               <span className="boldText">
@@ -119,7 +117,7 @@ const Cart: React.FC<Props> = props => {
           ))}
         <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.cta}>
           <div className={classes.ctaIconContainer}>
-            <FontAwesomeIcon icon="search" className={classes.ctaIcon} />
+            <SearchIcon className={classes.ctaIcon} />
           </div>
           <p className={classnames(classes.ctaText, 'boldText')}>
             Search for more FIO Handles?

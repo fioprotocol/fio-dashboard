@@ -1,8 +1,10 @@
 import React from 'react';
 import { components } from 'react-select';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import classes from '../styles/EditableSelect.module.scss';
 
@@ -94,8 +96,7 @@ export const ClearIndicator: React.FC<EditableCustomComponentsTypes> = clearIndi
   } = clearIndicatorProps;
   return (
     <components.ClearIndicator {...clearIndicatorProps}>
-      <FontAwesomeIcon
-        icon="times-circle"
+      <CancelIcon
         className={classnames(classes.clearIcon, uiType && classes[uiType])}
       />
     </components.ClearIndicator>
@@ -141,10 +142,11 @@ export const DropdownIndicator: React.FC<DropdownIndicatorProps> = dropdownProps
   } = dropdownProps;
   return (
     <components.DropdownIndicator {...dropdownProps}>
-      <FontAwesomeIcon
-        icon={menuIsOpen ? 'chevron-up' : 'chevron-down'}
-        className={classes.toggleMenuIcon}
-      />
+      {menuIsOpen ? (
+        <ExpandLessIcon className={classes.toggleMenuIcon} />
+      ) : (
+        <ExpandMoreIcon className={classes.toggleMenuIcon} />
+      )}
     </components.DropdownIndicator>
   );
 };

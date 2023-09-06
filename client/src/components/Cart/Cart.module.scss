@@ -8,7 +8,7 @@
   align-items: center;
 
   .infoIcon {
-    font-size: 1em;
+    font-size: 20px;
   }
 
   .infoText {
@@ -60,7 +60,7 @@
       align-items: center;
 
       .ctaIcon {
-        font-size: 0.825em;
+        font-size: 1em;
         color: $white;
       }
     }
@@ -163,92 +163,6 @@
   }
 }
 
-.walletContainer {
-  margin-top: 2.5rem;
-
-  .title {
-    @include proxima-nova-semibold;
-  }
-  .subtitle {
-    margin-top: 0.5rem;
-    font-size: 0.8125em;
-    line-height: 1em;
-    @include proxima-nova-thin;
-  }
-  .dropdown {
-    margin-top: 4px;
-    align-self: flex-start;
-    min-width: 335px;
-
-    .icon {
-      font-size: 1em;
-    }
-
-    .control {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      border: 1px solid $light;
-      border-radius: 12px;
-      background-color: $white;
-      position: relative;
-      padding: 0.9375rem 1.25rem 0.9375rem 1.5625rem;
-      z-index: 1001; //show over menu
-    }
-    .placeholder {
-      @include proxima-nova-semibold;
-      font-size: 0.9375em;
-    }
-    .menu {
-      border-radius: 0 0 12px 12px;
-      border: none;
-      box-shadow: 0 0 6px 0 rgba(0,0,0,0.53);
-      margin-top: -12px;
-      padding-top: 12px;
-      max-height: fit-content;
-      animation-name: expand;
-      animation-duration: 0.4s;
-      margin-left: auto;
-      margin-right: auto;
-      left: 0;
-      right: 0;
-      text-align: center;
-      width: 99%;
-    }
-    .optionItem {
-      @include sf-pro-display-medium;
-      margin: 0 auto;
-      font-size: 13px;
-      color: $baltic-sea;
-      text-align: left;
-      padding: 0.9375rem 1.25rem;
-
-      &:after {
-        content: ' ';
-        position: absolute;
-        width: calc(100% - 20px);
-        left: 10px;
-        margin: -0.9375rem auto 0;
-        border-bottom: 1px solid $light;
-      }
-
-      &:first-child:after {
-        border: none;
-      }
-
-      &:hover {
-        color: $white;
-        background-color: $dark-gray;
-      }
-
-      &:hover:after {
-        border-color: $dark-gray;
-      }
-    }
-  }
-}
-
 @include md {
   .amountTitle {
     top: -50px;
@@ -274,17 +188,6 @@
 
   .container {
     padding: 1.25rem;
-
-    .walletContainer {
-      margin-top: 1.875rem;
-      .subtitle {
-        line-height: 1.5em;
-      }
-      .dropdown {
-        width: 100%;
-        min-width: unset;
-      }
-    }
   }
 
   .itemContainer {

@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CircleIcon from '@mui/icons-material/Circle';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import classnames from 'classnames';
 
 import { LoggedActionButtons } from './ActionButtons';
@@ -66,7 +69,7 @@ const OrdersListNavItem: React.FC<DefaultNavItemProps> = props => (
   <NavItemContainer hide={props.hide}>
     <Nav.Link className={classes.navItem} as={Link} to={ROUTES.ORDERS}>
       <div className={classnames(classes.notifWrapper, classes.cartanim)}>
-        <FontAwesomeIcon icon="list-alt" className={classnames(classes.icon)} />
+        <ListAltIcon className={classes.icon} />
       </div>
     </Nav.Link>
     {!props.isDesktop && <div className="mx-3" />}
@@ -89,8 +92,7 @@ export const CartNavItem: React.FC<CartNavItemProps> = props => {
     <NavItemContainer hide={hide}>
       <Nav.Link className={classes.navItem} onClick={onClick} as={Link} to={to}>
         <div className={classnames(classes.notifWrapper, classes.cartanim)}>
-          <FontAwesomeIcon
-            icon="shopping-cart"
+          <ShoppingCartIcon
             className={classnames(classes.icon, hasMarginRight && 'mr-4')}
           />
           {cartItems.length > 0 && !hideCartIcon && (
@@ -100,8 +102,7 @@ export const CartNavItem: React.FC<CartNavItemProps> = props => {
                 classes.notifActiveWrapperRight,
               )}
             >
-              <FontAwesomeIcon
-                icon="circle"
+              <CircleIcon
                 className={classnames(classes.notifActive, 'text-success')}
               />
             </div>
@@ -137,14 +138,12 @@ const NotificationsNavItem: React.FC<NotificationsNavItemProps> = props => {
       <hr className={classnames(classes.vertical, 'mx-3')} />
       <Nav.Link href="#" className={classes.navItem} onClick={onClick}>
         <div className={classnames(classes.notifWrapper, classes.bellshake)}>
-          <FontAwesomeIcon
-            icon="bell"
+          <NotificationsIcon
             className={classnames(classes.icon, classes.notification)}
           />
           {!!notifications.length && (
             <div className={classes.notifActiveWrapper}>
-              <FontAwesomeIcon
-                icon="circle"
+              <CircleIcon
                 className={classnames(
                   classes.notifActive,
                   'mr-2',

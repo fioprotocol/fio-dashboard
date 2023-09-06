@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import Dropdown from '../../../components/Input/Dropdown';
 
 import { COLOR_TYPE } from '../../../components/Input/ErrorBadge';
 import { INPUT_UI_STYLES } from '../../../components/Input/TextInput';
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 
 import { formValidation } from './validation';
 
@@ -50,9 +50,7 @@ export const AffiliateSelectFCHModal: React.FC<Props> = props => {
               isHigh
               isWhite
             />
-            <Button className={classes.button} type="submit">
-              ACTIVATE
-            </Button>
+            <SubmitButton className={classes.button} text="ACTIVATE" />
           </form>
         )}
       </Form>

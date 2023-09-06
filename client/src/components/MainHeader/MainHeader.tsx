@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { MainHeaderContainer } from '../MainHeaderContainer';
+import Loader from '../Loader/Loader';
 import { Navigation } from './components/Navigation';
+
+import classes from './MainHeader.module.scss';
 
 import { MainHeaderProps } from './types';
 
@@ -77,7 +79,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   if (refProfileLoading) {
     return (
       <MainHeaderContainer>
-        <FontAwesomeIcon icon="spinner" spin />
+        <Loader className={classes.loader} hasSmallSize />
       </MainHeaderContainer>
     );
   }
