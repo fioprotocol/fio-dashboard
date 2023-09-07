@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import { Link } from 'react-router-dom';
-import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 import debounce from 'lodash/debounce';
@@ -63,14 +62,6 @@ const STEPS_LINK = {
 const EMAIL_FIELD_NAME = 'email';
 const CONFIRM_EMAIL_FIED_NAME = 'confirmEmail';
 
-type Location = {
-  location: {
-    query?: {
-      email?: string;
-    };
-  };
-};
-
 type State = {
   passwordValidation: PasswordValidationState;
   usernameAvailableLoading: boolean;
@@ -82,7 +73,7 @@ type State = {
   emailWasBlurred: boolean;
 };
 
-type OwnProps = {
+type Props = {
   resetSuccessState: () => void;
   makeNonce: (
     username: string,
@@ -111,8 +102,6 @@ type OwnProps = {
   serverSignUpLoading: boolean;
   redirectLink: RedirectLinkData;
 };
-
-type Props = OwnProps & WithLastLocationProps & Location;
 
 export default class CreateAccountForm extends React.Component<Props, State> {
   form: FormApi<FormValues> | null;
