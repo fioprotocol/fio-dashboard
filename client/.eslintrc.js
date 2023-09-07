@@ -37,7 +37,7 @@ module.exports = {
       }
     }
   },
-  ignorePatterns: [".eslintrc.js"],
+  ignorePatterns: [".eslintrc.js", "public/"],
   rules: {
     "prettier/prettier": [
       "error",
