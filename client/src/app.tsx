@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { Provider } from 'react-redux';
 import { hydrate, render } from 'react-dom';
 import { ConnectedRouter } from 'connected-react-router';
-import { LastLocationProvider } from 'react-router-last-location';
 import { HelmetProvider } from 'react-helmet-async';
 
 import { store, history } from './redux/init';
@@ -14,11 +13,9 @@ class App extends Component {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <LastLocationProvider>
-            <HelmetProvider>
-              <Routes />
-            </HelmetProvider>
-          </LastLocationProvider>
+          <HelmetProvider>
+            <Routes />
+          </HelmetProvider>
         </ConnectedRouter>
       </Provider>
     );
