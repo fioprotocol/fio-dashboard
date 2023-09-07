@@ -29,7 +29,8 @@
     "landing-page-fio-id:as:start": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:start",
     "landing-page-fio-id:as:build": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:build:no-snap",
     "migration:create": "npx sequelize migration:create --name",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "analyze": "source-map-explorer 'client/build/static/js/*.js'"
   },
   "license": "ISC",
   "overrides": {
