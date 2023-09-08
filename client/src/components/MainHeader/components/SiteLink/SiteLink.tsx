@@ -39,7 +39,7 @@ export const SiteLink: React.FC<SiteLinkProps> = props => {
     <div className={classnames(classes.link, classes.siteLink)}>
       <a href={link} target={target} rel="noopener noreferrer">
         <ArrowBackIcon className={classnames(classes.arrow, 'mr-2')} />
-        {text}
+        <p className={classes.linkText}>{text}</p>
       </a>
     </div>
   );
