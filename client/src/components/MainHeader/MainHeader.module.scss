@@ -26,6 +26,9 @@
           background-color: $light-indigo;
           border: 1px solid $light-indigo;
           border-radius: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           &.hasTransparentBackground {
             background-color: transparent;
