@@ -19,7 +19,10 @@ const FioLoader: React.FC<Props> = props => {
 
   if (props.wrap) {
     return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
+      <div
+        className="d-flex justify-content-center align-items-center align-self-center"
+        style={{ width: '70px', height: '70px' }}
+      >
         {renderLoader()}
       </div>
     );
