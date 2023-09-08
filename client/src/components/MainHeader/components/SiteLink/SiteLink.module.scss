@@ -20,7 +20,6 @@
   }
 
   &.siteLink {
-    width: 100%;
     margin-left: 2rem;
   }
 
@@ -28,6 +27,11 @@
     position: relative;
     transition: 0.2s ease-in-out;
     transform: translateX(0);
+  }
+
+  .linkText {
+    margin: 0;
+    flex-shrink: 0;
   }
 
   &:hover .arrow {
