@@ -3,7 +3,6 @@ import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import TwitterPage from './pages/TwitterPage';
 import MainLayout from './pages/MainLayout';
-import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
 import FioLoader from './components/common/FioLoader/FioLoader';
@@ -15,6 +14,9 @@ import useMaintenance from './hooks/useMaintenance';
 
 const DashboardPage = React.lazy(() =>
   import(/* webpackChunkName: 'dashboardPage' */ './pages/DashboardPage'),
+);
+const CreateAccount = React.lazy(() =>
+  import(/* webpackChunkName: 'createAccount' */ './pages/CreateAccountPage'),
 );
 const FioAddressManagePage = React.lazy(() =>
   import(
@@ -327,6 +329,11 @@ const Routes = (): React.ReactElement => {
                 exact
               />
               <Route
+                path={ROUTES.CREATE_ACCOUNT}
+                component={CreateAccount}
+                exact
+              />
+              <Route
                 path={ROUTES.FIO_ADDRESSES_SELECTION}
                 component={FioAddressSelectionPage}
                 exact
@@ -600,8 +607,6 @@ const Routes = (): React.ReactElement => {
                 component={FioAffiliateProgramPage}
                 exact
               />
-
-              <AuthContainer />
             </Switch>
           )}
         </React.Suspense>
