@@ -44,7 +44,11 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
       )}
     >
       {onlyAuth ? null : (
-        <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
+        <Nav.Link
+          as={Link}
+          to={ROUTES.CREATE_ACCOUNT}
+          className="flex-shrink-0"
+        >
           <Button
             variant="outline-primary"
             className={classnames(
