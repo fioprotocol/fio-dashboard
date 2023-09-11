@@ -37,6 +37,7 @@ export const SpecialsBannerBadge: React.FC<Props> = props => {
             className={classes.badgeIconMobile}
             src={mobileIcon || icon}
             alt={title}
+            loading="lazy"
           />
         </div>
         <div className={classes.badgeContainer}>

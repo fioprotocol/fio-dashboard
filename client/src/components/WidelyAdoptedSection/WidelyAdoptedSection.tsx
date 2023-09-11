@@ -31,18 +31,18 @@ export const WidelyAdoptedSection: React.FC = () => {
       </div>
 
       <div className={classes.iconsGrid}>
-        <img src={aaxSrc} alt="AAX" />
-        <img src={airnftsSrc} alt="AirNFTs" />
-        <img src={bitcoinComSrc} alt="bitcoin.com" />
-        <img src={changellySrc} alt="Changelly" />
-        <img src={coinomiSrc} alt="Coinomi" />
-        <img src={dopamineSrc} alt="Dopamine" />
-        <img src={edgeSrc} alt="Edge" />
-        <img src={guardaSrc} alt="Guarda Wallet" />
-        <img src={liquidSrc} alt="Liquid" />
-        <img src={operaSrc} alt="Opera" />
-        <img src={trustwalletSrc} alt="Trust Wallet" />
-        <img src={whitebitSrc} alt="WhiteBIT" />
+        <img src={aaxSrc} alt="AAX" loading="lazy" />
+        <img src={airnftsSrc} alt="AirNFTs" loading="lazy" />
+        <img src={bitcoinComSrc} alt="bitcoin.com" loading="lazy" />
+        <img src={changellySrc} alt="Changelly" loading="lazy" />
+        <img src={coinomiSrc} alt="Coinomi" loading="lazy" />
+        <img src={dopamineSrc} alt="Dopamine" loading="lazy" />
+        <img src={edgeSrc} alt="Edge" loading="lazy" />
+        <img src={guardaSrc} alt="Guarda Wallet" loading="lazy" />
+        <img src={liquidSrc} alt="Liquid" loading="lazy" />
+        <img src={operaSrc} alt="Opera" loading="lazy" />
+        <img src={trustwalletSrc} alt="Trust Wallet" loading="lazy" />
+        <img src={whitebitSrc} alt="WhiteBIT" loading="lazy" />
       </div>
 
       <div className={classes.buttonWrapper}>
