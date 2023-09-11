@@ -30,7 +30,6 @@ import { REACT_SNAP_AGENT } from '../../constants/twitter';
 
 import useEffectOnce from '../../hooks/general';
 import { getObjKeyByValue } from '../../utils';
-import { useGTMGlobalTags } from '../../hooks/googleTagManager';
 import apis from '../../api';
 
 type Props = {
@@ -73,8 +72,6 @@ const MainLayout: React.FC<Props> = props => {
 
   const isDesktop = useCheckIfDesktop();
   const routeName = getObjKeyByValue(ROUTES, pathname);
-
-  useGTMGlobalTags();
 
   useEffectOnce(() => {
     edgeContextInit();
