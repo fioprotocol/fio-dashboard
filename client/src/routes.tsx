@@ -11,6 +11,7 @@ import { REACT_SNAP_AGENT } from './constants/twitter';
 import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 import useMaintenance from './hooks/useMaintenance';
+import { useGTMGlobalTags } from './hooks/googleTagManager';
 
 const DashboardPage = React.lazy(() =>
   import(/* webpackChunkName: 'dashboardPage' */ './pages/DashboardPage'),
@@ -260,6 +261,7 @@ const UnwrapTokensPage = React.lazy(() =>
 
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
+  useGTMGlobalTags();
 
   return (
     <MainLayout isMaintenance={isMaintenance} isLoading={isLoading}>
