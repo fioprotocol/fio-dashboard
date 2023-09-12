@@ -268,9 +268,9 @@ const Routes = (): React.ReactElement => {
   useGTMGlobalTags();
 
   return (
-    <React.Suspense fallback={<FioLoader wrap />}>
-      <MainLayout isMaintenance={isMaintenance} isLoading={isLoading}>
-        <ScrollToTop>
+    <MainLayout isMaintenance={isMaintenance} isLoading={isLoading}>
+      <ScrollToTop>
+        <React.Suspense fallback={<FioLoader wrap />}>
           {isMaintenance ? (
             <>
               {navigator.userAgent !== REACT_SNAP_AGENT && (
@@ -615,9 +615,9 @@ const Routes = (): React.ReactElement => {
               />
             </Switch>
           )}
-        </ScrollToTop>
-      </MainLayout>
-    </React.Suspense>
+        </React.Suspense>
+      </ScrollToTop>
+    </MainLayout>
   );
 };
 
