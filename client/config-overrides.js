@@ -28,6 +28,24 @@ module.exports = {
       cache: true,
     });
 
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        default: false,
+        vendors: false,
+        textEncoding: {
+          test: /[\\/]node_modules[\\/](text-encoding)[\\/]/,
+          name: 'text-encoding',
+          chunks: 'all',
+        },
+        vendorEdgeCore: {
+          test: /[\\/]node_modules[\\/](edge-core-js)[\\/]/,
+          name: 'vendor-edge-core',
+          chunks: 'all',
+        },
+      },
+    };
+
     return config;
   },
   paths: function(paths, env) {
