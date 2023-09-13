@@ -101,32 +101,27 @@ const SelectModal: React.FC<Props &
   const { type, value = '', onChange } = input;
   const { data } = meta;
 
-  const [inputValue, setInputValue] = useState(value);
   const [optionsList, setOptionsList] = useState(options);
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const [isDirtyInputState, setIsDirtyInputState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!inputValue) {
+    if (!value) {
       setOptionsList(options);
     } else {
       const filteredOptions = options?.filter(
         (o: { name: string; id: string }) => {
           return (
-            o.id.includes(inputValue.toLowerCase()) ||
-            o.name.includes(inputValue.toLowerCase())
+            o.id.includes(value.toLowerCase()) ||
+            o.name.includes(value.toLowerCase())
           );
         },
       );
 
       setOptionsList(filteredOptions);
     }
-  }, [inputValue, options]);
-
-  useEffect(() => {
-    if (inputValue !== value) setInputValue(value);
-  }, [value, show]);
+  }, [value, options]);
 
   const handleClose = () => {
     if (isLoading) return;
@@ -139,21 +134,21 @@ const SelectModal: React.FC<Props &
   const handleConfirm = async () => {
     if (handleConfirmValidate) {
       setIsLoading(true);
-      const validationResult = await handleConfirmValidate(inputValue);
+      const validationResult = await handleConfirmValidate(value);
       if (validationResult.succeeded) {
-        onChange(inputValue);
+        onChange(value);
         handleClose();
       } else {
         setConfirmError(validationResult.message);
       }
       setIsLoading(false);
     } else {
-      onChange(inputValue);
+      onChange(value);
       handleClose();
     }
   };
 
-  const isInputHasValue = inputValue.length > 0;
+  const isInputHasValue = value.length > 0;
   const hasError = !!(confirmError && isDirtyInputState);
 
   return (
@@ -186,17 +181,15 @@ const SelectModal: React.FC<Props &
                   debounceTimeout={0}
                   {...input}
                   {...rest}
-                  value={inputValue}
+                  value={value}
                   onChange={e => {
                     const currentValue = e.target.value || '';
                     if (onChangeFormat) {
-                      return setInputValue(onChangeFormat(currentValue));
+                      return onChange(onChangeFormat(currentValue));
                     }
-                    if (lowerCased)
-                      return setInputValue(currentValue.toLowerCase());
-                    if (upperCased)
-                      return setInputValue(currentValue.toUpperCase());
-                    setInputValue(currentValue);
+                    if (lowerCased) return onChange(currentValue.toLowerCase());
+                    if (upperCased) return onChange(currentValue.toUpperCase());
+                    onChange(currentValue);
                   }}
                   onKeyDown={e => {
                     setConfirmError(null);
@@ -216,7 +209,7 @@ const SelectModal: React.FC<Props &
                   isInputHasValue && !disabled && !isLoading && !loading
                 }
                 onClear={() => {
-                  setInputValue('');
+                  onChange('');
                   setConfirmError(null);
                 }}
                 inputType={type}
@@ -225,10 +218,10 @@ const SelectModal: React.FC<Props &
                 uiType={uiType}
               />
               <PasteButton
-                isVisible={showPasteButton && !inputValue}
+                isVisible={showPasteButton && !value}
                 onClick={async () => {
                   try {
-                    setInputValue((await getValueFromPaste()) || '');
+                    onChange((await getValueFromPaste()) || '');
                     inputRef.current?.focus();
                   } catch (e) {
                     log.error('Paste error: ', e);
@@ -252,7 +245,7 @@ const SelectModal: React.FC<Props &
             <SubmitButton
               text="Done"
               onClick={handleConfirm}
-              disabled={inputValue === '' || !!confirmError || isLoading}
+              disabled={value === '' || !!confirmError || isLoading}
             />
           </div>
 
