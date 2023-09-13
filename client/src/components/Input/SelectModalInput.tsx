@@ -270,7 +270,9 @@ const SelectModal: React.FC<Props &
                     {typeof option === 'string' ? option : option.name}
                   </div>
                   <div className="d-flex ml-auto">
-                    {typeof option === 'string' ? null : option.id}
+                    {typeof option === 'string' || option?.name === option?.id
+                      ? null
+                      : option.id}
                   </div>
                 </div>
               ))}
