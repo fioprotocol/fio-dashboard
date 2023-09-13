@@ -398,13 +398,16 @@ export default class Fio {
         srps,
         roe,
       }: BalanceResponse = await this.publicFioSDK.getFioBalance(publicKey);
-      const rewards = !roe
+
+      const rewardsAmount = !roe
         ? 0
         : new MathOp(srps)
             .mul(roe)
-            .round(0, 2)
             .sub(staked)
+            .round(0, 2)
             .toNumber();
+
+      const rewards = new MathOp(rewardsAmount).lt(0) ? 0 : rewardsAmount;
 
       balances = {
         ...balances,
