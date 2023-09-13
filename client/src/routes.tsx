@@ -613,6 +613,12 @@ const Routes = (): React.ReactElement => {
                 component={FioAffiliateProgramPage}
                 exact
               />
+
+              <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} />
+              <Route
+                path="*"
+                component={() => <Redirect to={ROUTES.NOT_FOUND} />}
+              />
             </Switch>
           )}
         </React.Suspense>
