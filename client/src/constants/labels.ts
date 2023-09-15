@@ -133,7 +133,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.UNAVAILABLE]: 'Unavailable',
 };
 
-export const APP_TITLE = 'FIO Dashboard';
+export const APP_TITLE = 'FIO Protocol Dashboard';
 export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.HOME]: 'Home',
   [LINKS.DASHBOARD]: 'My FIO',
