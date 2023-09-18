@@ -10,7 +10,7 @@ const CHUNK_SIZE = 2;
 const DELAY_BETWEEN_CHUNKS = 100;
 const FIO_NFT_POLYGON_CONTRACT = process.env.FIO_NFT_POLYGON_CONTRACT || '';
 
-export default class GetInfuraNfts extends Base {
+export default class GetFioNfts extends Base {
   static get validationRules() {
     return {
       address: ['required', 'string'],
