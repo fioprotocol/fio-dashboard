@@ -132,6 +132,47 @@ class GetMoralisNfts {
     }
     return nftsList;
   }
+
+  async getNftMetadata({ chainName, tokenAddress, tokenId }) {
+    await this.init();
+    let chainNameValue = chainName;
+
+    switch (chainName) {
+      case 'MATIC':
+        chainNameValue = 'POLYGON';
+        break;
+      case 'AVAX':
+        chainNameValue = 'AVALANCHE';
+        break;
+      case 'FTM':
+        chainNameValue = 'FANTOM';
+        break;
+      case 'CRO':
+        chainNameValue = 'CRONOS';
+        break;
+      case 'ARBIONE':
+        chainNameValue = 'ARBITRUM';
+        break;
+      case 'RON':
+        chainNameValue = 'RONIN';
+        break;
+      case 'OP':
+        chainNameValue = 'OPTIMISM';
+        break;
+      default:
+        break;
+    }
+    const chain = EvmChain[chainNameValue];
+
+    return await Moralis.EvmApi.nft.getNFTMetadata({
+      chain,
+      format: 'decimal',
+      normalizeMetadata: true,
+      mediaItems: false,
+      address: tokenAddress,
+      tokenId,
+    });
+  }
 }
 
 export default new GetMoralisNfts();
