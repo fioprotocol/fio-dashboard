@@ -78,14 +78,14 @@ export const NftItemComponent: React.FC<Props> = props => {
     fch,
     hasMultipleSignatures,
     // hash,
-    infuraMetadata,
+    externalProviderMetadata,
     // isImage,
     isAlteredImage,
     tokenId,
     viewNftLink,
   } = props;
 
-  const { description, name } = infuraMetadata || {};
+  const { description, name } = externalProviderMetadata || {};
 
   const isDesktop = useCheckIfDesktop();
 

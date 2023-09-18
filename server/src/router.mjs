@@ -209,8 +209,11 @@ router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
-router.get('/fio-nfts', routes.external.getFioNfts);
-router.get('/infura-nfts-metadata', routes.external.infuraNftsMetadata);
+router.get('/external-provider-nfts', routes.external.externalProviderNfts);
+router.get(
+  '/external-provider-nfts-metadata',
+  routes.external.externalProviderNftsMetadata,
+);
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
 
