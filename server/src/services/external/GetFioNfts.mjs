@@ -7,7 +7,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 const CHUNK_SIZE = 2;
-const DELAY_BETWEEN_CHUNKS = 100;
+const DELAY_BETWEEN_CHUNKS = 500;
 const FIO_NFT_POLYGON_CONTRACT = process.env.FIO_NFT_POLYGON_CONTRACT || '';
 
 export default class GetFioNfts extends Base {
@@ -69,6 +69,8 @@ export default class GetFioNfts extends Base {
         const nftItemsWithSyncedMetadata = [];
 
         const resyncedNftMetadata = async nftItem => {
+          if (!nftItem || !nftItem.token_id) return;
+
           try {
             await Moralis.EvmApi.nft.reSyncMetadata({
               chain,
@@ -139,15 +141,17 @@ export default class GetFioNfts extends Base {
           }
         }
 
-        for (const nftItemWithSyncedMetadata of nftItemsWithSyncedMetadata) {
-          const nonUpdatedMetadataNftItem = nftsList.find(
-            nftItem => nftItem.token_id === nftItemWithSyncedMetadata.token_id,
-          );
+        if (nftItemsWithSyncedMetadata.length) {
+          for (const nftItemWithSyncedMetadata of nftItemsWithSyncedMetadata) {
+            const nonUpdatedMetadataNftItem = nftsList.find(
+              nftItem => nftItem.token_id === nftItemWithSyncedMetadata.token_id,
+            );
 
-          if (nonUpdatedMetadataNftItem) {
-            nonUpdatedMetadataNftItem.metadata = nftItemWithSyncedMetadata.metadata;
-            nonUpdatedMetadataNftItem.normalized_metadata =
-              nftItemWithSyncedMetadata.normalized_metadata;
+            if (nonUpdatedMetadataNftItem) {
+              nonUpdatedMetadataNftItem.metadata = nftItemWithSyncedMetadata.metadata;
+              nonUpdatedMetadataNftItem.normalized_metadata =
+                nftItemWithSyncedMetadata.normalized_metadata;
+            }
           }
         }
       }
