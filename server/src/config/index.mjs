@@ -46,5 +46,9 @@ export default {
     defaultChainId: process.env.INFURA_NFT_DEFAULT_CHAIN_ID,
     nftBaseUrl: process.env.INFURA_NFT_BASE_URL,
   },
+  nfts: {
+    apiKey: process.env.NFT_PROVIDER_API_KEY,
+    defaultChainName: process.env.NFT_DEFAULT_CHAIN_NAME,
+  },
   ...dbConfig,
 };
