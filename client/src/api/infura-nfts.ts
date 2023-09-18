@@ -7,16 +7,16 @@ export default class InfuraNfts extends Base {
     return this.apiClient.get(`fio-nfts`, { address, chainName });
   }
   getNftMetadata({
-    chainId,
+    chainName,
     tokenAddress,
     tokenId,
   }: {
-    chainId: number;
+    chainName: string;
     tokenAddress: string;
     tokenId: string;
   }): Promise<InfuraNftsMetadataResponse> {
     return this.apiClient.get('infura-nfts-metadata', {
-      chainId,
+      chainName,
       tokenAddress,
       tokenId,
     });
