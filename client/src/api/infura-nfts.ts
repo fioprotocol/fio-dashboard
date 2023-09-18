@@ -4,7 +4,7 @@ import { InfuraNftsResponse, InfuraNftsMetadataResponse } from './responses';
 
 export default class InfuraNfts extends Base {
   getAllNfts(address: string, chainName?: string): Promise<InfuraNftsResponse> {
-    return this.apiClient.get(`infura-nfts`, { address, chainName });
+    return this.apiClient.get(`fio-nfts`, { address, chainName });
   }
   getNftMetadata({
     chainId,
