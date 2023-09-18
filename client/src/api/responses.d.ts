@@ -99,15 +99,31 @@ export type FioRegCaptchaResponse = {
 export type FioRegApiUrlsResponse = string[];
 
 export type InfuraNftsResponse = {
-  contract: string;
-  tokenId: string;
-  supply: string;
-  type: string;
-  metadata: {
+  token_address: string;
+  token_id: string;
+  owner_of: string;
+  block_number: string;
+  block_number_minted: string;
+  token_hash: string;
+  amount: number;
+  possible_spam: boolean;
+  contract_type: string;
+  name: string;
+  symbol: string;
+  token_uri: string;
+  metadata: string | null;
+  last_token_uri_sync: string;
+  last_metadata_sync: string;
+  minter_address: string;
+  normalized_metadata: {
     name: string;
     description: string;
+    animation_url: string | null;
+    external_link: string | null;
     image: string;
-  };
+    attributes: [];
+  } | null;
+  verified_collection: boolean;
 }[];
 
 export type InfuraNftsMetadataResponse = {
