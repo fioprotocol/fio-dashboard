@@ -127,20 +127,39 @@ export type InfuraNftsResponse = {
 }[];
 
 export type InfuraNftsMetadataResponse = {
-  contract: string;
-  metadata: {
-    external_url?: string;
+  token_address: string;
+  token_id: string;
+  amount: string;
+  owner_of: string;
+  token_hash: string;
+  block_number_minted: string;
+  block_number: string;
+  transfer_index: number[];
+  contract_type: string;
+  name: string;
+  symbol: string;
+  token_uri: string;
+  metadata: string | null;
+  last_token_uri_sync: string;
+  last_metadata_sync: string;
+  minter_address: string;
+  normalized_metadata: {
     name: string;
     description: string;
+    animation_url: string | null;
+    external_link: string | null;
     image: string;
-    nft?: {
-      external_url?: string;
-      name: string;
-      description: string;
-      image: string;
-    };
-  };
-  tokenId: string;
+    attributes: {
+      trait_type: string | null;
+      value: string | null;
+      display_type: string | null;
+      max_value: string | null;
+      trait_count: number | null;
+      order: string | null;
+    }[];
+  } | null;
+  possible_spam: boolean;
+  verified_collection: boolean;
 };
 
 export type NotificationsListResponse = Notification[];

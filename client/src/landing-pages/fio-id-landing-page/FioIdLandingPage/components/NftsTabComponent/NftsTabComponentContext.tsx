@@ -137,34 +137,47 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
 
       if (newObject[chain_code] && !nftItemObj.hasMultipleSignatures) {
         try {
-          const infuraNftMetadata = await apis.infuraNfts.getNftMetadata({
-            chainId: newObject[chain_code],
+          const fioNftMetadata = await apis.infuraNfts.getNftMetadata({
+            chainName: chain_code,
             tokenAddress: contract_address,
             tokenId: token_id,
           });
 
-          if (infuraNftMetadata) {
+          if (fioNftMetadata) {
             const {
-              metadata: {
-                description: infuraDescription,
-                external_url: infuraExternalUrl,
-                image: infuraImage,
-                name: infuraName,
-                nft,
-              },
-            } = infuraNftMetadata;
+              normalized_metadata,
+              metadata,
+              token_uri: nftTokenUrl,
+            } = fioNftMetadata;
+
+            let nftDescription = null,
+              nftExternalUrl = null,
+              nftImage = null,
+              nftName = null;
 
             const {
-              description: nftDecription,
-              external_url: nftExternalUrl,
-              image: nftImage,
-              name: nftName,
-            } = nft || {};
+              description: normalizedNftDescription,
+              external_link: normalizedNftExternalUrl,
+              image: normalizedNftImage,
+              name: normalizedNftName,
+            } = normalized_metadata || {};
 
-            const description = infuraDescription || nftDecription || '';
-            const externalUrl = infuraExternalUrl || nftExternalUrl || '';
-            const image = infuraImage || nftImage || '';
-            const name = infuraName || nftName || '';
+            if (metadata && typeof metadata === 'string') {
+              const metadataParsed = JSON.parse(metadata);
+              const { description, external_link, image, name } =
+                metadataParsed || {};
+              nftDescription = description;
+              nftExternalUrl = external_link;
+              nftImage = image;
+              nftName = name;
+            }
+
+            const description =
+              normalizedNftDescription || nftDescription || '';
+            const externalUrl =
+              normalizedNftExternalUrl || nftExternalUrl || nftTokenUrl || '';
+            const image = normalizedNftImage || nftImage || '';
+            const name = normalizedNftName || nftName || '';
 
             nftItemObj.infuraMetadata = {
               description: convertDescriptionToArray(description),
