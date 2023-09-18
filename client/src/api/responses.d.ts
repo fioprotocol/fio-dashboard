@@ -98,7 +98,7 @@ export type FioRegCaptchaResponse = {
 };
 export type FioRegApiUrlsResponse = string[];
 
-export type InfuraNftsResponse = {
+export type ExternalProviderNftsResponse = {
   token_address: string;
   token_id: string;
   owner_of: string;
@@ -126,7 +126,7 @@ export type InfuraNftsResponse = {
   verified_collection: boolean;
 }[];
 
-export type InfuraNftsMetadataResponse = {
+export type ExternalProviderNftsMetadataResponse = {
   token_address: string;
   token_id: string;
   amount: string;

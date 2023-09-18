@@ -15,7 +15,7 @@ export type NftItem = {
   hasMultipleSignatures: boolean;
   hash?: string;
   imageUrl: string;
-  infuraMetadata?: {
+  externalProviderMetadata?: {
     description?: (string | string[])[];
     externalUrl?: string;
     imageSrc?: string;
@@ -137,11 +137,13 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
 
       if (newObject[chain_code] && !nftItemObj.hasMultipleSignatures) {
         try {
-          const fioNftMetadata = await apis.infuraNfts.getNftMetadata({
-            chainName: chain_code,
-            tokenAddress: contract_address,
-            tokenId: token_id,
-          });
+          const fioNftMetadata = await apis.externalProviderNfts.getNftMetadata(
+            {
+              chainName: chain_code,
+              tokenAddress: contract_address,
+              tokenId: token_id,
+            },
+          );
 
           if (fioNftMetadata) {
             const {
@@ -179,7 +181,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
             const image = normalizedNftImage || nftImage || '';
             const name = normalizedNftName || nftName || '';
 
-            nftItemObj.infuraMetadata = {
+            nftItemObj.externalProviderMetadata = {
               description: convertDescriptionToArray(description),
               externalUrl,
               imageSrc: image.replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
@@ -192,14 +194,15 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       }
 
       const fioImageUrl = await loadImage(url);
-      const infuraImageUrl = await loadImage(
-        nftItemObj.infuraMetadata?.imageSrc,
+      const externalProviderImageUrl = await loadImage(
+        nftItemObj.externalProviderMetadata?.imageSrc,
       );
-      const infuraxtenalImageUrl = await loadImage(
-        nftItemObj.infuraMetadata?.externalUrl,
+      const externalProviderLink = await loadImage(
+        nftItemObj.externalProviderMetadata?.externalUrl,
       );
 
-      const viewNftLink = fioImageUrl || infuraImageUrl || infuraxtenalImageUrl;
+      const viewNftLink =
+        fioImageUrl || externalProviderImageUrl || externalProviderLink;
 
       if (viewNftLink) {
         nftItemObj.viewNftLink = viewNftLink;
@@ -208,11 +211,11 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       nftItemObj.imageUrl = nftItemObj.hasMultipleSignatures
         ? multipleSignatureIconSrc
         : fioImageUrl ||
-          infuraImageUrl ||
-          infuraxtenalImageUrl ||
+          externalProviderImageUrl ||
+          externalProviderImageUrl ||
           noImageIconSrc;
       nftItemObj.isImage =
-        !!fioImageUrl || !!infuraImageUrl || !!infuraxtenalImageUrl;
+        !!fioImageUrl || !!externalProviderImageUrl || !!externalProviderLink;
 
       // todo: commented due to DASH-711 task. We hide it until figureout with hash
       // if (

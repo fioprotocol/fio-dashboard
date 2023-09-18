@@ -1,35 +1,32 @@
 import moralisNftsApi from '../../external/moralis-nft.mjs';
 
 import logger from '../../logger';
+import config from '../../config/index.mjs';
 import Base from '../Base';
 import X from '../Exception';
 
-export default class GetInfuraNftsMetadata extends Base {
+export default class GetExternalProviderNfts extends Base {
   static get validationRules() {
     return {
+      address: ['required', 'string'],
       chainName: ['string'],
-      tokenAddress: ['string'],
-      tokenId: ['string'],
     };
   }
 
-  async execute({ chainName, tokenAddress, tokenId }) {
+  async execute({ address, chainName = config.nfts.defaultChainName }) {
     try {
-      const res = await moralisNftsApi.getNftMetadata({
+      const nftsList = await moralisNftsApi.getAllWalletNfts({
+        address,
         chainName,
-        tokenAddress,
-        tokenId,
       });
 
-      return {
-        data: res,
-      };
+      return { data: nftsList };
     } catch (error) {
-      logger.error(`External Nfts Metadata get: ${error}`);
+      logger.error(`Get External Provider NFTs: ${error}`);
       throw new X({
         code: 'SERVER_ERROR',
         fields: {
-          infuraNfts: 'SERVER_ERROR',
+          fioNfts: 'SERVER_ERROR',
         },
       });
     }

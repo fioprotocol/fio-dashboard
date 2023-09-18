@@ -14,7 +14,7 @@ import FioReg from './fio-reg';
 import General from './general';
 import GeneratePdfFile from './generatePdf';
 import HealthCheck from './health-check';
-import InfuraNfts from './infura-nfts';
+import ExternalProviderNfts from './external-provider-nfts';
 import Notifications from './notifications';
 import Orders from './orders';
 import Payments from './payments';
@@ -58,7 +58,7 @@ export type Api = {
   general: General;
   generatePdfFile: GeneratePdfFile;
   healthCheck: HealthCheck;
-  infuraNfts: InfuraNfts;
+  externalProviderNfts: ExternalProviderNfts;
   notifications: Notifications;
   orders: Orders;
   payments: Payments;
@@ -85,7 +85,7 @@ const apis = {
   general: new General(apiClient),
   generatePdfFile: new GeneratePdfFile(apiClient),
   healthCheck: new HealthCheck(apiClient),
-  infuraNfts: new InfuraNfts(apiClient),
+  externalProviderNfts: new ExternalProviderNfts(apiClient),
   notifications: new Notifications(apiClient),
   orders: new Orders(apiClient),
   payments: new Payments(apiClient),
