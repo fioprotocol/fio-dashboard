@@ -54,11 +54,14 @@ export function useGetWrappedFioData(
 
     return nftsList.length > 0
       ? nftsList
-          .filter(nftItem => nftItem.metadata?.name)
+          .filter(nftItem => !!nftItem.metadata)
           .map(nftItem => {
-            const { metadata, tokenId } = nftItem;
-            const name = metadata.name && metadata.name.split(': ')[1];
-            return { name, id: tokenId };
+            const { metadata, token_id, normalized_metadata } = nftItem;
+            const metadataName =
+              normalized_metadata.name ||
+              (metadata && JSON.parse(metadata).name);
+            const name = metadataName && metadataName.split(': ')[1];
+            return { name, id: token_id };
           })
           .reverse()
       : null;
