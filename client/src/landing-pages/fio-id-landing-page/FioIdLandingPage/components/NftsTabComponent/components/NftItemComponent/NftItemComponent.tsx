@@ -164,7 +164,7 @@ export const NftItemComponent: React.FC<Props> = props => {
               )}
             </div>
           </div>
-          {description && (
+          {description?.length > 0 && (
             <div
               className={classnames(classes.contentItem, classes.description)}
             >
