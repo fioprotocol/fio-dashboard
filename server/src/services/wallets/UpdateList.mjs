@@ -1,6 +1,7 @@
 import Base from '../Base';
 
 import { Wallet } from '../../models';
+import X from '../Exception';
 
 export default class WalletsUpdate extends Base {
   static get validationRules() {
@@ -31,14 +32,27 @@ export default class WalletsUpdate extends Base {
         continue;
       }
 
-      const newWallet = new Wallet({
-        edgeId,
-        name,
-        publicKey,
-        userId: this.context.id,
-      });
+      const walletWithExistingPublicKey = wallets.find(
+        wallet => wallet.publicKey === publicKey,
+      );
 
-      await newWallet.save();
+      if (walletWithExistingPublicKey) {
+        await walletWithExistingPublicKey.update({ failedSyncedWithEdge: true });
+        throw new X({
+          code: 'NOT_UNIQUE',
+          fields: {
+            publicKey: 'NOT_UNIQUE',
+          },
+        });
+      } else {
+        const newWallet = new Wallet({
+          edgeId,
+          name,
+          publicKey,
+          userId: this.context.id,
+        });
+        await newWallet.save();
+      }
     }
 
     return {

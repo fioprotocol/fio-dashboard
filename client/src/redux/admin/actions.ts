@@ -161,16 +161,21 @@ export const GET_REGULAR_USERS_REQUEST = `${prefix}/GET_REGULAR_USERS_REQUEST`;
 export const GET_REGULAR_USERS_SUCCESS = `${prefix}/GET_REGULAR_USERS_SUCCESS`;
 export const GET_REGULAR_USERS_FAILURE = `${prefix}/GET_REGULAR_USERS_FAILURE`;
 
-export const getRegularUsersList = (
+export const getRegularUsersList = ({
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
-): CommonPromiseAction => ({
+  filters,
+}: {
+  limit: number;
+  offset: number;
+  filters?: { failedSyncedWithEdge?: string };
+}): CommonPromiseAction => ({
   types: [
     GET_REGULAR_USERS_REQUEST,
     GET_REGULAR_USERS_SUCCESS,
     GET_REGULAR_USERS_FAILURE,
   ],
-  promise: (api: Api) => api.admin.usersList(limit, offset),
+  promise: (api: Api) => api.admin.usersList({ limit, offset, filters }),
 });
 
 export const GET_FIO_API_URLS_REQUEST = `${prefix}/GET_FIO_API_URLS_REQUEST`;
