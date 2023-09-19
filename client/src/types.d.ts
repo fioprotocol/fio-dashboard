@@ -172,6 +172,7 @@ export type FioWalletDoublet = {
   rewards?: number | null;
   publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
+  failedSyncedWithEdge?: boolean;
 };
 
 export type NewFioWalletDoublet = {
