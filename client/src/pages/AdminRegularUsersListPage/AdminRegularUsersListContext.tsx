@@ -9,7 +9,7 @@ import { regularUsersList as regularUsersListSelector } from '../../redux/admin/
 
 import apis from '../../api';
 
-import usePagination from '../../hooks/usePagination';
+import usePagination, { DEFAULT_LIMIT } from '../../hooks/usePagination';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
@@ -20,10 +20,12 @@ import { User } from '../../types';
 import { log } from '../../util/general';
 
 type UseContextProps = {
+  filters: { failedSyncedWithEdge: string };
   loading: boolean;
   paginationComponent: Component;
   regularUsersList: User[];
   range: number[];
+  handleChangeFailedSyncFilter: (newValue: string) => void;
   onClick: (regularUserId: string) => void;
   onExportCsv: () => Promise<void>;
 };
@@ -36,14 +38,27 @@ export const useContext = (): UseContextProps => {
   const history = useHistory();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [filters, setFilters] = useState<{ failedSyncedWithEdge: string }>({
+    failedSyncedWithEdge: '',
+  });
 
   const getRegularUsers = useCallback(
     (limit: number, offset: number) =>
-      dispatch(getRegularUsersList(limit, offset)),
-    [dispatch],
+      dispatch(
+        getRegularUsersList({
+          limit,
+          offset,
+          filters,
+        }),
+      ),
+    [dispatch, filters],
   );
 
-  const { paginationComponent, range } = usePagination(getRegularUsers);
+  const { paginationComponent, range } = usePagination(
+    getRegularUsers,
+    DEFAULT_LIMIT,
+    filters,
+  );
 
   const onClick = useCallback(
     (regularUserEmail: string) => {
@@ -55,9 +70,21 @@ export const useContext = (): UseContextProps => {
     [history],
   );
 
+  const handleChangeFailedSyncFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      failedSyncedWithEdge: newValue,
+    }));
+  }, []);
+
   const onExportCsv = useCallback(async () => {
     setLoading(true);
-    const usersList = await apis.admin.usersList(0, 0, true);
+    const usersList = await apis.admin.usersList({
+      limit: 0,
+      offset: 0,
+      includeMoreDetailedInfo: true,
+      filters,
+    });
 
     const preparedUsersListToCsv: {
       number: number;
@@ -113,13 +140,15 @@ export const useContext = (): UseContextProps => {
     }
 
     setLoading(false);
-  }, []);
+  }, [filters]);
 
   return {
+    filters,
     loading,
     paginationComponent,
     regularUsersList,
     range,
+    handleChangeFailedSyncFilter,
     onClick,
     onExportCsv,
   };

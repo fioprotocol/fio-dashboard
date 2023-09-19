@@ -15,7 +15,7 @@ export default class RegularUsersList extends Base {
   }
 
   async execute({ limit = 25, offset = 0 }) {
-    const users = await User.list(limit, offset);
+    const users = await User.list({ limit, offset });
     const usersCount = await User.usersCount();
 
     return {
