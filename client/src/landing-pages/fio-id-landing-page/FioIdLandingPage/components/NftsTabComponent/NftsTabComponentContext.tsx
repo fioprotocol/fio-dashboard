@@ -182,7 +182,9 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
             const name = normalizedNftName || nftName || '';
 
             nftItemObj.externalProviderMetadata = {
-              description: convertDescriptionToArray(description),
+              description: description
+                ? convertDescriptionToArray(description)
+                : null,
               externalUrl,
               imageSrc: image.replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
               name,
