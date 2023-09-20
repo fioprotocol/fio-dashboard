@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { updatePublicAddresses } from '../../redux/fio/actions';
 import {
   currentFioAddress as currentFioAddressSelector,
   loading as loadingSelector,
@@ -73,7 +72,6 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
 
   const history = useHistory();
-  const dispatch = useDispatch();
 
   usePublicAddresses(fch);
 
@@ -132,12 +130,6 @@ export const useContext = (): UseContextProps => {
         );
         if (actionResults) {
           setResultsData(actionResults);
-          dispatch(
-            updatePublicAddresses(fch, {
-              addPublicAddresses: actionResults.connect.updated,
-              deletePublicAddresses: [],
-            }),
-          );
           history.push({
             pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
             search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
@@ -152,7 +144,7 @@ export const useContext = (): UseContextProps => {
         setSubmitData(null);
       }
     },
-    [dispatch, fch, history],
+    [fch, history],
   );
 
   const publicAddressesJson = JSON.stringify(publicAddresses);
@@ -172,7 +164,7 @@ export const useContext = (): UseContextProps => {
           !existingSocialMediaLinksList.find(
             existingSocialMediaLink =>
               existingSocialMediaLink.tokenCode.toLowerCase() ===
-              socialMediaContent.name.toLowerCase(),
+              socialMediaContent.tokenName.toLowerCase(),
           ),
       ),
     );

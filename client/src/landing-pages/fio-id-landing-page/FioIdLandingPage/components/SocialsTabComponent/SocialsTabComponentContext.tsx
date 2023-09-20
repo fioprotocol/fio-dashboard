@@ -4,7 +4,11 @@ import apis from '../../../api';
 import useEffectOnce from '../../../../../hooks/general';
 
 import { CHAIN_CODES } from '../../../../../constants/common';
-import { SOCIAL_MEDIA_LINKS } from '../../../../../constants/socialMediaLinks';
+import {
+  SOCIAL_MEDIA_IDS,
+  SOCIAL_MEDIA_LINKS,
+  SOCIAL_MEDIA_NAMES,
+} from '../../../../../constants/socialMediaLinks';
 
 interface ImageData {
   [key: string]: string;
@@ -51,7 +55,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         const socialMediaLinkItem = SOCIAL_MEDIA_LINKS.find(
           socialMediaItem =>
             publicAddress.token_code.toLowerCase() ===
-            socialMediaItem.name.toLowerCase(),
+            socialMediaItem.tokenName.toLowerCase(),
         );
         return {
           ...socialMediaLinkItem,
@@ -65,10 +69,28 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     }
 
     setSocialLinks(
-      socialLinksList.map(socialLinkItem => ({
-        ...socialLinkItem,
-        iconSrc: imagesParsed[socialLinkItem.name],
-      })),
+      socialLinksList.map(socialLinkItem => {
+        let iconSrc = imagesParsed[socialLinkItem.name];
+
+        if (
+          socialLinkItem.name ===
+          SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.DISCORDSER]
+        ) {
+          iconSrc = imagesParsed[SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.DISCORD]];
+        }
+
+        if (
+          socialLinkItem.name ===
+          SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.LINKEDINCO]
+        ) {
+          iconSrc = imagesParsed[SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.LINKEDIN]];
+        }
+
+        return {
+          ...socialLinkItem,
+          iconSrc,
+        };
+      }),
     );
     toggeLoading(false);
   }, [fch, imagesJSON, offset]);
