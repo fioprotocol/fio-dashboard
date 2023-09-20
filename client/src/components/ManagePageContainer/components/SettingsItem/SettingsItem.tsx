@@ -7,10 +7,13 @@ import classnames from 'classnames';
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import PageTitle from '../../../PageTitle/PageTitle';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
+import NotificationBadge from '../../../NotificationBadge';
 
 import { LINKS } from '../../../../constants/labels';
 import { ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
+
+import { isDomainExpired } from '../../../../util/fio';
 
 import { FioNameItemProps, FioWalletDoublet } from '../../../../types';
 
@@ -82,17 +85,25 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
 export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
   const { fioNameItem, fioWallets } = props;
 
-  const { name: fioName } = fioNameItem;
+  const { name: fioName, expiration } = fioNameItem;
   const { publicKey, name: walletName } =
     fioWallets.find(
       (fioWallet: FioWalletDoublet) =>
         fioWallet.publicKey === fioNameItem.walletPublicKey,
     ) || {};
 
+  const isExpired = isDomainExpired(fioName, expiration);
+
   return (
     <div className={classes.settingsContainer}>
       <PageTitle link={LINKS.FIO_DOMAINS_SETTINGS} isVirtualPage />
       <h3 className={classes.title}>Advanced Settings</h3>
+      <NotificationBadge
+        show={isExpired}
+        message="Certain actions are inactive due to domain is being expired. Renew today to restore the actions and ensure you do not loose the domain."
+        title="Domain Renewal "
+        type={BADGE_TYPES.WARNING}
+      />
       <h5 className={classes.subtitle}>FIO Domain Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.withLink)}>
@@ -142,7 +153,7 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
           to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
           className={classes.buttonLink}
         >
-          <Button className={classes.button}>
+          <Button className={classes.button} disabled={isExpired}>
             Make Domain {fioNameItem.isPublic ? 'Private' : 'Public'}
           </Button>
         </Link>
@@ -158,7 +169,9 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
           to={`${ROUTES.FIO_DOMAIN_OWNERSHIP}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
           className={classes.buttonLink}
         >
-          <Button className={classes.button}>Start Transfer</Button>
+          <Button className={classes.button} disabled={isExpired}>
+            Start Transfer
+          </Button>
         </Link>
       </div>
       <div>
@@ -172,17 +185,9 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
           to={`${ROUTES.WRAP_DOMAIN}?name=${fioName}`}
           className={classes.buttonLink}
         >
-          <Button className={classes.button}>Start Wrapping</Button>
-        </Link>
-      </div>
-      <div>
-        <h5 className={classes.actionTitle}>FIO Domain Unwrapping</h5>
-        <p className={classes.text}>
-          Unwrapping FIO domain allows you to transport your domain to FIO
-          network chain. Simply connect a wallet and initiate unwrapping.
-        </p>
-        <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.buttonLink}>
-          <Button className={classes.button}>Start Unwrapping</Button>
+          <Button className={classes.button} disabled={isExpired}>
+            Start Wrapping
+          </Button>
         </Link>
       </div>
     </div>

@@ -35,7 +35,6 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     pageName,
     showTopBadge,
     showWarningMessage,
-    showWarningDomainWatchListBadge,
     title,
     topBadgeContent,
     warningContent,
@@ -69,7 +68,6 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
   } = useContext({
     pageName,
     showWarningMessage,
-    showWarningDomainWatchListBadge,
     sessionBadgeClose,
   });
 

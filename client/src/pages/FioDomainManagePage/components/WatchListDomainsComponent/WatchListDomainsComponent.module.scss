@@ -38,6 +38,12 @@
       .actionButtons {
         width: 100%;
         justify-content: center;
+
+        .button {
+          height: auto;
+          min-height: 36px;
+          padding: 5px 10px;
+        }
       }
     }
   }

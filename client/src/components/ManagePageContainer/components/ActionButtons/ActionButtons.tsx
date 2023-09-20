@@ -21,6 +21,7 @@ import { FioNameItemProps } from '../../../../types';
 import classes from './ActionButtons.module.scss';
 
 type DefautProps = {
+  isExpired?: boolean;
   isSmallDesktop: boolean;
   name: string;
 };
@@ -76,13 +77,16 @@ const RenewActionButton: React.FC<{
 const WrapActionButton: React.FC<DefautProps & {
   isHidden?: boolean;
 }> = props => {
-  const { isHidden, isSmallDesktop, name } = props;
+  const { isExpired, isHidden, isSmallDesktop, name } = props;
   return (
     <Link
       to={`${ROUTES.WRAP_DOMAIN}?name=${name}`}
       className={classnames(classes.actionButton, isHidden && classes.isHidden)}
     >
-      <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
+      <Button
+        title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}
+        disabled={isExpired}
+      >
         <RefreshIcon />
         {!isSmallDesktop && BUTTONS_TITLE.wrap}
       </Button>
@@ -93,7 +97,7 @@ const WrapActionButton: React.FC<DefautProps & {
 const FchCustomSelection: React.FC<DefautProps & {
   isHidden?: boolean;
 }> = props => {
-  const { isHidden, isSmallDesktop, name } = props;
+  const { isExpired, isHidden, isSmallDesktop, name } = props;
 
   return (
     <Link
@@ -108,7 +112,10 @@ const FchCustomSelection: React.FC<DefautProps & {
       }}
       className={classnames(classes.actionButton, isHidden && classes.isHidden)}
     >
-      <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
+      <Button
+        title={isSmallDesktop ? BUTTONS_TITLE.register : ''}
+        disabled={isExpired}
+      >
         <span className={classes.prefixButtonText}>@</span>&nbsp;
         {!isSmallDesktop && BUTTONS_TITLE.register}
       </Button>
@@ -241,6 +248,7 @@ export const DomainActionButtons: React.FC<{
   fioNameItem: FioNameItemProps;
   isDesktop?: boolean;
   isDomainWatchlist?: boolean;
+  isExpired: boolean;
   onRenewDomain: (name: string) => void;
   onSettingsOpen: (data: FioNameItemProps) => void;
 }> = props => {
@@ -248,6 +256,7 @@ export const DomainActionButtons: React.FC<{
     fioNameItem,
     isDesktop,
     isDomainWatchlist,
+    isExpired,
     onRenewDomain,
     onSettingsOpen,
   } = props;
@@ -257,6 +266,7 @@ export const DomainActionButtons: React.FC<{
   const isSmallDesktop = useCheckIfSmallDesktop();
 
   const defaultProps = {
+    isExpired,
     isSmallDesktop,
     name,
   };

@@ -16,5 +16,6 @@ export const IS_REFERRAL_PROFILE_PATH = /^\/ref\/[a-zA-Z0-9-_]+$/;
 export const ENDS_WITH_FORWARD_SLASH_REGEX = '^.*/$';
 
 export const DOMAIN_EXP_DEBUG_AFFIX = /testdomainexpiration/i;
+export const DOMAIN_EXP_IN_30_DAYS = /expsoon30/i;
 
 export const USERNAME_REGEX = /^[a-z0-9-]+$/;
