@@ -12,7 +12,10 @@ import {
 } from '../ActionButtons';
 import { DateComponent } from '../DateComponent';
 
-import { isDomainExpired } from '../../../../util/fio';
+import {
+  isDomainExpired,
+  isDomainWillExpireIn30Days,
+} from '../../../../util/fio';
 
 import { DOMAIN_STATUS } from '../../../../constants/common';
 import { LOW_BUNDLES_THRESHOLD } from '../../../../constants/fio';
@@ -102,9 +105,10 @@ export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => 
 
   const { name = '', expiration, isPublic } = fioNameItem || {};
 
-  const [showWarning, toggleShowWarning] = useState(
-    expiration && isDomainExpired(name, expiration),
-  );
+  const isExpired = isDomainExpired(name, expiration);
+  const isExpiredIn30Days = isDomainWillExpireIn30Days(name, expiration);
+
+  const [showWarning, toggleShowWarning] = useState(expiration && isExpired);
 
   const closeWarning = useCallback(() => toggleShowWarning(false), []);
 
@@ -126,7 +130,11 @@ export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => 
       <Badge show type={BADGE_TYPES.WHITE} className={classes.badgeContainer}>
         <p className={classes.badgeTitle}>Expiration Date</p>
         <p className={classes.badgeItem}>
-          <DateComponent domainName={name} expiration={expiration} />
+          <DateComponent
+            expiration={expiration}
+            isExpired={isExpired}
+            isExpiredIn30Days={isExpiredIn30Days}
+          />
         </p>
       </Badge>
       <Badge show type={BADGE_TYPES.WHITE} className={classes.badgeContainer}>
@@ -141,6 +149,7 @@ export const DomainItemComponent: React.FC<DomainItemComponentProps> = props => 
           fioNameItem={fioNameItem}
           isDesktop={isDesktop}
           isDomainWatchlist={isDomainWatchlist}
+          isExpired={isExpired}
           onRenewDomain={onRenewDomain}
           onSettingsOpen={onSettingsOpen}
         />

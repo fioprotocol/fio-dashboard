@@ -16,6 +16,11 @@ import { TABLE_HEADERS_LIST } from '../../constants';
 import { DOMAIN_STATUS } from '../../../../constants/common';
 import { LOW_BUNDLES_THRESHOLD } from '../../../../constants/fio';
 
+import {
+  isDomainExpired,
+  isDomainWillExpireIn30Days,
+} from '../../../../util/fio';
+
 import { ModalOpenActionType } from '../../types';
 import { FioNameItemProps, FioNameType } from '../../../../types';
 
@@ -84,6 +89,10 @@ const DomainItemComponent: React.FC<ItemComponentProps & {
     onRenewDomain,
   } = props;
   const { name, isPublic, expiration } = fioNameItem;
+
+  const isExpired = isDomainExpired(name, expiration);
+  const isExpiredIn30Days = isDomainWillExpireIn30Days(name, expiration);
+
   return (
     <React.Fragment key={name}>
       <div className={classnames(classes.tableCol, classes.firstCol)}>
@@ -97,13 +106,18 @@ const DomainItemComponent: React.FC<ItemComponentProps & {
         />
       </div>
       <div className={classes.tableCol}>
-        <DateComponent domainName={name} expiration={expiration} />
+        <DateComponent
+          expiration={expiration}
+          isExpired={isExpired}
+          isExpiredIn30Days={isExpiredIn30Days}
+        />
       </div>
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <DomainActionButtons
           fioNameItem={fioNameItem}
           isDesktop={isDesktop}
           isDomainWatchlist={isDomainWatchlist}
+          isExpired={isExpired}
           onRenewDomain={onRenewDomain}
           onSettingsOpen={onSettingsOpen}
         />

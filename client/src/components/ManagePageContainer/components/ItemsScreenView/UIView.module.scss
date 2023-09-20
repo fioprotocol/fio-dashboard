@@ -59,6 +59,13 @@
     padding: 15px;
     margin-bottom: 20px;
     font-size: 0.875em;
+
+    .warnIcon {
+      margin-left: auto;
+      color: $simple-orange;
+      width: 18px !important;
+      height: 18px !important;
+    }
   }
 
   .nameContainer {
