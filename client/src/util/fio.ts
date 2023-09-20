@@ -22,7 +22,10 @@ import {
   FIO_REQUEST_STATUS_TYPES,
 } from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
-import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/regExps';
+import {
+  DOMAIN_EXP_DEBUG_AFFIX,
+  DOMAIN_EXP_IN_30_DAYS,
+} from '../constants/regExps';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
 
 import {
@@ -306,18 +309,44 @@ export const isDomainExpired = (
 ): boolean => {
   if (
     process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE === 'true' &&
-    DOMAIN_EXP_DEBUG_AFFIX.test(domainName)
+    DOMAIN_EXP_DEBUG_AFFIX.test(domainName) &&
+    !DOMAIN_EXP_IN_30_DAYS.test(domainName)
   ) {
     return true;
   }
 
   const today = new Date();
 
-  return (
-    expiration &&
-    convertToNewDate(expiration) <
-      new Date(today.setDate(today.getDate() + DOMAIN_EXPIRED_DAYS))
-  );
+  const expirationDay = new Date(convertToNewDate(expiration));
+
+  expirationDay.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  return expirationDay <= today;
+};
+
+export const isDomainWillExpireIn30Days = (
+  domainName: string,
+  expiration: number | string,
+): boolean => {
+  if (
+    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE === 'true' &&
+    DOMAIN_EXP_DEBUG_AFFIX.test(domainName) &&
+    DOMAIN_EXP_IN_30_DAYS.test(domainName)
+  ) {
+    return true;
+  }
+
+  const today = new Date();
+
+  const expirationDay = new Date(convertToNewDate(expiration));
+
+  expirationDay.setDate(expirationDay.getDate() - DOMAIN_EXPIRED_DAYS);
+
+  expirationDay.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  return expirationDay <= today;
 };
 
 export const checkIsDomainItemExistsOnCart = (

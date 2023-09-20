@@ -15,6 +15,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
 
 import apis from '../../api';
 
@@ -23,7 +24,11 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { checkIsDomainItemExistsOnCart, isDomainExpired } from '../../util/fio';
+import {
+  checkIsDomainItemExistsOnCart,
+  isDomainExpired,
+  isDomainWillExpireIn30Days,
+} from '../../util/fio';
 import { addCartItem } from '../../util/cart';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
@@ -40,7 +45,12 @@ import {
 } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 
-import { CartItem, DomainWatchlistItem, FioNameItemProps } from '../../types';
+import {
+  CartItem,
+  DomainWatchlistItem,
+  FioDomainDoublet,
+  FioNameItemProps,
+} from '../../types';
 import { FioDomainDoubletResponse } from '../../api/responses';
 
 const EMPTY_STATE_CONTENT = {
@@ -52,7 +62,12 @@ const WARNING_CONTENT = {
   DOMAIN_RENEW: {
     title: 'Domain Renewal',
     message:
-      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not lose the domain.',
+      'One or more FIO Domain below has expired. Certain actions are inactive until the domain is renewed. Renew today to restore the actions and to ensure you do not loose the domain.',
+  },
+  DOMAIN_RENEW_IN_30_DAYS: {
+    title: 'Domain Renewal',
+    message:
+      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not loose the domain.',
   },
 };
 
@@ -81,7 +96,6 @@ type UseContextProps = {
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
   showWarningMessage: boolean;
-  showWarningDomainWatchListBadge: boolean;
   successMessage: string | null;
   warningContent: {
     title: string;
@@ -114,6 +128,7 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
+  const fioDomains = useSelector(fioDomainsSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -146,13 +161,22 @@ export const useContext = (): UseContextProps => {
   >(false);
   const [showDangerModal, toggleDangerModal] = useState<boolean>(false);
   const [
+    showWarningDomainExpireBadge,
+    toggleShowWarningDomainExpireBadge,
+  ] = useState<boolean>(false);
+  const [
     showWarningDomainWatchListBadge,
     toggleShowWarningDomainWatchListBadge,
+  ] = useState<boolean>(false);
+  const [
+    showWarningDomainExpireIn30DaysBadge,
+    toggleShowWarningDomainExpireIn30DaysBadge,
   ] = useState<boolean>(false);
 
   const isDesktop = useCheckIfDesktop();
 
   const cartItemsJSON = JSON.stringify(cartItems);
+  const fioDomainsJSON = JSON.stringify(fioDomains);
 
   const renewDomainFeePrice =
     fees[apis.fio.actionEndPoints.renewFioDomain] || DEFAULT_FEE_PRICES;
@@ -394,6 +418,27 @@ export const useContext = (): UseContextProps => {
     }
   }, [domainsWatchlistList]);
 
+  useEffect(() => {
+    if (fioDomainsJSON) {
+      const fioDomainsParsed: FioDomainDoublet[] = JSON.parse(fioDomainsJSON);
+
+      const hasExpiredIn30Days = fioDomainsParsed.some(
+        fioDomain =>
+          fioDomain.expiration &&
+          isDomainWillExpireIn30Days(fioDomain.name, fioDomain.expiration),
+      );
+
+      const hasExpired = fioDomainsParsed.some(
+        fioDomain =>
+          fioDomain.expiration &&
+          isDomainExpired(fioDomain.name, fioDomain.expiration),
+      );
+
+      toggleShowWarningDomainExpireBadge(hasExpired);
+      toggleShowWarningDomainExpireIn30DaysBadge(hasExpiredIn30Days);
+    }
+  }, [fioDomainsJSON]);
+
   return {
     domainWatchlistIsDeleting,
     domainWatchlistLoading,
@@ -410,10 +455,16 @@ export const useContext = (): UseContextProps => {
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
-    showWarningMessage,
-    showWarningDomainWatchListBadge,
+    showWarningMessage:
+      showWarningMessage &&
+      (showWarningDomainExpireBadge ||
+        showWarningDomainExpireIn30DaysBadge ||
+        showWarningDomainWatchListBadge),
     successMessage,
-    warningContent: WARNING_CONTENT.DOMAIN_RENEW,
+    warningContent:
+      showWarningDomainExpireIn30DaysBadge && !showWarningDomainExpireBadge
+        ? WARNING_CONTENT.DOMAIN_RENEW_IN_30_DAYS
+        : WARNING_CONTENT.DOMAIN_RENEW,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
     handleRenewDomain,

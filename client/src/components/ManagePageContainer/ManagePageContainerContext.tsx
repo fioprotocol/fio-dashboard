@@ -8,7 +8,6 @@ import { ITEMS_LIMIT, PAGE_NAME, WELCOME_COMPONENT_TYPE } from './constants';
 import { LOW_BUNDLES_THRESHOLD } from '../../constants/fio';
 
 import { useCheckIfDesktop } from '../../screenType';
-import { isDomainExpired } from '../../util/fio';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 
 import { FioNameItemProps, FioNameType, FioWalletDoublet } from '../../types';
@@ -17,7 +16,6 @@ import { PAGE_TYPES_PROPS } from '../WelcomeComponent/constants';
 type Props = {
   pageName: FioNameType;
   showWarningMessage: boolean;
-  showWarningDomainWatchListBadge?: boolean;
   sessionBadgeClose: () => void;
 };
 
@@ -76,12 +74,7 @@ type UseContextProps = {
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const {
-    pageName,
-    showWarningMessage,
-    showWarningDomainWatchListBadge,
-    sessionBadgeClose,
-  } = props;
+  const { pageName, showWarningMessage, sessionBadgeClose } = props;
 
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
 
@@ -182,25 +175,9 @@ export const useContext = (props: Props): UseContextProps => {
       );
     }
     if (isDomain) {
-      toggleShowWarnBadge(
-        showWarningMessage &&
-          ((!!fioDomains &&
-            fioDomains.some(
-              fioDomain =>
-                fioDomain.expiration &&
-                isDomainExpired(fioDomain.name, fioDomain.expiration),
-            )) ||
-            showWarningDomainWatchListBadge),
-      );
+      toggleShowWarnBadge(showWarningMessage);
     }
-  }, [
-    fioAddresses,
-    fioDomains,
-    isAddress,
-    isDomain,
-    showWarningDomainWatchListBadge,
-    showWarningMessage,
-  ]);
+  }, [fioAddresses, fioDomains, isAddress, isDomain, showWarningMessage]);
 
   return {
     fio101ComponentProps,
