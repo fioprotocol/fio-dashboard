@@ -1,3 +1,3 @@
-import { SocialMediaLinkNameProp } from '../../types';
+import { SocialMediaLinkIdProp } from '../../types';
 
-export type FormValues = Record<SocialMediaLinkNameProp, string>;
+export type FormValues = Record<SocialMediaLinkIdProp, string>;

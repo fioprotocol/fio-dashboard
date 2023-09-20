@@ -21,7 +21,7 @@ import {
   FioAddressWithPubAddresses,
   LinkActionResult,
   SocialMediaLinkItem,
-  SocialMediaLinkNameProp,
+  SocialMediaLinkIdProp,
 } from '../../../../types';
 
 import classes from './AddSocialMediaLinksForm.module.scss';
@@ -43,7 +43,7 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
   } = props;
 
   const formatInputValue = useCallback(
-    (fieldName: SocialMediaLinkNameProp) => {
+    (fieldName: SocialMediaLinkIdProp) => {
       const { value } = form.getFieldState(fieldName) || {};
 
       let valueToFormat = value;
@@ -90,7 +90,7 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
                 {...socialMediaLinkItem}
                 input={
                   <Field
-                    name={socialMediaLinkItem.name}
+                    name={socialMediaLinkItem.tokenName}
                     type="text"
                     component={TextInput}
                     placeholder="Enter username"
@@ -103,8 +103,8 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
                 }
                 showInput
               />
-              <OnBlur name={socialMediaLinkItem.name}>
-                {() => formatInputValue(socialMediaLinkItem.name)}
+              <OnBlur name={socialMediaLinkItem.tokenName}>
+                {() => formatInputValue(socialMediaLinkItem.tokenName)}
               </OnBlur>
             </div>
           ))}
