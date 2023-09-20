@@ -14,10 +14,12 @@ import { SocialMediaLinkItem } from '../types';
 
 export const SOCIAL_MEDIA_NAMES = {
   DISCORD: 'discord',
+  DISCORDSERVER: 'discord Server',
   FACEBOOK: 'facebook',
   HIVE: 'hive',
   INSTAGRAM: 'instagram',
   LINKEDIN: 'linkedin',
+  LINKEDINCOMPANY: 'linkedin company',
   MASTODON: 'mastodon',
   NOSTR: 'nostr',
   REDDIT: 'reddit',
@@ -31,6 +33,11 @@ export const SOCIAL_MEDIA_LINKS: SocialMediaLinkItem[] = [
     iconSrc: DiscordSrc,
     name: SOCIAL_MEDIA_NAMES.DISCORD,
     link: 'https://discordapp.com/users/',
+  },
+  {
+    iconSrc: DiscordSrc,
+    name: SOCIAL_MEDIA_NAMES.DISCORDSERVER,
+    link: 'https://discord.gg/',
   },
   {
     iconSrc: FacebookSrc,
@@ -51,6 +58,11 @@ export const SOCIAL_MEDIA_LINKS: SocialMediaLinkItem[] = [
     iconSrc: LinkedinSrc,
     name: SOCIAL_MEDIA_NAMES.LINKEDIN,
     link: 'https://www.linkedin.com/in/',
+  },
+  {
+    iconSrc: LinkedinSrc,
+    name: SOCIAL_MEDIA_NAMES.LINKEDINCOMPANY,
+    link: 'https://www.linkedin.com/company/',
   },
   {
     iconSrc: MastedonSrc,
