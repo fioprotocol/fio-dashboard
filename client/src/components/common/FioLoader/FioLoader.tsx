@@ -28,7 +28,7 @@ const FioLoader: React.FC<Props> = props => {
     );
   }
 
-  return renderLoader();
+  return <div style={{ width: '70px', height: '70px' }}>{renderLoader()}</div>;
 };
 
 export default FioLoader;
