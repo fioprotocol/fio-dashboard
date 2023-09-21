@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import apis from '../../../../../api';
 
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
-import { loadImage } from '../../../../../util/general';
+import { loadImage, log } from '../../../../../util/general';
 import useEffectOnce from '../../../../../hooks/general';
 
 import noImageIconSrc from '../../../../../assets/images/no-photo.svg';
@@ -39,6 +39,7 @@ type UseContextProps = {
 };
 
 const INFURA_HOST_URL = 'ipfs.infura.io';
+const INFURA_IFPS_LINK = /ipfs:\/\//g;
 const REWRITE_INFURA_HOST_URL = 'fio.infura-ipfs.io';
 
 const DEFAULT_LIMIT = 6;
@@ -186,7 +187,12 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
                 ? convertDescriptionToArray(description)
                 : null,
               externalUrl,
-              imageSrc: image.replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
+              imageSrc: image
+                .replace(
+                  INFURA_IFPS_LINK,
+                  `https://${REWRITE_INFURA_HOST_URL}/ipfs/`,
+                )
+                .replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
               name,
             };
           }
@@ -195,6 +201,8 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         }
       }
 
+      let fetchedImageFileString = null;
+
       const fioImageUrl = await loadImage(url);
       const externalProviderImageUrl = await loadImage(
         nftItemObj.externalProviderMetadata?.imageSrc,
@@ -202,6 +210,36 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       const externalProviderLink = await loadImage(
         nftItemObj.externalProviderMetadata?.externalUrl,
       );
+
+      if (!fioImageUrl && !externalProviderImageUrl && !externalProviderLink) {
+        try {
+          const contentUrl =
+            url ||
+            nftItemObj.externalProviderMetadata?.imageSrc ||
+            nftItemObj.externalProviderMetadata?.externalUrl ||
+            null;
+          if (contentUrl !== null) {
+            const imageContentRes = await apis.general.getUrlContent(
+              contentUrl,
+            );
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = imageContentRes;
+
+            const firstImageElement = tempContainer.querySelector('img');
+            const firstSvgElement = tempContainer.querySelector('svg');
+
+            if (firstSvgElement) {
+              fetchedImageFileString = `data:image/svg+xml,${encodeURIComponent(
+                firstSvgElement.outerHTML,
+              )}`;
+            } else if (firstImageElement) {
+              fetchedImageFileString = firstImageElement.getAttribute('src');
+            }
+          }
+        } catch (err) {
+          log.error(err);
+        }
+      }
 
       const viewNftLink =
         fioImageUrl || externalProviderImageUrl || externalProviderLink;
@@ -214,10 +252,14 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         ? multipleSignatureIconSrc
         : fioImageUrl ||
           externalProviderImageUrl ||
-          externalProviderImageUrl ||
+          externalProviderLink ||
+          fetchedImageFileString ||
           noImageIconSrc;
       nftItemObj.isImage =
-        !!fioImageUrl || !!externalProviderImageUrl || !!externalProviderLink;
+        !!fioImageUrl ||
+        !!externalProviderImageUrl ||
+        !!externalProviderLink ||
+        !!fetchedImageFileString;
 
       // todo: commented due to DASH-711 task. We hide it until figureout with hash
       // if (

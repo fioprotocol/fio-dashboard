@@ -217,6 +217,8 @@ router.get(
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
 
+router.get('/get-url-content', routes.general.getUrlContent);
+
 router.post('/domains-watchlist', checkAuth, routes.domainsWatchlist.create);
 router.delete('/domains-watchlist', checkAuth, routes.domainsWatchlist.delete);
 router.get('/domains-watchlist', checkAuth, routes.domainsWatchlist.list);
