@@ -23,6 +23,9 @@ type Props = {
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
   obtData: FioRecord[];
+  sentFioRequestsLoading?: boolean;
+  receivedFioRequestsLoading?: boolean;
+  tabAction: (tabKey: string) => void;
 };
 
 type Location = {
@@ -39,13 +42,13 @@ const FIO_REQUEST_TABS = [
     title: 'Sent',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.sentFioRequests?.reverse()}
+        fioDataList={props.sentFioRequests}
         paymentDataList={props.obtData?.sort(
           (a: FioRecord, b: FioRecord) =>
             new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
         )}
         fioRecordType={FIO_RECORD_TYPES.SENT}
-        loading={false}
+        loading={props.sentFioRequestsLoading}
         {...props}
       />
     ),
@@ -55,13 +58,10 @@ const FIO_REQUEST_TABS = [
     title: 'Received',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.receivedFioRequests?.reverse()}
-        paymentDataList={props.obtData?.sort(
-          (a: FioRecord, b: FioRecord) =>
-            new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
-        )}
+        fioDataList={props.receivedFioRequests}
+        paymentDataList={props.obtData}
         fioRecordType={FIO_RECORD_TYPES.RECEIVED}
-        loading={false}
+        loading={props.receivedFioRequestsLoading}
         {...props}
       />
     ),
@@ -83,6 +83,7 @@ const FioRequestsTab: React.FC<Props> = props => {
         tabItemPrimaryClass={classes.tabItemPrimary}
         tabContentClass={classes.tabContent}
         tabProps={{ ...props }}
+        tabAction={props.tabAction}
         tabBorderPrimary
       />
     </TabsContainer>

@@ -199,10 +199,11 @@
   }
 
   .loader {
-    margin-left: 1rem;
-    position: absolute;
-    right: 27%;
-    top: 35%;
+    & > span {
+      color: inherit !important;
+      width: 16px !important;
+      height: 16px !important;
+    }
   }
 }
 

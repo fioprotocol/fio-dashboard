@@ -5,6 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import classes from './Loader.module.scss';
 
 type Props = {
+  className?: string;
   hasAutoWidth?: boolean;
   hasInheritFontSize?: boolean;
   hasSmallSize?: boolean;
@@ -14,6 +15,7 @@ type Props = {
 
 const Loader: React.FC<Props> = props => {
   const {
+    className,
     hasAutoWidth,
     hasInheritFontSize,
     hasSmallSize,
@@ -29,6 +31,7 @@ const Loader: React.FC<Props> = props => {
         hasInheritFontSize && classes.hasInheritFontSize,
         hasSmallSize && classes.hasSmallSize,
         isWhite && classes.isWhite,
+        className,
       )}
     >
       <CircularProgress style={styles} />

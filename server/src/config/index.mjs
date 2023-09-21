@@ -40,11 +40,9 @@ export default {
     sendinblueEventUrl: process.env.SENDINBLUE_EVENT_URL,
     sendinblueEventTrackerId: process.env.SENDINBLUE_EVENT_TRACKER_ID,
   },
-  infura: {
-    apiKey: process.env.INFURA_API_KEY,
-    apiSecret: process.env.INFURA_API_SECRET,
-    defaultChainId: process.env.INFURA_NFT_DEFAULT_CHAIN_ID,
-    nftBaseUrl: process.env.INFURA_NFT_BASE_URL,
+  nfts: {
+    apiKey: process.env.NFT_PROVIDER_API_KEY,
+    defaultChainName: process.env.NFT_DEFAULT_CHAIN_NAME,
   },
   ...dbConfig,
 };

@@ -209,10 +209,15 @@ router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
-router.get('/infura-nfts', routes.external.infuraNfts);
-router.get('/infura-nfts-metadata', routes.external.infuraNftsMetadata);
+router.get('/external-provider-nfts', routes.external.externalProviderNfts);
+router.get(
+  '/external-provider-nfts-metadata',
+  routes.external.externalProviderNftsMetadata,
+);
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
+
+router.get('/get-url-content', routes.general.getUrlContent);
 
 router.post('/domains-watchlist', checkAuth, routes.domainsWatchlist.create);
 router.delete('/domains-watchlist', checkAuth, routes.domainsWatchlist.delete);

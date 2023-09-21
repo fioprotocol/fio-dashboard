@@ -4,40 +4,61 @@ import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Loader from '../../components/Loader/Loader';
+import CustomDropdown from '../../components/CustomDropdown';
 
 import { useContext } from './AdminRegularUsersListContext';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
+import { USERS_FILTER_OPTIONS } from './constants';
+
 import classes from './AdminRegularUsersList.module.scss';
 
 const AdminRegularUsersList: React.FC = () => {
   const {
+    filters,
     loading,
     paginationComponent,
     regularUsersList,
     range,
+    handleChangeFailedSyncFilter,
     onClick,
     onExportCsv,
   } = useContext();
 
   return (
     <div className={classes.tableContainer}>
-      <Button
-        className="mb-4 d-flex flex-direction-row align-items-center"
-        onClick={onExportCsv}
-        disabled={loading}
-      >
-        <FontAwesomeIcon icon="download" className="mr-2" />{' '}
-        {loading ? (
-          <>
-            <span className="mr-3">Exporting...</span>
-            <Loader isWhite hasInheritFontSize />
-          </>
-        ) : (
-          'Export'
-        )}
-      </Button>
+      <div className="mb-4 d-flex flex-direction-row align-items-center justify-content-between">
+        <Button
+          className="mr-4 d-flex flex-direction-row align-items-center"
+          onClick={onExportCsv}
+          disabled={loading}
+        >
+          <FontAwesomeIcon icon="download" className="mr-2" />{' '}
+          {loading ? (
+            <>
+              <span className="mr-3">Exporting...</span>
+              <Loader isWhite hasInheritFontSize />
+            </>
+          ) : (
+            'Export'
+          )}
+        </Button>
+
+        <div className="d-flex align-items-center">
+          Filter Type:&nbsp;
+          <CustomDropdown
+            value={filters.failedSyncedWithEdge}
+            options={USERS_FILTER_OPTIONS}
+            onChange={handleChangeFailedSyncFilter}
+            isDark
+            withoutMarginBottom
+            fitContentWidth
+            isSmall
+            placeholder="All"
+          />
+        </div>
+      </div>
       <Table className="table" striped={true}>
         <thead>
           <tr>

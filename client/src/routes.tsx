@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { lazy } from 'react';
+
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
-import TwitterPage from './pages/TwitterPage';
 import MainLayout from './pages/MainLayout';
-import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
 import FioLoader from './components/common/FioLoader/FioLoader';
@@ -12,252 +11,261 @@ import { REACT_SNAP_AGENT } from './constants/twitter';
 import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 import useMaintenance from './hooks/useMaintenance';
+import { useGTMGlobalTags } from './hooks/googleTagManager';
 
-const DashboardPage = React.lazy(() =>
+const TwitterPage = lazy(() =>
+  import(/* webpackChunkName: 'twitterPage' */ './pages/TwitterPage'),
+);
+
+const DashboardPage = lazy(() =>
   import(/* webpackChunkName: 'dashboardPage' */ './pages/DashboardPage'),
 );
-const FioAddressManagePage = React.lazy(() =>
+const CreateAccount = lazy(() =>
+  import(/* webpackChunkName: 'createAccount' */ './pages/CreateAccountPage'),
+);
+const FioAddressManagePage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressManagePage' */ './pages/FioAddressManagePage'
   ),
 );
-const FioDomainManagePage = React.lazy(() =>
+const FioDomainManagePage = lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainManagePage' */ './pages/FioDomainManagePage'
   ),
 );
-const CartPage = React.lazy(() =>
+const CartPage = lazy(() =>
   import(/* webpackChunkName: 'cartPage' */ './pages/CartPage'),
 );
-const CheckoutPage = React.lazy(() =>
+const CheckoutPage = lazy(() =>
   import(/* webpackChunkName: 'checkoutPage' */ './pages/CheckoutPage'),
 );
-const PurchasePage = React.lazy(() =>
+const PurchasePage = lazy(() =>
   import(/* webpackChunkName: 'purchasePage' */ './pages/PurchasePage'),
 );
-const FioAddressTransferPage = React.lazy(() =>
+const FioAddressTransferPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressTransferPage' */ './pages/FioAddressTransferPage'
   ),
 );
-const FioDomainTransferPage = React.lazy(() =>
+const FioDomainTransferPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainTransferPage' */ './pages/FioDomainTransferPage'
   ),
 );
-const FioDomainStatusChangePage = React.lazy(() =>
+const FioDomainStatusChangePage = lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainStatusChangePage' */ './pages/FioDomainStatusChangePage'
   ),
 );
-const FioAddressAddBundlesPage = React.lazy(() =>
+const FioAddressAddBundlesPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressAddBundlesPage' */ './pages/FioAddressAddBundlesPage'
   ),
 );
-const FioDomainRenewPage = React.lazy(() =>
+const FioDomainRenewPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainRenewPage' */ './pages/FioDomainRenewPage'
   ),
 );
-const TokenListPage = React.lazy(() =>
+const TokenListPage = lazy(() =>
   import(/* webpackChunkName: 'tokenListPage' */ './pages/TokenListPage'),
 );
-const DeleteTokenPage = React.lazy(() =>
+const DeleteTokenPage = lazy(() =>
   import(/* webpackChunkName: 'deleteTokenPage' */ './pages/DeleteTokenPage'),
 );
-const AddTokenPage = React.lazy(() =>
+const AddTokenPage = lazy(() =>
   import(/* webpackChunkName: 'addTokenPage' */ './pages/AddTokenPage'),
 );
-const EditTokenPage = React.lazy(() =>
+const EditTokenPage = lazy(() =>
   import(/* webpackChunkName: 'editTokenPage' */ './pages/EditTokenPage'),
 );
-const SettingsPage = React.lazy(() =>
+const SettingsPage = lazy(() =>
   import(/* webpackChunkName: 'settingsPage' */ './pages/SettingsPage'),
 );
-const RefHomePage = React.lazy(() =>
+const RefHomePage = lazy(() =>
   import(/* webpackChunkName: 'refHomePage' */ './pages/RefHomePage'),
 );
-const AccountRecoveryPage = React.lazy(() =>
+const AccountRecoveryPage = lazy(() =>
   import(
     /* webpackChunkName: 'accountRecoveryPage' */ './pages/AccountRecoveryPage'
   ),
 );
-const FioAddressSignaturesPage = React.lazy(() =>
+const FioAddressSignaturesPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressSignaturesPage' */ './pages/FioAddressSignaturesPage'
   ),
 );
-const FioAddressSignPage = React.lazy(() =>
+const FioAddressSignPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressSignPage' */ './pages/FioAddressSignPage'
   ),
 );
-const FioAddressNftPage = React.lazy(() =>
+const FioAddressNftPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressNftPage' */ './pages/FioAddressNftPage'
   ),
 );
-const FioRequestDecryptPage = React.lazy(() =>
+const FioRequestDecryptPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioRequestDecryptPage' */ './pages/FioRequestDecryptPage'
   ),
 );
-const FioTokensRequestPage = React.lazy(() =>
+const FioTokensRequestPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioTokensRequestPage' */ './pages/FioTokensRequestPage'
   ),
 );
-const FioTokensReceivePage = React.lazy(() =>
+const FioTokensReceivePage = lazy(() =>
   import(
     /* webpackChunkName: 'fioTokensReceivePage' */ './pages/FioTokensReceivePage'
   ),
 );
-const FioTokensGetPage = React.lazy(() =>
+const FioTokensGetPage = lazy(() =>
   import(/* webpackChunkName: 'fioTokensGetPage' */ './pages/FioTokensGetPage'),
 );
-const FioSocialLinksPage = React.lazy(() =>
+const FioSocialLinksPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioSocialMediaLinksPage' */ './pages/FioSocialMediaLinksPage'
   ),
 );
-const AddSocialLinksPage = React.lazy(() =>
+const AddSocialLinksPage = lazy(() =>
   import(
     /* webpackChunkName: 'addSocialMediaLinksPage' */ './pages/AddSocialMediaLinksPage'
   ),
 );
-const EditSocialLinksPage = React.lazy(() =>
+const EditSocialLinksPage = lazy(() =>
   import(
     /* webpackChunkName: 'editSocialMediaLinksPage' */ './pages/EditSocialMediaLinksPage'
   ),
 );
-const DeleteSocialLinksPage = React.lazy(() =>
+const DeleteSocialLinksPage = lazy(() =>
   import(
     /* webpackChunkName: 'deleteSocialMediaLinksPage' */ './pages/DeleteSocialMediaLinksPage'
   ),
 );
-const TokensRequestPaymentPage = React.lazy(() =>
+const TokensRequestPaymentPage = lazy(() =>
   import(
     /* webpackChunkName: 'tokensRequestPaymentPage' */ './pages/TokensRequestPaymentPage'
   ),
 );
-const NftValidationPage = React.lazy(() =>
+const NftValidationPage = lazy(() =>
   import(
     /* webpackChunkName: 'nftValidationPage' */ './pages/NftValidationPage'
   ),
 );
-const WalletsPage = React.lazy(() =>
+const WalletsPage = lazy(() =>
   import(/* webpackChunkName: 'walletsPage' */ './pages/WalletsPage'),
 );
-const WalletPage = React.lazy(() =>
+const WalletPage = lazy(() =>
   import(/* webpackChunkName: 'walletPage' */ './pages/WalletPage'),
 );
-const ImportWalletPage = React.lazy(() =>
+const ImportWalletPage = lazy(() =>
   import(/* webpackChunkName: 'importWalletPage' */ './pages/ImportWalletPage'),
 );
-const SendPage = React.lazy(() =>
+const SendPage = lazy(() =>
   import(/* webpackChunkName: 'sendPage' */ './pages/SendPage'),
 );
-const CreateAccountSetupPinPage = React.lazy(() =>
+const CreateAccountSetupPinPage = lazy(() =>
   import(
     /* webpackChunkName: 'createAccountSetupPinPage' */ './pages/CreateAccountSetupPinPage'
   ),
 );
-const StakeTokensPage = React.lazy(() =>
+const StakeTokensPage = lazy(() =>
   import(/* webpackChunkName: 'stakeTokensPage' */ './pages/StakeTokensPage'),
 );
-const UnstakeTokensPage = React.lazy(() =>
+const UnstakeTokensPage = lazy(() =>
   import(
     /* webpackChunkName: 'unstakeTokensPage' */ './pages/UnstakeTokensPage'
   ),
 );
-const RejectFioRequestPage = React.lazy(() =>
+const RejectFioRequestPage = lazy(() =>
   import(
     /* webpackChunkName: 'rejectFioRequestPage' */ './pages/RejectFioRequestPage'
   ),
 );
-const CancelFioRequestPage = React.lazy(() =>
+const CancelFioRequestPage = lazy(() =>
   import(
     /* webpackChunkName: 'cancelFioRequestPage' */ './pages/CancelFioRequestPage'
   ),
 );
-const NotFoundPage = React.lazy(() =>
+const NotFoundPage = lazy(() =>
   import(/* webpackChunkName: 'notFoundPage' */ './pages/NotFoundPage'),
 );
-const UnavailablePage = React.lazy(() =>
+const UnavailablePage = lazy(() =>
   import(/* webpackChunkName: 'notFoundPage' */ './pages/UnavailablePage'),
 );
-const OrdersPage = React.lazy(() =>
+const OrdersPage = lazy(() =>
   import(/* webpackChunkName: 'ordersPage' */ './pages/OrdersPage'),
 );
-const OrderDetailsPage = React.lazy(() =>
+const OrderDetailsPage = lazy(() =>
   import(/* webpackChunkName: 'orderDetailsPage' */ './pages/OrderDetailsPage'),
 );
-const FioDomainLandingPage = React.lazy(() =>
+const FioDomainLandingPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainLandingPage' */ './pages/FioDomainLandingPage'
   ),
 );
-const FioAddressSelectionPage = React.lazy(() =>
+const FioAddressSelectionPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressSelectionPage'
   ),
 );
-const FioAddressCustomSelectionPage = React.lazy(() =>
+const FioAddressCustomSelectionPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressCustomSelectionPage'
   ),
 );
-const FioDomainSelectionPage = React.lazy(() =>
+const FioDomainSelectionPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainSelectionPage' */ './pages/FioDomainSelectionPage'
   ),
 );
-const FioAffiliateProgramLandingPage = React.lazy(() =>
+const FioAffiliateProgramLandingPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAffiliateProgramLandingPage' */ './pages/FioAffiliateProgramLandingPage'
   ),
 );
-const FioAffiliateProgramPage = React.lazy(() =>
+const FioAffiliateProgramPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioAffiliateProgramPage' */ './pages/FioAffiliateProgramPage'
   ),
 );
-const HomePage = React.lazy(() =>
+const HomePage = lazy(() =>
   import(/* webpackChunkName: 'homePage' */ './pages/HomePage'),
 );
-const PrivacyPolicyPage = React.lazy(() =>
+const PrivacyPolicyPage = lazy(() =>
   import(
     /* webpackChunkName: 'privacyPolicyPage' */ './pages/PrivacyPolicyPage'
   ),
 );
-const TermsOfServicePage = React.lazy(() =>
+const TermsOfServicePage = lazy(() =>
   import(
     /* webpackChunkName: 'termsOfServicePage' */ './pages/TermsOfServicePage'
   ),
 );
-const CookieNoticePage = React.lazy(() =>
+const CookieNoticePage = lazy(() =>
   import(/* webpackChunkName: 'cookieNoticePage' */ './pages/CookieNoticePage'),
 );
 
-const WrapTokensPage = React.lazy(() =>
+const WrapTokensPage = lazy(() =>
   import(/* webpackChunkName: 'WrapTokensPage' */ './pages/WrapTokensPage'),
 );
 
-const WrapDomainPage = React.lazy(() =>
+const WrapDomainPage = lazy(() =>
   import(/* webpackChunkName: 'WrapDomainPage' */ './pages/WrapDomainPage'),
 );
 
-const UnwrapDomainPage = React.lazy(() =>
+const UnwrapDomainPage = lazy(() =>
   import(/* webpackChunkName: 'UnwrapDomainPage' */ './pages/UnwrapDomainPage'),
 );
 
-const UnwrapTokensPage = React.lazy(() =>
+const UnwrapTokensPage = lazy(() =>
   import(/* webpackChunkName: 'UnwrapTokensPage' */ './pages/UnwrapTokensPage'),
 );
 
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
+  useGTMGlobalTags();
 
   return (
     <MainLayout isMaintenance={isMaintenance} isLoading={isLoading}>
@@ -324,6 +332,11 @@ const Routes = (): React.ReactElement => {
               <Route
                 path={ROUTES.REF_PROFILE_HOME}
                 component={RefHomePage}
+                exact
+              />
+              <Route
+                path={ROUTES.CREATE_ACCOUNT}
+                component={CreateAccount}
                 exact
               />
               <Route
@@ -601,7 +614,11 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <AuthContainer />
+              <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} />
+              <Route
+                path="*"
+                component={() => <Redirect to={ROUTES.NOT_FOUND} />}
+              />
             </Switch>
           )}
         </React.Suspense>

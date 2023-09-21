@@ -24,11 +24,6 @@
       visibility: hidden;
     }
 
-    &:hover {
-      background-color: $iris;
-      border-color: $iris;
-    }
-
     & button {
       font-size: 1em;
       width: 100%;
@@ -38,6 +33,11 @@
       border-radius: 100px;
       display: flex;
       align-items: center;
+
+      &:hover:enabled {
+        background-color: $medium-purple;
+        border-color: $medium-purple;
+      }
     }
 
     &.mobileView {

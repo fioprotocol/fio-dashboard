@@ -1,7 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import classnames from 'classnames';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import classes from './BackButton.module.scss';
 
@@ -19,8 +19,7 @@ const BackButton: React.FC<Props> = props => {
 
   if (onClick != null) {
     return (
-      <FontAwesomeIcon
-        icon="arrow-left"
+      <ArrowBackIcon
         className={classnames(classes.arrow, isWhite && classes.isWhite)}
         onClick={onClick}
       />
@@ -29,8 +28,7 @@ const BackButton: React.FC<Props> = props => {
 
   return (
     <Link to={link}>
-      <FontAwesomeIcon
-        icon="arrow-left"
+      <ArrowBackIcon
         className={classnames(classes.arrow, isWhite && classes.isWhite)}
       />
     </Link>

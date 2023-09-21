@@ -1,5 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 
 import Modal from '../../Modal/Modal';
 import SubmitButton from '../../common/SubmitButton/SubmitButton';
@@ -41,7 +41,7 @@ const ModalComponent: React.FC<Props> = props => {
       backdrop={false}
     >
       <div className={classes.approveContainer}>
-        <FontAwesomeIcon icon="exclamation-triangle" className={classes.icon} />
+        <ReportProblemIcon className={classes.icon} />
         <h4 className={classes.title}>New Device Sign In</h4>
         <p className={classes.subtitle}>
           A new device would like to sign in to you account.

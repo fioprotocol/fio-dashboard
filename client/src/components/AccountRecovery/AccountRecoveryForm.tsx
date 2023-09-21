@@ -1,12 +1,12 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Input from '../Input/Input';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import CancelButton from '../common/CancelButton/CancelButton';
 
 import { ErrorBadge, ERROR_UI_TYPE } from '../Input/ErrorBadge';
+import Loader from '../Loader/Loader';
 
 import { formValidation } from './validation';
 import { isEdgeAuthenticationError } from '../../util/edge';
@@ -87,7 +87,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
         <div className={classes.questionItem}>
           <div className={classes.question}>
             {questionsLoading ? (
-              <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
+              <Loader className={classes.icon} hasSmallSize />
             ) : (
               questionItems.recoveryQuestionOne
             )}
@@ -105,7 +105,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
         <div className={classes.questionItem}>
           <div className={classes.question}>
             {questionsLoading ? (
-              <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
+              <Loader className={classes.icon} hasSmallSize />
             ) : (
               questionItems.recoveryQuestionTwo
             )}

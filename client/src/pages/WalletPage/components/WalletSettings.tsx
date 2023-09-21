@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import Modal from '../../../components/Modal/Modal';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
@@ -12,6 +12,7 @@ import PasswordForm from './PasswordForm';
 import DeleteWalletForm from './DeleteWalletForm';
 import EditWalletNameForm from './EditWalletNameForm';
 import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
+import PageTitle from '../../../components/PageTitle/PageTitle';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
@@ -21,6 +22,7 @@ import { copyToClipboard, log } from '../../../util/general';
 
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
+import { LINKS } from '../../../constants/labels';
 
 import apis from '../../../api';
 
@@ -185,10 +187,7 @@ const WalletSettings: React.FC<Props> = props => {
           <div className={classes.actionButtons}>
             <CopyTooltip>
               <Button onClick={onCopy} className={classes.iconContainer}>
-                <FontAwesomeIcon
-                  className={classes.icon}
-                  icon={{ prefix: 'far', iconName: 'copy' }}
-                />
+                <ContentCopyIcon className={classes.icon} />
               </Button>
             </CopyTooltip>
           </div>
@@ -280,6 +279,7 @@ const WalletSettings: React.FC<Props> = props => {
 
   return (
     <>
+      <PageTitle link={LINKS.FIO_WALLET_DETAILS} isVirtualPage />
       <Modal
         show={show}
         isSimple={true}

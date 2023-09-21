@@ -186,7 +186,7 @@ export class User extends Base {
     return this.count();
   }
 
-  static list(limit = 25, offset, include) {
+  static list({ limit = 25, offset, include }) {
     const params = {
       order: [['createdAt', 'DESC']],
       offset,

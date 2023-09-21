@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import apis from '../../../../../api';
 
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
-import { loadImage } from '../../../../../util/general';
+import { loadImage, log } from '../../../../../util/general';
 import useEffectOnce from '../../../../../hooks/general';
 
 import noImageIconSrc from '../../../../../assets/images/no-photo.svg';
@@ -15,7 +15,7 @@ export type NftItem = {
   hasMultipleSignatures: boolean;
   hash?: string;
   imageUrl: string;
-  infuraMetadata?: {
+  externalProviderMetadata?: {
     description?: (string | string[])[];
     externalUrl?: string;
     imageSrc?: string;
@@ -39,6 +39,7 @@ type UseContextProps = {
 };
 
 const INFURA_HOST_URL = 'ipfs.infura.io';
+const INFURA_IFPS_LINK = /ipfs:\/\//g;
 const REWRITE_INFURA_HOST_URL = 'fio.infura-ipfs.io';
 
 const DEFAULT_LIMIT = 6;
@@ -137,39 +138,61 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
 
       if (newObject[chain_code] && !nftItemObj.hasMultipleSignatures) {
         try {
-          const infuraNftMetadata = await apis.infuraNfts.getNftMetadata({
-            chainId: newObject[chain_code],
-            tokenAddress: contract_address,
-            tokenId: token_id,
-          });
+          const fioNftMetadata = await apis.externalProviderNfts.getNftMetadata(
+            {
+              chainName: chain_code,
+              tokenAddress: contract_address,
+              tokenId: token_id,
+            },
+          );
 
-          if (infuraNftMetadata) {
+          if (fioNftMetadata) {
             const {
-              metadata: {
-                description: infuraDescription,
-                external_url: infuraExternalUrl,
-                image: infuraImage,
-                name: infuraName,
-                nft,
-              },
-            } = infuraNftMetadata;
+              normalized_metadata,
+              metadata,
+              token_uri: nftTokenUrl,
+            } = fioNftMetadata;
+
+            let nftDescription = null,
+              nftExternalUrl = null,
+              nftImage = null,
+              nftName = null;
 
             const {
-              description: nftDecription,
-              external_url: nftExternalUrl,
-              image: nftImage,
-              name: nftName,
-            } = nft || {};
+              description: normalizedNftDescription,
+              external_link: normalizedNftExternalUrl,
+              image: normalizedNftImage,
+              name: normalizedNftName,
+            } = normalized_metadata || {};
 
-            const description = infuraDescription || nftDecription || '';
-            const externalUrl = infuraExternalUrl || nftExternalUrl || '';
-            const image = infuraImage || nftImage || '';
-            const name = infuraName || nftName || '';
+            if (metadata && typeof metadata === 'string') {
+              const metadataParsed = JSON.parse(metadata);
+              const { description, external_link, image, name } =
+                metadataParsed || {};
+              nftDescription = description;
+              nftExternalUrl = external_link;
+              nftImage = image;
+              nftName = name;
+            }
 
-            nftItemObj.infuraMetadata = {
-              description: convertDescriptionToArray(description),
+            const description =
+              normalizedNftDescription || nftDescription || '';
+            const externalUrl =
+              normalizedNftExternalUrl || nftExternalUrl || nftTokenUrl || '';
+            const image = normalizedNftImage || nftImage || '';
+            const name = normalizedNftName || nftName || '';
+
+            nftItemObj.externalProviderMetadata = {
+              description: description
+                ? convertDescriptionToArray(description)
+                : null,
               externalUrl,
-              imageSrc: image.replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
+              imageSrc: image
+                .replace(
+                  INFURA_IFPS_LINK,
+                  `https://${REWRITE_INFURA_HOST_URL}/ipfs/`,
+                )
+                .replace(INFURA_HOST_URL, REWRITE_INFURA_HOST_URL),
               name,
             };
           }
@@ -178,15 +201,48 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         }
       }
 
+      let fetchedImageFileString = null;
+
       const fioImageUrl = await loadImage(url);
-      const infuraImageUrl = await loadImage(
-        nftItemObj.infuraMetadata?.imageSrc,
+      const externalProviderImageUrl = await loadImage(
+        nftItemObj.externalProviderMetadata?.imageSrc,
       );
-      const infuraxtenalImageUrl = await loadImage(
-        nftItemObj.infuraMetadata?.externalUrl,
+      const externalProviderLink = await loadImage(
+        nftItemObj.externalProviderMetadata?.externalUrl,
       );
 
-      const viewNftLink = fioImageUrl || infuraImageUrl || infuraxtenalImageUrl;
+      if (!fioImageUrl && !externalProviderImageUrl && !externalProviderLink) {
+        try {
+          const contentUrl =
+            url ||
+            nftItemObj.externalProviderMetadata?.imageSrc ||
+            nftItemObj.externalProviderMetadata?.externalUrl ||
+            null;
+          if (contentUrl !== null) {
+            const imageContentRes = await apis.general.getUrlContent(
+              contentUrl,
+            );
+            const tempContainer = document.createElement('div');
+            tempContainer.innerHTML = imageContentRes;
+
+            const firstImageElement = tempContainer.querySelector('img');
+            const firstSvgElement = tempContainer.querySelector('svg');
+
+            if (firstSvgElement) {
+              fetchedImageFileString = `data:image/svg+xml,${encodeURIComponent(
+                firstSvgElement.outerHTML,
+              )}`;
+            } else if (firstImageElement) {
+              fetchedImageFileString = firstImageElement.getAttribute('src');
+            }
+          }
+        } catch (err) {
+          log.error(err);
+        }
+      }
+
+      const viewNftLink =
+        fioImageUrl || externalProviderImageUrl || externalProviderLink;
 
       if (viewNftLink) {
         nftItemObj.viewNftLink = viewNftLink;
@@ -195,11 +251,15 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       nftItemObj.imageUrl = nftItemObj.hasMultipleSignatures
         ? multipleSignatureIconSrc
         : fioImageUrl ||
-          infuraImageUrl ||
-          infuraxtenalImageUrl ||
+          externalProviderImageUrl ||
+          externalProviderLink ||
+          fetchedImageFileString ||
           noImageIconSrc;
       nftItemObj.isImage =
-        !!fioImageUrl || !!infuraImageUrl || !!infuraxtenalImageUrl;
+        !!fioImageUrl ||
+        !!externalProviderImageUrl ||
+        !!externalProviderLink ||
+        !!fetchedImageFileString;
 
       // todo: commented due to DASH-711 task. We hide it until figureout with hash
       // if (

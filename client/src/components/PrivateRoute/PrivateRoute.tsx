@@ -6,8 +6,8 @@ import {
   RouteComponentProps,
   RouteProps,
 } from 'react-router-dom';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Loader from '../Loader/Loader';
 
 import {
   isAuthenticated as isAuthenticatedSelector,
@@ -37,16 +37,7 @@ export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
       {...rest}
       render={(props: RouteComponentProps) => {
         if (loading && !isAuthenticated) {
-          return (
-            <FontAwesomeIcon
-              icon={faSpinner}
-              spin
-              style={{
-                position: 'absolute',
-                top: '50%',
-              }}
-            />
-          );
+          return <Loader />;
         }
         if (noProfileLoaded)
           return (

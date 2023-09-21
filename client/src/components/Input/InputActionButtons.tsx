@@ -1,10 +1,11 @@
 import React from 'react';
-import {
-  FontAwesomeIcon,
-  FontAwesomeIconProps,
-} from '@fortawesome/react-fontawesome';
 import CancelIcon from '@mui/icons-material/Cancel';
 import classnames from 'classnames';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import QrCodeIcon from '@mui/icons-material/QrCode';
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 
 import { CheckIconComponent } from '../CheckIconComponent';
 
@@ -29,6 +30,8 @@ type ShowPasswordIconProps = {
 };
 
 type PasteButtonProps = {
+  onMouseDown?: () => void;
+  onMouseUp?: () => void;
   onClick: () => void;
   isBigDoubleIcon?: boolean;
 };
@@ -51,8 +54,7 @@ export const QrCodeButton: React.FC<PasteButtonProps & DefaultProps> = ({
   if (!isVisible) return null;
 
   return (
-    <FontAwesomeIcon
-      icon="qrcode"
+    <QrCodeIcon
       className={classnames(classes.inputIcon, uiType && classes[uiType])}
       onClick={onClick}
     />
@@ -68,8 +70,7 @@ export const CopyButton: React.FC<CopyButtonProps & DefaultProps> = ({
   if (!isVisible) return null;
 
   return (
-    <FontAwesomeIcon
-      icon={{ prefix: 'far', iconName: 'copy' }}
+    <ContentCopyIcon
       className={classnames(
         classes.inputIcon,
         isSecondary ? classes.doubleIcon : '',
@@ -80,9 +81,7 @@ export const CopyButton: React.FC<CopyButtonProps & DefaultProps> = ({
   );
 };
 
-export const PasteButton: React.FC<PasteButtonProps &
-  DefaultProps &
-  Partial<FontAwesomeIconProps>> = ({
+export const PasteButton: React.FC<PasteButtonProps & DefaultProps> = ({
   onClick,
   uiType,
   isVisible,
@@ -92,8 +91,7 @@ export const PasteButton: React.FC<PasteButtonProps &
   if (!navigator.clipboard?.readText || !isVisible) return null;
 
   return (
-    <FontAwesomeIcon
-      icon={{ prefix: 'far', iconName: 'clipboard' }}
+    <ContentPasteIcon
       className={classnames(
         classes.inputIcon,
         uiType && classes[uiType],
@@ -154,9 +152,17 @@ export const ShowPasswordIcon: React.FC<ShowPasswordIconProps &
 }) => {
   if (!isVisible) return null;
 
-  return (
-    <FontAwesomeIcon
-      icon={!showPass ? 'eye' : 'eye-slash'}
+  return showPass ? (
+    <VisibilityOffIcon
+      className={classnames(
+        classes.inputIcon,
+        disabled && classes.disabled,
+        uiType && classes[uiType],
+      )}
+      onClick={() => !disabled && toggleShowPass(!showPass)}
+    />
+  ) : (
+    <VisibilityIcon
       className={classnames(
         classes.inputIcon,
         disabled && classes.disabled,

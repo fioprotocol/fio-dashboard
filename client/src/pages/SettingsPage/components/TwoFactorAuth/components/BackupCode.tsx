@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CircleIcon from '@mui/icons-material/Circle';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import Badge, { BADGE_TYPES } from '../../../../../components/Badge/Badge';
 import EdgeConfirmAction from '../../../../../components/EdgeConfirmAction';
@@ -48,9 +50,7 @@ const BackupCode: React.FC = () => {
   const renderCircles = () => {
     const circles = [];
     for (let i = 0; i < 8; i++) {
-      circles.push(
-        <FontAwesomeIcon icon="circle" className={classes.circle} key={i} />,
-      );
+      circles.push(<CircleIcon className={classes.circle} key={i} />);
     }
     return circles;
   };
@@ -66,13 +66,23 @@ const BackupCode: React.FC = () => {
   return (
     <div className={classes.container}>
       <p className={classes.title}>2FA Code</p>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
+      <Badge
+        show={true}
+        type={BADGE_TYPES.WHITE}
+        className={classes.badgeContainer}
+      >
         {renderResults()}
-        <FontAwesomeIcon
-          icon={!show ? 'eye' : 'eye-slash'}
-          className={classes.showButton}
-          onClick={handleBackup}
-        />
+        {!show ? (
+          <VisibilityIcon
+            className={classes.showButton}
+            onClick={handleBackup}
+          />
+        ) : (
+          <VisibilityOffIcon
+            className={classes.showButton}
+            onClick={handleBackup}
+          />
+        )}
       </Badge>
       <EdgeConfirmAction
         data={submitData}

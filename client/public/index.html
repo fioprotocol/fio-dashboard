@@ -8,6 +8,14 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1"
     />
     <meta name="theme-color" content="#000000" />
+    
+    <meta name="description" content="Replace all of your public wallet addresses with a single, secure, customizable handle." />
+    <meta property="og:url" content="%REACT_APP_BASE_URL%" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Your FIO handle is now your web3 identity." />
+    <meta property="og:description" content="Get yours now and replace all of your public wallet addresses with a single, secure, customizable handle." />
+    <meta property="og:image" content="%PUBLIC_URL%/fio-summary-card.png" />
+
     <style id="frameDefender">
       body{display:none !important;}
     </style>
@@ -37,8 +45,9 @@
     <script>
       window.dataLayer = window.dataLayer || [];
     </script>
-    <script src="https://bitpay.com/bitpay.min.js"></script>
-    <title>FIO Dashboard</title>
+    <script src="https://bitpay.com/bitpay.min.js" defer></script>
+    <script src="%REACT_APP_BASE_URL%3d-party-libs/lottie-player.js"></script>
+    <title>FIO Protocol Dashboard</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -53,6 +62,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   </body>
 </html>

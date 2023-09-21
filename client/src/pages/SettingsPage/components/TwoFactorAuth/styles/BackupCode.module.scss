@@ -5,6 +5,11 @@
   margin-bottom: 20px;
   width: 100%;
   max-width: 335px;
+  
+  .badgeContainer {
+    display: flex;
+    align-items: center;
+  }
 
   .title {
     margin-bottom: -20px;

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ReplayIcon from '@mui/icons-material/Replay';
 import classnames from 'classnames';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
@@ -15,15 +17,13 @@ import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import { WelcomeComponent } from '../../components/WelcomeComponent';
+import { WrapIcon } from '../../components/WrapIcon';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { useContext } from './WalletPageContext';
-
-import wrapIcon from '../../assets/images/wrap.svg';
-import unwrapIcon from '../../assets/images/unwrap.svg';
 
 import classes from './styles/WalletPage.module.scss';
 
@@ -61,7 +61,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
           className={classes.actionButton}
         >
           <Button>
-            <FontAwesomeIcon icon="arrow-down" />
+            <ArrowDownwardIcon />
             <span>Receive</span>
           </Button>
         </Link>
@@ -74,7 +74,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
           className={classes.actionButton}
         >
           <Button>
-            <FontAwesomeIcon icon="arrow-up" />
+            <ArrowUpwardIcon />
             <span>Send</span>
           </Button>
         </Link>
@@ -84,7 +84,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
           className={classes.actionButton}
         >
           <Button>
-            <img src={wrapIcon} alt="wrap" />
+            <WrapIcon />
             <span>Wrap</span>
           </Button>
         </Link>
@@ -94,7 +94,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
           className={classes.actionButton}
         >
           <Button>
-            <img src={unwrapIcon} alt="unwrap" />
+            <ReplayIcon />
             <span>Unwrap</span>
           </Button>
         </Link>
@@ -118,12 +118,15 @@ const WalletPage: React.FC = () => {
     receivedFioRequests,
     sentFioRequests,
     obtData,
+    obtDataLoading,
+    sentFioRequestsLoading,
+    receivedFioRequestsLoading,
     welcomeComponentProps,
     closeWalletNameEdit,
     onKeyShow,
     onShowPrivateModalClose,
     onWalletUpdated,
-    getFioRequests,
+    tabAction,
   } = useContext();
 
   if (error)
@@ -177,7 +180,10 @@ const WalletPage: React.FC = () => {
           receivedFioRequests={receivedFioRequests}
           sentFioRequests={sentFioRequests}
           obtData={obtData}
-          getFioRequests={getFioRequests}
+          obtDataLoading={obtDataLoading}
+          sentFioRequestsLoading={sentFioRequestsLoading}
+          receivedFioRequestsLoading={receivedFioRequestsLoading}
+          tabAction={tabAction}
         />
         <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>

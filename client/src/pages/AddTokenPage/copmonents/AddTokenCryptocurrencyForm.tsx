@@ -1,8 +1,8 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import ErrorIcon from '@mui/icons-material/Error';
 
 import Badge from '../../../components/Badge/Badge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
@@ -90,10 +90,7 @@ export const AddTokenCryptocurrencyForm: React.FC<Props> = props => {
             </div>
             {initialValues?.isCustom && (
               <Badge type={BADGE_TYPES.INFO} show className="noMargin">
-                <FontAwesomeIcon
-                  className={classes.modalBadgeIcon}
-                  icon="exclamation-circle"
-                />
+                <ErrorIcon />
                 <div className={classes.modalBadgeTextContainer}>
                   <span className="boldText">Hints:</span>
                   <span>

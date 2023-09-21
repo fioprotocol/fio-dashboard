@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps, useForm } from 'react-final-form';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 import { ErrorBadge } from './ErrorBadge';
 import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
@@ -226,8 +226,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
         <div className={classnames(classes.exchangeValue)}>
           {isPrimaryExchange && (
-            <FontAwesomeIcon
-              icon="dollar-sign"
+            <AttachMoneyIcon
               className={classnames(
                 isBW && classes.bw,
                 disabled && classes.disabled,

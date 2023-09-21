@@ -11,9 +11,9 @@ export const getDetailedUsersInfo = async user => {
 
   if (user.fioWallets && user.fioWallets.length > 0) {
     for (const fioWallet of user.fioWallets) {
-      const { publicKey, name } = fioWallet;
+      const { publicKey, name, failedSyncedWithEdge } = fioWallet;
 
-      const fioWalletObj = { publicKey, name };
+      const fioWalletObj = { publicKey, name, failedSyncedWithEdge };
       fioWalletObj.balance = 'N/A';
 
       const publicFioSDK = await fioApi.getPublicFioSDK();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import EditIcon from '@mui/icons-material/Edit';
 
 import TokenBadge from '../../../components/Badges/TokenBadge/TokenBadge';
 
@@ -71,8 +71,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
   );
 
   const actionButton = (
-    <FontAwesomeIcon
-      icon="pen"
+    <EditIcon
       className={classnames(EDIT_ICON_CLASS, isEditing && classes.editing)}
       onClick={onEditClick}
       tabIndex={0}

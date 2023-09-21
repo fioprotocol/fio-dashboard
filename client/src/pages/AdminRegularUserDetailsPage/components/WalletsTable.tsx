@@ -18,6 +18,7 @@ export const WalletsTable: React.FC<Props> = props => {
           <th scope="col">Name</th>
           <th scope="col">Public Key</th>
           <th scope="col">Balance</th>
+          <th scope="col">Failed Edge Sync</th>
         </tr>
       </thead>
       <tbody>
@@ -35,6 +36,15 @@ export const WalletsTable: React.FC<Props> = props => {
                 </a>
               </th>
               <th>{fioWallet.balance}</th>
+              <th
+                className={
+                  fioWallet.failedSyncedWithEdge
+                    ? 'text-danger'
+                    : 'text-success'
+                }
+              >
+                {fioWallet.failedSyncedWithEdge ? 'FAILED SYNC' : 'OK'}
+              </th>
             </tr>
           ))
         ) : (

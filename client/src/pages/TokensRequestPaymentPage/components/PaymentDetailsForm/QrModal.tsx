@@ -1,7 +1,8 @@
 import React from 'react';
 import QRCode from 'qrcode.react';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ShareIcon from '@mui/icons-material/Share';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import CopyTooltip from '../../../../components/CopyTooltip';
@@ -31,7 +32,7 @@ const QrModal: React.FC<QrModalProps> = props => {
 
     return (
       <Button onClick={onShare} className={classes.iconContainer}>
-        <FontAwesomeIcon icon="share-alt" className={classes.icon} />
+        <ShareIcon className={classes.icon} />
       </Button>
     );
   };
@@ -60,10 +61,7 @@ const QrModal: React.FC<QrModalProps> = props => {
         <div className={classes.actionButtons}>
           <CopyTooltip>
             <Button onClick={handleCopy} className={classes.iconContainer}>
-              <FontAwesomeIcon
-                className={classes.icon}
-                icon={{ prefix: 'far', iconName: 'copy' }}
-              />
+              <ContentCopyIcon className={classes.icon} />
             </Button>
           </CopyTooltip>
 

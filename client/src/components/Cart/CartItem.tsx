@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import CancelIcon from '@mui/icons-material/Cancel';
+import InfoIcon from '@mui/icons-material/Info';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import CustomDropdown from '../CustomDropdown';
@@ -111,8 +112,7 @@ const CartItem: React.FC<Props> = props => {
             />
           </div>
           {onDelete && (
-            <FontAwesomeIcon
-              icon="times-circle"
+            <CancelIcon
               className={classes.icon}
               onClick={() => onDelete(item.id)}
             />
@@ -122,10 +122,7 @@ const CartItem: React.FC<Props> = props => {
       {showBadge && (
         <Badge show type={BADGE_TYPES.INFO}>
           <div className={classes.infoBadge}>
-            <FontAwesomeIcon
-              icon="exclamation-circle"
-              className={classes.infoIcon}
-            />
+            <InfoIcon className={classes.infoIcon} />
             <p className={classes.infoText}>
               <span className="boldText">FIO Handle Cost</span> - Your account
               already has a free FIO Handle associated with it.

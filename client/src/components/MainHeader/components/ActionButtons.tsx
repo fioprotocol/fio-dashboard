@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Nav } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SettingsIcon from '@mui/icons-material/Settings';
 import classnames from 'classnames';
 
 import Navigation from '../../Navigation';
+import Loader from '../../Loader/Loader';
 
 import { ROUTES } from '../../../constants/routes';
 
@@ -43,7 +44,11 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
       )}
     >
       {onlyAuth ? null : (
-        <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
+        <Nav.Link
+          as={Link}
+          to={ROUTES.CREATE_ACCOUNT}
+          className="flex-shrink-0"
+        >
           <Button
             variant="outline-primary"
             className={classnames(
@@ -66,9 +71,9 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
           onClick={showLogin}
           disabled={edgeAuthLoading}
         >
-          Sign In{' '}
+          <p className={classes.buttonText}>Sign In</p>
           {(edgeAuthLoading || profileLoading) && (
-            <FontAwesomeIcon icon="spinner" spin />
+            <Loader isWhite className={classes.buttonLoader} />
           )}
         </Button>
       </Nav.Link>
@@ -102,9 +107,9 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
             size="lg"
             disabled={edgeAuthLoading}
           >
-            Sign Out{' '}
+            <p className={classes.buttonText}>Sign Out </p>
             {(edgeAuthLoading || profileLoading) && (
-              <FontAwesomeIcon icon="spinner" spin />
+              <Loader isWhite className={classes.buttonLoader} />
             )}
           </Button>
         </Nav.Link>
@@ -119,7 +124,6 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
         isMenuOpen && classes.isOpen,
       )}
     >
-      {/* @ts-ignore */}
       {isMenuOpen && <Navigation isOnSide={isMenuOpen} closeMenu={closeMenu} />}
       {isMenuOpen && <hr className={classes.horizontal} />}
       {!hideSettings && (
@@ -130,7 +134,7 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
           onClick={closeMenu}
         >
           <div className={classes.settings}>
-            <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
+            <SettingsIcon className={classes.settingsIcon} />
           </div>
           <div className={classnames(classes.settingsText, 'ml-3')}>
             Settings
@@ -145,9 +149,9 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
           size="lg"
           disabled={edgeAuthLoading}
         >
-          Sign Out{' '}
+          <p className={classes.buttonText}>Sign Out </p>
           {(edgeAuthLoading || profileLoading) && (
-            <FontAwesomeIcon icon="spinner" spin />
+            <Loader isWhite className={classes.buttonLoader} />
           )}
         </Button>
       </Nav.Link>

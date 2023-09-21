@@ -125,7 +125,8 @@ const TotalBalanceBadge: React.FC<Props> = props => {
             viewDetails={() => setShowLockedTokensModalView(true)}
           />
         ) : null}
-        {rewards?.nativeFio ? (
+        {rewards?.nativeFio ||
+        (rewards?.nativeFio === 0 && staked?.nativeFio) ? (
           <Balance fio={rewards.fio} usdc={rewards.usdc} title="Rewards" />
         ) : null}
         {staked?.nativeFio ? (

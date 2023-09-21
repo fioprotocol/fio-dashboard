@@ -49,16 +49,19 @@ export function useGetWrappedFioData(
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const [abi, setAbi] = useState(null);
 
-  const getInfuraNfts = useCallback(async (address: string) => {
-    const nftsList = await apis.infuraNfts.getAllNfts(address);
+  const getExternalProviderNfts = useCallback(async (address: string) => {
+    const nftsList = await apis.externalProviderNfts.getAllNfts(address);
 
     return nftsList.length > 0
       ? nftsList
-          .filter(nftItem => nftItem.metadata?.name)
+          .filter(nftItem => !!nftItem.metadata)
           .map(nftItem => {
-            const { metadata, tokenId } = nftItem;
-            const name = metadata.name && metadata.name.split(': ')[1];
-            return { name, id: tokenId };
+            const { metadata, token_id, normalized_metadata } = nftItem;
+            const metadataName =
+              normalized_metadata.name ||
+              (metadata && JSON.parse(metadata).name);
+            const name = metadataName && metadataName.split(': ')[1];
+            return { name, id: token_id };
           })
           .reverse()
       : null;
@@ -91,7 +94,7 @@ export function useGetWrappedFioData(
         if (isFallback) {
           nfts = await getNftsWithContract(address);
         } else {
-          nfts = await getInfuraNfts(address);
+          nfts = await getExternalProviderNfts(address);
         }
 
         setNfts(nfts);
@@ -160,7 +163,7 @@ export function useGetWrappedFioData(
               try {
                 await getNfts();
               } catch (error) {
-                log.error('Get Infura nfts error, retry', error);
+                log.error('Get external provider nfts error, retry', error);
                 await getNfts(true);
               }
             }
@@ -187,7 +190,7 @@ export function useGetWrappedFioData(
     tokenContract,
     wFioBalance,
     getNftsWithContract,
-    getInfuraNfts,
+    getExternalProviderNfts,
   ]);
 
   // clear balance, when address input has been cleared

@@ -135,15 +135,20 @@
       cursor: pointer;
       color: $dark-gray;
       font-size: 20px;
+      transition: all 0.2s ease-in;
 
       &.indigoWhite {
         color: $light-indigo;
+      }
+
+      &:hover {
+        transform: rotate(90deg);
       }
     }
 
     .toggleMenuIcon {
       cursor: pointer;
-      font-size: 13px;
+      font-size: 20px;
       margin-right: 12px;
     }
   }

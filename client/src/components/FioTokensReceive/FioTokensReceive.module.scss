@@ -21,13 +21,18 @@
 }
 
 .walletDetails {
+  margin-top: 30px;
   display: flex;
   align-items: flex-start;
+  flex-flow: wrap;
   gap: 30px;
+
+  .badgeContainer {
+    margin-top: 0;
+  }
 }
 
 .qrCode {
-  margin-top: 30px;
   background-color: $white;
   border-radius: 8px;
   padding: 13px 13px 7px 13px;
@@ -67,6 +72,7 @@
   position: absolute;
   right: 0;
   bottom: 0;
+  width: 16px;
   cursor: pointer;
 }
 
@@ -104,5 +110,11 @@
       background-color: $iris;
       border-color: $iris;
     }
+  }
+}
+
+@include lg {
+  .walletDetails {
+    flex-wrap: nowrap;
   }
 }

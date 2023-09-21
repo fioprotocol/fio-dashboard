@@ -107,7 +107,7 @@ export const useContext = (): UseContextProps => {
           .map(pubAddress => {
             const existingSocialMediaLink = SOCIAL_MEDIA_LINKS.find(
               socialMediaContent =>
-                socialMediaContent.name.toLowerCase() ===
+                socialMediaContent.tokenName.toLowerCase() ===
                 pubAddress.tokenCode.toLowerCase(),
             );
             return {
@@ -188,7 +188,7 @@ export const useContext = (): UseContextProps => {
       connectList: editedSocialLinks.map(socialMediaLinkItem => ({
         ...socialMediaLinkItem,
         chainCode: CHAIN_CODES.SOCIALS,
-        tokenCode: socialMediaLinkItem.name.toUpperCase(),
+        tokenCode: socialMediaLinkItem.tokenName.toUpperCase(),
         publicAddress: socialMediaLinkItem.newUsername,
       })),
       keys,
@@ -211,7 +211,7 @@ export const useContext = (): UseContextProps => {
           deletePublicAddresses: editedSocialLinks.map(editedSocialLink => ({
             publicAddress: editedSocialLink.username,
             chainCode: CHAIN_CODES.SOCIALS,
-            tokenCode: editedSocialLink.name.toUpperCase(),
+            tokenCode: editedSocialLink.tokenName.toUpperCase(),
           })),
         }),
       );

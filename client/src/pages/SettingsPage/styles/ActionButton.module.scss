@@ -10,6 +10,10 @@
   border-color: $light-indigo !important;
   min-width: 250px;
   outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
 
   &:hover {
     background-color: $iris;
@@ -47,9 +51,20 @@
       max-width: none;
     }
   }
+
+  .title {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
   .loading {
-    margin-left: 15px;
-    font-size: 14px;
+    width: auto;
+    & > span {
+      width: 16px !important;
+      height: 16px !important;
+      color: inherit;
+    }
+
   }
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import classes from '../SignNft.module.scss';
 import 'react-dropdown/style.css';
@@ -33,15 +34,8 @@ const CustomDropdown: React.FC<Props> = props => {
       className={classes.dropdown}
       controlClassName={classes.control}
       menuClassName={classes.menu}
-      arrowClosed={
-        <FontAwesomeIcon
-          icon="chevron-down"
-          className={classes.dropdownArrow}
-        />
-      }
-      arrowOpen={
-        <FontAwesomeIcon icon="chevron-up" className={classes.dropdownArrow} />
-      }
+      arrowClosed={<ExpandMoreIcon className={classes.dropdownArrow} />}
+      arrowOpen={<ExpandLessIcon className={classes.dropdownArrow} />}
     />
   );
 };

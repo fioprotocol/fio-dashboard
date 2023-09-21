@@ -47,11 +47,11 @@ export const NftsTabComponent: React.FC<Props> = props => {
       >
         <div className={classes.container}>
           <div className={classes.nftsContainer}>
-            {nftsList.map(nftItem => {
+            {nftsList.map((nftItem, index) => {
               const { tokenId, contractAddress } = nftItem;
               return (
                 <div
-                  key={tokenId + contractAddress}
+                  key={tokenId + contractAddress + index.toString()}
                   onClick={() => onItemClick(nftItem)}
                 >
                   <NftItemImageComponent {...nftItem} />

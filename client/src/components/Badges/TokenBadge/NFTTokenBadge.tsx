@@ -1,8 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
@@ -68,10 +68,7 @@ const NFTTokenBadge: React.FC<Props> = props => {
               </div>
             </OverlayTrigger>
           </div>
-          <FontAwesomeIcon
-            icon="chevron-right"
-            className={classes.actionIcon}
-          />
+          <ChevronRightIcon className={classes.actionIcon} />
         </div>
       </Badge>
     </Link>

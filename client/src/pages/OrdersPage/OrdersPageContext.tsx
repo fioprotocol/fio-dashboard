@@ -71,7 +71,7 @@ export const useContext = (): OrdersPageProps => {
 
       fireInvoiceAnalytics();
 
-      const componentHtml = ReactDOMServer.renderToStaticMarkup(
+      const componentHtml = ReactDOMServer.renderToString(
         <OrderDetailedPdf orderItem={orderItemToPrint} />,
       );
 
@@ -111,15 +111,9 @@ export const useContext = (): OrdersPageProps => {
 
       fireInvoiceAnalytics();
 
-      const componentHtml = ReactDOMServer.renderToStaticMarkup(
+      const componentHtml = ReactDOMServer.renderToString(
         <OrderDetailedPdf orderItem={orderItemToPrint} isPrint={true} />,
       );
-
-      const preparedPageToPrint = generateOrderHtmlToPrint({
-        componentHtml,
-        orderNumber,
-        isPrint: true,
-      });
 
       const { width, height } = getPagePrintScreenDimensions({ isPrint: true });
 
@@ -128,6 +122,12 @@ export const useContext = (): OrdersPageProps => {
         'PRINT',
         `width=${width},height=${height},toolbar=0,scrollbars=0,status=0`,
       );
+
+      const preparedPageToPrint = generateOrderHtmlToPrint({
+        componentHtml,
+        orderNumber,
+        isPrint: true,
+      });
 
       winPrint.document.write(preparedPageToPrint);
       setTimeout(() => {

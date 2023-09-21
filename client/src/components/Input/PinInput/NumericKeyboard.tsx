@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import BackspaceIcon from '@mui/icons-material/Backspace';
 
 import { NUMERIC_KEYBOARD_LIST, BACKSPACE, PLUG } from './constants';
 
@@ -26,7 +26,7 @@ const NumericItem: React.FC<NumericItemProps> = props => {
       className={classnames(classes.numKey, numKey === PLUG && classes.hide)}
       onClick={tap}
     >
-      {numKey === BACKSPACE ? <FontAwesomeIcon icon="backspace" /> : numKey}
+      {numKey === BACKSPACE ? <BackspaceIcon fontSize="small" /> : numKey}
     </div>
   );
 };

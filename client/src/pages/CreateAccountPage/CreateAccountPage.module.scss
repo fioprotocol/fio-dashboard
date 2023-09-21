@@ -1,4 +1,4 @@
-@import "../../assets/styles/colors";
+@import '../../assets/styles/colors';
 @import '../../assets/styles/fontMixins';
 @import '../../assets/styles/forms';
 
@@ -17,14 +17,6 @@
     z-index: 3;
     opacity: .7;
   }
-}
-
-.spinner {
-  color: $white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
 }
 
 .square {

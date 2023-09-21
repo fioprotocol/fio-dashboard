@@ -128,7 +128,7 @@ export const useContext = (): UseContextProps => {
           .map(pubAddress => {
             const existingSocialMediaLink = SOCIAL_MEDIA_LINKS.find(
               socialMediaContent =>
-                socialMediaContent.name.toLowerCase() ===
+                socialMediaContent.tokenName.toLowerCase() ===
                 pubAddress.tokenCode.toLowerCase(),
             );
             return {

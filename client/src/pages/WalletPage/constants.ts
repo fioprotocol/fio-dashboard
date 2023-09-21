@@ -1,5 +1,3 @@
-import { IconName } from '@fortawesome/fontawesome-svg-core';
-
 import { FioRecordViewKeysProps } from './types';
 
 export const CONTENT_TYPES = {
@@ -36,7 +34,6 @@ export const INFO_BADGE_CONTENT = {
 
 export const CONTENT_TYPE: {
   [key: string]: {
-    icon: IconName;
     isGreen: boolean;
     isBlue: boolean;
     to: string | null;
@@ -44,14 +41,12 @@ export const CONTENT_TYPE: {
   };
 } = {
   [FIO_RECORD_TYPES.SENT]: {
-    icon: 'arrow-up',
     isGreen: true,
     isBlue: false,
     from: null,
     to: 'To',
   },
   [FIO_RECORD_TYPES.RECEIVED]: {
-    icon: 'arrow-down',
     isBlue: true,
     isGreen: false,
     from: 'From',

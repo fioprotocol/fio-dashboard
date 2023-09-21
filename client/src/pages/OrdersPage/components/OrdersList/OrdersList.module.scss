@@ -11,6 +11,7 @@
     font-size: 0.875em;
     white-space: nowrap;
     @include sf-pro-display-medium;
+    z-index: 1;
 
     &:first-child {
       padding-left: 15px;

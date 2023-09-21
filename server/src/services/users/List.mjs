@@ -1,6 +1,6 @@
 import Base from '../Base';
 
-import { AdminUser, ReferrerProfile, User } from '../../models';
+import { AdminUser, ReferrerProfile, User, Wallet } from '../../models';
 
 export default class UsersList extends Base {
   static get requiredPermissions() {
@@ -12,10 +12,17 @@ export default class UsersList extends Base {
       offset: 'string',
       limit: 'string',
       includeMoreDetailedInfo: 'boolean',
+      filters: [
+        {
+          nested_object: {
+            failedSyncedWithEdge: 'string',
+          },
+        },
+      ],
     };
   }
 
-  async execute({ limit = 25, offset = 0, includeMoreDetailedInfo }) {
+  async execute({ limit = 25, offset = 0, includeMoreDetailedInfo, filters }) {
     const include = [
       { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
       {
@@ -25,12 +32,28 @@ export default class UsersList extends Base {
       },
     ];
 
-    const users = await User.list(
+    const includeToUsers = [];
+    const hasFilters = !!filters.failedSyncedWithEdge;
+
+    if (includeMoreDetailedInfo) {
+      includeToUsers.push(...include);
+    }
+
+    if (filters.failedSyncedWithEdge) {
+      includeToUsers.push({
+        model: Wallet,
+        as: 'fioWallets',
+        where: { failedSyncedWithEdge: true },
+      });
+    }
+
+    const users = await User.list({
       limit,
       offset,
-      includeMoreDetailedInfo ? include : null,
-    );
-    const usersCount = await User.usersCount();
+      include: includeToUsers,
+    });
+
+    const usersCount = hasFilters ? users.length : await User.usersCount();
 
     return {
       data: {

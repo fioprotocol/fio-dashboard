@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import Loader from '../../../components/Loader/Loader';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
 import FioRecordDetailedModal from './FioRecordDetailedModal';
 import FioRecordDetailedTabs from './FioRecordDetailedTabs';
@@ -106,23 +105,19 @@ const FioRecordsList: React.FC<Props> = props => {
   ] = useState<FioRecordViewDecrypted | null>(null);
   const { fioRecordDecrypted, fioRequestTab } = state || {};
 
+  const fioRecordDecryptedJSON = JSON.stringify(fioRecordDecrypted);
+
   useEffect(() => {
-    if (fioRecordDecrypted && fioRequestTab === fioRecordType) {
-      setFioRecordDetailedItem(fioRecordDecrypted);
+    if (fioRecordDecryptedJSON && fioRequestTab === fioRecordType) {
+      const parsedFioRecordDecrypted = JSON.parse(fioRecordDecryptedJSON);
+      setFioRecordDetailedItem(parsedFioRecordDecrypted);
       toggleModal(true);
     }
-  }, [JSON.stringify(fioRecordDecrypted)]);
+  }, [fioRecordDecryptedJSON, fioRecordType, fioRequestTab]);
 
   useEffect(() => {
     return () => setFioRecordDetailedItem(null);
   }, []);
-
-  if (loading)
-    return (
-      <div className={classes.loader}>
-        <Loader />
-      </div>
-    );
 
   if ((!fioDataList || fioDataList.length === 0) && !loading)
     return (
@@ -186,7 +181,7 @@ const FioRecordsList: React.FC<Props> = props => {
     );
   };
 
-  const hasNextPage = visibleTransactionsCount < fioDataList.length;
+  const hasNextPage = visibleTransactionsCount < fioDataList?.length;
 
   return (
     <div className={classes.container}>
@@ -194,9 +189,10 @@ const FioRecordsList: React.FC<Props> = props => {
         loading={loading}
         hasNextPage={hasNextPage}
         onLoadMore={loadMore}
+        hasReverseLoading={loading}
       >
         {fioDataList
-          .slice(
+          ?.slice(
             0,
             !hasNextPage ? fioDataList.length : visibleTransactionsCount,
           )

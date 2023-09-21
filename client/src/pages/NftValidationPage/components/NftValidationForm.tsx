@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Form, FormProps, FormRenderProps } from 'react-final-form';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Loader from '../../../components/Loader/Loader';
 
 import apis from '../../../api';
 import { OPTIONS } from '../constant';
@@ -62,9 +63,7 @@ const RenderForm: React.FC<Props & FormRenderProps> = props => {
         disabled={loading || !valid}
       >
         Validate NFT Signature{' '}
-        {loading && (
-          <FontAwesomeIcon spin icon="spinner" className={classes.loader} />
-        )}
+        {loading && <Loader className={classes.loader} />}
       </Button>
     </form>
   );

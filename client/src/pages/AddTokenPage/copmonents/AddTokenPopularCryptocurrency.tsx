@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import CheckCircle from '@mui/icons-material/CheckCircle';
 
 import { AnyObject } from '../../../types';
 
@@ -52,10 +52,7 @@ export const AddTokenPopularCryptocurrency: React.FC<Props> = props => {
           </div>
           {currency.title}
         </div>
-        <FontAwesomeIcon
-          icon="check-circle"
-          className={classes.popularListItemTitleCheckIcon}
-        />
+        <CheckCircle className={classes.popularListItemTitleCheckIcon} />
       </div>
 
       <div className={classes.popularListItemRow}>

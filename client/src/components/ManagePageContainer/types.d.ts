@@ -26,7 +26,6 @@ export interface ContainerProps {
   };
   showTopBadge?: boolean;
   showWarningMessage: boolean;
-  showWarningDomainWatchListBadge?: boolean;
   warningContent?: {
     title: string;
     message: string;
