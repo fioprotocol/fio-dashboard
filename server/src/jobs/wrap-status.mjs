@@ -241,7 +241,7 @@ class WrapStatusJob extends CommonJob {
       }
 
       if (data.oraclesConfirmationActions.length > 0) {
-        WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+        await WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
           data.oraclesConfirmationActions,
         );
       }
@@ -388,8 +388,10 @@ class WrapStatusJob extends CommonJob {
       }
 
       if (data.oraclesConfirmationActions.length > 0) {
-        WrapStatusEthOraclesConfirmationsLogs.addLogs(data.oraclesConfirmationActions);
-        WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+        await WrapStatusEthOraclesConfirmationsLogs.addLogs(
+          data.oraclesConfirmationActions,
+        );
+        await WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
           data.oraclesConfirmationActions,
         );
       }
