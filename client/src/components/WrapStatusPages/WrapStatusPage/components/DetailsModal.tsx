@@ -301,7 +301,7 @@ const DetailsModal: React.FC<Props> = props => {
                   <div>{JSON.stringify(approvals.voters)}</div>
                 </div>
               )}
-              {JSON.stringify(!!approvals.isComplete) && (
+              {Object.keys(approvals).includes('isComplete') && (
                 <>
                   <div className="d-flex justify-content-between my-2">
                     <div className="mr-3">
