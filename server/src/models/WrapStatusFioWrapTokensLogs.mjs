@@ -54,7 +54,7 @@ export class WrapStatusFioWrapTokensLogs extends Base {
         WHERE wf."transactionId" IS NOT NULL
         GROUP BY wf."transactionId", we."transactionHash"
         ORDER BY wf."blockNumber"::bigint desc
-        LIMIT ${limit} OFFSET ${offset}
+        ${limit ? `LIMIT ${limit}` : ``} OFFSET ${offset}
       `);
 
     return actions;

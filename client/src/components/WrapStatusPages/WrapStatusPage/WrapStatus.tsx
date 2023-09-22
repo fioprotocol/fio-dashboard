@@ -1,98 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import Badge from 'react-bootstrap/Badge';
 import classNames from 'classnames';
+import DownloadIcon from '@mui/icons-material/Download';
+import DatePicker from 'react-datepicker';
+import { ExportToCsv } from 'export-to-csv';
 
 import { useHistory } from 'react-router';
 
 import Loader from '../../../components/Loader/Loader';
 import DetailsModal from './components/DetailsModal';
+import CustomDropdown from '../../CustomDropdown';
 
 import usePagination from '../../../hooks/usePagination';
 import { formatDateToLocale } from '../../../helpers/stringFormatters';
 import apis from '../../../api';
 
+import { log } from '../../../util/general';
+
 import { ROUTES } from '../../../constants/routes';
-import { WRAP_ITEM_STATUS } from '../../../constants/wrap';
+import {
+  WRAP_TYPE_FILTER_OPTIONS,
+  WRAP_ASSETS_FILTER_OPTIONS,
+  WRAP_DATE_FILTER_OPTIONS,
+  WRAP_STATUS_CONTENT,
+  WRAP_DATE_FILTER_NAMES,
+} from './constants';
 
 import { PageProps } from './types';
 import { WrapStatusWrapItem } from '../../../types';
+import { WrapStatusListItemsResponse } from '../../../api/responses';
 
 import classes from './WrapStatus.module.scss';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const DEFAULT_ORACLE_APPROVAL_COUNT = 3;
-
-export const parseActionStatus = (
-  item: WrapStatusWrapItem,
-  isWrap: boolean,
-): {
-  badgeType: string;
-  badgeText: string;
-  status: typeof WRAP_ITEM_STATUS[keyof typeof WRAP_ITEM_STATUS];
-} => {
-  const TRANSACTION_OUT_OF_TIME_MILLISECONDS = 10 * 60 * 1000; // 10 minutes - time delay which proves that transaction wasn't completed successfully (oracle - 1m, wrap_status job - 1m, else - chains requests)
-
-  let badgeType;
-  let badgeText;
-  let status;
-  const isTransactionIsOutOfTime = (date?: string) => {
-    if (!date) return true;
-    return (
-      new Date().getTime() - new Date(date).getTime() >=
-      TRANSACTION_OUT_OF_TIME_MILLISECONDS
-    );
-  };
-
-  const isCompleteAction = (data: WrapStatusWrapItem, isWrap: boolean) => {
-    if (!isWrap) {
-      return (
-        data?.confirmData &&
-        data?.oravotes &&
-        data.oravotes[0]?.isComplete &&
-        data.oravotes[0]?.voters?.length === DEFAULT_ORACLE_APPROVAL_COUNT
-      );
-    }
-
-    return (
-      data?.confirmData &&
-      (!Object.keys(data.confirmData).includes('isComplete') ||
-        !!data.confirmData.isComplete)
-    );
-  };
-
-  const isComplete = isCompleteAction(item, isWrap);
-  if (isComplete) {
-    badgeType = 'primary';
-    badgeText = WRAP_ITEM_STATUS.COMPLETE;
-    status = WRAP_ITEM_STATUS.COMPLETE;
-  } else {
-    if (
-      isTransactionIsOutOfTime(
-        isWrap
-          ? item?.data?.action_trace?.block_time
-            ? item?.data?.action_trace?.block_time + 'Z'
-            : null
-          : item?.confirmData?.[0]?.action_trace?.block_time
-          ? item?.confirmData?.[0]?.action_trace?.block_time + 'Z'
-          : null,
-      )
-    ) {
-      badgeType = 'secondary';
-      badgeText = WRAP_ITEM_STATUS.PENDING;
-      status = WRAP_ITEM_STATUS.FAILED;
-    } else {
-      status = WRAP_ITEM_STATUS.PENDING;
-      badgeType = 'secondary';
-      badgeText = WRAP_ITEM_STATUS.PENDING;
-    }
-  }
-
-  return {
-    badgeType,
-    badgeText,
-    status,
-  };
+const WRAP_FILTERS_NAME = {
+  WRAP: 'wrap',
+  UNWRAP: 'unwrap',
+  TOKENS: 'tokens',
+  DOMAINS: 'domains',
 };
 
 const WrapStatus: React.FC<PageProps> = props => {
@@ -104,11 +51,246 @@ const WrapStatus: React.FC<PageProps> = props => {
   const [isTokensSelected, setIsTokensSelected] = useState<boolean>(isTokens);
 
   const [modalData, setModalData] = useState<WrapStatusWrapItem | null>(null);
+  const [filters, setFilters] = useState<{
+    asset: string | null;
+    createdAt: string | null;
+    dateRange: { startDate: number; endDate: number } | null;
+    type: string | null;
+  }>({
+    createdAt: null,
+    dateRange: null,
+    type: isWrapSelected ? WRAP_FILTERS_NAME.WRAP : WRAP_FILTERS_NAME.UNWRAP,
+    asset: isTokensSelected
+      ? WRAP_FILTERS_NAME.TOKENS
+      : WRAP_FILTERS_NAME.DOMAINS,
+  });
+  const [dateRange, setDateRange] = useState<[Date, Date]>([null, null]);
+  const [showDatePicker, toggleShowDatePicker] = useState<boolean>(false);
+  const [isExportingCsv, toggleIsExportingCsv] = useState<boolean>(false);
+
+  const [startDate, endDate] = dateRange;
 
   const { paginationComponent } = usePagination(getData);
 
   const openDetailsModal = (item: WrapStatusWrapItem) => setModalData(item);
   const closeDetailsModal = () => setModalData(null);
+
+  const openDatePicker = useCallback(() => {
+    toggleShowDatePicker(true);
+  }, []);
+
+  const closeDatePicker = useCallback(() => {
+    toggleShowDatePicker(false);
+    setFilters(filters => ({
+      ...filters,
+      createdAt: null,
+      dateRange: null,
+    }));
+  }, []);
+
+  const handleChangeTypeFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      type: newValue,
+    }));
+  }, []);
+  const handleChangeAssetsFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      asset: newValue,
+    }));
+  }, []);
+
+  const setFilterWithDateRange = useCallback(() => {
+    setFilters(filters => ({
+      ...filters,
+      createdAt: null,
+      dateRange: {
+        startDate: new Date(dateRange[0]).setHours(0, 0, 0, 0),
+        endDate: new Date(dateRange[1]).setHours(23, 59, 59, 999),
+      },
+    }));
+  }, [dateRange]);
+
+  const handleChangeDateFilter = useCallback(
+    (newValue: string) => {
+      if (newValue === 'custom') {
+        openDatePicker();
+      } else {
+        setFilters(filters => ({
+          ...filters,
+          createdAt: newValue,
+          dateRange: null,
+        }));
+      }
+    },
+    [openDatePicker],
+  );
+
+  const handleExportWrapData = useCallback(async () => {
+    toggleIsExportingCsv(true);
+    const { createdAt, dateRange, type, asset } = filters;
+    let wrapData: Partial<WrapStatusListItemsResponse> = {};
+
+    const dateFilters: {
+      createdAt: string | null;
+      dateRange: { startDate: number; endDate: number };
+    } = {
+      createdAt: null,
+      dateRange,
+    };
+
+    if (createdAt) {
+      switch (createdAt) {
+        case WRAP_DATE_FILTER_NAMES.TODAY:
+          dateFilters.createdAt = new Date().toUTCString();
+          break;
+        case WRAP_DATE_FILTER_NAMES.YESTERDAY:
+          dateFilters.createdAt = new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setDate(
+              new Date().getDate() - 1,
+            ),
+          ).toUTCString();
+          break;
+        case WRAP_DATE_FILTER_NAMES.LAST7DAYS:
+          dateFilters.createdAt = new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setDate(
+              new Date().getDate() - 7,
+            ),
+          ).toUTCString();
+          break;
+        case WRAP_DATE_FILTER_NAMES.LASTMONTH:
+          dateFilters.createdAt = new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setMonth(
+              new Date().getMonth() - 1,
+            ),
+          ).toUTCString();
+          break;
+        case WRAP_DATE_FILTER_NAMES.LASTHALFOFYEAR:
+          dateFilters.createdAt = new Date(
+            new Date(new Date().setHours(0, 0, 0, 0)).setMonth(
+              new Date().getMonth() - 6,
+            ),
+          ).toUTCString();
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (type === WRAP_FILTERS_NAME.WRAP) {
+      if (asset === WRAP_FILTERS_NAME.TOKENS) {
+        wrapData = await apis.wrapStatus.wrapTokensList({
+          filters: dateFilters,
+        });
+      }
+      if (asset === WRAP_FILTERS_NAME.DOMAINS) {
+        wrapData = await apis.wrapStatus.wrapDomainsList({
+          filters: dateFilters,
+        });
+      }
+    }
+
+    if (type === WRAP_FILTERS_NAME.UNWRAP) {
+      if (asset === WRAP_FILTERS_NAME.TOKENS) {
+        wrapData = await apis.wrapStatus.unwrapTokensList({
+          filters: dateFilters,
+        });
+      }
+      if (asset === WRAP_FILTERS_NAME.DOMAINS) {
+        wrapData = await apis.wrapStatus.unwrapDomainsList({
+          filters: dateFilters,
+        });
+      }
+    }
+
+    const preparedWrapDataListToCsv: {
+      number: number;
+      transactionId: string;
+      from: string;
+      to: string;
+      amount?: string;
+      domain?: string;
+      status?: string;
+      firstTransaction?: string;
+      lastTransaction?: string;
+    }[] = [];
+
+    let index = 0;
+    for (const wrapItem of wrapData.list) {
+      const {
+        amount,
+        approvals,
+        blockTimestamp,
+        domain,
+        from,
+        status,
+        to,
+        transactionId,
+      } = wrapItem;
+
+      const wrapObjectToCsv: {
+        number: number;
+        transactionId: string;
+        from: string;
+        to: string;
+        amount?: string;
+        domain?: string;
+        status?: string;
+        firstTransaction?: string;
+        lastTransaction?: string;
+      } = {
+        number: index + 1,
+        transactionId,
+        from,
+        to,
+      };
+
+      if (asset === WRAP_FILTERS_NAME.TOKENS) {
+        wrapObjectToCsv.amount = amount;
+      }
+
+      if (asset === WRAP_FILTERS_NAME.DOMAINS) {
+        wrapObjectToCsv.domain = domain;
+      }
+
+      wrapObjectToCsv.status = WRAP_STATUS_CONTENT[status].text;
+      wrapObjectToCsv.firstTransaction = blockTimestamp;
+      wrapObjectToCsv.lastTransaction = approvals.blockTimeStamp;
+
+      preparedWrapDataListToCsv.push(wrapObjectToCsv);
+
+      index++;
+    }
+
+    const currentDate = new Date();
+
+    const headers = [
+      '#',
+      'TransactionId',
+      'From',
+      'To',
+      asset === WRAP_FILTERS_NAME.TOKENS ? 'Amount' : 'Domain',
+      'Status',
+      'Fitst transaction',
+      'Last transaction',
+    ];
+
+    try {
+      new ExportToCsv({
+        showLabels: true,
+        filename: `${type}-${asset}_Total-${
+          wrapData.maxCount
+        }_${currentDate.getFullYear()}-${currentDate.getMonth() +
+          1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
+        headers,
+      }).generateCsv(preparedWrapDataListToCsv);
+    } catch (err) {
+      log.error(err);
+    }
+
+    toggleIsExportingCsv(false);
+  }, [filters]);
 
   const handleOpenLink = () => {
     if (isWrapSelected && isTokensSelected)
@@ -161,6 +343,90 @@ const WrapStatus: React.FC<PageProps> = props => {
           </button>
         </div>
 
+        <div className={classes.filterContainer}>
+          <div className="mr-4">
+            <Button
+              onClick={handleExportWrapData}
+              disabled={isExportingCsv}
+              className="d-flex flex-direction-row align-items-center"
+            >
+              <DownloadIcon className="mr-2" />{' '}
+              {isExportingCsv ? (
+                <>
+                  <span className="mr-3">Exporting...</span>
+                  <Loader isWhite hasInheritFontSize hasSmallSize />
+                </>
+              ) : (
+                'Export'
+              )}
+            </Button>
+          </div>
+          <div className="d-flex">
+            <div className="d-flex align-items-center mr-2">
+              Filter Type:&nbsp;
+              <CustomDropdown
+                value={filters.type}
+                options={WRAP_TYPE_FILTER_OPTIONS}
+                onChange={handleChangeTypeFilter}
+                isDark
+                withoutMarginBottom
+                fitContentWidth
+                isSmall
+                placeholder={isWrapSelected ? 'WRAP' : 'UNWRAP'}
+              />
+            </div>
+            <div className="d-flex align-items-center mr-2">
+              Filter Assets:&nbsp;
+              <CustomDropdown
+                value={filters.asset ? filters.asset.toString() : ''}
+                options={WRAP_ASSETS_FILTER_OPTIONS}
+                onChange={handleChangeAssetsFilter}
+                isDark
+                withoutMarginBottom
+                fitContentWidth
+                isSmall
+                placeholder={isTokensSelected ? 'TOKENS' : 'DOMAINS'}
+              />
+            </div>
+            <div className="d-flex align-items-center">
+              Filter Date:&nbsp;
+              {showDatePicker ? (
+                <div className={classes.datePickerContainer}>
+                  <DatePicker
+                    selectsRange={true}
+                    startDate={startDate}
+                    endDate={endDate}
+                    onChange={update => {
+                      setDateRange(update);
+                    }}
+                    isClearable={true}
+                  />
+                  <Button
+                    className="btn btn-primary ml-2 mr-2"
+                    onClick={setFilterWithDateRange}
+                  >
+                    Set Date
+                  </Button>
+                  <Button className="btn btn-danger" onClick={closeDatePicker}>
+                    Close
+                  </Button>
+                </div>
+              ) : (
+                <CustomDropdown
+                  value={filters.createdAt}
+                  options={WRAP_DATE_FILTER_OPTIONS}
+                  onChange={handleChangeDateFilter}
+                  isDark
+                  withoutMarginBottom
+                  fitContentWidth
+                  isSmall
+                  placeholder="All"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
         <div>
           <h3>
             {isWrap ? 'Wrap ' : 'Unwrap '}
@@ -181,45 +447,35 @@ const WrapStatus: React.FC<PageProps> = props => {
           </thead>
           <tbody>
             {data?.length > 0
-              ? data.map((listItem, i) => (
-                  <tr key={listItem.transactionId || listItem.transactionHash}>
+              ? data.map((wrapItem, i) => (
+                  <tr key={wrapItem.transactionId}>
                     <th
                       className={classes.link}
-                      onClick={openDetailsModal.bind(null, listItem)}
+                      onClick={openDetailsModal.bind(null, wrapItem)}
                     >
-                      {listItem.transactionId || listItem.transactionHash}
+                      {wrapItem.transactionId}
+                    </th>
+                    <th>{wrapItem.from}</th>
+                    <th>{wrapItem.to}</th>
+                    <th>
+                      {wrapItem.domain
+                        ? wrapItem.domain
+                        : wrapItem.amount
+                        ? apis.fio
+                            .sufToAmount(wrapItem.amount || 0)
+                            .toFixed(2) + ' FIO'
+                        : 'N/A'}
                     </th>
                     <th>
-                      {isWrap
-                        ? listItem.data.action_trace.act.data.actor
-                        : listItem.address}
-                    </th>
-                    <th>{isWrap ? listItem.address : listItem.fioAddress}</th>
-                    <th>
-                      {!isTokens
-                        ? listItem.domain
-                        : apis.fio
-                            .sufToAmount(listItem.amount || 0)
-                            .toFixed(2) + ' FIO'}
-                    </th>
-                    <th>
-                      {listItem.data.action_trace?.block_time
-                        ? formatDateToLocale(
-                            listItem.data.action_trace.block_time + 'Z',
-                          )
-                        : null}
-                      {listItem.confirmData?.length &&
-                      listItem.confirmData[0].action_trace?.block_time
-                        ? formatDateToLocale(
-                            listItem.confirmData[0].action_trace.block_time,
-                          )
+                      {wrapItem.blockTimestamp
+                        ? formatDateToLocale(wrapItem.blockTimestamp)
                         : null}
                     </th>
                     <th>
                       <Badge
-                        variant={parseActionStatus(listItem, isWrap).badgeType}
+                        variant={WRAP_STATUS_CONTENT[wrapItem?.status]?.type}
                       >
-                        {parseActionStatus(listItem, isWrap).badgeText}
+                        {WRAP_STATUS_CONTENT[wrapItem?.status]?.text}
                       </Badge>
                     </th>
                   </tr>

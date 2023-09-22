@@ -221,7 +221,10 @@ export type AdminGeneralCreateResponse =
 export type AdminConfirmResponse = AdminUser;
 export type AdminSearchResponse = AdminSearchResult;
 
-export type WrapStatusListItemsResponse = WrapStatusWrapItem[];
+export type WrapStatusListItemsResponse = {
+  list: WrapStatusWrapItem[];
+  maxCount: number;
+};
 
 export type PaymentCreateResponse = Payment;
 

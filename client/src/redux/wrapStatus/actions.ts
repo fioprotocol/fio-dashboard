@@ -17,7 +17,7 @@ export const getWrapTokensList = (
     GET_WRAP_TOKENS_LIST_SUCCESS,
     GET_WRAP_TOKENS_LIST_FAILURE,
   ],
-  promise: (api: Api) => api.wrapStatus.wrapTokensList(limit, offset),
+  promise: (api: Api) => api.wrapStatus.wrapTokensList({ limit, offset }),
 });
 
 export const GET_UNWRAP_TOKENS_LIST_REQUEST = `${prefix}/GET_UNWRAP_TOKENS_LIST_REQUEST`;
@@ -33,7 +33,7 @@ export const getUnwrapTokensList = (
     GET_UNWRAP_TOKENS_LIST_SUCCESS,
     GET_UNWRAP_TOKENS_LIST_FAILURE,
   ],
-  promise: (api: Api) => api.wrapStatus.unwrapTokensList(limit, offset),
+  promise: (api: Api) => api.wrapStatus.unwrapTokensList({ limit, offset }),
 });
 
 export const GET_UNWRAP_DOMAINS_LIST_REQUEST = `${prefix}/GET_UNWRAP_DOMAINS_LIST_REQUEST`;
@@ -49,7 +49,7 @@ export const getUnwrapDomainsList = (
     GET_UNWRAP_DOMAINS_LIST_SUCCESS,
     GET_UNWRAP_DOMAINS_LIST_FAILURE,
   ],
-  promise: (api: Api) => api.wrapStatus.unwrapDomainsList(limit, offset),
+  promise: (api: Api) => api.wrapStatus.unwrapDomainsList({ limit, offset }),
 });
 
 export const GET_WRAP_DOMAINS_LIST_REQUEST = `${prefix}/GET_WRAP_DOMAINS_LIST_REQUEST`;
@@ -65,5 +65,5 @@ export const getWrapDomainsList = (
     GET_WRAP_DOMAINS_LIST_SUCCESS,
     GET_WRAP_DOMAINS_LIST_FAILURE,
   ],
-  promise: (api: Api) => api.wrapStatus.wrapDomainsList(limit, offset),
+  promise: (api: Api) => api.wrapStatus.wrapDomainsList({ limit, offset }),
 });
