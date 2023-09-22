@@ -64,7 +64,7 @@ export class WrapStatusPolygonUnwrapLogs extends Base {
         WHERE up."transactionHash" IS NOT NULL
         GROUP BY up."transactionHash"
         ORDER BY up."blockNumber"::bigint desc
-        LIMIT ${limit} OFFSET ${offset}
+        ${limit ? `LIMIT ${limit}` : ``} OFFSET ${offset}
       `);
 
     return actions.map(action => ({

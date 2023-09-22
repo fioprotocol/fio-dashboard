@@ -64,7 +64,7 @@ export class WrapStatusEthUnwrapLogs extends Base {
         WHERE ue."transactionHash" IS NOT NULL
         GROUP BY ue."transactionHash"
         ORDER BY ue."blockNumber"::bigint desc
-        LIMIT ${limit} OFFSET ${offset}
+        ${limit ? `LIMIT ${limit}` : ``} OFFSET ${offset}
       `);
 
     return actions.map(action => ({

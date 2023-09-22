@@ -2,29 +2,26 @@ import Base from './base';
 
 import { WrapStatusListItemsResponse } from './responses';
 
+type WrapParams = {
+  limit?: number | null;
+  offset?: number | null;
+  filters?: {
+    createdAt: string;
+    dateRange: { startDate: number; endDate: number };
+  };
+};
+
 export default class WrapStatus extends Base {
-  wrapTokensList(
-    limit: number,
-    offset: number,
-  ): Promise<WrapStatusListItemsResponse> {
-    return this.apiClient.get('wrap-status/tokens/wrap', { limit, offset });
+  wrapTokensList(params: WrapParams): Promise<WrapStatusListItemsResponse> {
+    return this.apiClient.get('wrap-status/tokens/wrap', params);
   }
-  unwrapTokensList(
-    limit: number,
-    offset: number,
-  ): Promise<WrapStatusListItemsResponse> {
-    return this.apiClient.get('wrap-status/tokens/unwrap', { limit, offset });
+  unwrapTokensList(params: WrapParams): Promise<WrapStatusListItemsResponse> {
+    return this.apiClient.get('wrap-status/tokens/unwrap', params);
   }
-  wrapDomainsList(
-    limit: number,
-    offset: number,
-  ): Promise<WrapStatusListItemsResponse> {
-    return this.apiClient.get('wrap-status/domains/wrap', { limit, offset });
+  wrapDomainsList(params: WrapParams): Promise<WrapStatusListItemsResponse> {
+    return this.apiClient.get('wrap-status/domains/wrap', params);
   }
-  unwrapDomainsList(
-    limit: number,
-    offset: number,
-  ): Promise<WrapStatusListItemsResponse> {
-    return this.apiClient.get('wrap-status/domains/unwrap', { limit, offset });
+  unwrapDomainsList(params: WrapParams): Promise<WrapStatusListItemsResponse> {
+    return this.apiClient.get('wrap-status/domains/unwrap', params);
   }
 }
