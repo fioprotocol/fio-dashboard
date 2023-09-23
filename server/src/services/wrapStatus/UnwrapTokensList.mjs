@@ -1,21 +1,53 @@
 import Base from '../Base';
 import { WrapStatusEthUnwrapLogs } from '../../models';
+import { normalizeUnwrapData, filterWrapItemsByDateRange } from '../../utils/wrap.mjs';
 
 export default class UnwrapTokensList extends Base {
   static get validationRules() {
     return {
       offset: 'string',
       limit: 'string',
+      filters: [
+        {
+          nested_object: {
+            createdAt: 'string',
+            dateRange: [
+              {
+                nested_object: {
+                  startDate: 'integer',
+                  endDate: 'integer',
+                },
+              },
+            ],
+          },
+        },
+      ],
     };
   }
 
-  async execute({ limit = 25, offset = 0 }) {
+  async execute({ limit, offset = 0, filters }) {
     const list = await WrapStatusEthUnwrapLogs.listWithConfirmation(limit, offset);
     const count = await WrapStatusEthUnwrapLogs.actionsCount();
 
+    const { createdAt, dateRange } = filters || {};
+
+    let unwrapList = [];
+
+    const normalizedUnwrapList = list.map(listItem => normalizeUnwrapData(listItem));
+
+    if (createdAt || (dateRange && dateRange.startDate && dateRange.endDate)) {
+      unwrapList = filterWrapItemsByDateRange({
+        createdAt,
+        dateRange,
+        normalizedWrapItemsData: normalizedUnwrapList,
+      });
+    } else {
+      unwrapList = normalizedUnwrapList;
+    }
+
     return {
       data: {
-        list: list || [],
+        list: unwrapList,
         maxCount: count,
       },
     };
