@@ -81,10 +81,11 @@ export const normalizeWrapData = wrapItem => {
         : chain_code;
   }
 
-  for (const oracleVoter of oravotes) {
-    const { returnValues: { account } = {}, transactionHash } = oracleVoter;
-    voters.push({ account, transactionHash });
-  }
+  if (oravotes && oravotes.length)
+    for (const oracleVoter of oravotes) {
+      const { returnValues: { account } = {}, transactionHash } = oracleVoter;
+      voters.push({ account, transactionHash });
+    }
 
   return {
     actionType,
