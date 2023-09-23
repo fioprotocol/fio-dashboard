@@ -922,18 +922,29 @@ export type ChainCodeProps = {
 };
 
 export type WrapStatusWrapItem = {
-  id: string;
-  blockNumber: string;
-  transactionId?: string;
-  transactionHash?: string;
-  address: string;
-  domain?: string;
+  actionType?: string;
   amount?: string;
-  fioAddress?: string;
-  data: AnyObject;
-  confirmData: AnyObject;
-  oravotes?: [{ transactionHash: string }];
-} & AnyObject;
+  approvals: {
+    blockNumber?: number;
+    blockTimeStamp: string;
+    chainCode: string;
+    isComplete?: boolean;
+    txId?: string;
+    txIds?: string[];
+    voters?: string[];
+  };
+  blockNumber: string;
+  blockTimestamp: string;
+  chain: string;
+  domain?: string;
+  escrowAccount?: string;
+  from: string;
+  status: string;
+  to: string;
+  tpid?: string;
+  voters?: { account: string; transactionHash: string }[];
+  transactionId: string;
+};
 
 export type FioActions = typeof CONFIRM_FIO_ACTIONS;
 export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;

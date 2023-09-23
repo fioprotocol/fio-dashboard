@@ -178,15 +178,45 @@ class WrapStatusJob extends CommonJob {
 
           maxCheckedBlockNumber = toBlockNumber;
 
-          data.transferActions = [
-            ...data.transferActions,
-            ...(await getPolygonActionsLogs(fromBlockNumber, toBlockNumber)),
-          ];
+          const eventsWithTimestamps = [];
+
+          const events = await await getPolygonActionsLogs(
+            fromBlockNumber,
+            toBlockNumber,
+          );
+
+          for (const event of events) {
+            const { blockNumber } = event;
+            const block = await web3.eth.getBlock(blockNumber);
+            eventsWithTimestamps.push({
+              ...event,
+              blockTimeStamp: block.timestamp,
+            });
+          }
+
+          data.transferActions = [...data.transferActions, ...eventsWithTimestamps];
 
           if (isWrap) {
+            const oracleEventsWithTimestamps = [];
+
+            const oracleEvents = await getPolygonActionsLogs(
+              fromBlockNumber,
+              toBlockNumber,
+              true,
+            );
+
+            for (const orcaleEvent of oracleEvents) {
+              const { blockNumber } = orcaleEvent;
+              const block = await web3.eth.getBlock(blockNumber);
+              eventsWithTimestamps.push({
+                ...orcaleEvent,
+                blockTimeStamp: block.timestamp,
+              });
+            }
+
             data.oraclesConfirmationActions = [
               ...data.oraclesConfirmationActions,
-              ...(await getPolygonActionsLogs(fromBlockNumber, toBlockNumber, true)),
+              ...oracleEventsWithTimestamps,
             ];
           }
 
@@ -211,7 +241,7 @@ class WrapStatusJob extends CommonJob {
       }
 
       if (data.oraclesConfirmationActions.length > 0) {
-        WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+        await WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
           data.oraclesConfirmationActions,
         );
       }
@@ -299,15 +329,41 @@ class WrapStatusJob extends CommonJob {
 
           maxCheckedBlockNumber = toBlockNumber;
 
-          data.transferActions = [
-            ...data.transferActions,
-            ...(await getEthActionsLogs(fromBlockNumber, toBlockNumber)),
-          ];
+          const eventsWithTimestamps = [];
+
+          const events = await getEthActionsLogs(fromBlockNumber, toBlockNumber);
+
+          for (const event of events) {
+            const { blockNumber } = event;
+            const block = await web3.eth.getBlock(blockNumber);
+            eventsWithTimestamps.push({
+              ...event,
+              blockTimeStamp: block.timestamp,
+            });
+          }
+
+          data.transferActions = [...data.transferActions, ...eventsWithTimestamps];
 
           if (isWrap) {
+            const oracleEventsWithTimestamps = [];
+
+            const oracleEvents = await getEthActionsLogs(
+              fromBlockNumber,
+              toBlockNumber,
+              true,
+            );
+
+            for (const orcaleEvent of oracleEvents) {
+              const { blockNumber } = orcaleEvent;
+              const block = await web3.eth.getBlock(blockNumber);
+              eventsWithTimestamps.push({
+                ...orcaleEvent,
+                blockTimeStamp: block.timestamp,
+              });
+            }
             data.oraclesConfirmationActions = [
               ...data.oraclesConfirmationActions,
-              ...(await getEthActionsLogs(fromBlockNumber, toBlockNumber, true)),
+              ...oracleEventsWithTimestamps,
             ];
           }
 
@@ -332,8 +388,10 @@ class WrapStatusJob extends CommonJob {
       }
 
       if (data.oraclesConfirmationActions.length > 0) {
-        WrapStatusEthOraclesConfirmationsLogs.addLogs(data.oraclesConfirmationActions);
-        WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+        await WrapStatusEthOraclesConfirmationsLogs.addLogs(
+          data.oraclesConfirmationActions,
+        );
+        await WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
           data.oraclesConfirmationActions,
         );
       }

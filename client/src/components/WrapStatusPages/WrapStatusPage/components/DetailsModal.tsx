@@ -9,9 +9,9 @@ import { CommandComponent } from '../components/CommandComponent';
 
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { WRAP_ITEM_STATUS } from '../../../../constants/wrap';
+import { WRAP_STATUS_CONTENT } from '../constants';
 
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
-import { parseActionStatus } from '../WrapStatus';
 
 import apis from '../../../../api';
 
@@ -26,18 +26,33 @@ type Props = {
   isTokens: boolean;
 };
 
-// todo: refactor
 const DetailsModal: React.FC<Props> = props => {
   const { itemData, onClose, isWrap, isTokens } = props;
 
-  const { badgeType, badgeText, status } = parseActionStatus(itemData, isWrap);
+  const {
+    actionType,
+    amount,
+    approvals,
+    blockNumber,
+    blockTimestamp,
+    chain,
+    domain,
+    escrowAccount,
+    from,
+    status,
+    to,
+    tpid,
+    transactionId,
+    voters,
+  } = itemData || {};
+
   const isPending = status === WRAP_ITEM_STATUS.PENDING;
   const isFailed = status === WRAP_ITEM_STATUS.FAILED;
 
-  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${itemData?.amount as number} ${itemData?.address as string} ${itemData?.transactionId as string}`;
-  const wrapDomainFailedCommand = `npm run oracle wrap domain ${itemData?.domain as string} ${itemData?.address as string} ${itemData?.transactionId as string}`;
-  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${itemData?.amount as number} ${itemData?.fioAddress as string} ${itemData?.transactionHash as string}`;
-  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${itemData?.domain as string} ${itemData?.fioAddress as string} ${itemData?.transactionHash as string}`;
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${from} ${transactionId}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${from} ${transactionId}`;
+  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${amount} ${to} ${transactionId}`;
+  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${domain} ${to} ${transactionId}`;
 
   const wrapCommand = isWrap
     ? isTokens
@@ -62,7 +77,11 @@ const DetailsModal: React.FC<Props> = props => {
             {isWrap ? 'Wrap ' : 'Unwrap '}
             {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
           </div>
-          {itemData ? <Badge variant={badgeType}>{badgeText}</Badge> : null}
+          {itemData ? (
+            <Badge variant={WRAP_STATUS_CONTENT[itemData.status].type}>
+              {WRAP_STATUS_CONTENT[itemData.status].text}
+            </Badge>
+          ) : null}
         </h3>
         {itemData ? (
           <div>
@@ -73,17 +92,17 @@ const DetailsModal: React.FC<Props> = props => {
               <div className={classNames(classes.trxId, 'mr-3')}>
                 <a
                   href={
-                    (itemData.transactionHash
+                    (!isWrap
                       ? isTokens
                         ? process.env.REACT_APP_ETH_HISTORY_URL
                         : process.env.REACT_APP_POLYGON_HISTORY_URL
                       : process.env.REACT_APP_FIO_BLOCKS_TX_URL) +
-                    (itemData.transactionHash || itemData.transactionId)
+                    itemData.transactionId
                   }
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {itemData.transactionHash || itemData.transactionId}
+                  {itemData.transactionId}
                 </a>
               </div>
             </div>
@@ -92,114 +111,81 @@ const DetailsModal: React.FC<Props> = props => {
                 <b>Date:</b>
               </div>
               <div>
-                {itemData.data.action_trace?.block_time
-                  ? formatDateToLocale(
-                      itemData.data.action_trace.block_time + 'Z',
-                    )
-                  : null}
-                {itemData.confirmData?.length &&
-                itemData.confirmData[0].action_trace?.block_time
-                  ? formatDateToLocale(
-                      itemData.confirmData[0].action_trace.block_time,
-                    )
-                  : null}
+                {blockTimestamp ? formatDateToLocale(blockTimestamp) : null}
               </div>
             </div>
             <div className="d-flex justify-content-between my-2">
               <div className="mr-3">
                 <b>Chain:</b>
               </div>
-              <div>{isWrap ? 'FIO' : isTokens ? 'ETH' : 'POLYGON'}</div>
+              <div>{chain}</div>
             </div>
             <div className="d-flex justify-content-between my-2">
               <div className="mr-3">
                 <b>Block Number:</b>
               </div>
-              <div>{itemData.blockNumber}</div>
+              <div>{blockNumber}</div>
             </div>
-            {itemData.data.action_trace?.act?.name ? (
+            {actionType && (
               <div className="d-flex justify-content-between my-2">
                 <div className="mr-3">
                   <b>Action type:</b>
                 </div>
-                <div>{itemData.data.action_trace.act.name}</div>
+                <div>{actionType}</div>
               </div>
-            ) : null}
-            {itemData.amount ? (
+            )}
+            {amount && (
               <div className="d-flex justify-content-between my-2">
                 <div className="mr-3">
                   <b>Amount:</b>
                 </div>
                 <div>
-                  {apis.fio.sufToAmount(itemData.amount || 0).toFixed(2) +
+                  {apis.fio.sufToAmount(Number(amount) || 0).toFixed(2) +
                     ' FIO'}
                 </div>
               </div>
-            ) : null}
-            {itemData.domain ? (
+            )}
+            {domain && (
               <div className="d-flex justify-content-between my-2">
                 <div className="mr-3">
                   <b>Domain:</b>
                 </div>
-                <div>{itemData.domain}</div>
+                <div>{domain}</div>
               </div>
-            ) : null}
-            {itemData.data.action_trace?.act?.data?.actor ? (
-              <div className="d-flex justify-content-between my-2">
-                <div className="mr-3">
-                  <b>From Account:</b>
-                </div>
-                <div>{itemData.data.action_trace.act.data.actor}</div>
-              </div>
-            ) : null}
+            )}
             <div className="d-flex justify-content-between my-2">
               <div className="mr-3">
-                <b>{isWrap ? 'To' : 'From'} Address:</b>
+                <b>From {isWrap ? 'Account' : 'Address'}:</b>
               </div>
-              <div>{itemData.address}</div>
+              <div>{from}</div>
+            </div>
+            <div className="d-flex justify-content-between my-2">
+              <div className="mr-3">
+                <b>To {isWrap ? 'Address' : 'Handle'}:</b>
+              </div>
+              <div>{to}</div>
             </div>
 
-            {itemData.data.action_trace ? (
+            {tpid && (
               <div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>TPID:</b>
                   </div>
-                  <div>
-                    {JSON.stringify(itemData.data.action_trace.act.data.tpid)}
-                  </div>
+                  <div>{tpid}</div>
                 </div>
-
+              </div>
+            )}
+            {escrowAccount && (
+              <div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>Escrow Account:</b>
                   </div>
-                  <div>{itemData.data.action_trace.receiver}</div>
+                  <div>{escrowAccount}</div>
                 </div>
               </div>
-            ) : null}
-
-            {!isWrap && itemData.oravotes?.length ? (
-              <div className="d-flex justify-content-between my-2">
-                <div className="mr-3">
-                  <b>To Handle:</b>
-                </div>
-                <div>{itemData.oravotes[0].fio_address}</div>
-              </div>
-            ) : null}
-
-            {!isWrap &&
-            !itemData.oravotes?.length &&
-            itemData.confirmData?.length ? (
-              <div className="d-flex justify-content-between my-2">
-                <div className="mr-3">
-                  <b>To Handle:</b>
-                </div>
-                <div>
-                  {itemData.confirmData[0].action_trace.act.data.fio_address}
-                </div>
-              </div>
-            ) : null}
+            )}
 
             <div className="mt-4">
               <div>
@@ -209,159 +195,150 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
             </div>
 
-            {!isWrap && itemData.oravotes?.length ? (
-              <div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Chain:</b>
-                  </div>
-                  <div>FIO</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Voters:</b>
-                  </div>
-                  <div>{JSON.stringify(itemData.oravotes[0].voters)}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Is complete:</b>
-                  </div>
-                  <div>{JSON.stringify(!!itemData.oravotes[0].isComplete)}</div>
-                </div>
-                <CommandComponent commandString={wrapCommand} show={isFailed} />
-              </div>
-            ) : null}
-
-            {isWrap && itemData.oravotes?.length ? (
+            {voters && voters.length && (
               <div>
                 <div className="d-flex flex-column my-2">
                   <div className="mr-3 mb-2">
                     <b>Voters:</b>
                   </div>
                   <div>
-                    {itemData.oravotes.map(
-                      (o: {
-                        transactionHash: string;
-                        returnValues: { account: string };
-                      }) => (
+                    {voters.map(voter => (
+                      <div className="d-flex flex-row" key={voter.account}>
                         <div className="d-flex flex-row">
-                          <div className="d-flex flex-row">
-                            <p className="mr-2">Oracle:</p>
-                            <a
-                              href={
-                                (isTokens
-                                  ? process.env.REACT_APP_ETH_ADDRESS_URL
-                                  : process.env.REACT_APP_POLYGON_ADDRESS_URL) +
-                                o.returnValues?.account
-                              }
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {o.returnValues?.account.substring(0, 10)}...
-                            </a>
-                          </div>
-                          <div className="d-flex flex-row ml-4">
-                            <p className="mr-2">Trx:</p>
-                            <a
-                              href={
-                                (isTokens
-                                  ? process.env.REACT_APP_ETH_HISTORY_URL
-                                  : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                                o.transactionHash
-                              }
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {o.transactionHash.substring(0, 10)}...
-                            </a>
-                          </div>
+                          <p className="mr-2">Oracle:</p>
+                          <a
+                            href={
+                              (isTokens
+                                ? process.env.REACT_APP_ETH_ADDRESS_URL
+                                : process.env.REACT_APP_POLYGON_ADDRESS_URL) +
+                              voter.account
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {voter.account?.substring(0, 10)}...
+                          </a>
                         </div>
-                      ),
-                    )}
+                        <div className="d-flex flex-row ml-4">
+                          <p className="mr-2">Trx:</p>
+                          <a
+                            href={
+                              (isTokens
+                                ? process.env.REACT_APP_ETH_HISTORY_URL
+                                : process.env.REACT_APP_POLYGON_HISTORY_URL) +
+                              voter.transactionHash
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {voter.transactionHash?.substring(0, 10)}...
+                          </a>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <CommandComponent commandString={wrapCommand} show={isFailed} />
-              </div>
-            ) : null}
-
-            {isWrap && itemData.confirmData ? (
-              <div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Approvals:</b>
-                  </div>
-                  <div></div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Trx_id:</b>
-                  </div>
-                  <div className={classes.trxId}>
-                    <a
-                      href={
-                        (isTokens
-                          ? process.env.REACT_APP_ETH_HISTORY_URL
-                          : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                        itemData.confirmData.transactionHash
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {itemData.confirmData.transactionHash}
-                    </a>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Chain:</b>
-                  </div>
-                  <div>
-                    {itemData.data.action_trace.act.data.chain_code === 'MATIC'
-                      ? 'Polygon'
-                      : itemData.data.action_trace.act.data.chain_code}
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Block Number:</b>
-                  </div>
-                  <div>{itemData.confirmData.blockNumber}</div>
                 </div>
               </div>
-            ) : null}
+            )}
 
-            {!isWrap && itemData.confirmData?.length ? (
-              <div>
-                <div className="my-2">
-                  <div className="mr-3">
-                    <b>Approvals:</b>
+            <div>
+              {approvals.txId && (
+                <>
+                  <div className="d-flex justify-content-between my-2">
+                    <div className="mr-3">
+                      <b>Approvals:</b>
+                    </div>
+                    <div></div>
                   </div>
-                  {itemData.confirmData.map((item: AnyType) => (
-                    <div
-                      key={item.action_trace.trx_id}
-                      className={classes.trxId}
-                    >
+                  <div className="d-flex justify-content-between my-2">
+                    <div className="mr-3">
+                      <b>Trx_id:</b>
+                    </div>
+                    <div className={classes.trxId}>
                       <a
                         href={
-                          process.env.REACT_APP_FIO_BLOCKS_TX_URL +
-                          item.action_trace.trx_id
+                          (isTokens
+                            ? process.env.REACT_APP_ETH_HISTORY_URL
+                            : process.env.REACT_APP_POLYGON_HISTORY_URL) +
+                          approvals.txId
                         }
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {item.action_trace.trx_id}
+                        {approvals.txId}
+                      </a>
+                    </div>
+                  </div>
+                </>
+              )}
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>Chain:</b>
+                </div>
+                <div>{approvals.chainCode}</div>
+              </div>
+              {approvals.blockNumber && (
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Block Number:</b>
+                  </div>
+                  <div>{approvals.blockNumber}</div>
+                </div>
+              )}
+              {approvals.blockTimeStamp && (
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Block Time:</b>
+                  </div>
+                  <div>{formatDateToLocale(approvals.blockTimeStamp)}</div>
+                </div>
+              )}
+              {approvals?.voters && (
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Voters:</b>
+                  </div>
+                  <div>{JSON.stringify(approvals.voters)}</div>
+                </div>
+              )}
+              {Object.keys(approvals).includes('isComplete') && (
+                <>
+                  <div className="d-flex justify-content-between my-2">
+                    <div className="mr-3">
+                      <b>Is complete:</b>
+                    </div>
+                    <div>{JSON.stringify(!!approvals.isComplete)}</div>
+                  </div>
+                  <CommandComponent
+                    commandString={wrapCommand}
+                    show={isFailed}
+                  />
+                </>
+              )}
+              {approvals.txIds && (
+                <>
+                  <div className="mr-3 mt-3">
+                    <b>Approvals:</b>
+                  </div>
+                  {approvals.txIds.map((txId: AnyType) => (
+                    <div key={txId} className={classes.trxId}>
+                      <a
+                        href={process.env.REACT_APP_FIO_BLOCKS_TX_URL + txId}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {txId}
                       </a>
                     </div>
                   ))}
-                </div>
-              </div>
-            ) : null}
+                </>
+              )}
+            </div>
 
             <InfoBadge
               className={classes.infoBadge}
               type={isPending ? BADGE_TYPES.REGULAR : BADGE_TYPES.ERROR}
-              show={!itemData.confirmData}
+              show={isPending || isFailed}
               title="Confirmation!"
               message={isPending ? 'Waiting...' : 'Something went wrong.'}
             />
