@@ -38,6 +38,9 @@ export class Wallet extends Base {
             unique: true,
             fields: ['publicKey', 'userId'],
           },
+          {
+            fields: ['failedSyncedWithEdge'],
+          },
         ],
       },
     );
