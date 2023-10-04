@@ -46,7 +46,7 @@ export const WidelyAdoptedSection: React.FC = () => {
       </div>
 
       <div className={classes.buttonWrapper}>
-        <a href="https://www.fioprotocol.io/ecosystem">
+        <a href="https://fio.net/discover/ecosystem">
           <SubmitButton
             text="SHOW MORE"
             hasLowHeight

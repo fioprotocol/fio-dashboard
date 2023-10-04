@@ -119,7 +119,7 @@ export const FioPartnersSlider: React.FC = () => {
           </div>
         ))}
         <a
-          href="https://www.fioprotocol.io/ecosystem"
+          href="https://fio.net/discover/ecosystem"
           target="_blank"
           rel="noopener noreferrer"
           className={classes.actionButton}
