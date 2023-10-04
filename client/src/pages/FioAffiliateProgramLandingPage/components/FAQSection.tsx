@@ -17,7 +17,7 @@ import classes from '../styles/FAQSection.module.scss';
 const accordionContent = [
   {
     title: 'How much can I earn?',
-    text: `For every FIO Domain that is registered by a person which you referred, you will receive up to 50% of the amount paid by that person. The cost of FIO Domains vary, but is typically around $40. The percentage of payout will remain at 50% until <a href="https://kb.fioprotocol.io/fio-token/token-distribution#tokens-minted-over-time" target="_blank" rel="noreferrer">New User Bounty token pool</a> is depleted, at which point it will be reduced to 10%.`,
+    text: `For every FIO Domain that is registered by a person which you referred, you will receive up to 50% of the amount paid by that person. The cost of FIO Domains vary, but is typically around $40. The percentage of payout will remain at 50% until <a href="https://fio.net/token/distribution" target="_blank" rel="noreferrer">New User Bounty token pool</a> is depleted, at which point it will be reduced to 10%.`,
   },
   {
     title: 'How will I receive the payment?',

@@ -43,7 +43,7 @@ const ACTION_BUTTONS_CONTENT = {
       isWhiteViolet: true,
       text: 'Learn More About FIO',
     },
-    link: 'https://www.fioprotocol.io/',
+    link: 'https://fio.net/',
   },
 };
 

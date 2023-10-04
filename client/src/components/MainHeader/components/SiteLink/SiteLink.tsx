@@ -8,8 +8,8 @@ import { RefProfile } from '../../../../types';
 
 import classes from './SiteLink.module.scss';
 
-const DEFAULT_LINK = 'https://fioprotocol.io/';
-const DEFAULT_LINK_TEXT = 'Go to fioprotocol.io';
+const DEFAULT_LINK = 'https://fio.net/';
+const DEFAULT_LINK_TEXT = 'Go to fio.net';
 
 type SiteLinkProps = {
   hideSiteLink?: boolean;
