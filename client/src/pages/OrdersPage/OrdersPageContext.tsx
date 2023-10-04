@@ -95,7 +95,7 @@ export const useContext = (): OrdersPageProps => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `FIO-Dashboard-order-${orderNumber}.pdf`;
+      a.download = `FIO-App-order-${orderNumber}.pdf`;
       a.click();
 
       togglePdfLoading(false);

@@ -76,7 +76,7 @@ export function* exportOrdersDataSuccess(): Generator {
       action.data.orders.map((order: OrderDetails) => ({
         number: order.number,
         item: order.createdAt ? formatDateToLocale(order.createdAt) : '',
-        refProfileName: order.refProfileName || 'FIO Dashboard',
+        refProfileName: order.refProfileName || 'FIO App',
         userEmail: order.userEmail,
         paymentProcessor:
           PAYMENT_PROVIDER_LABEL[order.paymentProcessor] || 'N/A',

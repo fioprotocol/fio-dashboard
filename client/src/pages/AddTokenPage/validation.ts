@@ -73,7 +73,7 @@ export const validateToken = (
     if (chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO) {
       tokenErrors.chainCode = {
         message:
-          'Your FIO Public Key is already mapped to your FIO Handle and that mapping cannot be changed via the Dashboard.',
+          'Your FIO Public Key is already mapped to your FIO Handle and that mapping cannot be changed via the FIO App.',
         type: ERROR_UI_TYPE.BADGE,
       };
     }

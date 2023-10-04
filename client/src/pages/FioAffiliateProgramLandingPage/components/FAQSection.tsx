@@ -27,7 +27,7 @@ const accordionContent = [
   {
     title: 'How will I know if someone has purchased a FIO Domain?',
     text:
-      'Individual FIO Domain purchases are not shown in the Dashboard, but once you receive a payment you will see it in the FIO Token section.',
+      'Individual FIO Domain purchases are not shown in the FIO App, but once you receive a payment you will see it in the FIO Token section.',
   },
   {
     title: 'Will I be paid if someone renews a FIO Domain?',
