@@ -94,13 +94,13 @@ class EmailSender {
     switch (templateName) {
       case templates.createAccount:
         return {
-          subject: 'Welcome to FIO Dashboard.',
+          subject: 'Welcome to FIO App.',
           body: EmailTemplate.get(templateName, sendData),
           images: EmailTemplate.getInlineImages(templateName),
         };
       case templates.confirmAdminEmail:
         return {
-          subject: 'FIO Dashboard - please confirm your email',
+          subject: 'FIO App - please confirm your email',
           body: EmailTemplate.get(templateName, {
             link: `${sendData.adminUrl}confirm-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
             ...sendData,
@@ -109,7 +109,7 @@ class EmailSender {
         };
       case templates.resetAdminPasswordEmail:
         return {
-          subject: 'FIO Dashboard - password reset',
+          subject: 'FIO App - password reset',
           body: EmailTemplate.get(templateName, {
             link: `${sendData.adminUrl}reset-password?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
             ...sendData,
@@ -118,7 +118,7 @@ class EmailSender {
         };
       case templates.passRecovery:
         return {
-          subject: 'FIO Dashboard recovery link',
+          subject: 'FIO App recovery link',
           body: EmailTemplate.get(templateName, {
             link: `${sendData.mainUrl}account-recovery?${QUERY_PARAMS_NAMES.USERNAME}=${sendData.username}&${QUERY_PARAMS_NAMES.TOKEN}=${sendData.token}`,
             ...sendData,
@@ -315,7 +315,7 @@ class EmailSender {
 
       case templates.purchaseConfirmation:
         return {
-          subject: `FIO dashboard purchase confirmation - ${sendData.orderNumber}`,
+          subject: `FIO App purchase confirmation - ${sendData.orderNumber}`,
           body: EmailTemplate.get(templateName, {
             link: `${sendData.mainUrl}order-details?${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${sendData.orderNumber}`,
             ...sendData,
