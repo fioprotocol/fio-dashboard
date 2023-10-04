@@ -36,10 +36,7 @@ export class Wallet extends Base {
         indexes: [
           {
             unique: true,
-            fields: ['publicKey', 'userId'],
-          },
-          {
-            fields: ['failedSyncedWithEdge'],
+            fields: ['publicKey', 'userId', 'failedSyncedWithEdge'],
           },
         ],
       },
