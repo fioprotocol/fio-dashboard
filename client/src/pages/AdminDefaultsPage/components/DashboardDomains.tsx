@@ -53,7 +53,7 @@ const DashboardDomains: React.FC<DashboardDomainsProps> = ({ form }) => {
   return (
     <div className={classes.section}>
       <div className={classes.sectionHeader}>
-        <h3>Dashboard Domains</h3>
+        <h3>FIO App Domains</h3>
         <Button onClick={addNewEntry}>Add</Button>
       </div>
       <FieldArray name={FIELD_ARRAY_KEY}>

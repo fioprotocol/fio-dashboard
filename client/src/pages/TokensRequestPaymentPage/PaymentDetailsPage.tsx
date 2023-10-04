@@ -204,7 +204,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
           message={
             isFioChain(chainCode)
               ? 'Please use this form if you have already paid but the record has not been created.'
-              : 'This request is not a FIO on chain request. You will need to complete the transaction outside of the dashboard and enter the transaction details below.'
+              : 'This request is not a FIO on chain request. You will need to complete the transaction outside of the FIO App and enter the transaction details below.'
           }
         />
 

@@ -26,7 +26,7 @@ const MaintenanceSwitch: React.FC = () => {
       <div className={classes.sectionHeader}>
         <h3>Maintenance</h3>
       </div>
-      <p>WARNING! When set to ON, the Dashboard will be disabled!</p>
+      <p>WARNING! When set to ON, the FIO App will be disabled!</p>
       <Form.Check
         id="isMaintenance"
         type="switch"

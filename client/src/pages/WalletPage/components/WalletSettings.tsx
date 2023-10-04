@@ -311,7 +311,7 @@ const WalletSettings: React.FC<Props> = props => {
           <>
             <span>
               If you permanently delete your wallet, you will no longer have
-              access to it from the Dashboard.
+              access to it from the FIO App.
             </span>
             <br />
             {isLedgerWallet ? (

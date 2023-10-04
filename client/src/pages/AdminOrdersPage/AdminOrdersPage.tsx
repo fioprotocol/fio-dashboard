@@ -294,7 +294,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                       </Link>
                     </th>
                     <th>{order.total || 0}</th>
-                    <th>{order.refProfileName || 'FIO Dashboard'}</th>
+                    <th>{order.refProfileName || 'FIO App'}</th>
                     <th>
                       {PAYMENT_PROVIDER_LABEL[order.paymentProcessor] || 'N/A'}
                     </th>
