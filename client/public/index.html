@@ -37,7 +37,9 @@
     <script type="text/javascript">
       if (self === top) {
         var frameDefender = document.getElementById("frameDefender");
-        frameDefender.parentNode.removeChild(frameDefender);
+        if (frameDefender && frameDefender.parentNode) {
+          frameDefender.parentNode.removeChild(frameDefender);
+        }
       } else {
         parent.location = self.location;
       }
