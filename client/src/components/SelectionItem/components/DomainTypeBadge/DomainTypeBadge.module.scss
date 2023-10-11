@@ -5,6 +5,10 @@
 .badgeContainer {
   cursor: pointer;
 
+  &.disabled {
+    cursor: not-allowed;
+  }
+
   > div {
     padding: 7px;
   }
