@@ -26,8 +26,8 @@ const PrivacyPolicyPage: React.FC = () => {
         <li>
           <p>
             Visit our website&nbsp;at&nbsp;
-            <a href="/" title="https://dashboard.fioprotocol.io/">
-              https://dashboard.fioprotocol.io
+            <a href="/" title={process.env.REACT_APP_BASE_URL}>
+              {process.env.REACT_APP_BASE_URL?.slice(0, -1)}
             </a>
             , or any website of ours that links to this privacy notice
           </p>

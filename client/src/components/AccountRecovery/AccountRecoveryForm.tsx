@@ -130,7 +130,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
           </div>
         )}
         <p className={classes.subtitle}>
-          Please update your password in order to access the dashboard.
+          Please update your password in order to access the FIO App.
         </p>
         <Field
           component={Input}

@@ -105,7 +105,7 @@ const ChangeEmail: React.FC<Props> = props => {
           showModal={showModal && !pinModalIsOpen}
           isWide={true}
           title="Update Email"
-          subtitle="Your email address is used access your FIO dashboard and recover your account."
+          subtitle="Your email address is used access your FIO App and recover your account."
         >
           <ChangeEmailForm
             onSubmit={onSubmit}

@@ -2,7 +2,7 @@ import speakeasy, { GeneratedSecret } from 'speakeasy';
 import { toDataURL } from 'qrcode';
 import { jsPDF } from 'jspdf';
 
-export const TFA_PREFIX_NAME = 'FIO Dashboard administration';
+export const TFA_PREFIX_NAME = 'FIO App administration';
 
 class TFA {
   createSecret(name?: string): GeneratedSecret {
@@ -27,7 +27,7 @@ class TFA {
   async downloadSecretQr(secretQrPng: string) {
     const doc = new jsPDF();
     doc.addImage(secretQrPng, 'PNG', 15, 8, 100, 100);
-    doc.save('FIO-dashboard-admin-2fa-secret.pdf');
+    doc.save('FIO-App-admin-2fa-secret.pdf');
   }
 }
 

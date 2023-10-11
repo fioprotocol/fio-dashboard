@@ -154,7 +154,7 @@ const AdminOrderModal: React.FC<Props> = ({
             )}
             {renderOrderItemFieldData(
               'Ref Profile',
-              orderItem.refProfileName || 'FIO Dashboard',
+              orderItem.refProfileName || 'FIO App',
             )}
 
             <br />
