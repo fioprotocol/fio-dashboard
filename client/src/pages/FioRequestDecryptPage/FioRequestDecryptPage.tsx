@@ -167,7 +167,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
       receivedFioRequestsStarted &&
       obtDataStarted
     ) {
-      const receivedRequest = receivedFioRequests.find(
+      const receivedRequest = receivedFioRequests?.find(
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (receivedRequest) {
@@ -182,7 +182,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         }
         return;
       }
-      const sentRequest = sentFioRequests.find(
+      const sentRequest = sentFioRequests?.find(
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (sentRequest) {
