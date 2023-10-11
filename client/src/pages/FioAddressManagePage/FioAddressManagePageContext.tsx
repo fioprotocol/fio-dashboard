@@ -1,14 +1,19 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { getFee, toggleFchBundleWarningBadge } from '../../redux/fio/actions';
+import {
+  getFee,
+  toggleFchBundleWarningBadge,
+  toggleExpiredDomainFchBadge,
+} from '../../redux/fio/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import {
   fees as feesSelector,
-  showFchBundleWarningBagde as showFchBundleWarningBagdeSelector,
+  fioAddresses as fioAddressesSelector,
+  fioAddressesLoading as fioAddressesLoadingSelector,
 } from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 
@@ -20,25 +25,22 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
+import { log } from '../../util/general';
+import { isDomainExpired } from '../../util/fio';
 
 import {
   CART_ITEM_TYPE,
   ANALYTICS_EVENT_ACTIONS,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, LOW_BUNDLES_THRESHOLD } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
+import { EMPTY_STATE_CONTENT, WARNING_CONTENT } from './constants';
 
-const EMPTY_STATE_CONTENT = {
-  title: 'No FIO Handles',
-  message: 'There are no FIO Handles in all your wallets',
-};
+import { WarningContentItem } from '../../components/ManagePageContainer/types';
+import useEffectOnce from '../../hooks/general';
 
-const WARNING_CONTENT = {
-  LOW_BUNDLES: {
-    title: 'Low Bundles',
-    message:
-      'Low Bundles - Your remaining bundles amount is low, please add more bundles.',
-  },
+type WarningContent = {
+  [key: string]: WarningContentItem;
 };
 
 type UseContextProps = {
@@ -46,22 +48,35 @@ type UseContextProps = {
     title: string;
     message: string;
   };
-  showWarningMessage: boolean;
-  warningContent: {
-    title: string;
-    message: string;
-  };
+  warningContent: WarningContentItem[];
   handleAddBundles: (name: string) => void;
-  sessionBadgeClose: () => void;
 };
 
 export const useContext = (): UseContextProps => {
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
-  const showWarningMessage = useSelector(showFchBundleWarningBagdeSelector);
+  const fioAddresses = useSelector(fioAddressesSelector);
+  const fioAddressesLoading = useSelector(fioAddressesLoadingSelector);
+
+  const [warningContent, setWarningContent] = useState<WarningContent>({
+    LOW_BUNDLES: {
+      ...WARNING_CONTENT.LOW_BUNDLES,
+      show: false,
+    },
+    EXPIRED_DOMAINS: {
+      ...WARNING_CONTENT.EXPIRED_DOMAINS,
+      show: false,
+    },
+  });
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const hasLowBundles =
+    !!fioAddresses &&
+    fioAddresses.some(
+      fioAddress => fioAddress.remaining < LOW_BUNDLES_THRESHOLD,
+    );
 
   const addBundlesFeePrice =
     fees[apis.fio.actionEndPoints.addBundledTransactions] || DEFAULT_FEE_PRICES;
@@ -101,19 +116,127 @@ export const useContext = (): UseContextProps => {
     ],
   );
 
-  const sessionBadgeClose = useCallback(() => {
+  const onFchBundleWarningBadgeClose = useCallback(() => {
+    setWarningContent({
+      ...warningContent,
+      LOW_BUNDLES: {
+        ...warningContent.LOW_BUNDLES,
+        show: false,
+      },
+    });
     dispatch(toggleFchBundleWarningBadge(false));
-  }, [dispatch]);
+  }, [dispatch, warningContent]);
+
+  const onExpiredDomainWarningBadgeClose = useCallback(() => {
+    setWarningContent({
+      ...warningContent,
+      EXPIRED_DOMAINS: {
+        ...warningContent.EXPIRED_DOMAINS,
+        show: false,
+      },
+    });
+    dispatch(toggleExpiredDomainFchBadge(false));
+  }, [dispatch, warningContent]);
+
+  const getDomainExpiration = useCallback(async (domainName: string) => {
+    try {
+      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
+
+      return expiration || null;
+    } catch (err) {
+      log.error(err);
+    }
+  }, []);
+
+  const checkIsDomainExpired = useCallback(
+    async (domainName: string) => {
+      if (!domainName) return null;
+
+      const expiration = await getDomainExpiration(domainName);
+
+      return expiration && isDomainExpired(domainName, expiration);
+    },
+    [getDomainExpiration],
+  );
+
+  const hasExpiredDomain = useCallback(async () => {
+    let hasExpiredDomain = false;
+
+    const domains = fioAddresses.map(fioAddress =>
+      fioAddress.name ? fioAddress.name.split(FIO_ADDRESS_DELIMITER)[1] : null,
+    );
+
+    const uniqueDomains = [...new Set(domains)];
+
+    for (const domain of uniqueDomains) {
+      const isExpired = await checkIsDomainExpired(domain);
+      if (isExpired) {
+        hasExpiredDomain = isExpired;
+        break;
+      }
+    }
+
+    return hasExpiredDomain;
+  }, [checkIsDomainExpired, fioAddresses]);
+
+  const handleExpiredWarningContent = useCallback(async () => {
+    const fioHandlesHasExpiredDomain = await hasExpiredDomain();
+
+    setWarningContent(prevWarningContent => ({
+      ...prevWarningContent,
+      EXPIRED_DOMAINS: {
+        ...prevWarningContent.EXPIRED_DOMAINS,
+        show: fioHandlesHasExpiredDomain,
+      },
+    }));
+  }, [hasExpiredDomain]);
 
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.addBundledTransactions));
   }, [dispatch]);
 
+  useEffectOnce(
+    () => {
+      if (!fioAddressesLoading) {
+        setWarningContent(prevWarningContent => ({
+          ...prevWarningContent,
+          LOW_BUNDLES: {
+            ...prevWarningContent.LOW_BUNDLES,
+            show: hasLowBundles,
+          },
+        }));
+      }
+    },
+    [hasLowBundles, fioAddressesLoading, warningContent.LOW_BUNDLES.show],
+    !fioAddressesLoading,
+  );
+
+  useEffectOnce(
+    () => {
+      if (!fioAddressesLoading) {
+        handleExpiredWarningContent();
+      }
+    },
+    [
+      hasExpiredDomain,
+      fioAddressesLoading,
+      warningContent.EXPIRED_DOMAINS.show,
+    ],
+    !fioAddressesLoading,
+  );
+
   return {
     emptyStateContent: EMPTY_STATE_CONTENT,
-    showWarningMessage,
-    warningContent: WARNING_CONTENT.LOW_BUNDLES,
+    warningContent: [
+      {
+        ...warningContent.LOW_BUNDLES,
+        onClose: onFchBundleWarningBadgeClose,
+      },
+      {
+        ...warningContent.EXPIRED_DOMAINS,
+        onClose: onExpiredDomainWarningBadgeClose,
+      },
+    ],
     handleAddBundles,
-    sessionBadgeClose,
   };
 };

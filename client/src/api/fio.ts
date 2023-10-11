@@ -42,6 +42,7 @@ import {
   ResponseFioRecord,
   WalletKeys,
 } from '../types';
+import { FioDomainDoubletResponse } from './responses';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -489,6 +490,24 @@ export default class Fio {
     }
 
     return res;
+  };
+
+  getFioDomain = async (
+    domainName: string,
+  ): Promise<FioDomainDoubletResponse> => {
+    try {
+      const tableRowsParams = this.setTableRowsParams(domainName);
+
+      const {
+        rows,
+      }: { rows: FioDomainDoubletResponse[] } = await this.getTableRows(
+        tableRowsParams,
+      );
+
+      return rows.length ? rows[0] : null;
+    } catch (e) {
+      this.logError(e);
+    }
   };
 
   getFioPublicAddress = async (

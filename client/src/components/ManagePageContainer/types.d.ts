@@ -10,6 +10,13 @@ type GetWalletAddresses = (
   offset: number,
 ) => void;
 
+export type WarningContentItem = {
+  title: string;
+  message: string;
+  show: boolean;
+  onClose?: () => void;
+};
+
 export interface ContainerProps {
   children?: React.ReactNode;
   emptyStateContent: {
@@ -25,15 +32,10 @@ export interface ContainerProps {
     type: string;
   };
   showTopBadge?: boolean;
-  showWarningMessage: boolean;
-  warningContent?: {
-    title: string;
-    message: string;
-  };
+  warningContent?: WarningContentItem[];
   handleAddBundles?: (name: string) => void;
   handleRenewDomain?: (name: string) => void;
   onTopBadgeClose?: () => void;
-  sessionBadgeClose: () => void;
 }
 
 type ModalOpenActionType = (
