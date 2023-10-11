@@ -42,10 +42,6 @@ type Props = {
   showDangerModal: boolean;
   showItemModal: boolean;
   showSettingsModal: boolean;
-  warningContent: {
-    title: string;
-    message: string;
-  };
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
   handleRenewDomain?: (name: string) => void;
@@ -74,7 +70,6 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
     showDangerModal,
     showItemModal,
     showSettingsModal,
-    warningContent,
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
     handleRenewDomain,
@@ -181,7 +176,6 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
           fioNameItem={selectedFioNameItem}
           isDesktop={isDesktop}
           isDomainWatchlist
-          warningContent={warningContent}
           onRenewDomain={handleRenewDomain}
           onSettingsOpen={onSettingsOpen}
         />

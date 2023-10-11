@@ -70,6 +70,8 @@ export default function configureStore(api: Api, history: History): Store {
             .showFchBundleWarningBagde,
           showExpiredDomainWarningBadge: store.getState().fio
             .showExpiredDomainWarningBadge,
+          showExpiredDomainWarningFchBadge: store.getState().fio
+            .showExpiredDomainWarningFchBadge,
         },
         fioWalletsData: {
           walletsData: store.getState().fioWalletsData.walletsData,

@@ -44,6 +44,11 @@ import {
   FIO_ORACLE_ACCOUNT_NAME,
 } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
+import {
+  EMPTY_STATE_CONTENT,
+  SUCCESS_MESSAGES,
+  WARNING_CONTENT,
+} from './constants';
 
 import {
   CartItem,
@@ -52,29 +57,7 @@ import {
   FioNameItemProps,
 } from '../../types';
 import { FioDomainDoubletResponse } from '../../api/responses';
-
-const EMPTY_STATE_CONTENT = {
-  title: 'No FIO Domains',
-  message: 'There are no FIO Domains in all your wallets',
-};
-
-const WARNING_CONTENT = {
-  DOMAIN_RENEW: {
-    title: 'Domain Renewal',
-    message:
-      'One or more FIO Domain below has expired. Certain actions are inactive until the domain is renewed. Renew today to restore the actions and to ensure you do not loose the domain.',
-  },
-  DOMAIN_RENEW_IN_30_DAYS: {
-    title: 'Domain Renewal',
-    message:
-      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not loose the domain.',
-  },
-};
-
-const SUCCESS_MESSAGES = {
-  CREATE_DOMAIN_WATCHLIST_ITEM: 'The domain was added to your watchlist',
-  DELETE_DOMAIN_WATCHLIST_ITEM: 'The domain was deleted from your watchlist',
-};
+import { WarningContentItem } from '../../components/ManagePageContainer/types';
 
 type UseContextProps = {
   domainWatchlistIsDeleting: boolean;
@@ -95,12 +78,8 @@ type UseContextProps = {
   showDomainWatchlistItemModal: boolean;
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
-  showWarningMessage: boolean;
   successMessage: string | null;
-  warningContent: {
-    title: string;
-    message: string;
-  };
+  warningContent: WarningContentItem[];
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
   handleRenewDomain: (name: string) => void;
@@ -439,6 +418,11 @@ export const useContext = (): UseContextProps => {
     }
   }, [fioDomainsJSON]);
 
+  const warningContnet =
+    showWarningDomainExpireIn30DaysBadge && !showWarningDomainExpireBadge
+      ? WARNING_CONTENT.DOMAIN_RENEW_IN_30_DAYS
+      : WARNING_CONTENT.DOMAIN_RENEW;
+
   return {
     domainWatchlistIsDeleting,
     domainWatchlistLoading,
@@ -455,16 +439,18 @@ export const useContext = (): UseContextProps => {
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
-    showWarningMessage:
-      showWarningMessage &&
-      (showWarningDomainExpireBadge ||
-        showWarningDomainExpireIn30DaysBadge ||
-        showWarningDomainWatchListBadge),
     successMessage,
-    warningContent:
-      showWarningDomainExpireIn30DaysBadge && !showWarningDomainExpireBadge
-        ? WARNING_CONTENT.DOMAIN_RENEW_IN_30_DAYS
-        : WARNING_CONTENT.DOMAIN_RENEW,
+    warningContent: [
+      {
+        ...warningContnet,
+        show:
+          showWarningMessage &&
+          (showWarningDomainExpireBadge ||
+            showWarningDomainExpireIn30DaysBadge ||
+            showWarningDomainWatchListBadge),
+        onClose: sessionBadgeClose,
+      },
+    ],
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
     handleRenewDomain,

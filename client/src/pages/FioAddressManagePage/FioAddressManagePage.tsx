@@ -8,19 +8,12 @@ import { PAGE_NAME } from '../../components/ManagePageContainer/constants';
 import { useContext } from './FioAddressManagePageContext';
 
 const FioAddressManagePage: React.FC = () => {
-  const {
-    emptyStateContent,
-    showWarningMessage,
-    warningContent,
-    handleAddBundles,
-    sessionBadgeClose,
-  } = useContext();
+  const { emptyStateContent, warningContent, handleAddBundles } = useContext();
 
   return (
     <ManagePageContainer
       emptyStateContent={emptyStateContent}
       pageName={PAGE_NAME.ADDRESS}
-      showWarningMessage={showWarningMessage}
       title={
         <Title
           title="Manage My FIO Handles"
@@ -29,7 +22,6 @@ const FioAddressManagePage: React.FC = () => {
       }
       warningContent={warningContent}
       handleAddBundles={handleAddBundles}
-      sessionBadgeClose={sessionBadgeClose}
     />
   );
 };
