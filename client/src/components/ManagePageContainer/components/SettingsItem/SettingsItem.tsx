@@ -12,6 +12,7 @@ import NotificationBadge from '../../../NotificationBadge';
 import { LINKS } from '../../../../constants/labels';
 import { ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
+import { WARNING_CONTENT } from '../../../../pages/FioAddressManagePage/constants';
 
 import { FioNameItemProps, FioWalletDoublet } from '../../../../types';
 
@@ -53,8 +54,8 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
       <h3 className={classes.title}>Advanced Settings</h3>
       <NotificationBadge
         show={isExpired}
-        message="One or more FIO Handle Domain has expired. Certain FIO handle actions are inactive until the domain is renewed. Renew today to restore the actions."
-        title="Handle Domain(s) Expired"
+        message={WARNING_CONTENT.EXPIRED_DOMAINS.message}
+        title={WARNING_CONTENT.EXPIRED_DOMAINS.title}
         type={BADGE_TYPES.WARNING}
       />
       <h5 className={classes.subtitle}>FIO Handle Ownership</h5>

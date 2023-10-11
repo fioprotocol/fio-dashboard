@@ -13,6 +13,7 @@ export type UseContextProps = {
 };
 
 export type SelectedItemProps = {
+  isExpired?: boolean;
   isSelected?: boolean;
 } & CartItem;
 

@@ -12,6 +12,6 @@ export const WARNING_CONTENT = {
   EXPIRED_DOMAINS: {
     title: 'FIO Handle Domain(s) Expired',
     message:
-      ' One or more FIO Handle Domain has expired. Certain FIO Handle actions are inactive until the domain is renewed. Renew today to restore the actions.',
+      'One or more FIO Handle Domain has expired. Certain FIO Handle actions are inactive until the domain is renewed. Renew today to restore the actions.',
   },
 };

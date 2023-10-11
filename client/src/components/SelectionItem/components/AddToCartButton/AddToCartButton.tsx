@@ -12,6 +12,7 @@ import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/typ
 import classes from './AddToCartButton.module.scss';
 
 type Props = {
+  disabled?: boolean;
   onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
@@ -21,6 +22,7 @@ export const AddToCartButton: React.FC<Props> = props => {
     address,
     allowFree,
     domain,
+    disabled,
     costFio,
     costNativeFio,
     costUsdc,
@@ -74,6 +76,7 @@ export const AddToCartButton: React.FC<Props> = props => {
     <Button
       onClick={onActionClick}
       className={classnames(classes.button, isSelected && classes.isSelected)}
+      disabled={disabled}
     >
       <div>
         {isSelected ? (
