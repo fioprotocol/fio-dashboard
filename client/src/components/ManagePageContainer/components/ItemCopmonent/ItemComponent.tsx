@@ -118,6 +118,7 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
           <WarningIcon className={classes.warnIcon} />
         )}
         <AddBundlesActionButton
+          isExpired={isExpired}
           isMobileView
           name={name}
           onAddBundles={onAddBundles}
@@ -127,6 +128,7 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
         <h4 className={classes.actionsTitle}>Actions</h4>
         <FchActionButtons
           fioNameItem={fioNameItem}
+          isExpired={isExpired}
           onSettingsOpen={onSettingsOpen}
         />
       </div>

@@ -28,10 +28,11 @@ type DefautProps = {
 
 export const AddBundlesActionButton: React.FC<{
   name: string;
+  isExpired: boolean;
   isMobileView?: boolean;
   onAddBundles: (name: string) => void;
 }> = props => {
-  const { name, isMobileView, onAddBundles } = props;
+  const { name, isExpired, isMobileView, onAddBundles } = props;
   const isSmallDesktop = useCheckIfSmallDesktop();
   const handleAddBundles = () => {
     onAddBundles(name);
@@ -46,7 +47,10 @@ export const AddBundlesActionButton: React.FC<{
           isMobileView && classes.mobileView,
         )}
       >
-        <Button title={isSmallDesktop ? BUTTONS_TITLE.addBundles : ''}>
+        <Button
+          title={isSmallDesktop ? BUTTONS_TITLE.addBundles : ''}
+          disabled={isExpired}
+        >
           <AddCircleIcon className={classes.linkIcon} />
           {!isSmallDesktop && BUTTONS_TITLE.addBundles}
         </Button>
@@ -141,13 +145,16 @@ const SettingsActionButton: React.FC<{
 };
 
 const LinkTokenActionButton: React.FC<DefautProps> = props => {
-  const { isSmallDesktop, name } = props;
+  const { isExpired, isSmallDesktop, name } = props;
   return (
     <Link
       to={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_HANDLE}=${name}`}
       className={classes.actionButton}
     >
-      <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
+      <Button
+        title={isSmallDesktop ? BUTTONS_TITLE.link : ''}
+        disabled={isExpired}
+      >
         <LinkIcon className={classes.linkIcon} />{' '}
         {!isSmallDesktop && BUTTONS_TITLE.link}
       </Button>
@@ -156,7 +163,7 @@ const LinkTokenActionButton: React.FC<DefautProps> = props => {
 };
 
 const FioRequestActionButton: React.FC<DefautProps> = props => {
-  const { isSmallDesktop, name } = props;
+  const { isExpired, isSmallDesktop, name } = props;
 
   return (
     <Link
@@ -168,7 +175,10 @@ const FioRequestActionButton: React.FC<DefautProps> = props => {
       }}
       className={classes.actionButton}
     >
-      <Button title={isSmallDesktop ? BUTTONS_TITLE.request : ''}>
+      <Button
+        title={isSmallDesktop ? BUTTONS_TITLE.request : ''}
+        disabled={isExpired}
+      >
         <ArrowDownwardIcon className={classes.linkIcon} />
         {!isSmallDesktop && BUTTONS_TITLE.request}
       </Button>
@@ -177,7 +187,7 @@ const FioRequestActionButton: React.FC<DefautProps> = props => {
 };
 
 const NftSignatureActionButton: React.FC<DefautProps> = props => {
-  const { isSmallDesktop, name } = props;
+  const { isExpired, isSmallDesktop, name } = props;
   return (
     <Link
       to={{
@@ -186,7 +196,10 @@ const NftSignatureActionButton: React.FC<DefautProps> = props => {
       }}
       className={classes.actionButton}
     >
-      <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
+      <Button
+        title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}
+        disabled={isExpired}
+      >
         <GestureIcon className={classes.atIcon} />{' '}
         {!isSmallDesktop && BUTTONS_TITLE.nft}
       </Button>
@@ -195,7 +208,7 @@ const NftSignatureActionButton: React.FC<DefautProps> = props => {
 };
 
 const SocialLinksActionButton: React.FC<DefautProps> = props => {
-  const { isSmallDesktop, name } = props;
+  const { isExpired, isSmallDesktop, name } = props;
 
   return (
     <Link
@@ -205,7 +218,10 @@ const SocialLinksActionButton: React.FC<DefautProps> = props => {
       }}
       className={classes.actionButton}
     >
-      <Button title={isSmallDesktop ? BUTTONS_TITLE.socialLinks : ''}>
+      <Button
+        title={isSmallDesktop ? BUTTONS_TITLE.socialLinks : ''}
+        disabled={isExpired}
+      >
         <span className={classes.prefixButtonText}>@</span>&nbsp;
         {!isSmallDesktop && BUTTONS_TITLE.socialLinks}
       </Button>
@@ -219,13 +235,15 @@ const ActionButtonsContainer: React.FC = props => (
 
 export const FchActionButtons: React.FC<{
   fioNameItem: FioNameItemProps;
+  isExpired: boolean;
   onSettingsOpen: (data: FioNameItemProps) => void;
 }> = props => {
-  const { fioNameItem, onSettingsOpen } = props;
+  const { fioNameItem, isExpired, onSettingsOpen } = props;
   const { name } = fioNameItem;
   const isSmallDesktop = useCheckIfSmallDesktop();
 
   const defaultProps = {
+    isExpired,
     isSmallDesktop,
     name,
   };
