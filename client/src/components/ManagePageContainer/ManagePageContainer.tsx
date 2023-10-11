@@ -49,6 +49,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     isAddress,
     isDesktop,
     isEmptyList,
+    isSelectedFioNameItemExpired,
     listItemsDefaultProps,
     loading,
     noProfileLoaded,
@@ -165,11 +166,13 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
           <FchSettingsItem
             fioNameItem={selectedFioNameItem}
             fioWallets={fioWallets}
+            isExpired={isSelectedFioNameItemExpired}
           />
         ) : (
           <DomainSettingsItem
             fioNameItem={selectedFioNameItem}
             fioWallets={fioWallets}
+            isExpired={isSelectedFioNameItemExpired}
           />
         )}
       </Modal>

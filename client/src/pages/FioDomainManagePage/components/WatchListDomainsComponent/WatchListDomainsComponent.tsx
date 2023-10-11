@@ -52,7 +52,11 @@ type Props = {
   onItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
   onSettingsClose: () => void;
-  onSettingsOpen: (domainsWatchlistItem: Partial<FioNameItemProps>) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+  }: {
+    fioNameItem: Partial<FioNameItemProps>;
+  }) => void;
   openDomainWatchlistModal: () => void;
 };
 
