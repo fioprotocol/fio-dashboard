@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import WarningIcon from '@mui/icons-material/Warning';
 
@@ -20,6 +20,9 @@ import {
   isDomainExpired,
   isDomainWillExpireIn30Days,
 } from '../../../../util/fio';
+
+import apis from '../../../../api';
+import { log } from '../../../../util/general';
 
 import { ModalOpenActionType } from '../../types';
 import { FioNameItemProps, FioNameType } from '../../../../types';
@@ -49,6 +52,27 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
 }> = props => {
   const { fioNameItem, onAddBundles, onSettingsOpen } = props;
   const { name = '', remaining } = fioNameItem;
+
+  const [domainExpiration, setDomainExpiration] = useState<number | null>(null);
+
+  const getDomainExpiration = useCallback(async () => {
+    try {
+      const { expiration } = (await apis.fio.getFioDomain(name)) || {};
+
+      if (expiration) {
+        setDomainExpiration(expiration);
+      }
+    } catch (err) {
+      log.error(err);
+    }
+  }, [name]);
+
+  const isExpired = domainExpiration && isDomainExpired(name, domainExpiration);
+
+  useEffect(() => {
+    getDomainExpiration();
+  }, [getDomainExpiration]);
+
   return (
     <React.Fragment key={name}>
       <div className={classnames(classes.tableCol, classes.firstCol)}>
@@ -60,10 +84,16 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
         ) : (
           '-'
         )}
-        {remaining < LOW_BUNDLES_THRESHOLD && (
-          <WarningIcon className={classes.warnIcon} />
+        {(remaining < LOW_BUNDLES_THRESHOLD || isExpired) && (
+          <WarningIcon
+            className={classnames(
+              classes.warnIcon,
+              `${remaining}`.length >= 3 && classes.longNumber,
+            )}
+          />
         )}
         <AddBundlesActionButton
+          isExpired={isExpired}
           name={fioNameItem.name || ''}
           onAddBundles={onAddBundles}
         />
@@ -71,6 +101,7 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <FchActionButtons
           fioNameItem={fioNameItem}
+          isExpired={isExpired}
           onSettingsOpen={onSettingsOpen}
         />
       </div>

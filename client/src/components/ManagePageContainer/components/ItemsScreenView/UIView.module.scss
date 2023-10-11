@@ -117,6 +117,10 @@
         height: 18px;
         position: absolute;
         left: 41px;
+
+        &.longNumber {
+          margin-left: -10px;
+        }
       }
     }
 
