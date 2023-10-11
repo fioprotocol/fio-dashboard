@@ -129,14 +129,21 @@ const FchCustomSelection: React.FC<DefautProps & {
 
 const SettingsActionButton: React.FC<{
   fioNameItem: FioNameItemProps;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  isExpired: boolean;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 }> = props => {
-  const { fioNameItem, onSettingsOpen } = props;
+  const { fioNameItem, isExpired, onSettingsOpen } = props;
   return (
     <Button
       className={classes.settingsButton}
       onClick={() => {
-        onSettingsOpen && onSettingsOpen(fioNameItem);
+        onSettingsOpen && onSettingsOpen({ fioNameItem, isExpired });
       }}
     >
       <SettingsIcon className={classes.settingsIcon} />
@@ -236,7 +243,13 @@ const ActionButtonsContainer: React.FC = props => (
 export const FchActionButtons: React.FC<{
   fioNameItem: FioNameItemProps;
   isExpired: boolean;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 }> = props => {
   const { fioNameItem, isExpired, onSettingsOpen } = props;
   const { name } = fioNameItem;
@@ -256,6 +269,7 @@ export const FchActionButtons: React.FC<{
       <SocialLinksActionButton {...defaultProps} />
       <SettingsActionButton
         fioNameItem={fioNameItem}
+        isExpired={isExpired}
         onSettingsOpen={onSettingsOpen}
       />
     </ActionButtonsContainer>
@@ -268,7 +282,13 @@ export const DomainActionButtons: React.FC<{
   isDomainWatchlist?: boolean;
   isExpired: boolean;
   onRenewDomain: (name: string) => void;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 }> = props => {
   const {
     fioNameItem,
@@ -305,6 +325,7 @@ export const DomainActionButtons: React.FC<{
         {isDesktop ? <WrapActionButton {...defaultProps} isHidden /> : null}
         <SettingsActionButton
           fioNameItem={fioNameItem}
+          isExpired={isExpired}
           onSettingsOpen={onSettingsOpen}
         />
       </ActionButtonsContainer>
@@ -318,6 +339,7 @@ export const DomainActionButtons: React.FC<{
       <FchCustomSelection {...defaultProps} />
       <SettingsActionButton
         fioNameItem={fioNameItem}
+        isExpired={isExpired}
         onSettingsOpen={onSettingsOpen}
       />
     </ActionButtonsContainer>

@@ -91,9 +91,11 @@ type UseContextProps = {
   onDomainWatchlistItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
   onDomainWatchlistItemSettingsClose: () => void;
-  onDomainWatchlistItemSettingsOpen: (
-    domainWatchilstItem: Partial<FioNameItemProps>,
-  ) => void;
+  onDomainWatchlistItemSettingsOpen: ({
+    fioNameItem,
+  }: {
+    fioNameItem: Partial<FioNameItemProps>;
+  }) => void;
   openDomainWatchlistModal: () => void;
   setSelectedDomainWatchlistItem: (
     domainWatchlistItem: DomainWatchlistItem,
@@ -212,8 +214,8 @@ export const useContext = (): UseContextProps => {
   );
 
   const onDomainWatchlistItemSettingsOpen = useCallback(
-    (domainWatchlistItem: Partial<FioNameItemProps>) => {
-      setSelectedDomainWatchlistSettingsItem(domainWatchlistItem);
+    ({ fioNameItem }: { fioNameItem: Partial<FioNameItemProps> }) => {
+      setSelectedDomainWatchlistSettingsItem(fioNameItem);
       handleShowModal(false);
       handleShowSettings(true);
     },

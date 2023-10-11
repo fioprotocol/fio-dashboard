@@ -32,7 +32,13 @@ import classes from './ItemComponent.module.scss';
 type FchItemComponentProps = {
   fioNameItem: FioNameItemProps;
   onAddBundles: (name: string) => void;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 };
 
 type DomainItemComponentProps = {
@@ -40,7 +46,13 @@ type DomainItemComponentProps = {
   isDesktop?: boolean;
   isDomainWatchlist?: boolean;
   onRenewDomain: (name: string) => void;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 };
 
 export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
@@ -66,13 +78,13 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
 
   const isExpired = domainExpiration && isDomainExpired(name, domainExpiration);
 
-  const [showFchLowBundlesWarning, toggleShowFchLowBundlesWarning] = useState(
-    remaining < LOW_BUNDLES_THRESHOLD,
-  );
+  const [showFchLowBundlesWarning, toggleShowFchLowBundlesWarning] = useState<
+    boolean
+  >(remaining < LOW_BUNDLES_THRESHOLD);
 
-  const [showExpiredDomainWarning, toggleShowExpiredDomainWarning] = useState(
-    isExpired,
-  );
+  const [showExpiredDomainWarning, toggleShowExpiredDomainWarning] = useState<
+    boolean
+  >(isExpired);
 
   const closeExpiredDomainWarning = useCallback(
     () => toggleShowExpiredDomainWarning(false),
@@ -87,6 +99,10 @@ export const FchItemComponent: React.FC<FchItemComponentProps> = props => {
   useEffect(() => {
     getDomainExpiration();
   }, [getDomainExpiration]);
+
+  useEffect(() => {
+    toggleShowExpiredDomainWarning(!!isExpired);
+  }, [isExpired]);
 
   return (
     <div className={classes.itemContainer}>

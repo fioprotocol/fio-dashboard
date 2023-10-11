@@ -33,6 +33,7 @@ type UseContextProps = {
   isAddress: boolean;
   isDesktop: boolean;
   isEmptyList: boolean;
+  isSelectedFioNameItemExpired: boolean;
   listItemsDefaultProps: {
     fioNameList: FioNameItemProps[];
     isAddress: boolean;
@@ -65,7 +66,13 @@ type UseContextProps = {
   onItemModalClose: () => void;
   onItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onSettingsClose: () => void;
-  onSettingsOpen: (fioNameItem: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
@@ -78,6 +85,10 @@ export const useContext = (props: Props): UseContextProps => {
   const [selectedFioNameItem, selectFioNameItem] = useState<FioNameItemProps>(
     {},
   );
+  const [
+    isSelectedFioNameItemExpired,
+    toggleIsSelectedFioNameItemExpired,
+  ] = useState<boolean>(false);
   const [visibleItemsCount, setVisibleItemsCount] = useState(ITEMS_LIMIT);
 
   const isDesktop = useCheckIfDesktop();
@@ -143,11 +154,21 @@ export const useContext = (props: Props): UseContextProps => {
   }, []);
   const onItemModalClose = useCallback(() => handleShowModal(false), []);
 
-  const onSettingsOpen = useCallback((fioNameItem: FioNameItemProps) => {
-    selectFioNameItem(fioNameItem);
-    handleShowModal(false);
-    handleShowSettings(true);
-  }, []);
+  const onSettingsOpen = useCallback(
+    ({
+      fioNameItem,
+      isExpired,
+    }: {
+      fioNameItem: FioNameItemProps;
+      isExpired?: boolean;
+    }) => {
+      selectFioNameItem(fioNameItem);
+      toggleIsSelectedFioNameItemExpired(isExpired);
+      handleShowModal(false);
+      handleShowSettings(true);
+    },
+    [],
+  );
   const onSettingsClose = useCallback(() => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
@@ -160,6 +181,7 @@ export const useContext = (props: Props): UseContextProps => {
     isAddress,
     isDesktop,
     isEmptyList,
+    isSelectedFioNameItemExpired,
     listItemsDefaultProps,
     loading,
     noProfileLoaded,

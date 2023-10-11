@@ -33,7 +33,13 @@ type ItemComponentProps = {
   fioNameItem: FioNameItemProps;
   isDesktop?: boolean;
   isDomainWatchlist?: boolean;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 };
 
 type DesktopViewProps = {
