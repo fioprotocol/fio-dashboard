@@ -215,6 +215,8 @@ router.get(
   routes.external.externalProviderNftsMetadata,
 );
 
+router.get('/gas-oracle', routes.external.getGasOracle);
+
 router.get('/fetch-image-hash', routes.general.imageToHash);
 
 router.get('/get-url-content', routes.general.getUrlContent);
