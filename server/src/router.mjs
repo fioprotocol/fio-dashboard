@@ -216,6 +216,10 @@ router.get(
 );
 
 router.get('/gas-oracle', routes.external.getGasOracle);
+router.get(
+  '/estimation-of-confirmation-time',
+  routes.external.getEstimationOfConfirmationTime,
+);
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
 

@@ -2,6 +2,7 @@ import { makeServiceRunner } from '../tools';
 
 import GetPrices from '../services/external/Prices';
 import GetGasOracle from '../services/external/GetGasOracle.mjs';
+import GetEstimationOfConfirmationTime from '../services/external/GetEstimationOfConfirmationTime.mjs';
 import Captcha from '../services/external/Captcha';
 import ValidatePubAddress from '../services/external/ValidatePubAddress';
 import ApiUrls from '../services/external/ApiUrls';
@@ -13,6 +14,10 @@ export default {
   prices: makeServiceRunner(GetPrices, req => req.query),
   initCaptcha: makeServiceRunner(Captcha),
   getGasOracle: makeServiceRunner(GetGasOracle, req => req.query),
+  getEstimationOfConfirmationTime: makeServiceRunner(
+    GetEstimationOfConfirmationTime,
+    req => req.query,
+  ),
   validatePubAddress: makeServiceRunner(ValidatePubAddress, req => req.query),
   apiUrls: makeServiceRunner(ApiUrls),
   externalProviderNfts: makeServiceRunner(GetExternalProviderNfts, req => req.query),

@@ -17,7 +17,7 @@ import Loader from '../../Loader/Loader';
 
 import useLoadFeePriceSuggestions from '../../../hooks/externalWalletsConnection/useLoadFeesSuggestions';
 import MathOp from '../../../util/math';
-import EtherScan from '../../../api/ether-scan';
+import apis from '../../../api';
 
 import classes from './FeesModalInput.module.scss';
 
@@ -31,8 +31,6 @@ export type FeePriceOptionItem = {
 };
 
 export const DEFAULT_GAS_LIMIT = 60000;
-
-const etherscan = new EtherScan();
 
 export const calculateGasFee = (
   gasPrice: string | number, // wei
@@ -133,7 +131,7 @@ const CustomFeeInputsTab = ({
   useEffect(() => {
     const loadTimeEstimation = async () => {
       if (gasPrice?.length) {
-        const predestinationValue = await etherscan.getEstimationOfConfirmationTime(
+        const predestinationValue = await apis.etherScan.getEstimationOfConfirmationTime(
           gasPrice,
         );
         setGasPriceEstimation(
