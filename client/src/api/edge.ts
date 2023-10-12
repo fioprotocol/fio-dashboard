@@ -350,6 +350,7 @@ export default class Edge {
       await account.changeWalletStates({
         [walletId]: { deleted: true },
       });
+      await account.logout();
       log.info(`Wallet with id: ${walletId} marked as deleted.`);
     } catch (e) {
       this.logError(e);
