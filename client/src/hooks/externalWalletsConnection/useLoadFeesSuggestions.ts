@@ -2,11 +2,8 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
 import { FeePriceOptionsList } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
-// import EtherScan from '../../api/ether-scan';
 import apis from '../../api';
 import { log } from '../../util/general';
-
-// const etherscan = new EtherScan();
 
 export function useLoadFeePriceSuggestions(
   startLoad: boolean = false,
@@ -24,7 +21,7 @@ export function useLoadFeePriceSuggestions(
     const getGasData = async () => {
       try {
         setIsLoading(true);
-        // const gasData = await etherscan.getGasOracle(isNFT);
+        // could be used EtherScan as alternative
         const gasData = await apis.infura.getGasOracle({ isPolygon: isNFT });
 
         const dataList: FeePriceOptionsList = [
@@ -50,18 +47,18 @@ export function useLoadFeePriceSuggestions(
 
         // This could be used in production
         // if (!isNFT) {
-        //   const getHighPriceEstimation = etherscan
-        //     .getEstimationOfConfirmationTime(gasData.FastGasPrice)
+        //   const getHighPriceEstimation = apis.etherScan
+        //     .getEstimationOfConfirmationTime(gasData?.FastGasPrice)
         //     .then((val: string) => {
         //       dataList[0].estimation = val;
         //     });
-        //   const getMediumPriceEstimation = etherscan
-        //     .getEstimationOfConfirmationTime(gasData.ProposeGasPrice)
+        //   const getMediumPriceEstimation = apis.etherScan
+        //     .getEstimationOfConfirmationTime(gasData?.ProposeGasPrice)
         //     .then((val: string) => {
         //       dataList[1].estimation = val;
         //     });
-        //   const getLowPriceEstimation = etherscan
-        //     .getEstimationOfConfirmationTime(gasData.SafeGasPrice)
+        //   const getLowPriceEstimation = apis.etherScan
+        //     .getEstimationOfConfirmationTime(gasData?.SafeGasPrice)
         //     .then((val: string) => {
         //       dataList[2].estimation = val;
         //     });
