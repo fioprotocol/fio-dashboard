@@ -19,6 +19,7 @@ const CartPage: React.FC = () => {
     paymentWalletPublicKey,
     prices,
     roe,
+    showExpiredDomainWarningBadge,
     totalCartAmount,
     totalCartNativeAmount,
     userWallets,
@@ -54,6 +55,7 @@ const CartPage: React.FC = () => {
     selectedPaymentProvider,
     disabled,
     paymentWalletPublicKey,
+    showExpiredDomainWarningBadge,
     totalCartNativeAmount,
     onPaymentChoose,
   };
