@@ -13,12 +13,17 @@ import {
 
 import apis from '../../api';
 import { setFioName } from '../../utils';
-import { checkAddressOrDomainIsExist, vaildateFioDomain } from '../../util/fio';
+import {
+  checkAddressOrDomainIsExist,
+  isDomainExpired,
+  vaildateFioDomain,
+} from '../../util/fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
 
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import { UserDomainType } from '../../types';
+import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 interface MatchFieldArgs {
   fieldId?: string;
@@ -106,9 +111,16 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
     const { rows } = await apis.fio.getTableRows(params);
 
-    if (rows.length && !rows[0].is_public && !existingUserDomain) {
-      succeeded = false;
-      message = DOMAIN_ALREADY_EXISTS;
+    if (rows.length) {
+      const { expiration, is_public, name } = rows[0];
+      if (isDomainExpired(name, expiration)) {
+        succeeded = false;
+        message = WARNING_CONTENT.EXPIRED_DOMAINS.message;
+      }
+      if (!is_public && !existingUserDomain) {
+        succeeded = false;
+        message = 'Domain has expired. Renew today to restore the actions.';
+      }
     }
   } catch (e) {
     succeeded = false;
