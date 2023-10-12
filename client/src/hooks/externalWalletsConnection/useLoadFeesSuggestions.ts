@@ -3,11 +3,10 @@ import { ethers } from 'ethers';
 
 import { FeePriceOptionsList } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
 // import EtherScan from '../../api/ether-scan';
-import InfuraApi from '../../api/infura';
+import apis from '../../api';
 import { log } from '../../util/general';
 
 // const etherscan = new EtherScan();
-const infura = new InfuraApi();
 
 export function useLoadFeePriceSuggestions(
   startLoad: boolean = false,
@@ -26,25 +25,25 @@ export function useLoadFeePriceSuggestions(
       try {
         setIsLoading(true);
         // const gasData = await etherscan.getGasOracle(isNFT);
-        const gasData = await infura.getGasOracle(isNFT);
+        const gasData = await apis.infura.getGasOracle({ isPolygon: isNFT });
 
         const dataList: FeePriceOptionsList = [
           {
             name: 'High',
             gasPrice: ethers.utils
-              .parseUnits(gasData.FastGasPrice, 'wei')
+              .parseUnits(gasData?.FastGasPrice, 'wei')
               .toString(),
           },
           {
             name: 'Medium',
             gasPrice: ethers.utils
-              .parseUnits(gasData.ProposeGasPrice, 'wei')
+              .parseUnits(gasData?.ProposeGasPrice, 'wei')
               .toString(),
           },
           {
             name: 'Low',
             gasPrice: ethers.utils
-              .parseUnits(gasData.SafeGasPrice, 'wei')
+              .parseUnits(gasData?.SafeGasPrice, 'wei')
               .toString(),
           },
         ];
