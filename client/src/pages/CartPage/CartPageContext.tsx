@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -55,7 +55,10 @@ import {
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { log } from '../../util/general';
-import { handlePriceForMultiYearFchWithCustomDomain } from '../../util/fio';
+import {
+  handlePriceForMultiYearFchWithCustomDomain,
+  isDomainExpired,
+} from '../../util/fio';
 import apis from '../../api';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -82,6 +85,7 @@ type UseContextReturnType = {
   paymentWalletPublicKey: string;
   prices: Prices;
   roe: number;
+  showExpiredDomainWarningBadge: boolean;
   totalCartAmount: string;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
@@ -123,6 +127,10 @@ export const useContext = (): UseContextReturnType => {
     selectedPaymentProvider,
     setSelectedPaymentProvider,
   ] = useState<PaymentProvider | null>(null);
+  const [
+    showExpiredDomainWarningBadge,
+    toggleShowExpiredDomainWarningBadge,
+  ] = useState<boolean>(false);
 
   const handleFreeAddressCartFn = () =>
     handleFreeAddressCart({
@@ -361,6 +369,57 @@ export const useContext = (): UseContextReturnType => {
     setSelectedPaymentProvider(null);
   };
 
+  const getDomainExpiration = useCallback(async (domainName: string) => {
+    try {
+      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
+
+      return expiration || null;
+    } catch (err) {
+      log.error(err);
+    }
+  }, []);
+
+  const checkIsDomainExpired = useCallback(
+    async (domainName: string) => {
+      if (!domainName) return null;
+
+      const expiration = await getDomainExpiration(domainName);
+
+      return expiration && isDomainExpired(domainName, expiration);
+    },
+    [getDomainExpiration],
+  );
+
+  const hasExpiredDomain = useCallback(async () => {
+    let hasExpiredDomain = false;
+
+    const domains = cartItems
+      .filter(cartItem => {
+        const { domain, type } = cartItem;
+        return (
+          domain &&
+          ![CART_ITEM_TYPE.DOMAIN, CART_ITEM_TYPE.DOMAIN_RENEWAL].includes(type)
+        );
+      })
+      .map(cartItem => cartItem.domain);
+
+    const uniqueDomains = [...new Set(domains)];
+
+    for (const domain of uniqueDomains) {
+      const isExpired = await checkIsDomainExpired(domain);
+      if (isExpired) {
+        hasExpiredDomain = isExpired;
+        break;
+      }
+    }
+
+    toggleShowExpiredDomainWarningBadge(hasExpiredDomain);
+  }, [checkIsDomainExpired, cartItems]);
+
+  useEffect(() => {
+    hasExpiredDomain();
+  }, [hasExpiredDomain]);
+
   useEffectOnce(() => {
     dispatch(getPrices());
   }, [dispatch, getPrices]);
@@ -418,6 +477,7 @@ export const useContext = (): UseContextReturnType => {
     prices,
     roe,
     error,
+    showExpiredDomainWarningBadge,
     onPaymentChoose,
     deleteItem: (data: DeleteCartItem) => dispatch(deleteItem(data)),
     setCartItems: (cartItems: CartItemType[]) =>

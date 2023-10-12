@@ -10,6 +10,7 @@ import {
   NON_VALID_FCH,
   NON_VAILD_DOMAIN,
 } from '../../constants/errors';
+import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 import apis from '../../api';
 import { setFioName } from '../../utils';
@@ -23,7 +24,6 @@ import { fireAnalyticsEventDebounced } from '../analytics';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import { UserDomainType } from '../../types';
-import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 interface MatchFieldArgs {
   fieldId?: string;

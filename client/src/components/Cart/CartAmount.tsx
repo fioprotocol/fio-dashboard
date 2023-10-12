@@ -21,6 +21,7 @@ type Props = {
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   error: string | null;
+  showExpiredDomainWarningBadge: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
@@ -36,6 +37,7 @@ const CartAmount: React.FC<Props> = props => {
     selectedPaymentProvider,
     disabled,
     error,
+    showExpiredDomainWarningBadge,
     onPaymentChoose,
   } = props;
 
@@ -69,6 +71,7 @@ const CartAmount: React.FC<Props> = props => {
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}
+          showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
         />
       </div>
     </CartSmallContainer>
