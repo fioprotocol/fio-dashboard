@@ -146,7 +146,7 @@ export const createAccount = async (
     result.account = await apis.edge.signup(username, password);
     result.fioWallet = await createFioWallet(result.account);
   } catch (e) {
-    log.error(e);
+    log.error('Create Edge Account Error:', e);
     try {
       result.account && result.account.logout();
     } catch (e) {
