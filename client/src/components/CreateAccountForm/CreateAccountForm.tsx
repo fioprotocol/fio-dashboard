@@ -32,6 +32,7 @@ import {
 } from './middleware';
 import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import { emailAvailable } from '../../api/middleware/auth';
+import { log } from '../../util/general';
 
 import {
   FioWalletDoublet,
@@ -43,6 +44,8 @@ import { FormValues, PasswordValidationState } from './types';
 
 import classes from './CreateAccountForm.module.scss';
 import { DEFAULT_DEBOUNCE_TIMEOUT } from '../../constants/timeout';
+
+const NO_EDGE_ACCOUNT_ERROR = 'No Edge Account';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
@@ -359,9 +362,13 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             password,
           );
 
-          setPinEnabled(account.username || emailToUsername(email));
+          if (!account) {
+            const errors = { email: NO_EDGE_ACCOUNT_ERROR };
+            return errors;
+          }
 
           if (!Object.values(errors).length && account && fioWallet) {
+            setPinEnabled(account?.username || emailToUsername(email));
             this.props.toggleTwoFactorAuth(!!account.otpKey);
             await this.confirm(account, fioWallet, values);
           }
@@ -399,6 +406,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     this.form = form;
     if (hasSubmitErrors && submitErrors && step === STEPS.SUCCESS) {
+      log.error('Create Account Errors', submitErrors as Error);
       return (
         <GenericErrorModal
           showGenericError={true}

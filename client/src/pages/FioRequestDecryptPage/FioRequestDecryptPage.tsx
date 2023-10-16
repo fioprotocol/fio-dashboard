@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import FioLoader from '../../components/common/FioLoader/FioLoader';
@@ -14,6 +14,9 @@ import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 
 import { transformFioRecord } from '../WalletPage/util';
 import { isFioChain } from '../../util/fio';
+import apis from '../../api';
+import { log } from '../../util/general';
+import useEffectOnce from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
@@ -42,7 +45,6 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
   LocationProps> = props => {
   const {
     fioWallets,
-    fioWalletsData,
     history,
     location: { query: { publicKey, fioRequestId: id } = {} },
     refreshBalance,
@@ -75,6 +77,78 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
   const [fioRecordType, setFioRecordType] = useState<string | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
+  const [receivedFioRequests, setReceivedFioRequests] = useState<FioRecord[]>(
+    [],
+  );
+
+  const [sentFioRequests, setSentFioRequests] = useState<FioRecord[]>([]);
+  const [obtData, setObtData] = useState<FioRecord[]>([]);
+  const [sentFioRequestsLoading, toggleSentFioRequestsLoading] = useState<
+    boolean
+  >(false);
+  const [
+    receivedFioRequestsLoading,
+    toggleReceivedFioRequestsLoading,
+  ] = useState<boolean>(false);
+  const [obtDataLoading, toggleObtDataLoading] = useState<boolean>(false);
+
+  const [sentFioRequestsStarted, setSentFioRequestsStarted] = useState<boolean>(
+    false,
+  );
+  const [receivedFioRequestsStarted, setReceivedFioRequestsStarted] = useState<
+    boolean
+  >(false);
+  const [obtDataStarted, setObtDataStarted] = useState<boolean>(false);
+
+  const getReceivedFioRequests = useCallback(async () => {
+    try {
+      toggleReceivedFioRequestsLoading(true);
+      setReceivedFioRequestsStarted(true);
+
+      const receivedFioRequests = await apis.fio.getReceivedFioRequests(
+        publicKey,
+      );
+
+      setReceivedFioRequests(receivedFioRequests);
+    } catch (err) {
+      log.error(err);
+    } finally {
+      toggleReceivedFioRequestsLoading(false);
+    }
+  }, [publicKey]);
+
+  const getSentFioRequests = useCallback(async () => {
+    try {
+      toggleSentFioRequestsLoading(true);
+      setSentFioRequestsStarted(true);
+      const sentFioRequests = await apis.fio.getSentFioRequests(publicKey);
+      setSentFioRequests(sentFioRequests);
+    } catch (err) {
+      log.error(err);
+    } finally {
+      toggleSentFioRequestsLoading(false);
+    }
+  }, [publicKey]);
+
+  const getObtData = useCallback(async () => {
+    try {
+      toggleObtDataLoading(true);
+      setObtDataStarted(true);
+      const obtData = await apis.fio.getObtData(publicKey);
+      setObtData(obtData);
+    } catch (err) {
+      log.error(err);
+    } finally {
+      toggleObtDataLoading(false);
+    }
+  }, [publicKey]);
+
+  const getFioRequests = useCallback(() => {
+    getReceivedFioRequests();
+    getSentFioRequests();
+    getObtData();
+  }, [getReceivedFioRequests, getSentFioRequests, getObtData]);
+
   // todo: check if fio address from request is in wallet addresses
 
   useEffect(() => {
@@ -83,10 +157,17 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
   }, [setDecryptData, setConfirmPinKeys]);
 
   useEffect(() => {
-    if (fioRequestId && fioWalletsData && publicKey && !fioRequest) {
-      const { receivedFioRequests = [], sentFioRequests = [], obtData = [] } =
-        fioWalletsData[publicKey] || {};
-      const receivedRequest = receivedFioRequests.find(
+    if (
+      fioRequestId &&
+      publicKey &&
+      !sentFioRequestsLoading &&
+      !receivedFioRequestsLoading &&
+      !obtDataLoading &&
+      sentFioRequestsStarted &&
+      receivedFioRequestsStarted &&
+      obtDataStarted
+    ) {
+      const receivedRequest = receivedFioRequests?.find(
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (receivedRequest) {
@@ -101,7 +182,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         }
         return;
       }
-      const sentRequest = sentFioRequests.find(
+      const sentRequest = sentFioRequests?.find(
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (sentRequest) {
@@ -134,7 +215,19 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         `We could not find your FIO request (${fioRequestId}). FIO Handle or wallet is not available.`,
       );
     }
-  }, [fioWalletsData, fioRequest, fioRequestId, publicKey]);
+  }, [
+    fioRequestId,
+    obtData,
+    obtDataLoading,
+    obtDataStarted,
+    publicKey,
+    receivedFioRequests,
+    receivedFioRequestsLoading,
+    receivedFioRequestsStarted,
+    sentFioRequests,
+    sentFioRequestsLoading,
+    sentFioRequestsStarted,
+  ]);
 
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) {
@@ -170,6 +263,10 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
     initDecrypt,
     paymentOtbData,
   ]);
+
+  useEffectOnce(() => {
+    getFioRequests();
+  }, [getFioRequests]);
 
   const onCancel = () => {
     setDecryptData(null);
@@ -246,8 +343,10 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
   if (
     !fioWallet ||
     !fioWallet.id ||
-    fioWalletsData === null ||
-    fioRequest === null
+    fioRequest === null ||
+    sentFioRequestsLoading ||
+    receivedFioRequestsLoading ||
+    obtDataLoading
   )
     return <FioLoader wrap={true} />;
 

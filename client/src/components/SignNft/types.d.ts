@@ -47,7 +47,7 @@ export type SignNftFormProps = {
   selectedFioAddressName: string;
   fioAddresses: FioAddressDoublet[];
   fioAddress?: FioAddressDoublet;
-  setSelectedFioAddressName: (value: string) => void;
+  onFioHandleChange: (value: string) => void;
   bundleCost: number;
   hasLowBalance: boolean;
   processing: boolean;

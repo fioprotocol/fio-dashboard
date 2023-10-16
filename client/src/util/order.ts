@@ -77,7 +77,7 @@ export const generateOrderHtmlToPrint = ({
         }
       }
     </style>
-    <title>FIO Dashboard Order - ${orderNumber}</title>
+    <title>FIO App Order - ${orderNumber}</title>
     </head>
     <body style="margin:0;width:${width};display:block;height:${height}">
       ${componentHtml.replaceAll('-word-break', 'word-break')}

@@ -32,7 +32,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
     alreadySigned,
     selectedFioAddressName,
     fioAddresses,
-    setSelectedFioAddressName,
+    onFioHandleChange,
     bundleCost,
     hasLowBalance,
     processing,
@@ -100,7 +100,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                         <CustomDropdown
                           value={selectedFioAddressName}
                           list={fioAddresses.map(({ name }) => name)}
-                          onChange={setSelectedFioAddressName}
+                          onChange={onFioHandleChange}
                         />
                       </div>
                     </Col>

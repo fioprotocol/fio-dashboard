@@ -2,6 +2,8 @@ import React from 'react';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
+import { ROUTES } from '../../constants/routes';
+
 import classes from '../PrivacyPolicyPage/PrivacyPolicyPage.module.scss';
 
 const TermsOfServicePage: React.FC = () => {
@@ -17,8 +19,8 @@ const TermsOfServicePage: React.FC = () => {
           between you, whether personally or on behalf of an entity (“you”) and
           FIO (BVI), Ltd ("FIO", “we”, “us”, or “our”), concerning your access
           to and use of the{' '}
-          <a href="/" title="https://dashboard.fioprotocol.io">
-            https://dashboard.fioprotocol.io
+          <a href="/" title={process.env.REACT_APP_BASE_URL}>
+            {process.env.REACT_APP_BASE_URL?.slice(0, -1)}
           </a>{' '}
           website as well as any other media form, media channel, mobile website
           or mobile application related, linked, or otherwise connected thereto
@@ -111,8 +113,7 @@ const TermsOfServicePage: React.FC = () => {
           IF YOU LOSE ACCESS TO THE SITE, WALLET, EMAIL ADDRESS OR PASSWORD AND
           YOU HAVE NOT SEPARATELY CREATED CORRESPONDING RECOVERY QUESTIONS AND
           ANSWERS, YOU ACKNOWLEDGE AND AGREE THAT ANY CRYPTOCURRENCY AND NFTS
-          YOU HAVE ASSOCIATED WITH THAT DASHBOARD WALLET WILL BECOME
-          INACCESSIBLE.
+          YOU HAVE ASSOCIATED WITH THAT FIO APP WALLET WILL BECOME INACCESSIBLE.
         </p>
         <br />
         <h4 className={classes.subtitle}>
@@ -395,12 +396,14 @@ const TermsOfServicePage: React.FC = () => {
           We care about data privacy and security. Please review our Privacy
           Policy:{' '}
           <a
-            href="/privacy-policy"
-            title="https://dashboard.fioprotocol.io/privacy-policy"
+            href={ROUTES.PRIVACY_POLICY}
+            title={`${process.env.REACT_APP_BASE_URL}${ROUTES.PRIVACY_POLICY}`}
             target="_blank"
             rel="noreferrer"
           >
-            https://dashboard.fioprotocol.io/privacy-policy
+            {`${process.env.REACT_APP_BASE_URL?.slice(0, -1)}${
+              ROUTES.PRIVACY_POLICY
+            }`}
           </a>
           . By using the Site , you agree to be bound by our Privacy Policy,
           which is incorporated into these Terms of Service. Please be advised
