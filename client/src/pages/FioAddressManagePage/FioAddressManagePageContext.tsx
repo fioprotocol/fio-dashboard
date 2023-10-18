@@ -14,6 +14,8 @@ import {
   fees as feesSelector,
   fioAddresses as fioAddressesSelector,
   fioAddressesLoading as fioAddressesLoadingSelector,
+  showFchBundleWarningBagde as showFchBundleWarningBagdeSelector,
+  showExpiredDomainWarningFchBadge as showExpiredDomainWarningFchBadgeSelector,
 } from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 
@@ -57,6 +59,12 @@ export const useContext = (): UseContextProps => {
   const fees = useSelector(feesSelector);
   const fioAddresses = useSelector(fioAddressesSelector);
   const fioAddressesLoading = useSelector(fioAddressesLoadingSelector);
+  const showFchBundleWarningBagde = useSelector(
+    showFchBundleWarningBagdeSelector,
+  );
+  const showExpiredDomainWarningFchBadge = useSelector(
+    showExpiredDomainWarningFchBadgeSelector,
+  );
 
   const [warningContent, setWarningContent] = useState<WarningContent>({
     LOW_BUNDLES: {
@@ -186,10 +194,10 @@ export const useContext = (): UseContextProps => {
       ...prevWarningContent,
       EXPIRED_DOMAINS: {
         ...prevWarningContent.EXPIRED_DOMAINS,
-        show: fioHandlesHasExpiredDomain,
+        show: showExpiredDomainWarningFchBadge && fioHandlesHasExpiredDomain,
       },
     }));
-  }, [hasExpiredDomain]);
+  }, [hasExpiredDomain, showExpiredDomainWarningFchBadge]);
 
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.addBundledTransactions));
@@ -202,12 +210,17 @@ export const useContext = (): UseContextProps => {
           ...prevWarningContent,
           LOW_BUNDLES: {
             ...prevWarningContent.LOW_BUNDLES,
-            show: hasLowBundles,
+            show: showFchBundleWarningBagde && hasLowBundles,
           },
         }));
       }
     },
-    [hasLowBundles, fioAddressesLoading, warningContent.LOW_BUNDLES.show],
+    [
+      hasLowBundles,
+      fioAddressesLoading,
+      showFchBundleWarningBagde,
+      warningContent.LOW_BUNDLES.show,
+    ],
     !fioAddressesLoading,
   );
 
