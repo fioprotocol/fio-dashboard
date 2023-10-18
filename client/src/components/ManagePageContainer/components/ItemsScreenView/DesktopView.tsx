@@ -23,6 +23,7 @@ import {
 
 import apis from '../../../../api';
 import { log } from '../../../../util/general';
+import { FIO_ADDRESS_DELIMITER } from '../../../../utils';
 
 import { ModalOpenActionType } from '../../types';
 import { FioNameItemProps, FioNameType } from '../../../../types';
@@ -59,11 +60,13 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
   const { fioNameItem, onAddBundles, onSettingsOpen } = props;
   const { name = '', remaining } = fioNameItem;
 
+  const domainName = name ? name.split(FIO_ADDRESS_DELIMITER)[1] : '';
+
   const [domainExpiration, setDomainExpiration] = useState<number | null>(null);
 
   const getDomainExpiration = useCallback(async () => {
     try {
-      const { expiration } = (await apis.fio.getFioDomain(name)) || {};
+      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
 
       if (expiration) {
         setDomainExpiration(expiration);
@@ -71,9 +74,10 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
     } catch (err) {
       log.error(err);
     }
-  }, [name]);
+  }, [domainName]);
 
-  const isExpired = domainExpiration && isDomainExpired(name, domainExpiration);
+  const isExpired =
+    domainExpiration && isDomainExpired(domainName, domainExpiration);
 
   useEffect(() => {
     getDomainExpiration();
