@@ -31,13 +31,35 @@ export type FeePriceOptionItem = {
 };
 
 export const DEFAULT_GAS_LIMIT = 60000;
+const DEFAULT_FIXED_AMOUNT = 9;
+const DEFAULT_EXTRA_FIXED_AMOUNT = 2;
 
 export const calculateGasFee = (
   gasPrice: string | number, // wei
   gasLimit: number = DEFAULT_GAS_LIMIT,
 ) => {
-  return (parseFloat(ethers.utils.formatEther(gasPrice).toString()) * gasLimit)
-    .toFixed(9)
+  const gasFee =
+    parseFloat(ethers.utils.formatEther(gasPrice).toString()) * gasLimit;
+  const decimalsPart = gasFee.toString().split('.')[1];
+  const eDecimalsPart = Number(gasFee.toString()?.split('e-')?.[1]);
+  let significantDigits = DEFAULT_FIXED_AMOUNT;
+
+  if (decimalsPart && !eDecimalsPart) {
+    for (let i = 0; i < decimalsPart.length; i++) {
+      if (decimalsPart[i] !== '0') {
+        if (i <= DEFAULT_FIXED_AMOUNT) break;
+        significantDigits = i + DEFAULT_EXTRA_FIXED_AMOUNT;
+        break;
+      }
+    }
+  }
+
+  if (eDecimalsPart) {
+    significantDigits = eDecimalsPart + DEFAULT_EXTRA_FIXED_AMOUNT;
+  }
+
+  return gasFee
+    .toFixed(significantDigits)
     .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1');
 };
 
