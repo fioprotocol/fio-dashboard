@@ -2,6 +2,7 @@ import { makeServiceRunner } from '../tools';
 
 import GetPrices from '../services/external/Prices';
 import GetGasOracle from '../services/external/GetGasOracle.mjs';
+import GetEdgeApiCreds from '../services/external/GetEdgeApiCreds.mjs';
 import GetEstimationOfConfirmationTime from '../services/external/GetEstimationOfConfirmationTime.mjs';
 import Captcha from '../services/external/Captcha';
 import ValidatePubAddress from '../services/external/ValidatePubAddress';
@@ -14,6 +15,7 @@ export default {
   prices: makeServiceRunner(GetPrices, req => req.query),
   initCaptcha: makeServiceRunner(Captcha),
   getGasOracle: makeServiceRunner(GetGasOracle, req => req.query),
+  getEdgeApiCreds: makeServiceRunner(GetEdgeApiCreds),
   getEstimationOfConfirmationTime: makeServiceRunner(
     GetEstimationOfConfirmationTime,
     req => req.query,

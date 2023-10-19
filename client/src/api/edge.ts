@@ -11,11 +11,20 @@ import {
   EdgeLoginMessages,
 } from 'edge-core-js/lib/types';
 
+import { handleEdgeKI } from './middleware/edge';
 import { log } from '../util/general';
+import Base from './base';
 
 const NO_EDGE_CONTEXT_MESSAGE = 'Edge Context is not initialised';
 
-export default class Edge {
+export type EdgeContextRes = {
+  edgeAK: string;
+  edgeAI: string;
+  buffer: { data: Buffer };
+  iv: { data: Buffer };
+};
+
+export default class Edge extends Base {
   edgeContext: EdgeContext | null;
 
   logError = (e: Error | string) => {
@@ -26,16 +35,24 @@ export default class Edge {
     if (!this.edgeContext) throw new Error(NO_EDGE_CONTEXT_MESSAGE);
   };
 
+  getEdgeContext = async (): Promise<EdgeContextRes> =>
+    this.apiClient.get('edge-cr');
+
   makeEdgeContext = async (): Promise<boolean> => {
     try {
       if (this.edgeContext) return true;
 
+      const data = await this.getEdgeContext();
+
+      const { decAIv, decAKv } = handleEdgeKI(data);
+
       this.edgeContext = await makeEdgeContext({
-        apiKey: process.env.REACT_APP_EDGE_LOGIN_API_KEY || '',
-        appId: process.env.REACT_APP_EDGE_LOGIN_API_ID || '',
+        apiKey: decAKv || '',
+        appId: decAIv || '',
         hideKeys: false,
         plugins: { fio: true },
       });
+
       addEdgeCorePlugins({
         fio: plugins.fio,
       });
