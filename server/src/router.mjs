@@ -221,6 +221,8 @@ router.get(
   routes.external.getEstimationOfConfirmationTime,
 );
 
+router.get('/edge-cr', routes.external.getEdgeApiCreds);
+
 router.get('/fetch-image-hash', routes.general.imageToHash);
 
 router.get('/get-url-content', routes.general.getUrlContent);

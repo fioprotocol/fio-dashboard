@@ -82,7 +82,7 @@ const apis = {
   client: apiClient,
   contacts: new Contacts(apiClient),
   domainsWatchlist: new DomainsWatchlist(apiClient),
-  edge: new Edge(),
+  edge: new Edge(apiClient),
   etherScan: new EtherScan(apiClient),
   fioHistory: new FioHistory(),
   fioReg: new FioReg(apiClient),
