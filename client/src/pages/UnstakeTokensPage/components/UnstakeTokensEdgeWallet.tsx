@@ -3,9 +3,14 @@ import React from 'react';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
+import MathOp from '../../../util/math';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { ACTIONS, BUNDLES_TX_COUNT } from '../../../constants/fio';
+import {
+  ACTIONS,
+  BUNDLES_TX_COUNT,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
+} from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { StakeTokensValues } from '../types';
@@ -40,7 +45,10 @@ const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
       {
         fioAddress: data.fioAddress,
         amount: apis.fio.amountToSUF(data.amount),
-        maxFee: fee,
+        maxFee: new MathOp(fee)
+          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+          .round(0)
+          .toNumber(),
       },
     );
     return {

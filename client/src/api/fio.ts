@@ -31,6 +31,7 @@ import {
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
   DEFAULT_FIO_RECORDS_LIMIT,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
 } from '../constants/fio';
 
 import {
@@ -576,7 +577,10 @@ export default class Fio {
       data: {
         payee_public_key: publicKey,
         amount,
-        max_fee: fee,
+        max_fee: new MathOp(fee)
+          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+          .round(0)
+          .toNumber(),
         tpid: this.tpid,
       },
     };
