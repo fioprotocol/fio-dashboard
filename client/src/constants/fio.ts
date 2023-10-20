@@ -243,3 +243,5 @@ export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';
 export const LOW_BUNDLES_THRESHOLD = 25;
 
 export const DEFAULT_FIO_RECORDS_LIMIT = 100;
+
+export const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;

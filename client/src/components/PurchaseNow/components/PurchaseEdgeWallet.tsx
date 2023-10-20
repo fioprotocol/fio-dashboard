@@ -4,6 +4,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { makeRegistrationOrder } from '../middleware';
 import { sleep } from '../../../utils';
+import MathOp from '../../../util/math';
 
 import {
   CART_ITEM_TYPE,
@@ -17,6 +18,7 @@ import {
 import apis from '../../../api';
 import {
   ACTIONS,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
 } from '../../../constants/fio';
 
@@ -76,7 +78,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -87,7 +92,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             ACTIONS.registerFioDomain,
             {
               fioDomain: registration.fioName,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.domainTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
               ownerPublicKey: keys.public,
@@ -99,7 +107,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             ACTIONS.renewFioDomain,
             {
               fioDomain: registration.fioName,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -109,7 +120,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             ACTIONS.registerFioAddress,
             {
               fioAddress: registration.fioName,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },

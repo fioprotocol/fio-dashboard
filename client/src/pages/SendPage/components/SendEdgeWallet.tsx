@@ -5,6 +5,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { log } from '../../../util/general';
+import MathOp from '../../../util/math';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
@@ -18,6 +19,7 @@ import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types'
 import {
   ACTIONS,
   BUNDLES_TX_COUNT,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_CHAIN_CODE,
 } from '../../../constants/fio';
 
@@ -50,7 +52,10 @@ const SendEdgeWallet: React.FC<Props> = props => {
     const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
       payeeFioPublicKey: data.toPubKey,
       amount: Number(data.nativeAmount),
-      maxFee: fee,
+      maxFee: new MathOp(fee)
+        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+        .round(0)
+        .toNumber(),
     });
     let obtError = null;
     let bundlesCollected = 0;

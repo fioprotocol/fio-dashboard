@@ -3,9 +3,11 @@ import React from 'react';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
+import MathOp from '../../../util/math';
 
 import {
   ACTIONS,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   TRANSACTION_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
@@ -48,7 +50,10 @@ const WrapTokensEdgeWallet: React.FC<Props> = props => {
         chain_code: data.chainCode,
         public_address: data.publicAddress,
         max_oracle_fee: oracleFee,
-        max_fee: fee,
+        max_fee: new MathOp(fee)
+          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+          .round(0)
+          .toNumber(),
         tpid: apis.fio.tpid,
       },
     });
