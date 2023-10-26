@@ -37,7 +37,6 @@ type Props = {
   fee?: number | null;
 };
 
-const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 7000;
 const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 
 const PurchaseEdgeWallet: React.FC<Props> = props => {
@@ -99,7 +98,17 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
-          await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          const hasTheSameItem = registrations.some(
+            registrationItem =>
+              registrationItem.fioName === registration.fioName &&
+              registrationItem.iteration > 0 &&
+              registrationItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
+          );
+
+          if (hasTheSameItem) {
+            await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          }
+
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.registerFioDomain,
             {
@@ -114,7 +123,17 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-          await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          const hasTheSameItem = registrations.some(
+            registrationItem =>
+              registrationItem.fioName === registration.fioName &&
+              registrationItem.iteration > 0 &&
+              registrationItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
+          );
+
+          if (hasTheSameItem) {
+            await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          }
+
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.renewFioDomain,
             {
