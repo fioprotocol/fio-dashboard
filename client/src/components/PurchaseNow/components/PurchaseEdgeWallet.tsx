@@ -38,6 +38,7 @@ type Props = {
 };
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 7000;
+const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
@@ -73,6 +74,17 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         let signedTx: SignedTxArgs;
         if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+          const hasTheSameItem = registrations.some(
+            registrationItem =>
+              registrationItem.fioName === registration.fioName &&
+              registrationItem.cartItemId !== registration.cartItemId &&
+              registrationItem.type === CART_ITEM_TYPE.ADD_BUNDLES,
+          );
+
+          if (hasTheSameItem) {
+            await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS);
+          }
+
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.addBundledTransactions,
             {
