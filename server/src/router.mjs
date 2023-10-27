@@ -209,6 +209,14 @@ router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
+router.post('/cart-add-item', routes.cart.addItem);
+router.delete('/cart-clear-cart', routes.cart.clearCart);
+router.patch('/cart-delete-item', routes.cart.deleteItem);
+router.get('/cart', routes.cart.getCart);
+router.patch('/cart-set-old-cart', routes.cart.setOldCart);
+router.patch('/cart-update-item-period', routes.cart.updateItemPeriod);
+router.patch('/cart-update-user-id', checkAuth, routes.cart.updateUserId);
+
 router.get('/external-provider-nfts', routes.external.externalProviderNfts);
 router.get(
   '/external-provider-nfts-metadata',
