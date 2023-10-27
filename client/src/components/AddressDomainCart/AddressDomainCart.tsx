@@ -18,7 +18,6 @@ import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import {
   cartHasOnlyFreeItems,
   handleFreeAddressCart,
-  deleteCartItem,
   getCartItemDescriptor,
 } from '../../util/cart';
 import {
@@ -28,7 +27,6 @@ import {
 
 import {
   CartItem,
-  DeleteCartItem,
   Domain,
   FioWalletDoublet,
   LastAuthData,
@@ -39,6 +37,7 @@ import {
 import classes from './AddressDomainCart.module.scss';
 
 type Props = {
+  cartId: string;
   cartItems: CartItem[];
   domains: Domain[];
   fioWallets: FioWalletDoublet[];
@@ -48,13 +47,14 @@ type Props = {
   roe: number | null;
   lastAuthData: LastAuthData;
   setCartItems: (cartItems: CartItem[]) => void;
-  deleteItem: (params: DeleteCartItem) => void;
+  deleteItem: (data: { id: string; itemId: string }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
 };
 
 const AddressDomainCart: React.FC<Props> = props => {
   const {
+    cartId,
     cartItems,
     deleteItem,
     domains,
@@ -99,14 +99,10 @@ const AddressDomainCart: React.FC<Props> = props => {
     history.push(route);
   };
 
-  const handleDeleteItem = (id: string) => {
-    deleteCartItem({
-      id,
-      prices,
-      cartItems,
-      roe,
-      deleteItem,
-      setCartItems,
+  const handleDeleteItem = (itemId: string) => {
+    deleteItem({
+      id: cartId,
+      itemId,
     });
   };
 

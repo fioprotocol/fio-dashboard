@@ -7,7 +7,7 @@ import { deleteItem, setCartItems } from '../../redux/cart/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
-import { cartItems } from '../../redux/cart/selectors';
+import { cartId, cartItems } from '../../redux/cart/selectors';
 import {
   hasFreeAddress,
   isAuthenticated,
@@ -20,6 +20,7 @@ import AddressDomainCart from './AddressDomainCart';
 
 const reduxConnect = connect(
   createStructuredSelector({
+    cartId,
     cartItems,
     domains,
     prices,

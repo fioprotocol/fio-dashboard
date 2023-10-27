@@ -75,6 +75,7 @@ import {
 } from '../../types';
 
 type UseContextReturnType = {
+  cartId: string;
   cartItems: CartItem[];
   hasGetPricesError: boolean;
   error?: string | null;
@@ -464,6 +465,7 @@ export const useContext = (): UseContextReturnType => {
   }, [history, isAuth]);
 
   return {
+    cartId,
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
     hasLowBalance,

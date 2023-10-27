@@ -27,6 +27,14 @@ export default combineReducers({
     switch (action.type) {
       case actions.ADD_ITEM_SUCCESS:
         return action.data.id;
+      case actions.CLEAR_CART_SUCCESS:
+        return null;
+      case actions.DELETE_ITEM_SUCCESS: {
+        if (action.data.items?.length === 0) {
+          return null;
+        }
+        return state;
+      }
       default:
         return state;
     }
