@@ -9,6 +9,7 @@ import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
+  cartId as cartIdSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
@@ -97,6 +98,7 @@ type UseContextReturnType = {
 };
 
 export const useContext = (): UseContextReturnType => {
+  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const hasGetPricesError = useSelector(hasGetPricesErrorSelector);
@@ -479,7 +481,8 @@ export const useContext = (): UseContextReturnType => {
     error,
     showExpiredDomainWarningBadge,
     onPaymentChoose,
-    deleteItem: (data: DeleteCartItem) => dispatch(deleteItem(data)),
+    deleteItem: (data: DeleteCartItem) =>
+      dispatch(deleteItem({ id: cartId, itemId: data.id })),
     setCartItems: (cartItems: CartItemType[]) =>
       dispatch(setCartItems(cartItems)),
   };

@@ -17,7 +17,10 @@ import {
   showFchBundleWarningBagde as showFchBundleWarningBagdeSelector,
   showExpiredDomainWarningFchBadge as showExpiredDomainWarningFchBadgeSelector,
 } from '../../redux/fio/selectors';
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 
 import apis from '../../api';
 
@@ -56,6 +59,7 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const cartItems = useSelector(cartItemsSelector);
+  const cartId = useSelector(cartIdSelector);
   const fees = useSelector(feesSelector);
   const fioAddresses = useSelector(fioAddressesSelector);
   const fioAddressesLoading = useSelector(fioAddressesLoadingSelector);
@@ -103,7 +107,7 @@ export const useContext = (): UseContextProps => {
         costUsdc: addBundlesFeePrice.usdc,
       };
 
-      dispatch(addItemToCart(newCartItem));
+      dispatch(addItemToCart({ id: cartId, item: newCartItem }));
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -118,6 +122,7 @@ export const useContext = (): UseContextProps => {
       addBundlesFeePrice.fio,
       addBundlesFeePrice?.nativeFio,
       addBundlesFeePrice.usdc,
+      cartId,
       cartItems,
       dispatch,
       history,
