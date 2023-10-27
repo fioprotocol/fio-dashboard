@@ -2,6 +2,7 @@ import account from './account';
 import actions from './actions';
 import adminUsers from './adminUsers';
 import auth from './auth';
+import cart from './cart.mjs';
 import chainCodes from './chainCodes';
 import contacts from './contacts';
 import domainsWatchlist from './domainsWatchlist.mjs';
@@ -24,6 +25,7 @@ export default {
   actions,
   adminUsers,
   auth,
+  cart,
   chainCodes,
   contacts,
   domainsWatchlist,
