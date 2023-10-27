@@ -8,6 +8,7 @@ import { useContext } from './CartPageContext';
 
 const CartPage: React.FC = () => {
   const {
+    cartId,
     cartItems,
     hasGetPricesError,
     error,
@@ -31,6 +32,7 @@ const CartPage: React.FC = () => {
   } = useContext();
 
   const commonProps = {
+    cartId,
     cartItems,
     hasLowBalance,
     roe,

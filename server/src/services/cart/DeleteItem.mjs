@@ -5,8 +5,6 @@ import { Cart } from '../../models/Cart.mjs';
 
 import logger from '../../logger.mjs';
 
-import ClearCart from './ClearCart.mjs';
-
 export default class DeleteItem extends Base {
   static get validationRules() {
     return {
@@ -39,8 +37,8 @@ export default class DeleteItem extends Base {
           data: Cart.format(cart.get({ plain: true })),
         };
       } else {
-        await ClearCart(id);
-        return [];
+        await Cart.destroy({ where: { id } });
+        return { data: { items: [] } };
       }
     } catch (error) {
       logger.error(error);

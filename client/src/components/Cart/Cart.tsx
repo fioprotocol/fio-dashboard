@@ -8,30 +8,28 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { deleteCartItem, updateCartItemPeriod } from '../../util/cart';
+import { updateCartItemPeriod } from '../../util/cart';
 
 import { ROUTES } from '../../constants/routes';
 
 import {
   FioWalletDoublet,
-  Prices,
   WalletBalancesItem,
   CartItem as CartItemType,
-  DeleteCartItem,
 } from '../../types';
 
 import classes from './Cart.module.scss';
 
 type Props = {
+  cartId: string;
   cartItems: CartItemType[];
-  deleteItem?: (data: DeleteCartItem) => void;
+  deleteItem?: (data: { id: string; itemId: string }) => void;
   userWallets: FioWalletDoublet[];
   hasLowBalance: boolean;
   walletCount: number;
   totalCartAmount: string;
   totalCartNativeAmount: number;
   walletBalancesAvailable: WalletBalancesItem;
-  prices: Prices;
   setCartItems?: (cartItems: CartItemType[]) => void;
   isPriceChanged: boolean;
   roe: number;
@@ -41,9 +39,9 @@ type Props = {
 
 const Cart: React.FC<Props> = props => {
   const {
+    cartId,
     cartItems,
     deleteItem,
-    prices,
     setCartItems,
     isPriceChanged,
     roe,
@@ -54,14 +52,10 @@ const Cart: React.FC<Props> = props => {
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
-  const handleDeleteItem = (id: string) => {
-    deleteCartItem({
-      id,
-      prices,
-      deleteItem,
-      cartItems,
-      setCartItems,
-      roe,
+  const handleDeleteItem = (itemId: string) => {
+    deleteItem({
+      id: cartId,
+      itemId,
     });
   };
   const handleUpdateItemPeriod = (id: string, period: number) => {
