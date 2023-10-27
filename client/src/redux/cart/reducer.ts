@@ -6,17 +6,41 @@ import { LOGOUT_SUCCESS } from '../profile/actions';
 import { CartItem } from '../../types';
 
 export default combineReducers({
+  loading(state: boolean = false, action = {}) {
+    switch (action.type) {
+      case actions.ADD_ITEM_REQUEST:
+      case actions.DELETE_ITEM_REQUEST:
+      case actions.UPDATE_CART_ITEM_PERIOD_REQUEST:
+        return true;
+      case actions.ADD_ITEM_SUCCESS:
+      case actions.ADD_ITEM_FAILURE:
+      case actions.DELETE_ITEM_SUCCESS:
+      case actions.DELETE_ITEM_FAILURE:
+      case actions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+      case actions.UPDATE_CART_ITEM_PERIOD_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  cartId(state: string | null = null, action = {}) {
+    switch (action.type) {
+      case actions.ADD_ITEM_SUCCESS:
+        return action.data.id;
+      default:
+        return state;
+    }
+  },
   cartItems(state: CartItem[] = [], action = {}) {
     switch (action.type) {
-      case actions.ADD_ITEM:
-        return [...state, action.data];
-      case actions.DELETE_ITEM:
-        if (action.data.cartItems) {
-          return action.data.cartItems;
-        }
-        return state.filter(item => item.id !== action.data.id);
+      case actions.ADD_ITEM_SUCCESS:
+        return action.data.items;
+      case actions.DELETE_ITEM_SUCCESS:
+        return action.data.items;
       case actions.CLEAR_CART:
         return [];
+      case action.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+        return action.data.items;
       case actions.SET_CART_ITEMS:
         return action.data;
       default:
@@ -31,14 +55,6 @@ export default combineReducers({
         return '';
       case LOGOUT_SUCCESS:
         return '';
-      default:
-        return state;
-    }
-  },
-  date(state: number | null = null, action = {}) {
-    switch (action.type) {
-      case actions.SET_CART_DATE:
-        return action.data;
       default:
         return state;
     }

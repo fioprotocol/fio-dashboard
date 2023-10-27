@@ -1,9 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { setCartItems } from '../../redux/cart/actions';
+// import { setCartItems } from '../../redux/cart/actions';
+import {
+  addItem as addItemToCart,
+  updateCartItemPeriod,
+} from '../../redux/cart/actions';
 
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -19,10 +26,9 @@ import { convertFioPrices } from '../../util/prices';
 import {
   checkAddressOrDomainIsExist,
   checkIsDomainItemExistsOnCart,
-  handlePriceForMultiYearFchWithCustomDomain,
+  // handlePriceForMultiYearFchWithCustomDomain,
   vaildateFioDomain,
 } from '../../util/fio';
-import { addCartItem } from '../../util/cart';
 import MathOp from '../../util/math';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
@@ -115,6 +121,7 @@ const validateDomainItems = async ({
   ).filter(Boolean);
 
 export const useContext = () => {
+  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
@@ -163,9 +170,12 @@ export const useContext = () => {
     togglePrefixPostfixListLoading(false);
   };
 
-  const onClick = (selectedItem: CartItem) => {
-    addCartItem(selectedItem);
-  };
+  const onClick = useCallback(
+    (selectedItem: CartItem) => {
+      dispatch(addItemToCart({ id: cartId, item: selectedItem }));
+    },
+    [cartId, dispatch],
+  );
 
   const onPeriodChange = (period: string, id: string) => {
     if (suggestedItem?.id === id) {
@@ -215,28 +225,32 @@ export const useContext = () => {
 
     if (existingCartItem) {
       if (existingCartItem.period === Number(period)) return;
-      const fioPrices = convertFioPrices(
-        handlePriceForMultiYearFchWithCustomDomain({
-          costNativeFio: existingCartItem.costNativeFio,
-          nativeFioAddressPrice: existingCartItem.nativeFioAddressPrice,
-          period,
-        }),
-        roe,
-      );
+      // const fioPrices = convertFioPrices(
+      //   handlePriceForMultiYearFchWithCustomDomain({
+      //     costNativeFio: existingCartItem.costNativeFio,
+      //     nativeFioAddressPrice: existingCartItem.nativeFioAddressPrice,
+      //     period,
+      //   }),
+      //   roe,
+      // );
 
       dispatch(
-        setCartItems(
-          parsedCartItems.map(cartItem =>
-            checkIsDomainItemExistsOnCart(id, cartItem)
-              ? {
-                  ...cartItem,
-                  period: Number(period),
-                  costFio: fioPrices.fio,
-                  costUsdc: fioPrices.usdc,
-                }
-              : cartItem,
-          ),
-        ),
+        updateCartItemPeriod({
+          id,
+          itemId: existingCartItem.id,
+          period: Number(period),
+        }),
+        // parsedCartItems.map(cartItem =>
+        //   checkIsDomainItemExistsOnCart(id, cartItem)
+        //     ? {
+        //         ...cartItem,
+        //         period: Number(period),
+        //         costFio: fioPrices.fio,
+        //         costUsdc: fioPrices.usdc,
+        //       }
+        //     : cartItem,
+        // ),
+        // ),
       );
     }
   };

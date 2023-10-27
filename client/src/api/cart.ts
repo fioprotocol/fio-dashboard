@@ -1,0 +1,31 @@
+import Base from './base';
+
+import { CartItem } from '../types';
+
+export default class Cart extends Base {
+  addItem({ id, item }: { id: string; item: CartItem }): Promise<any> {
+    return this.apiClient.post('cart-add-item', { id, item });
+  }
+  clearCart(id: string): Promise<any> {
+    return this.apiClient.delete('cart-clear-cart', { id });
+  }
+  deleteItem({ id, itemId }: { id: string; itemId: string }): Promise<any> {
+    return this.apiClient.patch('cart-delete-item', { id, itemId });
+  }
+  getCart(id: string): Promise<any> {
+    return this.apiClient.get('cart', { id });
+  }
+  setOldCart(id: string): Promise<any> {
+    return this.apiClient.patch('cart-set-old-cart', { id });
+  }
+  updateItemPeriod(data: {
+    id: string;
+    itemId: string;
+    period: number;
+  }): Promise<any> {
+    return this.apiClient.patch('cart-update-item-period', data);
+  }
+  updateUserId(id: string): Promise<any> {
+    return this.apiClient.patch('cart-update-user-id', { id });
+  }
+}

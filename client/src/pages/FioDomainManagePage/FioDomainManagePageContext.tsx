@@ -10,7 +10,10 @@ import {
   fees as feesSelector,
   showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector,
 } from '../../redux/fio/selectors';
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -104,6 +107,7 @@ type UseContextProps = {
 };
 
 export const useContext = (): UseContextProps => {
+  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
@@ -180,7 +184,7 @@ export const useContext = (): UseContextProps => {
         costFio: renewDomainFeePrice.fio,
         costUsdc: renewDomainFeePrice.usdc,
       };
-      dispatch(addItemToCart(newCartItem));
+      dispatch(addItemToCart({ id: cartId, item: newCartItem }));
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -192,6 +196,7 @@ export const useContext = (): UseContextProps => {
       history.push(ROUTES.CART);
     },
     [
+      cartId,
       cartItems,
       dispatch,
       history,

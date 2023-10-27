@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
 import { loadProfile } from '../../redux/profile/actions';
 
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -25,7 +29,6 @@ import {
   CART_ITEM_TYPE,
 } from '../../constants/common';
 
-import { addCartItem } from '../../util/cart';
 import {
   checkAddressOrDomainIsExist,
   transformCustomDomains,
@@ -265,6 +268,7 @@ const handleSelectedDomain = ({
 
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
+  const cartId = useSelector(cartIdSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const domainsLoaing = useSelector(domainsLoaingSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
@@ -549,9 +553,12 @@ export const useContext = (): UseContextProps => {
     ],
   );
 
-  const onClick = (selectedItem: CartItem) => {
-    addCartItem(selectedItem);
-  };
+  const onClick = useCallback(
+    (selectedItem: CartItem) => {
+      dispatch(addItemToCart({ id: cartId, item: selectedItem }));
+    },
+    [cartId, dispatch],
+  );
 
   const getFioRawAbis = useCallback(async () => {
     toggleIsRawAbiLoading(true);

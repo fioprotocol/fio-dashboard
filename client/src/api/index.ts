@@ -4,6 +4,7 @@ import ApiClient from './client';
 import Account from './account';
 import Admin from './admin';
 import Auth from './auth';
+import Cart from './cart';
 import ChainCode from './chain-code';
 import Contacts from './contacts';
 import DomainsWatchlist from './domains-watchilst';
@@ -50,6 +51,7 @@ export type Api = {
   account: Account;
   admin: Admin;
   auth: Auth;
+  cart: Cart;
   chainCode: ChainCode;
   client: ApiClient;
   contacts: Contacts;
@@ -78,6 +80,7 @@ const apis = {
   account: new Account(apiClient),
   admin: new Admin(apiClient),
   auth: new Auth(apiClient),
+  cart: new Cart(apiClient),
   chainCode: new ChainCode(apiClient),
   client: apiClient,
   contacts: new Contacts(apiClient),

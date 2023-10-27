@@ -48,9 +48,7 @@ export default function configureStore(api: Api, history: History): Store {
       const previousState: ReduxState = currentState;
       currentState = {
         cart: {
-          cartItems: store.getState().cart.cartItems,
-          date: store.getState().cart.date,
-          oldCart: store.getState().cart.oldCart,
+          cartId: store.getState().cart.cartId,
         },
         profile: {
           lastAuthData: store.getState().profile.lastAuthData,
