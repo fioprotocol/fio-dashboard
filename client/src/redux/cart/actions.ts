@@ -4,7 +4,6 @@ import { Api } from '../../api';
 
 export const prefix = 'cart';
 
-export const CLEAR_CART = `${prefix}/CLEAR_CART`;
 export const SET_CART_ITEMS = `${prefix}/SET_CART_ITEMS`;
 export const SET_OLD_CART = `${prefix}/SET_OLD_CART`;
 
@@ -63,8 +62,19 @@ export const addToOldCart = (
   data: { orderId, cart },
 });
 
-export const clear = (isNotify = false): CommonAction => ({
-  type: CLEAR_CART,
+export const CLEAR_CART_REQUEST = `${prefix}/CLEAR_CART_REQUEST`;
+export const CLEAR_CART_SUCCESS = `${prefix}/CLEAR_CART_SUCCESS`;
+export const CLEAR_CART_FAILURE = `${prefix}/CLEAR_CART_FAILURE`;
+
+export const clearCart = ({
+  id,
+  isNotify = false,
+}: {
+  id: string;
+  isNotify?: boolean;
+}): CommonPromiseAction => ({
+  types: [CLEAR_CART_REQUEST, CLEAR_CART_SUCCESS, CLEAR_CART_FAILURE],
+  promise: (api: Api) => api.cart.clearCart(id),
   data: isNotify,
 });
 

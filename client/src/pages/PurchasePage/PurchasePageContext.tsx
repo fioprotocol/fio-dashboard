@@ -6,7 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import {
   setCartItems,
-  clear as clearCart,
+  clearCart,
   addToOldCart,
   clearOldCartItems,
 } from '../../redux/cart/actions';
@@ -24,6 +24,7 @@ import {
   isContainedFlow as isContainedFlowSelector,
 } from '../../redux/containedFlow/selectors';
 import {
+  cartId as cartIdSelector,
   cartItems,
   oldCart as oldCartSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
@@ -72,6 +73,7 @@ export const useContext = (
     order?: Order;
     orderParams?: CreateOrderActionData;
   }>();
+  const cartId = useSelector(cartIdSelector);
   const noProfile = useSelector(noProfileLoaded);
   const roe = useSelector(roeSelector);
   const containedFlowParams = useSelector(containedFlowQueryParams);
@@ -95,7 +97,7 @@ export const useContext = (
     if (!oldCart[orderNumber]) {
       dispatch(addToOldCart(orderNumber, cart));
     }
-    dispatch(clearCart());
+    dispatch(clearCart({ id: cartId }));
   }, [dispatch, oldCart, orderNumber]);
 
   useEffect(() => {

@@ -45,7 +45,7 @@ export default combineReducers({
         return action.data.items;
       case actions.DELETE_ITEM_SUCCESS:
         return action.data.items;
-      case actions.CLEAR_CART:
+      case actions.CLEAR_CART_SUCCESS:
         return [];
       case action.UPDATE_CART_ITEM_PERIOD_SUCCESS:
         return action.data.items;
