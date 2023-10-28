@@ -16,26 +16,26 @@ import {
 } from '../redux/profile/actions';
 import { showLoginModal } from '../redux/modal/actions';
 import { setRedirectPath } from '../redux/navigation/actions';
-import { clear } from '../redux/cart/actions';
+import { clearCart } from '../redux/cart/actions';
 import {
   isAuthenticated,
   tokenCheckResult,
   lastActivityDate,
   profileRefreshed,
 } from '../redux/profile/selectors';
-import { cartItems } from '../redux/cart/selectors';
+import { cartId } from '../redux/cart/selectors';
 
 import { compose } from '../utils';
 import useEffectOnce from '../hooks/general';
 
-import { CartItem, RedirectLinkData, Unknown } from '../types';
+import { RedirectLinkData, Unknown } from '../types';
 
 type Props = {
+  cartId: string;
   tokenCheckResult: boolean;
   lastActivityDate: number;
   isAuthenticated: boolean;
   profileRefreshed: boolean;
-  cartItems: CartItem[];
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
@@ -84,12 +84,12 @@ const AutoLogout = (
     RouterProps & { history: { location: { query: Record<string, string> } } }, // todo: fixed in react router 6.9.1
 ): React.FunctionComponent | null => {
   const {
+    cartId,
     tokenCheckResult,
     lastActivityDate,
     isAuthenticated,
     profileRefreshed,
     history,
-    cartItems,
     history: {
       location: { pathname, state, search, query },
     },
@@ -111,8 +111,6 @@ const AutoLogout = (
     new Date().getTime(),
   );
 
-  const cartIsNotEmpty = cartItems.length > 0;
-
   const clearChecksTimeout = () => {
     timeoutRef.current && clearTimeout(timeoutRef.current);
     intervalRef.current && clearInterval(intervalRef.current);
@@ -126,16 +124,16 @@ const AutoLogout = (
   activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath({ pathname, state, search, query });
-    cartIsNotEmpty && dispatch(clear(true));
+    cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
     logout({ history });
     showLoginModal();
     clearChecksTimeout();
   }, [
+    cartId,
     history,
     pathname,
     search,
     state,
-    cartIsNotEmpty,
     query,
     logout,
     setRedirectPath,
@@ -225,9 +223,9 @@ const AutoLogout = (
     const lastActivity = new Date(lastActivityDate);
 
     if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-      cartIsNotEmpty && dispatch(clear(true));
+      cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
     }
-  }, [cartIsNotEmpty, dispatch, lastActivityDate]);
+  }, [cartId, dispatch, lastActivityDate]);
 
   useEffect(() => {
     if (tokenCheckResult === null) return;
@@ -252,17 +250,17 @@ const AutoLogout = (
 
 const reduxConnect = connect(
   createStructuredSelector({
+    cartId,
     isAuthenticated,
     lastActivityDate,
     tokenCheckResult,
     profileRefreshed,
-    cartItems,
   }),
   {
     setLastActivity,
     checkAuthToken,
     logout,
-    clear,
+    clearCart,
     showLoginModal,
     setRedirectPath,
   },

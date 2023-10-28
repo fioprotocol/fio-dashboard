@@ -6,7 +6,7 @@ import {
   isContainedFlow as getIsContainedFlow,
 } from '../containedFlow/selectors';
 
-import { CLEAR_CART } from './actions';
+import { CLEAR_CART_SUCCESS } from './actions';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import {
@@ -23,7 +23,7 @@ import { Action } from '../types';
 import { ContainedFlowQueryParams } from '../../types';
 
 export function* cartWasCleared(): Generator {
-  yield takeEvery(CLEAR_CART, function*(action: Action) {
+  yield takeEvery(CLEAR_CART_SUCCESS, function*(action: Action) {
     const { data: isNotify } = action;
     const isContainedFlow: boolean = yield select(getIsContainedFlow);
     const containedFlowQueryParams: ContainedFlowQueryParams = yield select(
