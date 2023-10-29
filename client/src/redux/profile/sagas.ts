@@ -23,7 +23,7 @@ import {
 
 import { closeLoginModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
-import { clearOldCartItems } from '../cart/actions';
+import { clearOldCartItems, updateUserId } from '../cart/actions';
 
 import {
   locationState as locationStateSelector,
@@ -31,6 +31,7 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
+import { cartId as cartIdSelector } from '../cart/selectors';
 import { isNewUser as isNewUserSelectors } from './selectors';
 
 import {
@@ -80,6 +81,11 @@ export function* loginSuccess(history: History, api: Api): Generator {
     // @ts-ignore
     yield yield put<Action>(loadProfile());
     yield put<Action>(listNotifications());
+
+    const cartId: string | null = yield select(cartIdSelector);
+    if (cartId) {
+      yield put<Action>(updateUserId(cartId));
+    }
 
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,

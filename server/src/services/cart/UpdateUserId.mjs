@@ -8,15 +8,15 @@ import logger from '../../logger.mjs';
 export default class UpdateUserId extends Base {
   static get validationRules() {
     return {
-      id: ['required', 'string'],
+      cartId: ['required', 'string'],
     };
   }
 
-  async execute({ id }) {
+  async execute({ cartId }) {
     try {
       const userId = this.context.id;
 
-      await Cart.update({ userId }, { where: { id } });
+      await Cart.update({ userId }, { where: { id: cartId } });
       return {
         data: { success: true },
       };
