@@ -25,7 +25,7 @@ export default class Cart extends Base {
   }): Promise<any> {
     return this.apiClient.patch('cart-update-item-period', data);
   }
-  updateUserId(id: string): Promise<any> {
-    return this.apiClient.patch('cart-update-user-id', { id });
+  updateUserId(cartId: string): Promise<any> {
+    return this.apiClient.patch('cart-update-user-id', { cartId });
   }
 }

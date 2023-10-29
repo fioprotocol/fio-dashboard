@@ -78,6 +78,19 @@ export const clearCart = ({
   data: isNotify,
 });
 
+export const UPDATE_CART_USER_ID_REQUEST = `${prefix}/UPDATE_CART_USER_ID_REQUEST`;
+export const UPDATE_CART_USER_ID_SUCCESS = `${prefix}/UPDATE_CART_USER_ID_SUCCESS`;
+export const UPDATE_CART_USER_ID_FAILURE = `${prefix}/UPDATE_CART_USER_ID_FAILURE`;
+
+export const updateUserId = (cartId: string): CommonPromiseAction => ({
+  types: [
+    UPDATE_CART_USER_ID_REQUEST,
+    UPDATE_CART_USER_ID_SUCCESS,
+    UPDATE_CART_USER_ID_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.updateUserId(cartId),
+});
+
 export const setCartItems = (cartItems: CartItem[]): CommonAction => ({
   type: SET_CART_ITEMS,
   data: cartItems,
