@@ -2,10 +2,16 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { Cart } from '../../models/Cart.mjs';
+import { Domain } from '../../models/Domain.mjs';
+import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
+import { FreeAddress } from '../../models/FreeAddress.mjs';
 
 import logger from '../../logger.mjs';
 
-import { handleFioHandleOnExistingCustomDomain } from '../../utils/cart.mjs';
+import {
+  handleFioHandleOnExistingCustomDomain,
+  handleFreeCartItem,
+} from '../../utils/cart.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -21,9 +27,9 @@ export default class AddItem extends Base {
             costNativeFio: ['required', 'string'],
             costUsdc: ['required', 'string'],
             domain: ['required', 'string'],
-            domainType: ['required', 'string'],
+            domainType: ['string'],
             id: ['required', 'string'],
-            period: ['required', 'string'],
+            period: ['string'],
             type: ['required', 'string'],
           },
         },
@@ -44,11 +50,32 @@ export default class AddItem extends Base {
 
   async execute({ id, item, prices, roe }) {
     try {
+      const { domain } = item;
+
       const userId = this.context.id || null;
       const existingCart = await Cart.findById(id);
 
+      const dashboardDomains = await Domain.getDashboardDomains();
+      const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
+      const userHasFreeAddress =
+        userId &&
+        (await FreeAddress.getItem({
+          userId,
+        }));
+
+      const handledFreeCartItem = handleFreeCartItem({
+        cartItems: existingCart ? existingCart.items : [],
+        dashboardDomains,
+        freeDomainOwner,
+        item,
+        userHasFreeAddress,
+      });
+
       if (!existingCart) {
-        const cart = await Cart.create({ items: [item], userId });
+        const cart = await Cart.create({
+          items: [handledFreeCartItem],
+          userId,
+        });
 
         return { data: Cart.format(cart.get({ plain: true })) };
       }
@@ -58,15 +85,16 @@ export default class AddItem extends Base {
       const handledCartItemsWithExistingCustomDomain = handleFioHandleOnExistingCustomDomain(
         {
           cartItems: items,
-          newItem: item,
+          newItem: handledFreeCartItem,
           prices,
           roe,
         },
       );
 
-      const updatedItems = handledCartItemsWithExistingCustomDomain;
-
-      await existingCart.update({ items: updatedItems, userId });
+      await existingCart.update({
+        items: handledCartItemsWithExistingCustomDomain,
+        userId,
+      });
 
       return {
         data: Cart.format(existingCart.get({ plain: true })),
@@ -76,7 +104,7 @@ export default class AddItem extends Base {
       throw new X({
         code: 'CART_UPDATE',
         fields: {
-          deleteItem: 'CANNOT DELETE CART ITEM',
+          addItem: 'CANNOT ADD CART ITEM',
         },
       });
     }
