@@ -16,8 +16,12 @@ import {
   fees as feesSelector,
   feesLoading as feeLoadingSelector,
 } from '../../redux/fio/selectors';
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
 
 import apis from '../../api';
@@ -27,11 +31,11 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import useQuery from '../../hooks/useQuery';
-import { addCartItem } from '../../util/cart';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import useEffectOnce from '../../hooks/general';
 
 const FioAddressAddBundlesPage: React.FC = () => {
+  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
@@ -85,7 +89,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
       costUsdc: addBundlesFeePrice.usdc,
     };
 
-    addCartItem(newCartItem);
+    dispatch(addItemToCart({ id: cartId, item: newCartItem }));
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
@@ -98,7 +102,9 @@ const FioAddressAddBundlesPage: React.FC = () => {
   }, [
     addBundledTransactions,
     addBundlesFeePrice,
+    cartId,
     cartItems,
+    dispatch,
     fch,
     feeLoading,
     feeLoadingFinished,

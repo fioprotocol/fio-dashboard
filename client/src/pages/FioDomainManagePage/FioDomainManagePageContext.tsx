@@ -32,7 +32,6 @@ import {
   isDomainExpired,
   isDomainWillExpireIn30Days,
 } from '../../util/fio';
-import { addCartItem } from '../../util/cart';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
@@ -262,10 +261,10 @@ export const useContext = (): UseContextProps => {
         type: CART_ITEM_TYPE.DOMAIN,
       };
 
-      addCartItem(newCartItem);
+      dispatch(addItemToCart({ id: cartId, item: newCartItem }));
       return history.push(ROUTES.CART);
     },
-    [cartItemsJSON, fio, history, nativeFioDomainPrice, usdc],
+    [cartId, cartItemsJSON, dispatch, fio, history, nativeFioDomainPrice, usdc],
   );
 
   const getDomainsWatchlistList = useCallback(async () => {

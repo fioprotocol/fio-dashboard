@@ -154,6 +154,7 @@ export const handleFreeAddressCart = ({
   setCartItems(!isEmpty(retCart) ? retCart : cartItems);
 };
 
+// todo: remove after analytic move
 export const addCartItem = (selectedItem: CartItem) => {
   const currentStore = store.getState();
 

@@ -1,10 +1,20 @@
 import Base from './base';
 
-import { CartItem } from '../types';
+import { CartItem, NativePrices } from '../types';
 
 export default class Cart extends Base {
-  addItem({ id, item }: { id: string; item: CartItem }): Promise<any> {
-    return this.apiClient.post('cart-add-item', { id, item });
+  addItem({
+    id,
+    item,
+    prices,
+    roe,
+  }: {
+    id: string;
+    item: CartItem;
+    prices?: NativePrices;
+    roe?: number;
+  }): Promise<any> {
+    return this.apiClient.post('cart-add-item', { id, item, prices, roe });
   }
   clearCart(id: string): Promise<any> {
     return this.apiClient.delete('cart-clear-cart', { id });

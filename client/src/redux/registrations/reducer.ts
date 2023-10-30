@@ -7,7 +7,7 @@ import { DomainsResponse } from '../../api/responses';
 
 const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
-  nativeFio: { address: 0, domain: 0 },
+  nativeFio: { addBundles: 0, address: 0, domain: 0, renewDomain: 0 },
   usdt: { address: 0, domain: 0 },
 };
 
