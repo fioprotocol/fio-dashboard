@@ -83,7 +83,7 @@ export const cartHasFreeItemsOnDashboardDomains = ({ cartItems, dashboardDomains
   );
 };
 
-export const handleFreeCartItem = ({
+export const handleFreeCartAddItem = ({
   cartItems,
   dashboardDomains,
   freeDomainOwner,
@@ -109,4 +109,51 @@ export const handleFreeCartItem = ({
   }
 
   return item;
+};
+
+export const handleFreeCartDeleteItem = ({
+  cartItems,
+  dashboardDomains,
+  existingItem,
+  userHasFreeAddress,
+}) => {
+  const { id, domain, domainType, isFree, type } = existingItem;
+
+  const deletedCartItems = cartItems.filter(cartItem => cartItem.id !== id);
+
+  if (
+    isFree &&
+    type === CART_ITEM_TYPE.ADDRESS &&
+    domainType === DOMAIN_TYPE.FREE &&
+    !userHasFreeAddress
+  ) {
+    const allowedFreeItem = cartItems.find(cartItem => {
+      const {
+        domainType: cartItemDomainType,
+        isFree: cartItemIsFree,
+        type: cartItemType,
+      } = cartItem;
+
+      const existingDashboardDomain = dashboardDomains.find(
+        dashboardDomain => dashboardDomain.name === domain,
+      );
+
+      return (
+        !cartItemIsFree &&
+        existingDashboardDomain &&
+        existingDashboardDomain &&
+        !existingDashboardDomain.isPremium &&
+        cartItemDomainType === DOMAIN_TYPE.FREE &&
+        cartItemType === CART_ITEM_TYPE.ADDRESS
+      );
+    });
+
+    if (allowedFreeItem) {
+      return deletedCartItems.map(cartItem =>
+        cartItem.id === allowedFreeItem.id ? { ...cartItem, isFree: true } : cartItem,
+      );
+    }
+  }
+
+  return deletedCartItems;
 };
