@@ -10,7 +10,7 @@ import logger from '../../logger.mjs';
 
 import {
   handleFioHandleOnExistingCustomDomain,
-  handleFreeCartItem,
+  handleFreeCartAddItem,
 } from '../../utils/cart.mjs';
 
 export default class AddItem extends Base {
@@ -29,6 +29,7 @@ export default class AddItem extends Base {
             domain: ['required', 'string'],
             domainType: ['string'],
             id: ['required', 'string'],
+            isFree: ['boolean'],
             period: ['string'],
             type: ['required', 'string'],
           },
@@ -63,7 +64,7 @@ export default class AddItem extends Base {
           userId,
         }));
 
-      const handledFreeCartItem = handleFreeCartItem({
+      const handledFreeCartItem = handleFreeCartAddItem({
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains,
         freeDomainOwner,
