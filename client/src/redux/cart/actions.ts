@@ -1,4 +1,4 @@
-import { CartItem } from '../../types';
+import { CartItem, NativePrices } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 import { Api } from '../../api';
 
@@ -14,12 +14,16 @@ export const ADD_ITEM_FAILURE = `${prefix}/ADD_ITEM_FAILURE`;
 export const addItem = ({
   id,
   item,
+  prices,
+  roe,
 }: {
   id?: string;
   item: CartItem;
+  prices?: NativePrices;
+  roe?: number;
 }): CommonPromiseAction => ({
   types: [ADD_ITEM_REQUEST, ADD_ITEM_SUCCESS, ADD_ITEM_FAILURE],
-  promise: (api: Api) => api.cart.addItem({ id, item }),
+  promise: (api: Api) => api.cart.addItem({ id, item, prices, roe }),
 });
 
 export const DELETE_ITEM_REQUEST = `${prefix}/DELETE_ITEM_REQUEST`;

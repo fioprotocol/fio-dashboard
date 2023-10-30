@@ -95,20 +95,22 @@ export type NotificationParams = {
   contentType: string;
 };
 
+export type NativePrices = {
+  addBundles: number;
+  address: number;
+  domain: number;
+  renewDomain: number;
+};
+
 export type Prices = {
   fio: { address: number; domain: number };
-  nativeFio: { address: number; domain: number; renewDomain?: number };
+  nativeFio: NativePrices;
   usdt: { address: number; domain: number };
 };
 
 export type IncomePrices = {
   pricing: {
-    nativeFio: {
-      address: number;
-      domain: number;
-      renewDomain: number;
-      addBundles: number;
-    };
+    nativeFio: NativePrices;
     usdtRoe: number;
   };
 };

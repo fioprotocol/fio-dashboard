@@ -5,6 +5,8 @@ import { Cart } from '../../models/Cart.mjs';
 
 import logger from '../../logger.mjs';
 
+import { handleFioHandleOnExistingCustomDomain } from '../../utils/cart.mjs';
+
 export default class AddItem extends Base {
   static get validationRules() {
     return {
@@ -21,16 +23,26 @@ export default class AddItem extends Base {
             domain: ['required', 'string'],
             domainType: ['required', 'string'],
             id: ['required', 'string'],
-            nativeFioAddressPrice: ['required', 'string'],
             period: ['required', 'string'],
             type: ['required', 'string'],
           },
         },
       ],
+      prices: [
+        {
+          nested_object: {
+            addBundles: ['string'],
+            address: ['string'],
+            domain: ['string'],
+            renewDomain: ['string'],
+          },
+        },
+      ],
+      roe: ['string'],
     };
   }
 
-  async execute({ id, item }) {
+  async execute({ id, item, prices, roe }) {
     try {
       const userId = this.context.id || null;
       const existingCart = await Cart.findById(id);
@@ -43,7 +55,16 @@ export default class AddItem extends Base {
 
       const items = existingCart.items;
 
-      const updatedItems = items.push(item);
+      const handledCartItemsWithExistingCustomDomain = handleFioHandleOnExistingCustomDomain(
+        {
+          cartItems: items,
+          newItem: item,
+          prices,
+          roe,
+        },
+      );
+
+      const updatedItems = handledCartItemsWithExistingCustomDomain;
 
       await existingCart.update({ items: updatedItems, userId });
 

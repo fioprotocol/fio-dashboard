@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { FadeLoader } from 'react-spinners';
 import Cookies from 'js-cookie';
 
@@ -11,9 +12,11 @@ import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
+import { cartId as cartIdSelector } from '../../redux/cart/selectors';
+
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 import apis from '../../api';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
-import { addCartItem } from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
@@ -101,6 +104,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   )}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`;
 
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
+
+  const cartId = useSelector(cartIdSelector);
+
+  const dispatch = useDispatch();
 
   const count = cartItems.length;
 
@@ -333,7 +340,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         type: CART_ITEM_TYPE.ADDRESS,
         allowFree: true,
       };
-      addCartItem(cartItem);
+      dispatch(addItemToCart({ id: cartId, item: cartItem }));
+
       setNotification(TWITTER_NOTIFICATIONS.EMPTY);
       toggleEnableRedirect(true);
     } else {

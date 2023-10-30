@@ -7,6 +7,7 @@ import { getDomains } from '../../redux/registrations/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import {
   isAuthenticated as isAuthenticatedSelector,
@@ -15,12 +16,17 @@ import {
 import {
   allDomains as allDomainsSelector,
   loading as publicDomainsLoadingSelector,
+  prices as pricesSelector,
+  roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import {
   fioWallets as fioWalletsSelector,
   loading as userDomainsLoadingSelector,
 } from '../../redux/fio/selectors';
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
@@ -32,7 +38,6 @@ import { DOMAIN_TYPE } from '../../constants/fio';
 
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
-import { addCartItem } from '../../util/cart';
 import { useCheckIfDesktop } from '../../screenType';
 import {
   fireAnalyticsEvent,
@@ -58,9 +63,12 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
+  const cartId = useSelector(cartIdSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
   const lastAuthData = useSelector(lastAuthDataSelector);
+  const prices = useSelector(pricesSelector);
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
+  const roe = useSelector(roeSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
   const cartItems = useSelector(cartItemsSelector);
@@ -107,20 +115,30 @@ export const useContext = (): UseContextProps => {
         label: userDomain.name,
       })) || [];
 
-  const onClick = useCallback((selectedItem: CartItem) => {
-    const newItem = {
-      ...selectedItem,
-      allowFree: selectedItem.domainType === DOMAIN_TYPE.FREE,
-      type:
-        selectedItem.domainType === DOMAIN_TYPE.CUSTOM
-          ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-          : CART_ITEM_TYPE.ADDRESS,
-    };
+  const onClick = useCallback(
+    (selectedItem: CartItem) => {
+      const newItem = {
+        ...selectedItem,
+        allowFree: selectedItem.domainType === DOMAIN_TYPE.FREE,
+        type:
+          selectedItem.domainType === DOMAIN_TYPE.CUSTOM
+            ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+            : CART_ITEM_TYPE.ADDRESS,
+      };
 
-    addCartItem(newItem);
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: newItem,
+          prices: prices.nativeFio,
+          roe,
+        }),
+      );
 
-    toggleHasItemAddedToCart(true);
-  }, []);
+      toggleHasItemAddedToCart(true);
+    },
+    [cartId, dispatch, prices.nativeFio, roe],
+  );
 
   const onFieldChange = (value: string) => {
     if (!value) {

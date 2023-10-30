@@ -555,9 +555,16 @@ export const useContext = (): UseContextProps => {
 
   const onClick = useCallback(
     (selectedItem: CartItem) => {
-      dispatch(addItemToCart({ id: cartId, item: selectedItem }));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: selectedItem,
+          prices: prices.nativeFio,
+          roe,
+        }),
+      );
     },
-    [cartId, dispatch],
+    [cartId, dispatch, prices.nativeFio, roe],
   );
 
   const getFioRawAbis = useCallback(async () => {
