@@ -17,14 +17,18 @@ export function convertFioPrices(nativeFio, roe) {
   };
 }
 
-export const handlePriceForMultiYearFioHandleWithCustomDomain = ({ prices, period }) => {
+export const handlePriceForMultiYearItems = ({ includeAddress, prices, period }) => {
   const { address, domain, renewDomain } = prices;
-  const renewDomainNativeCost = new MathOp(renewDomain).mul(period - 1).toNumber();
 
-  return new MathOp(address)
-    .add(domain)
-    .add(renewDomainNativeCost)
-    .toNumber();
+  const renewPeriod = new MathOp(period).sub(1).toNumber();
+  const renewDomainNativeCost = new MathOp(renewDomain).mul(renewPeriod).toNumber();
+  const multiDomainPrice = new MathOp(domain).add(renewDomainNativeCost).toNumber();
+
+  if (includeAddress) {
+    return new MathOp(multiDomainPrice).add(address).toNumber();
+  }
+
+  return multiDomainPrice;
 };
 
 export const handleFioHandleOnExistingCustomDomain = ({
@@ -41,7 +45,8 @@ export const handleFioHandleOnExistingCustomDomain = ({
 
   if (existingCustomDomain) {
     if (existingCustomDomain.period > 1) {
-      const nativeFioAmount = handlePriceForMultiYearFioHandleWithCustomDomain({
+      const nativeFioAmount = handlePriceForMultiYearItems({
+        includeAddress: true,
         prices,
         period,
       });

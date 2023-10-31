@@ -49,6 +49,8 @@ export const updateCartItemPeriod = (data: {
   id: string;
   itemId: string;
   period: number;
+  prices: NativePrices;
+  roe: number;
 }): CommonPromiseAction => ({
   types: [
     UPDATE_CART_ITEM_PERIOD_REQUEST,

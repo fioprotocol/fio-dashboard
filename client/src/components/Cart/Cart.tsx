@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import classnames from 'classnames';
 import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
@@ -8,65 +9,74 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { updateCartItemPeriod } from '../../util/cart';
+import { updateCartItemPeriod, deleteItem } from '../../redux/cart/actions';
+
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
 
 import { ROUTES } from '../../constants/routes';
 
-import {
-  FioWalletDoublet,
-  WalletBalancesItem,
-  CartItem as CartItemType,
-} from '../../types';
+import { FioWalletDoublet, WalletBalancesItem } from '../../types';
 
 import classes from './Cart.module.scss';
 
 type Props = {
-  cartId: string;
-  cartItems: CartItemType[];
-  deleteItem?: (data: { id: string; itemId: string }) => void;
   userWallets: FioWalletDoublet[];
   hasLowBalance: boolean;
   walletCount: number;
   totalCartAmount: string;
   totalCartNativeAmount: number;
   walletBalancesAvailable: WalletBalancesItem;
-  setCartItems?: (cartItems: CartItemType[]) => void;
   isPriceChanged: boolean;
-  roe: number;
   hasGetPricesError?: boolean;
   error: string | null;
 };
 
 const Cart: React.FC<Props> = props => {
-  const {
-    cartId,
-    cartItems,
-    deleteItem,
-    setCartItems,
-    isPriceChanged,
-    roe,
-    hasGetPricesError,
-    error,
-  } = props;
+  const { isPriceChanged, hasGetPricesError, error } = props;
+
+  const cartId = useSelector(cartIdSelector);
+  const cartItems = useSelector(cartItemsSelector);
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+
+  const dispatch = useDispatch();
 
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
-  const handleDeleteItem = (itemId: string) => {
-    deleteItem({
-      id: cartId,
-      itemId,
-    });
-  };
-  const handleUpdateItemPeriod = (id: string, period: number) => {
-    updateCartItemPeriod({
-      id,
-      period,
-      cartItems,
-      setCartItems,
-      roe,
-    });
-  };
+  const handleDeleteItem = useCallback(
+    (itemId: string) => {
+      dispatch(
+        deleteItem({
+          id: cartId,
+          itemId,
+        }),
+      );
+    },
+    [cartId, dispatch],
+  );
+
+  const handleUpdateItemPeriod = useCallback(
+    (id: string, period: number) => {
+      dispatch(
+        updateCartItemPeriod({
+          id: cartId,
+          itemId: id,
+          period,
+          prices: prices.nativeFio,
+          roe,
+        }),
+      );
+    },
+    [cartId, dispatch, prices.nativeFio, roe],
+  );
 
   let errorMessage = 'Your price has been updated due to pricing changes.';
   if (hasGetPricesError) {

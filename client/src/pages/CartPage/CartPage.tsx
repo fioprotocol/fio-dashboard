@@ -18,7 +18,6 @@ const CartPage: React.FC = () => {
     selectedPaymentProvider,
     disabled,
     paymentWalletPublicKey,
-    prices,
     roe,
     showExpiredDomainWarningBadge,
     totalCartAmount,
@@ -26,8 +25,6 @@ const CartPage: React.FC = () => {
     userWallets,
     walletBalancesAvailable,
     walletCount,
-    deleteItem,
-    setCartItems,
     onPaymentChoose,
   } = useContext();
 
@@ -43,13 +40,10 @@ const CartPage: React.FC = () => {
   const cartProps = {
     isPriceChanged,
     hasGetPricesError,
-    prices,
     totalCartAmount,
     totalCartNativeAmount,
     walletBalancesAvailable,
     walletCount,
-    deleteItem,
-    setCartItems,
   };
 
   const cartAmountProps = {
