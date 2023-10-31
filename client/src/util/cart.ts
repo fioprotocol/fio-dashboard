@@ -23,6 +23,7 @@ import {
   CartItem,
   CartItemType,
   DeleteCartItem,
+  NativePrices,
   OrderItem,
   Prices,
 } from '../types';
@@ -553,4 +554,30 @@ export const getCartItemDescriptor = (
     descriptor = `${descriptor} - ${period} year${period > 1 ? 's' : ''}`;
   }
   return descriptor;
+};
+
+export const handlePriceForMultiYearItems = ({
+  includeAddress,
+  prices,
+  period,
+}: {
+  includeAddress?: boolean;
+  prices: NativePrices;
+  period: number;
+}): number => {
+  const { address, domain, renewDomain } = prices;
+
+  const renewPeriod = new MathOp(period).sub(1).toNumber();
+  const renewDomainNativeCost = new MathOp(renewDomain)
+    .mul(renewPeriod)
+    .toNumber();
+  const multiDomainPrice = new MathOp(domain)
+    .add(renewDomainNativeCost)
+    .toNumber();
+
+  if (includeAddress) {
+    return new MathOp(multiDomainPrice).add(address).toNumber();
+  }
+
+  return multiDomainPrice;
 };

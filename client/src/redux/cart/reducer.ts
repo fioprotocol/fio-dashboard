@@ -13,6 +13,7 @@ export default combineReducers({
       case actions.UPDATE_CART_ITEM_PERIOD_REQUEST:
       case actions.HANDLE_USERS_FREE_CART_ITEMS_REQUEST:
       case actions.GET_CART_REQUEST_REQUEST:
+      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST:
         return true;
       case actions.ADD_ITEM_SUCCESS:
       case actions.ADD_ITEM_FAILURE:
@@ -24,6 +25,8 @@ export default combineReducers({
       case actions.HANDLE_USERS_FREE_CART_ITEMS_FAILURE:
       case actions.GET_CART_REQUEST_SUCCESS:
       case actions.GET_CART_REQUEST_FAILURE:
+      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
+      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE:
         return false;
       default:
         return state;
@@ -58,6 +61,8 @@ export default combineReducers({
       case actions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS:
         return action.data.items;
       case actions.GET_CART_REQUEST_SUCCESS:
+        return action.data.items;
+      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
         return action.data.items;
       default:
         return state;

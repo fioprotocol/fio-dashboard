@@ -76,6 +76,23 @@ export const handleUsersFreeCartItems = (data: {
   promise: (api: Api) => api.cart.handleUsersFreeCartItems(data),
 });
 
+export const RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST = `${prefix}/RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST`;
+export const RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS = `${prefix}/RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS`;
+export const RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE = `${prefix}/RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE`;
+
+export const recalculateOnPriceUpdate = (data: {
+  id: string;
+  prices: NativePrices;
+  roe: number;
+}): CommonPromiseAction => ({
+  types: [
+    RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST,
+    RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS,
+    RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.recalculateOnPriceUpdate(data),
+});
+
 export const addToOldCart = (
   orderId: string,
   cart: CartItem[],
