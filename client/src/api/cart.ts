@@ -38,6 +38,8 @@ export default class Cart extends Base {
     id: string;
     itemId: string;
     period: number;
+    prices: NativePrices;
+    roe: number;
   }): Promise<any> {
     return this.apiClient.patch('cart-update-item-period', data);
   }

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-// import { setCartItems } from '../../redux/cart/actions';
 import {
   addItem as addItemToCart,
   updateCartItemPeriod,
@@ -26,7 +25,6 @@ import { convertFioPrices } from '../../util/prices';
 import {
   checkAddressOrDomainIsExist,
   checkIsDomainItemExistsOnCart,
-  // handlePriceForMultiYearFchWithCustomDomain,
   vaildateFioDomain,
 } from '../../util/fio';
 import MathOp from '../../util/math';
@@ -180,10 +178,17 @@ export const useContext = () => {
   const onPeriodChange = (period: string, id: string) => {
     if (suggestedItem?.id === id) {
       if (suggestedItem.period === Number(period)) return;
-      const fioPrices = convertFioPrices(
-        new MathOp(suggestedItem.costNativeFio).mul(period).toNumber(),
-        roe,
-      );
+
+      const { domain, renewDomain } = prices?.nativeFio;
+
+      const renewPeriod = new MathOp(period).sub(1).toNumber();
+      const renewDomainNativeCost = new MathOp(renewDomain)
+        .mul(renewPeriod)
+        .toNumber();
+      const multiDomainPrice = new MathOp(domain)
+        .add(renewDomainNativeCost)
+        .toNumber();
+      const fioPrices = convertFioPrices(multiDomainPrice, roe);
 
       setSuggestedItem({
         ...suggestedItem,
@@ -225,32 +230,15 @@ export const useContext = () => {
 
     if (existingCartItem) {
       if (existingCartItem.period === Number(period)) return;
-      // const fioPrices = convertFioPrices(
-      //   handlePriceForMultiYearFchWithCustomDomain({
-      //     costNativeFio: existingCartItem.costNativeFio,
-      //     nativeFioAddressPrice: existingCartItem.nativeFioAddressPrice,
-      //     period,
-      //   }),
-      //   roe,
-      // );
 
       dispatch(
         updateCartItemPeriod({
-          id,
+          id: cartId,
           itemId: existingCartItem.id,
           period: Number(period),
+          prices: prices.nativeFio,
+          roe,
         }),
-        // parsedCartItems.map(cartItem =>
-        //   checkIsDomainItemExistsOnCart(id, cartItem)
-        //     ? {
-        //         ...cartItem,
-        //         period: Number(period),
-        //         costFio: fioPrices.fio,
-        //         costUsdc: fioPrices.usdc,
-        //       }
-        //     : cartItem,
-        // ),
-        // ),
       );
     }
   };
