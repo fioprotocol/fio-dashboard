@@ -31,6 +31,13 @@ export default class Cart extends Base {
   }): Promise<any> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }
+  recalculateOnPriceUpdate(data: {
+    id: string;
+    prices: NativePrices;
+    roe: number;
+  }): Promise<any> {
+    return this.apiClient.put('cart-recalculate-updated-prices', data);
+  }
   setOldCart(id: string): Promise<any> {
     return this.apiClient.patch('cart-set-old-cart', { id });
   }
