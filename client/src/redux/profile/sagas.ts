@@ -23,7 +23,7 @@ import {
 
 import { closeLoginModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
-import { clearOldCartItems, updateUserId } from '../cart/actions';
+import { handleUsersFreeCartItems } from '../cart/actions';
 
 import {
   locationState as locationStateSelector,
@@ -32,7 +32,10 @@ import {
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { cartId as cartIdSelector } from '../cart/selectors';
-import { isNewUser as isNewUserSelectors } from './selectors';
+import {
+  user as userSelector,
+  isNewUser as isNewUserSelectors,
+} from './selectors';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -44,7 +47,11 @@ import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
 import { Api as AdminApi } from '../../admin/api';
 
-import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
+import {
+  FioWalletDoublet,
+  PrivateRedirectLocationState,
+  User,
+} from '../../types';
 import { Action } from '../types';
 import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
@@ -82,11 +89,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
     yield yield put<Action>(loadProfile());
     yield put<Action>(listNotifications());
 
-    const cartId: string | null = yield select(cartIdSelector);
-    if (cartId) {
-      yield put<Action>(updateUserId(cartId));
-    }
-
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
@@ -114,13 +116,27 @@ export function* profileSuccess(): Generator {
     for (const fioWallet of action.data.fioWallets) {
       yield put<Action>(refreshBalance(fioWallet.publicKey));
     }
+
+    const user: User = yield select(userSelector);
+
+    const cartId: string | null = yield select(cartIdSelector);
+    if (cartId && user) {
+      yield put<Action>(
+        handleUsersFreeCartItems({ id: cartId, userId: user.id }),
+      );
+    }
   });
 }
 
 export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     api.client.removeToken();
-    yield put<Action>(clearOldCartItems());
+    // yield put<Action>(clearOldCartItems());
+
+    const cartId: string | null = yield select(cartIdSelector);
+    if (cartId) {
+      yield put<Action>(handleUsersFreeCartItems({ id: cartId }));
+    }
 
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);

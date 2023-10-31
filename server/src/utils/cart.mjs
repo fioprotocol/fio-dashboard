@@ -117,7 +117,7 @@ export const handleFreeCartDeleteItem = ({
   existingItem,
   userHasFreeAddress,
 }) => {
-  const { id, domain, domainType, isFree, type } = existingItem;
+  const { id, domainType, isFree, type } = existingItem;
 
   const deletedCartItems = cartItems.filter(cartItem => cartItem.id !== id);
 
@@ -129,18 +129,18 @@ export const handleFreeCartDeleteItem = ({
   ) {
     const allowedFreeItem = cartItems.find(cartItem => {
       const {
+        domain: cartItemDomain,
         domainType: cartItemDomainType,
         isFree: cartItemIsFree,
         type: cartItemType,
       } = cartItem;
 
       const existingDashboardDomain = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === domain,
+        dashboardDomain => dashboardDomain.name === cartItemDomain,
       );
 
       return (
         !cartItemIsFree &&
-        existingDashboardDomain &&
         existingDashboardDomain &&
         !existingDashboardDomain.isPremium &&
         cartItemDomainType === DOMAIN_TYPE.FREE &&
@@ -156,4 +156,81 @@ export const handleFreeCartDeleteItem = ({
   }
 
   return deletedCartItems;
+};
+
+export const handleUsersFreeCartItems = ({
+  cartItems,
+  dashboardDomains,
+  userHasFreeAddress,
+}) => {
+  let updatedCartItems = cartItems;
+
+  if (userHasFreeAddress) {
+    updatedCartItems = cartItems.map(cartItem => {
+      const { domain, domainType, isFree, type } = cartItem;
+
+      if (type !== CART_ITEM_TYPE.ADDRESS) return cartItem;
+
+      const existingDashboardDomain = dashboardDomains.find(
+        dashboardDomain => dashboardDomain.name === domain,
+      );
+
+      if (
+        isFree &&
+        domainType === DOMAIN_TYPE.FREE &&
+        existingDashboardDomain &&
+        !existingDashboardDomain.isPremium
+      ) {
+        return { ...cartItem, isFree: false };
+      }
+
+      return cartItem;
+    });
+  } else {
+    const freeCartItem = cartItems.find(cartItem => {
+      const { domain, domainType, isFree, type: cartItemType } = cartItem;
+
+      const existingDashboardDomain = dashboardDomains.find(
+        dashboardDomain => dashboardDomain.name === domain,
+      );
+
+      return (
+        isFree &&
+        existingDashboardDomain &&
+        !existingDashboardDomain.isPremium &&
+        domainType === DOMAIN_TYPE.FREE &&
+        cartItemType === CART_ITEM_TYPE.ADDRESS
+      );
+    });
+
+    const allowedFreeItem = cartItems.find(cartItem => {
+      const {
+        domain: cartItemDomain,
+        domainType: cartItemDomainType,
+        isFree: cartItemIsFree,
+        type: cartItemType,
+      } = cartItem;
+
+      const existingDashboardDomain = dashboardDomains.find(
+        dashboardDomain => dashboardDomain.name === cartItemDomain,
+      );
+
+      return (
+        !freeCartItem &&
+        !cartItemIsFree &&
+        existingDashboardDomain &&
+        !existingDashboardDomain.isPremium &&
+        cartItemDomainType === DOMAIN_TYPE.FREE &&
+        cartItemType === CART_ITEM_TYPE.ADDRESS
+      );
+    });
+
+    if (allowedFreeItem) {
+      updatedCartItems = cartItems.map(cartItem =>
+        cartItem.id === allowedFreeItem.id ? { ...cartItem, isFree: true } : cartItem,
+      );
+    }
+  }
+
+  return updatedCartItems;
 };

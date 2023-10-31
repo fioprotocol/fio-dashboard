@@ -25,6 +25,12 @@ export default class Cart extends Base {
   getCart(id: string): Promise<any> {
     return this.apiClient.get('cart', { id });
   }
+  handleUsersFreeCartItems(data: {
+    id: string;
+    userId?: string;
+  }): Promise<any> {
+    return this.apiClient.patch('cart-handle-free-items', data);
+  }
   setOldCart(id: string): Promise<any> {
     return this.apiClient.patch('cart-set-old-cart', { id });
   }

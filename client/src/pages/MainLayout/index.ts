@@ -3,11 +3,14 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
+import { getCart } from '../../redux/cart/actions';
 import { edgeContextInit } from '../../redux/edge/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { getApiUrls } from '../../redux/registrations/actions';
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { pathname } from '../../redux/navigation/selectors';
+
+import { cartId } from '../../redux/cart/selectors';
 import { isAuthenticated, isActiveUser } from '../../redux/profile/selectors';
 import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
@@ -18,6 +21,7 @@ import MainLayout from './MainLayout';
 
 const reduxConnect = connect(
   createStructuredSelector({
+    cartId,
     pathname,
     isAuthenticated,
     isActiveUser,
@@ -30,6 +34,7 @@ const reduxConnect = connect(
   }),
   {
     edgeContextInit,
+    getCart,
     showRecoveryModal,
     loadProfile,
     getApiUrls,
