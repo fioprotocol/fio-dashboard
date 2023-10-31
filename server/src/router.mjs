@@ -213,6 +213,7 @@ router.post('/cart-add-item', routes.cart.addItem);
 router.delete('/cart-clear-cart', routes.cart.clearCart);
 router.patch('/cart-delete-item', routes.cart.deleteItem);
 router.get('/cart', routes.cart.getCart);
+router.patch('/cart-handle-free-items', routes.cart.handleUsersFreeCartItems);
 router.patch('/cart-set-old-cart', routes.cart.setOldCart);
 router.patch('/cart-update-item-period', routes.cart.updateItemPeriod);
 router.patch('/cart-update-user-id', checkAuth, routes.cart.updateUserId);

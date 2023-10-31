@@ -58,6 +58,22 @@ export const updateCartItemPeriod = (data: {
   promise: (api: Api) => api.cart.updateItemPeriod(data),
 });
 
+export const HANDLE_USERS_FREE_CART_ITEMS_REQUEST = `${prefix}/HANDLE_USERS_FREE_CART_ITEMS_REQUEST`;
+export const HANDLE_USERS_FREE_CART_ITEMS_SUCCESS = `${prefix}/HANDLE_USERS_FREE_CART_ITEMS_SUCCESS`;
+export const HANDLE_USERS_FREE_CART_ITEMS_FAILURE = `${prefix}/HANDLE_USERS_FREE_CART_ITEMS_FAILURE`;
+
+export const handleUsersFreeCartItems = (data: {
+  id: string;
+  userId?: string;
+}): CommonPromiseAction => ({
+  types: [
+    HANDLE_USERS_FREE_CART_ITEMS_REQUEST,
+    HANDLE_USERS_FREE_CART_ITEMS_SUCCESS,
+    HANDLE_USERS_FREE_CART_ITEMS_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.handleUsersFreeCartItems(data),
+});
+
 export const addToOldCart = (
   orderId: string,
   cart: CartItem[],
@@ -93,6 +109,19 @@ export const updateUserId = (cartId: string): CommonPromiseAction => ({
     UPDATE_CART_USER_ID_FAILURE,
   ],
   promise: (api: Api) => api.cart.updateUserId(cartId),
+});
+
+export const GET_CART_REQUEST_REQUEST = `${prefix}/GET_CART_REQUEST_REQUEST`;
+export const GET_CART_REQUEST_SUCCESS = `${prefix}/GET_CART_REQUEST_SUCCESS`;
+export const GET_CART_REQUEST_FAILURE = `${prefix}/GET_CART_REQUEST_FAILURE`;
+
+export const getCart = (cartId: string): CommonPromiseAction => ({
+  types: [
+    GET_CART_REQUEST_REQUEST,
+    GET_CART_REQUEST_SUCCESS,
+    GET_CART_REQUEST_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.getCart(cartId),
 });
 
 export const setCartItems = (cartItems: CartItem[]): CommonAction => ({
