@@ -16,16 +16,8 @@ export default class GetCart extends Base {
     try {
       const cart = await Cart.findById(id);
 
-      if (!cart) {
-        throw new X({
-          code: 'NOT_FOUND',
-          fields: {
-            cart: 'NOT_FOUND',
-          },
-        });
-      }
       return {
-        data: Cart.format(cart.get({ plain: true })),
+        data: cart ? Cart.format(cart.get({ plain: true })) : { items: [] },
       };
     } catch (error) {
       logger.error(error);

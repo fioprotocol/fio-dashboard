@@ -257,26 +257,13 @@ export const serializeTransaction = async (
   return '';
 };
 
-export const transformNonPremiumDomains = (
-  domains: Partial<AdminDomain>[],
-  isPremium: boolean,
-  cartItems: CartItem[],
-) =>
+export const transformNonPremiumDomains = (domains: Partial<AdminDomain>[]) =>
   domains
     .filter(domain => !domain.isPremium)
     .map(domain => ({
       name: domain.name,
-      domainType:
-        isPremium &&
-        !cartItems.filter(
-          cartItem =>
-            cartItem.domain === domain.name &&
-            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
-        ).length
-          ? DOMAIN_TYPE.PREMIUM
-          : DOMAIN_TYPE.ALLOW_FREE,
+      domainType: DOMAIN_TYPE.ALLOW_FREE,
       rank: domain.rank || 0,
-      allowFree: true,
     }));
 
 export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>

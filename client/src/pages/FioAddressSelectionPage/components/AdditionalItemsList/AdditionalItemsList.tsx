@@ -40,7 +40,10 @@ export const AdditionalItemsList: React.FC<Props> = props => {
             isDesktop={isDesktop}
             hasMaxWidth
             actionComponent={
-              <DomainTypeBadge domainType={listItem.domainType} />
+              <DomainTypeBadge
+                domainType={listItem.domainType}
+                isFree={listItem.isFree}
+              />
             }
             onClick={onClick}
           />

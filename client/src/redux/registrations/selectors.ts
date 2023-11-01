@@ -40,7 +40,6 @@ export const domains = createSelector(
           domainType: refDomain.isPremium
             ? DOMAIN_TYPE.PREMIUM
             : DOMAIN_TYPE.ALLOW_FREE,
-          allowFree: !refDomain.isPremium,
           rank: refDomain.rank,
         })),
         usernamesOnCustomDomains: regDomainItems.usernamesOnCustomDomains,

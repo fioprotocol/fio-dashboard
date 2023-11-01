@@ -101,7 +101,6 @@ export const useContext = (): UseContextProps => {
         domain,
         type: CART_ITEM_TYPE.ADD_BUNDLES,
         id: `${name}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
-        allowFree: false,
         costNativeFio: addBundlesFeePrice?.nativeFio,
         costFio: addBundlesFeePrice.fio,
         costUsdc: addBundlesFeePrice.usdc,

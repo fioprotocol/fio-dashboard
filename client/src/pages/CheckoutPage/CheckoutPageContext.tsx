@@ -4,10 +4,7 @@ import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
-import {
-  setWallet as setWalletAction,
-  setCartItems,
-} from '../../redux/cart/actions';
+import { setWallet as setWalletAction } from '../../redux/cart/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 
@@ -27,7 +24,6 @@ import {
 import {
   isAuthenticated as isAuthenticatedSelector,
   noProfileLoaded as noProfileLoadedSelector,
-  hasFreeAddress as hasFreeAddressSelector,
 } from '../../redux/profile/selectors';
 import {
   prices as pricesSelector,
@@ -39,12 +35,7 @@ import apis from '../../api';
 
 import { onPurchaseFinish } from '../../util/purchase';
 import MathOp from '../../util/math';
-import {
-  totalCost,
-  handleFreeAddressCart,
-  cartIsRelative,
-  // cartHasOnlyFreeItems,
-} from '../../util/cart';
+import { totalCost, cartIsRelative } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
@@ -118,7 +109,6 @@ export const useContext = (): {
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
   const isAuth = useSelector(isAuthenticatedSelector);
-  const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const prices = useSelector(pricesSelector);
   const userDomains = useSelector(fioDomainsSelector);
   const isProcessing = useSelector(isProcessingSelector);
@@ -273,8 +263,6 @@ export const useContext = (): {
     fioWallets.length > 0,
   );
 
-  const cartItemsJson = JSON.stringify(cartItems);
-
   const isFree =
     !isEmpty(cartItems) && cartItems.every(cartItem => cartItem.isFree);
 
@@ -394,17 +382,6 @@ export const useContext = (): {
     paymentOption,
     walletHasNoEnoughBalance,
   ]);
-
-  useEffect(() => {
-    !isProcessing &&
-      handleFreeAddressCart({
-        setCartItems: cartItems => dispatch(setCartItems(cartItems)),
-        cartItems: JSON.parse(cartItemsJson),
-        prices,
-        hasFreeAddress,
-        roe,
-      });
-  }, [hasFreeAddress, prices, roe, isProcessing, cartItemsJson, dispatch]);
 
   // Check for ledger wallet when cart has addresses with private domains
   useEffect(() => {

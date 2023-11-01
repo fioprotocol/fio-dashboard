@@ -124,33 +124,11 @@ export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
     !isEmpty(cartItems) &&
     cartItems.some(
       item =>
-        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
-        !!item.address &&
-        item.domainType !== DOMAIN_TYPE.PRIVATE,
+        item.domainType === DOMAIN_TYPE.ALLOW_FREE &&
+        item.isFree &&
+        !!item.address,
     )
   );
-};
-
-export const handleFreeAddressCart = ({
-  setCartItems,
-  cartItems,
-  prices,
-  hasFreeAddress,
-  roe,
-}: {
-  setCartItems: (cartItems: CartItem[]) => void;
-  cartItems: CartItem[];
-  prices: Prices;
-  hasFreeAddress: boolean;
-  roe: number;
-}): void => {
-  let retCart: CartItem[] = [];
-  if (hasFreeAddress) {
-    retCart = removeFreeCart({ cartItems, prices, roe });
-  } else if (!cartHasFreeItem(cartItems)) {
-    retCart = setFreeCart({ cartItems });
-  }
-  setCartItems(!isEmpty(retCart) ? retCart : cartItems);
 };
 
 // todo: remove after analytic move
@@ -349,15 +327,7 @@ export const updateCartItemPeriod = ({
 };
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
-  cart.length &&
-  !cart.some(
-    item =>
-      item.domainType === DOMAIN_TYPE.CUSTOM ||
-      item.domainType === DOMAIN_TYPE.USERS ||
-      item.domainType === DOMAIN_TYPE.PREMIUM ||
-      item.type === CART_ITEM_TYPE.ADD_BUNDLES ||
-      item.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
-  );
+  cart.length && cart.every(item => item.isFree);
 
 export const totalCost = (
   cart: CartItem[],

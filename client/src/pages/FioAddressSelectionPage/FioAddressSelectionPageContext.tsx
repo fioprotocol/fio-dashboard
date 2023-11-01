@@ -63,14 +63,18 @@ const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
 const handleFCHItems = async ({
   address,
   cartItems,
+  cartHasFreeItem,
   domainArr,
+  hasFreeAddress,
   prices,
   roe,
   setError,
 }: {
   address: string;
   cartItems: CartItem[];
+  cartHasFreeItem: boolean;
   domainArr: DomainsArrItemType;
+  hasFreeAddress: boolean;
   prices: Prices;
   roe: number;
   setError: (error: string) => void;
@@ -85,7 +89,6 @@ const handleFCHItems = async ({
     await Promise.all(
       domainArr.map(async domain => {
         const {
-          allowFree,
           domainType,
           name,
           swapAddressAndDomainPlaces,
@@ -151,6 +154,10 @@ const handleFCHItems = async ({
           domainType: existingCustomDomainFchCartItem
             ? DOMAIN_TYPE.PREMIUM
             : domainType,
+          isFree:
+            domainType === DOMAIN_TYPE.ALLOW_FREE &&
+            !hasFreeAddress &&
+            !cartHasFreeItem,
           isSelected: false,
           isExist:
             isAddressExist ||
@@ -159,8 +166,7 @@ const handleFCHItems = async ({
           type: isCustomDomain
             ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
             : CART_ITEM_TYPE.ADDRESS,
-          allowFree,
-          hasCustomDomain: domainType === DOMAIN_TYPE.CUSTOM,
+          // hasCustomDomain: domainType === DOMAIN_TYPE.CUSTOM,
           rank,
           swapAddressAndDomainPlaces,
         };
@@ -200,48 +206,39 @@ const handleSelectedDomain = ({
 
   const existingCustomDomainFchCartItem = cartItems.find(
     cartItem =>
-      fchItem.hasCustomDomain &&
+      // fchItem.hasCustomDomain &&
+      (cartItem.type === CART_ITEM_TYPE.DOMAIN ||
+        cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) &&
       fchItem.domain === cartItem.domain &&
       !!cartItem.address &&
       fchItem.id !== cartItem.id,
   );
 
-  const { domainType, allowFree, hasCustomDomain } = fchItem;
-  const isCustomDomainConvertedToPremium =
-    hasCustomDomain && !existingCustomDomainFchCartItem;
+  const { domainType } = fchItem;
+  // const isCustomDomainConvertedToPremium = !existingCustomDomainFchCartItem;
   const isCustomDomain =
     domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
+  const isFree =
+    existingCartItem?.isFree ||
+    (domainType === DOMAIN_TYPE.ALLOW_FREE &&
+      !hasFreeAddress &&
+      !cartHasFreeItem);
 
-  const handleDomainType = () => {
-    if (domainType === DOMAIN_TYPE.CUSTOM) {
-      if (existingCustomDomainFchCartItem && !existingCartItem)
-        return DOMAIN_TYPE.PREMIUM;
-      return domainType;
-    }
+  // const handleDomainType = () => {
+  //   if (domainType === DOMAIN_TYPE.CUSTOM) {
+  //     if (existingCustomDomainFchCartItem && !existingCartItem)
+  //       return DOMAIN_TYPE.PREMIUM;
+  //     return domainType;
+  //   }
 
-    if (domainType === DOMAIN_TYPE.ALLOW_FREE) {
-      if (
-        hasFreeAddress ||
-        (cartHasFreeItem &&
-          (!existingCartItem ||
-            (!!existingCartItem &&
-              existingCartItem.domainType === DOMAIN_TYPE.PREMIUM)))
-      )
-        return DOMAIN_TYPE.PREMIUM;
-
-      return domainType;
-    }
-
-    if (domainType === DOMAIN_TYPE.PREMIUM) {
-      if (isCustomDomainConvertedToPremium) return DOMAIN_TYPE.CUSTOM;
-      if (!allowFree) return domainType;
-      if (!cartHasFreeItem && !hasFreeAddress) return DOMAIN_TYPE.ALLOW_FREE;
-      return domainType;
-    }
-  };
+  //   if (domainType === DOMAIN_TYPE.PREMIUM) {
+  //     if (isCustomDomainConvertedToPremium) return DOMAIN_TYPE.CUSTOM;
+  //     return domainType;
+  //   }
+  // };
 
   const totalNativeFio =
-    isCustomDomainConvertedToPremium ||
+    // isCustomDomainConvertedToPremium ||
     domainType === DOMAIN_TYPE.CUSTOM ||
     (existingCartItem &&
       existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN)
@@ -259,7 +256,8 @@ const handleSelectedDomain = ({
       ? existingDomainInCartItem.period
       : fchItem.period,
     isSelected: !!existingCartItem,
-    domainType: handleDomainType(),
+    isFree,
+    domainType,
     type: isCustomDomain
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
@@ -306,7 +304,8 @@ export const useContext = (): UseContextProps => {
   const [hasRawAbiLoaded, setIsRawAbiLoaded] = useState<boolean>(false);
 
   const cartHasFreeItem = cartItems.some(
-    cartItem => cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
+    cartItem =>
+      cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
   const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
@@ -322,11 +321,7 @@ export const useContext = (): UseContextProps => {
     true,
   ).sort((a, b) => a.rank - b.rank);
 
-  const nonPremiumPublicDomains = transformNonPremiumDomains(
-    publicDomains,
-    hasFreeAddress || cartHasFreeItem,
-    cartItems,
-  )
+  const nonPremiumPublicDomains = transformNonPremiumDomains(publicDomains)
     .sort((a, b) => a.rank - b.rank)
     .map((nonPremiumDomain, i) => ({ ...nonPremiumDomain, rank: i }));
 
@@ -381,6 +376,8 @@ export const useContext = (): UseContextProps => {
       const defaultParams = {
         address,
         cartItems: parsedCartItems,
+        cartHasFreeItem,
+        hasFreeAddress,
         prices,
         roe,
         setError,
@@ -542,8 +539,10 @@ export const useContext = (): UseContextProps => {
       toggleLoading(false);
     },
     [
+      cartHasFreeItem,
       cartItemsJSON,
       customDomainsJSON,
+      hasFreeAddress,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
       previousAddressValue,

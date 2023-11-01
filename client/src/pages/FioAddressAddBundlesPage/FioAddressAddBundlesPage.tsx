@@ -83,7 +83,6 @@ const FioAddressAddBundlesPage: React.FC = () => {
       domain,
       type: CART_ITEM_TYPE.ADD_BUNDLES,
       id: `${fch}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
-      allowFree: false,
       costNativeFio: addBundlesFeePrice?.nativeFio,
       costFio: addBundlesFeePrice.fio,
       costUsdc: addBundlesFeePrice.usdc,
