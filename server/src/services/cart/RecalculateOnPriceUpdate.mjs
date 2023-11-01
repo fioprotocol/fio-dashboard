@@ -43,24 +43,30 @@ export default class RecalculateOnPriceUpdate extends Base {
       }
 
       const cartItemsWithRecalculatedPrices = cart.items.map(cartItem => {
-        const { type, period } = cartItem;
+        const { hasCustomDomainInCart, type, period } = cartItem;
         const { addBundles, address, renewDomain } = prices;
 
         let nativeFioAmount = null;
 
         switch (type) {
           case CART_ITEM_TYPE.ADD_BUNDLES:
-            nativeFioAmount = addBundles;
+            nativeFioAmount = Number(addBundles);
             break;
           case CART_ITEM_TYPE.ADDRESS:
-            nativeFioAmount = address;
+            nativeFioAmount = Number(address);
             break;
           case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
-            nativeFioAmount = handlePriceForMultiYearItems({
-              includeAddress: true,
-              prices,
-              period,
-            });
+            {
+              if (hasCustomDomainInCart) {
+                nativeFioAmount = Number(address);
+              } else {
+                nativeFioAmount = handlePriceForMultiYearItems({
+                  includeAddress: true,
+                  prices,
+                  period,
+                });
+              }
+            }
             break;
           case CART_ITEM_TYPE.DOMAIN:
             nativeFioAmount = handlePriceForMultiYearItems({

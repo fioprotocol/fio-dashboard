@@ -217,7 +217,7 @@ export const useContext = (): UseContextReturnType => {
     } = updatedPrices || {};
 
     const updatedCartItems = cartItems.map(cartItem => {
-      const { isFree, period, type } = cartItem;
+      const { isFree, hasCustomDomainInCart, period, type } = cartItem;
 
       if (isFree && type === CART_ITEM_TYPE.ADDRESS) return cartItem;
 
@@ -242,11 +242,15 @@ export const useContext = (): UseContextReturnType => {
           });
           break;
         case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
-          costNativeFio = handlePriceForMultiYearItems({
-            includeAddress: true,
-            prices: updatedPrices?.pricing?.nativeFio,
-            period,
-          });
+          if (hasCustomDomainInCart) {
+            costNativeFio = updatedFioAddressPrice;
+          } else {
+            costNativeFio = handlePriceForMultiYearItems({
+              includeAddress: true,
+              prices: updatedPrices?.pricing?.nativeFio,
+              period,
+            });
+          }
           break;
         default:
           break;
