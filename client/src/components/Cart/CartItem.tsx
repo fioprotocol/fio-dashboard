@@ -41,7 +41,7 @@ export const CartItemPrice = (props: CartItemProps) => {
     <PriceComponent
       costFio={costFio}
       costUsdc={costUsdc}
-      isFree={!costNativeFio || domainType === DOMAIN_TYPE.FREE}
+      isFree={!costNativeFio || domainType === DOMAIN_TYPE.ALLOW_FREE}
     />
   );
 };

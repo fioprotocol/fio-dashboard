@@ -104,7 +104,7 @@ export const getCartItemsDataForAnalytics = (
     value: +cartItems.reduce(
       (sum, item) =>
         new MathOp(sum)
-          .add(item.domainType === DOMAIN_TYPE.FREE ? 0 : item.costUsdc)
+          .add(item.domainType === DOMAIN_TYPE.ALLOW_FREE ? 0 : item.costUsdc)
           .toNumber(),
       0,
     ),
@@ -112,11 +112,13 @@ export const getCartItemsDataForAnalytics = (
       .map(cartItem => {
         const item = {
           item_name:
-            cartItem.domainType === DOMAIN_TYPE.FREE
+            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE
               ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
               : cartItem.type,
           price:
-            cartItem.domainType === DOMAIN_TYPE.FREE ? 0 : +cartItem.costUsdc,
+            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE
+              ? 0
+              : +cartItem.costUsdc,
         };
 
         if (cartItem.period > 1) {

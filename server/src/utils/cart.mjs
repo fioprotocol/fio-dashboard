@@ -73,7 +73,7 @@ export const cartHasFreeItemsOnDashboardDomains = ({ cartItems, dashboardDomains
   return (
     cartItems &&
     cartItems.some(cartItem => {
-      const { allowFree, domain, isFree, domainType } = cartItem;
+      const { domain, isFree, domainType } = cartItem;
       const existingDashboardDomain = dashboardDomains.find(
         dashboardDomain => dashboardDomain.name === domain,
       );
@@ -82,8 +82,7 @@ export const cartHasFreeItemsOnDashboardDomains = ({ cartItems, dashboardDomains
         existingDashboardDomain &&
         !existingDashboardDomain.isPremium &&
         isFree &&
-        allowFree &&
-        domainType === DOMAIN_TYPE.FREE
+        domainType === DOMAIN_TYPE.ALLOW_FREE
       );
     })
   );
@@ -130,7 +129,7 @@ export const handleFreeCartDeleteItem = ({
   if (
     isFree &&
     type === CART_ITEM_TYPE.ADDRESS &&
-    domainType === DOMAIN_TYPE.FREE &&
+    domainType === DOMAIN_TYPE.ALLOW_FREE &&
     !userHasFreeAddress
   ) {
     const allowedFreeItem = cartItems.find(cartItem => {
@@ -149,7 +148,7 @@ export const handleFreeCartDeleteItem = ({
         !cartItemIsFree &&
         existingDashboardDomain &&
         !existingDashboardDomain.isPremium &&
-        cartItemDomainType === DOMAIN_TYPE.FREE &&
+        cartItemDomainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
     });
@@ -183,7 +182,7 @@ export const handleUsersFreeCartItems = ({
 
       if (
         isFree &&
-        domainType === DOMAIN_TYPE.FREE &&
+        domainType === DOMAIN_TYPE.ALLOW_FREE &&
         existingDashboardDomain &&
         !existingDashboardDomain.isPremium
       ) {
@@ -204,7 +203,7 @@ export const handleUsersFreeCartItems = ({
         isFree &&
         existingDashboardDomain &&
         !existingDashboardDomain.isPremium &&
-        domainType === DOMAIN_TYPE.FREE &&
+        domainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
     });
@@ -226,7 +225,7 @@ export const handleUsersFreeCartItems = ({
         !cartItemIsFree &&
         existingDashboardDomain &&
         !existingDashboardDomain.isPremium &&
-        cartItemDomainType === DOMAIN_TYPE.FREE &&
+        cartItemDomainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
     });
