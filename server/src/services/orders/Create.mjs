@@ -2,10 +2,12 @@ import Sequelize from 'sequelize';
 
 import Base from '../Base';
 
-import { Order, OrderItem, OrderItemStatus, Payment, User } from '../../models';
+import { Cart, Order, OrderItem, OrderItemStatus, Payment, User } from '../../models';
 
 import { DAY_MS, PAYMENTS_STATUSES } from '../../config/constants.js';
 import X from '../Exception.mjs';
+
+import { calculateCartTotalCost, cartItemsToOrderItems } from '../../utils/cart.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -14,22 +16,18 @@ export default class OrdersCreate extends Base {
         'required',
         {
           nested_object: {
-            total: 'string',
+            cartId: ['required', 'string'],
             roe: 'string',
             publicKey: 'string',
             paymentProcessor: 'string',
             refProfileId: 'integer',
-            items: [
+            prices: [
               {
-                list_of_objects: {
-                  action: 'string',
-                  address: 'string',
-                  domain: 'string',
-                  params: 'any_object',
-                  nativeFio: 'string',
-                  price: 'string',
-                  priceCurrency: 'string',
-                  data: 'any_object',
+                nested_object: {
+                  addBundles: ['string'],
+                  address: ['string'],
+                  domain: ['string'],
+                  renewDomain: ['string'],
                 },
               },
             ],
@@ -46,7 +44,7 @@ export default class OrdersCreate extends Base {
   }
 
   async execute({
-    data: { total, roe, publicKey, paymentProcessor, refProfileId, items, data },
+    data: { cartId, roe, publicKey, paymentProcessor, prices, refProfileId, data },
   }) {
     // assume user should have only one active order with status NEW
     const exOrder = await Order.findOne({
@@ -93,10 +91,26 @@ export default class OrdersCreate extends Base {
         );
       }
 
+      const cart = await Cart.findById(cartId);
+
+      if (!cart) {
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {
+            cart: 'NOT_FOUND',
+          },
+        });
+      }
+
+      const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
+        cartItems: cart.items,
+        roe,
+      });
+
       order = await Order.create(
         {
           status: Order.STATUS.NEW,
-          total,
+          total: totalCostUsdc,
           roe,
           publicKey,
           customerIp: this.context.ipAddress,
@@ -109,6 +123,8 @@ export default class OrdersCreate extends Base {
 
       order.number = Order.generateNumber(order.id);
       await order.save({ transaction: t });
+
+      const items = cartItemsToOrderItems({ cartItems: cart.items, prices, roe });
 
       for (const {
         action,

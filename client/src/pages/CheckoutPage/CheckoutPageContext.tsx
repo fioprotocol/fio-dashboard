@@ -19,6 +19,7 @@ import {
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
 import {
+  cartId as cartIdSelector,
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
@@ -42,7 +43,7 @@ import {
   totalCost,
   handleFreeAddressCart,
   cartIsRelative,
-  cartHasOnlyFreeItems,
+  // cartHasOnlyFreeItems,
 } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
@@ -57,12 +58,8 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import {
-  CART_ITEM_TYPE,
-  CURRENCY_CODES,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import { CART_ITEM_TYPE, WALLET_CREATED_FROM } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import {
   RegistrationResult,
@@ -111,6 +108,7 @@ export const useContext = (): {
   setWallet: (walletPublicKey: string) => void;
   setProcessing: (isProcessing: boolean) => void;
 } => {
+  const cartId = useSelector(cartIdSelector);
   const history = useHistory();
   const fioWallets = useSelector(fioWalletsSelector);
   const fioLoading = useSelector(fioLoadingSelector);
@@ -207,18 +205,11 @@ export const useContext = (): {
 
       if (!orderParamsFromLocation && isFree) {
         orderParams = {
-          total: '0',
+          cartId,
           roe,
           publicKey: paymentWalletPublicKey,
           paymentProcessor: PAYMENT_PROVIDER.FIO,
-          items: cartItems.map(({ address, domain, costNativeFio }) => ({
-            action: ACTIONS.registerFioAddress,
-            address,
-            domain,
-            nativeFio: '0',
-            price: '0',
-            priceCurrency: CURRENCY_CODES.USDC,
-          })),
+          prices: prices.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
@@ -256,7 +247,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [history, roe, setWallet],
+    [cartId, history, prices.nativeFio, roe, setWallet],
   );
 
   useEffectOnce(
@@ -285,9 +276,7 @@ export const useContext = (): {
   const cartItemsJson = JSON.stringify(cartItems);
 
   const isFree =
-    !isEmpty(cartItems) &&
-    ((cartItems.length === 1 && !hasFreeAddress && cartItems[0].allowFree) ||
-      cartHasOnlyFreeItems(cartItems));
+    !isEmpty(cartItems) && cartItems.every(cartItem => cartItem.isFree);
 
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,

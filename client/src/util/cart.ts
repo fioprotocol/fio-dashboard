@@ -6,9 +6,8 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
-  CURRENCY_CODES,
 } from '../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
+import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import { setCartItems } from '../redux/cart/actions';
@@ -27,7 +26,6 @@ import {
   OrderItem,
   Prices,
 } from '../types';
-import { CreateOrderActionItem } from '../redux/types';
 
 export const setFreeCart = ({
   cartItems,
@@ -203,6 +201,7 @@ export const addCartItem = (selectedItem: CartItem) => {
   );
 };
 
+// todo: remove after handle analytics
 export const deleteCartItem = ({
   id,
   prices,
@@ -277,6 +276,7 @@ export const deleteCartItem = ({
   }
 };
 
+// todo: remove after handle analytics
 export const updateCartItemPeriod = ({
   id,
   period,
@@ -346,107 +346,6 @@ export const updateCartItemPeriod = ({
     return newItem;
   });
   setCartItems(updatedCartItem);
-};
-
-export const getActionByCartItem = (
-  type: CartItemType,
-  address: string,
-): string => {
-  if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-    return ACTIONS.renewFioDomain;
-  } else if (type === CART_ITEM_TYPE.ADD_BUNDLES) {
-    return ACTIONS.addBundledTransactions;
-  } else if (address) {
-    return ACTIONS.registerFioAddress;
-  } else {
-    return ACTIONS.registerFioDomain;
-  }
-};
-
-export const cartItemsToOrderItems = (
-  cartItems: CartItem[],
-  prices: Prices,
-  roe: number,
-) => {
-  return cartItems
-    .map(({ id, type, address, domain, costNativeFio, domainType, period }) => {
-      const data: {
-        cartItemId: string;
-        period?: number;
-      } = {
-        cartItemId: id,
-      };
-      const nativeFio =
-        domainType === DOMAIN_TYPE.FREE || domainType === DOMAIN_TYPE.PRIVATE
-          ? 0
-          : costNativeFio;
-
-      if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
-        const items: CreateOrderActionItem[] = [
-          {
-            action: ACTIONS.registerFioDomain,
-            domain,
-            nativeFio: prices.nativeFio.domain.toString(),
-            price: convertFioPrices(prices.nativeFio.domain || 0, roe).usdc,
-            priceCurrency: CURRENCY_CODES.USDC,
-            data,
-          },
-          {
-            action: ACTIONS.registerFioAddress,
-            address,
-            domain,
-            nativeFio: prices.nativeFio.address.toString(),
-            price: convertFioPrices(prices.nativeFio.address || 0, roe).usdc,
-            priceCurrency: CURRENCY_CODES.USDC,
-            data,
-          },
-        ];
-        if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
-          const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
-          for (let i = 1; i < period; i++) {
-            items.push({
-              action: ACTIONS.renewFioDomain,
-              address: null,
-              domain,
-              nativeFio: `${nativeFio || 0}`,
-              price: convertFioPrices(nativeFio || 0, roe).usdc,
-              priceCurrency: CURRENCY_CODES.USDC,
-              data,
-            });
-          }
-        }
-        return items;
-      }
-
-      const item = {
-        action: getActionByCartItem(type, address),
-        address,
-        domain,
-        nativeFio: `${nativeFio || 0}`,
-        price: convertFioPrices(nativeFio || 0, roe).usdc,
-        priceCurrency: CURRENCY_CODES.USDC,
-        data,
-      };
-      if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
-        const items = [item];
-        const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
-        for (let i = 1; i < period; i++) {
-          items.push({
-            action: ACTIONS.renewFioDomain,
-            address,
-            domain,
-            nativeFio: `${nativeFio || 0}`,
-            price: convertFioPrices(nativeFio || 0, roe).usdc,
-            priceCurrency: CURRENCY_CODES.USDC,
-            data,
-          });
-        }
-        return items;
-      }
-
-      return item;
-    })
-    .flat();
 };
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>

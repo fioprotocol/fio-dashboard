@@ -1,9 +1,10 @@
 import MathOp from 'big.js';
 
-import { CART_ITEM_TYPE } from '../config/constants';
+import { CART_ITEM_TYPE, FIO_ACTIONS } from '../config/constants';
 
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
+import { CURRENCY_CODES } from '../constants/fio.mjs';
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = fioApi.sufToAmount(nativeFio || 0);
@@ -238,4 +239,145 @@ export const handleUsersFreeCartItems = ({
   }
 
   return updatedCartItems;
+};
+
+export const calculateCartTotalCost = ({ cartItems, roe }) => {
+  const nativeFioTotalCost = cartItems.reduce((acc, cartItem) => {
+    const { costNativeFio, isFree } = cartItem;
+
+    if (isFree) return acc;
+
+    return new MathOp(acc).add(costNativeFio).toNumber();
+  }, 0);
+
+  const { fio, usdc } = convertFioPrices(nativeFioTotalCost, roe);
+
+  return {
+    costFio: fio,
+    costNativeFio: nativeFioTotalCost,
+    costUsdc: usdc,
+  };
+};
+
+export const cartItemsToOrderItems = ({ cartItems, prices, roe }) => {
+  const {
+    addBundles: addBundlesPrice,
+    address: fioHandlePrice,
+    domain: fioDomainPrice,
+    renewDomain: renewDomainPrice,
+  } = prices;
+  const orderItems = [];
+
+  for (const cartItem of cartItems) {
+    const { address, domain, id, isFree, period, type } = cartItem;
+
+    if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+      const domainItem = {
+        action: FIO_ACTIONS.registerFioDomain,
+        domain,
+        nativeFio: fioDomainPrice.toString(),
+        price: convertFioPrices(fioDomainPrice, roe).usdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data: {
+          cartItemId: id,
+        },
+      };
+      const fioHandleItem = {
+        action: FIO_ACTIONS.registerFioAddress,
+        address,
+        domain,
+        nativeFio: fioHandlePrice.toString(),
+        price: convertFioPrices(fioHandlePrice, roe).usdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data: {
+          cartItemId: id,
+        },
+      };
+
+      orderItems.push(domainItem);
+      orderItems.push(fioHandleItem);
+      for (let i = 1; i < period; i++) {
+        orderItems.push({
+          action: FIO_ACTIONS.renewFioDomain,
+          address: null,
+          domain,
+          nativeFio: renewDomainPrice.toString(),
+          price: convertFioPrices(renewDomainPrice, roe).usdc,
+          priceCurrency: CURRENCY_CODES.USDC,
+          data: {
+            cartItemId: id,
+          },
+        });
+      }
+      continue;
+    }
+
+    const orderItem = {
+      domain,
+      data: {
+        cartItemId: id,
+      },
+    };
+
+    switch (type) {
+      case CART_ITEM_TYPE.DOMAIN_RENEWAL:
+        {
+          orderItem.action = FIO_ACTIONS.renewFioDomain;
+          orderItem.address = null;
+          orderItem.nativeFio = renewDomainPrice.toString();
+          orderItem.price = convertFioPrices(renewDomainPrice, roe).usdc;
+          orderItem.priceCurrency = CURRENCY_CODES.USDC;
+
+          for (let i = 1; i < period; i++) {
+            orderItems.push(orderItem);
+          }
+        }
+        break;
+      case CART_ITEM_TYPE.ADD_BUNDLES:
+        orderItem.action = FIO_ACTIONS.addBundledTransactions;
+        orderItem.address = address;
+        orderItem.nativeFio = addBundlesPrice;
+        orderItem.price = convertFioPrices(addBundlesPrice, roe).usdc;
+        orderItem.priceCurrency = CURRENCY_CODES.USDC;
+        orderItems.push(orderItem);
+        break;
+      case CART_ITEM_TYPE.ADDRESS:
+        orderItem.action = FIO_ACTIONS.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = isFree ? '0' : fioHandlePrice.toString();
+        orderItem.price = isFree ? '0' : convertFioPrices(fioHandlePrice, roe).usdc;
+        orderItem.priceCurrency = CURRENCY_CODES.USDC;
+        orderItems.push(orderItem);
+        break;
+      case CART_ITEM_TYPE.DOMAIN:
+        {
+          orderItem.action = FIO_ACTIONS.registerFioDomain;
+          orderItem.address = null;
+          orderItem.nativeFio = fioDomainPrice.toString();
+          orderItem.price = convertFioPrices(fioDomainPrice, roe).usdc;
+          orderItem.priceCurrency = CURRENCY_CODES.USDC;
+
+          orderItems.push(orderItem);
+
+          for (let i = 1; i < period; i++) {
+            orderItems.push({
+              action: FIO_ACTIONS.renewFioDomain,
+              address: null,
+              domain,
+              nativeFio: renewDomainPrice.toString(),
+              price: convertFioPrices(renewDomainPrice, roe).usdc,
+              priceCurrency: CURRENCY_CODES.USDC,
+              data: {
+                cartItemId: id,
+              },
+            });
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  return orderItems;
 };

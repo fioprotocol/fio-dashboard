@@ -34,7 +34,6 @@ import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import useQuery from '../../hooks/useQuery';
 import { useEffectOnce } from '../../hooks/general';
 
-import { cartItemsToOrderItems, totalCost } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { convertFioPrices } from '../../util/prices';
 
@@ -198,16 +197,15 @@ export const useContext = (
   };
 
   const onRetry = () => {
-    const { costUsdc: totalUsdc } = totalCost(cart, roe);
     history.push({
       pathname: ROUTES.CHECKOUT,
       state: {
         orderParams: {
-          total: totalUsdc,
+          cartId,
           roe,
           publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
           paymentProcessor: payment?.paymentProcessor,
-          items: cartItemsToOrderItems(cart, prices, roe),
+          prices: prices.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
