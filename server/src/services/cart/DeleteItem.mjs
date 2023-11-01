@@ -7,17 +7,31 @@ import { FreeAddress } from '../../models/FreeAddress.mjs';
 
 import logger from '../../logger.mjs';
 
-import { handleFreeCartDeleteItem } from '../../utils/cart.mjs';
+import {
+  handleFreeCartDeleteItem,
+  handleFioHandleCartItemsWithCustomDomain,
+} from '../../utils/cart.mjs';
 
 export default class DeleteItem extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
       itemId: ['required', 'string'],
+      prices: [
+        {
+          nested_object: {
+            addBundles: ['string'],
+            address: ['string'],
+            domain: ['string'],
+            renewDomain: ['string'],
+          },
+        },
+      ],
+      roe: ['string'],
     };
   }
 
-  async execute({ id, itemId }) {
+  async execute({ id, itemId, prices, roe }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -50,8 +64,23 @@ export default class DeleteItem extends Base {
         userHasFreeAddress,
       });
 
-      if (updatedItems.length > 0) {
-        await cart.update({ items: updatedItems });
+      const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
+        {
+          cartItems: updatedItems,
+          item: existingItem,
+          prices,
+          roe,
+        },
+      );
+
+      const cartItemWithoutDeletedItem = handledCartItemsWithExistingFioHandleCustomDomain.filter(
+        cartItem => cartItem.id !== itemId,
+      );
+
+      if (cartItemWithoutDeletedItem.length > 0) {
+        await cart.update({
+          items: cartItemWithoutDeletedItem,
+        });
 
         return {
           data: Cart.format(cart.get({ plain: true })),

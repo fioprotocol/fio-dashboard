@@ -56,13 +56,16 @@ const CartItem: React.FC<Props> = props => {
     costFio,
     costUsdc,
     costNativeFio,
+    hasCustomDomainInCart,
     showBadge,
     period,
     type,
     domainType,
   } = item;
   const shouldShowPeriod =
-    isPeriodEditable && CART_ITEM_TYPES_WITH_PERIOD.includes(type);
+    isPeriodEditable &&
+    CART_ITEM_TYPES_WITH_PERIOD.includes(type) &&
+    !hasCustomDomainInCart;
   const onPeriodChange = useCallback(
     (value: string) => {
       onUpdatePeriod && onUpdatePeriod(item.id, +value);

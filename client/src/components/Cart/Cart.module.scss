@@ -100,12 +100,11 @@
   }
 
   .period {
-    margin: 0 5px;
-
     > div {
       min-width: 120px;
       width: 120px;
       margin-bottom: 0;
+      margin-right: 20px;
     }
   }
 
@@ -203,6 +202,10 @@
       transform: translate(-50%, -50%);
       top: 50%;
       right: -10px;
+    }
+
+    .period {
+      margin-top: 15px;
     }
   }
 }

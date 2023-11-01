@@ -69,6 +69,7 @@ export const useContext = (
       cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
       cartItem.domain === domain &&
       !!cartItem.address &&
+      !cartItem.hasCustomDomainInCart &&
       !existingCartItem,
   );
 
@@ -112,7 +113,7 @@ export const useContext = (
     : [];
   const userDomains = allDomains.userDomains || [];
 
-  let domainType = !isEmpty(allDomains)
+  const domainType = !isEmpty(allDomains)
     ? [
         ...nonPremiumDomains,
         ...premiumDomains,
@@ -133,14 +134,13 @@ export const useContext = (
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
-  if (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
-    domainType = DOMAIN_TYPE.PREMIUM;
 
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
-  const totalNativeFio = isCustomDomain
-    ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
-    : nativeFioAddressPrice;
+  const totalNativeFio =
+    isCustomDomain && !existingCustomDomainFchCartItem
+      ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
@@ -163,7 +163,9 @@ export const useContext = (
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
     isSelected: !!existingCartItem,
-    // hasCustomDomain: isCustomDomain,
+    hasCustomDomainInCart:
+      existingCartItem?.hasCustomDomainInCart ||
+      (isCustomDomain && !!existingCustomDomainFchCartItem),
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;

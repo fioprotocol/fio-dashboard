@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -9,6 +10,11 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import { ExclamationIcon } from '../ExclamationIcon';
 import { PriceComponent } from '../PriceComponent';
+
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
@@ -24,6 +30,7 @@ import {
   CartItem,
   FioWalletDoublet,
   LastAuthData,
+  NativePrices,
   RedirectLinkData,
 } from '../../types';
 
@@ -36,7 +43,12 @@ type Props = {
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
   lastAuthData: LastAuthData;
-  deleteItem: (data: { id: string; itemId: string }) => void;
+  deleteItem: (data: {
+    id: string;
+    itemId: string;
+    prices: NativePrices;
+    roe: number;
+  }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
 };
@@ -53,6 +65,9 @@ const AddressDomainCart: React.FC<Props> = props => {
     lastAuthData,
   } = props;
   const count = cartItems.length;
+
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
 
   const isCartEmpty = count === 0;
   const cartHasFreeAddress = !!cartItems.every(({ isFree }) => isFree);
@@ -87,6 +102,8 @@ const AddressDomainCart: React.FC<Props> = props => {
     deleteItem({
       id: cartId,
       itemId,
+      prices: prices.nativeFio,
+      roe,
     });
   };
 

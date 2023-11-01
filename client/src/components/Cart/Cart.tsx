@@ -57,10 +57,12 @@ const Cart: React.FC<Props> = props => {
         deleteItem({
           id: cartId,
           itemId,
+          prices: prices.nativeFio,
+          roe,
         }),
       );
     },
-    [cartId, dispatch],
+    [cartId, dispatch, prices.nativeFio, roe],
   );
 
   const handleUpdateItemPeriod = useCallback(

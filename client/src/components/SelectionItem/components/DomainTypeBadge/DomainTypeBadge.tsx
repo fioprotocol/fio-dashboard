@@ -15,11 +15,12 @@ import classes from './DomainTypeBadge.module.scss';
 type Props = {
   disabled?: boolean;
   domainType: DomainItemType;
+  hasCustomDomainInCart?: boolean;
   isFree?: boolean;
 };
 
 export const DomainTypeBadge: React.FC<Props> = props => {
-  const { disabled, domainType, isFree } = props;
+  const { disabled, domainType, hasCustomDomainInCart, isFree } = props;
 
   const [isModalOpen, toggleModal] = useState(false);
 
@@ -27,7 +28,8 @@ export const DomainTypeBadge: React.FC<Props> = props => {
   const closeModal = () => toggleModal(false);
 
   const domainTypeToShow =
-    domainType === DOMAIN_TYPE.ALLOW_FREE && !isFree
+    (domainType === DOMAIN_TYPE.ALLOW_FREE && !isFree) ||
+    (domainType === DOMAIN_TYPE.CUSTOM && hasCustomDomainInCart)
       ? DOMAIN_TYPE.PREMIUM
       : domainType;
 

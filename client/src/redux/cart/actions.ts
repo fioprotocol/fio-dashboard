@@ -30,15 +30,14 @@ export const DELETE_ITEM_REQUEST = `${prefix}/DELETE_ITEM_REQUEST`;
 export const DELETE_ITEM_SUCCESS = `${prefix}/DELETE_ITEM_SUCCESS`;
 export const DELETE_ITEM_FAILURE = `${prefix}/DELETE_ITEM_FAILURE`;
 
-export const deleteItem = ({
-  id,
-  itemId,
-}: {
+export const deleteItem = (data: {
   id: string;
   itemId: string;
+  prices: NativePrices;
+  roe: number;
 }): CommonPromiseAction => ({
   types: [DELETE_ITEM_REQUEST, DELETE_ITEM_SUCCESS, DELETE_ITEM_FAILURE],
-  promise: (api: Api) => api.cart.deleteItem({ id, itemId }),
+  promise: (api: Api) => api.cart.deleteItem(data),
 });
 
 export const UPDATE_CART_ITEM_PERIOD_REQUEST = `${prefix}/UPDATE_CART_ITEM_PERIOD_REQUEST`;
