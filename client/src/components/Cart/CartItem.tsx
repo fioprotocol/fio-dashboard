@@ -90,7 +90,11 @@ const CartItem: React.FC<Props> = props => {
             </span>
 
             <span className={classes.descriptor}>
-              {getCartItemDescriptor(item.type, item.period)}
+              {getCartItemDescriptor({
+                type: item.type,
+                period: item.period,
+                hasCustomDomainInCart: item.hasCustomDomainInCart,
+              })}
             </span>
           </div>
           {shouldShowPeriod && (

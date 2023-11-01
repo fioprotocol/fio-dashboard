@@ -92,7 +92,7 @@ export const handleFioHandleCartItemsWithCustomDomain = ({
     item = {
       ...item,
       hasCustomDomainInCart: true,
-      costNativeFio: addressPrice,
+      costNativeFio: Number(addressPrice),
       costFio: fio,
       costUsdc: usdc,
     };

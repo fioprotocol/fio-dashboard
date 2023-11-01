@@ -135,7 +135,13 @@ const AddressDomainCart: React.FC<Props> = props => {
                     <p className={classes.itemName}>{item.domain}</p>
                   )}
                   <p className={classes.itemDescriptor}>
-                    <span>{getCartItemDescriptor(item.type, item.period)}</span>
+                    <span>
+                      {getCartItemDescriptor({
+                        type: item.type,
+                        period: item.period,
+                        hasCustomDomainInCart: item.hasCustomDomainInCart,
+                      })}
+                    </span>
                   </p>
                   <div className={classes.itemPrice}>
                     <span className="boldText">Cost: </span>

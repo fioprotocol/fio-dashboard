@@ -342,10 +342,11 @@ export const totalCost = (
     return { costFree: 'FREE' };
 
   const fioNativeTotal = cartItems
-    .filter(cartItem => cartItem.isFree)
-    .reduce<number>((acc, cartItem) => {
-      return new MathOp(acc).add(cartItem.costNativeFio).toNumber();
-    }, 0);
+    .filter(cartItem => !cartItem.isFree)
+    .reduce<number>(
+      (acc, cartItem) => new MathOp(acc).add(cartItem.costNativeFio).toNumber(),
+      0,
+    );
 
   const { fio, usdc } = convertFioPrices(fioNativeTotal, roe);
 
@@ -386,12 +387,21 @@ export const cartIsRelative = (
   return true;
 };
 
-export const getCartItemDescriptor = (
-  type: CartItemType,
-  period?: number,
-): string => {
+export const getCartItemDescriptor = ({
+  hasCustomDomainInCart,
+  type,
+  period,
+}: {
+  hasCustomDomainInCart?: boolean;
+  type: CartItemType;
+  period?: number;
+}): string => {
   let descriptor = CART_ITEM_DESCRIPTOR[type];
-  if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period) {
+  if (
+    CART_ITEM_TYPES_WITH_PERIOD.includes(type) &&
+    period &&
+    !hasCustomDomainInCart
+  ) {
     descriptor = `${descriptor} - ${period} year${period > 1 ? 's' : ''}`;
   }
   return descriptor;
