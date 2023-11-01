@@ -105,7 +105,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     setWaiting(true);
     for (const item of cartItems) {
       if (
-        (item.costNativeFio && item.domainType !== DOMAIN_TYPE.FREE) ||
+        (item.costNativeFio && item.domainType !== DOMAIN_TYPE.ALLOW_FREE) ||
         (hasFreeAddress && item.domainType !== DOMAIN_TYPE.PRIVATE)
       ) {
         setSubmitData({

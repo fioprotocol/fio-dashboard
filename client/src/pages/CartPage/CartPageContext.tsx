@@ -151,7 +151,7 @@ export const useContext = (): UseContextReturnType => {
       cartItems.length === 1 &&
       cartItems.every(
         item =>
-          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
           !!item.address,
       )) ||
       cartHasOnlyFreeItems(cartItems));

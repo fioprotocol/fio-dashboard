@@ -271,10 +271,10 @@ export const transformNonPremiumDomains = (
         !cartItems.filter(
           cartItem =>
             cartItem.domain === domain.name &&
-            cartItem.domainType === DOMAIN_TYPE.FREE,
+            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
         ).length
           ? DOMAIN_TYPE.PREMIUM
-          : DOMAIN_TYPE.FREE,
+          : DOMAIN_TYPE.ALLOW_FREE,
       rank: domain.rank || 0,
       allowFree: true,
     }));

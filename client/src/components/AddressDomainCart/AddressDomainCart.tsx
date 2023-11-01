@@ -154,7 +154,7 @@ const AddressDomainCart: React.FC<Props> = props => {
                       costUsdc={item.costUsdc}
                       isFree={
                         !Number.isFinite(item.costNativeFio) ||
-                        item.domainType === DOMAIN_TYPE.FREE ||
+                        item.domainType === DOMAIN_TYPE.ALLOW_FREE ||
                         item.domainType === DOMAIN_TYPE.PRIVATE
                       }
                     />

@@ -219,7 +219,7 @@ const handleSelectedDomain = ({
       return domainType;
     }
 
-    if (domainType === DOMAIN_TYPE.FREE) {
+    if (domainType === DOMAIN_TYPE.ALLOW_FREE) {
       if (
         hasFreeAddress ||
         (cartHasFreeItem &&
@@ -235,7 +235,7 @@ const handleSelectedDomain = ({
     if (domainType === DOMAIN_TYPE.PREMIUM) {
       if (isCustomDomainConvertedToPremium) return DOMAIN_TYPE.CUSTOM;
       if (!allowFree) return domainType;
-      if (!cartHasFreeItem && !hasFreeAddress) return DOMAIN_TYPE.FREE;
+      if (!cartHasFreeItem && !hasFreeAddress) return DOMAIN_TYPE.ALLOW_FREE;
       return domainType;
     }
   };
@@ -306,7 +306,7 @@ export const useContext = (): UseContextProps => {
   const [hasRawAbiLoaded, setIsRawAbiLoaded] = useState<boolean>(false);
 
   const cartHasFreeItem = cartItems.some(
-    cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
+    cartItem => cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
   const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
@@ -520,8 +520,8 @@ export const useContext = (): UseContextProps => {
         const rankCount = a.rank - b.rank;
         if (rankCount) return rankCount;
 
-        if (a.domainType === DOMAIN_TYPE.FREE) return -1;
-        if (b.domainType === DOMAIN_TYPE.FREE) return 1;
+        if (a.domainType === DOMAIN_TYPE.ALLOW_FREE) return -1;
+        if (b.domainType === DOMAIN_TYPE.ALLOW_FREE) return 1;
 
         if (a.domainType === DOMAIN_TYPE.PREMIUM) return -1;
         if (b.domainType === DOMAIN_TYPE.PREMIUM) return 1;

@@ -24,7 +24,7 @@ export const makeRegistrationOrder = (
       isFree:
         isFreeAllowed &&
         (!cartItem.costNativeFio ||
-          cartItem.domainType === DOMAIN_TYPE.FREE ||
+          cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE ||
           cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
         !!cartItem.address,
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
@@ -39,7 +39,7 @@ export const makeRegistrationOrder = (
 
     if (
       !cartItem.costNativeFio ||
-      cartItem.domainType === DOMAIN_TYPE.FREE ||
+      cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE ||
       cartItem.domainType === DOMAIN_TYPE.PRIVATE ||
       !cartItem.address
     ) {

@@ -41,7 +41,7 @@ export const OrderItem: React.FC<OrderItemDetailed> = props => {
       ? DOMAIN_TYPE.CUSTOM
       : fee_collected
       ? DOMAIN_TYPE.PREMIUM
-      : DOMAIN_TYPE.FREE,
+      : DOMAIN_TYPE.ALLOW_FREE,
   };
 
   return (

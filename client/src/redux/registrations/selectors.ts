@@ -39,7 +39,7 @@ export const domains = createSelector(
           isPremium: refDomain.isPremium,
           domainType: refDomain.isPremium
             ? DOMAIN_TYPE.PREMIUM
-            : DOMAIN_TYPE.FREE,
+            : DOMAIN_TYPE.ALLOW_FREE,
           allowFree: !refDomain.isPremium,
           rank: refDomain.rank,
         })),

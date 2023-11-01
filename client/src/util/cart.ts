@@ -40,7 +40,7 @@ export const setFreeCart = ({
       item.domainType !== DOMAIN_TYPE.PRIVATE,
   );
   if (recalcElem) {
-    recalcElem.domainType = DOMAIN_TYPE.FREE;
+    recalcElem.domainType = DOMAIN_TYPE.ALLOW_FREE;
 
     return cartItems.map(item => {
       delete item.showBadge;
@@ -94,7 +94,7 @@ export const removeFreeCart = ({
 
   return cartItems.map(item => {
     if (
-      (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+      (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
       item.domainType !== DOMAIN_TYPE.PRIVATE
     ) {
       item.costNativeFio = nativeFioAddressPrice;
@@ -124,7 +124,7 @@ export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
     !isEmpty(cartItems) &&
     cartItems.some(
       item =>
-        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
         !!item.address &&
         item.domainType !== DOMAIN_TYPE.PRIVATE,
     )
@@ -372,7 +372,7 @@ export const totalCost = (
     (cart.length === 1 &&
       cart.some(
         item =>
-          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
           !!item.address,
       )) ||
     cartHasOnlyFreeItems(cart)
@@ -386,7 +386,7 @@ export const totalCost = (
         .reduce<Record<string, number>>((acc, item) => {
           if (!acc.costNativeFio) acc.costNativeFio = 0;
           const nativeFio =
-            item.domainType === DOMAIN_TYPE.FREE
+            item.domainType === DOMAIN_TYPE.ALLOW_FREE
               ? 0
               : item.period > 1 &&
                 item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN

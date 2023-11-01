@@ -56,7 +56,8 @@ export const useContext = (
   const existingCartItem = cartItems.find(cartItem => cartItem.id === fchId);
 
   const existingFreeCartItem = cartItems.find(
-    cartItems => cartItems.domainType === DOMAIN_TYPE.FREE && !existingCartItem,
+    cartItems =>
+      cartItems.domainType === DOMAIN_TYPE.ALLOW_FREE && !existingCartItem,
   );
 
   const existingDomainInCartItem = cartItems.find(cartItem =>
@@ -141,7 +142,7 @@ export const useContext = (
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
   if (
-    (existingFreeCartItem && domainType === DOMAIN_TYPE.FREE) ||
+    (existingFreeCartItem && domainType === DOMAIN_TYPE.ALLOW_FREE) ||
     (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
   )
     domainType = DOMAIN_TYPE.PREMIUM;
