@@ -37,7 +37,6 @@ import {
 
 import {
   cartHasOnlyFreeItems,
-  cartItemsToOrderItems,
   handleFreeAddressCart,
   handlePriceForMultiYearItems,
   totalCost,
@@ -346,15 +345,13 @@ export const useContext = (): UseContextReturnType => {
   };
 
   const checkout = async (paymentProvider: PaymentProvider) => {
-    const { costUsdc: totalUsdc } = totalCost(cartItems, roe);
-
     try {
       await apis.orders.create({
-        total: totalUsdc,
+        cartId,
         roe,
         publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
         paymentProcessor: paymentProvider,
-        items: cartItemsToOrderItems(cartItems, prices, roe),
+        prices: prices.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
