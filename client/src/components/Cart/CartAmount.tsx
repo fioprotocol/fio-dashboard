@@ -4,8 +4,6 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import PaymentsBlock from './components/PaymentsBlock';
 import { PriceComponent } from '../PriceComponent';
 
-import { totalCost } from '../../util/cart';
-
 import { CartItem, FioWalletDoublet, PaymentProvider } from '../../types';
 
 import classes from './Cart.module.scss';
@@ -15,7 +13,8 @@ type Props = {
   isFree: boolean;
   paymentWalletPublicKey: string;
   hasLowBalance: boolean;
-  roe: number;
+  totalCartAmount: string;
+  totalCartUsdcAmount: string;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
@@ -31,7 +30,8 @@ const CartAmount: React.FC<Props> = props => {
     hasLowBalance,
     isFree,
     paymentWalletPublicKey,
-    roe,
+    totalCartAmount,
+    totalCartUsdcAmount,
     totalCartNativeAmount,
     userWallets,
     selectedPaymentProvider,
@@ -40,8 +40,6 @@ const CartAmount: React.FC<Props> = props => {
     showExpiredDomainWarningBadge,
     onPaymentChoose,
   } = props;
-
-  const { costFio, costUsdc } = totalCost(cartItems, roe);
 
   return (
     <CartSmallContainer isHintColor={true} hasBigMargin={true}>
@@ -52,8 +50,8 @@ const CartAmount: React.FC<Props> = props => {
         <div className={classes.cost}>
           Cost:{' '}
           <PriceComponent
-            costFio={costFio}
-            costUsdc={costUsdc}
+            costFio={totalCartAmount}
+            costUsdc={totalCartUsdcAmount}
             isFree={isFree}
           />
         </div>
@@ -67,7 +65,7 @@ const CartAmount: React.FC<Props> = props => {
           paymentWalletPublicKey={paymentWalletPublicKey}
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
-          totlaCartUsdcAmount={costUsdc}
+          totlaCartUsdcAmount={totalCartUsdcAmount}
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}

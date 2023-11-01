@@ -5,7 +5,6 @@ import isEmpty from 'lodash/isEmpty';
 
 import {
   deleteItem,
-  setCartItems,
   setWallet,
   recalculateOnPriceUpdate,
 } from '../../redux/cart/actions';
@@ -24,10 +23,7 @@ import {
   fioWallets as fioWalletsSelector,
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
-import {
-  isAuthenticated,
-  hasFreeAddress as hasFreeAddressSelector,
-} from '../../redux/profile/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -35,11 +31,7 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
-import {
-  cartHasOnlyFreeItems,
-  handlePriceForMultiYearItems,
-  totalCost,
-} from '../../util/cart';
+import { handlePriceForMultiYearItems, totalCost } from '../../util/cart';
 import MathOp from '../../util/math';
 import {
   fireAnalyticsEvent,
@@ -55,7 +47,6 @@ import {
   CART_ITEM_TYPE,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { log } from '../../util/general';
 import { isDomainExpired } from '../../util/fio';
@@ -63,7 +54,6 @@ import apis from '../../api';
 
 import { FioRegPricesResponse } from '../../api/responses';
 import {
-  CartItem as CartItemType,
   CartItem,
   DeleteCartItem,
   FioWalletDoublet,
@@ -89,19 +79,18 @@ type UseContextReturnType = {
   roe: number;
   showExpiredDomainWarningBadge: boolean;
   totalCartAmount: string;
+  totalCartUsdcAmount: string;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
   walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
   onPaymentChoose: (paymentProvider: PaymentProvider) => Promise<void>;
   deleteItem: (data: DeleteCartItem) => void;
-  setCartItems: (cartItems: CartItemType[]) => void;
 };
 
 export const useContext = (): UseContextReturnType => {
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const hasGetPricesError = useSelector(hasGetPricesErrorSelector);
   const isAuth = useSelector(isAuthenticated);
   const loading = useSelector(loadingSelector);
@@ -136,15 +125,7 @@ export const useContext = (): UseContextReturnType => {
   ] = useState<boolean>(false);
 
   const isFree =
-    !isEmpty(cartItems) &&
-    ((!hasFreeAddress &&
-      cartItems.length === 1 &&
-      cartItems.every(
-        item =>
-          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
-          !!item.address,
-      )) ||
-      cartHasOnlyFreeItems(cartItems));
+    cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree);
 
   const {
     costNativeFio: totalCartNativeAmount,
@@ -452,10 +433,11 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalance,
     walletCount,
     isFree,
+    isPriceChanged,
     selectedPaymentProvider,
     disabled: loading || isUpdatingPrices || !!selectedPaymentProvider,
     totalCartAmount,
-    isPriceChanged,
+    totalCartUsdcAmount,
     totalCartNativeAmount,
     userWallets,
     paymentWalletPublicKey,
@@ -473,7 +455,5 @@ export const useContext = (): UseContextReturnType => {
           roe,
         }),
       ),
-    setCartItems: (cartItems: CartItemType[]) =>
-      dispatch(setCartItems(cartItems)),
   };
 };
