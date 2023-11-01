@@ -465,7 +465,14 @@ export const useContext = (): UseContextReturnType => {
     showExpiredDomainWarningBadge,
     onPaymentChoose,
     deleteItem: (data: DeleteCartItem) =>
-      dispatch(deleteItem({ id: cartId, itemId: data.id })),
+      dispatch(
+        deleteItem({
+          id: cartId,
+          itemId: data.id,
+          prices: prices.nativeFio,
+          roe,
+        }),
+      ),
     setCartItems: (cartItems: CartItemType[]) =>
       dispatch(setCartItems(cartItems)),
   };

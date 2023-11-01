@@ -19,8 +19,13 @@ export default class Cart extends Base {
   clearCart(id: string): Promise<any> {
     return this.apiClient.delete('cart-clear-cart', { id });
   }
-  deleteItem({ id, itemId }: { id: string; itemId: string }): Promise<any> {
-    return this.apiClient.patch('cart-delete-item', { id, itemId });
+  deleteItem(data: {
+    id: string;
+    itemId: string;
+    prices: NativePrices;
+    roe: number;
+  }): Promise<any> {
+    return this.apiClient.patch('cart-delete-item', data);
   }
   getCart(id: string): Promise<any> {
     return this.apiClient.get('cart', { id });

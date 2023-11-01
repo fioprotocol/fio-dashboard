@@ -60,6 +60,7 @@ export type CartItem = {
   costUsdc?: string;
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
+  hasCustomDomainInCart?: boolean;
   period?: number;
   allowFree?: boolean;
   showBadge?: boolean;

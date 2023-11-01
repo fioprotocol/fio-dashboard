@@ -151,9 +151,7 @@ const handleFCHItems = async ({
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
           nativeFioAddressPrice,
-          domainType: existingCustomDomainFchCartItem
-            ? DOMAIN_TYPE.PREMIUM
-            : domainType,
+          domainType,
           isFree:
             domainType === DOMAIN_TYPE.ALLOW_FREE &&
             !hasFreeAddress &&
@@ -163,10 +161,13 @@ const handleFCHItems = async ({
             isAddressExist ||
             (swapAddressAndDomainPlaces && isUsernameOnCustomDomainExist),
           period: 1,
-          type: isCustomDomain
-            ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-            : CART_ITEM_TYPE.ADDRESS,
-          // hasCustomDomain: domainType === DOMAIN_TYPE.CUSTOM,
+          type:
+            domainType === DOMAIN_TYPE.CUSTOM
+              ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+              : CART_ITEM_TYPE.ADDRESS,
+          hasCustomDomainInCart:
+            domainType === DOMAIN_TYPE.CUSTOM &&
+            !!existingCustomDomainFchCartItem,
           rank,
           swapAddressAndDomainPlaces,
         };
@@ -206,16 +207,16 @@ const handleSelectedDomain = ({
 
   const existingCustomDomainFchCartItem = cartItems.find(
     cartItem =>
-      // fchItem.hasCustomDomain &&
+      fchItem.domainType === DOMAIN_TYPE.CUSTOM &&
       (cartItem.type === CART_ITEM_TYPE.DOMAIN ||
         cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) &&
       fchItem.domain === cartItem.domain &&
       !!cartItem.address &&
-      fchItem.id !== cartItem.id,
+      fchItem.id !== cartItem.id &&
+      !cartItem.hasCustomDomainInCart,
   );
 
-  const { domainType } = fchItem;
-  // const isCustomDomainConvertedToPremium = !existingCustomDomainFchCartItem;
+  const { domainType, type } = fchItem;
   const isCustomDomain =
     domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
   const isFree =
@@ -224,24 +225,11 @@ const handleSelectedDomain = ({
       !hasFreeAddress &&
       !cartHasFreeItem);
 
-  // const handleDomainType = () => {
-  //   if (domainType === DOMAIN_TYPE.CUSTOM) {
-  //     if (existingCustomDomainFchCartItem && !existingCartItem)
-  //       return DOMAIN_TYPE.PREMIUM;
-  //     return domainType;
-  //   }
-
-  //   if (domainType === DOMAIN_TYPE.PREMIUM) {
-  //     if (isCustomDomainConvertedToPremium) return DOMAIN_TYPE.CUSTOM;
-  //     return domainType;
-  //   }
-  // };
-
   const totalNativeFio =
-    // isCustomDomainConvertedToPremium ||
-    domainType === DOMAIN_TYPE.CUSTOM ||
+    isCustomDomain ||
     (existingCartItem &&
-      existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN)
+      existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      !existingCartItem.hasCustomDomainInCart)
       ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
       : nativeFioAddressPrice;
 
@@ -249,18 +237,19 @@ const handleSelectedDomain = ({
 
   return {
     ...fchItem,
-    costNativeFio: totalNativeFio,
-    costFio: fio,
-    costUsdc: usdc,
+    costNativeFio: existingCartItem?.costNativeFio || totalNativeFio,
+    costFio: existingCartItem?.costFio || fio,
+    costUsdc: existingCartItem?.costUsdc || usdc,
+    hasCustomDomainInCart:
+      existingCartItem?.hasCustomDomainInCart ||
+      (domainType === DOMAIN_TYPE.CUSTOM && !!existingCustomDomainFchCartItem),
     period: existingDomainInCartItem
       ? existingDomainInCartItem.period
       : fchItem.period,
     isSelected: !!existingCartItem,
     isFree,
     domainType,
-    type: isCustomDomain
-      ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-      : CART_ITEM_TYPE.ADDRESS,
+    type,
   };
 };
 

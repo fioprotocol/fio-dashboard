@@ -69,6 +69,70 @@ export const handleFioHandleOnExistingCustomDomain = ({
   return [...cartItems, newItem];
 };
 
+export const handleFioHandleCartItemsWithCustomDomain = ({
+  cartItems,
+  item,
+  prices,
+  roe,
+}) => {
+  const { id, domain, period } = item;
+  const { address: addressPrice } = prices;
+
+  const existingFioHandleOnCustomDomain = cartItems.find(
+    cartItem =>
+      cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      cartItem.domain === domain &&
+      !cartItem.hasCustomDomainInCart &&
+      cartItem.id !== id,
+  );
+
+  if (existingFioHandleOnCustomDomain) {
+    const { fio, usdc } = convertFioPrices(addressPrice, roe);
+
+    item = {
+      ...item,
+      hasCustomDomainInCart: true,
+      costNativeFio: addressPrice,
+      costFio: fio,
+      costUsdc: usdc,
+    };
+    return cartItems.map(cartItem => (cartItem.id === item.id ? item : cartItem));
+  }
+
+  const existingFioHandleOnCustomDomainInCart = cartItems.find(
+    cartItem =>
+      cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      cartItem.domain === domain &&
+      cartItem.hasCustomDomainInCart &&
+      cartItem.id !== id,
+  );
+
+  if (existingFioHandleOnCustomDomainInCart)
+    return cartItems.map(cartItem => {
+      if (cartItem.id === existingFioHandleOnCustomDomainInCart.id) {
+        const nativeFioAmount = handlePriceForMultiYearItems({
+          includeAddress: true,
+          prices,
+          period,
+        });
+        const { fio, usdc } = convertFioPrices(nativeFioAmount, roe);
+
+        return {
+          ...cartItem,
+          hasCustomDomainInCart: false,
+          costNativeFio: nativeFioAmount,
+          costFio: fio,
+          costUsdc: usdc,
+          period,
+        };
+      }
+
+      return cartItem;
+    });
+
+  return cartItems;
+};
+
 export const cartHasFreeItemsOnDashboardDomains = ({ cartItems, dashboardDomains }) => {
   return (
     cartItems &&
@@ -122,9 +186,9 @@ export const handleFreeCartDeleteItem = ({
   existingItem,
   userHasFreeAddress,
 }) => {
-  const { id, domainType, isFree, type } = existingItem;
+  const { domainType, isFree, type } = existingItem;
 
-  const deletedCartItems = cartItems.filter(cartItem => cartItem.id !== id);
+  let handledCartItems = [...cartItems];
 
   if (
     isFree &&
@@ -154,13 +218,13 @@ export const handleFreeCartDeleteItem = ({
     });
 
     if (allowedFreeItem) {
-      return deletedCartItems.map(cartItem =>
+      return (handledCartItems = handledCartItems.map(cartItem =>
         cartItem.id === allowedFreeItem.id ? { ...cartItem, isFree: true } : cartItem,
-      );
+      ));
     }
   }
 
-  return deletedCartItems;
+  return handledCartItems;
 };
 
 export const handleUsersFreeCartItems = ({
@@ -268,19 +332,23 @@ export const cartItemsToOrderItems = ({ cartItems, prices, roe }) => {
   const orderItems = [];
 
   for (const cartItem of cartItems) {
-    const { address, domain, id, isFree, period, type } = cartItem;
+    const { address, domain, id, isFree, hasCustomDomainInCart, period, type } = cartItem;
 
     if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-      const domainItem = {
-        action: FIO_ACTIONS.registerFioDomain,
-        domain,
-        nativeFio: fioDomainPrice.toString(),
-        price: convertFioPrices(fioDomainPrice, roe).usdc,
-        priceCurrency: CURRENCY_CODES.USDC,
-        data: {
-          cartItemId: id,
-        },
-      };
+      let domainItem = null;
+
+      if (!hasCustomDomainInCart) {
+        domainItem = {
+          action: FIO_ACTIONS.registerFioDomain,
+          domain,
+          nativeFio: fioDomainPrice.toString(),
+          price: convertFioPrices(fioDomainPrice, roe).usdc,
+          priceCurrency: CURRENCY_CODES.USDC,
+          data: {
+            cartItemId: id,
+          },
+        };
+      }
       const fioHandleItem = {
         action: FIO_ACTIONS.registerFioAddress,
         address,
@@ -293,7 +361,7 @@ export const cartItemsToOrderItems = ({ cartItems, prices, roe }) => {
         },
       };
 
-      orderItems.push(domainItem);
+      domainItem && orderItems.push(domainItem);
       orderItems.push(fioHandleItem);
       for (let i = 1; i < period; i++) {
         orderItems.push({

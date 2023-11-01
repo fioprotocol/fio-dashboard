@@ -56,6 +56,7 @@ export const SuggestedItemsList: React.FC<Props> = props => {
               <DomainTypeBadge
                 domainType={listItem.domainType}
                 isFree={listItem.isFree}
+                hasCustomDomainInCart={listItem.hasCustomDomainInCart}
               />
             }
             onClick={onClick}

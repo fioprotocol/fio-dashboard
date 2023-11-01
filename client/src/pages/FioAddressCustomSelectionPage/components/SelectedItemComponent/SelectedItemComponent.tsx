@@ -39,6 +39,7 @@ export const SelectedItemComponent: React.FC<SelectedItemComponentProps> = props
           <DomainTypeBadge
             domainType={selectedItemProps.domainType}
             isFree={selectedItemProps.isFree}
+            hasCustomDomainInCart={selectedItemProps.hasCustomDomainInCart}
           />
         }
       />
