@@ -57,6 +57,7 @@ const CartItem: React.FC<Props> = props => {
     costUsdc,
     costNativeFio,
     hasCustomDomainInCart,
+    isFree,
     showBadge,
     period,
     type,
@@ -113,6 +114,7 @@ const CartItem: React.FC<Props> = props => {
               costUsdc={costUsdc}
               costNativeFio={costNativeFio}
               domainType={domainType}
+              isFree={isFree}
             />
           </div>
           {onDelete && (

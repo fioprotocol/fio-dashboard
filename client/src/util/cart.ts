@@ -330,7 +330,7 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   cart.length && cart.every(item => item.isFree);
 
 export const totalCost = (
-  cart: CartItem[],
+  cartItems: CartItem[],
   roe: number,
 ): {
   costNativeFio?: number;
@@ -338,49 +338,21 @@ export const totalCost = (
   costFio?: string;
   costUsdc?: string;
 } => {
-  if (
-    (cart.length === 1 &&
-      cart.some(
-        item =>
-          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.ALLOW_FREE) &&
-          !!item.address,
-      )) ||
-    cartHasOnlyFreeItems(cart)
-  )
+  if (cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree))
     return { costFree: 'FREE' };
 
-  const cost = isEmpty(cart)
-    ? { costNativeFio: 0 }
-    : cart
-        .filter(item => item.costNativeFio)
-        .reduce<Record<string, number>>((acc, item) => {
-          if (!acc.costNativeFio) acc.costNativeFio = 0;
-          const nativeFio =
-            item.domainType === DOMAIN_TYPE.ALLOW_FREE
-              ? 0
-              : item.period > 1 &&
-                item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-              ? handlePriceForMultiYearFchWithCustomDomain({
-                  costNativeFio: item.costNativeFio || 0,
-                  nativeFioAddressPrice: item.nativeFioAddressPrice,
-                  period: item.period || 1,
-                })
-              : new MathOp(item.costNativeFio || 0)
-                  .mul(item.period || 1)
-                  .toNumber();
-          return {
-            costNativeFio: new MathOp(acc.costNativeFio)
-              .add(nativeFio)
-              .toNumber(),
-          };
-        }, {});
+  const fioNativeTotal = cartItems
+    .filter(cartItem => cartItem.isFree)
+    .reduce<number>((acc, cartItem) => {
+      return new MathOp(acc).add(cartItem.costNativeFio).toNumber();
+    }, 0);
 
-  const fioPrices = convertFioPrices(cost.costNativeFio, roe);
+  const { fio, usdc } = convertFioPrices(fioNativeTotal, roe);
 
   return {
-    costNativeFio: cost.costNativeFio || 0,
-    costFio: fioPrices.fio || '0',
-    costUsdc: fioPrices.usdc || '0',
+    costNativeFio: fioNativeTotal,
+    costFio: fio,
+    costUsdc: usdc,
   };
 };
 
