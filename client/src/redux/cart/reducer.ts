@@ -44,6 +44,12 @@ export default combineReducers({
         }
         return state;
       }
+      case actions.GET_CART_REQUEST_SUCCESS: {
+        if (action.data.items?.length === 0) {
+          return null;
+        }
+        return state;
+      }
       default:
         return state;
     }

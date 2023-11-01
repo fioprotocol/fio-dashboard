@@ -37,7 +37,6 @@ import {
 
 import {
   cartHasOnlyFreeItems,
-  handleFreeAddressCart,
   handlePriceForMultiYearItems,
   totalCost,
 } from '../../util/cart';
@@ -135,15 +134,6 @@ export const useContext = (): UseContextReturnType => {
     showExpiredDomainWarningBadge,
     toggleShowExpiredDomainWarningBadge,
   ] = useState<boolean>(false);
-
-  const handleFreeAddressCartFn = () =>
-    handleFreeAddressCart({
-      cartItems,
-      hasFreeAddress,
-      prices,
-      roe,
-      setCartItems: cartItems => dispatch(setCartItems(cartItems)),
-    });
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -448,14 +438,6 @@ export const useContext = (): UseContextReturnType => {
     if (highestBalanceWalletPubKey)
       dispatch(setWallet(highestBalanceWalletPubKey));
   }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
-
-  useEffectOnce(
-    () => {
-      if (isAuth) handleFreeAddressCartFn();
-    },
-    [isAuth],
-    !loading,
-  );
 
   useEffect(() => {
     if (!isAuth) {

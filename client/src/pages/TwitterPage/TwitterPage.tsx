@@ -336,9 +336,9 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         costUsdc: '0',
         costNativeFio: 0,
         domainType: DOMAIN_TYPE.PRIVATE,
+        isFree: true,
         period: 1,
         type: CART_ITEM_TYPE.ADDRESS,
-        allowFree: true,
       };
       dispatch(addItemToCart({ id: cartId, item: cartItem }));
 

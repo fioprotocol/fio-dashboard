@@ -21,6 +21,5 @@ export type DomainsArrItemType = {
   rank?: number;
   name: string;
   domainType: DomainItemType;
-  allowFree?: boolean;
   swapAddressAndDomainPlaces?: boolean;
 }[];

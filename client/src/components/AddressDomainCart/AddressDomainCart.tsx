@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
@@ -12,14 +12,9 @@ import { PriceComponent } from '../PriceComponent';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
-import {
-  cartHasOnlyFreeItems,
-  handleFreeAddressCart,
-  getCartItemDescriptor,
-} from '../../util/cart';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import { cartHasOnlyFreeItems, getCartItemDescriptor } from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
@@ -27,10 +22,8 @@ import {
 
 import {
   CartItem,
-  Domain,
   FioWalletDoublet,
   LastAuthData,
-  Prices,
   RedirectLinkData,
 } from '../../types';
 
@@ -39,14 +32,10 @@ import classes from './AddressDomainCart.module.scss';
 type Props = {
   cartId: string;
   cartItems: CartItem[];
-  domains: Domain[];
   fioWallets: FioWalletDoublet[];
-  prices: Prices;
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
-  roe: number | null;
   lastAuthData: LastAuthData;
-  setCartItems: (cartItems: CartItem[]) => void;
   deleteItem: (data: { id: string; itemId: string }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
@@ -57,21 +46,16 @@ const AddressDomainCart: React.FC<Props> = props => {
     cartId,
     cartItems,
     deleteItem,
-    domains,
-    prices,
-    setCartItems,
     hasFreeAddress,
     isAuthenticated,
     setRedirectPath,
     showLoginModal,
-    roe,
     lastAuthData,
   } = props;
   const count = cartItems.length;
-  const domainsAmount = domains.length;
+
   const isCartEmpty = count === 0;
-  const cartHasFreeAddress = !!cartItems.find(({ allowFree }) => allowFree);
-  const cartItemsJson = JSON.stringify(cartItems);
+  const cartHasFreeAddress = !!cartItems.every(({ isFree }) => isFree);
 
   const history = useHistory();
 
@@ -105,17 +89,6 @@ const AddressDomainCart: React.FC<Props> = props => {
       itemId,
     });
   };
-
-  useEffect(() => {
-    if (domainsAmount === 0 && hasFreeAddress === null) return;
-    handleFreeAddressCart({
-      cartItems: JSON.parse(cartItemsJson),
-      prices,
-      hasFreeAddress,
-      setCartItems,
-      roe,
-    });
-  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, setCartItems, roe]);
 
   return (
     <CartSmallContainer isAquaColor={true}>
@@ -152,11 +125,7 @@ const AddressDomainCart: React.FC<Props> = props => {
                     <PriceComponent
                       costFio={item.costFio}
                       costUsdc={item.costUsdc}
-                      isFree={
-                        !Number.isFinite(item.costNativeFio) ||
-                        item.domainType === DOMAIN_TYPE.ALLOW_FREE ||
-                        item.domainType === DOMAIN_TYPE.PRIVATE
-                      }
+                      isFree={item.isFree}
                     />
                   </div>
                 </div>

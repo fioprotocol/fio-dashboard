@@ -119,7 +119,6 @@ export const useContext = (): UseContextProps => {
     (selectedItem: CartItem) => {
       const newItem = {
         ...selectedItem,
-        allowFree: selectedItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
         type:
           selectedItem.domainType === DOMAIN_TYPE.CUSTOM
             ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN

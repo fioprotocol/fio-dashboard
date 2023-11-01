@@ -22,7 +22,6 @@ export default class AddItem extends Base {
         {
           nested_object: {
             address: ['string'],
-            allowFree: ['boolean'],
             costFio: ['required', 'string'],
             costNativeFio: ['required', 'string'],
             costUsdc: ['required', 'string'],
@@ -46,14 +45,16 @@ export default class AddItem extends Base {
         },
       ],
       roe: ['string'],
+      userId: ['string'],
     };
   }
 
-  async execute({ id, item, prices, roe }) {
+  async execute({ id, item, prices, roe, userId: reqUserId }) {
     try {
       const { domain } = item;
 
-      const userId = this.context.id || null;
+      const userId = this.context.id || reqUserId || null;
+
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();

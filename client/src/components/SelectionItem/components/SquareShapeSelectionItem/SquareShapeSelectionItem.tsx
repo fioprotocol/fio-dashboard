@@ -27,6 +27,7 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
     disabled,
     domain,
     domainType,
+    isFree,
   } = props;
 
   return (
@@ -41,6 +42,7 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
           costUsdc={costUsdc}
           costFio={costFio}
           domainType={domainType}
+          isFree={isFree}
           hasSmallFontSize
         />
       </div>

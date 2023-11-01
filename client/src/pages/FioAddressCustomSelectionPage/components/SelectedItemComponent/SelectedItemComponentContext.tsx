@@ -55,9 +55,9 @@ export const useContext = (
 
   const existingCartItem = cartItems.find(cartItem => cartItem.id === fchId);
 
-  const existingFreeCartItem = cartItems.find(
-    cartItems =>
-      cartItems.domainType === DOMAIN_TYPE.ALLOW_FREE && !existingCartItem,
+  const cartHasFreeItem = cartItems.some(
+    cartItem =>
+      cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
   const existingDomainInCartItem = cartItems.find(cartItem =>
@@ -96,11 +96,7 @@ export const useContext = (
   };
 
   const nonPremiumDomains = allDomains.dashboardDomains
-    ? transformNonPremiumDomains(
-        allDomains.dashboardDomains,
-        hasFreeAddress,
-        cartItems,
-      )
+    ? transformNonPremiumDomains(allDomains.dashboardDomains)
     : [];
   const premiumDomains = allDomains.dashboardDomains
     ? transformPremiumDomains(allDomains.dashboardDomains)
@@ -109,11 +105,7 @@ export const useContext = (
     ? transformCustomDomains(allDomains.usernamesOnCustomDomains)
     : [];
   const allNonPremiumRefProfileDomains = allDomains.allRefProfileDomains
-    ? transformNonPremiumDomains(
-        allDomains.allRefProfileDomains,
-        hasFreeAddress,
-        cartItems,
-      )
+    ? transformNonPremiumDomains(allDomains.allRefProfileDomains)
     : [];
   const allPremiumRefProfileDomains = allDomains.allRefProfileDomains
     ? transformPremiumDomains(allDomains.allRefProfileDomains)
@@ -141,10 +133,7 @@ export const useContext = (
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
-  if (
-    (existingFreeCartItem && domainType === DOMAIN_TYPE.ALLOW_FREE) ||
-    (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
-  )
+  if (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
     domainType = DOMAIN_TYPE.PREMIUM;
 
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
@@ -162,6 +151,11 @@ export const useContext = (
     costFio: fio,
     costUsdc: usdc,
     costNativeFio: totalNativeFio,
+    isFree:
+      existingCartItem?.isFree ||
+      (domainType === DOMAIN_TYPE.ALLOW_FREE &&
+        !hasFreeAddress &&
+        !cartHasFreeItem),
     nativeFioAddressPrice,
     domainType,
     period: existingDomainInCartItem ? existingDomainInCartItem.period : 1,
@@ -169,7 +163,7 @@ export const useContext = (
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
     isSelected: !!existingCartItem,
-    hasCustomDomain: isCustomDomain,
+    // hasCustomDomain: isCustomDomain,
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;

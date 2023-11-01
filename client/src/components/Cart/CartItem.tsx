@@ -32,16 +32,17 @@ export type CartItemProps = {
   costUsdc: string;
   costNativeFio?: number;
   domainType?: DomainItemType;
+  isFree?: boolean;
 };
 
 export const CartItemPrice = (props: CartItemProps) => {
-  const { costFio, costUsdc, costNativeFio, domainType } = props;
+  const { costFio, costUsdc, domainType, isFree } = props;
 
   return (
     <PriceComponent
       costFio={costFio}
       costUsdc={costUsdc}
-      isFree={!costNativeFio || domainType === DOMAIN_TYPE.ALLOW_FREE}
+      isFree={isFree && domainType === DOMAIN_TYPE.ALLOW_FREE}
     />
   );
 };
