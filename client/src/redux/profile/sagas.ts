@@ -160,6 +160,7 @@ export function* nonceSuccess(): Generator {
   yield takeEvery(NONCE_SUCCESS, function*(action: Action) {
     const {
       email,
+      edgeWallets,
       signature,
       nonce,
       otpKey,
@@ -172,6 +173,7 @@ export function* nonceSuccess(): Generator {
     yield put<Action>(
       login({
         email,
+        edgeWallets,
         signature,
         challenge: nonce,
         timeZone,

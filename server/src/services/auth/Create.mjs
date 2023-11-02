@@ -13,21 +13,27 @@ const EXPIRATION_TIME = DAY_MS; // 1 day
 export default class AuthCreate extends Base {
   static get validationRules() {
     return {
-      data: [
+      email: ['required', 'trim', 'email', 'to_lc'],
+      signature: ['string'],
+      challenge: ['string'],
+      timeZone: ['string'],
+      edgeWallets: [
         'required',
         {
-          nested_object: {
-            email: ['required', 'trim', 'email', 'to_lc'],
-            signature: ['string'],
-            challenge: ['string'],
-            timeZone: ['string'],
-          },
+          list_of_objects: [
+            {
+              edgeId: ['string'],
+              name: ['string'],
+              publicKey: ['string'],
+              from: ['string'],
+            },
+          ],
         },
       ],
     };
   }
 
-  async execute({ data: { email, signature, challenge, timeZone } }) {
+  async execute({ email, edgeWallets, signature, challenge, timeZone }) {
     const user = await User.findOneWhere({
       email,
       status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED },
@@ -44,9 +50,19 @@ export default class AuthCreate extends Base {
 
     const wallets = await Wallet.list({ userId: user.id });
     let verified = false;
-    for (const wallet of wallets) {
-      verified = User.verify(challenge, wallet.publicKey, signature);
-      if (verified) break;
+
+    if (!wallets.length && edgeWallets) {
+      for (const edgeWallet of edgeWallets) {
+        const newWallet = new Wallet({ ...edgeWallet, userId: user.id });
+        await newWallet.save();
+        verified = User.verify(challenge, edgeWallet.publicKey, signature);
+        if (verified) break;
+      }
+    } else {
+      for (const wallet of wallets) {
+        verified = User.verify(challenge, wallet.publicKey, signature);
+        if (verified) break;
+      }
     }
 
     if (!verified) {

@@ -143,6 +143,7 @@ router.post(
   checkAuth,
   routes.account.importValidateWallet,
 );
+router.post('/account/add-missing-wallet', routes.account.addMissingWallet);
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 
