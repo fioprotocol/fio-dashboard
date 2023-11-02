@@ -62,7 +62,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
 
     const registrations = makeRegistrationOrder(
       [...cartItems],
-      prices.nativeFio,
+      prices?.nativeFio,
       isFreeAllowed,
     );
     if (keys.private) {

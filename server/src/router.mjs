@@ -211,6 +211,7 @@ router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
 router.post('/cart-add-item', routes.cart.addItem);
 router.delete('/cart-clear-cart', routes.cart.clearCart);
+router.post('/cart-create-from-order', checkAuth, routes.cart.createCartFromOrder);
 router.patch('/cart-delete-item', routes.cart.deleteItem);
 router.get('/cart', routes.cart.getCart);
 router.patch('/cart-handle-free-items', routes.cart.handleUsersFreeCartItems);

@@ -28,10 +28,11 @@ export default class DeleteItem extends Base {
         },
       ],
       roe: ['string'],
+      userId: ['string'],
     };
   }
 
-  async execute({ id, itemId, prices, roe }) {
+  async execute({ id, itemId, prices, roe, userId }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -44,7 +45,6 @@ export default class DeleteItem extends Base {
         });
       }
 
-      const userId = this.context.id || null;
       const dashboardDomains = await Domain.getDashboardDomains();
 
       const userHasFreeAddress =

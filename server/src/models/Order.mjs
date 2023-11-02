@@ -728,6 +728,7 @@ export class Order extends Base {
                 `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
               ]
             : FIO_ACTIONS_LABEL[action],
+          originalAction: action,
           address,
           domain,
           fee_collected: isFree ? null : feeCollected,

@@ -20,6 +20,7 @@ import {
 import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
+  userId as userIdSelector,
 } from '../../redux/profile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
@@ -263,6 +264,7 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -337,7 +339,7 @@ export const useContext = (): UseContextProps => {
   const usersItemsListJSON = JSON.stringify(usersItemsList);
 
   useEffect(() => {
-    dispatch(loadProfile());
+    dispatch(loadProfile({}));
   }, [dispatch]);
 
   const validateAddress = useCallback(
@@ -547,12 +549,13 @@ export const useContext = (): UseContextProps => {
         addItemToCart({
           id: cartId,
           item: selectedItem,
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           roe,
+          userId,
         }),
       );
     },
-    [cartId, dispatch, prices.nativeFio, roe],
+    [cartId, dispatch, prices?.nativeFio, roe, userId],
   );
 
   const getFioRawAbis = useCallback(async () => {

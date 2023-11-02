@@ -1,10 +1,12 @@
 import MathOp from 'big.js';
 
-import { CART_ITEM_TYPE, FIO_ACTIONS } from '../config/constants';
+import { CART_ITEM_TYPE, FIO_ACTIONS, ORDER_ERROR_TYPES } from '../config/constants';
 
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
 import { CURRENCY_CODES } from '../constants/fio.mjs';
+
+const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = fioApi.sufToAmount(nativeFio || 0);
@@ -447,4 +449,110 @@ export const cartItemsToOrderItems = ({ cartItems, prices, roe }) => {
   }
 
   return orderItems;
+};
+
+export const createCartFromOrder = ({ orderItems, prices, roe }) => {
+  let cartItems = [];
+
+  const {
+    address: addressPrice,
+    addBundles: addBundlesPrice,
+    domain: domainPrice,
+    renewDomain: renewDomainPrice,
+  } = prices;
+
+  for (const orderItem of orderItems) {
+    const {
+      address,
+      domain,
+      error,
+      errorType,
+      id,
+      isFree,
+      originalAction,
+      period,
+      type,
+    } = orderItem;
+
+    if (
+      error.includes(ALREADY_REGISTERED_ERROR_TEXT) &&
+      errorType === ORDER_ERROR_TYPES.userHasFreeAddress
+    ) {
+      continue;
+    }
+
+    const existingMultipleYearItem = cartItems.find(
+      cartItem => cartItem.orderItemId === id,
+    );
+
+    if (existingMultipleYearItem) {
+      cartItems = cartItems.map(cartItem => {
+        if (cartItem.id === existingMultipleYearItem.id) {
+          const nativeFioAmount = handlePriceForMultiYearItems({
+            includeAddress: !!address,
+            prices,
+            period,
+          });
+          const { fio, usdc } = convertFioPrices(nativeFioAmount, roe);
+          return {
+            ...cartItem,
+            period: cartItem.period++,
+            costNativeFio: nativeFioAmount,
+            costFio: fio,
+            costUsdc: usdc,
+          };
+        }
+        return cartItem;
+      });
+      continue;
+    }
+
+    let cartItemId = null;
+    let costNativeFio = null;
+    let domainType = null;
+
+    const fioName = fioApi.setFioName(address, domain);
+    switch (originalAction) {
+      case FIO_ACTIONS.addBundledTransactions:
+        cartItemId = `${fioName}-${FIO_ACTIONS.addBundledTransactions}-${+new Date()}`;
+        costNativeFio = addBundlesPrice;
+        break;
+      case FIO_ACTIONS.registerFioAddress:
+        cartItemId = fioName;
+        costNativeFio = addressPrice;
+        domainType = isFree ? DOMAIN_TYPE.ALLOW_FREE : DOMAIN_TYPE.PREMIUM;
+        break;
+      case FIO_ACTIONS.registerFioDomain:
+        cartItemId = fioName;
+        costNativeFio = domainPrice;
+        break;
+      case FIO_ACTIONS.renewFioDomain:
+        cartItemId = `${fioName}-${FIO_ACTIONS.renewFioDomain}-${+new Date()}`;
+        costNativeFio = renewDomainPrice;
+        break;
+      default:
+        null;
+    }
+
+    const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+
+    cartItems.push({
+      address,
+      domain,
+      domainType,
+      costFio: fio,
+      costNativeFio,
+      costUsdc: usdc,
+      id: cartItemId,
+      isFree,
+      orderItemId: id,
+      period: 1,
+      type,
+    });
+  }
+
+  return cartItems.map(cartItem => {
+    delete cartItem.orderItemId;
+    return cartItem;
+  });
 };

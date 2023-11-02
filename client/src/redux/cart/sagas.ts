@@ -24,7 +24,7 @@ import { ContainedFlowQueryParams } from '../../types';
 
 export function* cartWasCleared(): Generator {
   yield takeEvery(CLEAR_CART_SUCCESS, function*(action: Action) {
-    const { data: isNotify } = action;
+    const { isNotify } = action;
     const isContainedFlow: boolean = yield select(getIsContainedFlow);
     const containedFlowQueryParams: ContainedFlowQueryParams = yield select(
       getContainedFlowQueryParams,

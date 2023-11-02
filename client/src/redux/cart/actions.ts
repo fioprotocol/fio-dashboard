@@ -5,25 +5,20 @@ import { Api } from '../../api';
 export const prefix = 'cart';
 
 export const SET_CART_ITEMS = `${prefix}/SET_CART_ITEMS`;
-export const SET_OLD_CART = `${prefix}/SET_OLD_CART`;
 
 export const ADD_ITEM_REQUEST = `${prefix}/ADD_ITEM_REQUEST`;
 export const ADD_ITEM_SUCCESS = `${prefix}/ADD_ITEM_SUCCESS`;
 export const ADD_ITEM_FAILURE = `${prefix}/ADD_ITEM_FAILURE`;
 
-export const addItem = ({
-  id,
-  item,
-  prices,
-  roe,
-}: {
+export const addItem = (data: {
   id?: string;
   item: CartItem;
   prices?: NativePrices;
   roe?: number;
+  userId?: string;
 }): CommonPromiseAction => ({
   types: [ADD_ITEM_REQUEST, ADD_ITEM_SUCCESS, ADD_ITEM_FAILURE],
-  promise: (api: Api) => api.cart.addItem({ id, item, prices, roe }),
+  promise: (api: Api) => api.cart.addItem(data),
 });
 
 export const DELETE_ITEM_REQUEST = `${prefix}/DELETE_ITEM_REQUEST`;
@@ -35,6 +30,7 @@ export const deleteItem = (data: {
   itemId: string;
   prices: NativePrices;
   roe: number;
+  userId?: string;
 }): CommonPromiseAction => ({
   types: [DELETE_ITEM_REQUEST, DELETE_ITEM_SUCCESS, DELETE_ITEM_FAILURE],
   promise: (api: Api) => api.cart.deleteItem(data),
@@ -92,12 +88,21 @@ export const recalculateOnPriceUpdate = (data: {
   promise: (api: Api) => api.cart.recalculateOnPriceUpdate(data),
 });
 
-export const addToOldCart = (
-  orderId: string,
-  cart: CartItem[],
-): CommonAction => ({
-  type: SET_OLD_CART,
-  data: { orderId, cart },
+export const CREATE_CART_FROM_ORDER_REQUEST = `${prefix}/CREATE_CART_FROM_ORDER_REQUEST`;
+export const CREATE_CART_FROM_ORDER_SUCCESS = `${prefix}/CREATE_CART_FROM_ORDER_SUCCESS`;
+export const CREATE_CART_FROM_ORDER_FAILURE = `${prefix}/CREATE_CART_FROM_ORDER_FAILURE`;
+
+export const createCartFromOrder = ({
+  orderId,
+}: {
+  orderId: string;
+}): CommonPromiseAction => ({
+  types: [
+    CREATE_CART_FROM_ORDER_REQUEST,
+    CREATE_CART_FROM_ORDER_SUCCESS,
+    CREATE_CART_FROM_ORDER_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.createCartFromOrder(orderId),
 });
 
 export const CLEAR_CART_REQUEST = `${prefix}/CLEAR_CART_REQUEST`;
@@ -113,7 +118,7 @@ export const clearCart = ({
 }): CommonPromiseAction => ({
   types: [CLEAR_CART_REQUEST, CLEAR_CART_SUCCESS, CLEAR_CART_FAILURE],
   promise: (api: Api) => api.cart.clearCart(id),
-  data: isNotify,
+  isNotify,
 });
 
 export const UPDATE_CART_USER_ID_REQUEST = `${prefix}/UPDATE_CART_USER_ID_REQUEST`;

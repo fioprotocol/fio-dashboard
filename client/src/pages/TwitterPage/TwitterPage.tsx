@@ -13,6 +13,11 @@ import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import { cartId as cartIdSelector } from '../../redux/cart/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import apis from '../../api';
@@ -106,6 +111,9 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
 
   const cartId = useSelector(cartIdSelector);
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -340,7 +348,15 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         period: 1,
         type: CART_ITEM_TYPE.ADDRESS,
       };
-      dispatch(addItemToCart({ id: cartId, item: cartItem }));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: cartItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
 
       setNotification(TWITTER_NOTIFICATIONS.EMPTY);
       toggleEnableRedirect(true);

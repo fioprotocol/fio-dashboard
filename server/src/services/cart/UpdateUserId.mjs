@@ -9,13 +9,12 @@ export default class UpdateUserId extends Base {
   static get validationRules() {
     return {
       cartId: ['required', 'string'],
+      userId: ['string'],
     };
   }
 
-  async execute({ cartId }) {
+  async execute({ cartId, userId }) {
     try {
-      const userId = this.context.id;
-
       await Cart.update({ userId }, { where: { id: cartId } });
       return {
         data: { success: true },
