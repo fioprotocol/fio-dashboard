@@ -367,7 +367,9 @@ export const cartIsRelative = (
         ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
           ? length + item.period + 1
           : length + item.period
-        : !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
+        : !!item.address &&
+          item.domainType === DOMAIN_TYPE.CUSTOM &&
+          !item.hasCustomDomainInCart
         ? length + 2
         : length + 1,
     0,

@@ -183,13 +183,17 @@ export const useContext = (): {
     setGetOrderLoading(false);
   }, [cartItems, setWallet]);
   const createOrder = useCallback(
-    async (
-      paymentWalletPublicKey: string,
-      fioWallets: FioWalletDoublet[],
-      orderParamsFromLocation: CreateOrderActionData,
-      cartItems: CartItem[],
-      isFree: boolean,
-    ) => {
+    async ({
+      paymentWalletPublicKey,
+      fioWallets,
+      orderParamsFromLocation,
+      isFree,
+    }: {
+      paymentWalletPublicKey: string;
+      fioWallets: FioWalletDoublet[];
+      orderParamsFromLocation: CreateOrderActionData;
+      isFree: boolean;
+    }) => {
       let result;
       let orderParams: CreateOrderActionData | null = null;
 
@@ -318,13 +322,12 @@ export const useContext = (): {
   useEffectOnce(
     () => {
       setOrder(undefined);
-      createOrder(
+      createOrder({
         paymentWalletPublicKey,
         fioWallets,
         orderParamsFromLocation,
-        cartItems,
         isFree,
-      );
+      });
     },
     [
       paymentWalletPublicKey,
