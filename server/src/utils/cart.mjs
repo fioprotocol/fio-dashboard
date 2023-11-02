@@ -476,7 +476,7 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
 
     if (
       error.includes(ALREADY_REGISTERED_ERROR_TEXT) &&
-      errorType === ORDER_ERROR_TYPES.userHasFreeAddress
+      errorType !== ORDER_ERROR_TYPES.userHasFreeAddress
     ) {
       continue;
     }
@@ -544,7 +544,7 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
       costNativeFio,
       costUsdc: usdc,
       id: cartItemId,
-      isFree,
+      isFree: isFree && errorType !== ORDER_ERROR_TYPES.userHasFreeAddress,
       orderItemId: id,
       period: 1,
       type,
