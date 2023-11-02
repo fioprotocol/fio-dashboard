@@ -24,9 +24,14 @@ export const PROFILE_REQUEST = `${prefix}/PROFILE_REQUEST`;
 export const PROFILE_SUCCESS = `${prefix}/PROFILE_SUCCESS`;
 export const PROFILE_FAILURE = `${prefix}/PROFILE_FAILURE`;
 
-export const loadProfile = (): CommonPromiseAction => ({
+export const loadProfile = ({
+  shouldHandleUsersFreeCart,
+}: {
+  shouldHandleUsersFreeCart?: boolean;
+}): CommonPromiseAction => ({
   types: [PROFILE_REQUEST, PROFILE_SUCCESS, PROFILE_FAILURE],
   promise: (api: Api) => api.auth.profile(),
+  shouldHandleUsersFreeCart,
 });
 
 export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;

@@ -12,6 +12,7 @@ import { addItem as addItemToCart } from '../../redux/cart/actions';
 import {
   isAuthenticated as isAuthenticatedSelector,
   lastAuthData as lastAuthDataSelector,
+  userId as userIdSelector,
 } from '../../redux/profile/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -72,6 +73,7 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const userId = useSelector(userIdSelector);
 
   const queryParams = useQuery();
   const dispatch = useDispatch();
@@ -129,14 +131,15 @@ export const useContext = (): UseContextProps => {
         addItemToCart({
           id: cartId,
           item: newItem,
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           roe,
+          userId,
         }),
       );
 
       toggleHasItemAddedToCart(true);
     },
-    [cartId, dispatch, prices.nativeFio, roe],
+    [cartId, dispatch, prices?.nativeFio, roe, userId],
   );
 
   const onFieldChange = (value: string) => {

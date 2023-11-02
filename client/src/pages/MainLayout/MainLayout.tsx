@@ -42,7 +42,11 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
-  loadProfile: () => void;
+  loadProfile: ({
+    shouldHandleUsersFreeCart,
+  }: {
+    shouldHandleUsersFreeCart: boolean;
+  }) => void;
   edgeContextInit: () => void;
   isContainedFlow: boolean;
   init: () => void;
@@ -79,7 +83,7 @@ const MainLayout: React.FC<Props> = props => {
 
   useEffectOnce(() => {
     edgeContextInit();
-    loadProfile();
+    loadProfile({ shouldHandleUsersFreeCart: true });
     getApiUrls();
   }, [edgeContextInit, loadProfile, getApiUrls]);
 

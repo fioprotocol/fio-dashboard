@@ -15,6 +15,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
@@ -48,6 +49,7 @@ type Props = {
     itemId: string;
     prices: NativePrices;
     roe: number;
+    userId?: string;
   }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
@@ -68,6 +70,7 @@ const AddressDomainCart: React.FC<Props> = props => {
 
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
 
   const isCartEmpty = count === 0;
   const cartHasFreeAddress = !!cartItems.every(({ isFree }) => isFree);
@@ -102,8 +105,9 @@ const AddressDomainCart: React.FC<Props> = props => {
     deleteItem({
       id: cartId,
       itemId,
-      prices: prices.nativeFio,
+      prices: prices?.nativeFio,
       roe,
+      userId,
     });
   };
 

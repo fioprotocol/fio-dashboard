@@ -19,6 +19,7 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import apis from '../../api';
 
@@ -113,6 +114,7 @@ export const useContext = (): UseContextProps => {
   const roe = useSelector(roeSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -182,7 +184,15 @@ export const useContext = (): UseContextProps => {
         costFio: renewDomainFeePrice.fio,
         costUsdc: renewDomainFeePrice.usdc,
       };
-      dispatch(addItemToCart({ id: cartId, item: newCartItem }));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: newCartItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -198,9 +208,12 @@ export const useContext = (): UseContextProps => {
       cartItems,
       dispatch,
       history,
+      prices?.nativeFio,
       renewDomainFeePrice.fio,
       renewDomainFeePrice?.nativeFio,
       renewDomainFeePrice.usdc,
+      roe,
+      userId,
     ],
   );
 
@@ -260,10 +273,29 @@ export const useContext = (): UseContextProps => {
         type: CART_ITEM_TYPE.DOMAIN,
       };
 
-      dispatch(addItemToCart({ id: cartId, item: newCartItem }));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: newCartItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
       return history.push(ROUTES.CART);
     },
-    [cartId, cartItemsJSON, dispatch, fio, history, nativeFioDomainPrice, usdc],
+    [
+      cartId,
+      cartItemsJSON,
+      dispatch,
+      fio,
+      history,
+      nativeFioDomainPrice,
+      prices?.nativeFio,
+      roe,
+      usdc,
+      userId,
+    ],
   );
 
   const getDomainsWatchlistList = useCallback(async () => {

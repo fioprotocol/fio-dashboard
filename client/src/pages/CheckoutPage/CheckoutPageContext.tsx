@@ -203,7 +203,7 @@ export const useContext = (): {
           roe,
           publicKey: paymentWalletPublicKey,
           paymentProcessor: PAYMENT_PROVIDER.FIO,
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
@@ -241,7 +241,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [cartId, history, prices.nativeFio, roe, setWallet],
+    [cartId, history, prices?.nativeFio, roe, setWallet],
   );
 
   useEffectOnce(
@@ -404,7 +404,7 @@ export const useContext = (): {
   useEffect(() => {
     return () => {
       setOrder(null);
-      dispatch(loadProfile());
+      dispatch(loadProfile({}));
     };
   }, [dispatch]);
 
@@ -486,7 +486,7 @@ export const useContext = (): {
     if (signTxItems.length) {
       return setBeforeSubmitProps({
         walletConfirmType: WALLET_CREATED_FROM.EDGE,
-        fee: new MathOp(prices.nativeFio.address)
+        fee: new MathOp(prices?.nativeFio?.address)
           .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
           .round(0, 2)
           .toNumber(),

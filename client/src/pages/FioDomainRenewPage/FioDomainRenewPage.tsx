@@ -19,6 +19,11 @@ import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
 } from '../../redux/cart/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
@@ -38,6 +43,9 @@ const FioDomainRenewPage: React.FC = () => {
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
 
   const [feeLoadingFinished, toggleFeeLoadingFinished] = useState<boolean>(
     false,
@@ -84,7 +92,15 @@ const FioDomainRenewPage: React.FC = () => {
       costUsdc: renewDomainFeePrice.usdc,
       domainType: DOMAIN_TYPE.PRIVATE,
     };
-    dispatch(addItemToCart({ id: cartId, item: newCartItem }));
+    dispatch(
+      addItemToCart({
+        id: cartId,
+        item: newCartItem,
+        prices: prices?.nativeFio,
+        roe,
+        userId,
+      }),
+    );
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
@@ -102,8 +118,11 @@ const FioDomainRenewPage: React.FC = () => {
     feeLoading,
     feeLoadingFinished,
     history,
+    prices?.nativeFio,
     renewDomainFeePrice,
     renewFioDomain,
+    roe,
+    userId,
   ]);
 
   return (

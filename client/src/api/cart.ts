@@ -1,22 +1,24 @@
 import Base from './base';
 
 import { CartItem, NativePrices } from '../types';
+import { DefaultSuccessResponse } from './responses';
+
+type CartResponseType = {
+  id?: string;
+  items: CartItem[];
+};
 
 export default class Cart extends Base {
-  addItem({
-    id,
-    item,
-    prices,
-    roe,
-  }: {
-    id: string;
+  addItem(data: {
+    id?: string;
     item: CartItem;
     prices?: NativePrices;
     roe?: number;
-  }): Promise<any> {
-    return this.apiClient.post('cart-add-item', { id, item, prices, roe });
+    userId?: string;
+  }): Promise<CartResponseType> {
+    return this.apiClient.post('cart-add-item', data);
   }
-  clearCart(id: string): Promise<any> {
+  clearCart(id: string): Promise<DefaultSuccessResponse> {
     return this.apiClient.delete('cart-clear-cart', { id });
   }
   deleteItem(data: {
@@ -24,27 +26,25 @@ export default class Cart extends Base {
     itemId: string;
     prices: NativePrices;
     roe: number;
-  }): Promise<any> {
+    userId?: string;
+  }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-delete-item', data);
   }
-  getCart(id: string): Promise<any> {
+  getCart(id: string): Promise<CartResponseType> {
     return this.apiClient.get('cart', { id });
   }
   handleUsersFreeCartItems(data: {
     id: string;
     userId?: string;
-  }): Promise<any> {
+  }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }
   recalculateOnPriceUpdate(data: {
     id: string;
     prices: NativePrices;
     roe: number;
-  }): Promise<any> {
+  }): Promise<CartResponseType> {
     return this.apiClient.put('cart-recalculate-updated-prices', data);
-  }
-  setOldCart(id: string): Promise<any> {
-    return this.apiClient.patch('cart-set-old-cart', { id });
   }
   updateItemPeriod(data: {
     id: string;
@@ -52,10 +52,13 @@ export default class Cart extends Base {
     period: number;
     prices: NativePrices;
     roe: number;
-  }): Promise<any> {
+  }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-update-item-period', data);
   }
-  updateUserId(cartId: string): Promise<any> {
+  updateUserId(cartId: string): Promise<CartResponseType> {
     return this.apiClient.patch('cart-update-user-id', { cartId });
+  }
+  createCartFromOrder(orderId: string): Promise<CartResponseType> {
+    return this.apiClient.post('cart-create-from-order', { orderId });
   }
 }

@@ -86,7 +86,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
       }
     // Need to wait for result, so use hack with two yield
     // @ts-ignore
-    yield yield put<Action>(loadProfile());
+    yield yield put<Action>(loadProfile({ shouldHandleUsersFreeCart: true }));
     yield put<Action>(listNotifications());
 
     const locationState: PrivateRedirectLocationState = yield select(
@@ -118,9 +118,9 @@ export function* profileSuccess(): Generator {
     }
 
     const user: User = yield select(userSelector);
-
     const cartId: string | null = yield select(cartIdSelector);
-    if (cartId && user) {
+
+    if (cartId && user && action.shouldHandleUsersFreeCart) {
       yield put<Action>(
         handleUsersFreeCartItems({ id: cartId, userId: user.id }),
       );

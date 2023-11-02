@@ -14,6 +14,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -123,6 +124,7 @@ export const useContext = () => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -170,9 +172,17 @@ export const useContext = () => {
 
   const onClick = useCallback(
     (selectedItem: CartItem) => {
-      dispatch(addItemToCart({ id: cartId, item: selectedItem }));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: selectedItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
     },
-    [cartId, dispatch],
+    [cartId, dispatch, prices?.nativeFio, roe, userId],
   );
 
   const onPeriodChange = (period: string, id: string) => {
@@ -236,7 +246,7 @@ export const useContext = () => {
           id: cartId,
           itemId: existingCartItem.id,
           period: Number(period),
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           roe,
         }),
       );

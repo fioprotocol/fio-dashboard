@@ -39,7 +39,7 @@ export const useContext = () => {
   const roe = useSelector(roeSelector);
   const prices = useSelector(pricesSelector);
   const domains = useSelector(registrationDomainsSelector);
-  const domainPrice = convertFioPrices(prices.nativeFio.domain, roe).usdc;
+  const domainPrice = convertFioPrices(prices?.nativeFio.domain, roe).usdc;
 
   return {
     onSubmit,

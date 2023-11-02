@@ -19,7 +19,11 @@ import { SubmitActionParams } from '../EdgeConfirmAction/types';
 type Props = {
   isAuthenticated: boolean;
   user: User;
-  loadProfile: () => void;
+  loadProfile: ({
+    shouldHandleUsersFreeCart,
+  }: {
+    shouldHandleUsersFreeCart?: boolean;
+  }) => void;
 };
 
 const TwoFactorAuth: React.FC<Props> = props => {
@@ -124,7 +128,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
           1000,
         );
         await apis.auth.deleteNewDeviceRequest(voucherId);
-        loadProfile();
+        loadProfile({});
       }
       if (type === ACTION_TYPE.DENY_ALL) {
         const promises = newDevicesList.map(device => [
@@ -138,7 +142,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
           await Promise.all(promises);
           toggleApproveModal(false);
         } finally {
-          loadProfile();
+          loadProfile({});
         }
       }
     } catch (e) {

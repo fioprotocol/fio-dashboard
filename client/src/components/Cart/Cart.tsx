@@ -19,6 +19,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -45,6 +46,7 @@ const Cart: React.FC<Props> = props => {
   const cartItems = useSelector(cartItemsSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -57,12 +59,13 @@ const Cart: React.FC<Props> = props => {
         deleteItem({
           id: cartId,
           itemId,
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           roe,
+          userId,
         }),
       );
     },
-    [cartId, dispatch, prices.nativeFio, roe],
+    [cartId, dispatch, prices?.nativeFio, roe, userId],
   );
 
   const handleUpdateItemPeriod = useCallback(
@@ -72,12 +75,12 @@ const Cart: React.FC<Props> = props => {
           id: cartId,
           itemId: id,
           period,
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           roe,
         }),
       );
     },
-    [cartId, dispatch, prices.nativeFio, roe],
+    [cartId, dispatch, prices?.nativeFio, roe],
   );
 
   let errorMessage = 'Your price has been updated due to pricing changes.';

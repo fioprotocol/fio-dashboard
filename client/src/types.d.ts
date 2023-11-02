@@ -163,6 +163,7 @@ export type RegistrationResult = {
 export type DeleteCartItem = {
   id: string;
   cartItems?: CartItem[];
+  userId?: string;
 };
 
 export type FioWalletDoublet = {

@@ -23,7 +23,10 @@ import {
   fioWallets as fioWalletsSelector,
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import {
+  isAuthenticated,
+  userId as userIdSelector,
+} from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -105,6 +108,7 @@ export const useContext = (): UseContextReturnType => {
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
   );
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -326,7 +330,7 @@ export const useContext = (): UseContextReturnType => {
         roe,
         publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
         paymentProcessor: paymentProvider,
-        prices: prices.nativeFio,
+        prices: prices?.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
@@ -455,8 +459,9 @@ export const useContext = (): UseContextReturnType => {
         deleteItem({
           id: cartId,
           itemId: data.id,
-          prices: prices.nativeFio,
+          prices: prices?.nativeFio,
           roe,
+          userId,
         }),
       ),
   };

@@ -21,6 +21,11 @@ import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
 } from '../../redux/cart/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
 
 import apis from '../../api';
 
@@ -69,6 +74,9 @@ export const useContext = (): UseContextProps => {
   const showExpiredDomainWarningFchBadge = useSelector(
     showExpiredDomainWarningFchBadgeSelector,
   );
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
 
   const [warningContent, setWarningContent] = useState<WarningContent>({
     LOW_BUNDLES: {
@@ -106,7 +114,15 @@ export const useContext = (): UseContextProps => {
         costUsdc: addBundlesFeePrice.usdc,
       };
 
-      dispatch(addItemToCart({ id: cartId, item: newCartItem }));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: newCartItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -125,6 +141,9 @@ export const useContext = (): UseContextProps => {
       cartItems,
       dispatch,
       history,
+      prices?.nativeFio,
+      roe,
+      userId,
     ],
   );
 
