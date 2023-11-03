@@ -41,7 +41,7 @@ export function* edgeLoginSuccess(): Generator {
         yield apis.account.addMissingWallet({
           fioWallet: {
             edgeId: createdWallet.id,
-            name: `${DEFAULT_WALLET_OPTIONS.name} 1`,
+            name: DEFAULT_WALLET_OPTIONS.name,
             publicKey: createdWallet.publicWalletInfo.keys.publicKey,
             from: WALLET_CREATED_FROM.EDGE,
           },

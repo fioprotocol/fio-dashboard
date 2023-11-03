@@ -111,6 +111,7 @@ const WalletPage: React.FC = () => {
     fioWalletBalance,
     fioWalletData,
     fioWalletTxHistory,
+    fioWalletsAmount,
     hasNoTransactions,
     isOpenLockedList,
     showWalletSettings,
@@ -150,6 +151,7 @@ const WalletPage: React.FC = () => {
       <WalletSettings
         show={showWalletSettings}
         fioWallet={fioWallet}
+        fioWalletsAmount={fioWalletsAmount}
         onClose={onShowPrivateModalClose}
       />
       <EditWalletName

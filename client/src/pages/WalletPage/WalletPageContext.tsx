@@ -44,6 +44,7 @@ type UseContextProps = {
   fioWalletBalance: WalletBalances;
   fioWalletData: FioWalletData;
   fioWalletTxHistory: FioWalletTxHistory;
+  fioWalletsAmount: number;
   hasNoTransactions: boolean;
   isOpenLockedList: boolean;
   showWalletSettings: boolean;
@@ -237,6 +238,7 @@ export const useContext = (): UseContextProps => {
     fioWalletBalance,
     fioWalletData,
     fioWalletTxHistory,
+    fioWalletsAmount: fioWallets?.length,
     hasNoTransactions,
     isOpenLockedList,
     showWalletSettings,

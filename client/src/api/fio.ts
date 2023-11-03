@@ -122,7 +122,7 @@ export default class Fio {
       '',
       '',
       this.baseurls,
-      window.fetch,
+      window.fioCorsFixfetch,
       '',
       this.tpid,
     );
@@ -227,14 +227,21 @@ export default class Fio {
 
   // todo: check if we need to update tpid for public wallet FIOSDK in other place
   createPublicWalletFioSdk = (keys: { public: string }): FIOSDK_LIB =>
-    new FIOSDK('', keys.public, this.baseurls, window.fetch, '', this.tpid);
+    new FIOSDK(
+      '',
+      keys.public,
+      this.baseurls,
+      window.fioCorsFixfetch,
+      '',
+      this.tpid,
+    );
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>
     (this.walletFioSDK = new FIOSDK(
       keys.private,
       keys.public,
       this.baseurls,
-      window.fetch,
+      window.fioCorsFixfetch,
       '',
       this.tpid,
     ));
