@@ -113,13 +113,14 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
     if (rows.length) {
       const { expiration, is_public, name } = rows[0];
+
       if (isDomainExpired(name, expiration)) {
         succeeded = false;
         message = WARNING_CONTENT.EXPIRED_DOMAINS.message;
       }
       if (!is_public && !existingUserDomain) {
         succeeded = false;
-        message = 'Domain has expired. Renew today to restore the actions.';
+        message = DOMAIN_ALREADY_EXISTS;
       }
     }
   } catch (e) {
