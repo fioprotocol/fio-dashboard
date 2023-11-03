@@ -33,6 +33,7 @@ import {
   INSUFFICIENT_FUNDS_ERR_MESSAGE,
   INSUFFICIENT_BALANCE,
 } from '../external/fio.mjs';
+import { convertFioPrices } from '../utils/cart.mjs';
 
 import {
   FIO_ACCOUNT_TYPES,
@@ -914,23 +915,34 @@ class OrdersJob extends CommonJob {
           );
         }
 
-        if (!price || (price === '0' && !domainOwner)) {
+        if ((!price || price === '0') && !domainOwner) {
+          let nativeFio = null;
+
           switch (action) {
             case FIO_ACTIONS.registerFioAddress:
-              orderItem.price = addressPrice;
+              nativeFio = addressPrice;
               break;
             case FIO_ACTIONS.addBundledTransactions:
-              orderItem.price = addBundlesPrice;
+              nativeFio = addBundlesPrice;
               break;
             case FIO_ACTIONS.registerFioDomain:
-              orderItem.price = domainPrice;
+              nativeFio = domainPrice;
               break;
             case FIO_ACTIONS.renewFioDomain:
-              orderItem.price = renewDomainPrice;
+              nativeFio = renewDomainPrice;
               break;
             default:
               null;
           }
+          const { usdc } = convertFioPrices(nativeFio, roe);
+
+          if (!nativeFio)
+            throw new Error('Item price should not be free. Updated prices failed.');
+
+          orderItem.price = usdc;
+          orderItem.nativeFio = nativeFio;
+
+          await OrderItem.update({ price: usdc, nativeFio }, { where: { id } });
         }
 
         // Check if fee/roe changed and handle changes
