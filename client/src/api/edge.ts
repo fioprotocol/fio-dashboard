@@ -14,8 +14,10 @@ import {
 import { handleEdgeKI } from './middleware/edge';
 import { log } from '../util/general';
 import Base from './base';
+import { sleep } from '../utils';
 
 const NO_EDGE_CONTEXT_MESSAGE = 'Edge Context is not initialised';
+const DEFAULT_WALLET_DELETE_TIMEOUT = 5000;
 
 export type EdgeContextRes = {
   edgeAK: string;
@@ -365,8 +367,13 @@ export default class Edge extends Base {
   async deleteWallet(account: EdgeAccount, walletId: string): Promise<void> {
     try {
       await account.changeWalletStates({
-        [walletId]: { deleted: true },
+        [walletId]: { archived: true },
       });
+
+      await account.sync();
+
+      await sleep(DEFAULT_WALLET_DELETE_TIMEOUT);
+
       await account.logout();
       log.info(`Wallet with id: ${walletId} marked as deleted.`);
     } catch (e) {

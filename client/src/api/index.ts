@@ -33,15 +33,18 @@ import { log } from '../util/general';
 const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
-const fetch = window.fetch;
-window.fetch = async (uri: RequestInfo | URL, opts: RequestInit = {}) => {
+const fioCorsFixfetch = window.fetch;
+window.fioCorsFixfetch = async (
+  uri: RequestInfo | URL,
+  opts: RequestInit = {},
+) => {
   // @ts-ignore todo: fix headers['Content-Type'] type usage
   if (opts.headers && opts.headers['Content-Type']) {
     // @ts-ignore
     delete opts.headers['Content-Type'];
   }
   try {
-    return await fetch(uri, { ...opts });
+    return await fioCorsFixfetch(uri, { ...opts });
   } catch (err) {
     log.error(err);
   }

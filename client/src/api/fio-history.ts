@@ -21,14 +21,17 @@ export default class FioHistory {
       return { error: { noNodeForIndex: true } };
 
     const apiUrl = this.historyNodeUrls[nodeIndex];
-    const result = await fetch(`${apiUrl}history/${uri || ''}`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    const result = await window.fioCorsFixfetch(
+      `${apiUrl}history/${uri || ''}`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
       },
-      body: JSON.stringify(params),
-    });
+    );
 
     return result.json();
   }
