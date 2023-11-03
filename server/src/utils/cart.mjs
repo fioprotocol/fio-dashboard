@@ -434,7 +434,7 @@ export const cartItemsToOrderItems = async ({
           orderItem.price = convertFioPrices(renewDomainPrice, roe).usdc;
           orderItem.priceCurrency = CURRENCY_CODES.USDC;
 
-          for (let i = 1; i < period; i++) {
+          for (let i = 0; i < period; i++) {
             orderItems.push(orderItem);
           }
         }

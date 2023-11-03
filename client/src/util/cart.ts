@@ -365,8 +365,8 @@ export const cartIsRelative = (
     (length, item) =>
       CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
         ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
-          ? length + item.period + 1
-          : length + item.period
+          ? length + Number(item.period) + 1
+          : length + Number(item.period)
         : !!item.address &&
           item.domainType === DOMAIN_TYPE.CUSTOM &&
           !item.hasCustomDomainInCart
@@ -374,7 +374,8 @@ export const cartIsRelative = (
         : length + 1,
     0,
   );
-  if (cartItemsLength !== orderItems.length) return false;
+
+  if (!new MathOp(cartItemsLength).eq(orderItems.length)) return false;
 
   for (const cartItem of cartItems) {
     if (
