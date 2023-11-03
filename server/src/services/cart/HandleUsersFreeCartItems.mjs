@@ -4,6 +4,7 @@ import X from '../Exception';
 import { Cart } from '../../models/Cart.mjs';
 import { Domain } from '../../models/Domain.mjs';
 import { FreeAddress } from '../../models/FreeAddress.mjs';
+import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -31,6 +32,7 @@ export default class HandleUsersFreeCartItems extends Base {
       }
 
       const dashboardDomains = await Domain.getDashboardDomains();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
       const userHasFreeAddress =
         userId &&
         (await FreeAddress.getItem({
@@ -39,7 +41,7 @@ export default class HandleUsersFreeCartItems extends Base {
 
       const handledFreeCartItems = handleUsersFreeCartItems({
         cartItems: cart.items,
-        dashboardDomains,
+        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
         userHasFreeAddress,
       });
 

@@ -4,6 +4,7 @@ import X from '../Exception';
 import { Cart } from '../../models/Cart.mjs';
 import { Domain } from '../../models/Domain.mjs';
 import { FreeAddress } from '../../models/FreeAddress.mjs';
+import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -46,6 +47,7 @@ export default class DeleteItem extends Base {
       }
 
       const dashboardDomains = await Domain.getDashboardDomains();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
       const userHasFreeAddress =
         userId &&
@@ -59,7 +61,7 @@ export default class DeleteItem extends Base {
 
       const updatedItems = handleFreeCartDeleteItem({
         cartItems: items,
-        dashboardDomains,
+        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
         existingItem,
         userHasFreeAddress,
       });
