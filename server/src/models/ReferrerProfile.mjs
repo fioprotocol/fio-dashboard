@@ -131,6 +131,14 @@ export class ReferrerProfile extends Base {
     });
   }
 
+  static async getRefDomainsList() {
+    const refDomainsList = await this.findAll()
+      .map(refProfile => refProfile.settings.domains)
+      .filter(domains => domains.length > 0);
+
+    return refDomainsList && refDomainsList.length ? refDomainsList.flat() : [];
+  }
+
   static format({
     id,
     type,

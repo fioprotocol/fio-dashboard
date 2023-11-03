@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import '../db';
 
 import {
+  Domain,
   OrderItem,
   FioAccountProfile,
   BlockchainTransaction,
@@ -13,6 +14,7 @@ import {
   FreeAddress,
   Var,
   PublicWalletData,
+  ReferrerProfile,
   Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
@@ -255,6 +257,14 @@ class OrdersJob extends CommonJob {
           nativePrice = fioApi.amountToSUF(price);
           currency = Payment.CURRENCY.FIO;
           statusNotes = "User's FIO Wallet";
+      }
+
+      if (new MathOp(price).gt(orderItemProps.toal)) {
+        throw new Error('Refund price is bigger than total order price');
+      }
+
+      if (!price || price === '0' || price === 0) {
+        throw new Error('Refund price is 0');
       }
 
       // Refund user for order
@@ -797,9 +807,19 @@ class OrdersJob extends CommonJob {
     await fioApi.getRawAbi();
     const roe = await getROE();
     const feesVar = await Var.getByKey(FEES_VAR_KEY);
+    const prices = await fioApi.getPrices(true);
+    const dashboardDomains = await Domain.getDashboardDomains();
+    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+
     this.feesJson = feesVar ? JSON.parse(feesVar.value) : {};
     this.feesUpdatedAt = feesVar ? feesVar.updatedAt : null;
 
+    const {
+      addBundles: addBundlesPrice,
+      address: addressPrice,
+      domain: domainPrice,
+      renewDomain: renewDomainPrice,
+    } = prices;
     // get order items ready to process
     const items = await OrderItem.getActionRequired();
 
@@ -869,8 +889,19 @@ class OrdersJob extends CommonJob {
           auth = { actor, permission };
         }
 
+        const existingDashboardDomain = [
+          ...dashboardDomains,
+          ...allRefProfileDomains,
+        ].find(dashboardDomain => dashboardDomain.name === domain);
+
         // Handle free addresses
-        if ((!price || price === '0') && address && !domainOwner) {
+        if (
+          (!price || price === '0') &&
+          existingDashboardDomain &&
+          !existingDashboardDomain.isPremium &&
+          action === FIO_ACTIONS.registerFioAddress &&
+          !domainOwner
+        ) {
           return this.registerFree(
             fioName,
             freeAuth,
@@ -881,6 +912,25 @@ class OrdersJob extends CommonJob {
             },
             processOrderItem,
           );
+        }
+
+        if (!price || (price === '0' && !domainOwner)) {
+          switch (action) {
+            case FIO_ACTIONS.registerFioAddress:
+              orderItem.price = addressPrice;
+              break;
+            case FIO_ACTIONS.addBundledTransactions:
+              orderItem.price = addBundlesPrice;
+              break;
+            case FIO_ACTIONS.registerFioDomain:
+              orderItem.price = domainPrice;
+              break;
+            case FIO_ACTIONS.renewFioDomain:
+              orderItem.price = renewDomainPrice;
+              break;
+            default:
+              null;
+          }
         }
 
         // Check if fee/roe changed and handle changes
