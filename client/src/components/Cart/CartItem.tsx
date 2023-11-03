@@ -11,7 +11,6 @@ import {
   CART_ITEM_PERIOD_OPTIONS,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import { getCartItemDescriptor } from '../../util/cart';
@@ -36,14 +35,10 @@ export type CartItemProps = {
 };
 
 export const CartItemPrice = (props: CartItemProps) => {
-  const { costFio, costUsdc, domainType, isFree } = props;
+  const { costFio, costUsdc, isFree } = props;
 
   return (
-    <PriceComponent
-      costFio={costFio}
-      costUsdc={costUsdc}
-      isFree={isFree && domainType === DOMAIN_TYPE.ALLOW_FREE}
-    />
+    <PriceComponent costFio={costFio} costUsdc={costUsdc} isFree={isFree} />
   );
 };
 
