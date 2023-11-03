@@ -5,8 +5,38 @@ import { CART_ITEM_TYPE, FIO_ACTIONS, ORDER_ERROR_TYPES } from '../config/consta
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
 import { CURRENCY_CODES } from '../constants/fio.mjs';
+import { getROE } from '../external/roe';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
+
+export const handlePrices = async ({ prices, roe }) => {
+  const dbPrices = await fioApi.getPrices(true);
+  const dbRoe = await getROE();
+
+  const {
+    addBundles: addBundlesPrice,
+    address: addressPrice,
+    domain: domainPrice,
+    renewDomain: renewDomainPrice,
+  } = prices;
+
+  const {
+    addBundles: addBundlesDbPrice,
+    address: addressDbPrice,
+    domain: domainDbPrice,
+    renewDomain: renewDomainDbPrice,
+  } = dbPrices;
+
+  return {
+    handledPrices: {
+      addBundles: addBundlesPrice || addBundlesDbPrice,
+      address: addressPrice || addressDbPrice,
+      domain: domainPrice || domainDbPrice,
+      renewDomain: renewDomainPrice || renewDomainDbPrice,
+    },
+    handledRoe: roe || dbRoe,
+  };
+};
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = fioApi.sufToAmount(nativeFio || 0);
@@ -308,9 +338,9 @@ export const handleUsersFreeCartItems = ({
 
 export const calculateCartTotalCost = ({ cartItems, roe }) => {
   const nativeFioTotalCost = cartItems.reduce((acc, cartItem) => {
-    const { costNativeFio, isFree } = cartItem;
+    const { costNativeFio, isFree, type } = cartItem;
 
-    if (isFree) return acc;
+    if (isFree && type === CART_ITEM_TYPE.ADDRESS) return acc;
 
     return new MathOp(acc).add(costNativeFio).toNumber();
   }, 0);
@@ -324,7 +354,14 @@ export const calculateCartTotalCost = ({ cartItems, roe }) => {
   };
 };
 
-export const cartItemsToOrderItems = ({ cartItems, prices, roe }) => {
+export const cartItemsToOrderItems = async ({
+  cartItems,
+  dashboardDomains,
+  FioAccountProfile,
+  prices,
+  roe,
+  userHasFreeAddress,
+}) => {
   const {
     addBundles: addBundlesPrice,
     address: fioHandlePrice,
@@ -410,14 +447,31 @@ export const cartItemsToOrderItems = ({ cartItems, prices, roe }) => {
         orderItem.priceCurrency = CURRENCY_CODES.USDC;
         orderItems.push(orderItem);
         break;
-      case CART_ITEM_TYPE.ADDRESS:
+      case CART_ITEM_TYPE.ADDRESS: {
+        const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
+        const existingDashboardDomain = dashboardDomains.find(
+          dashboardDomain => dashboardDomain.name === domain,
+        );
+
+        const userableRegisterFree =
+          (existingDashboardDomain &&
+            !existingDashboardDomain.isPremium &&
+            !userHasFreeAddress &&
+            !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id)) ||
+          (!existingDashboardDomain && freeDomainOwner);
+
         orderItem.action = FIO_ACTIONS.registerFioAddress;
         orderItem.address = address;
-        orderItem.nativeFio = isFree ? '0' : fioHandlePrice.toString();
-        orderItem.price = isFree ? '0' : convertFioPrices(fioHandlePrice, roe).usdc;
+        orderItem.nativeFio =
+          isFree && userableRegisterFree ? '0' : fioHandlePrice.toString();
+        orderItem.price =
+          isFree && userableRegisterFree
+            ? '0'
+            : convertFioPrices(fioHandlePrice, roe).usdc;
         orderItem.priceCurrency = CURRENCY_CODES.USDC;
         orderItems.push(orderItem);
         break;
+      }
       case CART_ITEM_TYPE.DOMAIN:
         {
           orderItem.action = FIO_ACTIONS.registerFioDomain;
