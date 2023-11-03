@@ -18,7 +18,6 @@ export default class AuthCreate extends Base {
       challenge: ['string'],
       timeZone: ['string'],
       edgeWallets: [
-        'required',
         {
           list_of_objects: [
             {
