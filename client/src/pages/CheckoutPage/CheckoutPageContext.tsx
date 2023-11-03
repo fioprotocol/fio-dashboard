@@ -182,6 +182,7 @@ export const useContext = (): {
     setOrder(null);
     setGetOrderLoading(false);
   }, [cartItems, setWallet]);
+
   const createOrder = useCallback(
     async ({
       paymentWalletPublicKey,
