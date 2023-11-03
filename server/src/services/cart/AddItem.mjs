@@ -5,6 +5,7 @@ import { Cart } from '../../models/Cart.mjs';
 import { Domain } from '../../models/Domain.mjs';
 import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
 import { FreeAddress } from '../../models/FreeAddress.mjs';
+import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -60,6 +61,7 @@ export default class AddItem extends Base {
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
       const userHasFreeAddress =
         userId &&
@@ -69,7 +71,7 @@ export default class AddItem extends Base {
 
       const handledFreeCartItem = handleFreeCartAddItem({
         cartItems: existingCart ? existingCart.items : [],
-        dashboardDomains,
+        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
         freeDomainOwner,
         item,
         userHasFreeAddress,
