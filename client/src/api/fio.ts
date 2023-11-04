@@ -855,7 +855,7 @@ export default class Fio {
         ];
 
         if (fioRequests.more) {
-          await getAllFioRequests({ offset: offset + limit });
+          await getAllFioRequests({ offset: offset ? offset + limit : limit });
         }
       };
 
