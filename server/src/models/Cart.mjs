@@ -18,7 +18,6 @@ export class Cart extends Base {
         items: {
           type: DT.JSON,
         },
-        isOldCart: { type: DT.BOOLEAN, defaultValue: false },
         userId: {
           type: DT.UUID,
           references: {
@@ -45,7 +44,7 @@ export class Cart extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'items', 'userId', 'isOldCart'],
+      default: ['id', 'items', 'userId'],
     };
 
     if (type in attributes) {
@@ -55,7 +54,7 @@ export class Cart extends Base {
     return attributes.default;
   }
 
-  static format({ id, items, isOldCart }) {
-    return { id, items, isOldCart };
+  static format({ id, items }) {
+    return { id, items };
   }
 }

@@ -24,7 +24,7 @@ export default class UpdateUserId extends Base {
       throw new X({
         code: 'CART_UPDATE_ERROR',
         fields: {
-          setOldCart: 'CANNOT_UPDATE_USER_ID',
+          updateUserId: 'CANNOT_UPDATE_USER_ID',
         },
       });
     }

@@ -4,8 +4,6 @@ import { Api } from '../../api';
 
 export const prefix = 'cart';
 
-export const SET_CART_ITEMS = `${prefix}/SET_CART_ITEMS`;
-
 export const ADD_ITEM_REQUEST = `${prefix}/ADD_ITEM_REQUEST`;
 export const ADD_ITEM_SUCCESS = `${prefix}/ADD_ITEM_SUCCESS`;
 export const ADD_ITEM_FAILURE = `${prefix}/ADD_ITEM_FAILURE`;
@@ -153,11 +151,6 @@ export const getCart = (cartId: string): CommonPromiseAction => ({
   promise: (api: Api) => api.cart.getCart(cartId),
 });
 
-export const setCartItems = (cartItems: CartItem[]): CommonAction => ({
-  type: SET_CART_ITEMS,
-  data: cartItems,
-});
-
 export const SET_WALLET_FOR_PAYMENT = `${prefix}/SET_WALLET_FOR_PAYMENT`;
 export const UNSET_WALLET_FOR_PAYMENT = `${prefix}/UNSET_WALLET_FOR_PAYMENT`;
 
@@ -168,10 +161,4 @@ export const setWallet = (walletPublicKey: string): CommonAction => ({
 
 export const unsetWallet = (): CommonAction => ({
   type: UNSET_WALLET_FOR_PAYMENT,
-});
-
-export const CLEAR_OLD_CART = `${prefix}/CLEAR_OLD_CART`;
-
-export const clearOldCartItems = (): CommonAction => ({
-  type: CLEAR_OLD_CART,
 });
