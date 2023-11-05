@@ -5,7 +5,11 @@ import { Cart } from '../../models/Cart.mjs';
 
 import logger from '../../logger.mjs';
 
-import { handlePriceForMultiYearItems, convertFioPrices } from '../../utils/cart.mjs';
+import {
+  handlePriceForMultiYearItems,
+  convertFioPrices,
+  handlePrices,
+} from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
@@ -44,12 +48,45 @@ export default class UpdateItemPeriod extends Base {
         });
       }
 
+      const { handledPrices, handledRoe } = await handlePrices({
+        prices,
+        roe,
+      });
+
+      const {
+        addBundles: addBundlesPrice,
+        address: addressPrice,
+        domain: domainPrice,
+        renewDomain: renewDomainPrice,
+      } = handledPrices;
+
+      const isEmptyPrices =
+        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+      if (isEmptyPrices) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            prices: 'PRICES_ARE_EMPTY',
+          },
+        });
+      }
+
+      if (!handledRoe) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            roe: 'ROE_IS_EMPTY',
+          },
+        });
+      }
+
       const updatedMultiYearPrice = handlePriceForMultiYearItems({
         includeAddress:
           existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
         period,
-        prices,
-        roe,
+        prices: handledPrices,
+        roe: handledRoe,
       });
 
       const { fio, usdc } = convertFioPrices(updatedMultiYearPrice, roe);

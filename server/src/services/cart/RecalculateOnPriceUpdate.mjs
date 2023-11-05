@@ -7,7 +7,11 @@ import { Cart } from '../../models/Cart.mjs';
 
 import logger from '../../logger.mjs';
 
-import { convertFioPrices, handlePriceForMultiYearItems } from '../../utils/cart.mjs';
+import {
+  convertFioPrices,
+  handlePriceForMultiYearItems,
+  handlePrices,
+} from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
@@ -42,9 +46,42 @@ export default class RecalculateOnPriceUpdate extends Base {
         });
       }
 
+      const { handledPrices, handledRoe } = await handlePrices({
+        prices,
+        roe,
+      });
+
+      const {
+        addBundles: addBundlesPrice,
+        address: addressPrice,
+        domain: domainPrice,
+        renewDomain: renewDomainPrice,
+      } = handledPrices;
+
+      const isEmptyPrices =
+        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+      if (isEmptyPrices) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            prices: 'PRICES_ARE_EMPTY',
+          },
+        });
+      }
+
+      if (!handledRoe) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            roe: 'ROE_IS_EMPTY',
+          },
+        });
+      }
+
       const cartItemsWithRecalculatedPrices = cart.items.map(cartItem => {
         const { hasCustomDomainInCart, type, period } = cartItem;
-        const { addBundles, address, renewDomain } = prices;
+        const { addBundles, address, renewDomain } = handledPrices;
 
         let nativeFioAmount = null;
 
@@ -62,7 +99,7 @@ export default class RecalculateOnPriceUpdate extends Base {
               } else {
                 nativeFioAmount = handlePriceForMultiYearItems({
                   includeAddress: true,
-                  prices,
+                  prices: handledPrices,
                   period,
                 });
               }
@@ -71,7 +108,7 @@ export default class RecalculateOnPriceUpdate extends Base {
           case CART_ITEM_TYPE.DOMAIN:
             nativeFioAmount = handlePriceForMultiYearItems({
               includeAddress: false,
-              prices,
+              prices: handledPrices,
               period,
             });
             break;
