@@ -212,7 +212,7 @@ class WrapStatusJob extends CommonJob {
             for (const orcaleEvent of oracleEvents) {
               const { blockNumber } = orcaleEvent;
               const block = await web3.eth.getBlock(blockNumber);
-              eventsWithTimestamps.push({
+              oracleEventsWithTimestamps.push({
                 ...orcaleEvent,
                 blockTimeStamp: block.timestamp,
               });
@@ -362,7 +362,7 @@ class WrapStatusJob extends CommonJob {
             for (const orcaleEvent of oracleEvents) {
               const { blockNumber } = orcaleEvent;
               const block = await web3.eth.getBlock(blockNumber);
-              eventsWithTimestamps.push({
+              oracleEventsWithTimestamps.push({
                 ...orcaleEvent,
                 blockTimeStamp: block.timestamp,
               });
