@@ -13,6 +13,7 @@ import {
   handleFioHandleOnExistingCustomDomain,
   handleFreeCartAddItem,
   handleFioHandleCartItemsWithCustomDomain,
+  handlePrices,
 } from '../../utils/cart.mjs';
 
 export default class AddItem extends Base {
@@ -69,6 +70,36 @@ export default class AddItem extends Base {
           userId,
         }));
 
+      const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
+
+      const {
+        addBundles: addBundlesPrice,
+        address: addressPrice,
+        domain: domainPrice,
+        renewDomain: renewDomainPrice,
+      } = handledPrices;
+
+      const isEmptyPrices =
+        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+      if (isEmptyPrices) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            prices: 'PRICES_ARE_EMPTY',
+          },
+        });
+      }
+
+      if (!handledRoe) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            roe: 'ROE_IS_EMPTY',
+          },
+        });
+      }
+
       const handledFreeCartItem = handleFreeCartAddItem({
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
@@ -92,8 +123,8 @@ export default class AddItem extends Base {
         {
           cartItems: items,
           newItem: handledFreeCartItem,
-          prices,
-          roe,
+          prices: handledPrices,
+          roe: handledRoe,
         },
       );
 
@@ -101,8 +132,8 @@ export default class AddItem extends Base {
         {
           cartItems: handledCartItemsWithExistingCustomDomain,
           item,
-          prices,
-          roe,
+          prices: handledPrices,
+          roe: handledRoe,
         },
       );
 

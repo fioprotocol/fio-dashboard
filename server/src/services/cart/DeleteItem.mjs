@@ -11,6 +11,7 @@ import logger from '../../logger.mjs';
 import {
   handleFreeCartDeleteItem,
   handleFioHandleCartItemsWithCustomDomain,
+  handlePrices,
 } from '../../utils/cart.mjs';
 
 export default class DeleteItem extends Base {
@@ -55,6 +56,39 @@ export default class DeleteItem extends Base {
           userId,
         }));
 
+      const { handledPrices, handledRoe } = await handlePrices({
+        prices,
+        roe,
+      });
+
+      const {
+        addBundles: addBundlesPrice,
+        address: addressPrice,
+        domain: domainPrice,
+        renewDomain: renewDomainPrice,
+      } = handledPrices;
+
+      const isEmptyPrices =
+        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+      if (isEmptyPrices) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            prices: 'PRICES_ARE_EMPTY',
+          },
+        });
+      }
+
+      if (!handledRoe) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            roe: 'ROE_IS_EMPTY',
+          },
+        });
+      }
+
       const items = cart.items;
 
       const existingItem = items.find(item => item.id === itemId);
@@ -70,8 +104,8 @@ export default class DeleteItem extends Base {
         {
           cartItems: updatedItems,
           item: existingItem,
-          prices,
-          roe,
+          prices: handledPrices,
+          roe: handledRoe,
         },
       );
 
