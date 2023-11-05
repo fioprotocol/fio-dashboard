@@ -131,7 +131,6 @@ export function* profileSuccess(): Generator {
 export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     api.client.removeToken();
-    // yield put<Action>(clearOldCartItems());
 
     const cartId: string | null = yield select(cartIdSelector);
     if (cartId) {
