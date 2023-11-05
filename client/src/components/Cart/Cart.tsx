@@ -8,6 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import Loader from '../Loader/Loader';
 
 import { updateCartItemPeriod, deleteItem } from '../../redux/cart/actions';
 
@@ -32,6 +33,7 @@ import {
 import classes from './Cart.module.scss';
 
 type Props = {
+  loading: boolean;
   userWallets: FioWalletDoublet[];
   hasLowBalance: boolean;
   walletCount: number;
@@ -44,7 +46,7 @@ type Props = {
 };
 
 const Cart: React.FC<Props> = props => {
-  const { isPriceChanged, hasGetPricesError, error } = props;
+  const { isPriceChanged, hasGetPricesError, error, loading } = props;
 
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
@@ -136,6 +138,7 @@ const Cart: React.FC<Props> = props => {
               />
             </div>
           ))}
+        {loading && <Loader className="mt-4" />}
         <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.cta}>
           <div className={classes.ctaIconContainer}>
             <SearchIcon className={classes.ctaIcon} />

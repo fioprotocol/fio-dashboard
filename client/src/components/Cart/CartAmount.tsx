@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Loader from '../Loader/Loader';
+
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import PaymentsBlock from './components/PaymentsBlock';
 import { PriceComponent } from '../PriceComponent';
@@ -11,6 +13,7 @@ import classes from './Cart.module.scss';
 type Props = {
   cartItems: CartItem[];
   isFree: boolean;
+  loading: boolean;
   paymentWalletPublicKey: string;
   hasLowBalance: boolean;
   totalCartAmount: string;
@@ -29,6 +32,7 @@ const CartAmount: React.FC<Props> = props => {
     cartItems,
     hasLowBalance,
     isFree,
+    loading,
     paymentWalletPublicKey,
     totalCartAmount,
     totalCartUsdcAmount,
@@ -49,11 +53,15 @@ const CartAmount: React.FC<Props> = props => {
         <hr className={classes.divider} />
         <div className={classes.cost}>
           Cost:{' '}
-          <PriceComponent
-            costFio={totalCartAmount}
-            costUsdc={totalCartUsdcAmount}
-            isFree={isFree}
-          />
+          {loading ? (
+            <Loader hasSmallSize className="justify-content-start ml-3" />
+          ) : (
+            <PriceComponent
+              costFio={totalCartAmount}
+              costUsdc={totalCartUsdcAmount}
+              isFree={isFree}
+            />
+          )}
         </div>
         <hr className={classes.divider} />
       </div>

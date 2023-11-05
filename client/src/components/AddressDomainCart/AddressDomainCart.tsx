@@ -8,6 +8,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
+import Loader from '../Loader/Loader';
+
 import { ExclamationIcon } from '../ExclamationIcon';
 import { PriceComponent } from '../PriceComponent';
 
@@ -44,6 +46,7 @@ type Props = {
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
   lastAuthData: LastAuthData;
+  loading: boolean;
   deleteItem: (data: {
     id: string;
     itemId: string;
@@ -66,6 +69,7 @@ const AddressDomainCart: React.FC<Props> = props => {
     setRedirectPath,
     showLoginModal,
     lastAuthData,
+    loading,
   } = props;
   const count = cartItems.length;
 
@@ -120,13 +124,19 @@ const AddressDomainCart: React.FC<Props> = props => {
         <h5 className={classes.title}>Cart</h5>
       </div>
       {isCartEmpty ? (
-        <div className={classes.textContainer}>
-          <h5 className={classes.textTitle}>Your Cart is Empty</h5>
-          <p className={classes.text}>
-            Add a FIO domain to start your journey in the world of
-            interoperability
-          </p>
-        </div>
+        <>
+          {loading ? (
+            <Loader className="mt-4" />
+          ) : (
+            <div className={classes.textContainer}>
+              <h5 className={classes.textTitle}>Your Cart is Empty</h5>
+              <p className={classes.text}>
+                Add a FIO domain to start your journey in the world of
+                interoperability
+              </p>
+            </div>
+          )}
+        </>
       ) : (
         <div>
           {!isEmpty(cartItems) &&
@@ -165,6 +175,7 @@ const AddressDomainCart: React.FC<Props> = props => {
                 />
               </div>
             ))}
+          {loading && <Loader className="mt-3 mb-3" />}
           {!isEmpty(cartItems) && !cartHasOnlyFreeItems(cartItems) && (
             <>
               <hr />

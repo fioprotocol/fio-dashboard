@@ -9,6 +9,8 @@ import { domains } from '../registrations/selectors';
 import { ReduxState } from '../init';
 import { CartItem } from '../../types';
 
+export const loading = (state: ReduxState): boolean => state[prefix].loading;
+
 export const cartId = (state: ReduxState): string =>
   state[prefix].cartId || null;
 

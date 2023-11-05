@@ -14,6 +14,7 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
+  loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
 import {
   fioWallets as fioWalletsSelector,
@@ -67,6 +68,7 @@ type UseContextReturnType = {
   hasLowBalance?: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
+  loadingCart: boolean;
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   paymentWalletPublicKey: string;
@@ -99,6 +101,7 @@ export const useContext = (): UseContextReturnType => {
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
   );
+  const loadingCart = useSelector(loadingCartSelector);
 
   const dispatch = useDispatch();
 
@@ -429,6 +432,7 @@ export const useContext = (): UseContextReturnType => {
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
     hasLowBalance,
+    loadingCart,
     walletCount,
     isFree,
     isPriceChanged,

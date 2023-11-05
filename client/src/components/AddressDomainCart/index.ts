@@ -7,7 +7,7 @@ import { deleteItem } from '../../redux/cart/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
-import { cartId, cartItems } from '../../redux/cart/selectors';
+import { cartId, cartItems, loading } from '../../redux/cart/selectors';
 import {
   hasFreeAddress,
   isAuthenticated,
@@ -25,6 +25,7 @@ const reduxConnect = connect(
     isAuthenticated,
     fioWallets,
     lastAuthData,
+    loading,
   }),
   {
     deleteItem,
