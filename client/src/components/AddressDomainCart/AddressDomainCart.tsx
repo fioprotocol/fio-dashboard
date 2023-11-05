@@ -47,6 +47,7 @@ type Props = {
   deleteItem: (data: {
     id: string;
     itemId: string;
+    item: CartItem;
     prices: NativePrices;
     roe: number;
     userId?: string;
@@ -101,10 +102,11 @@ const AddressDomainCart: React.FC<Props> = props => {
     history.push(route);
   };
 
-  const handleDeleteItem = (itemId: string) => {
+  const handleDeleteItem = (item: CartItem) => {
     deleteItem({
       id: cartId,
-      itemId,
+      itemId: item.id,
+      item,
       prices: prices?.nativeFio,
       roe,
       userId,
@@ -159,7 +161,7 @@ const AddressDomainCart: React.FC<Props> = props => {
 
                 <DeleteIcon
                   className={classes.deleteIcon}
-                  onClick={() => handleDeleteItem(item.id)}
+                  onClick={() => handleDeleteItem(item)}
                 />
               </div>
             ))}

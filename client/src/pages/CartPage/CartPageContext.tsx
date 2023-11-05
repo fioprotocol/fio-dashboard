@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import {
-  deleteItem,
-  setWallet,
-  recalculateOnPriceUpdate,
-} from '../../redux/cart/actions';
+import { setWallet, recalculateOnPriceUpdate } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -23,10 +19,7 @@ import {
   fioWallets as fioWalletsSelector,
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
-import {
-  isAuthenticated,
-  userId as userIdSelector,
-} from '../../redux/profile/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -58,7 +51,6 @@ import apis from '../../api';
 import { FioRegPricesResponse } from '../../api/responses';
 import {
   CartItem,
-  DeleteCartItem,
   FioWalletDoublet,
   IncomePrices,
   PaymentProvider,
@@ -88,7 +80,6 @@ type UseContextReturnType = {
   walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
   onPaymentChoose: (paymentProvider: PaymentProvider) => Promise<void>;
-  deleteItem: (data: DeleteCartItem) => void;
 };
 
 export const useContext = (): UseContextReturnType => {
@@ -108,7 +99,6 @@ export const useContext = (): UseContextReturnType => {
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
   );
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -454,15 +444,5 @@ export const useContext = (): UseContextReturnType => {
     error,
     showExpiredDomainWarningBadge,
     onPaymentChoose,
-    deleteItem: (data: DeleteCartItem) =>
-      dispatch(
-        deleteItem({
-          id: cartId,
-          itemId: data.id,
-          prices: prices?.nativeFio,
-          roe,
-          userId,
-        }),
-      ),
   };
 };

@@ -6,6 +6,7 @@ import {
   ANALYTICS_FIO_NAME_TYPE,
   ANALYTICS_SEND_TYPE,
   ANALYTICS_WALLET_TYPE,
+  CART_ITEM_TYPE,
   CONFIRM_FIO_ACTIONS,
   CURRENCY_CODES,
   DOMAIN,
@@ -96,46 +97,71 @@ export const getCartItemsDataForAnalytics = (
   const currentStore = store.getState();
   const { prices, roe } = currentStore.registrations;
   const {
-    nativeFio: { domain: nativeFioDomainPrice },
+    nativeFio: {
+      address: nativeFioAddressPrice,
+      domain: nativeFioDomainPrice,
+      renewDomain: nativeRenewDomainPrice,
+    },
   } = prices;
-  const { usdc: usdcDomainPrice } = convertFioPrices(nativeFioDomainPrice, roe);
+  const renewDomainUsdcPrice = +convertFioPrices(nativeRenewDomainPrice, roe)
+    .usdc;
+  const fioAddressUsdcPrice = +convertFioPrices(nativeFioAddressPrice, roe)
+    .usdc;
+  const fioDomainUsdcPrice = +convertFioPrices(nativeFioDomainPrice, roe).usdc;
+
   return {
     currency: CURRENCY_CODES.USD,
-    value: +cartItems.reduce(
-      (sum, item) =>
-        new MathOp(sum)
-          .add(item.domainType === DOMAIN_TYPE.ALLOW_FREE ? 0 : item.costUsdc)
-          .toNumber(),
-      0,
-    ),
+    value: +cartItems.reduce((sum, item) => {
+      const { costUsdc, domainType, isFree, period, type } = item;
+
+      let itemPrice =
+        domainType === DOMAIN_TYPE.ALLOW_FREE && isFree ? 0 : costUsdc;
+
+      if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+        itemPrice = new MathOp(fioAddressUsdcPrice)
+          .add(fioDomainUsdcPrice)
+          .toNumber();
+      } else if (type === CART_ITEM_TYPE.DOMAIN) {
+        itemPrice = fioDomainUsdcPrice;
+      } else {
+        itemPrice = renewDomainUsdcPrice;
+      }
+
+      for (let i = 1; i < period; i++) {
+        itemPrice = new MathOp(renewDomainUsdcPrice).add(itemPrice).toNumber();
+      }
+
+      return new MathOp(sum).add(itemPrice).toNumber();
+    }, 0),
     items: cartItems
       .map(cartItem => {
         const item = {
           item_name:
-            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE
+            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE && cartItem.isFree
               ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
               : cartItem.type,
           price:
-            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE
+            cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE && cartItem.isFree
               ? 0
               : +cartItem.costUsdc,
         };
 
         if (cartItem.period > 1) {
-          if (cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
-            item.price = api.fio.convertFioToUsdc(cartItem.costNativeFio, roe);
+          if (cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+            item.price = new MathOp(fioAddressUsdcPrice)
+              .add(fioDomainUsdcPrice)
+              .toNumber();
+          } else if (cartItem.type === CART_ITEM_TYPE.DOMAIN) {
+            item.price = fioDomainUsdcPrice;
           } else {
-            item.price = +(item.price / cartItem.period).toFixed(2);
+            item.price = renewDomainUsdcPrice;
           }
           const items = [item];
 
           for (let i = 1; i < cartItem.period; i++) {
             items.push({
               item_name: ANALYTICS_FIO_NAME_TYPE.DOMAIN_RENEWAL,
-              price:
-                cartItem.domainType === DOMAIN_TYPE.CUSTOM
-                  ? +usdcDomainPrice
-                  : item.price,
+              price: renewDomainUsdcPrice,
             });
           }
 

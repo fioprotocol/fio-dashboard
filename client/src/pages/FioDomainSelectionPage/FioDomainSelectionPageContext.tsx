@@ -245,6 +245,7 @@ export const useContext = () => {
         updateCartItemPeriod({
           id: cartId,
           itemId: existingCartItem.id,
+          item: existingCartItem,
           period: Number(period),
           prices: prices?.nativeFio,
           roe,
