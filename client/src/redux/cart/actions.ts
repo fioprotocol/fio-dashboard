@@ -19,6 +19,7 @@ export const addItem = (data: {
 }): CommonPromiseAction => ({
   types: [ADD_ITEM_REQUEST, ADD_ITEM_SUCCESS, ADD_ITEM_FAILURE],
   promise: (api: Api) => api.cart.addItem(data),
+  cartItem: data.item,
 });
 
 export const DELETE_ITEM_REQUEST = `${prefix}/DELETE_ITEM_REQUEST`;
@@ -28,12 +29,14 @@ export const DELETE_ITEM_FAILURE = `${prefix}/DELETE_ITEM_FAILURE`;
 export const deleteItem = (data: {
   id: string;
   itemId: string;
+  item: CartItem;
   prices: NativePrices;
   roe: number;
   userId?: string;
 }): CommonPromiseAction => ({
   types: [DELETE_ITEM_REQUEST, DELETE_ITEM_SUCCESS, DELETE_ITEM_FAILURE],
   promise: (api: Api) => api.cart.deleteItem(data),
+  cartItem: data.item,
 });
 
 export const UPDATE_CART_ITEM_PERIOD_REQUEST = `${prefix}/UPDATE_CART_ITEM_PERIOD_REQUEST`;
@@ -43,6 +46,7 @@ export const UPDATE_CART_ITEM_PERIOD_FAILURE = `${prefix}/UPDATE_CART_ITEM_PERIO
 export const updateCartItemPeriod = (data: {
   id: string;
   itemId: string;
+  item: CartItem;
   period: number;
   prices: NativePrices;
   roe: number;
@@ -53,6 +57,8 @@ export const updateCartItemPeriod = (data: {
     UPDATE_CART_ITEM_PERIOD_FAILURE,
   ],
   promise: (api: Api) => api.cart.updateItemPeriod(data),
+  cartItem: data.item,
+  newPeroid: data.period,
 });
 
 export const HANDLE_USERS_FREE_CART_ITEMS_REQUEST = `${prefix}/HANDLE_USERS_FREE_CART_ITEMS_REQUEST`;

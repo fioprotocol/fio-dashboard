@@ -23,7 +23,11 @@ import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { ROUTES } from '../../constants/routes';
 
-import { FioWalletDoublet, WalletBalancesItem } from '../../types';
+import {
+  CartItem as CartItemType,
+  FioWalletDoublet,
+  WalletBalancesItem,
+} from '../../types';
 
 import classes from './Cart.module.scss';
 
@@ -54,11 +58,12 @@ const Cart: React.FC<Props> = props => {
   const isCartEmpty = count === 0;
 
   const handleDeleteItem = useCallback(
-    (itemId: string) => {
+    (item: CartItemType) => {
       dispatch(
         deleteItem({
           id: cartId,
-          itemId,
+          itemId: item.id,
+          item,
           prices: prices?.nativeFio,
           roe,
           userId,
@@ -69,12 +74,19 @@ const Cart: React.FC<Props> = props => {
   );
 
   const handleUpdateItemPeriod = useCallback(
-    (id: string, period: number) => {
+    ({
+      cartItem,
+      newPeriod,
+    }: {
+      cartItem: CartItemType;
+      newPeriod: number;
+    }) => {
       dispatch(
         updateCartItemPeriod({
           id: cartId,
-          itemId: id,
-          period,
+          itemId: cartItem.id,
+          item: cartItem,
+          period: newPeriod,
           prices: prices?.nativeFio,
           roe,
         }),

@@ -21,8 +21,11 @@ import classes from './Cart.module.scss';
 
 type Props = {
   item: CartItemType;
-  onDelete?: (id: string) => void;
-  onUpdatePeriod?: (id: string, period: number) => void;
+  onDelete?: (cartItem: CartItemType) => void;
+  onUpdatePeriod?: (data: {
+    cartItem: CartItemType;
+    newPeriod: number;
+  }) => void;
   isPeriodEditable?: boolean;
 };
 
@@ -64,7 +67,7 @@ const CartItem: React.FC<Props> = props => {
     !hasCustomDomainInCart;
   const onPeriodChange = useCallback(
     (value: string) => {
-      onUpdatePeriod && onUpdatePeriod(item.id, +value);
+      onUpdatePeriod && onUpdatePeriod({ cartItem: item, newPeriod: +value });
     },
     [item, onUpdatePeriod],
   );
@@ -119,7 +122,7 @@ const CartItem: React.FC<Props> = props => {
           {onDelete && (
             <CancelIcon
               className={classes.icon}
-              onClick={() => onDelete(item.id)}
+              onClick={() => onDelete(item)}
             />
           )}
         </div>

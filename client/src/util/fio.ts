@@ -13,7 +13,6 @@ import apis from '../api';
 import { AdminDomain } from '../api/responses';
 import { setFioName } from '../utils';
 import { convertToNewDate, log } from '../util/general';
-import MathOp from './math';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
@@ -342,23 +341,3 @@ export const checkIsDomainItemExistsOnCart = (
 ): boolean =>
   cartItem.id === id ||
   (cartItem.domainType === DOMAIN_TYPE.CUSTOM && cartItem.domain === id);
-
-export const handlePriceForMultiYearFchWithCustomDomain = ({
-  costNativeFio,
-  nativeFioAddressPrice,
-  period,
-}: {
-  costNativeFio: number;
-  nativeFioAddressPrice?: number;
-  period: number | string;
-}): number => {
-  if (!nativeFioAddressPrice)
-    return new MathOp(costNativeFio).mul(period).toNumber();
-
-  return new MathOp(
-    new MathOp(costNativeFio).sub(nativeFioAddressPrice).toNumber(),
-  )
-    .mul(period)
-    .add(nativeFioAddressPrice)
-    .toNumber();
-};
