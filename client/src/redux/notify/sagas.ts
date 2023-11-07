@@ -68,7 +68,7 @@ export function* notify(history: History): Generator {
     ) {
       if (action.type === ADMIN_PROFILE_FAILURE) {
         yield put<Action>(adminLogout({ history }, ADMIN_ROUTES.ADMIN_LOGIN));
-      } else yield put<Action>(logout({ history }, ROUTES.HOME));
+      } else yield put<Action>(logout({ history, redirect: ROUTES.HOME }));
     }
   });
 }

@@ -1,6 +1,7 @@
 import { Ecc } from '@fioprotocol/fiojs';
 
 import { RouterProps } from 'react-router';
+import { History } from 'history';
 
 import { Api } from '../../api';
 import { FioWalletDoublet, WalletKeysObj } from '../../types';
@@ -140,13 +141,19 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = (
-  { history }: RouterProps,
-  redirect: string = '',
-): CommonPromiseAction => ({
+export const logout = ({
+  history,
+  redirect = '',
+  shouldHandleUsersFreeCart,
+}: {
+  history?: History;
+  redirect?: string;
+  shouldHandleUsersFreeCart?: boolean;
+}): CommonPromiseAction => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: (api: Api) => api.auth.logout(),
   redirect,
+  shouldHandleUsersFreeCart,
 });
 
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;

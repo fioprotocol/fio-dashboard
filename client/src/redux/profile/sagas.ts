@@ -133,7 +133,7 @@ export function* logoutSuccess(history: History, api: Api): Generator {
     api.client.removeToken();
 
     const cartId: string | null = yield select(cartIdSelector);
-    if (cartId) {
+    if (cartId && action.shouldHandleUsersFreeCart) {
       yield put<Action>(handleUsersFreeCartItems({ id: cartId }));
     }
 
