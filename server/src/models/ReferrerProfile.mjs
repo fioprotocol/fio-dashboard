@@ -132,7 +132,9 @@ export class ReferrerProfile extends Base {
   }
 
   static async getRefDomainsList() {
-    const refDomainsList = await this.findAll()
+    const refDomainsList = await this.findAll({
+      where: { type: this.TYPE.REF },
+    })
       .map(refProfile => refProfile.settings.domains)
       .filter(domains => domains.length > 0);
 

@@ -260,14 +260,6 @@ class OrdersJob extends CommonJob {
           statusNotes = "User's FIO Wallet";
       }
 
-      if (new MathOp(price).gt(orderItemProps.toal)) {
-        throw new Error('Refund price is bigger than total order price');
-      }
-
-      if (!price || price === '0' || price === 0) {
-        throw new Error('Refund price is 0');
-      }
-
       // Refund user for order
       const refundPayment = await Payment.create({
         status: Payment.STATUS.NEW,
@@ -286,6 +278,32 @@ class OrdersJob extends CommonJob {
         statusNotes,
         paymentId: refundPayment.id,
       });
+
+      if (new MathOp(price).gt(orderItemProps.total)) {
+        refundPayment.status = Payment.STATUS.CANCELLED;
+        const errorMessage = 'Refund price is bigger than total order price';
+
+        await refundPayment.save();
+        await PaymentEventLog.create({
+          status: PaymentEventLog.STATUS.FAILED,
+          statusNotes: errorMessage,
+          paymentId: refundPayment.id,
+        });
+        throw new Error(errorMessage);
+      }
+
+      if (!price || price === '0' || price === 0) {
+        refundPayment.status = Payment.STATUS.CANCELLED;
+        const errorMessage = 'Refund price is 0';
+
+        await refundPayment.save();
+        await PaymentEventLog.create({
+          status: PaymentEventLog.STATUS.FAILED,
+          statusNotes: errorMessage,
+          paymentId: refundPayment.id,
+        });
+        throw new Error(errorMessage);
+      }
 
       let refundTx;
       switch (payment.processor) {
