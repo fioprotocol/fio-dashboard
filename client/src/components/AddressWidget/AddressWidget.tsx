@@ -18,7 +18,7 @@ type Props = {
   };
   logoSrc?: string;
   title?: ReactNode;
-  subtitle?: string;
+  subtitle?: ReactNode;
   actionText?: string;
   hasMinHeight?: boolean;
   showSignInWidget?: boolean;

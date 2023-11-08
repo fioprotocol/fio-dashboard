@@ -1,0 +1,58 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  background-color: $mine-shaft;
+  color: $white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 100px 80px;
+
+  .title {
+    margin-bottom: 0;
+    font-size: 2.625em;
+    @include inter-bold;
+  }
+
+  .subtitle {
+    font-size: 1.5em;
+    margin-top: 40px;
+    margin-bottom: 0;
+    max-width: 1080px;
+    @include inter-regular;
+  }
+
+  .tilesContainer {
+    margin-top: 80px;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+
+    .tileItem {
+      max-width: 400px;
+      width: auto;
+      padding: 35px 35px 45px 35px;
+      border-radius: 20px;
+      border: 1px solid $mountain-mist;
+
+      .title {
+        margin-top: 60px;
+        font-size: 2em;
+        @include inter-bold;
+      }
+
+      .subtitle {
+        margin-top: 20px;
+        font-size: 1.125em;
+        @include inter-regular;
+      }
+
+      .img {
+        width: 100%;
+      }
+    }
+  }
+}

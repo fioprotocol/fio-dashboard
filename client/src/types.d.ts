@@ -423,8 +423,6 @@ export type RefProfile = {
       isOn: boolean;
       params: { asset: string; chainId: string; contractAddress: string };
     };
-    showExplanationsSection?: false;
-    showPartnersSection?: false;
     img?: string;
     link?: string;
   };
