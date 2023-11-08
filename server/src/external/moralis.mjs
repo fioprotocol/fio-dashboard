@@ -173,6 +173,20 @@ class GetMoralis {
       tokenId,
     });
   }
+
+  async getAllTokens({ chainName, address }) {
+    try {
+      await this.init();
+      const chain = EvmChain[chainName];
+      return await Moralis.EvmApi.token.getWalletTokenBalances({
+        address,
+        chain,
+      });
+    } catch (error) {
+      logger.error(error);
+      throw Error(error);
+    }
+  }
 }
 
 export default new GetMoralis();

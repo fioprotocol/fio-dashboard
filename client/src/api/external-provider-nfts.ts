@@ -3,6 +3,7 @@ import Base from './base';
 import {
   ExternalProviderNftsResponse,
   ExternalProviderNftsMetadataResponse,
+  ExternalTokensResponse,
 } from './responses';
 
 export default class ExternalProviderNfts extends Base {
@@ -26,5 +27,11 @@ export default class ExternalProviderNfts extends Base {
       tokenAddress,
       tokenId,
     });
+  }
+  getAllExternalTokens(data: {
+    address: string;
+    chainName: string;
+  }): Promise<ExternalTokensResponse[]> {
+    return this.apiClient.get('/external-tokens', data);
   }
 }

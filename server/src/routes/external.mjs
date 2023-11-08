@@ -9,6 +9,7 @@ import ValidatePubAddress from '../services/external/ValidatePubAddress';
 import ApiUrls from '../services/external/ApiUrls';
 import GetExternalProviderNfts from '../services/external/GetExternalProviderNfts.mjs';
 import GetExternalProviderNftsMetadata from '../services/external/GetExternalProviderNftsMetadata.mjs';
+import GetExternalAllTokens from '../services/external/GetExternalAllTokens.mjs';
 import AbstractEmailVerification from '../services/external/AbstractEmailVerification.mjs';
 
 export default {
@@ -27,6 +28,7 @@ export default {
     GetExternalProviderNftsMetadata,
     req => req.query,
   ),
+  getAllExternalTokens: makeServiceRunner(GetExternalAllTokens, req => req.query),
   abstractEmailVerification: makeServiceRunner(
     AbstractEmailVerification,
     req => req.query,

@@ -132,7 +132,12 @@ export const RefHomePage: React.FC<Props &
 
     const domainName = refDomain || 'rulez';
 
-    if (refTitle && refTitle.includes(`@${DEFAULT_DOMAIN_NAME}`) && refDomain) {
+    if (
+      refTitle &&
+      typeof refTitle === 'string' &&
+      refTitle.includes(`@${DEFAULT_DOMAIN_NAME}`) &&
+      refDomain
+    ) {
       addressWidgetContent.title = refTitle.replace(
         `@${DEFAULT_DOMAIN_NAME}`,
         `@${refDomain}`,
@@ -161,21 +166,23 @@ export const RefHomePage: React.FC<Props &
           suffixText={`@${refDomain}`}
           showSignInWidget={!isGatedFlow}
         >
-          <GateVerificationComponent
-            parnterName={refProfileInfo?.label}
-            refDomain={refDomain}
-            showBrowserExtensionErrorModal={showBrowserExtensionErrorModal}
-            showProviderWindowError={showProviderWindowError}
-            showProviderLoadingIcon={showProviderLoadingIcon}
-            showSelectProviderModalVisible={showSelectProviderModalVisible}
-            connectWallet={connectWallet}
-            closeSelectProviderModal={closeSelectProviderModal}
-            onClick={onClick}
-            setConnectionError={setConnectionError}
-            setShowBrowserExtensionErrorModal={
-              setShowBrowserExtensionErrorModal
-            }
-          />
+          {isGatedFlow && (
+            <GateVerificationComponent
+              parnterName={refProfileInfo?.label}
+              refDomain={refDomain}
+              showBrowserExtensionErrorModal={showBrowserExtensionErrorModal}
+              showProviderWindowError={showProviderWindowError}
+              showProviderLoadingIcon={showProviderLoadingIcon}
+              showSelectProviderModalVisible={showSelectProviderModalVisible}
+              connectWallet={connectWallet}
+              closeSelectProviderModal={closeSelectProviderModal}
+              onClick={onClick}
+              setConnectionError={setConnectionError}
+              setShowBrowserExtensionErrorModal={
+                setShowBrowserExtensionErrorModal
+              }
+            />
+          )}
         </AddressWidget>
         <FCHBanner
           containerClass={classes.fchBannerConainerClass}
