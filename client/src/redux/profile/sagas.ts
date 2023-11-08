@@ -24,6 +24,7 @@ import {
 import { closeLoginModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
 import { handleUsersFreeCartItems } from '../cart/actions';
+import { setRedirectPath } from '../navigation/actions';
 
 import {
   locationState as locationStateSelector,
@@ -105,6 +106,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
     }
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);
+      yield put<Action>(setRedirectPath(null));
     }
 
     yield put(closeLoginModal());
