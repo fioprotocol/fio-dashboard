@@ -41,6 +41,7 @@ type Props = {
 const AddressWidget: React.FC<Props> = props => {
   const {
     actionText,
+    children,
     hasMinHeight,
     isAuthenticated,
     isReverseColors,
@@ -94,6 +95,8 @@ const AddressWidget: React.FC<Props> = props => {
         onInputChanged={onInputChanged}
         buttonText={buttonText}
       />
+
+      {children}
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>
   );
