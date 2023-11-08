@@ -25,8 +25,21 @@ export default class PartnerCreate extends Base {
                   name: ['required', 'string'],
                   isPremium: 'boolean',
                   rank: { min_number: 0 },
+                  isFirstRegFree: 'boolean',
                 },
               ],
+            },
+            gatedRegistration: {
+              nested_object: {
+                isOn: 'boolean',
+                params: {
+                  nested_object: {
+                    asset: 'string',
+                    chainId: 'string',
+                    contractAddress: 'string',
+                  },
+                },
+              },
             },
             preselectedDomain: 'string',
             showExplanationsSection: 'boolean',

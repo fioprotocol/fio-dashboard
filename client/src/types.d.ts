@@ -394,6 +394,7 @@ export type RefProfileDomain = {
   name: string;
   isPremium: boolean;
   rank: number;
+  isFirstRegFree: boolean;
   domainType?: DomainItemType;
   allowFree?: boolean;
 };
@@ -418,6 +419,10 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
+    gatedRegistration?: {
+      isOn: boolean;
+      params: { asset: string; chainId: string; contractAddress: string };
+    };
     showExplanationsSection?: false;
     showPartnersSection?: false;
     img?: string;
