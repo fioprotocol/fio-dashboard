@@ -15,7 +15,7 @@ const EXPIRING_DOMAINS_EMAIL_SUBJECTS = {
   [DOMAIN_EXP_PERIOD.EXPIRED_30]: 'Your FIO domain(s) have expired',
   [DOMAIN_EXP_PERIOD.EXPIRED_90]: 'Your FIO domain(s) have expired and will be burned',
   [DOMAIN_EXP_PERIOD.EXPIRED]:
-    'Your FIO domain(s) and associated addresses have been burned',
+    'Your FIO domain(s) and associated addresses are scheduled to be burned',
 };
 
 const EXPIRING_DOMAINS_EMAIL_TITLE = {
