@@ -7,6 +7,7 @@ import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import { FCHBanner } from '../../components/FCHBanner';
 import { DetailedInfoMainPageComponent } from '../../components/DetailedInfoMainPageComponent';
+import { GateVerificationComponent } from '../../components/GateVerificationComponent';
 
 import { APP_TITLE } from '../../constants/labels';
 import { DEFAULT_DOMAIN_NAME } from '../../constants/ref';
@@ -113,6 +114,7 @@ export const RefHomePage: React.FC<Props &
 
     const refTitle = addressWidgetContent?.title as string;
     const refDomain = refProfileInfo?.settings?.domains[0]?.name;
+    const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
 
     const domainName = refDomain || 'rulez';
 
@@ -141,10 +143,15 @@ export const RefHomePage: React.FC<Props &
             </div>
           }
           isAuthenticated={isAuthenticated}
-          showSignInWidget
           isDarkWhite
           suffixText={`@${refDomain}`}
-        />
+          showSignInWidget={!isGatedFlow}
+        >
+          <GateVerificationComponent
+            parnterName={refProfileInfo?.label}
+            refDomain={refDomain}
+          />
+        </AddressWidget>
         <FCHBanner
           containerClass={classes.fchBannerConainerClass}
           customFioHandleBanner={

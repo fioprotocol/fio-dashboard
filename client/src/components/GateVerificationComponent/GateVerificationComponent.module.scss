@@ -1,0 +1,52 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  color: $white;
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  max-width: 763px;
+  margin: 0 auto;
+
+  .text {
+    margin-top: 10px;
+    @include inter-regular;
+    font-size: 0.875em;
+    line-height: 2em;
+
+    .boldText {
+      @include inter-bold;
+    }
+  }
+
+  .metamask {
+    display: flex;
+    gap: 10px;
+    font-size: 0.8125em;
+    align-items: center;
+
+    .logo {
+      width: 34px;
+    }
+  }
+
+  .securityNote {
+    display: flex;
+    font-size: 0.6875em;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    @include lg {
+      flex-direction: row;
+    }
+
+    .securityNoteText {
+      @include inter-regular;
+      margin: 0;
+    }
+  }
+}
