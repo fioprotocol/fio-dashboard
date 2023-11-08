@@ -1,12 +1,24 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { ethers } from 'ethers';
+import { useSelector } from 'react-redux';
 
-import useInitializeProviderConnection from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
-import { log } from '../../util/general';
 import { OPENED_METAMASK_WINDOW_ERROR_CODE } from '../../components/ConnectWallet/ConnectWalletButton/ConnectWalletButton';
 
+import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
+
+import apis from '../../api';
+import MathOp from '../../util/math';
+import { log } from '../../util/general';
+
+import useInitializeProviderConnection from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
+
+import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
+import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
+
 type UseContextProps = {
+  hasVerifiedError: boolean;
+  isVerified: boolean;
   isWalletConnected: boolean;
   showBrowserExtensionErrorModal: boolean;
   showProviderWindowError: boolean;
@@ -22,13 +34,17 @@ type UseContextProps = {
 export const useContext = (): UseContextProps => {
   const providerData = useInitializeProviderConnection();
   const {
+    address,
     connectionError,
+    network,
     setProvider,
     setWeb3Provider,
     setAddress,
     setConnectionError,
     setNetwork,
   } = providerData;
+
+  const refProfileInfo = useSelector(refProfileInfoSelector);
 
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [
@@ -40,6 +56,12 @@ export const useContext = (): UseContextProps => {
     setShowSelectProviderModalVisible,
   ] = useState<boolean>(false);
   const [showProviderLoadingIcon, setShowProviderLoadingIcon] = useState(false);
+  const [isVerified, toggleVerified] = useState(false);
+  const [hasVerifiedError, toggleHasVerifiedError] = useState(false);
+
+  const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
+  const contractAddress =
+    refProfileInfo?.settings?.gatedRegistration?.params?.contractAddress;
 
   const closeSelectProviderModal = useCallback(() => {
     setShowProviderLoadingIcon(false);
@@ -93,7 +115,74 @@ export const useContext = (): UseContextProps => {
     setShowSelectProviderModalVisible(true);
   }, []);
 
+  const getNfts = useCallback(async () => {
+    const chain = MORALIS_CHAIN_LIST.find(
+      chainItem => chainItem.chainId === network?.chainId,
+    );
+
+    if (chain?.chainName) {
+      try {
+        const nftsList = await apis.externalProviderNfts.getAllNfts(
+          address,
+          chain.chainName,
+        );
+
+        const hasRefContract = nftsList.find(
+          nftItem => nftItem.token_address === contractAddress,
+        );
+
+        toggleVerified(!!hasRefContract);
+      } catch (error) {
+        log.error(error);
+        toggleVerified(false);
+        toggleHasVerifiedError(true);
+      }
+    }
+  }, [address, contractAddress, network?.chainId]);
+
+  const getAllTokens = useCallback(async () => {
+    const chain = MORALIS_CHAIN_LIST.find(
+      chainItem => chainItem.chainId === network?.chainId,
+    );
+
+    if (chain?.chainName) {
+      try {
+        const tokensList = await apis.externalProviderNfts.getAllExternalTokens(
+          {
+            address,
+            chainName: chain.chainName,
+          },
+        );
+
+        const hasRefContract = tokensList.find(
+          tokenItem =>
+            tokenItem.token_address === contractAddress &&
+            new MathOp(tokenItem.balance).gt(0),
+        );
+
+        if (hasRefContract) {
+          toggleVerified(!!hasRefContract);
+        }
+      } catch (error) {
+        log.error(error);
+        toggleVerified(false);
+        toggleHasVerifiedError(true);
+      }
+    }
+  }, [address, contractAddress, network?.chainId]);
+
+  useEffect(() => {
+    if (asset === NFT_LABEL && network?.chainId) {
+      getNfts();
+    }
+    if (asset === TOKEN_LABEL && network?.chainId) {
+      getAllTokens();
+    }
+  }, [asset, getAllTokens, getNfts, network?.chainId]);
+
   return {
+    hasVerifiedError,
+    isVerified,
     isWalletConnected,
     showBrowserExtensionErrorModal,
     showProviderWindowError:

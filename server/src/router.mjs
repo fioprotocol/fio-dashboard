@@ -225,6 +225,7 @@ router.get(
   '/external-provider-nfts-metadata',
   routes.external.externalProviderNftsMetadata,
 );
+router.get('/external-tokens', routes.external.getAllExternalTokens);
 
 router.get('/gas-oracle', routes.external.getGasOracle);
 router.get(

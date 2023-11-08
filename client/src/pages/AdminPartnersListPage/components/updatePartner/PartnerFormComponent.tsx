@@ -28,6 +28,7 @@ import {
 } from '../../../../constants/common';
 import { FIO_ACCOUNT_TYPES } from '../../../../constants/fio';
 import { MORALIS_CHAIN_LIST_ARR } from '../../../../constants/ethereum';
+import { ASSETS_SETTINGS_CHOICE } from '../../../../constants/ref';
 
 import {
   FioAccountProfile,
@@ -43,10 +44,6 @@ type FieldsType = FieldArrayRenderProps<
 >['fields'];
 
 const RANK_REARRANGEMENT_DELAY_MS = 500;
-const ASSETS_SETTINGS_CHOICE = [
-  { id: 'NFT', name: 'NFT' },
-  { id: 'TOKEN', name: 'TOKEN' },
-];
 
 export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
   loading: boolean;

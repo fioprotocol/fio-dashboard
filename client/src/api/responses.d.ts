@@ -162,6 +162,16 @@ export type ExternalProviderNftsMetadataResponse = {
   verified_collection: boolean;
 };
 
+export type ExternalTokensResponse = {
+  token_address: string;
+  name: string;
+  symbol: string;
+  logo: string | null;
+  thumbnail: string | null;
+  decimals: number;
+  balance: string;
+};
+
 export type NotificationsListResponse = Notification[];
 export type NotificationsCreateResponse = Notification;
 export type NotificationsUpdateResponse = Notification;
