@@ -8,7 +8,7 @@ const CHUNK_SIZE = 2;
 const DELAY_BETWEEN_CHUNKS = 500;
 const FIO_NFT_POLYGON_CONTRACT = process.env.FIO_NFT_POLYGON_CONTRACT || '';
 
-class GetMoralisNfts {
+class GetMoralis {
   async init() {
     if (!Moralis.Core._isStarted)
       await Moralis.start({
@@ -175,4 +175,4 @@ class GetMoralisNfts {
   }
 }
 
-export default new GetMoralisNfts();
+export default new GetMoralis();

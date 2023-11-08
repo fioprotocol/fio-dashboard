@@ -1,4 +1,4 @@
-import moralisNftsApi from '../../external/moralis-nft.mjs';
+import moralisApi from '../../external/moralis.mjs';
 
 import logger from '../../logger';
 import config from '../../config/index.mjs';
@@ -15,7 +15,7 @@ export default class GetExternalProviderNfts extends Base {
 
   async execute({ address, chainName = config.nfts.defaultChainName }) {
     try {
-      const nftsList = await moralisNftsApi.getAllWalletNfts({
+      const nftsList = await moralisApi.getAllWalletNfts({
         address,
         chainName,
       });

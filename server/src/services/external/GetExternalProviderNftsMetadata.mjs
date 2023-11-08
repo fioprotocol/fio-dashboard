@@ -1,4 +1,4 @@
-import moralisNftsApi from '../../external/moralis-nft.mjs';
+import moralisApi from '../../external/moralis.mjs';
 
 import logger from '../../logger';
 import Base from '../Base';
@@ -15,7 +15,7 @@ export default class GetExternalProviderNftsMetadata extends Base {
 
   async execute({ chainName, tokenAddress, tokenId }) {
     try {
-      const res = await moralisNftsApi.getNftMetadata({
+      const res = await moralisApi.getNftMetadata({
         chainName,
         tokenAddress,
         tokenId,
