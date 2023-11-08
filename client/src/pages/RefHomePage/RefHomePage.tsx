@@ -15,6 +15,8 @@ import { DEFAULT_DOMAIN_NAME } from '../../constants/ref';
 import { handleHomePageContent } from '../../util/homePage';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
+import { useContext } from './RefHomePageContext';
+
 import {
   RefProfile,
   ContainedFlowQuery,
@@ -58,6 +60,18 @@ export const RefHomePage: React.FC<Props &
   } = props;
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
+
+  const {
+    showBrowserExtensionErrorModal,
+    showProviderWindowError,
+    showProviderLoadingIcon,
+    showSelectProviderModalVisible,
+    connectWallet,
+    closeSelectProviderModal,
+    onClick,
+    setConnectionError,
+    setShowBrowserExtensionErrorModal,
+  } = useContext();
 
   useEffect(() => {
     if (refProfileInfo != null) {
@@ -138,9 +152,9 @@ export const RefHomePage: React.FC<Props &
             <div className={classes.title}>{addressWidgetContent?.title}</div>
           }
           subtitle={
-            <div className={classes.subtitle}>
+            <span className={classes.subtitle}>
               {addressWidgetContent?.subtitle}
-            </div>
+            </span>
           }
           isAuthenticated={isAuthenticated}
           isDarkWhite
@@ -150,6 +164,17 @@ export const RefHomePage: React.FC<Props &
           <GateVerificationComponent
             parnterName={refProfileInfo?.label}
             refDomain={refDomain}
+            showBrowserExtensionErrorModal={showBrowserExtensionErrorModal}
+            showProviderWindowError={showProviderWindowError}
+            showProviderLoadingIcon={showProviderLoadingIcon}
+            showSelectProviderModalVisible={showSelectProviderModalVisible}
+            connectWallet={connectWallet}
+            closeSelectProviderModal={closeSelectProviderModal}
+            onClick={onClick}
+            setConnectionError={setConnectionError}
+            setShowBrowserExtensionErrorModal={
+              setShowBrowserExtensionErrorModal
+            }
           />
         </AddressWidget>
         <FCHBanner

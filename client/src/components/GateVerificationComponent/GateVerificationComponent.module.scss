@@ -50,3 +50,24 @@
     }
   }
 }
+
+.connectWalletModal {
+  padding-bottom: 20px;
+
+  .connectWalletProviderTypeButton {
+    padding: 8px 20px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $baltic-sea;
+    border-radius: 12px;
+    color: $white;
+    width: 100%;
+
+    .providerIcon {
+      margin-left: 10px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+}

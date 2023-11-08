@@ -8,14 +8,38 @@ import SubmitButton from '../common/SubmitButton/SubmitButton';
 import MetamaskImgSrc from '../../assets/images/metamask.svg';
 
 import classes from './GateVerificationComponent.module.scss';
+import { LoadingIcon } from '../Input/StaticInputParts';
+import ModalComponent from '../Modal/Modal';
+import DangerModal from '../Modal/DangerModal';
 
 type Props = {
   parnterName: string;
   refDomain: string;
+  showProviderWindowError: boolean;
+  showBrowserExtensionErrorModal: boolean;
+  showProviderLoadingIcon: boolean;
+  showSelectProviderModalVisible: boolean;
+  connectWallet: () => void;
+  closeSelectProviderModal: () => void;
+  onClick: () => void;
+  setConnectionError: (data: null) => void;
+  setShowBrowserExtensionErrorModal: (show: boolean) => void;
 };
 
 export const GateVerificationComponent: React.FC<Props> = props => {
-  const { parnterName, refDomain } = props;
+  const {
+    parnterName,
+    refDomain,
+    showProviderWindowError,
+    showBrowserExtensionErrorModal,
+    showProviderLoadingIcon,
+    showSelectProviderModalVisible,
+    closeSelectProviderModal,
+    connectWallet,
+    onClick,
+    setConnectionError,
+    setShowBrowserExtensionErrorModal,
+  } = props;
 
   return (
     <div className={classes.container}>
@@ -31,7 +55,7 @@ export const GateVerificationComponent: React.FC<Props> = props => {
       </p>
 
       <SubmitButton
-        onClick={() => {}}
+        onClick={onClick}
         text={
           <div className={classes.metamask}>
             <img
@@ -53,6 +77,46 @@ export const GateVerificationComponent: React.FC<Props> = props => {
           validation purposes only.
         </p>
       </div>
+      <DangerModal
+        show={showBrowserExtensionErrorModal}
+        title="Please add MetaMask extension in your browser first. Or refresh the page if it has just been installed."
+        onClose={() => setShowBrowserExtensionErrorModal(false)}
+        buttonText="Close"
+        onActionButtonClick={() => setShowBrowserExtensionErrorModal(false)}
+      />
+      <DangerModal
+        show={showProviderWindowError}
+        title="MetaMask window is already opened for this site. Please check your browser windows first."
+        onClose={() => setConnectionError(null)}
+        buttonText="Close"
+        onActionButtonClick={() => setConnectionError(null)}
+      />
+      <ModalComponent
+        show={showSelectProviderModalVisible}
+        onClose={closeSelectProviderModal}
+        closeButton={true}
+        isSimple={true}
+        isWide={true}
+      >
+        <div className={classes.connectWalletModal}>
+          <h2>Please Connect Your Wallet</h2>
+          <p className="pt-2">Please, connect your wallet to verify.</p>
+          <button
+            onClick={connectWallet}
+            className={classes.connectWalletProviderTypeButton}
+          >
+            <div>MetaMask</div>
+            <div className="d-flex justify-content-center align-items-center">
+              <LoadingIcon isVisible={showProviderLoadingIcon} />
+              <img
+                src={MetamaskImgSrc}
+                className={classes.providerIcon}
+                alt="metamask"
+              />
+            </div>
+          </button>
+        </div>
+      </ModalComponent>
     </div>
   );
 };

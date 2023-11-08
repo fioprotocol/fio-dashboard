@@ -43,7 +43,7 @@ export const DetailedInfoMainPageComponent: React.FC<Props> = props => {
       </p>
       <div className={classes.tilesContainer}>
         {TILES_CONTENT.map(tileItem => (
-          <div className={classes.tileItem}>
+          <div className={classes.tileItem} key={tileItem.title}>
             <img
               src={tileItem.img}
               alt={tileItem.title}

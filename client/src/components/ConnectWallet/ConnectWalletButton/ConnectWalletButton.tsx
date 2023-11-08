@@ -28,7 +28,7 @@ type Props = {
   wFioBalance?: string;
 } & ConnectProviderType;
 
-const OPENED_METAMASK_WINDOW_ERROR_CODE = -32002;
+export const OPENED_METAMASK_WINDOW_ERROR_CODE = -32002;
 
 const ConnectWalletButton: React.FC<Props> = props => {
   const {
