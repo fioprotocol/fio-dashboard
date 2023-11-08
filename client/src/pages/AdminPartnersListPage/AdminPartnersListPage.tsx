@@ -76,8 +76,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             contractAddress: '',
           },
         },
-        showExplanationsSection: false,
-        showPartnersSection: false,
         actions: {
           SIGNNFT: {},
           REG: {},

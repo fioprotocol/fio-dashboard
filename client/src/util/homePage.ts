@@ -5,6 +5,7 @@ import {
   CONTAINED_FLOW_SUBTITLES,
   CONTAINED_FLOW_TITLES,
 } from '../constants/containedFlow';
+import { DEFAULT_DOMAIN_NAME } from '../constants/ref';
 
 import { removeExtraCharactersFromString } from '../util/general';
 
@@ -79,6 +80,13 @@ export const handleHomePageContent = ({
     title = CONTAINED_FLOW_TITLES[actionName];
     subtitle = CONTAINED_FLOW_SUBTITLES[actionName];
     actionText = CONTAINED_FLOW_ACTION_TEXT[actionName];
+  }
+
+  if (refProfileInfo) {
+    title = title ? title : `Claim your @${DEFAULT_DOMAIN_NAME} web3 name!`;
+    subtitle = subtitle
+      ? subtitle
+      : 'Replace all of your public wallet addresses with a single, secure, customizable handle.';
   }
 
   return {

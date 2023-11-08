@@ -6,10 +6,10 @@ import { Helmet } from 'react-helmet-async';
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import { FCHBanner } from '../../components/FCHBanner';
-import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
-import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
+import { DetailedInfoMainPageComponent } from '../../components/DetailedInfoMainPageComponent';
 
 import { APP_TITLE } from '../../constants/labels';
+import { DEFAULT_DOMAIN_NAME } from '../../constants/ref';
 
 import { handleHomePageContent } from '../../util/homePage';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
@@ -20,7 +20,7 @@ import {
   ContainedFlowQueryParams,
 } from '../../types';
 
-import classnames from './RefHomePage.module.scss';
+import classes from './RefHomePage.module.scss';
 
 const FADE_OUT_TIMEOUT = 780;
 
@@ -83,10 +83,8 @@ export const RefHomePage: React.FC<Props &
 
   if (refLinkError) {
     return (
-      <div className={classnames.container}>
-        <div className={classnames.validationErrorContainer}>
-          {refLinkError}
-        </div>
+      <div className={classes.container}>
+        <div className={classes.validationErrorContainer}>{refLinkError}</div>
       </div>
     );
   }
@@ -95,8 +93,8 @@ export const RefHomePage: React.FC<Props &
     if (loading || !refProfileIsLoaded) {
       return (
         <div
-          className={`${classnames.spinnerContainer} ${
-            hideLoader ? classnames.fadeOut : ''
+          className={`${classes.spinnerContainer} ${
+            hideLoader ? classes.fadeOut : ''
           }`}
         >
           <FioLoader />
@@ -113,12 +111,20 @@ export const RefHomePage: React.FC<Props &
       refProfileInfo,
     });
 
-    const {
-      settings: { showExplanationsSection, showPartnersSection } = {},
-    } = refProfileInfo;
+    const refTitle = addressWidgetContent?.title as string;
+    const refDomain = refProfileInfo?.settings?.domains[0]?.name;
+
+    const domainName = refDomain || 'rulez';
+
+    if (refTitle && refTitle.includes(`@${DEFAULT_DOMAIN_NAME}`) && refDomain) {
+      addressWidgetContent.title = refTitle.replace(
+        `@${DEFAULT_DOMAIN_NAME}`,
+        `@${refDomain}`,
+      );
+    }
 
     return (
-      <div className={classnames.container}>
+      <div className={classes.container}>
         <Helmet>
           <title>
             {APP_TITLE} - {refProfileInfo.label}
@@ -126,20 +132,34 @@ export const RefHomePage: React.FC<Props &
         </Helmet>
         <AddressWidget
           {...addressWidgetContent}
+          title={
+            <div className={classes.title}>{addressWidgetContent?.title}</div>
+          }
+          subtitle={
+            <div className={classes.subtitle}>
+              {addressWidgetContent?.subtitle}
+            </div>
+          }
           isAuthenticated={isAuthenticated}
           showSignInWidget
           isDarkWhite
+          suffixText={`@${refDomain}`}
         />
-        {showExplanationsSection && (
-          <>
-            <FCHBanner fch="bob@rulez" />
-            <FCHSpecialsBanner />
-          </>
-        )}
-        {showPartnersSection && <WidelyAdoptedSection />}
-        {(showExplanationsSection || showPartnersSection) && (
-          <AddressWidget {...addressWidgetContent} isReverseColors />
-        )}
+        <FCHBanner
+          containerClass={classes.fchBannerConainerClass}
+          customFioHandleBanner={
+            <div className={classes.customFioHandleBanner}>
+              bob<span className={classes.boldText}>@{domainName}</span>
+            </div>
+          }
+          fch={`bob@${domainName}`}
+          mainTextClass={classes.mainTextClass}
+          publicKeyWrapperClass={classes.publicKeyWrapperClass}
+          publicKeyClass={classes.publicKeyClass}
+          subtextClass={classes.subtextClass}
+          text="Now people can send you cryptocurrency to"
+        />
+        <DetailedInfoMainPageComponent domain={domainName} />
       </div>
     );
   };
