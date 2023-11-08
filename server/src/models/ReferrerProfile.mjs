@@ -38,19 +38,12 @@ export class ReferrerProfile extends Base {
         settings: { type: DT.JSON },
         // Possible settings keys:
         // settings: {
-        //   domains: ['refprofile'],
-        //   premiumDomains: ['refprofile'],
         //   actions: {"SIGNNFT": {title: '', subtitle: ''}, "REG": {title: '', subtitle: ''}},
+        //   domains: [{ name: 'refprofile', isPremium: boolean, rank: number, isFirstRegFree: boolean }],
+        //   gatedRegistration: {'isOn': boolean, params: {'asset': 'NFT || TOKEN', chainId: '1' (1 - Ethereum), contractAddress: ''}}
         //   img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3A/wD/A...',
         //   link: 'https://www.ref.profile/',
-        //   simpleRegLogo: '/ref/logos/simple-reg-ref-profile-log.png',
-        //   cryptoHandleSalePrice: 1.22,
-        //   cryptoHandleSaleRoeActive: false,
-        //   domainSalePrice: 33,
-        //   domainSaleRoeActive: true,
-        //   auto_bundles: false,
-        //   showExplanationsSection: false,
-        //   showPartnersSection: false,
+        //   preselectedDomain: 'refprofile'
         // },
         simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
         simpleRegIpWhitelist: {

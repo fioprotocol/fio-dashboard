@@ -40,6 +40,14 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
         wrapperClasses="ml-3"
         label="Premium"
       />
+      <Field
+        type="checkbox"
+        id={`${field}-isFirstRegFree`}
+        component={Input}
+        name={`${field}.isFirstRegFree`}
+        wrapperClasses="ml-3"
+        label="First registration always free"
+      />
       <Button
         className="w-25 ml-3 mb-0"
         variant="danger"

@@ -27,6 +27,7 @@ import {
   REF_PROFILE_TYPE,
 } from '../../../../constants/common';
 import { FIO_ACCOUNT_TYPES } from '../../../../constants/fio';
+import { MORALIS_CHAIN_LIST_ARR } from '../../../../constants/ethereum';
 
 import {
   FioAccountProfile,
@@ -42,6 +43,10 @@ type FieldsType = FieldArrayRenderProps<
 >['fields'];
 
 const RANK_REARRANGEMENT_DELAY_MS = 500;
+const ASSETS_SETTINGS_CHOICE = [
+  { id: 'NFT', name: 'NFT' },
+  { id: 'TOKEN', name: 'TOKEN' },
+];
 
 export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
   loading: boolean;
@@ -138,6 +143,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
       name: '',
       isPremium: false,
       rank: numberOfDomains + 1,
+      isFirstRegFree: false,
     });
   }, [form]);
 
@@ -334,6 +340,54 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
               />
             </div>
           </div>
+
+          <div className="d-flex align-self-start mb-4">
+            <Field
+              name="settings.gatedRegistration.isOn"
+              type="checkbox"
+              component={Input}
+              label="Gated Registration"
+            />
+          </div>
+          {values.settings?.gatedRegistration?.isOn ? (
+            <>
+              <Field
+                type="dropdown"
+                name="settings.gatedRegistration.params.chainId"
+                component={Input}
+                options={MORALIS_CHAIN_LIST_ARR}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Chain"
+                placeholder="Select..."
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="dropdown"
+                name="settings.gatedRegistration.params.asset"
+                component={Input}
+                options={ASSETS_SETTINGS_CHOICE}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Asset"
+                placeholder="Select..."
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="text"
+                name="settings.gatedRegistration.params.contractAddress"
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Contract Address"
+                placeholder="Set Contract Address"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+            </>
+          ) : null}
 
           <div className="d-flex align-self-start mb-4">
             <Field
