@@ -39,18 +39,18 @@
     justify-content: center;
     gap: 10px;
 
-    &.isVerified {
+    &.hasFioHandleInfoMessage, &.isVerified, &.hasVerifiedError {
       display: flex;
       flex-direction: row;
-      background-color: $green-shell;
       height: auto;
     }
 
+    &.isVerified {
+      background-color: $green-shell;
+    }
+
     &.hasVerifiedError {
-      display: flex;
-      flex-direction: row;
       background-color: $warn-red;
-      height: auto;
       margin-bottom: 30px;
     }
 

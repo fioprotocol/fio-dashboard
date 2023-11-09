@@ -420,6 +420,11 @@
       background-color: $white;
     }
 
+    &.disabledGray {
+      background-color: $mine-shaft;
+      opacity: 0.5;
+    }
+
     &.doubleIconInput {
       padding-right: 90px;
 
@@ -469,6 +474,10 @@
 
   &.hasIconsLeft {
     right: 50px;
+  }
+
+  &.disabledGray {
+    opacity: 0.5;
   }
 }
 
