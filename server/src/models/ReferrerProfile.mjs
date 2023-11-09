@@ -135,7 +135,12 @@ export class ReferrerProfile extends Base {
         },
       },
     })
-      .map(refProfile => refProfile.settings.domains)
+      .map(refProfile =>
+        refProfile.settings.domains.map(domain => ({
+          ...domain,
+          hasGatedRegistration: refProfile.settings.gatedRegistration.isOn,
+        })),
+      )
       .filter(domains => domains.length > 0);
 
     return refDomainsList && refDomainsList.length ? refDomainsList.flat() : [];

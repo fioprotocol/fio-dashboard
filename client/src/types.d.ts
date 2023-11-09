@@ -397,6 +397,7 @@ export type RefProfileDomain = {
   isFirstRegFree: boolean;
   domainType?: DomainItemType;
   allowFree?: boolean;
+  hasGatedRegistration?: boolean;
 };
 export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
