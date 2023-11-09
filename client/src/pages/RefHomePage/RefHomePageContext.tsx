@@ -20,7 +20,9 @@ import { log } from '../../util/general';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
-import useInitializeProviderConnection from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
+import useInitializeProviderConnection, {
+  ConnectionErrorType,
+} from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
 import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
@@ -29,6 +31,7 @@ import { DOMAIN_TYPE } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
 import { ROUTES } from '../../constants/routes';
+import { AnyObject } from '../../types';
 
 type UseContextProps = {
   disabled: boolean;
@@ -60,6 +63,7 @@ export const useContext = (): UseContextProps => {
     address,
     connectionError,
     network,
+    provider,
     setProvider,
     setWeb3Provider,
     setAddress,
@@ -165,6 +169,70 @@ export const useContext = (): UseContextProps => {
     setNetwork,
     setProvider,
     setWeb3Provider,
+  ]);
+
+  const handleDisconnect = useCallback(
+    async (
+      setIsWalletConnectedStateInInput: (val?: boolean) => void,
+      provider?: AnyObject,
+    ) => {
+      if (provider?.disconnect && typeof provider.disconnect === 'function') {
+        await provider.disconnect();
+      }
+      setProvider(null);
+      setAddress(null);
+      setNetwork(null);
+      setConnectionError(null);
+      setIsWalletConnectedStateInInput(false);
+      toggleVerified(false);
+    },
+    [setAddress, setConnectionError, setNetwork, setProvider],
+  );
+
+  useEffect(() => {
+    if (provider?.on) {
+      const disconnect = (error?: ConnectionErrorType) => {
+        if (error) log.info('disconnect', error);
+        handleDisconnect(setIsWalletConnected, provider);
+      };
+
+      const handleAccountsChanged = (accounts: string[]) => {
+        log.info('accountsChanged', accounts);
+        if (accounts.length) {
+          setAddress(accounts[0]);
+          if (connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE)
+            setConnectionError(null);
+        } else {
+          // clear form value when user manually disconnects all addresses by metamask interface
+          // (not the same as 'disconnect' event)
+          disconnect();
+        }
+      };
+
+      // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
+      const handleChainChanged = (_hexChainId: string) => {
+        window.location.reload();
+      };
+
+      provider.on('accountsChanged', handleAccountsChanged);
+      provider.on('chainChanged', handleChainChanged);
+      provider.on('disconnect', disconnect);
+
+      return () => {
+        if (provider.removeListener) {
+          provider.removeListener('accountsChanged', handleAccountsChanged);
+          provider.removeListener('chainChanged', handleChainChanged);
+          provider.removeListener('disconnect', disconnect);
+        }
+      };
+    }
+  }, [
+    provider,
+    connectionError,
+    handleDisconnect,
+    setAddress,
+    setConnectionError,
+    setIsWalletConnected,
   ]);
 
   const onClick = useCallback(() => {
@@ -340,10 +408,12 @@ export const useContext = (): UseContextProps => {
   }, [asset, getAllTokens, getNfts, network?.chainId]);
 
   useEffect(() => {
-    if (network?.chainId) {
-      verifyUsersData();
+    if (!network?.chainId) {
+      return;
     }
-  }, [network?.chainId, verifyUsersData]);
+
+    address && verifyUsersData();
+  }, [address, network?.chainId, verifyUsersData]);
 
   useEffect(() => {
     if (isVerified) {
