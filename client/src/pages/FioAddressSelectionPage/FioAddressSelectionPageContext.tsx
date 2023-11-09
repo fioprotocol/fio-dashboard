@@ -276,6 +276,10 @@ export const useContext = (): UseContextProps => {
     usernamesOnCustomDomains = [],
   } = allDomains;
 
+  const nonGateRefProfileDomains = refProfileDomains.filter(
+    refProfileDomain => !refProfileDomain.hasGatedRegistration,
+  );
+
   const [addressValue, setAddressValue] = useState<string>(null);
   const [additionalItemsList, setAdditionalItemsList] = useState<
     SelectedItemProps[] | []
@@ -299,8 +303,8 @@ export const useContext = (): UseContextProps => {
       cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
-  const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
-    ? refProfileDomains
+  const publicDomains: Partial<AdminDomain>[] = nonGateRefProfileDomains.length
+    ? nonGateRefProfileDomains
     : dashboardDomains;
 
   const sortedUserDomains = userDomains.sort((a, b) =>

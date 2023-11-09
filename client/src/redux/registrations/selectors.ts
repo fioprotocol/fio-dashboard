@@ -34,6 +34,8 @@ export const domains = createSelector(
       refProfileInfo.type === REF_PROFILE_TYPE.REF
     ) {
       return {
+        allRefProfileDomains: regDomainItems.allRefProfileDomains,
+        dashboardDomains: regDomainItems.dashboardDomains,
         refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
           name: refDomain.name,
           isPremium: refDomain.isPremium,
@@ -42,6 +44,7 @@ export const domains = createSelector(
             : DOMAIN_TYPE.ALLOW_FREE,
           rank: refDomain.rank,
           isFirstRegFree: refDomain.isFirstRegFree,
+          hasGatedRegistration: refProfileInfo.settings.gatedRegistration?.isOn,
         })),
         usernamesOnCustomDomains: regDomainItems.usernamesOnCustomDomains,
         availableDomains: regDomainItems.availableDomains,

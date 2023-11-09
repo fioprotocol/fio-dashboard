@@ -96,20 +96,26 @@ export const useContext = (
     }
   };
 
-  const nonPremiumDomains = allDomains.dashboardDomains
-    ? transformNonPremiumDomains(allDomains.dashboardDomains)
+  const {
+    allRefProfileDomains,
+    dashboardDomains,
+    usernamesOnCustomDomains,
+  } = allDomains;
+
+  const nonPremiumDomains = dashboardDomains
+    ? transformNonPremiumDomains(dashboardDomains)
     : [];
-  const premiumDomains = allDomains.dashboardDomains
-    ? transformPremiumDomains(allDomains.dashboardDomains)
+  const premiumDomains = dashboardDomains
+    ? transformPremiumDomains(dashboardDomains)
     : [];
-  const customDomains = allDomains.usernamesOnCustomDomains
-    ? transformCustomDomains(allDomains.usernamesOnCustomDomains)
+  const customDomains = usernamesOnCustomDomains
+    ? transformCustomDomains(usernamesOnCustomDomains)
     : [];
-  const allNonPremiumRefProfileDomains = allDomains.allRefProfileDomains
-    ? transformNonPremiumDomains(allDomains.allRefProfileDomains)
+  const allNonPremiumRefProfileDomains = allRefProfileDomains
+    ? transformNonPremiumDomains(allRefProfileDomains)
     : [];
-  const allPremiumRefProfileDomains = allDomains.allRefProfileDomains
-    ? transformPremiumDomains(allDomains.allRefProfileDomains)
+  const allPremiumRefProfileDomains = allRefProfileDomains
+    ? transformPremiumDomains(allRefProfileDomains)
     : [];
   const userDomains = allDomains.userDomains || [];
 
@@ -122,8 +128,8 @@ export const useContext = (
         ...chainPublicDomains.filter(
           chainPublicDomains =>
             ![
-              ...(allDomains.dashboardDomains || []),
-              ...(allDomains.allRefProfileDomains || []),
+              ...(dashboardDomains || []),
+              ...(allRefProfileDomains || []),
             ].some(
               dashboardPubilcDomains =>
                 dashboardPubilcDomains.name === chainPublicDomains.name,

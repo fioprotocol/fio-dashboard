@@ -23,7 +23,7 @@ import { fireAnalyticsEventDebounced } from '../analytics';
 
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import { UserDomainType } from '../../types';
+import { RefProfileDomain, UserDomainType } from '../../types';
 
 interface MatchFieldArgs {
   fieldId?: string;
@@ -55,6 +55,11 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   const { address, domain } = values;
 
   const userDomains = values.userDomains as UserDomainType[];
+  const gatedDomains = values.gatedDomains as RefProfileDomain[];
+
+  const currentDomainGated = gatedDomains.find(
+    gatedDomain => gatedDomain.name === domain,
+  );
 
   let existingUserDomain = null;
 
@@ -66,6 +71,12 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
   let succeeded = true;
   let message = '';
+
+  if (currentDomainGated) {
+    succeeded = false;
+    message =
+      'Unfortunately this domain is not available. Please search again or select from the additional domains for sale below.';
+  }
 
   const fchValue = setFioName(address, domain);
 
