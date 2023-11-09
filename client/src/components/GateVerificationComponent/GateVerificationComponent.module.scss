@@ -29,6 +29,37 @@
     z-index: 2;
   }
 
+  .infoBadge {
+    width: auto;
+    background-color: $violet;
+    border-radius: 999em;
+    padding: 10px 30px 10px 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    &.isVerified {
+      display: flex;
+      flex-direction: row;
+      background-color: $green-shell;
+      height: auto;
+    }
+
+    &.hasVerifiedError {
+      display: flex;
+      flex-direction: row;
+      background-color: $warn-red;
+      height: auto;
+      margin-bottom: 30px;
+    }
+
+    .infoMessage {
+      margin: 0;
+      font-size: 0.8125em;
+    }
+  }
+
   .text {
     margin-top: 10px;
     @include inter-regular;

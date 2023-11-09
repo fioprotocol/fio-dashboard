@@ -62,6 +62,9 @@ export const RefHomePage: React.FC<Props &
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
   const {
+    hasVerifiedError,
+    infoMessage,
+    isVerified,
     loaderText,
     showBrowserExtensionErrorModal,
     showProviderWindowError,
@@ -170,6 +173,9 @@ export const RefHomePage: React.FC<Props &
         >
           {isGatedFlow && (
             <GateVerificationComponent
+              hasVerifiedError={hasVerifiedError}
+              isVerified={isVerified}
+              infoMessage={infoMessage}
               loaderText={loaderText}
               parnterName={refProfileInfo?.label}
               refDomain={refDomain}
