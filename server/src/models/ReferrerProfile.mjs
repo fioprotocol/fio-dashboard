@@ -5,7 +5,7 @@ import Base from './Base';
 import { User } from './User';
 import { FioAccountProfile } from './FioAccountProfile';
 
-const { DataTypes: DT } = Sequelize;
+const { DataTypes: DT, Op } = Sequelize;
 
 const CODE_LENGTH = 5;
 const CODE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -126,7 +126,14 @@ export class ReferrerProfile extends Base {
 
   static async getRefDomainsList() {
     const refDomainsList = await this.findAll({
-      where: { type: this.TYPE.REF },
+      where: {
+        type: this.TYPE.REF,
+        settings: {
+          domains: {
+            [Op.not]: null,
+          },
+        },
+      },
     })
       .map(refProfile => refProfile.settings.domains)
       .filter(domains => domains.length > 0);
