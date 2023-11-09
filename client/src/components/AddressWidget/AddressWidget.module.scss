@@ -8,6 +8,7 @@
   padding: 100px 32px;
   width: 100%;
   flex: 1;
+  overflow: hidden;
 
   &.isReverseColors {
     background: $light-indigo;

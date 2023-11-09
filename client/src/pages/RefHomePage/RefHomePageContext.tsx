@@ -20,10 +20,12 @@ type UseContextProps = {
   hasVerifiedError: boolean;
   isVerified: boolean;
   isWalletConnected: boolean;
+  loaderText: string;
   showBrowserExtensionErrorModal: boolean;
   showProviderWindowError: boolean;
   showProviderLoadingIcon: boolean;
   showSelectProviderModalVisible: boolean;
+  verifyLoading: boolean;
   connectWallet: () => void;
   closeSelectProviderModal: () => void;
   onClick: () => void;
@@ -58,10 +60,17 @@ export const useContext = (): UseContextProps => {
   const [showProviderLoadingIcon, setShowProviderLoadingIcon] = useState(false);
   const [isVerified, toggleVerified] = useState(false);
   const [hasVerifiedError, toggleHasVerifiedError] = useState(false);
+  const [verifyLoading, toggleVerifyLoading] = useState(false);
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
   const contractAddress =
     refProfileInfo?.settings?.gatedRegistration?.params?.contractAddress;
+  const loaderText =
+    asset === NFT_LABEL
+      ? 'Verifying NFT holdings'
+      : asset === TOKEN_LABEL
+      ? 'Verifying Token holdings'
+      : 'Verifying ...';
 
   const closeSelectProviderModal = useCallback(() => {
     setShowProviderLoadingIcon(false);
@@ -115,80 +124,88 @@ export const useContext = (): UseContextProps => {
     setShowSelectProviderModalVisible(true);
   }, []);
 
-  const getNfts = useCallback(async () => {
+  const getNfts = useCallback(
+    async (chainName: string) => {
+      const nftsList = await apis.externalProviderNfts.getAllNfts(
+        address,
+        chainName,
+      );
+
+      const hasRefContract = nftsList.find(
+        nftItem => nftItem.token_address === contractAddress,
+      );
+
+      return !!hasRefContract;
+    },
+    [address, contractAddress],
+  );
+
+  const getAllTokens = useCallback(
+    async (chainName: string) => {
+      const tokensList = await apis.externalProviderNfts.getAllExternalTokens({
+        address,
+        chainName,
+      });
+
+      const hasRefContract = tokensList.find(
+        tokenItem =>
+          tokenItem.token_address === contractAddress &&
+          new MathOp(tokenItem.balance).gt(0),
+      );
+
+      return !!hasRefContract;
+    },
+    [address, contractAddress],
+  );
+
+  const verifyUsersData = useCallback(async () => {
     const chain = MORALIS_CHAIN_LIST.find(
       chainItem => chainItem.chainId === network?.chainId,
     );
 
-    if (chain?.chainName) {
+    const { chainName } = chain || {};
+
+    if (chainName) {
+      toggleVerifyLoading(true);
+      let isVerified = false;
+
       try {
-        const nftsList = await apis.externalProviderNfts.getAllNfts(
-          address,
-          chain.chainName,
-        );
-
-        const hasRefContract = nftsList.find(
-          nftItem => nftItem.token_address === contractAddress,
-        );
-
-        toggleVerified(!!hasRefContract);
-      } catch (error) {
-        log.error(error);
-        toggleVerified(false);
-        toggleHasVerifiedError(true);
-      }
-    }
-  }, [address, contractAddress, network?.chainId]);
-
-  const getAllTokens = useCallback(async () => {
-    const chain = MORALIS_CHAIN_LIST.find(
-      chainItem => chainItem.chainId === network?.chainId,
-    );
-
-    if (chain?.chainName) {
-      try {
-        const tokensList = await apis.externalProviderNfts.getAllExternalTokens(
-          {
-            address,
-            chainName: chain.chainName,
-          },
-        );
-
-        const hasRefContract = tokensList.find(
-          tokenItem =>
-            tokenItem.token_address === contractAddress &&
-            new MathOp(tokenItem.balance).gt(0),
-        );
-
-        if (hasRefContract) {
-          toggleVerified(!!hasRefContract);
+        if (asset === NFT_LABEL && network?.chainId) {
+          isVerified = await getNfts(chainName);
         }
+
+        if (asset === TOKEN_LABEL && network?.chainId) {
+          isVerified = await getAllTokens(chainName);
+        }
+
+        toggleVerified(isVerified);
       } catch (error) {
         log.error(error);
         toggleVerified(false);
         toggleHasVerifiedError(true);
+      } finally {
+        toggleVerifyLoading(false);
       }
-    }
-  }, [address, contractAddress, network?.chainId]);
-
-  useEffect(() => {
-    if (asset === NFT_LABEL && network?.chainId) {
-      getNfts();
-    }
-    if (asset === TOKEN_LABEL && network?.chainId) {
-      getAllTokens();
     }
   }, [asset, getAllTokens, getNfts, network?.chainId]);
+
+  useEffect(() => {
+    if (network?.chainId) {
+      verifyUsersData();
+    }
+  }, [network?.chainId, verifyUsersData]);
 
   return {
     hasVerifiedError,
     isVerified,
     isWalletConnected,
+    loaderText,
     showBrowserExtensionErrorModal,
     showProviderWindowError:
       connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE,
     showProviderLoadingIcon,
     showSelectProviderModalVisible,
+    verifyLoading,
     connectWallet,
     closeSelectProviderModal,
     onClick,

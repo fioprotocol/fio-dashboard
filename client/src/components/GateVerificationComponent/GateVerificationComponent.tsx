@@ -2,23 +2,26 @@ import React from 'react';
 
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import { FadeLoader } from 'react-spinners';
 
 import SubmitButton from '../common/SubmitButton/SubmitButton';
-
-import MetamaskImgSrc from '../../assets/images/metamask.svg';
-
-import classes from './GateVerificationComponent.module.scss';
 import { LoadingIcon } from '../Input/StaticInputParts';
 import ModalComponent from '../Modal/Modal';
 import DangerModal from '../Modal/DangerModal';
 
+import MetamaskImgSrc from '../../assets/images/metamask.svg';
+
+import classes from './GateVerificationComponent.module.scss';
+
 type Props = {
+  loaderText: string;
   parnterName: string;
   refDomain: string;
   showProviderWindowError: boolean;
   showBrowserExtensionErrorModal: boolean;
   showProviderLoadingIcon: boolean;
   showSelectProviderModalVisible: boolean;
+  verifyLoading: boolean;
   connectWallet: () => void;
   closeSelectProviderModal: () => void;
   onClick: () => void;
@@ -28,12 +31,14 @@ type Props = {
 
 export const GateVerificationComponent: React.FC<Props> = props => {
   const {
+    loaderText,
     parnterName,
     refDomain,
     showProviderWindowError,
     showBrowserExtensionErrorModal,
     showProviderLoadingIcon,
     showSelectProviderModalVisible,
+    verifyLoading,
     closeSelectProviderModal,
     connectWallet,
     onClick,
@@ -43,6 +48,18 @@ export const GateVerificationComponent: React.FC<Props> = props => {
 
   return (
     <div className={classes.container}>
+      {verifyLoading && (
+        <div className={classes.loader}>
+          <FadeLoader
+            height="8px"
+            width="5px"
+            radius="3px"
+            margin="1px"
+            color="rgb(118, 92, 214)"
+          />
+          <p>{loaderText}</p>
+        </div>
+      )}
       <NewReleasesIcon />
       <p className={classes.text}>
         Registration of FIO Handles on the{' '}
