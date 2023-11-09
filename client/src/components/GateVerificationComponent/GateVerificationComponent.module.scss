@@ -9,6 +9,25 @@
   align-items: center;
   max-width: 763px;
   margin: 0 auto;
+  position: relative;
+
+  .loader {
+    background: $mine-shaft;
+    opacity: 0.87;
+    width: 200%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -7%;
+    bottom: -7%;
+    line-height: 2.75rem;
+    @include comfortaa-bold;
+    color: $pile-violet;
+    z-index: 2;
+  }
 
   .text {
     margin-top: 10px;

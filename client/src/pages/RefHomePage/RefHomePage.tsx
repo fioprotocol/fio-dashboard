@@ -62,10 +62,12 @@ export const RefHomePage: React.FC<Props &
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
   const {
+    loaderText,
     showBrowserExtensionErrorModal,
     showProviderWindowError,
     showProviderLoadingIcon,
     showSelectProviderModalVisible,
+    verifyLoading,
     connectWallet,
     closeSelectProviderModal,
     onClick,
@@ -168,12 +170,14 @@ export const RefHomePage: React.FC<Props &
         >
           {isGatedFlow && (
             <GateVerificationComponent
+              loaderText={loaderText}
               parnterName={refProfileInfo?.label}
               refDomain={refDomain}
               showBrowserExtensionErrorModal={showBrowserExtensionErrorModal}
               showProviderWindowError={showProviderWindowError}
               showProviderLoadingIcon={showProviderLoadingIcon}
               showSelectProviderModalVisible={showSelectProviderModalVisible}
+              verifyLoading={verifyLoading}
               connectWallet={connectWallet}
               closeSelectProviderModal={closeSelectProviderModal}
               onClick={onClick}
