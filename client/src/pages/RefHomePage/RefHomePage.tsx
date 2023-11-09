@@ -62,6 +62,9 @@ export const RefHomePage: React.FC<Props &
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
   const {
+    disabled,
+    hasFioHandleInfoMessage,
+    hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
     isVerified,
@@ -73,7 +76,10 @@ export const RefHomePage: React.FC<Props &
     verifyLoading,
     connectWallet,
     closeSelectProviderModal,
+    customHandleSubmit,
     onClick,
+    onFocusOut,
+    onInputChanged,
     setConnectionError,
     setShowBrowserExtensionErrorModal,
   } = useContext();
@@ -166,13 +172,22 @@ export const RefHomePage: React.FC<Props &
               {addressWidgetContent?.subtitle}
             </span>
           }
+          convert={onFocusOut}
+          onInputChanged={onInputChanged}
+          customHandleSubmit={customHandleSubmit}
+          disabled={disabled}
+          disabledInput={!isVerified}
+          disabledInputGray
           isAuthenticated={isAuthenticated}
           isDarkWhite
+          formatOnFocusOut
           suffixText={`@${refDomain}`}
           showSignInWidget={!isGatedFlow}
         >
           {isGatedFlow && (
             <GateVerificationComponent
+              hasFioHandleInfoMessage={hasFioHandleInfoMessage}
+              hasFioVerificactionError={hasFioVerificactionError}
               hasVerifiedError={hasVerifiedError}
               isVerified={isVerified}
               infoMessage={infoMessage}

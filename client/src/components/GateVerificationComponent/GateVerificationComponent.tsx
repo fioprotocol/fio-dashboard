@@ -4,6 +4,7 @@ import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
+import InfoIcon from '@mui/icons-material/Info';
 import { FadeLoader } from 'react-spinners';
 import classnames from 'classnames';
 
@@ -17,6 +18,8 @@ import MetamaskImgSrc from '../../assets/images/metamask.svg';
 import classes from './GateVerificationComponent.module.scss';
 
 type Props = {
+  hasFioHandleInfoMessage: boolean;
+  hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
   isVerified: boolean;
   infoMessage: string;
@@ -37,6 +40,8 @@ type Props = {
 
 export const GateVerificationComponent: React.FC<Props> = props => {
   const {
+    hasFioHandleInfoMessage,
+    hasFioVerificactionError,
     hasVerifiedError,
     isVerified,
     infoMessage,
@@ -72,15 +77,23 @@ export const GateVerificationComponent: React.FC<Props> = props => {
       <div
         className={classnames(
           classes.infoBadge,
-          hasVerifiedError && classes.hasVerifiedError,
+          (hasVerifiedError || hasFioVerificactionError) &&
+            classes.hasVerifiedError,
           isVerified && classes.isVerified,
+          hasFioVerificactionError && classes.hasFioVerificactionError,
+          hasFioHandleInfoMessage && classes.hasFioHandleInfoMessage,
         )}
       >
-        {isVerified ? (
+        {isVerified &&
+        !hasFioHandleInfoMessage &&
+        !hasVerifiedError &&
+        !hasFioVerificactionError ? (
           <CheckCircleIcon />
-        ) : hasVerifiedError ? (
+        ) : hasVerifiedError || hasFioVerificactionError ? (
           <WarningIcon />
-        ) : null}
+        ) : (
+          <InfoIcon />
+        )}
         <p className={classes.infoMessage}>{infoMessage}</p>
       </div>
 
