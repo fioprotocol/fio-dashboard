@@ -18,6 +18,7 @@ import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
 
 type UseContextProps = {
   hasVerifiedError: boolean;
+  infoMessage: string;
   isVerified: boolean;
   isWalletConnected: boolean;
   loaderText: string;
@@ -72,6 +73,14 @@ export const useContext = (): UseContextProps => {
       ? 'Verifying Token holdings'
       : 'Verifying ...';
 
+  const infoMessage = `${refProfileInfo?.label} ${
+    asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
+  } Holder ${
+    !hasVerifiedError
+      ? 'Confirmed. Register your handle now!'
+      : 'Not Confirmed. Please make sure your NFT is held within your Metamask Wallet.'
+  }`;
+
   const closeSelectProviderModal = useCallback(() => {
     setShowProviderLoadingIcon(false);
     setShowSelectProviderModalVisible(false);
@@ -79,6 +88,7 @@ export const useContext = (): UseContextProps => {
 
   const connectWallet = useCallback(async () => {
     setShowProviderLoadingIcon(true);
+    toggleHasVerifiedError(false);
 
     const provider = window.ethereum;
 
@@ -179,6 +189,10 @@ export const useContext = (): UseContextProps => {
         }
 
         toggleVerified(isVerified);
+
+        if (!isVerified) {
+          toggleHasVerifiedError(true);
+        }
       } catch (error) {
         log.error(error);
         toggleVerified(false);
@@ -197,6 +211,7 @@ export const useContext = (): UseContextProps => {
 
   return {
     hasVerifiedError,
+    infoMessage,
     isVerified,
     isWalletConnected,
     loaderText,
