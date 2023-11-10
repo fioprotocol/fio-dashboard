@@ -565,10 +565,7 @@ export const cartItemsToOrderItems = async ({
           (existingDashboardDomain &&
             !existingDashboardDomain.isPremium &&
             (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
-            !cartHasFreeItemsOnDomains({
-              cartItems,
-              domains: [...dashboardDomains, ...isFirstRegFreeDomains],
-            })) ||
+            !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id)) ||
           (!existingDashboardDomain && freeDomainOwner) ||
           (!existingDashboardDomain &&
             existingIsFirstRegFree &&
@@ -576,10 +573,7 @@ export const cartItemsToOrderItems = async ({
             (!userHasFreeAddress ||
               (userHasFreeAddress && !userHasFreeAddress.length) ||
               (userHasFreeAddress.length && !existingUsersFreeAddress)) &&
-            !cartHasFreeItemsOnDomains({
-              cartItems,
-              domains: [...dashboardDomains, ...isFirstRegFreeDomains],
-            }));
+            !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id));
 
         orderItem.action = FIO_ACTIONS.registerFioAddress;
         orderItem.address = address;
