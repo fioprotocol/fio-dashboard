@@ -340,13 +340,9 @@ export const useContext = (): UseContextProps => {
       cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
-  const publicDomains: Partial<AdminDomain>[] = [
-    ...nonGateRefProfileDomains,
-    ...dashboardDomains,
-  ];
-  // nonGateRefProfileDomains.length
-  //   ? nonGateRefProfileDomains
-  //   : dashboardDomains;
+  const publicDomains: Partial<AdminDomain>[] = nonGateRefProfileDomains.length
+    ? nonGateRefProfileDomains
+    : dashboardDomains;
 
   const sortedUserDomains = userDomains.sort((a, b) =>
     a.name.localeCompare(b.name),
