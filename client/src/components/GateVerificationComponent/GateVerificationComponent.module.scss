@@ -54,6 +54,10 @@
       margin-bottom: 30px;
     }
 
+    &.hasFioHandleInfoMessage {
+      background-color: $violet;
+    }
+
     .infoMessage {
       margin: 0;
       font-size: 0.8125em;

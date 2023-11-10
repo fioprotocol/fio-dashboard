@@ -25,6 +25,7 @@ import MathOp from '../../util/math';
 import { log } from '../../util/general';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
 import useInitializeProviderConnection, {
   ConnectionErrorType,
@@ -276,6 +277,8 @@ export const useContext = (): UseContextProps => {
   const onFocusOut = (value: string) => {
     if (!value) return;
 
+    let newValue = value;
+
     if (!isValid(value)) {
       toggleFioVerificationError(true);
       setInfoMessage(
@@ -285,18 +288,16 @@ export const useContext = (): UseContextProps => {
     }
 
     if (value.includes('_')) {
-      value.replaceAll('_', '-');
+      newValue = value.replaceAll('_', '-');
       toggleHasFioHandleInfoMessage(true);
       setInfoMessage(
         'FIO Handles only support dashes so all underscores are replaced with dashes.',
       );
-    } else {
-      setInfoMessage('');
     }
 
     toggleFioVerificationError(false);
 
-    return value;
+    return newValue;
   };
 
   const customHandleSubmit = useCallback(
@@ -344,7 +345,12 @@ export const useContext = (): UseContextProps => {
           }),
         );
 
-        history.push(ROUTES.CART);
+        if (userId) {
+          history.push(ROUTES.CART);
+        } else {
+          dispatch(setRedirectPath({ pathname: ROUTES.CART }));
+          history.push(ROUTES.CREATE_ACCOUNT);
+        }
       } catch (error) {
         log.error(error);
       }
