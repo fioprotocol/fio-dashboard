@@ -52,7 +52,7 @@ export default class DeleteItem extends Base {
 
       const userHasFreeAddress =
         userId &&
-        (await FreeAddress.getItem({
+        (await FreeAddress.getItems({
           userId,
         }));
 
@@ -94,8 +94,9 @@ export default class DeleteItem extends Base {
       const existingItem = items.find(item => item.id === itemId);
 
       const updatedItems = handleFreeCartDeleteItem({
+        allRefProfileDomains,
         cartItems: items,
-        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
+        dashboardDomains,
         existingItem,
         userHasFreeAddress,
       });

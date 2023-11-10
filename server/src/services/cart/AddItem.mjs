@@ -66,7 +66,7 @@ export default class AddItem extends Base {
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
       const userHasFreeAddress =
         userId &&
-        (await FreeAddress.getItem({
+        (await FreeAddress.getItems({
           userId,
         }));
 
@@ -101,8 +101,9 @@ export default class AddItem extends Base {
       }
 
       const handledFreeCartItem = handleFreeCartAddItem({
+        allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
-        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
+        dashboardDomains,
         freeDomainOwner,
         item,
         userHasFreeAddress,

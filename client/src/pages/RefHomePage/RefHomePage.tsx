@@ -175,8 +175,8 @@ export const RefHomePage: React.FC<Props &
           convert={onFocusOut}
           onInputChanged={onInputChanged}
           customHandleSubmit={customHandleSubmit}
-          disabled={disabled}
-          disabledInput={!isVerified}
+          disabled={disabled && isGatedFlow}
+          disabledInput={!isVerified && isGatedFlow}
           disabledInputGray
           isAuthenticated={isAuthenticated}
           isDarkWhite
