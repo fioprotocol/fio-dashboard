@@ -423,6 +423,7 @@ class OrdersJob extends CommonJob {
 
     if (
       userHasFreeAddress &&
+      userHasFreeAddress.length &&
       (!existingDashboardDomain.isFirstRegFree ||
         (existingDashboardDomain.isFirstRegFree && existingUsersFreeAddress))
     ) {
