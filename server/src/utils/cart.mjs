@@ -165,18 +165,16 @@ export const handleFioHandleCartItemsWithCustomDomain = ({
   return cartItems;
 };
 
-export const cartHasFreeItemsOnDashboardDomains = ({ cartItems, dashboardDomains }) => {
+export const cartHasFreeItemsOnDomains = ({ cartItems, domains }) => {
   return (
     cartItems &&
     cartItems.some(cartItem => {
       const { domain, isFree, domainType } = cartItem;
-      const existingDashboardDomain = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === domain,
-      );
+      const existingDomain = domains.find(domainItem => domainItem.name === domain);
 
       return (
-        existingDashboardDomain &&
-        !existingDashboardDomain.isPremium &&
+        existingDomain &&
+        !existingDomain.isPremium &&
         isFree &&
         domainType === DOMAIN_TYPE.ALLOW_FREE
       );
@@ -185,6 +183,7 @@ export const cartHasFreeItemsOnDashboardDomains = ({ cartItems, dashboardDomains
 };
 
 export const handleFreeCartAddItem = ({
+  allRefProfileDomains,
   cartItems,
   dashboardDomains,
   freeDomainOwner,
@@ -193,16 +192,46 @@ export const handleFreeCartAddItem = ({
 }) => {
   const { domain, type } = item;
 
+  const domainsArr = [
+    ...dashboardDomains,
+    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+  ];
+
+  const isFirstRegFreeDomains = allRefProfileDomains.filter(
+    refProfile => refProfile.isFirstRegFree,
+  );
+
+  const existingUsersFreeAddress =
+    userHasFreeAddress &&
+    userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
+
   if (type === CART_ITEM_TYPE.ADDRESS) {
-    const existingDashboardDomain = dashboardDomains.find(
+    const existingDashboardDomain = domainsArr.find(
       dashboardDomain => dashboardDomain.name === domain,
     );
+    const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+      isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
+    );
+
     if (
       (existingDashboardDomain &&
         !existingDashboardDomain.isPremium &&
-        !userHasFreeAddress &&
-        !cartHasFreeItemsOnDashboardDomains({ cartItems, dashboardDomains })) ||
-      (!existingDashboardDomain && freeDomainOwner)
+        (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
+        !cartHasFreeItemsOnDomains({
+          cartItems,
+          domains: [...dashboardDomains, ...isFirstRegFreeDomains],
+        })) ||
+      (!existingDashboardDomain && freeDomainOwner) ||
+      (!existingDashboardDomain &&
+        existingIsFirstRegFree &&
+        !existingIsFirstRegFree.isPremium &&
+        (!userHasFreeAddress ||
+          (userHasFreeAddress && !userHasFreeAddress.length) ||
+          (userHasFreeAddress && !existingUsersFreeAddress)) &&
+        !cartHasFreeItemsOnDomains({
+          cartItems,
+          domains: [...dashboardDomains, ...isFirstRegFreeDomains],
+        }))
     ) {
       return { ...item, isFree: true };
     }
@@ -213,6 +242,7 @@ export const handleFreeCartAddItem = ({
 };
 
 export const handleFreeCartDeleteItem = ({
+  allRefProfileDomains,
   cartItems,
   dashboardDomains,
   existingItem,
@@ -222,11 +252,19 @@ export const handleFreeCartDeleteItem = ({
 
   let handledCartItems = [...cartItems];
 
+  const domainsArr = [
+    ...dashboardDomains,
+    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+  ];
+
+  const isFirstRegFreeDomains = allRefProfileDomains.filter(
+    refProfile => refProfile.isFirstRegFree,
+  );
+
   if (
     isFree &&
     type === CART_ITEM_TYPE.ADDRESS &&
-    domainType === DOMAIN_TYPE.ALLOW_FREE &&
-    !userHasFreeAddress
+    domainType === DOMAIN_TYPE.ALLOW_FREE
   ) {
     const allowedFreeItem = cartItems.find(cartItem => {
       const {
@@ -236,14 +274,32 @@ export const handleFreeCartDeleteItem = ({
         type: cartItemType,
       } = cartItem;
 
-      const existingDashboardDomain = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === cartItemDomain,
+      const existingDashboardDomain = domainsArr.find(
+        domainItem => domainItem.name === cartItemDomain,
       );
+      const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+        isFirstRegFreeDomain => isFirstRegFreeDomain.name === cartItemDomain,
+      );
+
+      const existingUsersFreeAddress =
+        userHasFreeAddress &&
+        userHasFreeAddress.find(
+          freeAddress => freeAddress.name.split('@')[1] === cartItemDomain,
+        );
 
       return (
         !cartItemIsFree &&
-        existingDashboardDomain &&
-        !existingDashboardDomain.isPremium &&
+        ((existingDashboardDomain &&
+          !existingDashboardDomain.isPremium &&
+          (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length))) ||
+          (!existingDashboardDomain &&
+            existingIsFirstRegFree &&
+            !existingIsFirstRegFree.isPremium &&
+            (!userHasFreeAddress ||
+              (userHasFreeAddress && !userHasFreeAddress.length) ||
+              (userHasFreeAddress &&
+                userHasFreeAddress.length &&
+                !existingUsersFreeAddress)))) &&
         cartItemDomainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
@@ -260,27 +316,47 @@ export const handleFreeCartDeleteItem = ({
 };
 
 export const handleUsersFreeCartItems = ({
+  allRefProfileDomains,
   cartItems,
   dashboardDomains,
   userHasFreeAddress,
 }) => {
   let updatedCartItems = cartItems;
 
-  if (userHasFreeAddress) {
+  const domainsArr = [
+    ...dashboardDomains,
+    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+  ];
+
+  const isFirstRegFreeDomains = allRefProfileDomains.filter(
+    refProfile => refProfile.isFirstRegFree,
+  );
+
+  if (userHasFreeAddress && userHasFreeAddress.length) {
     updatedCartItems = cartItems.map(cartItem => {
       const { domain, domainType, isFree, type } = cartItem;
 
       if (type !== CART_ITEM_TYPE.ADDRESS) return cartItem;
 
-      const existingDashboardDomain = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === domain,
+      const existingDashboardDomain = domainsArr.find(
+        domainItem => domainItem.name === domain,
+      );
+      const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+        isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
+      );
+
+      const existingUsersFreeAddress = userHasFreeAddress.find(
+        freeAddress => freeAddress.name.split('@')[1] === domain,
       );
 
       if (
         isFree &&
         domainType === DOMAIN_TYPE.ALLOW_FREE &&
-        existingDashboardDomain &&
-        !existingDashboardDomain.isPremium
+        ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
+          (!existingDashboardDomain &&
+            existingIsFirstRegFree &&
+            !existingIsFirstRegFree.isPremium &&
+            existingUsersFreeAddress))
       ) {
         return { ...cartItem, isFree: false };
       }
@@ -291,14 +367,20 @@ export const handleUsersFreeCartItems = ({
     const freeCartItem = cartItems.find(cartItem => {
       const { domain, domainType, isFree, type: cartItemType } = cartItem;
 
-      const existingDashboardDomain = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === domain,
+      const existingDashboardDomain = domainsArr.find(
+        domainItem => domainItem.name === domain,
+      );
+
+      const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+        isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
       );
 
       return (
         isFree &&
-        existingDashboardDomain &&
-        !existingDashboardDomain.isPremium &&
+        ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
+          (!existingDashboardDomain &&
+            existingIsFirstRegFree &&
+            !existingIsFirstRegFree.isPremium)) &&
         domainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
@@ -312,15 +394,21 @@ export const handleUsersFreeCartItems = ({
         type: cartItemType,
       } = cartItem;
 
-      const existingDashboardDomain = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === cartItemDomain,
+      const existingDashboardDomain = domainsArr.find(
+        domainItem => domainItem.name === cartItemDomain,
+      );
+
+      const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+        isFirstRegFreeDomain => isFirstRegFreeDomain.name === cartItemDomain,
       );
 
       return (
         !freeCartItem &&
         !cartItemIsFree &&
-        existingDashboardDomain &&
-        !existingDashboardDomain.isPremium &&
+        ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
+          (!existingDashboardDomain &&
+            existingIsFirstRegFree &&
+            !existingIsFirstRegFree.isPremium)) &&
         cartItemDomainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
@@ -355,6 +443,7 @@ export const calculateCartTotalCost = ({ cartItems, roe }) => {
 };
 
 export const cartItemsToOrderItems = async ({
+  allRefProfileDomains,
   cartItems,
   dashboardDomains,
   FioAccountProfile,
@@ -369,6 +458,15 @@ export const cartItemsToOrderItems = async ({
     renewDomain: renewDomainPrice,
   } = prices;
   const orderItems = [];
+
+  const domainsArr = [
+    ...dashboardDomains,
+    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+  ];
+
+  const isFirstRegFreeDomains = allRefProfileDomains.filter(
+    refProfile => refProfile.isFirstRegFree,
+  );
 
   for (const cartItem of cartItems) {
     const { address, domain, id, isFree, hasCustomDomainInCart, period, type } = cartItem;
@@ -449,16 +547,39 @@ export const cartItemsToOrderItems = async ({
         break;
       case CART_ITEM_TYPE.ADDRESS: {
         const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-        const existingDashboardDomain = dashboardDomains.find(
-          dashboardDomain => dashboardDomain.name === domain,
+
+        const existingDashboardDomain = domainsArr.find(
+          domainItem => domainItem.name === domain,
         );
+        const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+          isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
+        );
+
+        const existingUsersFreeAddress =
+          userHasFreeAddress &&
+          userHasFreeAddress.find(
+            freeAddress => freeAddress.name.split('@')[1] === domain,
+          );
 
         const userableRegisterFree =
           (existingDashboardDomain &&
             !existingDashboardDomain.isPremium &&
-            !userHasFreeAddress &&
-            !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id)) ||
-          (!existingDashboardDomain && freeDomainOwner);
+            (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
+            !cartHasFreeItemsOnDomains({
+              cartItems,
+              domains: [...dashboardDomains, ...isFirstRegFreeDomains],
+            })) ||
+          (!existingDashboardDomain && freeDomainOwner) ||
+          (!existingDashboardDomain &&
+            existingIsFirstRegFree &&
+            !existingIsFirstRegFree.isPremium &&
+            (!userHasFreeAddress ||
+              (userHasFreeAddress && !userHasFreeAddress.length) ||
+              (userHasFreeAddress.length && !existingUsersFreeAddress)) &&
+            !cartHasFreeItemsOnDomains({
+              cartItems,
+              domains: [...dashboardDomains, ...isFirstRegFreeDomains],
+            }));
 
         orderItem.action = FIO_ACTIONS.registerFioAddress;
         orderItem.address = address;

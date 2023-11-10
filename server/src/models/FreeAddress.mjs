@@ -29,8 +29,8 @@ export class FreeAddress extends Base {
     });
   }
 
-  static getItem(where) {
-    return this.findOne({
+  static getItems(where) {
+    return this.findAll({
       where: { ...where },
     });
   }

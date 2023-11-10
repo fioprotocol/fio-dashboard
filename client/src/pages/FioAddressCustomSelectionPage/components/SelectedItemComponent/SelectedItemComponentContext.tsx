@@ -10,7 +10,10 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../../../redux/registrations/selectors';
-import { hasFreeAddress as hasFreeAddressSelector } from '../../../../redux/profile/selectors';
+import {
+  hasFreeAddress as hasFreeAddressSelector,
+  usersFreeAddresses as usersFreeAddressesSelector,
+} from '../../../../redux/profile/selectors';
 
 import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
@@ -42,6 +45,7 @@ export const useContext = (
   const roe = useSelector(roeSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const [chainPublicDomains, setChainPublicDomains] = useState<
     UserDomainType[]
@@ -150,6 +154,20 @@ export const useContext = (
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
+  const isFirstRegFreeDomains = allRefProfileDomains?.filter(
+    refProfile => refProfile.isFirstRegFree,
+  );
+
+  const existingIsFirstRegFree = isFirstRegFreeDomains?.find(
+    isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
+  );
+
+  const existingUsersFreeAddress =
+    usersFreeAddresses &&
+    usersFreeAddresses.find(
+      freeAddress => freeAddress.name.split('@')[1] === domain,
+    );
+
   const selectedItemProps = {
     id: fchId,
     address,
@@ -160,7 +178,10 @@ export const useContext = (
     isFree:
       existingCartItem?.isFree ||
       (domainType === DOMAIN_TYPE.ALLOW_FREE &&
-        !hasFreeAddress &&
+        (!hasFreeAddress ||
+          (hasFreeAddress &&
+            existingIsFirstRegFree &&
+            !existingUsersFreeAddress)) &&
         !cartHasFreeItem),
     nativeFioAddressPrice,
     domainType,

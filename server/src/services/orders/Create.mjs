@@ -146,7 +146,7 @@ export default class OrdersCreate extends Base {
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
       const userHasFreeAddress =
         userId &&
-        (await FreeAddress.getItem({
+        (await FreeAddress.getItems({
           userId,
         }));
 
@@ -179,8 +179,9 @@ export default class OrdersCreate extends Base {
       }
 
       const items = await cartItemsToOrderItems({
+        allRefProfileDomains,
         cartItems: cart.items,
-        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
+        dashboardDomains,
         FioAccountProfile,
         prices: handledPrices,
         roe: handledRoe,

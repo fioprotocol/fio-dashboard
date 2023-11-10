@@ -405,18 +405,27 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async registerFree(
+  async registerFree({
     fioName,
     auth,
     orderItem,
-    { fallbackFreeFioActor, fallbackFreeFioPermision },
+    fallbackFreeFioActor,
+    fallbackFreeFioPermision,
     processOrderItem,
-  ) {
-    const { id, blockchainTransactionId, label, orderId, userId } = orderItem;
+    existingDashboardDomain,
+  }) {
+    const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    const userHasFreeAddress = await FreeAddress.getItem({ userId });
+    const userHasFreeAddress = await FreeAddress.getItems({ userId });
+    const existingUsersFreeAddress =
+      userHasFreeAddress &&
+      userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
 
-    if (userHasFreeAddress) {
+    if (
+      userHasFreeAddress &&
+      (!existingDashboardDomain.isFirstRegFree ||
+        (existingDashboardDomain.isFirstRegFree && existingUsersFreeAddress))
+    ) {
       logger.error(USER_HAS_FREE_ERROR);
 
       await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
@@ -921,16 +930,15 @@ class OrdersJob extends CommonJob {
           action === FIO_ACTIONS.registerFioAddress &&
           !domainOwner
         ) {
-          return this.registerFree(
+          return this.registerFree({
             fioName,
-            freeAuth,
+            auth: freeAuth,
             orderItem,
-            {
-              fallbackFreeFioActor,
-              fallbackFreeFioPermision,
-            },
+            fallbackFreeFioActor,
+            fallbackFreeFioPermision,
+            existingDashboardDomain,
             processOrderItem,
-          );
+          });
         }
 
         if ((!price || price === '0') && !domainOwner) {

@@ -17,9 +17,12 @@ export type SelectedItemProps = {
   isSelected?: boolean;
 } & CartItem;
 
-export type DomainsArrItemType = {
+export type DomainsItemType = {
   rank?: number;
   name: string;
   domainType: DomainItemType;
   swapAddressAndDomainPlaces?: boolean;
-}[];
+  isFirstRegFree?: boolean;
+};
+
+export type DomainsArrItemType = DomainsItemType[];

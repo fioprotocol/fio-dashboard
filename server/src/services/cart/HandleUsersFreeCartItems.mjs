@@ -35,13 +35,14 @@ export default class HandleUsersFreeCartItems extends Base {
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
       const userHasFreeAddress =
         userId &&
-        (await FreeAddress.getItem({
+        (await FreeAddress.getItems({
           userId,
         }));
 
       const handledFreeCartItems = handleUsersFreeCartItems({
+        allRefProfileDomains,
         cartItems: cart.items,
-        dashboardDomains: [...dashboardDomains, ...allRefProfileDomains],
+        dashboardDomains,
         userHasFreeAddress,
       });
 

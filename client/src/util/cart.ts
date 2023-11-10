@@ -8,6 +8,32 @@ import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
 import { CartItem, CartItemType, NativePrices, OrderItem } from '../types';
+import { DomainsArrItemType } from '../pages/FioAddressSelectionPage/types';
+
+export const cartHasFreeItemsOnDomains = ({
+  cartItems,
+  domains,
+}: {
+  cartItems: CartItem[];
+  domains: DomainsArrItemType;
+}) => {
+  return (
+    cartItems &&
+    cartItems.some(cartItem => {
+      const { domain, isFree, domainType } = cartItem;
+      const existingDomain = domains.find(
+        domainItem => domainItem.name === domain,
+      );
+
+      return (
+        existingDomain &&
+        existingDomain.domainType !== DOMAIN_TYPE.PREMIUM &&
+        isFree &&
+        domainType === DOMAIN_TYPE.ALLOW_FREE
+      );
+    })
+  );
+};
 
 export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
   return (

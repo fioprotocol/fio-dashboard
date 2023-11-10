@@ -263,6 +263,7 @@ export const transformNonPremiumDomains = (domains: Partial<AdminDomain>[]) =>
       name: domain.name,
       domainType: DOMAIN_TYPE.ALLOW_FREE,
       rank: domain.rank || 0,
+      isFirstRegFree: domain?.isFirstRegFree,
     }));
 
 export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>

@@ -11,8 +11,14 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { cartId as cartIdSelector } from '../../redux/cart/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
+import {
+  userId as userIdSelector,
+  usersFreeAddresses as usersFreeAddressesSelector,
+} from '../../redux/profile/selectors';
 
 import apis from '../../api';
 import MathOp from '../../util/math';
@@ -72,10 +78,12 @@ export const useContext = (): UseContextProps => {
   } = providerData;
 
   const cartId = useSelector(cartIdSelector);
+  const cartItems = useSelector(cartItemsSelector);
   const refProfileInfo = useSelector(refProfileInfoSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
+  const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [
@@ -103,10 +111,26 @@ export const useContext = (): UseContextProps => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const cartHasFreeItem = cartItems.some(
+    cartItem =>
+      cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
+  );
+
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
   const contractAddress =
     refProfileInfo?.settings?.gatedRegistration?.params?.contractAddress;
-  const refDomainObj = refProfileInfo?.settings?.domains[0];
+  const preselectedDomain = refProfileInfo?.settings?.preselectedDomain;
+  const refDomainObj = preselectedDomain
+    ? refProfileInfo?.settings?.domains.find(
+        domain => domain.name === preselectedDomain,
+      )
+    : refProfileInfo?.settings?.domains[0];
+
+  const existingUsersFreeAddress =
+    usersFreeAddresses &&
+    usersFreeAddresses.find(
+      freeAddress => freeAddress.name.split('@')[1] === refDomainObj?.name,
+    );
 
   const verifiedMessage = `${refProfileInfo?.label} ${
     asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
@@ -306,7 +330,7 @@ export const useContext = (): UseContextProps => {
           costUsdc: usdc,
           costNativeFio: prices.nativeFio.address,
           domainType: isPremium ? DOMAIN_TYPE.PREMIUM : DOMAIN_TYPE.ALLOW_FREE,
-          isFree: !isPremium,
+          isFree: !isPremium && !cartHasFreeItem && !existingUsersFreeAddress,
           period: 1,
           type: CART_ITEM_TYPE.ADDRESS,
         };
@@ -325,7 +349,17 @@ export const useContext = (): UseContextProps => {
         log.error(error);
       }
     },
-    [cartId, dispatch, history, prices.nativeFio, refDomainObj, roe, userId],
+    [
+      cartHasFreeItem,
+      cartId,
+      dispatch,
+      existingUsersFreeAddress,
+      history,
+      prices.nativeFio,
+      refDomainObj,
+      roe,
+      userId,
+    ],
   );
 
   const onInputChanged = (value: string) => {
