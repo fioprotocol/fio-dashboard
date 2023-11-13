@@ -13,6 +13,7 @@ export const addItem = (data: {
   item: CartItem;
   prices?: NativePrices;
   roe?: number;
+  token?: string;
   userId?: string;
 }): CommonPromiseAction => ({
   types: [ADD_ITEM_REQUEST, ADD_ITEM_SUCCESS, ADD_ITEM_FAILURE],

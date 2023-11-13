@@ -1,11 +1,16 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 import X from '../Exception';
 
-import { Cart } from '../../models/Cart.mjs';
-import { Domain } from '../../models/Domain.mjs';
-import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
-import { FreeAddress } from '../../models/FreeAddress.mjs';
-import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
+import {
+  Cart,
+  Domain,
+  FioAccountProfile,
+  FreeAddress,
+  GatedRegistrtionTokens,
+  ReferrerProfile,
+} from '../../models';
 
 import logger from '../../logger.mjs';
 
@@ -15,6 +20,8 @@ import {
   handleFioHandleCartItemsWithCustomDomain,
   handlePrices,
 } from '../../utils/cart.mjs';
+
+import { CART_ITEM_TYPE } from '../../config/constants';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -49,13 +56,14 @@ export default class AddItem extends Base {
         },
       ],
       roe: ['string'],
+      token: ['string'],
       userId: ['string'],
     };
   }
 
-  async execute({ id, item, prices, roe, userId: reqUserId }) {
+  async execute({ id, item, prices, roe, token, userId: reqUserId }) {
     try {
-      const { domain } = item;
+      const { domain, type } = item;
 
       const userId = this.context.id || reqUserId || null;
 
@@ -69,6 +77,29 @@ export default class AddItem extends Base {
         (await FreeAddress.getItems({
           userId,
         }));
+
+      const gatedRefProfile = await ReferrerProfile.findOne({
+        where: Sequelize.literal(
+          `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings" IS NOT NULL`,
+        ),
+      });
+
+      if (gatedRefProfile && type === CART_ITEM_TYPE.ADDRESS) {
+        const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
+          where: { token },
+        });
+
+        if (!gatedRegistrationToken) {
+          throw new X({
+            code: 'SERVER_ERROR',
+            fields: {
+              token: 'NOT_FOUND',
+            },
+          });
+        }
+
+        await gatedRegistrationToken.destroy({ force: true });
+      }
 
       const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
@@ -149,9 +180,9 @@ export default class AddItem extends Base {
     } catch (error) {
       logger.error(error);
       throw new X({
-        code: 'CART_UPDATE',
+        code: 'SERVER_ERROR',
         fields: {
-          addItem: 'CANNOT ADD CART ITEM',
+          addItem: 'CANNOT_ADD_CART_ITEM',
         },
       });
     }

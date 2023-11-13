@@ -21,7 +21,6 @@ import {
 } from '../../redux/profile/selectors';
 
 import apis from '../../api';
-import MathOp from '../../util/math';
 import { log } from '../../util/general';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -108,6 +107,7 @@ export const useContext = (): UseContextProps => {
     boolean
   >(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [gatedToken, setGatedToken] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -118,8 +118,6 @@ export const useContext = (): UseContextProps => {
   );
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
-  const contractAddress =
-    refProfileInfo?.settings?.gatedRegistration?.params?.contractAddress;
   const preselectedDomain = refProfileInfo?.settings?.preselectedDomain;
   const refDomainObj = preselectedDomain
     ? refProfileInfo?.settings?.domains.find(
@@ -341,6 +339,7 @@ export const useContext = (): UseContextProps => {
             item: cartItem,
             prices: prices?.nativeFio,
             roe,
+            token: gatedToken,
             userId,
           }),
         );
@@ -360,6 +359,7 @@ export const useContext = (): UseContextProps => {
       cartId,
       dispatch,
       existingUsersFreeAddress,
+      gatedToken,
       history,
       prices.nativeFio,
       refDomainObj,
@@ -378,40 +378,6 @@ export const useContext = (): UseContextProps => {
     return value;
   };
 
-  const getNfts = useCallback(
-    async (chainName: string) => {
-      const nftsList = await apis.externalProviderNfts.getAllNfts(
-        address,
-        chainName,
-      );
-
-      const hasRefContract = nftsList.find(
-        nftItem => nftItem.token_address === contractAddress,
-      );
-
-      return !!hasRefContract;
-    },
-    [address, contractAddress],
-  );
-
-  const getAllTokens = useCallback(
-    async (chainName: string) => {
-      const tokensList = await apis.externalProviderNfts.getAllExternalTokens({
-        address,
-        chainName,
-      });
-
-      const hasRefContract = tokensList.find(
-        tokenItem =>
-          tokenItem.token_address === contractAddress &&
-          new MathOp(tokenItem.balance).gt(0),
-      );
-
-      return !!hasRefContract;
-    },
-    [address, contractAddress],
-  );
-
   const verifyUsersData = useCallback(async () => {
     const chain = MORALIS_CHAIN_LIST.find(
       chainItem => chainItem.chainId === network?.chainId,
@@ -421,17 +387,22 @@ export const useContext = (): UseContextProps => {
 
     if (chainName) {
       toggleVerifyLoading(true);
-      let isVerified = false;
 
       try {
-        if (asset === NFT_LABEL && network?.chainId) {
-          isVerified = await getNfts(chainName);
+        const verified = await apis.metamask.verifyMetamask({
+          address,
+          chainId: network?.chainId,
+          refId: refProfileInfo?.id,
+        });
+
+        const { isVerified, token } = verified || {};
+
+        if (!token) {
+          toggleHasVerifiedError(true);
+          setInfoMessage('Not verified');
         }
 
-        if (asset === TOKEN_LABEL && network?.chainId) {
-          isVerified = await getAllTokens(chainName);
-        }
-
+        setGatedToken(token);
         toggleVerified(isVerified);
 
         if (!isVerified) {
@@ -445,7 +416,7 @@ export const useContext = (): UseContextProps => {
         toggleVerifyLoading(false);
       }
     }
-  }, [asset, getAllTokens, getNfts, network?.chainId]);
+  }, [address, network?.chainId, refProfileInfo?.id]);
 
   useEffect(() => {
     if (!network?.chainId) {

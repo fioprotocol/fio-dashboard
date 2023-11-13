@@ -15,6 +15,7 @@ export const {
   FioAccountProfile,
   FioApiUrl,
   FreeAddress,
+  GatedRegistrtionTokens,
   LockedFch,
   NewDeviceTwoFactor,
   Nonce,
