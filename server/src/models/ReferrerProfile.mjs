@@ -5,7 +5,7 @@ import Base from './Base';
 import { User } from './User';
 import { FioAccountProfile } from './FioAccountProfile';
 
-const { DataTypes: DT } = Sequelize;
+const { DataTypes: DT, Op } = Sequelize;
 
 const CODE_LENGTH = 5;
 const CODE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -38,19 +38,12 @@ export class ReferrerProfile extends Base {
         settings: { type: DT.JSON },
         // Possible settings keys:
         // settings: {
-        //   domains: ['refprofile'],
-        //   premiumDomains: ['refprofile'],
         //   actions: {"SIGNNFT": {title: '', subtitle: ''}, "REG": {title: '', subtitle: ''}},
+        //   domains: [{ name: 'refprofile', isPremium: boolean, rank: number, isFirstRegFree: boolean }],
+        //   gatedRegistration: {'isOn': boolean, params: {'asset': 'NFT || TOKEN', chainId: '1' (1 - Ethereum), contractAddress: ''}}
         //   img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3A/wD/A...',
         //   link: 'https://www.ref.profile/',
-        //   simpleRegLogo: '/ref/logos/simple-reg-ref-profile-log.png',
-        //   cryptoHandleSalePrice: 1.22,
-        //   cryptoHandleSaleRoeActive: false,
-        //   domainSalePrice: 33,
-        //   domainSaleRoeActive: true,
-        //   auto_bundles: false,
-        //   showExplanationsSection: false,
-        //   showPartnersSection: false,
+        //   preselectedDomain: 'refprofile'
         // },
         simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
         simpleRegIpWhitelist: {
@@ -129,6 +122,28 @@ export class ReferrerProfile extends Base {
     return this.findOne({
       where: { ...where },
     });
+  }
+
+  static async getRefDomainsList() {
+    const refDomainsList = await this.findAll({
+      where: {
+        type: this.TYPE.REF,
+        settings: {
+          domains: {
+            [Op.not]: null,
+          },
+        },
+      },
+    })
+      .map(refProfile =>
+        refProfile.settings.domains.map(domain => ({
+          ...domain,
+          hasGatedRegistration: refProfile.settings.gatedRegistration.isOn,
+        })),
+      )
+      .filter(domains => domains.length > 0);
+
+    return refDomainsList && refDomainsList.length ? refDomainsList.flat() : [];
   }
 
   static format({

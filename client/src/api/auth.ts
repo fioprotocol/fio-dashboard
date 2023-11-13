@@ -32,16 +32,15 @@ export default class Auth extends Base {
     return this.apiClient.get(`auth/username/${email}`);
   }
 
-  login(
-    email: string,
-    signature: string,
-    challenge: string,
-    referrerCode?: string,
-    timeZone?: string,
-  ): Promise<AuthLoginResponse> {
-    return this.apiClient.post('auth', {
-      data: { email, signature, challenge, referrerCode, timeZone },
-    });
+  login(data: {
+    email: string;
+    edgeWallets?: FioWalletDoublet[];
+    signature: string;
+    challenge: string;
+    referrerCode?: string;
+    timeZone?: string;
+  }): Promise<AuthLoginResponse> {
+    return this.apiClient.post('auth', data);
   }
 
   available(email: string): Promise<AuthAvailableResponse> {

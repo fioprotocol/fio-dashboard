@@ -18,23 +18,25 @@ type Props = {
 const CreateWalletModal: React.FC<Props> = props => {
   const { show, loading, initialValues, onSubmit, onClose } = props;
   return (
-    <Modal
-      show={show}
-      isSimple={true}
-      closeButton={true}
-      onClose={onClose}
-      isMiddleWidth={true}
-      hasDefaultCloseColor={true}
-    >
-      <div className={classes.container}>
-        <h4 className={classes.title}>Create New Wallet</h4>
-        <CreateWalletForm
-          onSubmit={onSubmit}
-          loading={loading}
-          initialValues={initialValues}
-        />
-      </div>
-    </Modal>
+    show && (
+      <Modal
+        show={show}
+        isSimple={true}
+        closeButton={true}
+        onClose={onClose}
+        isMiddleWidth={true}
+        hasDefaultCloseColor={true}
+      >
+        <div className={classes.container}>
+          <h4 className={classes.title}>Create New Wallet</h4>
+          <CreateWalletForm
+            onSubmit={onSubmit}
+            loading={loading}
+            initialValues={initialValues}
+          />
+        </div>
+      </Modal>
+    )
   );
 };
 

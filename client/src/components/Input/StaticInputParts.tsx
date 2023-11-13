@@ -121,7 +121,9 @@ export const Suffix: React.FC<{
   hasIconsLeft?: boolean;
   suffix: string;
   uiType?: string;
-}> = ({ hasIconsLeft, suffix, uiType }) => {
+  disabled?: boolean;
+  disabledInputGray?: boolean;
+}> = ({ disabled, disabledInputGray, hasIconsLeft, suffix, uiType }) => {
   if (suffix && !suffix.length) return null;
 
   return (
@@ -130,6 +132,7 @@ export const Suffix: React.FC<{
         classes.suffix,
         uiType && classes[uiType],
         hasIconsLeft && classes.hasIconsLeft,
+        disabled && disabledInputGray && classes.disabledGray,
       )}
     >
       {suffix}

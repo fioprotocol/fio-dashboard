@@ -4,16 +4,19 @@ import ApiClient from './client';
 import Account from './account';
 import Admin from './admin';
 import Auth from './auth';
+import Cart from './cart';
 import ChainCode from './chain-code';
 import Contacts from './contacts';
 import DomainsWatchlist from './domains-watchilst';
 import Edge from './edge';
+import EtherScan from './ether-scan';
 import Fio from './fio';
 import FioHistory from './fio-history';
 import FioReg from './fio-reg';
 import General from './general';
 import GeneratePdfFile from './generatePdf';
 import HealthCheck from './health-check';
+import InfuraApi from './infura';
 import ExternalProviderNfts from './external-provider-nfts';
 import Notifications from './notifications';
 import Orders from './orders';
@@ -30,15 +33,18 @@ import { log } from '../util/general';
 const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
-const fetch = window.fetch;
-window.fetch = async (uri: RequestInfo | URL, opts: RequestInit = {}) => {
+const fioCorsFixfetch = window.fetch;
+window.fioCorsFixfetch = async (
+  uri: RequestInfo | URL,
+  opts: RequestInit = {},
+) => {
   // @ts-ignore todo: fix headers['Content-Type'] type usage
   if (opts.headers && opts.headers['Content-Type']) {
     // @ts-ignore
     delete opts.headers['Content-Type'];
   }
   try {
-    return await fetch(uri, { ...opts });
+    return await fioCorsFixfetch(uri, { ...opts });
   } catch (err) {
     log.error(err);
   }
@@ -48,16 +54,19 @@ export type Api = {
   account: Account;
   admin: Admin;
   auth: Auth;
+  cart: Cart;
   chainCode: ChainCode;
   client: ApiClient;
   contacts: Contacts;
   domainsWatchlist: DomainsWatchlist;
   edge: Edge;
+  etherScan: EtherScan;
   fioReg: FioReg;
   fio: Fio;
   general: General;
   generatePdfFile: GeneratePdfFile;
   healthCheck: HealthCheck;
+  infura: InfuraApi;
   externalProviderNfts: ExternalProviderNfts;
   notifications: Notifications;
   orders: Orders;
@@ -74,17 +83,20 @@ const apis = {
   account: new Account(apiClient),
   admin: new Admin(apiClient),
   auth: new Auth(apiClient),
+  cart: new Cart(apiClient),
   chainCode: new ChainCode(apiClient),
   client: apiClient,
   contacts: new Contacts(apiClient),
   domainsWatchlist: new DomainsWatchlist(apiClient),
-  edge: new Edge(),
+  edge: new Edge(apiClient),
+  etherScan: new EtherScan(apiClient),
   fioHistory: new FioHistory(),
   fioReg: new FioReg(apiClient),
   fio: new Fio(),
   general: new General(apiClient),
   generatePdfFile: new GeneratePdfFile(apiClient),
   healthCheck: new HealthCheck(apiClient),
+  infura: new InfuraApi(apiClient),
   externalProviderNfts: new ExternalProviderNfts(apiClient),
   notifications: new Notifications(apiClient),
   orders: new Orders(apiClient),

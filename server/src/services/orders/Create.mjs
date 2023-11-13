@@ -2,10 +2,27 @@ import Sequelize from 'sequelize';
 
 import Base from '../Base';
 
-import { Order, OrderItem, OrderItemStatus, Payment, User } from '../../models';
+import {
+  Cart,
+  Domain,
+  FioAccountProfile,
+  FreeAddress,
+  Order,
+  OrderItem,
+  OrderItemStatus,
+  Payment,
+  ReferrerProfile,
+  User,
+} from '../../models';
 
 import { DAY_MS, PAYMENTS_STATUSES } from '../../config/constants.js';
 import X from '../Exception.mjs';
+
+import {
+  calculateCartTotalCost,
+  cartItemsToOrderItems,
+  handlePrices,
+} from '../../utils/cart.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -14,22 +31,18 @@ export default class OrdersCreate extends Base {
         'required',
         {
           nested_object: {
-            total: 'string',
+            cartId: ['required', 'string'],
             roe: 'string',
             publicKey: 'string',
             paymentProcessor: 'string',
             refProfileId: 'integer',
-            items: [
+            prices: [
               {
-                list_of_objects: {
-                  action: 'string',
-                  address: 'string',
-                  domain: 'string',
-                  params: 'any_object',
-                  nativeFio: 'string',
-                  price: 'string',
-                  priceCurrency: 'string',
-                  data: 'any_object',
+                nested_object: {
+                  addBundles: ['string'],
+                  address: ['string'],
+                  domain: ['string'],
+                  renewDomain: ['string'],
                 },
               },
             ],
@@ -46,13 +59,14 @@ export default class OrdersCreate extends Base {
   }
 
   async execute({
-    data: { total, roe, publicKey, paymentProcessor, refProfileId, items, data },
+    data: { cartId, roe, publicKey, paymentProcessor, prices, refProfileId, data },
   }) {
+    const userId = this.context.id;
     // assume user should have only one active order with status NEW
     const exOrder = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
-        userId: this.context.id,
+        userId,
         createdAt: {
           [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
         },
@@ -63,7 +77,7 @@ export default class OrdersCreate extends Base {
     let payment = null;
     const orderItems = [];
 
-    const user = await User.findActive(this.context.id);
+    const user = await User.findActive(userId);
 
     if (!user) {
       throw new X({
@@ -93,14 +107,30 @@ export default class OrdersCreate extends Base {
         );
       }
 
+      const cart = await Cart.findById(cartId);
+
+      if (!cart) {
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {
+            cart: 'NOT_FOUND',
+          },
+        });
+      }
+
+      const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
+        cartItems: cart.items,
+        roe,
+      });
+
       order = await Order.create(
         {
           status: Order.STATUS.NEW,
-          total,
+          total: totalCostUsdc,
           roe,
           publicKey,
           customerIp: this.context.ipAddress,
-          userId: this.context.id,
+          userId,
           refProfileId: refProfileId ? refProfileId : user.refProfileId,
           data,
         },
@@ -109,6 +139,54 @@ export default class OrdersCreate extends Base {
 
       order.number = Order.generateNumber(order.id);
       await order.save({ transaction: t });
+
+      const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
+
+      const dashboardDomains = await Domain.getDashboardDomains();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+      const userHasFreeAddress =
+        userId &&
+        (await FreeAddress.getItems({
+          userId,
+        }));
+
+      const {
+        addBundles: addBundlesPrice,
+        address: addressPrice,
+        domain: domainPrice,
+        renewDomain: renewDomainPrice,
+      } = handledPrices;
+
+      const isEmptyPrices =
+        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+      if (isEmptyPrices) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            prices: 'PRICES_ARE_EMPTY',
+          },
+        });
+      }
+
+      if (!handledRoe) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            roe: 'ROE_IS_EMPTY',
+          },
+        });
+      }
+
+      const items = await cartItemsToOrderItems({
+        allRefProfileDomains,
+        cartItems: cart.items,
+        dashboardDomains,
+        FioAccountProfile,
+        prices: handledPrices,
+        roe: handledRoe,
+        userHasFreeAddress,
+      });
 
       for (const {
         action,

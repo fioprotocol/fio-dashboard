@@ -1,0 +1,167 @@
+import Base from '../Base';
+import X from '../Exception';
+
+import { Cart } from '../../models/Cart.mjs';
+import { Domain } from '../../models/Domain.mjs';
+import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
+import { FreeAddress } from '../../models/FreeAddress.mjs';
+import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
+
+import logger from '../../logger.mjs';
+
+import {
+  handleFioHandleOnExistingCustomDomain,
+  handleFreeCartAddItem,
+  handleFioHandleCartItemsWithCustomDomain,
+  handlePrices,
+} from '../../utils/cart.mjs';
+
+export default class AddItem extends Base {
+  static get validationRules() {
+    return {
+      id: ['string'],
+      item: [
+        'required',
+        {
+          nested_object: {
+            address: ['string'],
+            costFio: ['required', 'string'],
+            costNativeFio: ['required', 'string'],
+            costUsdc: ['required', 'string'],
+            domain: ['required', 'string'],
+            domainType: ['string'],
+            id: ['required', 'string'],
+            isFree: ['boolean'],
+            hasCustomDomainInCart: ['boolean'],
+            period: ['string'],
+            type: ['required', 'string'],
+          },
+        },
+      ],
+      prices: [
+        {
+          nested_object: {
+            addBundles: ['string'],
+            address: ['string'],
+            domain: ['string'],
+            renewDomain: ['string'],
+          },
+        },
+      ],
+      roe: ['string'],
+      userId: ['string'],
+    };
+  }
+
+  async execute({ id, item, prices, roe, userId: reqUserId }) {
+    try {
+      const { domain } = item;
+
+      const userId = this.context.id || reqUserId || null;
+
+      const existingCart = await Cart.findById(id);
+
+      const dashboardDomains = await Domain.getDashboardDomains();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+      const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
+      const userHasFreeAddress =
+        userId &&
+        (await FreeAddress.getItems({
+          userId,
+        }));
+
+      const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
+
+      const {
+        addBundles: addBundlesPrice,
+        address: addressPrice,
+        domain: domainPrice,
+        renewDomain: renewDomainPrice,
+      } = handledPrices;
+
+      const isEmptyPrices =
+        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+      if (isEmptyPrices) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            prices: 'PRICES_ARE_EMPTY',
+          },
+        });
+      }
+
+      if (!handledRoe) {
+        throw new X({
+          code: 'ERROR',
+          fields: {
+            roe: 'ROE_IS_EMPTY',
+          },
+        });
+      }
+
+      const handledFreeCartItem = handleFreeCartAddItem({
+        allRefProfileDomains,
+        cartItems: existingCart ? existingCart.items : [],
+        dashboardDomains,
+        freeDomainOwner,
+        item,
+        userHasFreeAddress,
+      });
+
+      if (!existingCart) {
+        const cart = await Cart.create({
+          items: [handledFreeCartItem],
+          userId,
+        });
+
+        return { data: Cart.format(cart.get({ plain: true })) };
+      }
+
+      const items = existingCart.items;
+
+      const handledCartItemsWithExistingCustomDomain = handleFioHandleOnExistingCustomDomain(
+        {
+          cartItems: items,
+          newItem: handledFreeCartItem,
+          prices: handledPrices,
+          roe: handledRoe,
+        },
+      );
+
+      const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
+        {
+          cartItems: handledCartItemsWithExistingCustomDomain,
+          item,
+          prices: handledPrices,
+          roe: handledRoe,
+        },
+      );
+
+      await existingCart.update({
+        items: handledCartItemsWithExistingFioHandleCustomDomain,
+        userId,
+      });
+
+      return {
+        data: Cart.format(existingCart.get({ plain: true })),
+      };
+    } catch (error) {
+      logger.error(error);
+      throw new X({
+        code: 'CART_UPDATE',
+        fields: {
+          addItem: 'CANNOT ADD CART ITEM',
+        },
+      });
+    }
+  }
+
+  static get paramsSecret() {
+    return [];
+  }
+
+  static get resultSecret() {
+    return [];
+  }
+}

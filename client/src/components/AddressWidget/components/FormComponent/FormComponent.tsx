@@ -18,6 +18,9 @@ import classes from './FormComponent.module.scss';
 
 type Props = {
   buttonText?: string;
+  disabled?: boolean;
+  disabledInput?: boolean;
+  disabledInputGray?: boolean;
   links?: {
     getCryptoHandle: React.ReactNode;
   };
@@ -34,6 +37,7 @@ type Props = {
 
 type ActionButtonProps = {
   buttonText?: string;
+  disabled?: boolean;
   isWhiteBordered?: boolean;
   links?: {
     getCryptoHandle: React.ReactNode;
@@ -41,7 +45,7 @@ type ActionButtonProps = {
 };
 
 const ActionButton: React.FC<ActionButtonProps> = props => {
-  const { buttonText = 'GET IT', isWhiteBordered, links } = props;
+  const { buttonText = 'GET IT', disabled, isWhiteBordered, links } = props;
   const form = useForm();
 
   if (links && links.getCryptoHandle) {
@@ -61,6 +65,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
         rel="noreferrer"
       >
         <SubmitButton
+          disabled={disabled}
           isButtonType={true}
           hasLowHeight={true}
           text={buttonText}
@@ -74,6 +79,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
   return (
     <div className={classes.button}>
       <SubmitButton
+        disabled={disabled}
         withoutMargin={true}
         hasLowHeight={true}
         text={buttonText}
@@ -87,6 +93,9 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
 export const FormComponent: React.FC<Props> = props => {
   const {
     buttonText,
+    disabled,
+    disabledInput,
+    disabledInputGray,
     isReverseColors,
     links,
     suffixText,
@@ -147,10 +156,13 @@ export const FormComponent: React.FC<Props> = props => {
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
                 parse={onInputChanged}
+                disabled={disabledInput}
+                disabledInputGray={disabledInputGray}
               />
             </div>
             {showSubmitButton && (
               <ActionButton
+                disabled={disabled}
                 isWhiteBordered={isReverseColors}
                 links={links}
                 buttonText={buttonText}

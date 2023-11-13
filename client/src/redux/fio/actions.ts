@@ -255,6 +255,15 @@ export const toggleExpiredDomainBadge = (enabled: boolean): CommonAction => ({
   enabled,
 });
 
+export const TOGGLE_EXPIRED_DOMAIN_WARNING_FCH_BADGE = `${prefix}/TOGGLE_EXPIRED_DOMAIN_WARNING_FCH_BADGE`;
+
+export const toggleExpiredDomainFchBadge = (
+  enabled: boolean,
+): CommonAction => ({
+  type: TOGGLE_EXPIRED_DOMAIN_WARNING_FCH_BADGE,
+  enabled,
+});
+
 export const TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE = `${prefix}/TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE`;
 
 export const toggleSocialMediaListInfoBadge = (

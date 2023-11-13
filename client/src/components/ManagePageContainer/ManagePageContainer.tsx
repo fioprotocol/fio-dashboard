@@ -34,14 +34,12 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     listNameTitle,
     pageName,
     showTopBadge,
-    showWarningMessage,
     title,
     topBadgeContent,
     warningContent,
     handleAddBundles,
     handleRenewDomain,
     onTopBadgeClose,
-    sessionBadgeClose,
   } = props;
 
   const {
@@ -51,11 +49,11 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     isAddress,
     isDesktop,
     isEmptyList,
+    isSelectedFioNameItemExpired,
     listItemsDefaultProps,
     loading,
     noProfileLoaded,
     selectedFioNameItem,
-    showWarnBadge,
     showItemModal,
     showSettingsModal,
     welcomeComponentProps,
@@ -64,11 +62,8 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
     onItemModalOpen,
     onSettingsClose,
     onSettingsOpen,
-    onWarningBadgeClose,
   } = useContext({
     pageName,
-    showWarningMessage,
-    sessionBadgeClose,
   });
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
@@ -91,15 +86,18 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
             <div className={classes.listNameTitle}>{listNameTitle}</div>
           )}
           <div className={classes.dataContainer}>
-            <NotificationBadge
-              type={BADGE_TYPES.WARNING}
-              title={warningContent.title}
-              message={warningContent.message}
-              show={showWarnBadge}
-              withoutMargin
-              onClose={onWarningBadgeClose}
-              className={classes.warningBadgeContainerWithMarginTop}
-            />
+            {warningContent.map(content => (
+              <NotificationBadge
+                key={`${content.title}-${content.message}`}
+                type={BADGE_TYPES.WARNING}
+                title={content.title}
+                message={content.message}
+                show={content.show}
+                withoutMargin
+                onClose={content.onClose}
+                className={classes.warningBadgeContainerWithMarginTop}
+              />
+            ))}
             <InfiniteScroll
               loading={loading}
               hasNextPage={hasNextPage}
@@ -143,7 +141,6 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
         {isAddress ? (
           <FchItemComponent
             fioNameItem={selectedFioNameItem}
-            warningContent={warningContent}
             onAddBundles={handleAddBundles}
             onSettingsOpen={onSettingsOpen}
           />
@@ -151,7 +148,6 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
           <DomainItemComponent
             fioNameItem={selectedFioNameItem}
             isDesktop={isDesktop}
-            warningContent={warningContent}
             onRenewDomain={handleRenewDomain}
             onSettingsOpen={onSettingsOpen}
           />
@@ -170,11 +166,13 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
           <FchSettingsItem
             fioNameItem={selectedFioNameItem}
             fioWallets={fioWallets}
+            isExpired={isSelectedFioNameItemExpired}
           />
         ) : (
           <DomainSettingsItem
             fioNameItem={selectedFioNameItem}
             fioWallets={fioWallets}
+            isExpired={isSelectedFioNameItemExpired}
           />
         )}
       </Modal>

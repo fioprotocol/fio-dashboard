@@ -32,6 +32,7 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
     domainType,
     hasWhiteBackground,
     hasMaxWidth,
+    isFree,
   } = props;
 
   return (
@@ -61,6 +62,7 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
           costUsdc={costUsdc}
           costFio={costFio}
           domainType={domainType}
+          isFree={isFree}
           hasMarginRight
         />
       </div>

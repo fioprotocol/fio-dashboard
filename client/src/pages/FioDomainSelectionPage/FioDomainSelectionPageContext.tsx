@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { setCartItems } from '../../redux/cart/actions';
+import {
+  addItem as addItemToCart,
+  updateCartItemPeriod,
+} from '../../redux/cart/actions';
 
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -19,10 +26,8 @@ import { convertFioPrices } from '../../util/prices';
 import {
   checkAddressOrDomainIsExist,
   checkIsDomainItemExistsOnCart,
-  handlePriceForMultiYearFchWithCustomDomain,
   vaildateFioDomain,
 } from '../../util/fio';
-import { addCartItem } from '../../util/cart';
 import MathOp from '../../util/math';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
@@ -115,9 +120,11 @@ const validateDomainItems = async ({
   ).filter(Boolean);
 
 export const useContext = () => {
+  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -163,17 +170,35 @@ export const useContext = () => {
     togglePrefixPostfixListLoading(false);
   };
 
-  const onClick = (selectedItem: CartItem) => {
-    addCartItem(selectedItem);
-  };
+  const onClick = useCallback(
+    (selectedItem: CartItem) => {
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: selectedItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
+    },
+    [cartId, dispatch, prices?.nativeFio, roe, userId],
+  );
 
   const onPeriodChange = (period: string, id: string) => {
     if (suggestedItem?.id === id) {
       if (suggestedItem.period === Number(period)) return;
-      const fioPrices = convertFioPrices(
-        new MathOp(suggestedItem.costNativeFio).mul(period).toNumber(),
-        roe,
-      );
+
+      const { domain, renewDomain } = prices?.nativeFio;
+
+      const renewPeriod = new MathOp(period).sub(1).toNumber();
+      const renewDomainNativeCost = new MathOp(renewDomain)
+        .mul(renewPeriod)
+        .toNumber();
+      const multiDomainPrice = new MathOp(domain)
+        .add(renewDomainNativeCost)
+        .toNumber();
+      const fioPrices = convertFioPrices(multiDomainPrice, roe);
 
       setSuggestedItem({
         ...suggestedItem,
@@ -215,28 +240,16 @@ export const useContext = () => {
 
     if (existingCartItem) {
       if (existingCartItem.period === Number(period)) return;
-      const fioPrices = convertFioPrices(
-        handlePriceForMultiYearFchWithCustomDomain({
-          costNativeFio: existingCartItem.costNativeFio,
-          nativeFioAddressPrice: existingCartItem.nativeFioAddressPrice,
-          period,
-        }),
-        roe,
-      );
 
       dispatch(
-        setCartItems(
-          parsedCartItems.map(cartItem =>
-            checkIsDomainItemExistsOnCart(id, cartItem)
-              ? {
-                  ...cartItem,
-                  period: Number(period),
-                  costFio: fioPrices.fio,
-                  costUsdc: fioPrices.usdc,
-                }
-              : cartItem,
-          ),
-        ),
+        updateCartItemPeriod({
+          id: cartId,
+          itemId: existingCartItem.id,
+          item: existingCartItem,
+          period: Number(period),
+          prices: prices?.nativeFio,
+          roe,
+        }),
       );
     }
   };

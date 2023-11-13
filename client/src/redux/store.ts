@@ -11,8 +11,7 @@ import throttle from 'lodash/throttle';
 import isEqual from 'lodash/isEqual';
 import { History } from 'history';
 
-import { loadState, parseState, saveState } from '../localStorage';
-import { setCartItems } from './cart/actions';
+import { loadState, saveState } from '../localStorage';
 
 import apiMiddleware from './apiMiddleware';
 
@@ -48,9 +47,7 @@ export default function configureStore(api: Api, history: History): Store {
       const previousState: ReduxState = currentState;
       currentState = {
         cart: {
-          cartItems: store.getState().cart.cartItems,
-          date: store.getState().cart.date,
-          oldCart: store.getState().cart.oldCart,
+          cartId: store.getState().cart.cartId,
         },
         profile: {
           lastAuthData: store.getState().profile.lastAuthData,
@@ -70,6 +67,8 @@ export default function configureStore(api: Api, history: History): Store {
             .showFchBundleWarningBagde,
           showExpiredDomainWarningBadge: store.getState().fio
             .showExpiredDomainWarningBadge,
+          showExpiredDomainWarningFchBadge: store.getState().fio
+            .showExpiredDomainWarningFchBadge,
         },
         fioWalletsData: {
           walletsData: store.getState().fioWalletsData.walletsData,
@@ -82,15 +81,6 @@ export default function configureStore(api: Api, history: History): Store {
       }
     }, 1000),
   );
-  window.addEventListener('storage', event => {
-    if (event.key === 'state') {
-      const oldCartItems = parseState(event.oldValue)?.cart?.cartItems;
-      const newCartItems = parseState(event.newValue)?.cart?.cartItems;
-      if (!isEqual(oldCartItems, newCartItems)) {
-        store.dispatch(setCartItems(newCartItems));
-      }
-    }
-  });
 
   sagaMiddleware.run(() => rootSaga(history, api));
 

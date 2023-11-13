@@ -78,14 +78,12 @@ type State = {
 
 type Props = {
   resetSuccessState: () => void;
-  makeNonce: (
-    username: string,
-    keys: WalletKeysObj,
-    otpKey?: string,
-    voucherId?: string,
-    isPinLogin?: boolean,
-    isSignUp?: boolean,
-  ) => void;
+  makeNonce: (data: {
+    username: string;
+    keys: WalletKeysObj;
+    isPinLogin: boolean;
+    isSignUp: boolean;
+  }) => void;
   showLoginModal: () => void;
   setPinEnabled: (username: string) => void;
   setPinSetupPostponed: (isPinPostponed: boolean) => void;
@@ -151,14 +149,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values: { email },
     } = this.form ? this.form.getState() : { values: { email: undefined } };
 
-    this.props.makeNonce(
-      emailToUsername(email),
-      this.state.keys,
-      '',
-      '',
-      false,
-      true,
-    );
+    this.props.makeNonce({
+      username: emailToUsername(email),
+      keys: this.state.keys,
+      isPinLogin: false,
+      isSignUp: true,
+    });
   };
 
   setEmailError = (emailError: string) => {

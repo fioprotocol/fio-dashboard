@@ -7,6 +7,7 @@ import { BADGE_TYPES } from '../../Badge/Badge';
 import OtherPaymentsBlock from './OtherPaymentsBlock';
 
 import { PAYMENT_OPTIONS } from '../../../constants/purchase';
+import { WARNING_CONTENT } from '../../../pages/FioAddressManagePage/constants';
 
 import MathOp from '../../../util/math';
 
@@ -22,6 +23,7 @@ type Props = {
   totlaCartUsdcAmount: string;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
+  showExpiredDomainWarningBadge: boolean;
   disabled?: boolean;
 };
 
@@ -36,6 +38,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     userWallets,
     selectedPaymentProvider,
     disabled,
+    showExpiredDomainWarningBadge,
     onPaymentChoose,
   } = props;
 
@@ -62,6 +65,17 @@ const PaymentsBlock: React.FC<Props> = props => {
   };
 
   const priceIsLowerThanHalfADollar = new MathOp(totlaCartUsdcAmount).lt(0.5);
+
+  if (showExpiredDomainWarningBadge) {
+    return (
+      <NotificationBadge
+        show
+        message={WARNING_CONTENT.EXPIRED_DOMAINS.message}
+        title={WARNING_CONTENT.EXPIRED_DOMAINS.title}
+        type={BADGE_TYPES.WARNING}
+      />
+    );
+  }
 
   if (hasLowBalance && priceIsLowerThanHalfADollar) {
     return (

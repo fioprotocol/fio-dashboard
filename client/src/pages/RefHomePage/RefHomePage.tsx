@@ -6,13 +6,16 @@ import { Helmet } from 'react-helmet-async';
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import { FCHBanner } from '../../components/FCHBanner';
-import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
-import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
+import { DetailedInfoMainPageComponent } from '../../components/DetailedInfoMainPageComponent';
+import { GateVerificationComponent } from '../../components/GateVerificationComponent';
 
 import { APP_TITLE } from '../../constants/labels';
+import { DEFAULT_DOMAIN_NAME } from '../../constants/ref';
 
 import { handleHomePageContent } from '../../util/homePage';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
+
+import { useContext } from './RefHomePageContext';
 
 import {
   RefProfile,
@@ -20,7 +23,7 @@ import {
   ContainedFlowQueryParams,
 } from '../../types';
 
-import classnames from './RefHomePage.module.scss';
+import classes from './RefHomePage.module.scss';
 
 const FADE_OUT_TIMEOUT = 780;
 
@@ -58,6 +61,29 @@ export const RefHomePage: React.FC<Props &
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
+  const {
+    disabled,
+    hasFioHandleInfoMessage,
+    hasFioVerificactionError,
+    hasVerifiedError,
+    infoMessage,
+    isVerified,
+    loaderText,
+    showBrowserExtensionErrorModal,
+    showProviderWindowError,
+    showProviderLoadingIcon,
+    showSelectProviderModalVisible,
+    verifyLoading,
+    connectWallet,
+    closeSelectProviderModal,
+    customHandleSubmit,
+    onClick,
+    onFocusOut,
+    onInputChanged,
+    setConnectionError,
+    setShowBrowserExtensionErrorModal,
+  } = useContext();
+
   useEffect(() => {
     if (refProfileInfo != null) {
       setHideLoader(true);
@@ -83,10 +109,8 @@ export const RefHomePage: React.FC<Props &
 
   if (refLinkError) {
     return (
-      <div className={classnames.container}>
-        <div className={classnames.validationErrorContainer}>
-          {refLinkError}
-        </div>
+      <div className={classes.container}>
+        <div className={classes.validationErrorContainer}>{refLinkError}</div>
       </div>
     );
   }
@@ -95,8 +119,8 @@ export const RefHomePage: React.FC<Props &
     if (loading || !refProfileIsLoaded) {
       return (
         <div
-          className={`${classnames.spinnerContainer} ${
-            hideLoader ? classnames.fadeOut : ''
+          className={`${classes.spinnerContainer} ${
+            hideLoader ? classes.fadeOut : ''
           }`}
         >
           <FioLoader />
@@ -113,12 +137,26 @@ export const RefHomePage: React.FC<Props &
       refProfileInfo,
     });
 
-    const {
-      settings: { showExplanationsSection, showPartnersSection } = {},
-    } = refProfileInfo;
+    const refTitle = addressWidgetContent?.title as string;
+    const refDomain = refProfileInfo?.settings?.domains[0]?.name;
+    const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
+
+    const domainName = refDomain || 'rulez';
+
+    if (
+      refTitle &&
+      typeof refTitle === 'string' &&
+      refTitle.includes(`@${DEFAULT_DOMAIN_NAME}`) &&
+      refDomain
+    ) {
+      addressWidgetContent.title = refTitle.replace(
+        `@${DEFAULT_DOMAIN_NAME}`,
+        `@${refDomain}`,
+      );
+    }
 
     return (
-      <div className={classnames.container}>
+      <div className={classes.container}>
         <Helmet>
           <title>
             {APP_TITLE} - {refProfileInfo.label}
@@ -126,20 +164,66 @@ export const RefHomePage: React.FC<Props &
         </Helmet>
         <AddressWidget
           {...addressWidgetContent}
+          title={
+            <div className={classes.title}>{addressWidgetContent?.title}</div>
+          }
+          subtitle={
+            <span className={classes.subtitle}>
+              {addressWidgetContent?.subtitle}
+            </span>
+          }
+          convert={onFocusOut}
+          onInputChanged={onInputChanged}
+          customHandleSubmit={customHandleSubmit}
+          disabled={disabled && isGatedFlow}
+          disabledInput={!isVerified && isGatedFlow}
+          disabledInputGray
           isAuthenticated={isAuthenticated}
-          showSignInWidget
           isDarkWhite
+          formatOnFocusOut
+          suffixText={`@${refDomain}`}
+          showSignInWidget={!isGatedFlow}
+        >
+          {isGatedFlow && (
+            <GateVerificationComponent
+              hasFioHandleInfoMessage={hasFioHandleInfoMessage}
+              hasFioVerificactionError={hasFioVerificactionError}
+              hasVerifiedError={hasVerifiedError}
+              isVerified={isVerified}
+              infoMessage={infoMessage}
+              loaderText={loaderText}
+              parnterName={refProfileInfo?.label}
+              refDomain={refDomain}
+              showBrowserExtensionErrorModal={showBrowserExtensionErrorModal}
+              showProviderWindowError={showProviderWindowError}
+              showProviderLoadingIcon={showProviderLoadingIcon}
+              showSelectProviderModalVisible={showSelectProviderModalVisible}
+              verifyLoading={verifyLoading}
+              connectWallet={connectWallet}
+              closeSelectProviderModal={closeSelectProviderModal}
+              onClick={onClick}
+              setConnectionError={setConnectionError}
+              setShowBrowserExtensionErrorModal={
+                setShowBrowserExtensionErrorModal
+              }
+            />
+          )}
+        </AddressWidget>
+        <FCHBanner
+          containerClass={classes.fchBannerConainerClass}
+          customFioHandleBanner={
+            <div className={classes.customFioHandleBanner}>
+              bob<span className={classes.boldText}>@{domainName}</span>
+            </div>
+          }
+          fch={`bob@${domainName}`}
+          mainTextClass={classes.mainTextClass}
+          publicKeyWrapperClass={classes.publicKeyWrapperClass}
+          publicKeyClass={classes.publicKeyClass}
+          subtextClass={classes.subtextClass}
+          text="Now people can send you cryptocurrency to"
         />
-        {showExplanationsSection && (
-          <>
-            <FCHBanner fch="bob@rulez" />
-            <FCHSpecialsBanner />
-          </>
-        )}
-        {showPartnersSection && <WidelyAdoptedSection />}
-        {(showExplanationsSection || showPartnersSection) && (
-          <AddressWidget {...addressWidgetContent} isReverseColors />
-        )}
+        <DetailedInfoMainPageComponent domain={domainName} />
       </div>
     );
   };

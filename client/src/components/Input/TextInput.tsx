@@ -45,6 +45,7 @@ export const INPUT_COLOR_SCHEMA = {
 
 export type TextInputProps = {
   colorSchema?: string;
+  disabledInputGray?: boolean;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
   showConnectWalletButton?: boolean;
@@ -92,6 +93,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     input,
     meta,
     debounceTimeout = 0,
+    disabledInputGray,
     colorSchema,
     onClose,
     hideError,
@@ -229,6 +231,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             isLowHeight && classes.lowHeight,
             isMiddleHeight && classes.middleHeight,
             isWalletConnected ? classes.dark : '',
+            disabled && disabledInputGray && classes.disabledGray,
           )}
         >
           <PrefixLabel
@@ -284,6 +287,8 @@ export const TextInput: React.ForwardRefRenderFunction<
             isVisiblePasswordButton ||
             isVisiblePasteButton
           }
+          disabled={disabled}
+          disabledInputGray={disabledInputGray}
         />
         <ClearButton
           isVisible={isVisibleClearButton}

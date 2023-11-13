@@ -7,6 +7,7 @@ export const {
   AdminUsersStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
+  Cart,
   ChainCode,
   Contact,
   Domain,

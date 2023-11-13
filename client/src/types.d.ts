@@ -60,6 +60,7 @@ export type CartItem = {
   costUsdc?: string;
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
+  hasCustomDomainInCart?: boolean;
   period?: number;
   allowFree?: boolean;
   showBadge?: boolean;
@@ -95,20 +96,22 @@ export type NotificationParams = {
   contentType: string;
 };
 
+export type NativePrices = {
+  addBundles: number;
+  address: number;
+  domain: number;
+  renewDomain: number;
+};
+
 export type Prices = {
   fio: { address: number; domain: number };
-  nativeFio: { address: number; domain: number; renewDomain?: number };
+  nativeFio: NativePrices;
   usdt: { address: number; domain: number };
 };
 
 export type IncomePrices = {
   pricing: {
-    nativeFio: {
-      address: number;
-      domain: number;
-      renewDomain: number;
-      addBundles: number;
-    };
+    nativeFio: NativePrices;
     usdtRoe: number;
   };
 };
@@ -160,6 +163,7 @@ export type RegistrationResult = {
 export type DeleteCartItem = {
   id: string;
   cartItems?: CartItem[];
+  userId?: string;
 };
 
 export type FioWalletDoublet = {
@@ -390,8 +394,10 @@ export type RefProfileDomain = {
   name: string;
   isPremium: boolean;
   rank: number;
+  isFirstRegFree: boolean;
   domainType?: DomainItemType;
   allowFree?: boolean;
+  hasGatedRegistration?: boolean;
 };
 export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
@@ -414,8 +420,10 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
-    showExplanationsSection?: false;
-    showPartnersSection?: false;
+    gatedRegistration?: {
+      isOn: boolean;
+      params: { asset: string; chainId: string; contractAddress: string };
+    };
     img?: string;
     link?: string;
   };

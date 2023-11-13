@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import WarningIcon from '@mui/icons-material/Warning';
 
@@ -21,6 +21,10 @@ import {
   isDomainWillExpireIn30Days,
 } from '../../../../util/fio';
 
+import apis from '../../../../api';
+import { log } from '../../../../util/general';
+import { FIO_ADDRESS_DELIMITER } from '../../../../utils';
+
 import { ModalOpenActionType } from '../../types';
 import { FioNameItemProps, FioNameType } from '../../../../types';
 
@@ -30,7 +34,13 @@ type ItemComponentProps = {
   fioNameItem: FioNameItemProps;
   isDesktop?: boolean;
   isDomainWatchlist?: boolean;
-  onSettingsOpen: (data: FioNameItemProps) => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 };
 
 type DesktopViewProps = {
@@ -49,6 +59,30 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
 }> = props => {
   const { fioNameItem, onAddBundles, onSettingsOpen } = props;
   const { name = '', remaining } = fioNameItem;
+
+  const domainName = name ? name.split(FIO_ADDRESS_DELIMITER)[1] : '';
+
+  const [domainExpiration, setDomainExpiration] = useState<number | null>(null);
+
+  const getDomainExpiration = useCallback(async () => {
+    try {
+      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
+
+      if (expiration) {
+        setDomainExpiration(expiration);
+      }
+    } catch (err) {
+      log.error(err);
+    }
+  }, [domainName]);
+
+  const isExpired =
+    domainExpiration && isDomainExpired(domainName, domainExpiration);
+
+  useEffect(() => {
+    getDomainExpiration();
+  }, [getDomainExpiration]);
+
   return (
     <React.Fragment key={name}>
       <div className={classnames(classes.tableCol, classes.firstCol)}>
@@ -60,10 +94,16 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
         ) : (
           '-'
         )}
-        {remaining < LOW_BUNDLES_THRESHOLD && (
-          <WarningIcon className={classes.warnIcon} />
+        {(remaining < LOW_BUNDLES_THRESHOLD || isExpired) && (
+          <WarningIcon
+            className={classnames(
+              classes.warnIcon,
+              `${remaining}`.length >= 3 && classes.longNumber,
+            )}
+          />
         )}
         <AddBundlesActionButton
+          isExpired={isExpired}
           name={fioNameItem.name || ''}
           onAddBundles={onAddBundles}
         />
@@ -71,6 +111,7 @@ const AddressItemComponent: React.FC<ItemComponentProps & {
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <FchActionButtons
           fioNameItem={fioNameItem}
+          isExpired={isExpired}
           onSettingsOpen={onSettingsOpen}
         />
       </div>

@@ -8,8 +8,10 @@ import { useContext } from './CartPageContext';
 
 const CartPage: React.FC = () => {
   const {
+    cartId,
     cartItems,
     hasGetPricesError,
+    loadingCart,
     error,
     hasLowBalance,
     isFree,
@@ -17,21 +19,22 @@ const CartPage: React.FC = () => {
     selectedPaymentProvider,
     disabled,
     paymentWalletPublicKey,
-    prices,
     roe,
+    showExpiredDomainWarningBadge,
     totalCartAmount,
+    totalCartUsdcAmount,
     totalCartNativeAmount,
     userWallets,
     walletBalancesAvailable,
     walletCount,
-    deleteItem,
-    setCartItems,
     onPaymentChoose,
   } = useContext();
 
   const commonProps = {
+    cartId,
     cartItems,
     hasLowBalance,
+    loading: loadingCart,
     roe,
     userWallets,
     error,
@@ -40,13 +43,10 @@ const CartPage: React.FC = () => {
   const cartProps = {
     isPriceChanged,
     hasGetPricesError,
-    prices,
     totalCartAmount,
     totalCartNativeAmount,
     walletBalancesAvailable,
     walletCount,
-    deleteItem,
-    setCartItems,
   };
 
   const cartAmountProps = {
@@ -54,6 +54,9 @@ const CartPage: React.FC = () => {
     selectedPaymentProvider,
     disabled,
     paymentWalletPublicKey,
+    showExpiredDomainWarningBadge,
+    totalCartAmount,
+    totalCartUsdcAmount,
     totalCartNativeAmount,
     onPaymentChoose,
   };

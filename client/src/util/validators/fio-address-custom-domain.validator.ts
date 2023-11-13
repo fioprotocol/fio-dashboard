@@ -10,15 +10,20 @@ import {
   NON_VALID_FCH,
   NON_VAILD_DOMAIN,
 } from '../../constants/errors';
+import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 import apis from '../../api';
 import { setFioName } from '../../utils';
-import { checkAddressOrDomainIsExist, vaildateFioDomain } from '../../util/fio';
+import {
+  checkAddressOrDomainIsExist,
+  isDomainExpired,
+  vaildateFioDomain,
+} from '../../util/fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
 
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import { UserDomainType } from '../../types';
+import { RefProfileDomain, UserDomainType } from '../../types';
 
 interface MatchFieldArgs {
   fieldId?: string;
@@ -50,6 +55,11 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   const { address, domain } = values;
 
   const userDomains = values.userDomains as UserDomainType[];
+  const gatedDomains = values.gatedDomains as RefProfileDomain[];
+
+  const currentDomainGated = gatedDomains.find(
+    gatedDomain => gatedDomain.name === domain,
+  );
 
   let existingUserDomain = null;
 
@@ -61,6 +71,12 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
   let succeeded = true;
   let message = '';
+
+  if (currentDomainGated) {
+    succeeded = false;
+    message =
+      'Unfortunately this domain is not available. Please search again or select from the additional domains for sale below.';
+  }
 
   const fchValue = setFioName(address, domain);
 
@@ -106,9 +122,17 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
     const { rows } = await apis.fio.getTableRows(params);
 
-    if (rows.length && !rows[0].is_public && !existingUserDomain) {
-      succeeded = false;
-      message = DOMAIN_ALREADY_EXISTS;
+    if (rows.length) {
+      const { expiration, is_public, name } = rows[0];
+
+      if (isDomainExpired(name, expiration)) {
+        succeeded = false;
+        message = WARNING_CONTENT.EXPIRED_DOMAINS.message;
+      }
+      if (!is_public && !existingUserDomain) {
+        succeeded = false;
+        message = DOMAIN_ALREADY_EXISTS;
+      }
     }
   } catch (e) {
     succeeded = false;

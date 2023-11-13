@@ -53,7 +53,11 @@ export const SuggestedItemsList: React.FC<Props> = props => {
             isSquareShape
             isDesktop={isDesktop}
             actionComponent={
-              <DomainTypeBadge domainType={listItem.domainType} />
+              <DomainTypeBadge
+                domainType={listItem.domainType}
+                isFree={listItem.isFree}
+                hasCustomDomainInCart={listItem.hasCustomDomainInCart}
+              />
             }
             onClick={onClick}
             key={listItem.id}

@@ -10,7 +10,10 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../../../redux/registrations/selectors';
-import { hasFreeAddress as hasFreeAddressSelector } from '../../../../redux/profile/selectors';
+import {
+  hasFreeAddress as hasFreeAddressSelector,
+  usersFreeAddresses as usersFreeAddressesSelector,
+} from '../../../../redux/profile/selectors';
 
 import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
@@ -42,6 +45,7 @@ export const useContext = (
   const roe = useSelector(roeSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const [chainPublicDomains, setChainPublicDomains] = useState<
     UserDomainType[]
@@ -55,8 +59,9 @@ export const useContext = (
 
   const existingCartItem = cartItems.find(cartItem => cartItem.id === fchId);
 
-  const existingFreeCartItem = cartItems.find(
-    cartItems => cartItems.domainType === DOMAIN_TYPE.FREE && !existingCartItem,
+  const cartHasFreeItem = cartItems.some(
+    cartItem =>
+      cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
   const existingDomainInCartItem = cartItems.find(cartItem =>
@@ -68,6 +73,7 @@ export const useContext = (
       cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
       cartItem.domain === domain &&
       !!cartItem.address &&
+      !cartItem.hasCustomDomainInCart &&
       !existingCartItem,
   );
 
@@ -94,32 +100,30 @@ export const useContext = (
     }
   };
 
-  const nonPremiumDomains = allDomains.dashboardDomains
-    ? transformNonPremiumDomains(
-        allDomains.dashboardDomains,
-        hasFreeAddress,
-        cartItems,
-      )
+  const {
+    allRefProfileDomains,
+    dashboardDomains,
+    usernamesOnCustomDomains,
+  } = allDomains;
+
+  const nonPremiumDomains = dashboardDomains
+    ? transformNonPremiumDomains(dashboardDomains)
     : [];
-  const premiumDomains = allDomains.dashboardDomains
-    ? transformPremiumDomains(allDomains.dashboardDomains)
+  const premiumDomains = dashboardDomains
+    ? transformPremiumDomains(dashboardDomains)
     : [];
-  const customDomains = allDomains.usernamesOnCustomDomains
-    ? transformCustomDomains(allDomains.usernamesOnCustomDomains)
+  const customDomains = usernamesOnCustomDomains
+    ? transformCustomDomains(usernamesOnCustomDomains)
     : [];
-  const allNonPremiumRefProfileDomains = allDomains.allRefProfileDomains
-    ? transformNonPremiumDomains(
-        allDomains.allRefProfileDomains,
-        hasFreeAddress,
-        cartItems,
-      )
+  const allNonPremiumRefProfileDomains = allRefProfileDomains
+    ? transformNonPremiumDomains(allRefProfileDomains)
     : [];
-  const allPremiumRefProfileDomains = allDomains.allRefProfileDomains
-    ? transformPremiumDomains(allDomains.allRefProfileDomains)
+  const allPremiumRefProfileDomains = allRefProfileDomains
+    ? transformPremiumDomains(allRefProfileDomains)
     : [];
   const userDomains = allDomains.userDomains || [];
 
-  let domainType = !isEmpty(allDomains)
+  const domainType = !isEmpty(allDomains)
     ? [
         ...nonPremiumDomains,
         ...premiumDomains,
@@ -128,8 +132,8 @@ export const useContext = (
         ...chainPublicDomains.filter(
           chainPublicDomains =>
             ![
-              ...(allDomains.dashboardDomains || []),
-              ...(allDomains.allRefProfileDomains || []),
+              ...(dashboardDomains || []),
+              ...(allRefProfileDomains || []),
             ].some(
               dashboardPubilcDomains =>
                 dashboardPubilcDomains.name === chainPublicDomains.name,
@@ -140,19 +144,29 @@ export const useContext = (
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
-  if (
-    (existingFreeCartItem && domainType === DOMAIN_TYPE.FREE) ||
-    (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
-  )
-    domainType = DOMAIN_TYPE.PREMIUM;
 
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
-  const totalNativeFio = isCustomDomain
-    ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
-    : nativeFioAddressPrice;
+  const totalNativeFio =
+    isCustomDomain && !existingCustomDomainFchCartItem
+      ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+
+  const isFirstRegFreeDomains = allRefProfileDomains?.filter(
+    refProfile => refProfile.isFirstRegFree,
+  );
+
+  const existingIsFirstRegFree = isFirstRegFreeDomains?.find(
+    isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
+  );
+
+  const existingUsersFreeAddress =
+    usersFreeAddresses &&
+    usersFreeAddresses.find(
+      freeAddress => freeAddress.name.split('@')[1] === domain,
+    );
 
   const selectedItemProps = {
     id: fchId,
@@ -161,6 +175,14 @@ export const useContext = (
     costFio: fio,
     costUsdc: usdc,
     costNativeFio: totalNativeFio,
+    isFree:
+      existingCartItem?.isFree ||
+      (domainType === DOMAIN_TYPE.ALLOW_FREE &&
+        (!hasFreeAddress ||
+          (hasFreeAddress &&
+            existingIsFirstRegFree &&
+            !existingUsersFreeAddress)) &&
+        !cartHasFreeItem),
     nativeFioAddressPrice,
     domainType,
     period: existingDomainInCartItem ? existingDomainInCartItem.period : 1,
@@ -168,7 +190,9 @@ export const useContext = (
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
     isSelected: !!existingCartItem,
-    hasCustomDomain: isCustomDomain,
+    hasCustomDomainInCart:
+      existingCartItem?.hasCustomDomainInCart ||
+      (isCustomDomain && !!existingCustomDomainFchCartItem),
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;

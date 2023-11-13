@@ -9,10 +9,7 @@ export default class DefaultList extends Base {
       order: [['rank', 'DESC']],
     });
 
-    const allRefProfileDomainsArr = await ReferrerProfile.findAll()
-      .map(refProfile => refProfile.settings.domains)
-      .filter(domains => domains.length > 0);
-    const allRefProfileDomains = allRefProfileDomainsArr.flat();
+    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
     return {
       data: {

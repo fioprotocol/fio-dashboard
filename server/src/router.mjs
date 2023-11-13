@@ -143,6 +143,7 @@ router.post(
   checkAuth,
   routes.account.importValidateWallet,
 );
+router.post('/account/add-missing-wallet', routes.account.addMissingWallet);
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 
@@ -209,11 +210,30 @@ router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
+router.post('/cart-add-item', routes.cart.addItem);
+router.delete('/cart-clear-cart', routes.cart.clearCart);
+router.post('/cart-create-from-order', checkAuth, routes.cart.createCartFromOrder);
+router.patch('/cart-delete-item', routes.cart.deleteItem);
+router.get('/cart', routes.cart.getCart);
+router.patch('/cart-handle-free-items', routes.cart.handleUsersFreeCartItems);
+router.put('/cart-recalculate-updated-prices', routes.cart.recalculateOnPriceUpdate);
+router.patch('/cart-update-item-period', routes.cart.updateItemPeriod);
+router.patch('/cart-update-user-id', checkAuth, routes.cart.updateUserId);
+
 router.get('/external-provider-nfts', routes.external.externalProviderNfts);
 router.get(
   '/external-provider-nfts-metadata',
   routes.external.externalProviderNftsMetadata,
 );
+router.get('/external-tokens', routes.external.getAllExternalTokens);
+
+router.get('/gas-oracle', routes.external.getGasOracle);
+router.get(
+  '/estimation-of-confirmation-time',
+  routes.external.getEstimationOfConfirmationTime,
+);
+
+router.get('/edge-cr', routes.external.getEdgeApiCreds);
 
 router.get('/fetch-image-hash', routes.general.imageToHash);
 

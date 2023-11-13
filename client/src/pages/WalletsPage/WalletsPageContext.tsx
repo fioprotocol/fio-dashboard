@@ -20,6 +20,7 @@ import useQuery from '../../hooks/useQuery';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 const AUTOCLOSE_TIME = 5000;
+const AUTOCLOSE_CREATE_WALLET_TIME = 10000;
 
 type UseContextProps = {
   fioWallets: FioWalletDoublet[];
@@ -102,6 +103,18 @@ export const useContext = (): UseContextProps => {
 
     return () => clearTimeout(timeoutId);
   }, [showWalletDeleted]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setShowWalletCreated(false);
+    }, AUTOCLOSE_CREATE_WALLET_TIME);
+
+    if (!showWalletCreated) {
+      clearTimeout(timeoutId);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [showWalletCreated]);
 
   return {
     fioWallets,

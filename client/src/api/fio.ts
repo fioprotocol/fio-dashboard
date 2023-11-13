@@ -31,6 +31,7 @@ import {
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
   DEFAULT_FIO_RECORDS_LIMIT,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
 } from '../constants/fio';
 
 import {
@@ -42,6 +43,7 @@ import {
   ResponseFioRecord,
   WalletKeys,
 } from '../types';
+import { FioDomainDoubletResponse } from './responses';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -120,7 +122,7 @@ export default class Fio {
       '',
       '',
       this.baseurls,
-      window.fetch,
+      window.fioCorsFixfetch,
       '',
       this.tpid,
     );
@@ -225,14 +227,21 @@ export default class Fio {
 
   // todo: check if we need to update tpid for public wallet FIOSDK in other place
   createPublicWalletFioSdk = (keys: { public: string }): FIOSDK_LIB =>
-    new FIOSDK('', keys.public, this.baseurls, window.fetch, '', this.tpid);
+    new FIOSDK(
+      '',
+      keys.public,
+      this.baseurls,
+      window.fioCorsFixfetch,
+      '',
+      this.tpid,
+    );
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>
     (this.walletFioSDK = new FIOSDK(
       keys.private,
       keys.public,
       this.baseurls,
-      window.fetch,
+      window.fioCorsFixfetch,
       '',
       this.tpid,
     ));
@@ -491,6 +500,24 @@ export default class Fio {
     return res;
   };
 
+  getFioDomain = async (
+    domainName: string,
+  ): Promise<FioDomainDoubletResponse> => {
+    try {
+      const tableRowsParams = this.setTableRowsParams(domainName);
+
+      const {
+        rows,
+      }: { rows: FioDomainDoubletResponse[] } = await this.getTableRows(
+        tableRowsParams,
+      );
+
+      return rows.length ? rows[0] : null;
+    } catch (e) {
+      this.logError(e);
+    }
+  };
+
   getFioPublicAddress = async (
     fioAddress: string,
   ): Promise<PublicAddressResponse> => {
@@ -557,7 +584,10 @@ export default class Fio {
       data: {
         payee_public_key: publicKey,
         amount,
-        max_fee: fee,
+        max_fee: new MathOp(fee)
+          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+          .round(0)
+          .toNumber(),
         tpid: this.tpid,
       },
     };
@@ -825,7 +855,7 @@ export default class Fio {
         ];
 
         if (fioRequests.more) {
-          await getAllFioRequests({ offset: offset + limit });
+          await getAllFioRequests({ offset: offset ? offset + limit : limit });
         }
       };
 

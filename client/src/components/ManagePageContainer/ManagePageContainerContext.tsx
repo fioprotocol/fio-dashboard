@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
 import { noProfileLoaded as noProfileLoadedSelector } from '../../redux/profile/selectors';
 
 import { ITEMS_LIMIT, PAGE_NAME, WELCOME_COMPONENT_TYPE } from './constants';
-import { LOW_BUNDLES_THRESHOLD } from '../../constants/fio';
 
 import { useCheckIfDesktop } from '../../screenType';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
@@ -15,8 +14,6 @@ import { PAGE_TYPES_PROPS } from '../WelcomeComponent/constants';
 
 type Props = {
   pageName: FioNameType;
-  showWarningMessage: boolean;
-  sessionBadgeClose: () => void;
 };
 
 type UseContextProps = {
@@ -36,6 +33,7 @@ type UseContextProps = {
   isAddress: boolean;
   isDesktop: boolean;
   isEmptyList: boolean;
+  isSelectedFioNameItemExpired: boolean;
   listItemsDefaultProps: {
     fioNameList: FioNameItemProps[];
     isAddress: boolean;
@@ -46,7 +44,6 @@ type UseContextProps = {
   selectedFioNameItem: FioNameItemProps;
   showItemModal: boolean;
   showSettingsModal: boolean;
-  showWarnBadge: boolean;
   welcomeComponentProps: {
     firstFromListFioAddressName: string;
     firstFromListFioDomainName: string;
@@ -69,21 +66,29 @@ type UseContextProps = {
   onItemModalClose: () => void;
   onItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onSettingsClose: () => void;
-  onSettingsOpen: (fioNameItem: FioNameItemProps) => void;
-  onWarningBadgeClose: () => void;
+  onSettingsOpen: ({
+    fioNameItem,
+    isExpired,
+  }: {
+    fioNameItem: FioNameItemProps;
+    isExpired?: boolean;
+  }) => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { pageName, showWarningMessage, sessionBadgeClose } = props;
+  const { pageName } = props;
 
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
 
-  const [showWarnBadge, toggleShowWarnBadge] = useState<boolean>(false);
   const [showItemModal, handleShowModal] = useState(false);
   const [showSettingsModal, handleShowSettings] = useState(false);
   const [selectedFioNameItem, selectFioNameItem] = useState<FioNameItemProps>(
     {},
   );
+  const [
+    isSelectedFioNameItemExpired,
+    toggleIsSelectedFioNameItemExpired,
+  ] = useState<boolean>(false);
   const [visibleItemsCount, setVisibleItemsCount] = useState(ITEMS_LIMIT);
 
   const isDesktop = useCheckIfDesktop();
@@ -149,35 +154,25 @@ export const useContext = (props: Props): UseContextProps => {
   }, []);
   const onItemModalClose = useCallback(() => handleShowModal(false), []);
 
-  const onSettingsOpen = useCallback((fioNameItem: FioNameItemProps) => {
-    selectFioNameItem(fioNameItem);
-    handleShowModal(false);
-    handleShowSettings(true);
-  }, []);
+  const onSettingsOpen = useCallback(
+    ({
+      fioNameItem,
+      isExpired,
+    }: {
+      fioNameItem: FioNameItemProps;
+      isExpired?: boolean;
+    }) => {
+      selectFioNameItem(fioNameItem);
+      toggleIsSelectedFioNameItemExpired(isExpired);
+      handleShowModal(false);
+      handleShowSettings(true);
+    },
+    [],
+  );
   const onSettingsClose = useCallback(() => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
   }, [isDesktop]);
-
-  const onWarningBadgeClose = useCallback(() => {
-    toggleShowWarnBadge(false);
-    sessionBadgeClose();
-  }, [sessionBadgeClose]);
-
-  useEffect(() => {
-    if (isAddress) {
-      toggleShowWarnBadge(
-        showWarningMessage &&
-          !!fioAddresses &&
-          fioAddresses.some(
-            fioAddress => fioAddress.remaining < LOW_BUNDLES_THRESHOLD,
-          ),
-      );
-    }
-    if (isDomain) {
-      toggleShowWarnBadge(showWarningMessage);
-    }
-  }, [fioAddresses, fioDomains, isAddress, isDomain, showWarningMessage]);
 
   return {
     fio101ComponentProps,
@@ -186,19 +181,18 @@ export const useContext = (props: Props): UseContextProps => {
     isAddress,
     isDesktop,
     isEmptyList,
+    isSelectedFioNameItemExpired,
     listItemsDefaultProps,
     loading,
     noProfileLoaded,
     selectedFioNameItem,
     showItemModal,
     showSettingsModal,
-    showWarnBadge,
     welcomeComponentProps,
     loadMore,
     onItemModalClose,
     onItemModalOpen,
     onSettingsClose,
     onSettingsOpen,
-    onWarningBadgeClose,
   };
 };

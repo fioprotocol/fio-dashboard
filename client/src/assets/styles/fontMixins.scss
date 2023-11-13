@@ -1,3 +1,15 @@
+@mixin inter-bold {
+  font-family: 'Inter Bold';
+}
+
+@mixin inter-bold-italic {
+  font-family: 'Inter Bold Italic';
+}
+
+@mixin inter-regular {
+  font-family: 'Inter Regular';
+}
+
 @mixin proxima-nova-regular {
   font-family: 'Proxima Nova Regular';
 }

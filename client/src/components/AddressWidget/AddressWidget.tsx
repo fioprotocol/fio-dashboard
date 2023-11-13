@@ -13,12 +13,15 @@ import { TwitterNotification } from '../../types';
 import classes from './AddressWidget.module.scss';
 
 type Props = {
+  disabled?: boolean;
+  disabledInput?: boolean;
+  disabledInputGray?: boolean;
   links?: {
     getCryptoHandle: ReactNode;
   };
   logoSrc?: string;
   title?: ReactNode;
-  subtitle?: string;
+  subtitle?: ReactNode;
   actionText?: string;
   hasMinHeight?: boolean;
   showSignInWidget?: boolean;
@@ -41,6 +44,10 @@ type Props = {
 const AddressWidget: React.FC<Props> = props => {
   const {
     actionText,
+    children,
+    disabled,
+    disabledInput,
+    disabledInputGray,
     hasMinHeight,
     isAuthenticated,
     isReverseColors,
@@ -82,6 +89,9 @@ const AddressWidget: React.FC<Props> = props => {
       )}
 
       <FormComponent
+        disabled={disabled}
+        disabledInput={disabledInput}
+        disabledInputGray={disabledInputGray}
         isReverseColors={isReverseColors}
         links={links}
         suffixText={suffixText}
@@ -94,6 +104,8 @@ const AddressWidget: React.FC<Props> = props => {
         onInputChanged={onInputChanged}
         buttonText={buttonText}
       />
+
+      {children}
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>
   );

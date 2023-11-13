@@ -13,13 +13,16 @@ export type UseContextProps = {
 };
 
 export type SelectedItemProps = {
+  isExpired?: boolean;
   isSelected?: boolean;
 } & CartItem;
 
-export type DomainsArrItemType = {
+export type DomainsItemType = {
   rank?: number;
   name: string;
   domainType: DomainItemType;
-  allowFree?: boolean;
   swapAddressAndDomainPlaces?: boolean;
-}[];
+  isFirstRegFree?: boolean;
+};
+
+export type DomainsArrItemType = DomainsItemType[];

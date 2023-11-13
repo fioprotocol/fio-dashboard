@@ -6,7 +6,17 @@ import {
   isContainedFlow as getIsContainedFlow,
 } from '../containedFlow/selectors';
 
-import { CLEAR_CART } from './actions';
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../registrations/selectors';
+
+import {
+  ADD_ITEM_SUCCESS,
+  CLEAR_CART_SUCCESS,
+  DELETE_ITEM_SUCCESS,
+  UPDATE_CART_ITEM_PERIOD_SUCCESS,
+} from './actions';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import {
@@ -15,16 +25,25 @@ import {
 } from '../../constants/notifications';
 import { CONTAINED_FLOW_NOTIFICATION_MESSAGES } from '../../constants/containedFlow';
 import { ROUTES } from '../../constants/routes';
-import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 
-import { fireAnalyticsEventDebounced } from '../../util/analytics';
+import {
+  fireAnalyticsEvent,
+  fireAnalyticsEventDebounced,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
+
+import { convertFioPrices } from '../../util/prices';
 
 import { Action } from '../types';
-import { ContainedFlowQueryParams } from '../../types';
+import { ContainedFlowQueryParams, Prices } from '../../types';
 
 export function* cartWasCleared(): Generator {
-  yield takeEvery(CLEAR_CART, function*(action: Action) {
-    const { data: isNotify } = action;
+  yield takeEvery(CLEAR_CART_SUCCESS, function*(action: Action) {
+    const { isNotify } = action;
     const isContainedFlow: boolean = yield select(getIsContainedFlow);
     const containedFlowQueryParams: ContainedFlowQueryParams = yield select(
       getContainedFlowQueryParams,
@@ -57,5 +76,55 @@ export function* cartWasCleared(): Generator {
     }
 
     fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.CART_EMPTIED);
+  });
+}
+
+export function* addItem(): Generator {
+  yield takeEvery(ADD_ITEM_SUCCESS, function*(action: Action) {
+    const { cartItem } = action;
+
+    yield fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+      getCartItemsDataForAnalytics([cartItem]),
+    );
+  });
+}
+
+export function* deleteItem(): Generator {
+  yield takeEvery(DELETE_ITEM_SUCCESS, function*(action: Action) {
+    const { cartItem } = action;
+
+    yield fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.REMOVE_ITEM_FROM_CART,
+      getCartItemsDataForAnalytics([cartItem]),
+    );
+  });
+}
+
+export function* updatePeriodItem(): Generator {
+  yield takeEvery(UPDATE_CART_ITEM_PERIOD_SUCCESS, function*(action: Action) {
+    const { cartItem, newPeroid } = action;
+    const { period } = cartItem;
+
+    if (newPeroid !== period) {
+      const periodDiff = Math.abs(period - newPeroid);
+
+      const prices: Prices = yield select(pricesSelector);
+      const roe: number = yield select(roeSelector);
+
+      fireAnalyticsEvent(
+        newPeroid > period
+          ? ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART
+          : ANALYTICS_EVENT_ACTIONS.REMOVE_ITEM_FROM_CART,
+        getCartItemsDataForAnalytics([
+          {
+            ...cartItem,
+            type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+            period: periodDiff,
+            costUsdc: convertFioPrices(prices.nativeFio.renewDomain, roe).usdc,
+          },
+        ]),
+      );
+    }
   });
 }

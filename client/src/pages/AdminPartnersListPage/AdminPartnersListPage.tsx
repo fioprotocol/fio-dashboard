@@ -65,10 +65,17 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             name: '',
             isPremium: false,
             rank: 1,
+            isFirstRegFree: false,
           },
         ],
-        showExplanationsSection: false,
-        showPartnersSection: false,
+        gatedRegistration: {
+          isOn: false,
+          params: {
+            asset: 'NFT',
+            chainId: '5',
+            contractAddress: '',
+          },
+        },
         actions: {
           SIGNNFT: {},
           REG: {},

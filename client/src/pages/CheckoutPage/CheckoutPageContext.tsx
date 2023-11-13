@@ -4,10 +4,7 @@ import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
-import {
-  setWallet as setWalletAction,
-  setCartItems,
-} from '../../redux/cart/actions';
+import { setWallet as setWalletAction } from '../../redux/cart/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 
@@ -19,6 +16,7 @@ import {
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
 import {
+  cartId as cartIdSelector,
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
@@ -26,7 +24,6 @@ import {
 import {
   isAuthenticated as isAuthenticatedSelector,
   noProfileLoaded as noProfileLoadedSelector,
-  hasFreeAddress as hasFreeAddressSelector,
 } from '../../redux/profile/selectors';
 import {
   prices as pricesSelector,
@@ -38,12 +35,7 @@ import apis from '../../api';
 
 import { onPurchaseFinish } from '../../util/purchase';
 import MathOp from '../../util/math';
-import {
-  totalCost,
-  handleFreeAddressCart,
-  cartIsRelative,
-  cartHasOnlyFreeItems,
-} from '../../util/cart';
+import { totalCost, cartIsRelative } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
@@ -57,12 +49,8 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import {
-  CART_ITEM_TYPE,
-  CURRENCY_CODES,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import { CART_ITEM_TYPE, WALLET_CREATED_FROM } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import {
   RegistrationResult,
@@ -111,6 +99,7 @@ export const useContext = (): {
   setWallet: (walletPublicKey: string) => void;
   setProcessing: (isProcessing: boolean) => void;
 } => {
+  const cartId = useSelector(cartIdSelector);
   const history = useHistory();
   const fioWallets = useSelector(fioWalletsSelector);
   const fioLoading = useSelector(fioLoadingSelector);
@@ -120,7 +109,6 @@ export const useContext = (): {
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
   const isAuth = useSelector(isAuthenticatedSelector);
-  const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const prices = useSelector(pricesSelector);
   const userDomains = useSelector(fioDomainsSelector);
   const isProcessing = useSelector(isProcessingSelector);
@@ -194,31 +182,29 @@ export const useContext = (): {
     setOrder(null);
     setGetOrderLoading(false);
   }, [cartItems, setWallet]);
+
   const createOrder = useCallback(
-    async (
-      paymentWalletPublicKey: string,
-      fioWallets: FioWalletDoublet[],
-      orderParamsFromLocation: CreateOrderActionData,
-      cartItems: CartItem[],
-      isFree: boolean,
-    ) => {
+    async ({
+      paymentWalletPublicKey,
+      fioWallets,
+      orderParamsFromLocation,
+      isFree,
+    }: {
+      paymentWalletPublicKey: string;
+      fioWallets: FioWalletDoublet[];
+      orderParamsFromLocation: CreateOrderActionData;
+      isFree: boolean;
+    }) => {
       let result;
       let orderParams: CreateOrderActionData | null = null;
 
       if (!orderParamsFromLocation && isFree) {
         orderParams = {
-          total: '0',
+          cartId,
           roe,
           publicKey: paymentWalletPublicKey,
           paymentProcessor: PAYMENT_PROVIDER.FIO,
-          items: cartItems.map(({ address, domain, costNativeFio }) => ({
-            action: ACTIONS.registerFioAddress,
-            address,
-            domain,
-            nativeFio: '0',
-            price: '0',
-            priceCurrency: CURRENCY_CODES.USDC,
-          })),
+          prices: prices?.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
@@ -256,7 +242,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [history, roe, setWallet],
+    [cartId, history, prices?.nativeFio, roe, setWallet],
   );
 
   useEffectOnce(
@@ -282,12 +268,8 @@ export const useContext = (): {
     fioWallets.length > 0,
   );
 
-  const cartItemsJson = JSON.stringify(cartItems);
-
   const isFree =
-    !isEmpty(cartItems) &&
-    ((cartItems.length === 1 && !hasFreeAddress && cartItems[0].allowFree) ||
-      cartHasOnlyFreeItems(cartItems));
+    !isEmpty(cartItems) && cartItems.every(cartItem => cartItem.isFree);
 
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,
@@ -341,13 +323,12 @@ export const useContext = (): {
   useEffectOnce(
     () => {
       setOrder(undefined);
-      createOrder(
+      createOrder({
         paymentWalletPublicKey,
         fioWallets,
         orderParamsFromLocation,
-        cartItems,
         isFree,
-      );
+      });
     },
     [
       paymentWalletPublicKey,
@@ -406,17 +387,6 @@ export const useContext = (): {
     walletHasNoEnoughBalance,
   ]);
 
-  useEffect(() => {
-    !isProcessing &&
-      handleFreeAddressCart({
-        setCartItems: cartItems => dispatch(setCartItems(cartItems)),
-        cartItems: JSON.parse(cartItemsJson),
-        prices,
-        hasFreeAddress,
-        roe,
-      });
-  }, [hasFreeAddress, prices, roe, isProcessing, cartItemsJson, dispatch]);
-
   // Check for ledger wallet when cart has addresses with private domains
   useEffect(() => {
     if (
@@ -435,7 +405,7 @@ export const useContext = (): {
   useEffect(() => {
     return () => {
       setOrder(null);
-      dispatch(loadProfile());
+      dispatch(loadProfile({}));
     };
   }, [dispatch]);
 
@@ -517,7 +487,7 @@ export const useContext = (): {
     if (signTxItems.length) {
       return setBeforeSubmitProps({
         walletConfirmType: WALLET_CREATED_FROM.EDGE,
-        fee: new MathOp(prices.nativeFio.address)
+        fee: new MathOp(prices?.nativeFio?.address)
           .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
           .round(0, 2)
           .toNumber(),

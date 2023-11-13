@@ -177,6 +177,7 @@ export class OrderItem extends Base {
           o.id "orderId", 
           o.roe, 
           o."publicKey", 
+          o.total,
           o."userId", 
           ois."blockchainTransactionId",
           ois."paymentId",

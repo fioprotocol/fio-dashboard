@@ -33,6 +33,7 @@ import { getObjKeyByValue } from '../../utils';
 import apis from '../../api';
 
 type Props = {
+  cartId: string;
   children: React.ReactNode | React.ReactNode[];
   pathname: string;
   isAuthenticated: boolean;
@@ -41,7 +42,11 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
-  loadProfile: () => void;
+  loadProfile: ({
+    shouldHandleUsersFreeCart,
+  }: {
+    shouldHandleUsersFreeCart: boolean;
+  }) => void;
   edgeContextInit: () => void;
   isContainedFlow: boolean;
   init: () => void;
@@ -50,10 +55,12 @@ type Props = {
   getApiUrls: () => void;
   isMaintenance?: boolean;
   isLoading?: boolean;
+  getCart: (cartId: string) => void;
 };
 
 const MainLayout: React.FC<Props> = props => {
   const {
+    cartId,
     pathname,
     children,
     edgeContextSet,
@@ -68,6 +75,7 @@ const MainLayout: React.FC<Props> = props => {
     getApiUrls,
     isMaintenance,
     isLoading,
+    getCart,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -75,7 +83,7 @@ const MainLayout: React.FC<Props> = props => {
 
   useEffectOnce(() => {
     edgeContextInit();
-    loadProfile();
+    loadProfile({ shouldHandleUsersFreeCart: true });
     getApiUrls();
   }, [edgeContextInit, loadProfile, getApiUrls]);
 
@@ -86,6 +94,12 @@ const MainLayout: React.FC<Props> = props => {
     [apiUrls],
     apiUrls?.length !== 0,
   );
+
+  useEffectOnce(() => {
+    if (cartId) {
+      getCart(cartId);
+    }
+  }, [cartId]);
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
