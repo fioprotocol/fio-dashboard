@@ -63,6 +63,13 @@ const availableJobsParams = {
     closeWorkerAfterMs:
       parseInt(process.env.PAYMENTS_JOB_CLOSE_TIMEOUT) || 60 * 60 * 1000, // 60 min
   },
+  cart: {
+    path: path.join(JOBS_PATH, 'cart.mjs'),
+    name: 'cart',
+    interval: process.env.CART_JOB_INTERVAL || 1000 * 60 * 60 * 24, // 1 day
+    timeout: 0,
+    closeWorkerAfterMs: parseInt(process.env.CART_JOB_CLOSE_TIMEOUT) || 60 * 60 * 1000, // 60 min
+  },
 };
 
 const jobsToLaunch = process.env.JOB_LIST;
