@@ -889,6 +889,7 @@ class OrdersJob extends CommonJob {
         price,
         blockchainTransactionId,
         label,
+        nativeFio,
         freeActor,
         freePermission,
         paidActor,
@@ -942,7 +943,10 @@ class OrdersJob extends CommonJob {
           });
         }
 
-        if ((!price || price === '0') && !domainOwner) {
+        if (
+          (!price || price === '0' || !nativeFio || nativeFio === '0') &&
+          !domainOwner
+        ) {
           let nativeFio = null;
 
           switch (action) {
