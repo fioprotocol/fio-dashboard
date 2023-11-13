@@ -31,6 +31,7 @@ export class Cart extends Base {
       {
         sequelize,
         tableName: 'cart',
+        timestamps: true,
       },
     );
   }
