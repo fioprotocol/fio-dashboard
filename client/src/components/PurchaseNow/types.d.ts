@@ -10,7 +10,6 @@ export type PurchaseValues = {
   cartItems: CartItem[];
   prices: Prices;
   refProfileInfo: RefProfile | null;
-  isFreeAllowed: boolean;
 };
 
 export type PurchaseNowTypes = {
