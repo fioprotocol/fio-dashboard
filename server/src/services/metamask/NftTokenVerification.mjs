@@ -57,14 +57,14 @@ export default class NftTokenVerification extends Base {
         const { asset, contractAddress } = refProfile.settings.gatedRegistration.params;
 
         if (asset === NFT_LABEL && chainId) {
-          const nftsList = await moralisApi.getAllTokens({
+          const nftsList = await moralisApi.getAllWalletNfts({
             address,
             chainName,
           });
           ({ address, chainName });
-          isVerified = nftsList.some(
-            nftItem => nftItem.token_address === contractAddress,
-          );
+          isVerified =
+            nftsList &&
+            nftsList.some(nftItem => nftItem.token_address === contractAddress);
         }
 
         if (asset === TOKEN_LABEL && chainId) {
