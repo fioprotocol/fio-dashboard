@@ -80,7 +80,7 @@ export default class AddItem extends Base {
 
       const gatedRefProfile = await ReferrerProfile.findOne({
         where: Sequelize.literal(
-          `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings" IS NOT NULL`,
+          `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
         ),
       });
 
