@@ -28,6 +28,7 @@ import { setRedirectPath } from '../../redux/navigation/actions';
 
 import useInitializeProviderConnection, {
   ConnectionErrorType,
+  NetworkType,
 } from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
@@ -374,70 +375,87 @@ export const useContext = (): UseContextProps => {
     return value;
   };
 
-  const verifyUsersData = useCallback(async () => {
-    const chain = MORALIS_CHAIN_LIST.find(
-      chainItem => chainItem.chainId === network?.chainId,
-    );
+  const verifyUsersData = useCallback(
+    async ({ network }: { network: NetworkType }) => {
+      const { chainId, name } = network || {};
+      const chain = MORALIS_CHAIN_LIST.find(
+        chainItem => chainItem.chainId === chainId,
+      );
 
-    const { chainName } = chain || {};
+      const { chainName } = chain || {};
 
-    if (chainName) {
-      toggleVerifyLoading(true);
-
-      try {
-        const verified = await apis.metamask.verifyMetamask({
-          address,
-          chainId: network?.chainId,
-          refId: refProfileInfo?.id,
-        });
-
-        const { isVerified, token } = verified || {};
-
-        if (!token) {
-          toggleHasVerifiedError(true);
-          setInfoMessage(nonVerifiedMessage);
-        }
-
-        setGatedToken(token);
-        toggleVerified(isVerified);
-
-        if (!isVerified) {
-          toggleHasVerifiedError(true);
-        }
-      } catch (error) {
-        log.error(error);
-        toggleVerified(false);
+      if (!chainName) {
         toggleHasVerifiedError(true);
-      } finally {
-        toggleVerifyLoading(false);
+        setInfoMessage(
+          `Metamask network chain ${name?.toUpperCase()} is not supported. Please select another chain.`,
+        );
       }
-    }
-  }, [address, network?.chainId, nonVerifiedMessage, refProfileInfo?.id]);
+
+      if (chainName) {
+        toggleVerifyLoading(true);
+
+        try {
+          const verified = await apis.metamask.verifyMetamask({
+            address,
+            chainId: network?.chainId,
+            refId: refProfileInfo?.id,
+          });
+
+          const { isVerified, token } = verified || {};
+
+          if (!token) {
+            toggleHasVerifiedError(true);
+            setInfoMessage(nonVerifiedMessage);
+          }
+
+          setGatedToken(token);
+          toggleVerified(isVerified);
+
+          if (!isVerified) {
+            toggleHasVerifiedError(true);
+          }
+        } catch (error) {
+          log.error(error);
+          toggleVerified(false);
+          toggleHasVerifiedError(true);
+        } finally {
+          toggleVerifyLoading(false);
+        }
+      }
+    },
+    [address, nonVerifiedMessage, refProfileInfo?.id],
+  );
 
   const onClick = useCallback(() => {
     if (network?.chainId) {
-      verifyUsersData();
+      verifyUsersData({ network });
     } else {
       setShowSelectProviderModalVisible(true);
     }
-  }, [network?.chainId, verifyUsersData]);
+  }, [network, verifyUsersData]);
 
   useEffect(() => {
     if (!network?.chainId) {
       return;
     }
 
-    address && verifyUsersData();
-  }, [address, network?.chainId, verifyUsersData]);
+    address && verifyUsersData({ network });
+  }, [address, network, verifyUsersData]);
 
   useEffect(() => {
     if (isVerified) {
       setInfoMessage(verifiedMessage);
     }
-    if (hasVerifiedError) {
+    if (hasVerifiedError && !infoMessage.includes('is not supported')) {
       setInfoMessage(nonVerifiedMessage);
     }
-  }, [hasVerifiedError, isVerified, nonVerifiedMessage, verifiedMessage]);
+  }, [
+    hasVerifiedError,
+    infoMessage,
+    isVerified,
+    nonVerifiedMessage,
+    verifiedMessage,
+  ]);
 
   return {
     disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
