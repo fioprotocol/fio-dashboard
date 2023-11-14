@@ -258,10 +258,6 @@ export const useContext = (): UseContextProps => {
     setIsWalletConnected,
   ]);
 
-  const onClick = useCallback(() => {
-    setShowSelectProviderModalVisible(true);
-  }, []);
-
   const isValid = (address: string) => {
     if (!address) return;
     return !(
@@ -399,7 +395,7 @@ export const useContext = (): UseContextProps => {
 
         if (!token) {
           toggleHasVerifiedError(true);
-          setInfoMessage('Not verified');
+          setInfoMessage(nonVerifiedMessage);
         }
 
         setGatedToken(token);
@@ -416,7 +412,15 @@ export const useContext = (): UseContextProps => {
         toggleVerifyLoading(false);
       }
     }
-  }, [address, network?.chainId, refProfileInfo?.id]);
+  }, [address, network?.chainId, nonVerifiedMessage, refProfileInfo?.id]);
+
+  const onClick = useCallback(() => {
+    if (network?.chainId) {
+      verifyUsersData();
+    } else {
+      setShowSelectProviderModalVisible(true);
+    }
+  }, [network?.chainId, verifyUsersData]);
 
   useEffect(() => {
     if (!network?.chainId) {
