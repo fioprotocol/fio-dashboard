@@ -1,6 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { CART_ITEM_TYPES_WITH_PERIOD } from '../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
+} from '../constants/common';
 import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
@@ -48,7 +51,14 @@ export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
 };
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
-  cart.length && cart.every(item => item.isFree);
+  cart.length &&
+  cart.every(
+    item =>
+      item.isFree &&
+      item.type === CART_ITEM_TYPE.ADDRESS &&
+      (item.domainType === DOMAIN_TYPE.ALLOW_FREE ||
+        item.domainType === DOMAIN_TYPE.PRIVATE),
+  );
 
 export const totalCost = (
   cartItems: CartItem[],

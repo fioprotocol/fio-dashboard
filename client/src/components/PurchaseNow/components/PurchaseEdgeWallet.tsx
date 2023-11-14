@@ -50,7 +50,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    const { cartItems, prices, isFreeAllowed } = data;
+    const { cartItems, prices } = data;
 
     const result: RegistrationResult = {
       errors: [],
@@ -63,7 +63,6 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
     const registrations = makeRegistrationOrder(
       [...cartItems],
       prices?.nativeFio,
-      isFreeAllowed,
     );
     if (keys.private) {
       apis.fio.setWalletFioSdk(keys);
