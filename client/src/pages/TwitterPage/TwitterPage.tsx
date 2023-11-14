@@ -109,6 +109,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   )}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`;
 
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>(null);
 
   const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
@@ -170,6 +171,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           setCookies(userfch, data.token, {
             expires: data.expires,
           });
+          setToken(data.token);
         }
         onUserVerify();
       } else if (data.isLocked) {
@@ -354,6 +356,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           item: cartItem,
           prices: prices?.nativeFio,
           roe,
+          token,
           userId,
         }),
       );

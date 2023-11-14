@@ -84,7 +84,7 @@ export default class AddItem extends Base {
         ),
       });
 
-      if (gatedRefProfile && type === CART_ITEM_TYPE.ADDRESS) {
+      if ((gatedRefProfile || freeDomainOwner) && type === CART_ITEM_TYPE.ADDRESS) {
         const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
           where: { token },
         });
