@@ -446,7 +446,7 @@ export const useContext = (): UseContextProps => {
     if (isVerified) {
       setInfoMessage(verifiedMessage);
     }
-    if (hasVerifiedError && !infoMessage.includes('is not supported')) {
+    if (hasVerifiedError && !infoMessage?.includes('is not supported')) {
       setInfoMessage(nonVerifiedMessage);
     }
   }, [
