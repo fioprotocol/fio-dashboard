@@ -153,6 +153,7 @@ export const useContext = (): UseContextProps => {
   const notSupportedChainMessage = (name: string) =>
     `Metamask network chain ${name?.toUpperCase()} is not supported. Please select another chain.`;
   const wrongChainMessage = `Verification is available for ${gatedChainName?.toUpperCase()}`;
+  const wrongSignMessage = 'Metamask Sign failed';
 
   const loaderText =
     asset === NFT_LABEL
@@ -391,6 +392,22 @@ export const useContext = (): UseContextProps => {
     return value;
   };
 
+  const siweSign = useCallback(async () => {
+    const siweMessage = process.env.REACT_APP_METAMASK_SIGN_MESSAGE;
+    try {
+      const msg = `0x${Buffer.from(siweMessage, 'utf8').toString('hex')}`;
+      const sign = await provider.request({
+        method: 'personal_sign',
+        params: [msg, address],
+      });
+      return sign;
+    } catch (err) {
+      log.error(err);
+      toggleHasVerifiedError(true);
+      setInfoMessage(wrongSignMessage);
+    }
+  }, [address, provider]);
+
   const verifyUsersData = useCallback(
     async ({ network }: { network: NetworkType }) => {
       const { chainId, name } = network || {};
@@ -414,11 +431,13 @@ export const useContext = (): UseContextProps => {
       if (chainName) {
         toggleVerifyLoading(true);
 
+        const signedMessage = await siweSign();
+
         try {
           const verified = await apis.metamask.verifyMetamask({
             address,
-            chainId: network?.chainId,
             refId: refProfileInfo?.id,
+            signedMessage,
           });
 
           const { isVerified, token } = verified || {};
@@ -448,6 +467,7 @@ export const useContext = (): UseContextProps => {
       gatedChainId,
       nonVerifiedMessage,
       refProfileInfo?.id,
+      siweSign,
       wrongChainMessage,
     ],
   );
@@ -476,7 +496,8 @@ export const useContext = (): UseContextProps => {
     if (
       hasVerifiedError &&
       !infoMessage?.includes('is not supported') &&
-      !infoMessage?.includes('Verification is available')
+      !infoMessage?.includes('Verification is available') &&
+      !infoMessage?.includes(wrongSignMessage)
     ) {
       setInfoMessage(nonVerifiedMessage);
     }

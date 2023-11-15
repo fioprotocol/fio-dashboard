@@ -1,3 +1,5 @@
+import Web3 from 'web3';
+
 import logger from '../../logger';
 import Base from '../Base';
 import X from '../Exception.mjs';
@@ -9,18 +11,41 @@ import { Action, GatedRegistrtionTokens, ReferrerProfile } from '../../models';
 import { NFT_LABEL, TOKEN_LABEL } from '../../constants/general.mjs';
 import { MORALIS_CHAIN_LIST } from '../../constants/moralis-chains.mjs';
 
+const web3 = new Web3();
+
 export default class NftTokenVerification extends Base {
   static get validationRules() {
     return {
       address: ['required', 'string'],
-      chainId: ['required', 'string'],
       refId: ['required', 'string'],
+      signedMessage: ['required', 'string'],
     };
   }
 
-  async execute({ address, chainId, refId }) {
+  async execute({ address, refId, signedMessage }) {
     try {
       let isVerified = null;
+
+      const r = '0x' + signedMessage.slice(2, 66);
+      const s = '0x' + signedMessage.slice(66, 130);
+      const v = '0x' + signedMessage.slice(130, 132);
+      const publicKey = web3.eth.accounts.recover(
+        process.env.METAMASK_SIGN_MESSAGE,
+        v,
+        r,
+        s,
+      );
+
+      const addressFromSignedMessage = web3.utils.toChecksumAddress(publicKey);
+
+      if (address !== addressFromSignedMessage) {
+        throw new X({
+          code: 'SERVER_ERROR',
+          fields: {
+            address: 'WRONG_ADDRESS_AND_SIGN_MESSAGE',
+          },
+        });
+      }
 
       const refProfile = await ReferrerProfile.findById(refId);
 
@@ -37,8 +62,11 @@ export default class NftTokenVerification extends Base {
         refProfile.settings &&
         refProfile.settings.gatedRegistration &&
         refProfile.settings.gatedRegistration.isOn &&
-        refProfile.settings.gatedRegistration.params
+        refProfile.settings.gatedRegistration.params &&
+        refProfile.settings.gatedRegistration.params.chainId
       ) {
+        const chainId = refProfile.settings.gatedRegistration.params.chainId;
+
         const chain = MORALIS_CHAIN_LIST.find(
           chainItem => chainItem.chainId.toString() === chainId.toString(),
         );
