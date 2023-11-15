@@ -28,7 +28,6 @@ import { setRedirectPath } from '../../redux/navigation/actions';
 
 import useInitializeProviderConnection, {
   ConnectionErrorType,
-  NetworkType,
 } from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
@@ -71,7 +70,6 @@ export const useContext = (): UseContextProps => {
   const {
     address,
     connectionError,
-    network,
     provider,
     setProvider,
     setWeb3Provider,
@@ -150,9 +148,6 @@ export const useContext = (): UseContextProps => {
   const nonVerifiedMessage = `${refProfileInfo?.label} ${
     asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
   } Not Confirmed. Please make sure your NFT is held within your Metamask Wallet.`;
-  const notSupportedChainMessage = (name: string) =>
-    `Metamask network chain ${name?.toUpperCase()} is not supported. Please select another chain.`;
-  const wrongChainMessage = `Verification is available for ${gatedChainName?.toUpperCase()}`;
   const wrongSignMessage = 'Metamask Sign failed';
 
   const loaderText =
@@ -409,26 +404,8 @@ export const useContext = (): UseContextProps => {
   }, [address, provider]);
 
   const verifyUsersData = useCallback(
-    async ({ network }: { network: NetworkType }) => {
-      const { chainId, name } = network || {};
-      const chain = MORALIS_CHAIN_LIST.find(
-        chainItem => chainItem.chainId === chainId,
-      );
-
-      const { chainName } = chain || {};
-
-      if (chainId?.toString() !== gatedChainId?.toString()) {
-        toggleHasVerifiedError(true);
-        setInfoMessage(wrongChainMessage);
-        return;
-      }
-
-      if (!chainName) {
-        toggleHasVerifiedError(true);
-        setInfoMessage(notSupportedChainMessage(name));
-      }
-
-      if (chainName) {
+    async ({ address }: { address: string }) => {
+      if (address) {
         toggleVerifyLoading(true);
 
         const signedMessage = await siweSign();
@@ -462,43 +439,30 @@ export const useContext = (): UseContextProps => {
         }
       }
     },
-    [
-      address,
-      gatedChainId,
-      nonVerifiedMessage,
-      refProfileInfo?.id,
-      siweSign,
-      wrongChainMessage,
-    ],
+    [nonVerifiedMessage, refProfileInfo?.id, siweSign],
   );
 
   const onClick = useCallback(() => {
-    if (network?.chainId) {
-      verifyUsersData({ network });
+    if (address) {
+      verifyUsersData({ address });
     } else {
       setShowSelectProviderModalVisible(true);
     }
-  }, [network, verifyUsersData]);
+  }, [address, verifyUsersData]);
 
   useEffect(() => {
-    if (!network?.chainId || !gatedChainId) {
-      return;
-    }
+    if (!address) return;
 
-    address && verifyUsersData({ network });
-  }, [address, gatedChainId, network, verifyUsersData, wrongChainMessage]);
+    verifyUsersData({ address });
+  }, [address, verifyUsersData]);
 
   useEffect(() => {
     if (isVerified) {
       setInfoMessage(verifiedMessage);
+      toggleHasVerifiedError(false);
     }
 
-    if (
-      hasVerifiedError &&
-      !infoMessage?.includes('is not supported') &&
-      !infoMessage?.includes('Verification is available') &&
-      !infoMessage?.includes(wrongSignMessage)
-    ) {
+    if (hasVerifiedError && !infoMessage?.includes(wrongSignMessage)) {
       setInfoMessage(nonVerifiedMessage);
     }
   }, [
@@ -507,7 +471,6 @@ export const useContext = (): UseContextProps => {
     isVerified,
     nonVerifiedMessage,
     verifiedMessage,
-    wrongChainMessage,
   ]);
 
   return {
