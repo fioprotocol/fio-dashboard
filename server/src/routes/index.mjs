@@ -11,6 +11,7 @@ import general from './general';
 import generatePdf from './generatePdf';
 import history from './wrapStatus.mjs';
 import newDeviceTwoFactor from './newDeviceTwoFactor';
+import metamask from './metamask.mjs';
 import notifications from './notifications';
 import orders from './orders';
 import payments from './payments';
@@ -33,6 +34,7 @@ export default {
   general,
   generatePdf,
   history,
+  metamask,
   newDeviceTwoFactor,
   notifications,
   orders,

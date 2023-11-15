@@ -194,7 +194,7 @@ export const handleFreeCartAddItem = ({
 
   const domainsArr = [
     ...dashboardDomains,
-    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+    ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
   ];
 
   const isFirstRegFreeDomains = allRefProfileDomains.filter(
@@ -219,7 +219,7 @@ export const handleFreeCartAddItem = ({
         (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
         !cartHasFreeItemsOnDomains({
           cartItems,
-          domains: [...dashboardDomains, ...isFirstRegFreeDomains],
+          domains: [...domainsArr, ...isFirstRegFreeDomains],
         })) ||
       (!existingDashboardDomain && freeDomainOwner) ||
       (!existingDashboardDomain &&
@@ -230,7 +230,7 @@ export const handleFreeCartAddItem = ({
           (userHasFreeAddress && !existingUsersFreeAddress)) &&
         !cartHasFreeItemsOnDomains({
           cartItems,
-          domains: [...dashboardDomains, ...isFirstRegFreeDomains],
+          domains: [...domainsArr, ...isFirstRegFreeDomains],
         }))
     ) {
       return { ...item, isFree: true };
@@ -254,7 +254,7 @@ export const handleFreeCartDeleteItem = ({
 
   const domainsArr = [
     ...dashboardDomains,
-    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+    ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
   ];
 
   const isFirstRegFreeDomains = allRefProfileDomains.filter(
@@ -325,7 +325,7 @@ export const handleUsersFreeCartItems = ({
 
   const domainsArr = [
     ...dashboardDomains,
-    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+    ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
   ];
 
   const isFirstRegFreeDomains = allRefProfileDomains.filter(
@@ -461,7 +461,7 @@ export const cartItemsToOrderItems = async ({
 
   const domainsArr = [
     ...dashboardDomains,
-    allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
+    ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
   ];
 
   const isFirstRegFreeDomains = allRefProfileDomains.filter(

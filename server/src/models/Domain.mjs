@@ -32,8 +32,8 @@ export class Domain extends Base {
     );
   }
 
-  static getDashboardDomains() {
-    return this.findAll({
+  static async getDashboardDomains() {
+    const dashboardDomains = await this.findAll({
       where: {
         isDashboardDomain: {
           [Op.eq]: true,
@@ -41,6 +41,8 @@ export class Domain extends Base {
       },
       order: [['rank', 'ASC']],
     });
+
+    return dashboardDomains.map(dashboardDomainItem => this.format(dashboardDomainItem));
   }
 
   static getAvailableDomains() {
@@ -55,5 +57,15 @@ export class Domain extends Base {
         ['name', 'ASC'],
       ],
     });
+  }
+
+  static format({ id, isDashboardDomain, isPremium, name, rank }) {
+    return {
+      id,
+      isDashboardDomain,
+      isPremium,
+      name,
+      rank,
+    };
   }
 }

@@ -18,6 +18,7 @@ import GeneratePdfFile from './generatePdf';
 import HealthCheck from './health-check';
 import InfuraApi from './infura';
 import ExternalProviderNfts from './external-provider-nfts';
+import Metamask from './metamask';
 import Notifications from './notifications';
 import Orders from './orders';
 import Payments from './payments';
@@ -68,6 +69,7 @@ export type Api = {
   healthCheck: HealthCheck;
   infura: InfuraApi;
   externalProviderNfts: ExternalProviderNfts;
+  metamask: Metamask;
   notifications: Notifications;
   orders: Orders;
   payments: Payments;
@@ -98,6 +100,7 @@ const apis = {
   healthCheck: new HealthCheck(apiClient),
   infura: new InfuraApi(apiClient),
   externalProviderNfts: new ExternalProviderNfts(apiClient),
+  metamask: new Metamask(apiClient),
   notifications: new Notifications(apiClient),
   orders: new Orders(apiClient),
   payments: new Payments(apiClient),

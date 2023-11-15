@@ -63,10 +63,12 @@ export const RefHomePage: React.FC<Props &
 
   const {
     disabled,
+    gatedChainName,
     hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
+    isGatedFlow,
     isVerified,
     loaderText,
     showBrowserExtensionErrorModal,
@@ -139,7 +141,6 @@ export const RefHomePage: React.FC<Props &
 
     const refTitle = addressWidgetContent?.title as string;
     const refDomain = refProfileInfo?.settings?.domains[0]?.name;
-    const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
 
     const domainName = refDomain || 'rulez';
 
@@ -186,6 +187,7 @@ export const RefHomePage: React.FC<Props &
         >
           {isGatedFlow && (
             <GateVerificationComponent
+              gatedChainName={gatedChainName}
               hasFioHandleInfoMessage={hasFioHandleInfoMessage}
               hasFioVerificactionError={hasFioVerificactionError}
               hasVerifiedError={hasVerifiedError}

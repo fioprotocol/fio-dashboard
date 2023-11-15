@@ -21,7 +21,6 @@ import {
 } from '../../redux/profile/selectors';
 
 import apis from '../../api';
-import MathOp from '../../util/math';
 import { log } from '../../util/general';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -29,6 +28,7 @@ import { setRedirectPath } from '../../redux/navigation/actions';
 
 import useInitializeProviderConnection, {
   ConnectionErrorType,
+  NetworkType,
 } from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
@@ -42,10 +42,12 @@ import { AnyObject } from '../../types';
 
 type UseContextProps = {
   disabled: boolean;
+  gatedChainName?: string;
   hasFioHandleInfoMessage: boolean;
   hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
   infoMessage: string;
+  isGatedFlow?: boolean;
   isVerified: boolean;
   isWalletConnected: boolean;
   loaderText: string;
@@ -108,6 +110,7 @@ export const useContext = (): UseContextProps => {
     boolean
   >(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [gatedToken, setGatedToken] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -118,14 +121,22 @@ export const useContext = (): UseContextProps => {
   );
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
-  const contractAddress =
-    refProfileInfo?.settings?.gatedRegistration?.params?.contractAddress;
   const preselectedDomain = refProfileInfo?.settings?.preselectedDomain;
   const refDomainObj = preselectedDomain
     ? refProfileInfo?.settings?.domains.find(
         domain => domain.name === preselectedDomain,
       )
     : refProfileInfo?.settings?.domains[0];
+  const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
+  const gatedChainId =
+    refProfileInfo?.settings?.gatedRegistration?.params?.chainId;
+  const gatedChainName =
+    isGatedFlow && gatedChainId
+      ? MORALIS_CHAIN_LIST.find(
+          chainListItem =>
+            chainListItem.chainId.toString() === gatedChainId.toString(),
+        )?.name
+      : null;
 
   const existingUsersFreeAddress =
     usersFreeAddresses &&
@@ -139,6 +150,10 @@ export const useContext = (): UseContextProps => {
   const nonVerifiedMessage = `${refProfileInfo?.label} ${
     asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
   } Not Confirmed. Please make sure your NFT is held within your Metamask Wallet.`;
+  const notSupportedChainMessage = (name: string) =>
+    `Metamask network chain ${name?.toUpperCase()} is not supported. Please select another chain.`;
+  const wrongChainMessage = `Verification is available for ${gatedChainName?.toUpperCase()}`;
+  const wrongSignMessage = 'Metamask Sign failed';
 
   const loaderText =
     asset === NFT_LABEL
@@ -155,6 +170,7 @@ export const useContext = (): UseContextProps => {
   const connectWallet = useCallback(async () => {
     setShowProviderLoadingIcon(true);
     toggleHasVerifiedError(false);
+    toggleFioVerificationError(false);
 
     const provider = window.ethereum;
 
@@ -260,10 +276,6 @@ export const useContext = (): UseContextProps => {
     setIsWalletConnected,
   ]);
 
-  const onClick = useCallback(() => {
-    setShowSelectProviderModalVisible(true);
-  }, []);
-
   const isValid = (address: string) => {
     if (!address) return;
     return !(
@@ -341,6 +353,7 @@ export const useContext = (): UseContextProps => {
             item: cartItem,
             prices: prices?.nativeFio,
             roe,
+            token: gatedToken,
             userId,
           }),
         );
@@ -360,6 +373,7 @@ export const useContext = (): UseContextProps => {
       cartId,
       dispatch,
       existingUsersFreeAddress,
+      gatedToken,
       history,
       prices.nativeFio,
       refDomainObj,
@@ -378,98 +392,132 @@ export const useContext = (): UseContextProps => {
     return value;
   };
 
-  const getNfts = useCallback(
-    async (chainName: string) => {
-      const nftsList = await apis.externalProviderNfts.getAllNfts(
-        address,
-        chainName,
-      );
-
-      const hasRefContract = nftsList.find(
-        nftItem => nftItem.token_address === contractAddress,
-      );
-
-      return !!hasRefContract;
-    },
-    [address, contractAddress],
-  );
-
-  const getAllTokens = useCallback(
-    async (chainName: string) => {
-      const tokensList = await apis.externalProviderNfts.getAllExternalTokens({
-        address,
-        chainName,
+  const siweSign = useCallback(async () => {
+    const siweMessage = process.env.REACT_APP_METAMASK_SIGN_MESSAGE;
+    try {
+      const msg = `0x${Buffer.from(siweMessage, 'utf8').toString('hex')}`;
+      const sign = await provider.request({
+        method: 'personal_sign',
+        params: [msg, address],
       });
+      return sign;
+    } catch (err) {
+      log.error(err);
+      toggleHasVerifiedError(true);
+      setInfoMessage(wrongSignMessage);
+    }
+  }, [address, provider]);
 
-      const hasRefContract = tokensList.find(
-        tokenItem =>
-          tokenItem.token_address === contractAddress &&
-          new MathOp(tokenItem.balance).gt(0),
+  const verifyUsersData = useCallback(
+    async ({ network }: { network: NetworkType }) => {
+      const { chainId, name } = network || {};
+      const chain = MORALIS_CHAIN_LIST.find(
+        chainItem => chainItem.chainId === chainId,
       );
 
-      return !!hasRefContract;
+      const { chainName } = chain || {};
+
+      if (chainId?.toString() !== gatedChainId?.toString()) {
+        toggleHasVerifiedError(true);
+        setInfoMessage(wrongChainMessage);
+        return;
+      }
+
+      if (!chainName) {
+        toggleHasVerifiedError(true);
+        setInfoMessage(notSupportedChainMessage(name));
+      }
+
+      if (chainName) {
+        toggleVerifyLoading(true);
+
+        const signedMessage = await siweSign();
+
+        try {
+          const verified = await apis.metamask.verifyMetamask({
+            address,
+            refId: refProfileInfo?.id,
+            signedMessage,
+          });
+
+          const { isVerified, token } = verified || {};
+
+          if (!token) {
+            toggleHasVerifiedError(true);
+            setInfoMessage(nonVerifiedMessage);
+          }
+
+          setGatedToken(token);
+          toggleVerified(isVerified);
+
+          if (!isVerified) {
+            toggleHasVerifiedError(true);
+          }
+        } catch (error) {
+          log.error(error);
+          toggleVerified(false);
+          toggleHasVerifiedError(true);
+        } finally {
+          toggleVerifyLoading(false);
+        }
+      }
     },
-    [address, contractAddress],
+    [
+      address,
+      gatedChainId,
+      nonVerifiedMessage,
+      refProfileInfo?.id,
+      siweSign,
+      wrongChainMessage,
+    ],
   );
 
-  const verifyUsersData = useCallback(async () => {
-    const chain = MORALIS_CHAIN_LIST.find(
-      chainItem => chainItem.chainId === network?.chainId,
-    );
-
-    const { chainName } = chain || {};
-
-    if (chainName) {
-      toggleVerifyLoading(true);
-      let isVerified = false;
-
-      try {
-        if (asset === NFT_LABEL && network?.chainId) {
-          isVerified = await getNfts(chainName);
-        }
-
-        if (asset === TOKEN_LABEL && network?.chainId) {
-          isVerified = await getAllTokens(chainName);
-        }
-
-        toggleVerified(isVerified);
-
-        if (!isVerified) {
-          toggleHasVerifiedError(true);
-        }
-      } catch (error) {
-        log.error(error);
-        toggleVerified(false);
-        toggleHasVerifiedError(true);
-      } finally {
-        toggleVerifyLoading(false);
-      }
+  const onClick = useCallback(() => {
+    if (network?.chainId) {
+      verifyUsersData({ network });
+    } else {
+      setShowSelectProviderModalVisible(true);
     }
-  }, [asset, getAllTokens, getNfts, network?.chainId]);
+  }, [network, verifyUsersData]);
 
   useEffect(() => {
-    if (!network?.chainId) {
+    if (!network?.chainId || !gatedChainId) {
       return;
     }
 
-    address && verifyUsersData();
-  }, [address, network?.chainId, verifyUsersData]);
+    address && verifyUsersData({ network });
+  }, [address, gatedChainId, network, verifyUsersData, wrongChainMessage]);
 
   useEffect(() => {
     if (isVerified) {
       setInfoMessage(verifiedMessage);
     }
-    if (hasVerifiedError) {
+
+    if (
+      hasVerifiedError &&
+      !infoMessage?.includes('is not supported') &&
+      !infoMessage?.includes('Verification is available') &&
+      !infoMessage?.includes(wrongSignMessage)
+    ) {
       setInfoMessage(nonVerifiedMessage);
     }
-  }, [hasVerifiedError, isVerified, nonVerifiedMessage, verifiedMessage]);
+  }, [
+    hasVerifiedError,
+    infoMessage,
+    isVerified,
+    nonVerifiedMessage,
+    verifiedMessage,
+    wrongChainMessage,
+  ]);
 
   return {
     disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
+    gatedChainName,
     hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
+    isGatedFlow,
     isVerified,
     isWalletConnected,
     loaderText,

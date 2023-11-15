@@ -3,7 +3,7 @@ import { verifyTwitterHandle } from '../../external/twitter.mjs';
 import logger from '../../logger';
 import Base from '../Base';
 import X from '../Exception.mjs';
-import { Action, LockedFch } from '../../models/index.mjs';
+import { Action, GatedRegistrtionTokens, LockedFch } from '../../models/index.mjs';
 
 import { EXPIRED_LOCKED_PERIOD } from '../../config/constants.js';
 
@@ -46,6 +46,7 @@ export default class VerifyTwitter extends Base {
       const lockedFchToken = await Action.generateHash();
 
       await LockedFch.create({ fch, token: lockedFchToken, userId });
+      await GatedRegistrtionTokens.create({ token: lockedFchToken });
 
       return {
         data: {
