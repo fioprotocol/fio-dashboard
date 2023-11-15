@@ -42,10 +42,12 @@ import { AnyObject } from '../../types';
 
 type UseContextProps = {
   disabled: boolean;
+  gatedChainName?: string;
   hasFioHandleInfoMessage: boolean;
   hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
   infoMessage: string;
+  isGatedFlow?: boolean;
   isVerified: boolean;
   isWalletConnected: boolean;
   loaderText: string;
@@ -125,6 +127,16 @@ export const useContext = (): UseContextProps => {
         domain => domain.name === preselectedDomain,
       )
     : refProfileInfo?.settings?.domains[0];
+  const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
+  const gatedChainId =
+    refProfileInfo?.settings?.gatedRegistration?.params?.chainId;
+  const gatedChainName =
+    isGatedFlow && gatedChainId
+      ? MORALIS_CHAIN_LIST.find(
+          chainListItem =>
+            chainListItem.chainId.toString() === gatedChainId.toString(),
+        )?.name
+      : null;
 
   const existingUsersFreeAddress =
     usersFreeAddresses &&
@@ -138,6 +150,9 @@ export const useContext = (): UseContextProps => {
   const nonVerifiedMessage = `${refProfileInfo?.label} ${
     asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
   } Not Confirmed. Please make sure your NFT is held within your Metamask Wallet.`;
+  const notSupportedChainMessage = (name: string) =>
+    `Metamask network chain ${name?.toUpperCase()} is not supported. Please select another chain.`;
+  const wrongChainMessage = `Verification is available for ${gatedChainName?.toUpperCase()}`;
 
   const loaderText =
     asset === NFT_LABEL
@@ -154,6 +169,7 @@ export const useContext = (): UseContextProps => {
   const connectWallet = useCallback(async () => {
     setShowProviderLoadingIcon(true);
     toggleHasVerifiedError(false);
+    toggleFioVerificationError(false);
 
     const provider = window.ethereum;
 
@@ -384,11 +400,15 @@ export const useContext = (): UseContextProps => {
 
       const { chainName } = chain || {};
 
+      if (chainId?.toString() !== gatedChainId?.toString()) {
+        toggleHasVerifiedError(true);
+        setInfoMessage(wrongChainMessage);
+        return;
+      }
+
       if (!chainName) {
         toggleHasVerifiedError(true);
-        setInfoMessage(
-          `Metamask network chain ${name?.toUpperCase()} is not supported. Please select another chain.`,
-        );
+        setInfoMessage(notSupportedChainMessage(name));
       }
 
       if (chainName) {
@@ -423,7 +443,13 @@ export const useContext = (): UseContextProps => {
         }
       }
     },
-    [address, nonVerifiedMessage, refProfileInfo?.id],
+    [
+      address,
+      gatedChainId,
+      nonVerifiedMessage,
+      refProfileInfo?.id,
+      wrongChainMessage,
+    ],
   );
 
   const onClick = useCallback(() => {
@@ -435,18 +461,23 @@ export const useContext = (): UseContextProps => {
   }, [network, verifyUsersData]);
 
   useEffect(() => {
-    if (!network?.chainId) {
+    if (!network?.chainId || !gatedChainId) {
       return;
     }
 
     address && verifyUsersData({ network });
-  }, [address, network, verifyUsersData]);
+  }, [address, gatedChainId, network, verifyUsersData, wrongChainMessage]);
 
   useEffect(() => {
     if (isVerified) {
       setInfoMessage(verifiedMessage);
     }
-    if (hasVerifiedError && !infoMessage?.includes('is not supported')) {
+
+    if (
+      hasVerifiedError &&
+      !infoMessage?.includes('is not supported') &&
+      !infoMessage?.includes('Verification is available')
+    ) {
       setInfoMessage(nonVerifiedMessage);
     }
   }, [
@@ -455,14 +486,17 @@ export const useContext = (): UseContextProps => {
     isVerified,
     nonVerifiedMessage,
     verifiedMessage,
+    wrongChainMessage,
   ]);
 
   return {
     disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
+    gatedChainName,
     hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
+    isGatedFlow,
     isVerified,
     isWalletConnected,
     loaderText,
