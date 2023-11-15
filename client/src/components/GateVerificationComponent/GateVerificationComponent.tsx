@@ -21,6 +21,7 @@ type Props = {
   hasFioHandleInfoMessage: boolean;
   hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
+  gatedChainName?: string;
   isVerified: boolean;
   infoMessage: string;
   loaderText: string;
@@ -40,6 +41,7 @@ type Props = {
 
 export const GateVerificationComponent: React.FC<Props> = props => {
   const {
+    gatedChainName,
     hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
@@ -103,7 +105,11 @@ export const GateVerificationComponent: React.FC<Props> = props => {
           <p className={classes.text}>
             Registration of FIO Handles on the{' '}
             <span className={classes.boldText}>@{refDomain}</span> domain is
-            reserved only for holders of {parnterName} NFTs.{' '}
+            reserved only for holders of {parnterName} NFTs on{' '}
+            <span className={classes.boldText}>
+              {gatedChainName?.toUpperCase()}
+            </span>
+            . <br />
             <span className={classes.boldText}>
               Connect your Metamask wallet to complete validation and register
               your FIO handle.
