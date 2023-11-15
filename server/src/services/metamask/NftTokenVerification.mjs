@@ -87,12 +87,18 @@ export default class NftTokenVerification extends Base {
         if (asset === NFT_LABEL && chainId) {
           const nftsList = await moralisApi.getAllWalletNfts({
             address,
+            contractAddresses: [contractAddress],
             chainName,
           });
-          ({ address, chainName });
+
           isVerified =
             nftsList &&
-            nftsList.some(nftItem => nftItem.token_address === contractAddress);
+            nftsList.some(
+              nftItem =>
+                nftItem.token_address &&
+                contractAddress &&
+                nftItem.token_address.toLowerCase() === contractAddress.toLowerCase(),
+            );
         }
 
         if (asset === TOKEN_LABEL && chainId) {
@@ -106,7 +112,9 @@ export default class NftTokenVerification extends Base {
             tokensList &&
             tokensList.some(
               tokenItem =>
-                tokenItem.token_address === contractAddress &&
+                tokenItem.token_address &&
+                contractAddress &&
+                tokenItem.token_address.toLowerCase() === contractAddress.toLowerCase() &&
                 new MathOp(tokenItem.balance).gt(0),
             );
         }
