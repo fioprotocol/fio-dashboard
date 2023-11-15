@@ -56,8 +56,19 @@ class GetMoralis {
     }
   }
 
-  async getWalletNfts({ address, chainName = config.nfts.defaultChainName, cursor }) {
+  async getWalletNfts({
+    address,
+    contractAddresses,
+    chainName = config.nfts.defaultChainName,
+    cursor,
+  }) {
     const chain = EvmChain[chainName];
+
+    const tokenAddresses =
+      contractAddresses && contractAddresses.length
+        ? contractAddresses
+        : [FIO_NFT_POLYGON_CONTRACT];
+
     return await Moralis.EvmApi.nft.getWalletNFTs({
       address,
       chain,
@@ -65,11 +76,16 @@ class GetMoralis {
       format: 'decimal',
       mediaItems: false,
       normalizeMetadata: true,
-      tokenAddresses: [FIO_NFT_POLYGON_CONTRACT],
+      tokenAddresses,
     });
   }
 
-  async getAllWalletNfts({ address, chainName = config.nfts.defaultChainName, cursor }) {
+  async getAllWalletNfts({
+    address,
+    contractAddresses,
+    chainName = config.nfts.defaultChainName,
+    cursor,
+  }) {
     await this.init();
     const nftsList = [];
 
@@ -77,7 +93,13 @@ class GetMoralis {
     if (cursor) {
       walletNftsRes = await cursor.next();
     } else {
-      walletNftsRes = (await this.getWalletNfts({ address, chainName, cursor })) || {};
+      walletNftsRes =
+        (await this.getWalletNfts({
+          address,
+          contractAddresses,
+          chainName,
+          cursor,
+        })) || {};
     }
 
     const walletNftsResData = walletNftsRes.toJSON();
