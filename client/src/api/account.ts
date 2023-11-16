@@ -7,6 +7,7 @@ import {
   AccountUpdateWalletsResponse,
   AccountValidateWalletImportResponse,
   AccountDeleteWalletResponse,
+  DefaultSuccessResponse,
 } from './responses';
 
 export default class Account extends Base {
@@ -22,6 +23,13 @@ export default class Account extends Base {
 
   addWallet(data: NewFioWalletDoublet): Promise<AccountAddWalletsResponse> {
     return this.apiClient.post('account/wallet', { data });
+  }
+
+  addMissingWallet(data: {
+    fioWallet: NewFioWalletDoublet;
+    username: string;
+  }): Promise<DefaultSuccessResponse> {
+    return this.apiClient.post('account/add-missing-wallet', data);
   }
 
   updateWallet(

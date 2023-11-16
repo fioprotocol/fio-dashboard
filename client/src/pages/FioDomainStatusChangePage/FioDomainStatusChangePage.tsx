@@ -13,7 +13,7 @@ import {
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../constants/fio';
 import { LINKS } from '../../constants/labels';
 
 import { useWalletBalances } from '../../util/hooks';
@@ -66,7 +66,10 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     return await apis.fio.executeAction(keys, ACTIONS.setFioDomainVisibility, {
       fioDomain: name,
       isPublic: statusToChange === DOMAIN_STATUS.PUBLIC,
-      maxFee: feePrice.nativeFio,
+      maxFee: new MathOp(feePrice.nativeFio)
+        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+        .round(0)
+        .toNumber(),
     });
   };
 

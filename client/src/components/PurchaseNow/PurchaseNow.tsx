@@ -15,7 +15,6 @@ import {
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
-import { DOMAIN_TYPE } from '../../constants/fio';
 
 import {
   fireAnalyticsEvent,
@@ -25,12 +24,12 @@ import { sleep } from '../../utils';
 
 import { PurchaseValues, PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
+import { cartHasOnlyFreeItems } from '../../util/cart';
 
 const MIN_WAIT_TIME = 3000;
 
 export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const {
-    hasFreeAddress,
     cartItems,
     captchaResult,
     paymentWalletPublicKey,
@@ -103,25 +102,19 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
       getCartItemsDataForAnalytics(cartItems),
     );
     setWaiting(true);
-    for (const item of cartItems) {
-      if (
-        (item.costNativeFio && item.domainType !== DOMAIN_TYPE.FREE) ||
-        (hasFreeAddress && item.domainType !== DOMAIN_TYPE.PRIVATE)
-      ) {
-        setSubmitData({
-          cartItems,
-          prices,
-          refProfileInfo,
-          isFreeAllowed:
-            !hasFreeAddress ||
-            cartItems.some(
-              cartItem => cartItem.domainType === DOMAIN_TYPE.PRIVATE,
-            ),
-        });
-        return;
-      }
+    const cartHasFreeItemsOnly = cartHasOnlyFreeItems(cartItems);
+
+    if (cartHasFreeItemsOnly) {
+      checkCaptcha();
+      return;
     }
-    checkCaptcha();
+
+    setSubmitData({
+      cartItems,
+      prices,
+      refProfileInfo,
+    });
+    return;
   };
   const onCancel = () => {
     setSubmitData(null);

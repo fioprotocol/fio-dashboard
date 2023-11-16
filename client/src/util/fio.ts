@@ -13,7 +13,6 @@ import apis from '../api';
 import { AdminDomain } from '../api/responses';
 import { setFioName } from '../utils';
 import { convertToNewDate, log } from '../util/general';
-import MathOp from './math';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
@@ -257,26 +256,14 @@ export const serializeTransaction = async (
   return '';
 };
 
-export const transformNonPremiumDomains = (
-  domains: Partial<AdminDomain>[],
-  isPremium: boolean,
-  cartItems: CartItem[],
-) =>
+export const transformNonPremiumDomains = (domains: Partial<AdminDomain>[]) =>
   domains
     .filter(domain => !domain.isPremium)
     .map(domain => ({
       name: domain.name,
-      domainType:
-        isPremium &&
-        !cartItems.filter(
-          cartItem =>
-            cartItem.domain === domain.name &&
-            cartItem.domainType === DOMAIN_TYPE.FREE,
-        ).length
-          ? DOMAIN_TYPE.PREMIUM
-          : DOMAIN_TYPE.FREE,
+      domainType: DOMAIN_TYPE.ALLOW_FREE,
       rank: domain.rank || 0,
-      allowFree: true,
+      isFirstRegFree: domain?.isFirstRegFree,
     }));
 
 export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>
@@ -355,23 +342,3 @@ export const checkIsDomainItemExistsOnCart = (
 ): boolean =>
   cartItem.id === id ||
   (cartItem.domainType === DOMAIN_TYPE.CUSTOM && cartItem.domain === id);
-
-export const handlePriceForMultiYearFchWithCustomDomain = ({
-  costNativeFio,
-  nativeFioAddressPrice,
-  period,
-}: {
-  costNativeFio: number;
-  nativeFioAddressPrice?: number;
-  period: number | string;
-}): number => {
-  if (!nativeFioAddressPrice)
-    return new MathOp(costNativeFio).mul(period).toNumber();
-
-  return new MathOp(
-    new MathOp(costNativeFio).sub(nativeFioAddressPrice).toNumber(),
-  )
-    .mul(period)
-    .add(nativeFioAddressPrice)
-    .toNumber();
-};

@@ -8,6 +8,7 @@ import CancelButton from '../../common/CancelButton/CancelButton';
 import classes from './DangerModal.module.scss';
 
 type Props = {
+  backdrop?: boolean;
   show: boolean;
   onClose: () => void;
   onActionButtonClick: () => void;
@@ -23,6 +24,7 @@ type Props = {
 
 const DangerModal: React.FC<Props> = props => {
   const {
+    backdrop,
     buttonText,
     onActionButtonClick,
     onClose,
@@ -36,7 +38,13 @@ const DangerModal: React.FC<Props> = props => {
     footerContent,
   } = props;
   return (
-    <Modal show={show} onClose={onClose} isDanger={true} closeButton={!loading}>
+    <Modal
+      show={show}
+      onClose={onClose}
+      isDanger={true}
+      closeButton={!loading}
+      backdrop={backdrop}
+    >
       <BlockIcon className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>

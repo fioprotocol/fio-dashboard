@@ -71,7 +71,8 @@ export const showFchBundleWarningBagde = (state: ReduxState): boolean =>
   state[prefix].showFchBundleWarningBagde;
 export const showExpiredDomainWarningBadge = (state: ReduxState): boolean =>
   state[prefix].showExpiredDomainWarningBadge;
-
+export const showExpiredDomainWarningFchBadge = (state: ReduxState): boolean =>
+  state[prefix].showExpiredDomainWarningFchBadge;
 export const currentWallet = (
   state: ReduxState,
   ownProps: {

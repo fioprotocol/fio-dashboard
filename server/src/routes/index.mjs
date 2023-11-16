@@ -2,6 +2,7 @@ import account from './account';
 import actions from './actions';
 import adminUsers from './adminUsers';
 import auth from './auth';
+import cart from './cart.mjs';
 import chainCodes from './chainCodes';
 import contacts from './contacts';
 import domainsWatchlist from './domainsWatchlist.mjs';
@@ -10,6 +11,7 @@ import general from './general';
 import generatePdf from './generatePdf';
 import history from './wrapStatus.mjs';
 import newDeviceTwoFactor from './newDeviceTwoFactor';
+import metamask from './metamask.mjs';
 import notifications from './notifications';
 import orders from './orders';
 import payments from './payments';
@@ -24,6 +26,7 @@ export default {
   actions,
   adminUsers,
   auth,
+  cart,
   chainCodes,
   contacts,
   domainsWatchlist,
@@ -31,6 +34,7 @@ export default {
   general,
   generatePdf,
   history,
+  metamask,
   newDeviceTwoFactor,
   notifications,
   orders,

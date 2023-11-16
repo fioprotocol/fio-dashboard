@@ -21,7 +21,7 @@ const reduxConnect = connect(
   (dispatch: AppDispatch, ownProps: OwnPropsAny) => ({
     logout: () => {
       const { history } = ownProps;
-      dispatch(logout({ history }, '/?logout=silent'));
+      dispatch(logout({ history, redirect: '/?logout=silent' }));
       dispatch(resetLastAuthData());
     },
     closeSuccessModal: () => {

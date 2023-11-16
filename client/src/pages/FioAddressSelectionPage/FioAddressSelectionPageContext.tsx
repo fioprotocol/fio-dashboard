@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
 import { loadProfile } from '../../redux/profile/actions';
 
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -16,6 +20,8 @@ import {
 import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
+  userId as userIdSelector,
+  usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
@@ -25,7 +31,6 @@ import {
   CART_ITEM_TYPE,
 } from '../../constants/common';
 
-import { addCartItem } from '../../util/cart';
 import {
   checkAddressOrDomainIsExist,
   transformCustomDomains,
@@ -42,6 +47,7 @@ import apis from '../../api';
 
 import {
   DomainsArrItemType,
+  DomainsItemType,
   SelectedItemProps,
   UseContextProps,
 } from './types';
@@ -60,16 +66,22 @@ const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
 const handleFCHItems = async ({
   address,
   cartItems,
+  cartHasFreeItem,
   domainArr,
+  hasFreeAddress,
   prices,
   roe,
+  usersFreeAddresses,
   setError,
 }: {
   address: string;
   cartItems: CartItem[];
+  cartHasFreeItem: boolean;
   domainArr: DomainsArrItemType;
+  hasFreeAddress: boolean;
   prices: Prices;
   roe: number;
+  usersFreeAddresses: { name: string }[];
   setError: (error: string) => void;
 }) => {
   const {
@@ -82,11 +94,11 @@ const handleFCHItems = async ({
     await Promise.all(
       domainArr.map(async domain => {
         const {
-          allowFree,
           domainType,
           name,
           swapAddressAndDomainPlaces,
           rank = 0,
+          isFirstRegFree,
         } = domain;
 
         let addressName = address;
@@ -137,6 +149,12 @@ const handleFCHItems = async ({
 
         const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
+        const existingUsersFreeAddress =
+          usersFreeAddresses &&
+          usersFreeAddresses.find(
+            freeAddress => freeAddress.name.split('@')[1] === domainName,
+          );
+
         return {
           id: setFioName(addressName, domainName),
           address: addressName,
@@ -145,19 +163,26 @@ const handleFCHItems = async ({
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
           nativeFioAddressPrice,
-          domainType: existingCustomDomainFchCartItem
-            ? DOMAIN_TYPE.PREMIUM
-            : domainType,
+          domainType,
+          isFree:
+            domainType === DOMAIN_TYPE.ALLOW_FREE &&
+            (!hasFreeAddress ||
+              (hasFreeAddress &&
+                isFirstRegFree &&
+                !existingUsersFreeAddress)) &&
+            !cartHasFreeItem,
           isSelected: false,
           isExist:
             isAddressExist ||
             (swapAddressAndDomainPlaces && isUsernameOnCustomDomainExist),
           period: 1,
-          type: isCustomDomain
-            ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-            : CART_ITEM_TYPE.ADDRESS,
-          allowFree,
-          hasCustomDomain: domainType === DOMAIN_TYPE.CUSTOM,
+          type:
+            domainType === DOMAIN_TYPE.CUSTOM
+              ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+              : CART_ITEM_TYPE.ADDRESS,
+          hasCustomDomainInCart:
+            domainType === DOMAIN_TYPE.CUSTOM &&
+            !!existingCustomDomainFchCartItem,
           rank,
           swapAddressAndDomainPlaces,
         };
@@ -170,16 +195,20 @@ const handleSelectedDomain = ({
   fchItem,
   cartItems,
   cartHasFreeItem,
+  domains,
   hasFreeAddress,
   prices,
   roe,
+  usersFreeAddresses,
 }: {
   fchItem: SelectedItemProps;
   cartItems: CartItem[];
   cartHasFreeItem: boolean;
+  domains: DomainsItemType[];
   hasFreeAddress: boolean;
   prices: Prices;
   roe: number;
+  usersFreeAddresses: { name: string }[];
 }) => {
   const {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
@@ -197,51 +226,47 @@ const handleSelectedDomain = ({
 
   const existingCustomDomainFchCartItem = cartItems.find(
     cartItem =>
-      fchItem.hasCustomDomain &&
+      fchItem.domainType === DOMAIN_TYPE.CUSTOM &&
+      (cartItem.type === CART_ITEM_TYPE.DOMAIN ||
+        cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) &&
       fchItem.domain === cartItem.domain &&
       !!cartItem.address &&
-      fchItem.id !== cartItem.id,
+      fchItem.id !== cartItem.id &&
+      !cartItem.hasCustomDomainInCart,
   );
 
-  const { domainType, allowFree, hasCustomDomain } = fchItem;
-  const isCustomDomainConvertedToPremium =
-    hasCustomDomain && !existingCustomDomainFchCartItem;
+  const { domain, domainType, type } = fchItem;
+
+  const isFirstRegFreeDomains = domains.filter(
+    domainItem => domainItem.isFirstRegFree,
+  );
+
+  const existingIsFirstRegFree = isFirstRegFreeDomains.find(
+    isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
+  );
+
+  const existingUsersFreeAddress =
+    usersFreeAddresses &&
+    usersFreeAddresses.find(
+      freeAddress => freeAddress.name.split('@')[1] === domain,
+    );
+
   const isCustomDomain =
     domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
-
-  const handleDomainType = () => {
-    if (domainType === DOMAIN_TYPE.CUSTOM) {
-      if (existingCustomDomainFchCartItem && !existingCartItem)
-        return DOMAIN_TYPE.PREMIUM;
-      return domainType;
-    }
-
-    if (domainType === DOMAIN_TYPE.FREE) {
-      if (
-        hasFreeAddress ||
-        (cartHasFreeItem &&
-          (!existingCartItem ||
-            (!!existingCartItem &&
-              existingCartItem.domainType === DOMAIN_TYPE.PREMIUM)))
-      )
-        return DOMAIN_TYPE.PREMIUM;
-
-      return domainType;
-    }
-
-    if (domainType === DOMAIN_TYPE.PREMIUM) {
-      if (isCustomDomainConvertedToPremium) return DOMAIN_TYPE.CUSTOM;
-      if (!allowFree) return domainType;
-      if (!cartHasFreeItem && !hasFreeAddress) return DOMAIN_TYPE.FREE;
-      return domainType;
-    }
-  };
+  const isFree =
+    existingCartItem?.isFree ||
+    (domainType === DOMAIN_TYPE.ALLOW_FREE &&
+      (!hasFreeAddress ||
+        (usersFreeAddresses &&
+          existingIsFirstRegFree &&
+          !existingUsersFreeAddress)) &&
+      !cartHasFreeItem);
 
   const totalNativeFio =
-    isCustomDomainConvertedToPremium ||
-    domainType === DOMAIN_TYPE.CUSTOM ||
+    isCustomDomain ||
     (existingCartItem &&
-      existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN)
+      existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      !existingCartItem.hasCustomDomainInCart)
       ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
       : nativeFioAddressPrice;
 
@@ -249,22 +274,25 @@ const handleSelectedDomain = ({
 
   return {
     ...fchItem,
-    costNativeFio: totalNativeFio,
-    costFio: fio,
-    costUsdc: usdc,
+    costNativeFio: existingCartItem?.costNativeFio || totalNativeFio,
+    costFio: existingCartItem?.costFio || fio,
+    costUsdc: existingCartItem?.costUsdc || usdc,
+    hasCustomDomainInCart:
+      existingCartItem?.hasCustomDomainInCart ||
+      (domainType === DOMAIN_TYPE.CUSTOM && !!existingCustomDomainFchCartItem),
     period: existingDomainInCartItem
       ? existingDomainInCartItem.period
       : fchItem.period,
     isSelected: !!existingCartItem,
-    domainType: handleDomainType(),
-    type: isCustomDomain
-      ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-      : CART_ITEM_TYPE.ADDRESS,
+    isFree,
+    domainType,
+    type,
   };
 };
 
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
+  const cartId = useSelector(cartIdSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const domainsLoaing = useSelector(domainsLoaingSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
@@ -272,6 +300,8 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const userId = useSelector(userIdSelector);
+  const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const dispatch = useDispatch();
 
@@ -282,6 +312,10 @@ export const useContext = (): UseContextProps => {
     refProfileDomains = [],
     usernamesOnCustomDomains = [],
   } = allDomains;
+
+  const nonGateRefProfileDomains = refProfileDomains.filter(
+    refProfileDomain => !refProfileDomain.hasGatedRegistration,
+  );
 
   const [addressValue, setAddressValue] = useState<string>(null);
   const [additionalItemsList, setAdditionalItemsList] = useState<
@@ -302,11 +336,12 @@ export const useContext = (): UseContextProps => {
   const [hasRawAbiLoaded, setIsRawAbiLoaded] = useState<boolean>(false);
 
   const cartHasFreeItem = cartItems.some(
-    cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
+    cartItem =>
+      cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
-  const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
-    ? refProfileDomains
+  const publicDomains: Partial<AdminDomain>[] = nonGateRefProfileDomains.length
+    ? nonGateRefProfileDomains
     : dashboardDomains;
 
   const sortedUserDomains = userDomains.sort((a, b) =>
@@ -318,11 +353,7 @@ export const useContext = (): UseContextProps => {
     true,
   ).sort((a, b) => a.rank - b.rank);
 
-  const nonPremiumPublicDomains = transformNonPremiumDomains(
-    publicDomains,
-    hasFreeAddress || cartHasFreeItem,
-    cartItems,
-  )
+  const nonPremiumPublicDomains = transformNonPremiumDomains(publicDomains)
     .sort((a, b) => a.rank - b.rank)
     .map((nonPremiumDomain, i) => ({ ...nonPremiumDomain, rank: i }));
 
@@ -349,7 +380,7 @@ export const useContext = (): UseContextProps => {
   const usersItemsListJSON = JSON.stringify(usersItemsList);
 
   useEffect(() => {
-    dispatch(loadProfile());
+    dispatch(loadProfile({}));
   }, [dispatch]);
 
   const validateAddress = useCallback(
@@ -377,8 +408,11 @@ export const useContext = (): UseContextProps => {
       const defaultParams = {
         address,
         cartItems: parsedCartItems,
+        cartHasFreeItem,
+        hasFreeAddress,
         prices,
         roe,
+        usersFreeAddresses,
         setError,
       };
 
@@ -516,8 +550,8 @@ export const useContext = (): UseContextProps => {
         const rankCount = a.rank - b.rank;
         if (rankCount) return rankCount;
 
-        if (a.domainType === DOMAIN_TYPE.FREE) return -1;
-        if (b.domainType === DOMAIN_TYPE.FREE) return 1;
+        if (a.domainType === DOMAIN_TYPE.ALLOW_FREE) return -1;
+        if (b.domainType === DOMAIN_TYPE.ALLOW_FREE) return 1;
 
         if (a.domainType === DOMAIN_TYPE.PREMIUM) return -1;
         if (b.domainType === DOMAIN_TYPE.PREMIUM) return 1;
@@ -538,20 +572,34 @@ export const useContext = (): UseContextProps => {
       toggleLoading(false);
     },
     [
+      cartHasFreeItem,
       cartItemsJSON,
       customDomainsJSON,
+      hasFreeAddress,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
       previousAddressValue,
       prices,
       roe,
       userDomainsJSON,
+      usersFreeAddresses,
     ],
   );
 
-  const onClick = (selectedItem: CartItem) => {
-    addCartItem(selectedItem);
-  };
+  const onClick = useCallback(
+    (selectedItem: CartItem) => {
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: selectedItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
+    },
+    [cartId, dispatch, prices?.nativeFio, roe, userId],
+  );
 
   const getFioRawAbis = useCallback(async () => {
     toggleIsRawAbiLoading(true);
@@ -594,6 +642,7 @@ export const useContext = (): UseContextProps => {
     const parsedUsersItemsList: SelectedItemProps[] = JSON.parse(
       usersItemsListJSON,
     );
+    const publicDomains = JSON.parse(nonPremiumPublicDomainsJSON);
 
     setSuggestedItemsList(
       parsedSuggestedItemsList.map(suggestedItem =>
@@ -601,9 +650,11 @@ export const useContext = (): UseContextProps => {
           fchItem: suggestedItem,
           cartItems: parsedCartItems,
           cartHasFreeItem,
+          domains: publicDomains,
           hasFreeAddress,
           prices,
           roe,
+          usersFreeAddresses,
         }),
       ),
     );
@@ -614,9 +665,11 @@ export const useContext = (): UseContextProps => {
           fchItem: additionalItem,
           cartItems: parsedCartItems,
           cartHasFreeItem,
+          domains: publicDomains,
           hasFreeAddress,
           prices,
           roe,
+          usersFreeAddresses,
         }),
       ),
     );
@@ -636,8 +689,10 @@ export const useContext = (): UseContextProps => {
     usersItemsListJSON,
     cartHasFreeItem,
     hasFreeAddress,
+    nonPremiumPublicDomainsJSON,
     prices,
     roe,
+    usersFreeAddresses,
   ]);
 
   useEffectOnce(() => {

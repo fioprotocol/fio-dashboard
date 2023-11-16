@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Loader from '../Loader/Loader';
+
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import PaymentsBlock from './components/PaymentsBlock';
 import { PriceComponent } from '../PriceComponent';
-
-import { totalCost } from '../../util/cart';
 
 import { CartItem, FioWalletDoublet, PaymentProvider } from '../../types';
 
@@ -13,14 +13,17 @@ import classes from './Cart.module.scss';
 type Props = {
   cartItems: CartItem[];
   isFree: boolean;
+  loading: boolean;
   paymentWalletPublicKey: string;
   hasLowBalance: boolean;
-  roe: number;
+  totalCartAmount: string;
+  totalCartUsdcAmount: string;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   error: string | null;
+  showExpiredDomainWarningBadge: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
@@ -29,17 +32,18 @@ const CartAmount: React.FC<Props> = props => {
     cartItems,
     hasLowBalance,
     isFree,
+    loading,
     paymentWalletPublicKey,
-    roe,
+    totalCartAmount,
+    totalCartUsdcAmount,
     totalCartNativeAmount,
     userWallets,
     selectedPaymentProvider,
     disabled,
     error,
+    showExpiredDomainWarningBadge,
     onPaymentChoose,
   } = props;
-
-  const { costFio, costUsdc } = totalCost(cartItems, roe);
 
   return (
     <CartSmallContainer isHintColor={true} hasBigMargin={true}>
@@ -49,11 +53,15 @@ const CartAmount: React.FC<Props> = props => {
         <hr className={classes.divider} />
         <div className={classes.cost}>
           Cost:{' '}
-          <PriceComponent
-            costFio={costFio}
-            costUsdc={costUsdc}
-            isFree={isFree}
-          />
+          {loading ? (
+            <Loader hasSmallSize className="justify-content-start ml-3" />
+          ) : (
+            <PriceComponent
+              costFio={totalCartAmount}
+              costUsdc={totalCartUsdcAmount}
+              isFree={isFree}
+            />
+          )}
         </div>
         <hr className={classes.divider} />
       </div>
@@ -65,10 +73,11 @@ const CartAmount: React.FC<Props> = props => {
           paymentWalletPublicKey={paymentWalletPublicKey}
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
-          totlaCartUsdcAmount={costUsdc}
+          totlaCartUsdcAmount={totalCartUsdcAmount}
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}
+          showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
         />
       </div>
     </CartSmallContainer>

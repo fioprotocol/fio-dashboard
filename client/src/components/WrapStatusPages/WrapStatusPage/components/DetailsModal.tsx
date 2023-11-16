@@ -195,7 +195,7 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
             </div>
 
-            {voters && voters.length && (
+            {voters && voters.length > 0 && (
               <div>
                 <div className="d-flex flex-column my-2">
                   <div className="mr-3 mb-2">
@@ -244,12 +244,6 @@ const DetailsModal: React.FC<Props> = props => {
             <div>
               {approvals.txId && (
                 <>
-                  <div className="d-flex justify-content-between my-2">
-                    <div className="mr-3">
-                      <b>Approvals:</b>
-                    </div>
-                    <div></div>
-                  </div>
                   <div className="d-flex justify-content-between my-2">
                     <div className="mr-3">
                       <b>Trx_id:</b>

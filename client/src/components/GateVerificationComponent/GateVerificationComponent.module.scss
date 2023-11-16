@@ -1,0 +1,127 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  color: $white;
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  max-width: 763px;
+  margin: 0 auto;
+  position: relative;
+
+  .loader {
+    background: $mine-shaft;
+    opacity: 0.87;
+    width: 200%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -7%;
+    bottom: -7%;
+    line-height: 2.75rem;
+    @include comfortaa-bold;
+    color: $pile-violet;
+    z-index: 2;
+  }
+
+  .infoBadge {
+    width: auto;
+    background-color: $violet;
+    border-radius: 999em;
+    padding: 10px 30px 10px 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    &.hasFioHandleInfoMessage, &.isVerified, &.hasVerifiedError {
+      display: flex;
+      flex-direction: row;
+      height: auto;
+    }
+
+    &.isVerified {
+      background-color: $green-shell;
+    }
+
+    &.hasVerifiedError {
+      background-color: $warn-red;
+      margin-bottom: 30px;
+    }
+
+    &.hasFioHandleInfoMessage {
+      background-color: $violet;
+    }
+
+    .infoMessage {
+      margin: 0;
+      font-size: 0.8125em;
+    }
+  }
+
+  .text {
+    margin-top: 10px;
+    @include inter-regular;
+    font-size: 0.875em;
+    line-height: 2em;
+
+    .boldText {
+      @include inter-bold;
+    }
+  }
+
+  .metamask {
+    display: flex;
+    gap: 10px;
+    font-size: 0.8125em;
+    align-items: center;
+
+    .logo {
+      width: 34px;
+    }
+  }
+
+  .securityNote {
+    display: flex;
+    font-size: 0.6875em;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    @include lg {
+      flex-direction: row;
+    }
+
+    .securityNoteText {
+      @include inter-regular;
+      margin: 0;
+    }
+  }
+}
+
+.connectWalletModal {
+  padding-bottom: 20px;
+
+  .connectWalletProviderTypeButton {
+    padding: 8px 20px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $baltic-sea;
+    border-radius: 12px;
+    color: $white;
+    width: 100%;
+
+    .providerIcon {
+      margin-left: 10px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+}

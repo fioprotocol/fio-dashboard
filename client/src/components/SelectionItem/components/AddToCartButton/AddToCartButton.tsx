@@ -12,6 +12,7 @@ import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/typ
 import classes from './AddToCartButton.module.scss';
 
 type Props = {
+  disabled?: boolean;
   onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
@@ -19,14 +20,15 @@ export const AddToCartButton: React.FC<Props> = props => {
   const {
     id,
     address,
-    allowFree,
     domain,
+    disabled,
     costFio,
     costNativeFio,
     costUsdc,
     nativeFioAddressPrice,
     domainType,
-    hasCustomDomain,
+    isFree,
+    hasCustomDomainInCart,
     period,
     type,
     isSelected,
@@ -36,28 +38,28 @@ export const AddToCartButton: React.FC<Props> = props => {
   const selectedItem = useMemo(
     () => ({
       id,
-      allowFree,
       address,
       domain,
       costFio,
       costNativeFio,
       costUsdc,
       domainType,
-      hasCustomDomain,
+      isFree,
+      hasCustomDomainInCart,
       nativeFioAddressPrice,
       period,
       type,
     }),
     [
       address,
-      allowFree,
       costFio,
       costNativeFio,
       costUsdc,
       domain,
       domainType,
-      hasCustomDomain,
+      hasCustomDomainInCart,
       id,
+      isFree,
       nativeFioAddressPrice,
       period,
       type,
@@ -74,6 +76,7 @@ export const AddToCartButton: React.FC<Props> = props => {
     <Button
       onClick={onActionClick}
       className={classnames(classes.button, isSelected && classes.isSelected)}
+      disabled={disabled}
     >
       <div>
         {isSelected ? (

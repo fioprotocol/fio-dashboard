@@ -22,6 +22,7 @@ export const OrderItem: React.FC<OrderItemDetailed> = props => {
     type,
     period,
     id,
+    isFree,
     fee_collected,
     costUsdc,
     transaction_ids,
@@ -36,12 +37,13 @@ export const OrderItem: React.FC<OrderItemDetailed> = props => {
     costUsdc,
     costNativeFio: fee_collected ? new MathOp(fee_collected).toNumber() : null,
     id,
+    isFree,
     hasCustomDomain,
     domainType: hasCustomDomain
       ? DOMAIN_TYPE.CUSTOM
       : fee_collected
       ? DOMAIN_TYPE.PREMIUM
-      : DOMAIN_TYPE.FREE,
+      : DOMAIN_TYPE.ALLOW_FREE,
   };
 
   return (

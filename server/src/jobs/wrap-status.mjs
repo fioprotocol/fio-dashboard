@@ -42,7 +42,9 @@ class WrapStatusJob extends CommonJob {
 
   // example of getting all POLYGON smart contract events
   async test() {
-    const web3 = new Web3(process.env.POLYGON_INFURA);
+    const web3 = new Web3(
+      `${process.env.POLYGON_INFURA_BASE_URL}${process.env.INFURA_API_KEY}`,
+    );
     const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
 
     const fioNftContractOnPolygonChain = new web3.eth.Contract(
@@ -109,7 +111,9 @@ class WrapStatusJob extends CommonJob {
     const logPrefix = `Get POLYGON Logs, isWrap: ${isWrap} --> `;
 
     try {
-      const web3 = new Web3(process.env.POLYGON_INFURA);
+      const web3 = new Web3(
+        `${process.env.POLYGON_INFURA_BASE_URL}${process.env.INFURA_API_KEY}`,
+      );
       const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
 
       const fioNftContractOnPolygonChain = new web3.eth.Contract(
@@ -208,7 +212,7 @@ class WrapStatusJob extends CommonJob {
             for (const orcaleEvent of oracleEvents) {
               const { blockNumber } = orcaleEvent;
               const block = await web3.eth.getBlock(blockNumber);
-              eventsWithTimestamps.push({
+              oracleEventsWithTimestamps.push({
                 ...orcaleEvent,
                 blockTimeStamp: block.timestamp,
               });
@@ -262,7 +266,9 @@ class WrapStatusJob extends CommonJob {
   async getEthLogs(isWrap = false) {
     const logPrefix = `Get ETH Logs, isWrap: ${isWrap} --> `;
     try {
-      const web3 = new Web3(process.env.ETH_INFURA);
+      const web3 = new Web3(
+        `${process.env.ETH_INFURA_BASE_URL}${process.env.INFURA_API_KEY}`,
+      );
       const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_ETH);
 
       const fioTokenContractOnEthChain = new web3.eth.Contract(
@@ -356,7 +362,7 @@ class WrapStatusJob extends CommonJob {
             for (const orcaleEvent of oracleEvents) {
               const { blockNumber } = orcaleEvent;
               const block = await web3.eth.getBlock(blockNumber);
-              eventsWithTimestamps.push({
+              oracleEventsWithTimestamps.push({
                 ...orcaleEvent,
                 blockTimeStamp: block.timestamp,
               });

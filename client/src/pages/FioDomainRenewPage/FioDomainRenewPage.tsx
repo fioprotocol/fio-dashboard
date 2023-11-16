@@ -15,8 +15,17 @@ import {
   fees as feesSelector,
   feesLoading as feeLoadingSelector,
 } from '../../redux/fio/selectors';
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
 
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
 
 import apis from '../../api';
@@ -26,14 +35,17 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import useQuery from '../../hooks/useQuery';
-import { addCartItem } from '../../util/cart';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import useEffectOnce from '../../hooks/general';
 
 const FioDomainRenewPage: React.FC = () => {
+  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
 
   const [feeLoadingFinished, toggleFeeLoadingFinished] = useState<boolean>(
     false,
@@ -74,14 +86,21 @@ const FioDomainRenewPage: React.FC = () => {
       domain,
       type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
       id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
-      allowFree: false,
       period: 1,
       costNativeFio: renewDomainFeePrice?.nativeFio,
       costFio: renewDomainFeePrice.fio,
       costUsdc: renewDomainFeePrice.usdc,
       domainType: DOMAIN_TYPE.PRIVATE,
     };
-    addCartItem(newCartItem);
+    dispatch(
+      addItemToCart({
+        id: cartId,
+        item: newCartItem,
+        prices: prices?.nativeFio,
+        roe,
+        userId,
+      }),
+    );
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
@@ -92,13 +111,18 @@ const FioDomainRenewPage: React.FC = () => {
     );
     history.replace(ROUTES.CART);
   }, [
+    cartId,
     cartItems,
+    dispatch,
     domain,
     feeLoading,
     feeLoadingFinished,
     history,
+    prices?.nativeFio,
     renewDomainFeePrice,
     renewFioDomain,
+    roe,
+    userId,
   ]);
 
   return (

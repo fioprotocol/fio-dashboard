@@ -10,12 +10,16 @@ import {
   fees as feesSelector,
   showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector,
 } from '../../redux/fio/selectors';
-import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import apis from '../../api';
 
@@ -29,7 +33,6 @@ import {
   isDomainExpired,
   isDomainWillExpireIn30Days,
 } from '../../util/fio';
-import { addCartItem } from '../../util/cart';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
@@ -44,6 +47,11 @@ import {
   FIO_ORACLE_ACCOUNT_NAME,
 } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
+import {
+  EMPTY_STATE_CONTENT,
+  SUCCESS_MESSAGES,
+  WARNING_CONTENT,
+} from './constants';
 
 import {
   CartItem,
@@ -52,29 +60,7 @@ import {
   FioNameItemProps,
 } from '../../types';
 import { FioDomainDoubletResponse } from '../../api/responses';
-
-const EMPTY_STATE_CONTENT = {
-  title: 'No FIO Domains',
-  message: 'There are no FIO Domains in all your wallets',
-};
-
-const WARNING_CONTENT = {
-  DOMAIN_RENEW: {
-    title: 'Domain Renewal',
-    message:
-      'One or more FIO Domain below has expired. Certain actions are inactive until the domain is renewed. Renew today to restore the actions and to ensure you do not loose the domain.',
-  },
-  DOMAIN_RENEW_IN_30_DAYS: {
-    title: 'Domain Renewal',
-    message:
-      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not loose the domain.',
-  },
-};
-
-const SUCCESS_MESSAGES = {
-  CREATE_DOMAIN_WATCHLIST_ITEM: 'The domain was added to your watchlist',
-  DELETE_DOMAIN_WATCHLIST_ITEM: 'The domain was deleted from your watchlist',
-};
+import { WarningContentItem } from '../../components/ManagePageContainer/types';
 
 type UseContextProps = {
   domainWatchlistIsDeleting: boolean;
@@ -95,12 +81,8 @@ type UseContextProps = {
   showDomainWatchlistItemModal: boolean;
   showDomainWatchlistSettingsModal: boolean;
   showAddDomainWatchlistModal: boolean;
-  showWarningMessage: boolean;
   successMessage: string | null;
-  warningContent: {
-    title: string;
-    message: string;
-  };
+  warningContent: WarningContentItem[];
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
   handleRenewDomain: (name: string) => void;
@@ -112,9 +94,11 @@ type UseContextProps = {
   onDomainWatchlistItemModalOpen: (fioNameItem: FioNameItemProps) => void;
   onPurchaseButtonClick: (domain: string) => void;
   onDomainWatchlistItemSettingsClose: () => void;
-  onDomainWatchlistItemSettingsOpen: (
-    domainWatchilstItem: Partial<FioNameItemProps>,
-  ) => void;
+  onDomainWatchlistItemSettingsOpen: ({
+    fioNameItem,
+  }: {
+    fioNameItem: Partial<FioNameItemProps>;
+  }) => void;
   openDomainWatchlistModal: () => void;
   setSelectedDomainWatchlistItem: (
     domainWatchlistItem: DomainWatchlistItem,
@@ -123,12 +107,14 @@ type UseContextProps = {
 };
 
 export const useContext = (): UseContextProps => {
+  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -193,13 +179,20 @@ export const useContext = (): UseContextProps => {
         domain,
         type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
         id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
-        allowFree: false,
         period: 1,
         costNativeFio: renewDomainFeePrice?.nativeFio,
         costFio: renewDomainFeePrice.fio,
         costUsdc: renewDomainFeePrice.usdc,
       };
-      dispatch(addItemToCart(newCartItem));
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: newCartItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
         getCartItemsDataForAnalytics([newCartItem]),
@@ -211,12 +204,16 @@ export const useContext = (): UseContextProps => {
       history.push(ROUTES.CART);
     },
     [
+      cartId,
       cartItems,
       dispatch,
       history,
+      prices?.nativeFio,
       renewDomainFeePrice.fio,
       renewDomainFeePrice?.nativeFio,
       renewDomainFeePrice.usdc,
+      roe,
+      userId,
     ],
   );
 
@@ -233,8 +230,8 @@ export const useContext = (): UseContextProps => {
   );
 
   const onDomainWatchlistItemSettingsOpen = useCallback(
-    (domainWatchlistItem: Partial<FioNameItemProps>) => {
-      setSelectedDomainWatchlistSettingsItem(domainWatchlistItem);
+    ({ fioNameItem }: { fioNameItem: Partial<FioNameItemProps> }) => {
+      setSelectedDomainWatchlistSettingsItem(fioNameItem);
       handleShowModal(false);
       handleShowSettings(true);
     },
@@ -276,10 +273,29 @@ export const useContext = (): UseContextProps => {
         type: CART_ITEM_TYPE.DOMAIN,
       };
 
-      addCartItem(newCartItem);
+      dispatch(
+        addItemToCart({
+          id: cartId,
+          item: newCartItem,
+          prices: prices?.nativeFio,
+          roe,
+          userId,
+        }),
+      );
       return history.push(ROUTES.CART);
     },
-    [cartItemsJSON, fio, history, nativeFioDomainPrice, usdc],
+    [
+      cartId,
+      cartItemsJSON,
+      dispatch,
+      fio,
+      history,
+      nativeFioDomainPrice,
+      prices?.nativeFio,
+      roe,
+      usdc,
+      userId,
+    ],
   );
 
   const getDomainsWatchlistList = useCallback(async () => {
@@ -439,6 +455,11 @@ export const useContext = (): UseContextProps => {
     }
   }, [fioDomainsJSON]);
 
+  const warningContnet =
+    showWarningDomainExpireIn30DaysBadge && !showWarningDomainExpireBadge
+      ? WARNING_CONTENT.DOMAIN_RENEW_IN_30_DAYS
+      : WARNING_CONTENT.DOMAIN_RENEW;
+
   return {
     domainWatchlistIsDeleting,
     domainWatchlistLoading,
@@ -455,16 +476,18 @@ export const useContext = (): UseContextProps => {
     showDomainWatchlistItemModal,
     showDomainWatchlistSettingsModal,
     showAddDomainWatchlistModal,
-    showWarningMessage:
-      showWarningMessage &&
-      (showWarningDomainExpireBadge ||
-        showWarningDomainExpireIn30DaysBadge ||
-        showWarningDomainWatchListBadge),
     successMessage,
-    warningContent:
-      showWarningDomainExpireIn30DaysBadge && !showWarningDomainExpireBadge
-        ? WARNING_CONTENT.DOMAIN_RENEW_IN_30_DAYS
-        : WARNING_CONTENT.DOMAIN_RENEW,
+    warningContent: [
+      {
+        ...warningContnet,
+        show:
+          showWarningMessage &&
+          (showWarningDomainExpireBadge ||
+            showWarningDomainExpireIn30DaysBadge ||
+            showWarningDomainWatchListBadge),
+        onClose: sessionBadgeClose,
+      },
+    ],
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
     handleRenewDomain,

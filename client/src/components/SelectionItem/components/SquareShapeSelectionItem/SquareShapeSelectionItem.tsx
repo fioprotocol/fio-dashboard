@@ -1,5 +1,7 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 import { AddToCartButton } from '../AddToCartButton';
 import { FCHItem } from '../FCHItem';
 import { PirceItem } from '../PriceItem';
@@ -11,6 +13,7 @@ import classes from './SquareShapeSelectionItem.module.scss';
 
 type Props = {
   actionComponent: React.ReactNode;
+  disabled?: boolean;
   onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
@@ -21,12 +24,16 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
     costFio,
     costNativeFio,
     costUsdc,
+    disabled,
     domain,
     domainType,
+    isFree,
   } = props;
 
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(classes.container, disabled && classes.disabled)}
+    >
       <FCHItem address={address} domain={domain} hasCenteredText />
       <div className={classes.badge}>{actionComponent}</div>
       <div className={classes.priceContainer}>
@@ -35,6 +42,7 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
           costUsdc={costUsdc}
           costFio={costFio}
           domainType={domainType}
+          isFree={isFree}
           hasSmallFontSize
         />
       </div>

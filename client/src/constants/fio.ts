@@ -108,7 +108,7 @@ export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/ge
 
 export const DOMAIN_TYPE = {
   CUSTOM: 'custom',
-  FREE: 'free',
+  ALLOW_FREE: 'allow-free',
   PREMIUM: 'premium',
   USERS: 'users',
   PRIVATE: 'private',
@@ -132,7 +132,7 @@ export const DOMAIN_TYPE_PARAMS: {
     modalBodyText:
       'When you register a Custom FIO Handle you also get your own FIO Domain (@domain). By default this domain is private, meaning only you can create new handles on it.',
   },
-  [DOMAIN_TYPE.FREE]: {
+  [DOMAIN_TYPE.ALLOW_FREE]: {
     title: 'Free',
     isRose: true,
     modalTitle: 'Free FIO Handle',
@@ -243,3 +243,5 @@ export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';
 export const LOW_BUNDLES_THRESHOLD = 25;
 
 export const DEFAULT_FIO_RECORDS_LIMIT = 100;
+
+export const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;

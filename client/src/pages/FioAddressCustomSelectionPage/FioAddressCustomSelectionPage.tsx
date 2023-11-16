@@ -65,6 +65,9 @@ const FioAddressCustomSelectionPage: React.FC = () => {
             formValidation.validateForm({
               ...values,
               userDomains: allDomains.userDomains,
+              gatedDomains: allDomains.allRefProfileDomains?.filter(
+                refPorfileDomain => refPorfileDomain.hasGatedRegistration,
+              ),
             })
           }
           initialValues={initialValues}

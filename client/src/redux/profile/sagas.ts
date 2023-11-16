@@ -23,7 +23,8 @@ import {
 
 import { closeLoginModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
-import { clearOldCartItems } from '../cart/actions';
+import { handleUsersFreeCartItems } from '../cart/actions';
+import { setRedirectPath } from '../navigation/actions';
 
 import {
   locationState as locationStateSelector,
@@ -31,7 +32,11 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
-import { isNewUser as isNewUserSelectors } from './selectors';
+import { cartId as cartIdSelector } from '../cart/selectors';
+import {
+  user as userSelector,
+  isNewUser as isNewUserSelectors,
+} from './selectors';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -43,7 +48,11 @@ import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
 import { Api as AdminApi } from '../../admin/api';
 
-import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
+import {
+  FioWalletDoublet,
+  PrivateRedirectLocationState,
+  User,
+} from '../../types';
 import { Action } from '../types';
 import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
@@ -78,7 +87,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
       }
     // Need to wait for result, so use hack with two yield
     // @ts-ignore
-    yield yield put<Action>(loadProfile());
+    yield yield put<Action>(loadProfile({ shouldHandleUsersFreeCart: true }));
     yield put<Action>(listNotifications());
 
     const locationState: PrivateRedirectLocationState = yield select(
@@ -97,6 +106,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
     }
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);
+      yield put<Action>(setRedirectPath(null));
     }
 
     yield put(closeLoginModal());
@@ -108,13 +118,26 @@ export function* profileSuccess(): Generator {
     for (const fioWallet of action.data.fioWallets) {
       yield put<Action>(refreshBalance(fioWallet.publicKey));
     }
+
+    const user: User = yield select(userSelector);
+    const cartId: string | null = yield select(cartIdSelector);
+
+    if (cartId && user && action.shouldHandleUsersFreeCart) {
+      yield put<Action>(
+        handleUsersFreeCartItems({ id: cartId, userId: user.id }),
+      );
+    }
   });
 }
 
 export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     api.client.removeToken();
-    yield put<Action>(clearOldCartItems());
+
+    const cartId: string | null = yield select(cartIdSelector);
+    if (cartId && action.shouldHandleUsersFreeCart) {
+      yield put<Action>(handleUsersFreeCartItems({ id: cartId }));
+    }
 
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);
@@ -138,6 +161,7 @@ export function* nonceSuccess(): Generator {
   yield takeEvery(NONCE_SUCCESS, function*(action: Action) {
     const {
       email,
+      edgeWallets,
       signature,
       nonce,
       otpKey,
@@ -150,6 +174,7 @@ export function* nonceSuccess(): Generator {
     yield put<Action>(
       login({
         email,
+        edgeWallets,
         signature,
         challenge: nonce,
         timeZone,

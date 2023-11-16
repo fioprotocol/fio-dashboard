@@ -11,7 +11,6 @@ import {
   CART_ITEM_PERIOD_OPTIONS,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import { getCartItemDescriptor } from '../../util/cart';
@@ -22,8 +21,11 @@ import classes from './Cart.module.scss';
 
 type Props = {
   item: CartItemType;
-  onDelete?: (id: string) => void;
-  onUpdatePeriod?: (id: string, period: number) => void;
+  onDelete?: (cartItem: CartItemType) => void;
+  onUpdatePeriod?: (data: {
+    cartItem: CartItemType;
+    newPeriod: number;
+  }) => void;
   isPeriodEditable?: boolean;
 };
 
@@ -32,17 +34,14 @@ export type CartItemProps = {
   costUsdc: string;
   costNativeFio?: number;
   domainType?: DomainItemType;
+  isFree?: boolean;
 };
 
 export const CartItemPrice = (props: CartItemProps) => {
-  const { costFio, costUsdc, costNativeFio, domainType } = props;
+  const { costFio, costUsdc, isFree } = props;
 
   return (
-    <PriceComponent
-      costFio={costFio}
-      costUsdc={costUsdc}
-      isFree={!costNativeFio || domainType === DOMAIN_TYPE.FREE}
-    />
+    <PriceComponent costFio={costFio} costUsdc={costUsdc} isFree={isFree} />
   );
 };
 
@@ -55,16 +54,20 @@ const CartItem: React.FC<Props> = props => {
     costFio,
     costUsdc,
     costNativeFio,
+    hasCustomDomainInCart,
+    isFree,
     showBadge,
     period,
     type,
     domainType,
   } = item;
   const shouldShowPeriod =
-    isPeriodEditable && CART_ITEM_TYPES_WITH_PERIOD.includes(type);
+    isPeriodEditable &&
+    CART_ITEM_TYPES_WITH_PERIOD.includes(type) &&
+    !hasCustomDomainInCart;
   const onPeriodChange = useCallback(
     (value: string) => {
-      onUpdatePeriod && onUpdatePeriod(item.id, +value);
+      onUpdatePeriod && onUpdatePeriod({ cartItem: item, newPeriod: +value });
     },
     [item, onUpdatePeriod],
   );
@@ -85,7 +88,11 @@ const CartItem: React.FC<Props> = props => {
             </span>
 
             <span className={classes.descriptor}>
-              {getCartItemDescriptor(item.type, item.period)}
+              {getCartItemDescriptor({
+                type: item.type,
+                period: item.period,
+                hasCustomDomainInCart: item.hasCustomDomainInCart,
+              })}
             </span>
           </div>
           {shouldShowPeriod && (
@@ -109,12 +116,13 @@ const CartItem: React.FC<Props> = props => {
               costUsdc={costUsdc}
               costNativeFio={costNativeFio}
               domainType={domainType}
+              isFree={isFree}
             />
           </div>
           {onDelete && (
             <CancelIcon
               className={classes.icon}
-              onClick={() => onDelete(item.id)}
+              onClick={() => onDelete(item)}
             />
           )}
         </div>

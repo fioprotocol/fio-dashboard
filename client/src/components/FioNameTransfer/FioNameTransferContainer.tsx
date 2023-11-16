@@ -21,10 +21,11 @@ import {
   MANAGE_PAGE_REDIRECT,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../constants/fio';
 
 import { hasFioAddressDelimiter, isDomain } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
+import MathOp from '../../util/math';
 
 import apis from '../../api';
 
@@ -100,12 +101,18 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
         ? {
             fioDomain: name,
             newOwnerKey,
-            maxFee: feePrice.nativeFio,
+            maxFee: new MathOp(feePrice.nativeFio)
+              .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+              .round(0)
+              .toNumber(),
           }
         : {
             fioAddress: name,
             newOwnerKey,
-            maxFee: feePrice.nativeFio,
+            maxFee: new MathOp(feePrice.nativeFio)
+              .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+              .round(0)
+              .toNumber(),
           },
     );
     return { ...result, newOwnerKey };

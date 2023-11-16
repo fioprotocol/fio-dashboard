@@ -1,26 +1,29 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
+import Loader from '../Loader/Loader';
+
 import { ExclamationIcon } from '../ExclamationIcon';
 import { PriceComponent } from '../PriceComponent';
 
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
+
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
-import {
-  cartHasOnlyFreeItems,
-  handleFreeAddressCart,
-  deleteCartItem,
-  getCartItemDescriptor,
-} from '../../util/cart';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import { cartHasOnlyFreeItems, getCartItemDescriptor } from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
@@ -28,50 +31,54 @@ import {
 
 import {
   CartItem,
-  DeleteCartItem,
-  Domain,
   FioWalletDoublet,
   LastAuthData,
-  Prices,
+  NativePrices,
   RedirectLinkData,
 } from '../../types';
 
 import classes from './AddressDomainCart.module.scss';
 
 type Props = {
+  cartId: string;
   cartItems: CartItem[];
-  domains: Domain[];
   fioWallets: FioWalletDoublet[];
-  prices: Prices;
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
-  roe: number | null;
   lastAuthData: LastAuthData;
-  setCartItems: (cartItems: CartItem[]) => void;
-  deleteItem: (params: DeleteCartItem) => void;
+  loading: boolean;
+  deleteItem: (data: {
+    id: string;
+    itemId: string;
+    item: CartItem;
+    prices: NativePrices;
+    roe: number;
+    userId?: string;
+  }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
 };
 
 const AddressDomainCart: React.FC<Props> = props => {
   const {
+    cartId,
     cartItems,
     deleteItem,
-    domains,
-    prices,
-    setCartItems,
     hasFreeAddress,
     isAuthenticated,
     setRedirectPath,
     showLoginModal,
-    roe,
     lastAuthData,
+    loading,
   } = props;
   const count = cartItems.length;
-  const domainsAmount = domains.length;
+
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+  const userId = useSelector(userIdSelector);
+
   const isCartEmpty = count === 0;
-  const cartHasFreeAddress = !!cartItems.find(({ allowFree }) => allowFree);
-  const cartItemsJson = JSON.stringify(cartItems);
+  const cartHasFreeAddress = !!cartItems.every(({ isFree }) => isFree);
 
   const history = useHistory();
 
@@ -99,27 +106,16 @@ const AddressDomainCart: React.FC<Props> = props => {
     history.push(route);
   };
 
-  const handleDeleteItem = (id: string) => {
-    deleteCartItem({
-      id,
-      prices,
-      cartItems,
+  const handleDeleteItem = (item: CartItem) => {
+    deleteItem({
+      id: cartId,
+      itemId: item.id,
+      item,
+      prices: prices?.nativeFio,
       roe,
-      deleteItem,
-      setCartItems,
+      userId,
     });
   };
-
-  useEffect(() => {
-    if (domainsAmount === 0 && hasFreeAddress === null) return;
-    handleFreeAddressCart({
-      cartItems: JSON.parse(cartItemsJson),
-      prices,
-      hasFreeAddress,
-      setCartItems,
-      roe,
-    });
-  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, setCartItems, roe]);
 
   return (
     <CartSmallContainer isAquaColor={true}>
@@ -128,13 +124,19 @@ const AddressDomainCart: React.FC<Props> = props => {
         <h5 className={classes.title}>Cart</h5>
       </div>
       {isCartEmpty ? (
-        <div className={classes.textContainer}>
-          <h5 className={classes.textTitle}>Your Cart is Empty</h5>
-          <p className={classes.text}>
-            Add a FIO domain to start your journey in the world of
-            interoperability
-          </p>
-        </div>
+        <>
+          {loading ? (
+            <Loader className="mt-4" />
+          ) : (
+            <div className={classes.textContainer}>
+              <h5 className={classes.textTitle}>Your Cart is Empty</h5>
+              <p className={classes.text}>
+                Add a FIO domain to start your journey in the world of
+                interoperability
+              </p>
+            </div>
+          )}
+        </>
       ) : (
         <div>
           {!isEmpty(cartItems) &&
@@ -149,28 +151,31 @@ const AddressDomainCart: React.FC<Props> = props => {
                     <p className={classes.itemName}>{item.domain}</p>
                   )}
                   <p className={classes.itemDescriptor}>
-                    <span>{getCartItemDescriptor(item.type, item.period)}</span>
+                    <span>
+                      {getCartItemDescriptor({
+                        type: item.type,
+                        period: item.period,
+                        hasCustomDomainInCart: item.hasCustomDomainInCart,
+                      })}
+                    </span>
                   </p>
                   <div className={classes.itemPrice}>
                     <span className="boldText">Cost: </span>
                     <PriceComponent
                       costFio={item.costFio}
                       costUsdc={item.costUsdc}
-                      isFree={
-                        !Number.isFinite(item.costNativeFio) ||
-                        item.domainType === DOMAIN_TYPE.FREE ||
-                        item.domainType === DOMAIN_TYPE.PRIVATE
-                      }
+                      isFree={item.isFree}
                     />
                   </div>
                 </div>
 
                 <DeleteIcon
                   className={classes.deleteIcon}
-                  onClick={() => handleDeleteItem(item.id)}
+                  onClick={() => handleDeleteItem(item)}
                 />
               </div>
             ))}
+          {loading && <Loader className="mt-3 mb-3" />}
           {!isEmpty(cartItems) && !cartHasOnlyFreeItems(cartItems) && (
             <>
               <hr />

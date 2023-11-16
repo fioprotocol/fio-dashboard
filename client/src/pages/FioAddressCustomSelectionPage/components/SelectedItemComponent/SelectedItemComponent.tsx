@@ -36,7 +36,11 @@ export const SelectedItemComponent: React.FC<SelectedItemComponentProps> = props
         hasWhiteBackground
         hasMaxWidth
         actionComponent={
-          <DomainTypeBadge domainType={selectedItemProps.domainType} />
+          <DomainTypeBadge
+            domainType={selectedItemProps.domainType}
+            isFree={selectedItemProps.isFree}
+            hasCustomDomainInCart={selectedItemProps.hasCustomDomainInCart}
+          />
         }
       />
       <InfoBadge

@@ -8,7 +8,7 @@ const CHUNK_SIZE = 2;
 const DELAY_BETWEEN_CHUNKS = 500;
 const FIO_NFT_POLYGON_CONTRACT = process.env.FIO_NFT_POLYGON_CONTRACT || '';
 
-class GetMoralisNfts {
+class GetMoralis {
   async init() {
     if (!Moralis.Core._isStarted)
       await Moralis.start({
@@ -56,8 +56,19 @@ class GetMoralisNfts {
     }
   }
 
-  async getWalletNfts({ address, chainName = config.nfts.defaultChainName, cursor }) {
+  async getWalletNfts({
+    address,
+    contractAddresses,
+    chainName = config.nfts.defaultChainName,
+    cursor,
+  }) {
     const chain = EvmChain[chainName];
+
+    const tokenAddresses =
+      contractAddresses && contractAddresses.length
+        ? contractAddresses
+        : [FIO_NFT_POLYGON_CONTRACT];
+
     return await Moralis.EvmApi.nft.getWalletNFTs({
       address,
       chain,
@@ -65,11 +76,16 @@ class GetMoralisNfts {
       format: 'decimal',
       mediaItems: false,
       normalizeMetadata: true,
-      tokenAddresses: [FIO_NFT_POLYGON_CONTRACT],
+      tokenAddresses,
     });
   }
 
-  async getAllWalletNfts({ address, chainName = config.nfts.defaultChainName, cursor }) {
+  async getAllWalletNfts({
+    address,
+    contractAddresses,
+    chainName = config.nfts.defaultChainName,
+    cursor,
+  }) {
     await this.init();
     const nftsList = [];
 
@@ -77,7 +93,13 @@ class GetMoralisNfts {
     if (cursor) {
       walletNftsRes = await cursor.next();
     } else {
-      walletNftsRes = (await this.getWalletNfts({ address, chainName, cursor })) || {};
+      walletNftsRes =
+        (await this.getWalletNfts({
+          address,
+          contractAddresses,
+          chainName,
+          cursor,
+        })) || {};
     }
 
     const walletNftsResData = walletNftsRes.toJSON();
@@ -173,6 +195,20 @@ class GetMoralisNfts {
       tokenId,
     });
   }
+
+  async getAllTokens({ chainName, address }) {
+    try {
+      await this.init();
+      const chain = EvmChain[chainName];
+      return await Moralis.EvmApi.token.getWalletTokenBalances({
+        address,
+        chain,
+      });
+    } catch (error) {
+      logger.error(error);
+      throw Error(error);
+    }
+  }
 }
 
-export default new GetMoralisNfts();
+export default new GetMoralis();

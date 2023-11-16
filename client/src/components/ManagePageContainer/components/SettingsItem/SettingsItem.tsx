@@ -12,8 +12,7 @@ import NotificationBadge from '../../../NotificationBadge';
 import { LINKS } from '../../../../constants/labels';
 import { ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
-
-import { isDomainExpired } from '../../../../util/fio';
+import { WARNING_CONTENT } from '../../../../pages/FioAddressManagePage/constants';
 
 import { FioNameItemProps, FioWalletDoublet } from '../../../../types';
 
@@ -22,11 +21,13 @@ import classes from './SettingsItem.module.scss';
 type FchSettingsItemProps = {
   fioNameItem: FioNameItemProps;
   fioWallets: FioWalletDoublet[];
+  isExpired: boolean;
 };
 
 type DomainSettingsItemProps = {
   fioNameItem: FioNameItemProps;
   fioWallets: FioWalletDoublet[];
+  isExpired: boolean;
 };
 
 type DomainsWatchlistSettingsItemProps = {
@@ -38,7 +39,7 @@ type DomainsWatchlistSettingsItemProps = {
 };
 
 export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
-  const { fioNameItem, fioWallets } = props;
+  const { fioNameItem, fioWallets, isExpired } = props;
 
   const { name } = fioNameItem;
   const { publicKey, name: walletName } =
@@ -51,6 +52,12 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
     <div className={classes.settingsContainer}>
       <PageTitle link={LINKS.FIO_ADDRESSES_SETTINGS} isVirtualPage />
       <h3 className={classes.title}>Advanced Settings</h3>
+      <NotificationBadge
+        show={isExpired}
+        message={WARNING_CONTENT.EXPIRED_DOMAINS.message}
+        title={WARNING_CONTENT.EXPIRED_DOMAINS.title}
+        type={BADGE_TYPES.WARNING}
+      />
       <h5 className={classes.subtitle}>FIO Handle Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
@@ -75,7 +82,9 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
           to={`${ROUTES.FIO_ADDRESS_OWNERSHIP}?${QUERY_PARAMS_NAMES.NAME}=${name}`}
           className={classes.buttonLink}
         >
-          <Button className={classes.button}>Start Transfer</Button>
+          <Button className={classes.button} disabled={isExpired}>
+            Start Transfer
+          </Button>
         </Link>
       </div>
     </div>
@@ -83,16 +92,14 @@ export const FchSettingsItem: React.FC<FchSettingsItemProps> = props => {
 };
 
 export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
-  const { fioNameItem, fioWallets } = props;
+  const { fioNameItem, fioWallets, isExpired } = props;
 
-  const { name: fioName, expiration } = fioNameItem;
+  const { name: fioName } = fioNameItem;
   const { publicKey, name: walletName } =
     fioWallets.find(
       (fioWallet: FioWalletDoublet) =>
         fioWallet.publicKey === fioNameItem.walletPublicKey,
     ) || {};
-
-  const isExpired = isDomainExpired(fioName, expiration);
 
   return (
     <div className={classes.settingsContainer}>

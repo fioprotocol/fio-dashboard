@@ -1,27 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { deleteItem, setCartItems, setWallet } from '../../redux/cart/actions';
+import { setWallet, recalculateOnPriceUpdate } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
+  cartId as cartIdSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
+  loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
 import {
   fioWallets as fioWalletsSelector,
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
-import {
-  isAuthenticated,
-  hasFreeAddress as hasFreeAddressSelector,
-} from '../../redux/profile/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -29,14 +28,8 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
-import {
-  cartHasOnlyFreeItems,
-  cartItemsToOrderItems,
-  handleFreeAddressCart,
-  totalCost,
-} from '../../util/cart';
+import { handlePriceForMultiYearItems, totalCost } from '../../util/cart';
 import MathOp from '../../util/math';
-import { convertFioPrices } from '../../util/prices';
 import {
   fireAnalyticsEvent,
   getGAClientId,
@@ -49,52 +42,51 @@ import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
-  CART_ITEM_TYPES_WITH_PERIOD,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { log } from '../../util/general';
-import { handlePriceForMultiYearFchWithCustomDomain } from '../../util/fio';
+import { isDomainExpired } from '../../util/fio';
 import apis from '../../api';
 
 import { FioRegPricesResponse } from '../../api/responses';
 import {
-  CartItem as CartItemType,
   CartItem,
-  DeleteCartItem,
   FioWalletDoublet,
   IncomePrices,
   PaymentProvider,
   Prices,
   WalletBalancesItem,
 } from '../../types';
+import { convertFioPrices } from '../../util/prices';
 
 type UseContextReturnType = {
+  cartId: string;
   cartItems: CartItem[];
   hasGetPricesError: boolean;
   error?: string | null;
   hasLowBalance?: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
+  loadingCart: boolean;
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   paymentWalletPublicKey: string;
   prices: Prices;
   roe: number;
+  showExpiredDomainWarningBadge: boolean;
   totalCartAmount: string;
+  totalCartUsdcAmount: string;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
   walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
   onPaymentChoose: (paymentProvider: PaymentProvider) => Promise<void>;
-  deleteItem: (data: DeleteCartItem) => void;
-  setCartItems: (cartItems: CartItemType[]) => void;
 };
 
 export const useContext = (): UseContextReturnType => {
+  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const hasGetPricesError = useSelector(hasGetPricesErrorSelector);
   const isAuth = useSelector(isAuthenticated);
   const loading = useSelector(loadingSelector);
@@ -109,6 +101,7 @@ export const useContext = (): UseContextReturnType => {
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
   );
+  const loadingCart = useSelector(loadingCartSelector);
 
   const dispatch = useDispatch();
 
@@ -123,26 +116,13 @@ export const useContext = (): UseContextReturnType => {
     selectedPaymentProvider,
     setSelectedPaymentProvider,
   ] = useState<PaymentProvider | null>(null);
-
-  const handleFreeAddressCartFn = () =>
-    handleFreeAddressCart({
-      cartItems,
-      hasFreeAddress,
-      prices,
-      roe,
-      setCartItems: cartItems => dispatch(setCartItems(cartItems)),
-    });
+  const [
+    showExpiredDomainWarningBadge,
+    toggleShowExpiredDomainWarningBadge,
+  ] = useState<boolean>(false);
 
   const isFree =
-    !isEmpty(cartItems) &&
-    ((!hasFreeAddress &&
-      cartItems.length === 1 &&
-      cartItems.every(
-        item =>
-          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
-          !!item.address,
-      )) ||
-      cartHasOnlyFreeItems(cartItems));
+    cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree);
 
   const {
     costNativeFio: totalCartNativeAmount,
@@ -156,10 +136,6 @@ export const useContext = (): UseContextReturnType => {
   const error = isCartPrivateDomainsError
     ? 'Some FIO Handles in your cart are on private FIO Domains controlled by different FIO Wallets and therefore cannot be purchased in a single transaction. Please purchase them one at a time.'
     : null;
-
-  const {
-    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
-  } = prices;
 
   // Check if FIO Wallet has enough balance when cart has items with private domains
   let hasLowBalanceForPrivateDomains = false;
@@ -229,57 +205,57 @@ export const useContext = (): UseContextReturnType => {
     const {
       pricing: {
         nativeFio: {
-          address: updatedFioAddressPrice = nativeFioAddressPrice,
-          domain: updatedFioDomainPrice = nativeFioDomainPrice,
-          renewDomain: updatedRenewFioDomainPrice = nativeFioDomainPrice,
-          addBundles: updatedAddBundlesPrice = 0,
-        } = {},
+          address: updatedFioAddressPrice,
+          renewDomain: updatedRenewFioDomainPrice,
+          addBundles: updatedAddBundlesPrice,
+        },
         usdtRoe: updatedRoe = roe,
-      } = {},
+      },
     } = updatedPrices || {};
 
-    const updatedCartItems = cartItems.map(item => {
-      if (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE)
-        return item;
+    const updatedCartItems = cartItems.map(cartItem => {
+      const { isFree, hasCustomDomainInCart, period, type } = cartItem;
 
-      const retObj = { ...item };
+      if (isFree && type === CART_ITEM_TYPE.ADDRESS) return cartItem;
 
-      if (item.type === CART_ITEM_TYPE.ADD_BUNDLES) {
-        retObj.costNativeFio = updatedAddBundlesPrice;
-      } else if (item.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-        retObj.costNativeFio = updatedRenewFioDomainPrice;
-      } else if (!item.address) {
-        retObj.costNativeFio = updatedFioDomainPrice;
-      } else {
-        retObj.costNativeFio = updatedFioAddressPrice;
-      }
+      let costNativeFio = cartItem.costNativeFio;
 
-      const isCustomDomainItem =
-        !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM;
-
-      if (isCustomDomainItem) {
-        retObj.costNativeFio = new MathOp(retObj.costNativeFio)
-          .add(updatedFioDomainPrice)
-          .toNumber();
-      }
-
-      const period = retObj.period || 1;
-      const fioPrices = CART_ITEM_TYPES_WITH_PERIOD.includes(retObj.type)
-        ? convertFioPrices(
-            handlePriceForMultiYearFchWithCustomDomain({
-              costNativeFio: retObj.costNativeFio,
-              nativeFioAddressPrice:
-                isCustomDomainItem && updatedFioAddressPrice,
+      switch (type) {
+        case CART_ITEM_TYPE.ADD_BUNDLES:
+          costNativeFio = updatedAddBundlesPrice;
+          break;
+        case CART_ITEM_TYPE.DOMAIN_RENEWAL:
+          costNativeFio = new MathOp(updatedRenewFioDomainPrice)
+            .mul(period)
+            .toNumber();
+          break;
+        case CART_ITEM_TYPE.ADDRESS:
+          costNativeFio = updatedFioAddressPrice;
+          break;
+        case CART_ITEM_TYPE.DOMAIN:
+          costNativeFio = handlePriceForMultiYearItems({
+            prices: updatedPrices?.pricing?.nativeFio,
+            period,
+          });
+          break;
+        case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
+          if (hasCustomDomainInCart) {
+            costNativeFio = updatedFioAddressPrice;
+          } else {
+            costNativeFio = handlePriceForMultiYearItems({
+              includeAddress: true,
+              prices: updatedPrices?.pricing?.nativeFio,
               period,
-            }),
-            roe,
-          )
-        : convertFioPrices(retObj.costNativeFio, updatedRoe);
+            });
+          }
+          break;
+        default:
+          break;
+      }
 
-      retObj.costFio = fioPrices.fio;
-      retObj.costUsdc = fioPrices.usdc;
+      const { fio, usdc } = convertFioPrices(costNativeFio, updatedRoe);
 
-      return retObj;
+      return { ...cartItem, costNativeFio, costFio: fio, costUsdc: usdc };
     });
 
     const {
@@ -297,18 +273,20 @@ export const useContext = (): UseContextReturnType => {
   };
 
   const allowCheckout = async (): Promise<boolean> => {
-    if (totalCartNativeAmount > 0) {
+    if (
+      totalCartNativeAmount > 0 ||
+      !cartItems.every(cartItem => cartItem.isFree)
+    ) {
       try {
         const updatedPrices = await getFreshPrices();
 
         const {
-          updatedTotalPrice,
-          updatedFree,
-          updatedCostUsdc,
-          updatedCartItems,
-        } = recalculateBalance(updatedPrices);
+          pricing: { usdtRoe: updatedRoe },
+        } = updatedPrices || {};
 
-        if (updatedFree) return true;
+        const { updatedTotalPrice, updatedCostUsdc } = recalculateBalance(
+          updatedPrices,
+        );
 
         const isEqualPrice =
           new MathOp(totalCartNativeAmount).eq(updatedTotalPrice) &&
@@ -319,7 +297,13 @@ export const useContext = (): UseContextReturnType => {
         if (isEqualPrice) return true;
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PRICE_CHANGE);
 
-        dispatch(setCartItems(updatedCartItems));
+        dispatch(
+          recalculateOnPriceUpdate({
+            id: cartId,
+            prices: updatedPrices?.pricing?.nativeFio,
+            roe: updatedRoe,
+          }),
+        );
         dispatch(getPrices());
 
         return false;
@@ -333,15 +317,13 @@ export const useContext = (): UseContextReturnType => {
   };
 
   const checkout = async (paymentProvider: PaymentProvider) => {
-    const { costUsdc: totalUsdc } = totalCost(cartItems, roe);
-
     try {
       await apis.orders.create({
-        total: totalUsdc,
+        cartId,
         roe,
         publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
         paymentProcessor: paymentProvider,
-        items: cartItemsToOrderItems(cartItems, prices, roe),
+        prices: prices?.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
@@ -360,6 +342,57 @@ export const useContext = (): UseContextReturnType => {
       return await checkout(paymentProvider);
     setSelectedPaymentProvider(null);
   };
+
+  const getDomainExpiration = useCallback(async (domainName: string) => {
+    try {
+      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
+
+      return expiration || null;
+    } catch (err) {
+      log.error(err);
+    }
+  }, []);
+
+  const checkIsDomainExpired = useCallback(
+    async (domainName: string) => {
+      if (!domainName) return null;
+
+      const expiration = await getDomainExpiration(domainName);
+
+      return expiration && isDomainExpired(domainName, expiration);
+    },
+    [getDomainExpiration],
+  );
+
+  const hasExpiredDomain = useCallback(async () => {
+    let hasExpiredDomain = false;
+
+    const domains = cartItems
+      .filter(cartItem => {
+        const { domain, type } = cartItem;
+        return (
+          domain &&
+          ![CART_ITEM_TYPE.DOMAIN, CART_ITEM_TYPE.DOMAIN_RENEWAL].includes(type)
+        );
+      })
+      .map(cartItem => cartItem.domain);
+
+    const uniqueDomains = [...new Set(domains)];
+
+    for (const domain of uniqueDomains) {
+      const isExpired = await checkIsDomainExpired(domain);
+      if (isExpired) {
+        hasExpiredDomain = isExpired;
+        break;
+      }
+    }
+
+    toggleShowExpiredDomainWarningBadge(hasExpiredDomain);
+  }, [checkIsDomainExpired, cartItems]);
+
+  useEffect(() => {
+    hasExpiredDomain();
+  }, [hasExpiredDomain]);
 
   useEffectOnce(() => {
     dispatch(getPrices());
@@ -388,14 +421,6 @@ export const useContext = (): UseContextReturnType => {
       dispatch(setWallet(highestBalanceWalletPubKey));
   }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
 
-  useEffectOnce(
-    () => {
-      if (isAuth) handleFreeAddressCartFn();
-    },
-    [isAuth],
-    !loading,
-  );
-
   useEffect(() => {
     if (!isAuth) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
@@ -403,24 +428,25 @@ export const useContext = (): UseContextReturnType => {
   }, [history, isAuth]);
 
   return {
+    cartId,
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
     hasLowBalance,
+    loadingCart,
     walletCount,
     isFree,
+    isPriceChanged,
     selectedPaymentProvider,
     disabled: loading || isUpdatingPrices || !!selectedPaymentProvider,
     totalCartAmount,
-    isPriceChanged,
+    totalCartUsdcAmount,
     totalCartNativeAmount,
     userWallets,
     paymentWalletPublicKey,
     prices,
     roe,
     error,
+    showExpiredDomainWarningBadge,
     onPaymentChoose,
-    deleteItem: (data: DeleteCartItem) => dispatch(deleteItem(data)),
-    setCartItems: (cartItems: CartItemType[]) =>
-      dispatch(setCartItems(cartItems)),
   };
 };

@@ -1,4 +1,28 @@
 @font-face {
+  font-family: 'Inter Bold';
+  src: url('../fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Bold Italic';
+  src: url('../fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Regular';
+  src: url('../fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Proxima Nova Regular';
   src: url('../fonts/Proxima-Nova-Regular.otf') format('truetype');
   font-weight: normal;

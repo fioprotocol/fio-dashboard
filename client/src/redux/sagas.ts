@@ -10,7 +10,12 @@ import {
 } from './profile/sagas';
 import { edgeLoginSuccess, edgePinUpdateSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
-import { cartWasCleared } from './cart/sagas';
+import {
+  addItem,
+  cartWasCleared,
+  deleteItem,
+  updatePeriodItem,
+} from './cart/sagas';
 import {
   containedFlowActionSuccess,
   containedFlowResultsClose,
@@ -54,5 +59,8 @@ export default function* rootSaga(history: History, api: Api) {
     purchaseResultsClose(history),
     getRefProfileSuccess(),
     cartWasCleared(),
+    addItem(),
+    deleteItem(),
+    updatePeriodItem(),
   ]);
 }

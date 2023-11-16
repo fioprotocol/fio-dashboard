@@ -4,6 +4,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { makeRegistrationOrder } from '../middleware';
 import { sleep } from '../../../utils';
+import MathOp from '../../../util/math';
 
 import {
   CART_ITEM_TYPE,
@@ -17,6 +18,7 @@ import {
 import apis from '../../../api';
 import {
   ACTIONS,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
 } from '../../../constants/fio';
 
@@ -35,7 +37,7 @@ type Props = {
   fee?: number | null;
 };
 
-const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 7000;
+const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
@@ -48,7 +50,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    const { cartItems, prices, isFreeAllowed } = data;
+    const { cartItems, prices } = data;
 
     const result: RegistrationResult = {
       errors: [],
@@ -60,8 +62,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
 
     const registrations = makeRegistrationOrder(
       [...cartItems],
-      prices.nativeFio,
-      isFreeAllowed,
+      prices?.nativeFio,
     );
     if (keys.private) {
       apis.fio.setWalletFioSdk(keys);
@@ -71,35 +72,75 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         let signedTx: SignedTxArgs;
         if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+          const hasTheSameItem = registrations.some(
+            registrationItem =>
+              registrationItem.fioName === registration.fioName &&
+              registrationItem.cartItemId !== registration.cartItemId &&
+              registrationItem.type === CART_ITEM_TYPE.ADD_BUNDLES,
+          );
+
+          if (hasTheSameItem) {
+            await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS);
+          }
+
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.addBundledTransactions,
             {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
-          await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          const hasTheSameItem = registrations.some(
+            registrationItem =>
+              registrationItem.fioName === registration.fioName &&
+              registrationItem.iteration > 0 &&
+              registrationItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
+          );
+
+          if (hasTheSameItem) {
+            await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          }
+
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.registerFioDomain,
             {
               fioDomain: registration.fioName,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.domainTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
               ownerPublicKey: keys.public,
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-          await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          const hasTheSameItem = registrations.some(
+            registrationItem =>
+              registrationItem.fioName === registration.fioName &&
+              registrationItem.iteration > 0 &&
+              registrationItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
+          );
+
+          if (hasTheSameItem) {
+            await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          }
+
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.renewFioDomain,
             {
               fioDomain: registration.fioName,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -109,7 +150,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             ACTIONS.registerFioAddress,
             {
               fioAddress: registration.fioName,
-              maxFee: registration.fee,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },

@@ -12,7 +12,6 @@ import { CartItem } from '../../types';
 export const makeRegistrationOrder = (
   cartItems: CartItem[],
   fees: { address: number; domain: number },
-  isFreeAllowed: boolean,
 ): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
@@ -22,11 +21,11 @@ export const makeRegistrationOrder = (
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
       isFree:
-        isFreeAllowed &&
-        (!cartItem.costNativeFio ||
-          cartItem.domainType === DOMAIN_TYPE.FREE ||
+        cartItem.isFree &&
+        (cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE ||
           cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
-        !!cartItem.address,
+        !!cartItem.address &&
+        cartItem.type === CART_ITEM_TYPE.ADDRESS,
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
       )
@@ -38,8 +37,8 @@ export const makeRegistrationOrder = (
     };
 
     if (
-      !cartItem.costNativeFio ||
-      cartItem.domainType === DOMAIN_TYPE.FREE ||
+      cartItem.isFree ||
+      cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE ||
       cartItem.domainType === DOMAIN_TYPE.PRIVATE ||
       !cartItem.address
     ) {

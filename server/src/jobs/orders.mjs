@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import '../db';
 
 import {
+  Domain,
   OrderItem,
   FioAccountProfile,
   BlockchainTransaction,
@@ -13,6 +14,7 @@ import {
   FreeAddress,
   Var,
   PublicWalletData,
+  ReferrerProfile,
   Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
@@ -31,6 +33,7 @@ import {
   INSUFFICIENT_FUNDS_ERR_MESSAGE,
   INSUFFICIENT_BALANCE,
 } from '../external/fio.mjs';
+import { convertFioPrices } from '../utils/cart.mjs';
 
 import {
   FIO_ACCOUNT_TYPES,
@@ -276,6 +279,32 @@ class OrdersJob extends CommonJob {
         paymentId: refundPayment.id,
       });
 
+      if (new MathOp(price).gt(orderItemProps.total)) {
+        refundPayment.status = Payment.STATUS.CANCELLED;
+        const errorMessage = 'Refund price is bigger than total order price';
+
+        await refundPayment.save();
+        await PaymentEventLog.create({
+          status: PaymentEventLog.STATUS.FAILED,
+          statusNotes: errorMessage,
+          paymentId: refundPayment.id,
+        });
+        throw new Error(errorMessage);
+      }
+
+      if (!price || price === '0' || price === 0) {
+        refundPayment.status = Payment.STATUS.CANCELLED;
+        const errorMessage = 'Refund price is 0';
+
+        await refundPayment.save();
+        await PaymentEventLog.create({
+          status: PaymentEventLog.STATUS.FAILED,
+          statusNotes: errorMessage,
+          paymentId: refundPayment.id,
+        });
+        throw new Error(errorMessage);
+      }
+
       let refundTx;
       switch (payment.processor) {
         case Payment.PROCESSOR.STRIPE: {
@@ -376,18 +405,28 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async registerFree(
+  async registerFree({
     fioName,
     auth,
     orderItem,
-    { fallbackFreeFioActor, fallbackFreeFioPermision },
+    fallbackFreeFioActor,
+    fallbackFreeFioPermision,
     processOrderItem,
-  ) {
-    const { id, blockchainTransactionId, label, orderId, userId } = orderItem;
+    existingDashboardDomain,
+  }) {
+    const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    const userHasFreeAddress = await FreeAddress.getItem({ userId });
+    const userHasFreeAddress = await FreeAddress.getItems({ userId });
+    const existingUsersFreeAddress =
+      userHasFreeAddress &&
+      userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
 
-    if (userHasFreeAddress) {
+    if (
+      userHasFreeAddress &&
+      userHasFreeAddress.length &&
+      (!existingDashboardDomain.isFirstRegFree ||
+        (existingDashboardDomain.isFirstRegFree && existingUsersFreeAddress))
+    ) {
       logger.error(USER_HAS_FREE_ERROR);
 
       await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
@@ -797,9 +836,19 @@ class OrdersJob extends CommonJob {
     await fioApi.getRawAbi();
     const roe = await getROE();
     const feesVar = await Var.getByKey(FEES_VAR_KEY);
+    const prices = await fioApi.getPrices(true);
+    const dashboardDomains = await Domain.getDashboardDomains();
+    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+
     this.feesJson = feesVar ? JSON.parse(feesVar.value) : {};
     this.feesUpdatedAt = feesVar ? feesVar.updatedAt : null;
 
+    const {
+      addBundles: addBundlesPrice,
+      address: addressPrice,
+      domain: domainPrice,
+      renewDomain: renewDomainPrice,
+    } = prices;
     // get order items ready to process
     const items = await OrderItem.getActionRequired();
 
@@ -840,6 +889,7 @@ class OrdersJob extends CommonJob {
         price,
         blockchainTransactionId,
         label,
+        nativeFio,
         freeActor,
         freePermission,
         paidActor,
@@ -869,18 +919,61 @@ class OrdersJob extends CommonJob {
           auth = { actor, permission };
         }
 
+        const existingDashboardDomain = [
+          ...dashboardDomains,
+          ...allRefProfileDomains,
+        ].find(dashboardDomain => dashboardDomain.name === domain);
+
         // Handle free addresses
-        if ((!price || price === '0') && address && !domainOwner) {
-          return this.registerFree(
+        if (
+          (!price || price === '0') &&
+          existingDashboardDomain &&
+          !existingDashboardDomain.isPremium &&
+          action === FIO_ACTIONS.registerFioAddress &&
+          !domainOwner
+        ) {
+          return this.registerFree({
             fioName,
-            freeAuth,
+            auth: freeAuth,
             orderItem,
-            {
-              fallbackFreeFioActor,
-              fallbackFreeFioPermision,
-            },
+            fallbackFreeFioActor,
+            fallbackFreeFioPermision,
+            existingDashboardDomain,
             processOrderItem,
-          );
+          });
+        }
+
+        if (
+          (!price || price === '0' || !nativeFio || nativeFio === '0') &&
+          !domainOwner
+        ) {
+          let nativeFio = null;
+
+          switch (action) {
+            case FIO_ACTIONS.registerFioAddress:
+              nativeFio = addressPrice;
+              break;
+            case FIO_ACTIONS.addBundledTransactions:
+              nativeFio = addBundlesPrice;
+              break;
+            case FIO_ACTIONS.registerFioDomain:
+              nativeFio = domainPrice;
+              break;
+            case FIO_ACTIONS.renewFioDomain:
+              nativeFio = renewDomainPrice;
+              break;
+            default:
+              null;
+          }
+          const { usdc } = convertFioPrices(nativeFio, roe);
+
+          if (!nativeFio)
+            throw new Error('Item price should not be free. Updated prices failed.');
+
+          orderItem.price = usdc;
+          orderItem.nativeFio = nativeFio;
+
+          await OrderItem.update({ price: usdc, nativeFio }, { where: { id } });
         }
 
         // Check if fee/roe changed and handle changes

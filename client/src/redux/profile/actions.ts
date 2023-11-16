@@ -1,6 +1,7 @@
 import { Ecc } from '@fioprotocol/fiojs';
 
 import { RouterProps } from 'react-router';
+import { History } from 'history';
 
 import { Api } from '../../api';
 import { FioWalletDoublet, WalletKeysObj } from '../../types';
@@ -24,28 +25,51 @@ export const PROFILE_REQUEST = `${prefix}/PROFILE_REQUEST`;
 export const PROFILE_SUCCESS = `${prefix}/PROFILE_SUCCESS`;
 export const PROFILE_FAILURE = `${prefix}/PROFILE_FAILURE`;
 
-export const loadProfile = (): CommonPromiseAction => ({
+export const loadProfile = ({
+  shouldHandleUsersFreeCart,
+}: {
+  shouldHandleUsersFreeCart?: boolean;
+}): CommonPromiseAction => ({
   types: [PROFILE_REQUEST, PROFILE_SUCCESS, PROFILE_FAILURE],
   promise: (api: Api) => api.auth.profile(),
+  shouldHandleUsersFreeCart,
 });
 
 export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;
 export const NONCE_SUCCESS = `${prefix}/NONCE_SUCCESS`;
 export const NONCE_FAILURE = `${prefix}/NONCE_FAILURE`;
 
-export const makeNonce = (
-  username: string,
-  keys: WalletKeysObj,
-  otpKey?: string,
-  voucherId?: string,
-  isPinLogin?: boolean,
-  isSignUp?: boolean,
-): CommonPromiseAction => ({
+export const makeNonce = ({
+  edgeWallets,
+  username,
+  keys,
+  otpKey,
+  voucherId,
+  isPinLogin,
+  isSignUp,
+}: {
+  edgeWallets: FioWalletDoublet[];
+  username: string;
+  keys: WalletKeysObj;
+  otpKey?: string;
+  voucherId?: string;
+  isPinLogin?: boolean;
+  isSignUp?: boolean;
+}): CommonPromiseAction => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
     const { nonce, email } = await api.auth.nonce(username);
     const signature: string = Ecc.sign(nonce, Object.values(keys)[0].private);
-    return { email, nonce, signature, otpKey, voucherId, isPinLogin, isSignUp };
+    return {
+      email,
+      edgeWallets,
+      nonce,
+      signature,
+      otpKey,
+      voucherId,
+      isPinLogin,
+      isSignUp,
+    };
   },
 });
 
@@ -55,6 +79,7 @@ export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
 export const login = ({
   email,
+  edgeWallets,
   signature,
   challenge,
   referrerCode,
@@ -65,6 +90,7 @@ export const login = ({
   isSignUp,
 }: {
   email: string;
+  edgeWallets: FioWalletDoublet[];
   signature: string;
   challenge: string;
   referrerCode?: string;
@@ -76,7 +102,14 @@ export const login = ({
 }): CommonPromiseAction => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: (api: Api) =>
-    api.auth.login(email, signature, challenge, referrerCode, timeZone),
+    api.auth.login({
+      email,
+      edgeWallets,
+      signature,
+      challenge,
+      referrerCode,
+      timeZone,
+    }),
   otpKey,
   voucherId,
   isPinLogin,
@@ -108,13 +141,19 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = (
-  { history }: RouterProps,
-  redirect: string = '',
-): CommonPromiseAction => ({
+export const logout = ({
+  history,
+  redirect = '',
+  shouldHandleUsersFreeCart,
+}: {
+  history?: History;
+  redirect?: string;
+  shouldHandleUsersFreeCart?: boolean;
+}): CommonPromiseAction => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: (api: Api) => api.auth.logout(),
   redirect,
+  shouldHandleUsersFreeCart,
 });
 
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;

@@ -76,6 +76,7 @@
     background-color: $black-cow;
     .placeholder {
       color: $white;
+      white-space: nowrap;
     }
 
     svg {

@@ -9,6 +9,7 @@ import { CartItem } from '../../types';
 
 type Props = {
   actionComponent: React.ReactNode;
+  disabled?: boolean;
   isDesktop: boolean;
   isSquareShape?: boolean;
   hasShortNamePart?: boolean;
