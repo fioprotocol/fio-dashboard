@@ -43,7 +43,6 @@ import { AnyObject } from '../../types';
 type UseContextProps = {
   disabled: boolean;
   gatedChainName?: string;
-  hasFioHandleInfoMessage: boolean;
   hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
   infoMessage: string;
@@ -103,9 +102,6 @@ export const useContext = (): UseContextProps => {
   const [hasVerifiedError, toggleHasVerifiedError] = useState<boolean>(false);
   const [verifyLoading, toggleVerifyLoading] = useState<boolean>(false);
   const [hasFioVerificactionError, toggleFioVerificationError] = useState<
-    boolean
-  >(false);
-  const [hasFioHandleInfoMessage, toggleHasFioHandleInfoMessage] = useState<
     boolean
   >(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
@@ -272,40 +268,23 @@ export const useContext = (): UseContextProps => {
     setIsWalletConnected,
   ]);
 
-  const isValid = (address: string) => {
-    if (!address) return;
-    return !(
-      address.startsWith('_') ||
-      address.endsWith('_') ||
-      address.startsWith('-') ||
-      address.endsWith('-')
-    );
-  };
-
   const onFocusOut = (value: string) => {
     if (!value) return;
 
-    let newValue = value;
+    const isNotValidAddressError = validateFioAddress(
+      value,
+      refDomainObj?.name,
+    );
 
-    if (!isValid(value)) {
+    if (isNotValidAddressError) {
       toggleFioVerificationError(true);
-      setInfoMessage(
-        'Handles which start or end with underscore or dash are not supported at this time.',
-      );
+      setInfoMessage(isNotValidAddressError);
       return value;
-    }
-
-    if (value.includes('_')) {
-      newValue = value.replaceAll('_', '-');
-      toggleHasFioHandleInfoMessage(true);
-      setInfoMessage(
-        'FIO Handles only support dashes so all underscores are replaced with dashes.',
-      );
     }
 
     toggleFioVerificationError(false);
 
-    return newValue;
+    return value;
   };
 
   const customHandleSubmit = useCallback(
@@ -315,17 +294,6 @@ export const useContext = (): UseContextProps => {
         const { name: refDomain, isPremium } = refDomainObj || {};
 
         if (!refDomain) return;
-
-        const isNotValidAddressError = validateFioAddress(
-          addressValue,
-          refDomain,
-        );
-
-        if (isNotValidAddressError) {
-          toggleFioVerificationError(true);
-          setInfoMessage(isNotValidAddressError);
-          return;
-        }
 
         const isRegistered = await apis.fio.availCheckTableRows(
           setFioName(addressValue, refDomain),
@@ -390,11 +358,9 @@ export const useContext = (): UseContextProps => {
   );
 
   const onInputChanged = (value: string) => {
-    (hasFioVerificactionError || hasFioHandleInfoMessage) &&
-      setInfoMessage(verifiedMessage);
+    hasFioVerificactionError && setInfoMessage(verifiedMessage);
 
     toggleFioVerificationError(false);
-    toggleHasFioHandleInfoMessage(false);
 
     return value;
   };
@@ -469,7 +435,7 @@ export const useContext = (): UseContextProps => {
   }, [address, verifyUsersData]);
 
   useEffect(() => {
-    if (isVerified && !hasFioVerificactionError && !hasFioHandleInfoMessage) {
+    if (isVerified && !hasFioVerificactionError) {
       setInfoMessage(verifiedMessage);
       toggleHasVerifiedError(false);
     }
@@ -478,7 +444,6 @@ export const useContext = (): UseContextProps => {
       setInfoMessage(nonVerifiedMessage);
     }
   }, [
-    hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
@@ -490,7 +455,6 @@ export const useContext = (): UseContextProps => {
   return {
     disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
     gatedChainName,
-    hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,

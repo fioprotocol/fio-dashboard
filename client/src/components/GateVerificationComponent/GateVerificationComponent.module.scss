@@ -39,7 +39,7 @@
     justify-content: center;
     gap: 10px;
 
-    &.hasFioHandleInfoMessage, &.isVerified, &.hasVerifiedError {
+    &.isVerified, &.hasVerifiedError {
       display: flex;
       flex-direction: row;
       height: auto;
@@ -54,8 +54,8 @@
       margin-bottom: 30px;
     }
 
-    &.hasFioHandleInfoMessage {
-      background-color: $violet;
+    &.hasFioVerificactionError {
+      margin-bottom: 0;
     }
 
     .infoMessage {

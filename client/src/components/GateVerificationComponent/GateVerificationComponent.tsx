@@ -18,7 +18,6 @@ import MetamaskImgSrc from '../../assets/images/metamask.svg';
 import classes from './GateVerificationComponent.module.scss';
 
 type Props = {
-  hasFioHandleInfoMessage: boolean;
   hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
   gatedChainName?: string;
@@ -42,7 +41,6 @@ type Props = {
 export const GateVerificationComponent: React.FC<Props> = props => {
   const {
     gatedChainName,
-    hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     isVerified,
@@ -83,13 +81,9 @@ export const GateVerificationComponent: React.FC<Props> = props => {
             classes.hasVerifiedError,
           isVerified && classes.isVerified,
           hasFioVerificactionError && classes.hasFioVerificactionError,
-          hasFioHandleInfoMessage && classes.hasFioHandleInfoMessage,
         )}
       >
-        {isVerified &&
-        !hasFioHandleInfoMessage &&
-        !hasVerifiedError &&
-        !hasFioVerificactionError ? (
+        {isVerified && !hasVerifiedError && !hasFioVerificactionError ? (
           <CheckCircleIcon />
         ) : hasVerifiedError || hasFioVerificactionError ? (
           <WarningIcon />
