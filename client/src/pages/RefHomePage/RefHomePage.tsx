@@ -64,7 +64,6 @@ export const RefHomePage: React.FC<Props &
   const {
     disabled,
     gatedChainName,
-    hasFioHandleInfoMessage,
     hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
@@ -175,7 +174,7 @@ export const RefHomePage: React.FC<Props &
           }
           convert={onFocusOut}
           onInputChanged={onInputChanged}
-          customHandleSubmit={customHandleSubmit}
+          customHandleSubmit={isGatedFlow && customHandleSubmit}
           disabled={disabled && isGatedFlow}
           disabledInput={!isVerified && isGatedFlow}
           disabledInputGray
@@ -188,7 +187,6 @@ export const RefHomePage: React.FC<Props &
           {isGatedFlow && (
             <GateVerificationComponent
               gatedChainName={gatedChainName}
-              hasFioHandleInfoMessage={hasFioHandleInfoMessage}
               hasFioVerificactionError={hasFioVerificactionError}
               hasVerifiedError={hasVerifiedError}
               isVerified={isVerified}
