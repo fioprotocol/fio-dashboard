@@ -22,6 +22,7 @@ import {
 
 import apis from '../../api';
 import { log } from '../../util/general';
+import { validateFioAddress } from '../../util/fio';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
@@ -315,6 +316,17 @@ export const useContext = (): UseContextProps => {
 
         if (!refDomain) return;
 
+        const isNotValidAddressError = validateFioAddress(
+          addressValue,
+          refDomain,
+        );
+
+        if (isNotValidAddressError) {
+          toggleFioVerificationError(true);
+          setInfoMessage(isNotValidAddressError);
+          return;
+        }
+
         const isRegistered = await apis.fio.availCheckTableRows(
           setFioName(addressValue, refDomain),
         );
@@ -457,7 +469,7 @@ export const useContext = (): UseContextProps => {
   }, [address, verifyUsersData]);
 
   useEffect(() => {
-    if (isVerified) {
+    if (isVerified && !hasFioVerificactionError && !hasFioHandleInfoMessage) {
       setInfoMessage(verifiedMessage);
       toggleHasVerifiedError(false);
     }
@@ -466,6 +478,8 @@ export const useContext = (): UseContextProps => {
       setInfoMessage(nonVerifiedMessage);
     }
   }, [
+    hasFioHandleInfoMessage,
+    hasFioVerificactionError,
     hasVerifiedError,
     infoMessage,
     isVerified,
