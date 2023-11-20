@@ -58,7 +58,7 @@ export const vaildateFioDomain = (domain: string) => {
   return null;
 };
 
-export const validateFioAddress = async (address: string, domain: string) => {
+export const validateFioAddress = (address: string, domain: string) => {
   if (!address) {
     return 'FIO Handle Field Should Be Filled';
   }
