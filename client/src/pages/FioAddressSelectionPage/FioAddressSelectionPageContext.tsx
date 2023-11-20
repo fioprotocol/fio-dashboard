@@ -109,7 +109,7 @@ const handleFCHItems = async ({
           domainName = address;
         }
 
-        const error = await validateFioAddress(addressName, domainName);
+        const error = validateFioAddress(addressName, domainName);
         if (error) {
           setError(error);
           return;
