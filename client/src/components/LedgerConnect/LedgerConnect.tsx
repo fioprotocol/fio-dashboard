@@ -94,6 +94,11 @@ const LedgerConnect: React.FC<Props> = props => {
       const newTransport = await TransportWebUSB.create();
       setTransport(newTransport);
     } catch (e) {
+      log.error(e);
+      showGenericErrorModal(
+        'Try to reconnect your ledger device or update FIO application on your device.',
+        'Connection Error',
+      );
       onCancel();
     }
   };
