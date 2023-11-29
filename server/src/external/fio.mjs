@@ -345,7 +345,13 @@ class Fio {
       }
     }
     try {
-      if (!prices) {
+      if (
+        !prices ||
+        !prices.renewDomain ||
+        !prices.addBundles ||
+        !prices.address ||
+        !prices.domain
+      ) {
         const registrationAddressFeePromise = this.registrationFee();
         const registrationDomainFeePromise = this.registrationFee(true);
         const renewDomainFeePromise = this.getFee(FIO_ACTIONS.renewFioDomain);
