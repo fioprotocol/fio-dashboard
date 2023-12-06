@@ -49,11 +49,15 @@ const TwoFactorAuth: React.FC<Props> = props => {
   );
 
   const getLoginMessages = useCallback(async () => {
-    const res = await apis.edge.loginMessages();
+    const loginMessages = await apis.edge.loginMessages();
 
-    if (res && username) {
+    const currentUser = loginMessages.find(
+      loginMessage => loginMessage.username === username,
+    );
+
+    if (currentUser) {
       const usersPendingVouchers: PendingVoucher[] =
-        res[username] && res[username].pendingVouchers;
+        currentUser.pendingVouchers;
       const newDeviceTwoFactorRequested = newDeviceTwoFactor.filter(
         device => device.status === NEW_DEVICE_REQUEST_STATUS.REQUESTED,
       );

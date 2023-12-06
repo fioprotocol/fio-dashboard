@@ -130,13 +130,13 @@ const UsernamePassword: React.FC<Props> = props => {
             : 'Server error',
       });
     }
-  }, [loginFailure]);
+  }, [currentForm, loginFailure]);
 
   useEffect(() => {
     if (!isEmpty(initialValues)) {
       resetFormErrors();
     }
-  }, [JSON.stringify(initialValues)]);
+  }, [initialValues, resetFormErrors]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {

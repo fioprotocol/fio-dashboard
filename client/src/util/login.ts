@@ -21,9 +21,10 @@ type AutoLoginProps = {
 const handleAutoLogin = async (props: AutoLoginProps) => {
   const { voucherId, loginParams, login, onCloseBlockModal } = props;
   const voucherCheck = async () => {
-    const messages = await apis.edge.loginMessages();
-    for (const username of Object.keys(messages)) {
-      const { pendingVouchers } = messages[username];
+    const loginMessages = await apis.edge.loginMessages();
+
+    for (const loginMessage of loginMessages) {
+      const { pendingVouchers } = loginMessage;
       for (const voucher of pendingVouchers) {
         if (voucher.voucherId === voucherId) return false;
       }

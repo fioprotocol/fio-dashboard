@@ -8,8 +8,9 @@ import {
   EdgeAccount,
   EdgeAccountOptions,
   EdgeContext,
-  EdgeLoginMessages,
-} from 'edge-core-js/lib/types';
+  EdgeLoginMessage,
+  EdgeUserInfo,
+} from 'edge-core-js/types';
 
 import { handleEdgeKI } from './middleware/edge';
 import { log } from '../util/general';
@@ -68,12 +69,19 @@ export default class Edge extends Base {
   };
 
   getCachedUsers(): Promise<string[]> {
-    try {
-      this.validateEdgeContext();
-      return this.edgeContext.listUsernames();
-    } catch (e) {
-      this.logError(e);
-    }
+    // use promise to make working on redux middleware
+    return new Promise((resolve, reject) => {
+      try {
+        this.validateEdgeContext();
+        const usernames = this.edgeContext.localUsers.map(
+          localUser => localUser.username,
+        );
+        resolve(usernames);
+      } catch (e) {
+        this.logError(e);
+        reject(e); // Reject the promise in case of an error
+      }
+    });
   }
 
   clearCachedUser(username: string): Promise<void> {
@@ -85,7 +93,7 @@ export default class Edge extends Base {
     }
   }
 
-  login(
+  async login(
     username: string,
     password: string,
     options: EdgeAccountOptions = {},
@@ -93,7 +101,12 @@ export default class Edge extends Base {
     // returns EdgeAccount
     try {
       this.validateEdgeContext();
-      return this.edgeContext.loginWithPassword(username, password, options);
+      const account = await this.edgeContext.loginWithPassword(
+        username,
+        password,
+        options,
+      );
+      return account;
     } catch (e) {
       this.logError(e);
       throw e;
@@ -143,14 +156,14 @@ export default class Edge extends Base {
     // create account
     try {
       this.validateEdgeContext();
-      return this.edgeContext.createAccount(username, password, null, {});
+      return this.edgeContext.createAccount({ username, password });
     } catch (e) {
       this.logError(e);
       throw e;
     }
   }
 
-  async loginMessages(): Promise<EdgeLoginMessages> {
+  async loginMessages(): Promise<EdgeLoginMessage[]> {
     try {
       this.validateEdgeContext();
       return await this.edgeContext.fetchLoginMessages();
@@ -251,7 +264,10 @@ export default class Edge extends Base {
   async checkIsPinSet(username: string): Promise<boolean> {
     try {
       this.validateEdgeContext();
-      return await this.edgeContext.pinLoginEnabled(username);
+      const localUser = this.edgeContext.localUsers.find(
+        localUser => localUser.username === username,
+      );
+      return localUser && localUser.pinLoginEnabled;
     } catch (e) {
       log.error(e);
     }
@@ -261,7 +277,7 @@ export default class Edge extends Base {
     try {
       this.validateEdgeContext();
       const localUser = this.edgeContext.localUsers.find(
-        ({ username: localUsername }: { username: string }) =>
+        ({ username: localUsername }: EdgeUserInfo) =>
           localUsername === username,
       );
       if (localUser?.recovery2Key) return localUser.recovery2Key;
