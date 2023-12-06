@@ -80,7 +80,7 @@ const LoginForm: React.FC<Props> = props => {
 
   const timerRef = useRef(null);
 
-  useEffect(getCachedUsers, []);
+  useEffect(getCachedUsers, [getCachedUsers]);
 
   const handlePinLogin = useCallback(() => {
     if (
@@ -133,7 +133,13 @@ const LoginForm: React.FC<Props> = props => {
         });
       }
     }
-  }, [edgeLoginFailure.reason]);
+  }, [
+    edgeLoginFailure,
+    edgeLoginFailure.reason,
+    loginParams,
+    onSubmit,
+    showCodeModal,
+  ]);
 
   const handleSubmit = (values: FormValues) => {
     const { email, password, pin } = values;
