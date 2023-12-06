@@ -25,7 +25,8 @@ type FormValues = {
   pin?: string;
   refCode?: string;
   options?: {
-    otpKey: string;
+    otpKey?: string;
+    challengeId?: string;
   };
   voucherId?: string;
 };
@@ -46,6 +47,8 @@ type Props = {
     voucherActivates?: string;
     message?: string;
     voucherId?: string;
+    challengeId?: string;
+    challengeUri?: string;
   };
   cachedUsers: string[];
   lastAuthData: LastAuthData;
@@ -135,12 +138,26 @@ const LoginForm: React.FC<Props> = props => {
   const handleSubmit = (values: FormValues) => {
     const { email, password, pin } = values;
     setLoginParams({ email, password });
-    onSubmit({
+    const submitParams: {
+      email: string;
+      password: string;
+      pin: string;
+      refCode: string;
+      options?: {
+        challengeId?: string;
+      };
+    } = {
       email,
       password,
       pin,
       refCode: refProfileInfo?.code || '',
-    });
+    };
+
+    if (edgeLoginFailure && edgeLoginFailure.challengeId) {
+      submitParams.options = { challengeId: edgeLoginFailure.challengeId };
+    }
+
+    onSubmit(submitParams);
   };
 
   const onCloseLogin = useCallback(() => {
@@ -222,6 +239,7 @@ const LoginForm: React.FC<Props> = props => {
             title="Sign In"
             onClose={onCloseLogin}
             initialValues={loginParams || {}}
+            resetLoginFailure={resetLoginFailure}
           />
         )}
       </ModalComponent>
