@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
@@ -8,6 +8,7 @@ import classnames from 'classnames';
 import BlockIcon from '@mui/icons-material/Block';
 
 import Link from '../Link/Link';
+import Loader from '../Loader/Loader';
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 import PageTitle from '../PageTitle/PageTitle';
@@ -29,18 +30,23 @@ type FormValues = {
   password: string;
 };
 
-type OwnProps = {
+type Props = {
   isForgotPass: boolean;
   onSubmit: (params: { email: string; password: string }) => void;
   edgeAuthLoading: boolean;
   onClose: () => void;
   toggleForgotPass: (open: boolean) => void;
   loginFailure: LoginFailure;
-  edgeLoginFailure: { name?: string; type?: string };
+  edgeLoginFailure: {
+    name?: string;
+    type?: string;
+    challengeId?: string;
+    challengeUri?: string;
+  };
   title: string;
   initialValues: { email?: string; password?: string };
+  resetLoginFailure: () => void;
 };
-type Props = OwnProps;
 
 const UsernamePassword: React.FC<Props> = props => {
   const {
@@ -53,9 +59,39 @@ const UsernamePassword: React.FC<Props> = props => {
     toggleForgotPass,
     title,
     initialValues,
+    resetLoginFailure,
   } = props;
 
   let currentForm: FormApi | null = null;
+
+  const [showiframeLoader, toggleShowiframeLoader] = useState(true);
+
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  const { challengeId, challengeUri } = edgeLoginFailure || {};
+
+  const resetFormErrors = useCallback(() => {
+    if (!currentForm) return;
+    const { mutators } = currentForm;
+
+    mutators.setDataMutator('password', {
+      error: null,
+    });
+    mutators.setDataMutator('email', {
+      error: null,
+      hideError: false,
+    });
+  }, [currentForm]);
+
+  const onBackClick = useCallback(() => {
+    resetFormErrors();
+    resetLoginFailure();
+    toggleShowiframeLoader(true);
+  }, [resetFormErrors, resetLoginFailure]);
+
+  const onIframeLoad = useCallback(() => {
+    toggleShowiframeLoader(false);
+  }, []);
 
   useEffect(() => {
     if (currentForm && !isEmpty(edgeLoginFailure)) {
@@ -102,18 +138,32 @@ const UsernamePassword: React.FC<Props> = props => {
     }
   }, [JSON.stringify(initialValues)]);
 
-  const resetFormErrors = () => {
-    if (!currentForm) return;
-    const { mutators } = currentForm;
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const { data } = event || {};
 
-    mutators.setDataMutator('password', {
-      error: null,
-    });
-    mutators.setDataMutator('email', {
-      error: null,
-      hideError: false,
-    });
-  };
+      const { captchaResult } = data || {};
+
+      if (data && captchaResult) {
+        if (captchaResult.toLowerCase() === 'success') {
+          currentForm.submit();
+          resetFormErrors();
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [
+    challengeId,
+    challengeUri,
+    currentForm,
+    resetFormErrors,
+    resetLoginFailure,
+  ]);
 
   const handleSubmit = (values: FormValues) => {
     const { email, password } = values;
@@ -181,42 +231,76 @@ const UsernamePassword: React.FC<Props> = props => {
 
   const renderFormItems = (formRenderProps: FormRenderProps) => {
     const { handleSubmit: login, form } = formRenderProps;
+
     currentForm = form;
+
     return (
       <form onSubmit={login}>
         <FormHeader title={title} />
-        <Field
-          name="email"
-          type="text"
-          placeholder="Enter Your Email Address"
-          disabled={edgeAuthLoading}
-          component={Input}
-        />
-        <OnChange name="email">{handleChange}</OnChange>
-        <Field
-          name="password"
-          type="password"
-          placeholder="Enter Your Password"
-          component={Input}
-          disabled={edgeAuthLoading}
-        />
-        <OnChange name="password">{handleChange}</OnChange>
-        <SubmitButton
-          onClick={login}
-          disabled={edgeAuthLoading}
-          text="Sign In"
-          loading={edgeAuthLoading}
-          withBottomMargin
-        />
-        <Link
-          classname={classes.forgotPasswordLink}
-          to=""
-          onClick={onForgotPassHandler}
-          isDisabled={edgeAuthLoading}
+        <div
+          className={classnames(
+            classes.formFields,
+            challengeId && challengeUri && classes.hideForm,
+          )}
         >
-          Forgot your password?
-        </Link>
-        {renderCreateAccount()}
+          <Field
+            name="email"
+            type="text"
+            placeholder="Enter Your Email Address"
+            disabled={edgeAuthLoading}
+            component={Input}
+          />
+          <OnChange name="email">{handleChange}</OnChange>
+          <Field
+            name="password"
+            type="password"
+            placeholder="Enter Your Password"
+            component={Input}
+            disabled={edgeAuthLoading}
+          />
+          <OnChange name="password">{handleChange}</OnChange>
+          <SubmitButton
+            onClick={login}
+            disabled={edgeAuthLoading}
+            text="Sign In"
+            loading={edgeAuthLoading}
+            withBottomMargin
+          />
+          <Link
+            classname={classes.forgotPasswordLink}
+            to=""
+            onClick={onForgotPassHandler}
+            isDisabled={edgeAuthLoading}
+          >
+            Forgot your password?
+          </Link>
+          {renderCreateAccount()}
+        </div>
+        {challengeId && challengeUri && (
+          <div className={classes.captchaContainer}>
+            {showiframeLoader && <Loader className={classes.loader} />}
+            <div
+              className={classnames(
+                classes.frame,
+                !showiframeLoader && classes.show,
+              )}
+            >
+              <iframe
+                ref={iframeRef}
+                id="edge-captcha"
+                src={challengeUri}
+                frameBorder="0"
+                title="captcha"
+                onLoad={onIframeLoad}
+              ></iframe>
+            </div>
+            <SubmitButton
+              onClick={onBackClick}
+              withBottomMargin
+              text="Back to login"
+            />
+          </div>
+        )}
       </form>
     );
   };
