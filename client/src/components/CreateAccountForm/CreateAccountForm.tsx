@@ -268,7 +268,9 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         from: WALLET_CREATED_FROM.EDGE,
       },
     ];
-    this.setState({ keys: getWalletKeys([fioWallet]) });
+    const keys = await getWalletKeys({ account, fioWallets: [fioWallet] });
+
+    this.setState({ keys });
     await account.logout();
 
     if (redirectLink) {

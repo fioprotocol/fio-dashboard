@@ -1,4 +1,4 @@
-import { EdgeCurrencyWallet } from 'edge-core-js';
+import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
@@ -67,13 +67,18 @@ export function emailToUsername(email: string): string {
   return '';
 }
 
-export const getWalletKeys = (
-  fioWallets: EdgeCurrencyWallet[],
-): EdgeWalletsKeys => {
+export const getWalletKeys = async ({
+  account,
+  fioWallets,
+}: {
+  account: EdgeAccount;
+  fioWallets: EdgeCurrencyWallet[];
+}): Promise<EdgeWalletsKeys> => {
   const keys: EdgeWalletsKeys = {};
   for (const fioWallet of fioWallets) {
+    const privateKey = await account.getDisplayPrivateKey(fioWallet.id);
     keys[fioWallet.id] = {
-      private: fioWallet.keys.fioKey,
+      private: privateKey,
       public: fioWallet.publicWalletInfo.keys.publicKey,
     };
   }
