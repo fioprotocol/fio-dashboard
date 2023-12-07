@@ -21,9 +21,10 @@ export const waitWalletKeys = async (
   try {
     for (const walletId of account.activeWalletIds) {
       const wallet = await account.waitForCurrencyWallet(walletId);
+      const privateKey = await account.getDisplayPrivateKey(walletId);
       if (wallet.currencyInfo.currencyCode === 'FIO') {
         keys[walletId] = {
-          private: wallet.keys.fioKey,
+          private: privateKey,
           public: wallet.publicWalletInfo.keys.publicKey,
         };
         // todo: there is no stopEngine anymore, do something instead of 'await wallet.stopEngine()';

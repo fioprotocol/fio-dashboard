@@ -19,7 +19,7 @@ import { log } from '../../util/general';
 import apis from '../../api';
 
 import { Action } from '../types';
-import { PrivateRedirectLocationState } from '../../types';
+import { PrivateRedirectLocationState, EdgeWalletsKeys } from '../../types';
 import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
@@ -52,7 +52,10 @@ export function* edgeLoginSuccess(): Generator {
       yield log.error(error);
     }
 
-    const keys = getWalletKeys(fioWallets);
+    const keys: EdgeWalletsKeys = yield getWalletKeys({
+      account,
+      fioWallets,
+    });
     for (const fioWallet of fioWallets) {
       yield put<Action>(refreshBalance(keys[fioWallet.id].public));
     }
