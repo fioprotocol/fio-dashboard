@@ -2,15 +2,19 @@ import { useCallback, useState } from 'react';
 
 import { MetamaskSnapProps } from '../utils/MetamaskSnapContext';
 import { log } from '../../../util/general';
+import { ACTIONS } from '../../../constants/fio';
 
 type UseContextProps = {
+  activeAction: string;
   executedTxn: any;
   executedTxnError: Error | null;
   executedTxnLoading: boolean;
+  fioActionFormParams: any;
   onActionChange: (value: string) => void;
   onConnectClick: () => void;
   onExecuteTxn: () => void;
   onSignTxn: () => void;
+  onSubmitActionForm: (values: any) => void;
 };
 
 export const useContext = (
@@ -24,6 +28,9 @@ export const useContext = (
     false,
   );
   const [executedTxnError, setExecutedTxnError] = useState<Error | null>(null);
+  const [fioActionFormParams, setFioActionFormParams] = useState<any | null>(
+    null,
+  );
 
   const onActionChange = useCallback((value: string) => {
     setActiveAction(value);
@@ -61,18 +68,55 @@ export const useContext = (
   }, [executeFioAction]);
 
   const onSignTxn = useCallback(() => {
-    signSnapTxn();
-  }, [signSnapTxn]);
+    const params: {
+      apiUrl: string;
+      contract?: string;
+      action?: string;
+      data?: any;
+    } = {
+      apiUrl: 'https://fiotestnet.blockpane.com',
+    };
+    if (activeAction === ACTIONS.addPublicAddress) {
+      params.action = 'addaddress';
+      params.contract = 'fio.address';
+      params.data = {
+        fio_address: fioActionFormParams.fioHandle,
+        public_addresses: [
+          {
+            chain_code: fioActionFormParams.chainCode,
+            token_code: fioActionFormParams.tokenCode,
+            public_address: fioActionFormParams.publicAddress,
+          },
+        ],
+        max_fee: 600000000,
+        tpid: process.env.REACT_APP_DEFAULT_TPID,
+      };
+    }
 
-  console.log('activeAction', activeAction);
+    signSnapTxn(params);
+  }, [
+    activeAction,
+    fioActionFormParams?.chainCode,
+    fioActionFormParams?.fioHandle,
+    fioActionFormParams?.publicAddress,
+    fioActionFormParams?.tokenCode,
+    signSnapTxn,
+  ]);
+
+  const onSubmitActionForm = useCallback((values: any) => {
+    setFioActionFormParams(values);
+  }, []);
 
   return {
+    activeAction,
     executedTxn,
     executedTxnError,
     executedTxnLoading,
+    fioActionFormParams,
     onActionChange,
     onConnectClick,
     onExecuteTxn,
     onSignTxn,
+    onSubmitActionForm,
   };
 };
