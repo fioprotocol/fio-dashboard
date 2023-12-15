@@ -58,34 +58,17 @@ export const getPublicKey = async () => {
   return res;
 };
 
-export const signTxn = async () => {
-  const res = await window.ethereum.request({
+export const signTxn = async (params: any) => {
+  const txn = await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,
       request: {
         method: 'signTransaction',
-        params: {
-          apiUrl: 'https://fiotestnet.blockpane.com',
-          contract: 'fio.address',
-          action: 'addaddress',
-          data: {
-            fio_address: 'gatest01@regtest',
-            public_addresses: [
-              {
-                chain_code: 'BCH',
-                token_code: 'BCH',
-                public_address: 'bitcoincash:somebitcoincashpublicaddress',
-              },
-            ],
-            max_fee: 600000000,
-            tpid: 'dashboard@fiouat',
-            actor: 'ozb2hshyezbw',
-          },
-        },
+        params,
       },
     },
   });
 
-  return res?.txn;
+  return txn;
 };

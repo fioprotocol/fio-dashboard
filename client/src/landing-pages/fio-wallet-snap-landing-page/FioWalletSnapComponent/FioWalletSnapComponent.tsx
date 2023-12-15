@@ -2,9 +2,10 @@ import React from 'react';
 
 import CustomDropdown from '../../../components/CustomDropdown';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
+import { MetamaskSnapContext } from '../utils/MetamaskSnapContext';
 
 import { useContext } from './FioWalletSnapComponentContext';
-import { MetamaskSnapContext } from '../utils/MetamaskSnapContext';
+import { FioActionForms } from './FioActionForms';
 
 import { FIO_ACTIONS_OBJECT_LIST } from './constants';
 
@@ -24,13 +25,16 @@ export const FioWalletSnapComponent: React.FC = () => {
   } = metamaskSnapContext || {};
 
   const {
+    activeAction,
     executedTxn,
     executedTxnError,
     executedTxnLoading,
+    fioActionFormParams,
     onConnectClick,
     onActionChange,
     onExecuteTxn,
     onSignTxn,
+    onSubmitActionForm,
   } = useContext(metamaskSnapContext);
 
   return (
@@ -47,6 +51,7 @@ export const FioWalletSnapComponent: React.FC = () => {
           text="Connect MetaMask"
           withBottomMargin
           loading={snapLoading}
+          disabled={snapLoading}
         />
         {snapError && (
           <p className={classes.snapErrorMessage}>{snapError.message}</p>
@@ -65,12 +70,16 @@ export const FioWalletSnapComponent: React.FC = () => {
                 options={FIO_ACTIONS_OBJECT_LIST}
                 onChange={onActionChange}
               />
+              <FioActionForms
+                action={activeAction}
+                onSubmit={onSubmitActionForm}
+              />
             </div>
             <hr />
             <SubmitButton
               onClick={onSignTxn}
               text="Sign Transaction"
-              disabled={signedTxnLoading}
+              disabled={signedTxnLoading || !fioActionFormParams}
               loading={signedTxnLoading}
               withTopMargin
             />
