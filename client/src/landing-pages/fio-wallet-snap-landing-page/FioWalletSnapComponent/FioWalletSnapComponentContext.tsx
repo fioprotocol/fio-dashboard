@@ -1,12 +1,17 @@
 import { useCallback, useState } from 'react';
 
+import { MetamaskSnapProps } from '../utils/MetamaskSnapContext';
+
 type UseContextProps = {
   onActionChange: (value: string) => void;
   onConnectClick: () => void;
   onSignTxn: () => void;
 };
 
-export const useContext = (): UseContextProps => {
+export const useContext = (
+  metamaskSnapContext: MetamaskSnapProps,
+): UseContextProps => {
+  const { handleConnectClick } = metamaskSnapContext;
   const [activeAction, setActiveAction] = useState<string | null>(null);
 
   const onActionChange = useCallback((value: string) => {
@@ -14,8 +19,8 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   const onConnectClick = useCallback(() => {
-    console.log('Connect');
-  }, []);
+    handleConnectClick();
+  }, [handleConnectClick]);
 
   const onSignTxn = useCallback(() => {
     console.log('Active action', activeAction);

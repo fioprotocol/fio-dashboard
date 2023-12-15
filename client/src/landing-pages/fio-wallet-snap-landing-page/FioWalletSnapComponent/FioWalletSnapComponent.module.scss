@@ -33,6 +33,14 @@
       @include proxima-nova-semibold;
     }
 
+    .loader {
+      margin-top: 50px;
+    }
+
+    .snapErrorMessage {
+      color: $warn-red;
+    }
+
     .dropdown {
       max-width: 300px;
       align-self: center;
