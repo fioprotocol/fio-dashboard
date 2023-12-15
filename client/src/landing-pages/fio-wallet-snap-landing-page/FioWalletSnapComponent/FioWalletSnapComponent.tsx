@@ -2,7 +2,6 @@ import React from 'react';
 
 import CustomDropdown from '../../../components/CustomDropdown';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
-import Loader from '../../../components/Loader/Loader';
 
 import { useContext } from './FioWalletSnapComponentContext';
 import { MetamaskSnapContext } from '../utils/MetamaskSnapContext';
@@ -14,12 +13,25 @@ import classes from './FioWalletSnapComponent.module.scss';
 export const FioWalletSnapComponent: React.FC = () => {
   const metamaskSnapContext = MetamaskSnapContext();
 
-  const { publicKey, snapLoading, snapError, state: metamaskState } =
-    metamaskSnapContext || {};
+  const {
+    publicKey,
+    snapLoading,
+    snapError,
+    signedTxn,
+    signedTxnError,
+    signedTxnLoading,
+    state: metamaskState,
+  } = metamaskSnapContext || {};
 
-  const { onConnectClick, onActionChange, onSignTxn } = useContext(
-    metamaskSnapContext,
-  );
+  const {
+    executedTxn,
+    executedTxnError,
+    executedTxnLoading,
+    onConnectClick,
+    onActionChange,
+    onExecuteTxn,
+    onSignTxn,
+  } = useContext(metamaskSnapContext);
 
   return (
     <div className={classes.container}>
@@ -34,15 +46,14 @@ export const FioWalletSnapComponent: React.FC = () => {
           onClick={onConnectClick}
           text="Connect MetaMask"
           withBottomMargin
+          loading={snapLoading}
         />
         {snapError && (
           <p className={classes.snapErrorMessage}>{snapError.message}</p>
         )}
-        {!metamaskState?.enabled && snapLoading && (
-          <Loader className={classes.loader} />
-        )}
         {metamaskState?.enabled && !snapLoading ? (
           <>
+            <hr />
             {publicKey && (
               <div>
                 <h5>FIO Public Key</h5>
@@ -55,12 +66,65 @@ export const FioWalletSnapComponent: React.FC = () => {
                 onChange={onActionChange}
               />
             </div>
-            <div>
-              <h5>Signed transaction</h5>
-            </div>
-            <SubmitButton onClick={onSignTxn} text="Execute Transaction" />
-            <div>
+            <hr />
+            <SubmitButton
+              onClick={onSignTxn}
+              text="Sign Transaction"
+              disabled={signedTxnLoading}
+              loading={signedTxnLoading}
+              withTopMargin
+            />
+            {signedTxnError && (
+              <p className={classes.snapErrorMessage}>
+                {signedTxnError?.message}
+              </p>
+            )}
+            {signedTxn && (
+              <div>
+                <h5 className="mt-4">Signed transaction</h5>
+                {Object.entries(signedTxn).map(([key, value]) => (
+                  <p className={classes.txn} key={key}>
+                    {key}: {JSON.stringify(value)}
+                  </p>
+                ))}
+              </div>
+            )}
+            <hr />
+            <SubmitButton
+              onClick={onExecuteTxn}
+              text="Execute Transaction"
+              disabled={!signedTxn || executedTxnLoading}
+              withTopMargin
+              loading={executedTxnLoading}
+            />
+            <div className="mt-4">
               <h5>Transaction details</h5>
+              {executedTxnError && (
+                <p className={classes.snapErrorMessage}>
+                  {executedTxnError?.message}
+                </p>
+              )}
+              {executedTxn && (
+                <>
+                  <p>
+                    Transaction:{' '}
+                    <a
+                      href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${executedTxn.transaction_id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {executedTxn.transaction_id}
+                    </a>
+                  </p>
+
+                  <p>Processed:</p>
+                  {Object.entries(executedTxn.processed).map(([key, value]) => (
+                    <p className={classes.txn} key={key}>
+                      {key}: {JSON.stringify(value)}
+                    </p>
+                  ))}
+                </>
+              )}
             </div>
           </>
         ) : null}

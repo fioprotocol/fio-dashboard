@@ -86,6 +86,6 @@ export const signTxn = async () => {
       },
     },
   });
-  console.log(res);
-  return res;
+
+  return res?.txn;
 };

@@ -33,12 +33,13 @@
       @include proxima-nova-semibold;
     }
 
-    .loader {
-      margin-top: 50px;
-    }
-
     .snapErrorMessage {
       color: $warn-red;
+    }
+
+    .txn {
+      word-wrap: break-word;
+      max-width: 700px;
     }
 
     .dropdown {
