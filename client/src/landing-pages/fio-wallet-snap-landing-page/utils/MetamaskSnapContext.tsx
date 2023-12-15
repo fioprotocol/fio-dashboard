@@ -1,20 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { connectSnap, getPublicKey, getSnap } from './snap';
+import { connectSnap, getPublicKey, getSnap, signTxn } from './snap';
 import { log } from '../../../util/general';
 
 export type MetamaskSnapProps = {
   publicKey: string | null;
+  signedTxn: any | null;
+  signedTxnError: Error;
+  signedTxnLoading: boolean;
   snapError: Error;
   snapLoading: boolean;
   state: any;
   handleConnectClick: () => void;
+  signSnapTxn: () => void;
 };
 
 export const MetamaskSnapContext = (): MetamaskSnapProps => {
   const [state, setState] = useState<any | null>(null);
   const [snapError, setSnapError] = useState<Error | null>(null);
   const [snapLoading, toggleSnapLoading] = useState<boolean>(false);
+  const [signedTxnLoading, toggleSignedTxnLoading] = useState<boolean>(false);
+  const [signedTxn, setSignedTxn] = useState<any | null>(null);
+  const [signedTxnError, setSignedTxnError] = useState<Error | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
 
   const handleConnectClick = useCallback(async () => {
@@ -42,6 +49,19 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     }
   }, []);
 
+  const signSnapTxn = useCallback(async () => {
+    try {
+      toggleSignedTxnLoading(true);
+      const signedTxn = await signTxn();
+      setSignedTxn(signedTxn);
+    } catch (error) {
+      log.error(error);
+      setSignedTxnError(error);
+    } finally {
+      toggleSignedTxnLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (state?.enabled) {
       getPublicKeyFromSnap();
@@ -50,9 +70,13 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
 
   return {
     publicKey,
+    signedTxn,
+    signedTxnError,
+    signedTxnLoading,
     snapLoading,
     snapError,
     state,
     handleConnectClick,
+    signSnapTxn,
   };
 };
