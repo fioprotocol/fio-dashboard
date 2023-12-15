@@ -1,0 +1,26 @@
+import { ACTIONS } from '../../../constants/fio';
+
+export const FIO_ACTIONS_OBJECT_LIST = [
+  { id: ACTIONS.addBundledTransactions, name: 'Add Bundled Transactions' },
+  { id: ACTIONS.addNft, name: 'Add NFT' },
+  { id: ACTIONS.addPublicAddress, name: 'Add Public Address' },
+  { id: ACTIONS.addPublicAddresses, name: 'Add Public Addresses' },
+  { id: ACTIONS.cancelFundsRequest, name: 'Cancel Funds Request' },
+  { id: ACTIONS.recordObtData, name: 'Record Obt Data' },
+  { id: ACTIONS.registerFioAddress, name: 'Register FIO Address' },
+  { id: ACTIONS.registerFioDomain, name: 'Register FIO Domain' },
+  { id: ACTIONS.registerOwnerFioDomain, name: 'Register Owner FIO Domain' },
+  { id: ACTIONS.rejectFundsRequest, name: 'Reject Funds Request' },
+  { id: ACTIONS.renewFioDomain, name: 'Renew FIO Domain' },
+  { id: ACTIONS.removeAllPublicAddresses, name: 'Remove All Public Addresses' },
+  { id: ACTIONS.removePublicAddresses, name: 'Remove Public Addresses' },
+  { id: ACTIONS.requestFunds, name: 'Request Funds' },
+  { id: ACTIONS.setFioDomainVisibility, name: 'Set FIO Domain Visibility' },
+  { id: ACTIONS.stakeFioTokens, name: 'Stake FIO Tokens' },
+  { id: ACTIONS.transferFioAddress, name: 'Transfer FIO Address' },
+  { id: ACTIONS.transferFioDomain, name: 'Transfer FIO Domain' },
+  { id: ACTIONS.transferTokens, name: 'Transfer Tokens' },
+  { id: ACTIONS.unStakeFioTokens, name: 'Unstake FIO Tokens' },
+  { id: ACTIONS.wrapFioDomain, name: 'Wrap FIO Domain' },
+  { id: ACTIONS.wrapFioTokens, name: 'Wrap FIO Tokens' },
+];
