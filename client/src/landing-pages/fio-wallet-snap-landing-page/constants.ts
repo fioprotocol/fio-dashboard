@@ -1,2 +1,2 @@
 export const defaultSnapOrigin =
-  process.env.SNAP_ORIGIN ?? `local:http://localhost:8080`;
+  process.env.REACT_APP_SNAP_URL ?? `local:http://localhost:8080`;

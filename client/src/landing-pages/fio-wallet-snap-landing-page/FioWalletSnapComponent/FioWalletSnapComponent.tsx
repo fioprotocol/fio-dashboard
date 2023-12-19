@@ -127,11 +127,15 @@ export const FioWalletSnapComponent: React.FC = () => {
                   </p>
 
                   <p>Processed:</p>
-                  {Object.entries(executedTxn.processed).map(([key, value]) => (
-                    <p className={classes.txn} key={key}>
-                      {key}: {JSON.stringify(value)}
-                    </p>
-                  ))}
+                  {executedTxn &&
+                    executedTxn?.processed &&
+                    Object.entries(executedTxn?.processed).map(
+                      ([key, value]) => (
+                        <p className={classes.txn} key={key}>
+                          {key}: {JSON.stringify(value)}
+                        </p>
+                      ),
+                    )}
                 </>
               )}
             </div>

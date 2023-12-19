@@ -11,6 +11,7 @@ export type MetamaskSnapProps = {
   snapError: Error;
   snapLoading: boolean;
   state: any;
+  clearSignTx: () => void;
   handleConnectClick: () => void;
   signSnapTxn: (params: any) => void;
 };
@@ -23,6 +24,11 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   const [signedTxn, setSignedTxn] = useState<any | null>(null);
   const [signedTxnError, setSignedTxnError] = useState<Error | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
+
+  const clearSignTx = useCallback(() => {
+    setSignedTxn(null);
+    setSignedTxnError(null);
+  }, []);
 
   const handleConnectClick = useCallback(async () => {
     try {
@@ -54,6 +60,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
 
   const signSnapTxn = useCallback(async (params: any) => {
     try {
+      setSignedTxnError(null);
       toggleSignedTxnLoading(true);
 
       const signedTxn = await signTxn(params);
@@ -81,6 +88,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     snapLoading,
     snapError,
     state,
+    clearSignTx,
     handleConnectClick,
     signSnapTxn,
   };
