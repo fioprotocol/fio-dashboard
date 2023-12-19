@@ -46,7 +46,10 @@ export const FIO_ACTIONS_OBJECT_LIST = [
     id: TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain],
     name: 'Transfer FIO Domain',
   },
-  // { id: ACTIONS.transferTokens, name: 'Transfer Tokens' },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens],
+    name: 'Transfer FIO Tokens',
+  },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens],
     name: 'Unstake FIO Tokens',

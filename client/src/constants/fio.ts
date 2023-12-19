@@ -69,6 +69,7 @@ export const TRANSACTION_ACTION_NAMES = {
   [ACTIONS.stakeFioTokens]: 'stakefio',
   [ACTIONS.transferFioAddress]: 'xferaddress',
   [ACTIONS.transferFioDomain]: 'xferdomain',
+  [ACTIONS.transferTokens]: 'trnsfiopubky',
   [ACTIONS.unStakeFioTokens]: 'unstakefio',
   [ACTIONS.wrapFioTokens]: 'wraptokens',
   [ACTIONS.wrapFioDomain]: 'wrapdomain',
