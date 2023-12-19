@@ -282,7 +282,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    input {
+    input, textarea {
       outline: none;
       background: transparent;
       box-sizing: border-box;
@@ -307,6 +307,10 @@
       }
     }
 
+    textarea {
+      height: 500px;
+    }
+
     &.prefixSpace {
       padding-left: 45px;
     }
@@ -325,7 +329,7 @@
       color: $light-indigo !important;
       height: 40px;
 
-      input {
+      input, textarea {
         color: $light-indigo !important;
 
         &::placeholder {
@@ -340,7 +344,7 @@
       color: $gray-main !important;
       height: 40px;
 
-      input {
+      input, textarea {
         color: $gray-main !important;
 
         &::placeholder {
@@ -354,7 +358,7 @@
       border-color: $aqua-haze;
       color: $gray-main !important;
 
-      input {
+      input, textarea {
         color: $gray-main !important;
     
         &::placeholder {
@@ -385,7 +389,7 @@
       border-color: transparent;
       color: $baltic-sea;
 
-      input {
+      input, textarea {
         color: $baltic-sea;
 
         &::placeholder {
@@ -423,6 +427,10 @@
     &.disabledGray {
       background-color: $mine-shaft;
       opacity: 0.5;
+    }
+
+    &.textarea {
+      height: 500px;
     }
 
     &.doubleIconInput {

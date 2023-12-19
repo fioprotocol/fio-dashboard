@@ -228,6 +228,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             suffix && classes.suffixSpace,
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
+            type === 'textarea' && classes.textarea,
             isLowHeight && classes.lowHeight,
             isMiddleHeight && classes.middleHeight,
             isWalletConnected ? classes.dark : '',
