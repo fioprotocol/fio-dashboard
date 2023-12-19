@@ -245,6 +245,16 @@ export const useContext = (
           new_owner_fio_public_key: fioActionFormParams.newOwnerPublicKey,
         };
         break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens]:
+        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioToken;
+        params.data = {
+          ...params.data,
+          amount: new FioApi()
+            .amountToSUF(Number(fioActionFormParams.amount))
+            .toString(),
+          payee_public_key: fioActionFormParams.payeeFioPublicKey,
+        };
+        break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
         params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
         params.data = {
@@ -273,6 +283,7 @@ export const useContext = (
     fioActionFormParams?.hash,
     fioActionFormParams?.isPublic,
     fioActionFormParams?.newOwnerPublicKey,
+    fioActionFormParams?.payeeFioPublicKey,
     fioActionFormParams?.publicAddress,
     fioActionFormParams?.tokenCode,
     fioActionFormParams?.tokenId,
