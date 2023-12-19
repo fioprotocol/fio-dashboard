@@ -9,6 +9,7 @@ import {
 } from '../../../constants/fio';
 import { DEFAULT_BUNDLE_SET_VALUE } from '../../../constants/common';
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+import { CUSTOM_ACTION_NAME } from './constants';
 
 type UseContextProps = {
   activeAction: string;
@@ -104,16 +105,16 @@ export const useContext = (
   }, [executeFioAction]);
 
   const onSignTxn = useCallback(() => {
-    const params: {
+    let params: {
       actor?: string;
       apiUrl: string;
-      contract?: string;
+      account?: string;
       action?: string;
       data?: any;
     } = {
       apiUrl: 'https://fiotestnet.blockpane.com',
       action: activeAction,
-      contract: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+      account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
       data: {
         tpid: process.env.REACT_APP_DEFAULT_TPID || '',
         max_fee: DEFAULT_ACTION_FEE_AMOUNT,
@@ -160,7 +161,7 @@ export const useContext = (
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest]:
-        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
         params.data = {
           ...params.data,
           fio_request_id: fioActionFormParams.fioRequestId
@@ -183,7 +184,7 @@ export const useContext = (
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds]:
-        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
         params.data = {
           ...params.data,
         };
@@ -221,7 +222,7 @@ export const useContext = (
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens]:
-        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -246,7 +247,7 @@ export const useContext = (
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens]:
-        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioToken;
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioToken;
         params.data = {
           ...params.data,
           amount: new FioApi()
@@ -256,7 +257,7 @@ export const useContext = (
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
-        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -266,31 +267,20 @@ export const useContext = (
           tpid: 'dashboard@fiotestnet',
         };
         break;
+      case CUSTOM_ACTION_NAME: {
+        const customParams = JSON.parse(fioActionFormParams.customAction);
+        params = {
+          apiUrl: 'https://fiotestnet.blockpane.com',
+          ...customParams,
+        };
+        break;
+      }
       default:
         break;
     }
 
     signSnapTxn(params);
-  }, [
-    activeAction,
-    fioActionFormParams?.amount,
-    fioActionFormParams?.chainCode,
-    fioActionFormParams?.contractAddress,
-    fioActionFormParams?.creatorUrl,
-    fioActionFormParams?.fioDomain,
-    fioActionFormParams?.fioHandle,
-    fioActionFormParams?.fioRequestId,
-    fioActionFormParams?.hash,
-    fioActionFormParams?.isPublic,
-    fioActionFormParams?.newOwnerPublicKey,
-    fioActionFormParams?.payeeFioPublicKey,
-    fioActionFormParams?.publicAddress,
-    fioActionFormParams?.tokenCode,
-    fioActionFormParams?.tokenId,
-    fioActionFormParams?.url,
-    publicKey,
-    signSnapTxn,
-  ]);
+  }, [activeAction, fioActionFormParams, publicKey, signSnapTxn]);
 
   const onSubmitActionForm = useCallback(
     (values: any) => {

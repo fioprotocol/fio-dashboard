@@ -1,5 +1,7 @@
 import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../constants/fio';
 
+export const CUSTOM_ACTION_NAME = 'customAction';
+
 export const FIO_ACTIONS_OBJECT_LIST = [
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.addBundledTransactions],
@@ -53,6 +55,10 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens],
     name: 'Unstake FIO Tokens',
+  },
+  {
+    id: CUSTOM_ACTION_NAME,
+    name: 'Custom action',
   },
   // { id: ACTIONS.wrapFioDomain, name: 'Wrap FIO Domain' },
   // { id: ACTIONS.wrapFioTokens, name: 'Wrap FIO Tokens' },

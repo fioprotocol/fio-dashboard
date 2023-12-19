@@ -4,6 +4,7 @@ import { AddBundledTransaction } from './AddBundledTransaction';
 import { AddPublicAddressForm } from './AddPublicAddressForm';
 import { AddNftForm } from './AddNftForm';
 import { CancelFioRequest } from './CancelFioRequest';
+import { CustomActionForm } from './CustomActionForm';
 import { RegisterFioHandle } from './RegisterFioHandle';
 import { RequestNewFunds } from './RequestNewFunds';
 import { RegisterFioDomain } from './RegisterFioDomain';
@@ -18,6 +19,7 @@ import { TransferFioTokens } from './TransferFioTokens';
 import { UnstakeFioTokens } from './UnstakeFioTokens';
 
 import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../../constants/fio';
+import { CUSTOM_ACTION_NAME } from '../constants';
 
 type Props = {
   action: string;
@@ -60,6 +62,8 @@ export const FioActionForms: React.FC<Props> = props => {
       return <TransferFioTokens onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
       return <UnstakeFioTokens onSubmit={onSubmit} />;
+    case CUSTOM_ACTION_NAME:
+      return <CustomActionForm onSubmit={onSubmit} />;
     default:
       return null;
   }
