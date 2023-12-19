@@ -18,6 +18,14 @@ export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 
 export const FIO_ORACLE_ACCOUNT_NAME = 'fio.oracle';
 
+export const FIO_DEFAULT_ACCOUNT = 'fio.address';
+
+export const FIO_CONTRACT_ACCOUNT_NAMES = {
+  fioAddress: 'fio.address',
+  fioToken: 'fio.token',
+  fioRecordObt: 'fio.reqobt',
+};
+
 export const ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
@@ -45,7 +53,18 @@ export const ACTIONS = {
 };
 
 export const TRANSACTION_ACTION_NAMES = {
+  [ACTIONS.addBundledTransactions]: 'addbundles',
+  [ACTIONS.addPublicAddress]: 'addaddress',
+  [ACTIONS.addPublicAddresses]: 'addaddress',
   [ACTIONS.addNft]: 'addnft',
+  [ACTIONS.cancelFundsRequest]: 'cancelfndreq',
+  [ACTIONS.requestFunds]: 'newfundsreq',
+  [ACTIONS.registerFioAddress]: 'regaddress',
+  [ACTIONS.registerFioDomain]: 'regdomain',
+  [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
+  [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
+  [ACTIONS.removePublicAddresses]: 'remaddress',
+  [ACTIONS.renewFioDomain]: 'renewdomain',
   [ACTIONS.wrapFioTokens]: 'wraptokens',
   [ACTIONS.wrapFioDomain]: 'wrapdomain',
 };
