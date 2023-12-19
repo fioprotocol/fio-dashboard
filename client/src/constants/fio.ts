@@ -67,6 +67,8 @@ export const TRANSACTION_ACTION_NAMES = {
   [ACTIONS.removePublicAddresses]: 'remaddress',
   [ACTIONS.renewFioDomain]: 'renewdomain',
   [ACTIONS.stakeFioTokens]: 'stakefio',
+  [ACTIONS.transferFioAddress]: 'xferaddress',
+  [ACTIONS.transferFioDomain]: 'xferdomain',
   [ACTIONS.unStakeFioTokens]: 'unstakefio',
   [ACTIONS.wrapFioTokens]: 'wraptokens',
   [ACTIONS.wrapFioDomain]: 'wrapdomain',

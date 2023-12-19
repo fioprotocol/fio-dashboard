@@ -231,6 +231,20 @@ export const useContext = (
           tpid: 'dashboard@fiotestnet',
         };
         break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress]:
+        params.data = {
+          ...params.data,
+          fio_address: fioActionFormParams.fioHandle,
+          new_owner_fio_public_key: fioActionFormParams.newOwnerPublicKey,
+        };
+        break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain]:
+        params.data = {
+          ...params.data,
+          fio_domain: fioActionFormParams.fioDomain,
+          new_owner_fio_public_key: fioActionFormParams.newOwnerPublicKey,
+        };
+        break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
         params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
         params.data = {
@@ -258,6 +272,7 @@ export const useContext = (
     fioActionFormParams?.fioRequestId,
     fioActionFormParams?.hash,
     fioActionFormParams?.isPublic,
+    fioActionFormParams?.newOwnerPublicKey,
     fioActionFormParams?.publicAddress,
     fioActionFormParams?.tokenCode,
     fioActionFormParams?.tokenId,
