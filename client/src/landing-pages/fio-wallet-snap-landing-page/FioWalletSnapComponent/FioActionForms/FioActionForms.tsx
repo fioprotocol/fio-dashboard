@@ -11,6 +11,8 @@ import { ChangeDomainVisibility } from './ChangeDomainVisibility';
 import { RemoveAllPublicAddresses } from './RemoveAllPublicAddresses';
 import { RemovePublicAddress } from './RemovePublicAddress';
 import { RenewFioDomain } from './RenewFioDomain';
+import { StakeFioTokens } from './StakeFioTokens';
+import { UnstakeFioTokens } from './UnstakeFioTokens';
 
 import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../../constants/fio';
 
@@ -45,6 +47,10 @@ export const FioActionForms: React.FC<Props> = props => {
       return <RemovePublicAddress onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.renewFioDomain]:
       return <RenewFioDomain onSubmit={onSubmit} />;
+    case TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens]:
+      return <StakeFioTokens onSubmit={onSubmit} />;
+    case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
+      return <UnstakeFioTokens onSubmit={onSubmit} />;
     default:
       return null;
   }

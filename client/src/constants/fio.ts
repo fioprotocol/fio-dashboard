@@ -24,6 +24,7 @@ export const FIO_CONTRACT_ACCOUNT_NAMES = {
   fioAddress: 'fio.address',
   fioToken: 'fio.token',
   fioRecordObt: 'fio.reqobt',
+  fioStaking: 'fio.staking',
 };
 
 export const ACTIONS = {
@@ -65,6 +66,8 @@ export const TRANSACTION_ACTION_NAMES = {
   [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
   [ACTIONS.removePublicAddresses]: 'remaddress',
   [ACTIONS.renewFioDomain]: 'renewdomain',
+  [ACTIONS.stakeFioTokens]: 'stakefio',
+  [ACTIONS.unStakeFioTokens]: 'unstakefio',
   [ACTIONS.wrapFioTokens]: 'wraptokens',
   [ACTIONS.wrapFioDomain]: 'wrapdomain',
 };

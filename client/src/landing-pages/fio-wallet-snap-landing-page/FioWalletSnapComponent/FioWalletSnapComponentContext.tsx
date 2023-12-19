@@ -8,7 +8,7 @@ import {
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
 import { DEFAULT_BUNDLE_SET_VALUE } from '../../../constants/common';
-import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
 type UseContextProps = {
   activeAction: string;
@@ -105,6 +105,7 @@ export const useContext = (
 
   const onSignTxn = useCallback(() => {
     const params: {
+      actor?: string;
       apiUrl: string;
       contract?: string;
       action?: string;
@@ -219,6 +220,28 @@ export const useContext = (
           fio_domain: fioActionFormParams.fioDomain,
         };
         break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens]:
+        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
+        params.data = {
+          ...params.data,
+          fio_address: fioActionFormParams.fioHandle,
+          amount: new FioApi()
+            .amountToSUF(Number(fioActionFormParams.amount))
+            .toString(),
+          tpid: 'dashboard@fiotestnet',
+        };
+        break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
+        params.contract = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
+        params.data = {
+          ...params.data,
+          fio_address: fioActionFormParams.fioHandle,
+          amount: new FioApi()
+            .amountToSUF(Number(fioActionFormParams.amount))
+            .toString(),
+          tpid: 'dashboard@fiotestnet',
+        };
+        break;
       default:
         break;
     }
@@ -226,6 +249,7 @@ export const useContext = (
     signSnapTxn(params);
   }, [
     activeAction,
+    fioActionFormParams?.amount,
     fioActionFormParams?.chainCode,
     fioActionFormParams?.contractAddress,
     fioActionFormParams?.creatorUrl,
