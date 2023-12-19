@@ -12,6 +12,8 @@ import { RemoveAllPublicAddresses } from './RemoveAllPublicAddresses';
 import { RemovePublicAddress } from './RemovePublicAddress';
 import { RenewFioDomain } from './RenewFioDomain';
 import { StakeFioTokens } from './StakeFioTokens';
+import { TransferFioHandle } from './TransferFioHandle';
+import { TransferFioDomain } from './TransferFioDomain';
 import { UnstakeFioTokens } from './UnstakeFioTokens';
 
 import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../../constants/fio';
@@ -49,6 +51,10 @@ export const FioActionForms: React.FC<Props> = props => {
       return <RenewFioDomain onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens]:
       return <StakeFioTokens onSubmit={onSubmit} />;
+    case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress]:
+      return <TransferFioHandle onSubmit={onSubmit} />;
+    case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain]:
+      return <TransferFioDomain onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
       return <UnstakeFioTokens onSubmit={onSubmit} />;
     default:

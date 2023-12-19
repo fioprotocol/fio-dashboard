@@ -38,8 +38,14 @@ export const FIO_ACTIONS_OBJECT_LIST = [
     id: TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens],
     name: 'Stake FIO Tokens',
   },
-  // { id: ACTIONS.transferFioAddress, name: 'Transfer FIO Address' },
-  // { id: ACTIONS.transferFioDomain, name: 'Transfer FIO Domain' },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress],
+    name: 'Transfer FIO Address',
+  },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain],
+    name: 'Transfer FIO Domain',
+  },
   // { id: ACTIONS.transferTokens, name: 'Transfer Tokens' },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens],
