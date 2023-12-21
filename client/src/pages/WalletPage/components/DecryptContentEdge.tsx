@@ -11,8 +11,11 @@ import {
   FioDecryptedRecordData,
 } from '../../../types';
 import { decryptFioRequestData } from '../../../utils';
-import { CONTENT_TYPES, FIO_RECORD_TYPES } from '../constants';
-import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
+import { FIO_RECORD_TYPES } from '../constants';
+import {
+  FIO_REQUEST_STATUS_TYPES,
+  FIO_CONTENT_TYPES,
+} from '../../../constants/fio';
 
 type Props = {
   submitData: {
@@ -36,8 +39,8 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
 
   const contentType =
     fioRecordType === FIO_RECORD_TYPES.DATA
-      ? CONTENT_TYPES.RECORD_OBT_DATA
-      : CONTENT_TYPES.NEW_FUNDS;
+      ? FIO_CONTENT_TYPES.RECORD_OBT_DATA
+      : FIO_CONTENT_TYPES.NEW_FUNDS;
   const decryptedContent = decryptFioRequestData({
     data: itemData,
     walletKeys: {
@@ -55,7 +58,7 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
         public: keys.public,
         private: keys.private,
       },
-      contentType: CONTENT_TYPES.RECORD_OBT_DATA,
+      contentType: FIO_CONTENT_TYPES.RECORD_OBT_DATA,
     });
 
     paymentData = {

@@ -1,10 +1,5 @@
 import { FioRecordViewKeysProps } from './types';
 
-export const CONTENT_TYPES = {
-  RECORD_OBT_DATA: 'record_obt_data_content',
-  NEW_FUNDS: 'new_funds_content',
-};
-
 export const FIO_RECORD_TYPES = {
   SENT: 'sent',
   RECEIVED: 'received',
