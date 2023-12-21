@@ -168,9 +168,7 @@ export const useContext = (
         params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
         params.data = {
           ...params.data,
-          fio_request_id: fioActionFormParams.fioRequestId
-            ? Number(fioActionFormParams.fioRequestId)
-            : null,
+          fio_request_id: fioActionFormParams.fioRequestId,
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress]:
