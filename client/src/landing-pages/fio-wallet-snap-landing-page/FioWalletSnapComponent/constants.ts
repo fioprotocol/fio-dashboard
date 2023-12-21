@@ -62,10 +62,10 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   },
   // { id: ACTIONS.wrapFioDomain, name: 'Wrap FIO Domain' },
   // { id: ACTIONS.wrapFioTokens, name: 'Wrap FIO Tokens' },
-  // {
-  //   id: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
-  //   name: 'Cancel Funds Request',
-  // },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
+    name: 'Cancel Funds Request',
+  },
   // { id: ACTIONS.recordObtData, name: 'Record Obt Data' },
   // { id: ACTIONS.rejectFundsRequest, name: 'Reject Funds Request' },
   {
