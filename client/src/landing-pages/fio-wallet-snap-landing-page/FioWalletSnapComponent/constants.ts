@@ -64,10 +64,13 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   // { id: ACTIONS.wrapFioTokens, name: 'Wrap FIO Tokens' },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
-    name: 'Cancel Funds Request',
+    name: 'Cancel FIO Request',
   },
   // { id: ACTIONS.recordObtData, name: 'Record Obt Data' },
-  // { id: ACTIONS.rejectFundsRequest, name: 'Reject Funds Request' },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest],
+    name: 'Reject FIO Request',
+  },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
     name: 'Create FIO Request',

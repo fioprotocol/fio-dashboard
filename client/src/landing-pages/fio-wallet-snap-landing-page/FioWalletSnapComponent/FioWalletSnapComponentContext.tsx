@@ -217,6 +217,13 @@ export const useContext = (
           is_public: Number(fioActionFormParams.isPublic),
         };
         break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest]:
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+        params.data = {
+          ...params.data,
+          fio_request_id: fioActionFormParams.fioRequestId,
+        };
+        break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses]:
         params.data = {
           ...params.data,

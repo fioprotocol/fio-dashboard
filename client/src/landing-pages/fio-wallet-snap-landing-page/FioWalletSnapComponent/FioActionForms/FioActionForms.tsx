@@ -9,6 +9,7 @@ import { RegisterFioHandle } from './RegisterFioHandle';
 import { RequestNewFunds } from './RequestNewFunds';
 import { RegisterFioDomain } from './RegisterFioDomain';
 import { ChangeDomainVisibility } from './ChangeDomainVisibility';
+import { RejectFioRequest } from './RejectFioRequest';
 import { RemoveAllPublicAddresses } from './RemoveAllPublicAddresses';
 import { RemovePublicAddress } from './RemovePublicAddress';
 import { RenewFioDomain } from './RenewFioDomain';
@@ -46,6 +47,8 @@ export const FioActionForms: React.FC<Props> = props => {
       return <RegisterFioDomain onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility]:
       return <ChangeDomainVisibility onSubmit={onSubmit} />;
+    case TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest]:
+      return <RejectFioRequest onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses]:
       return <RemoveAllPublicAddresses onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses]:
