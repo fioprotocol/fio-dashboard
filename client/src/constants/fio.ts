@@ -270,3 +270,8 @@ export const LOW_BUNDLES_THRESHOLD = 25;
 export const DEFAULT_FIO_RECORDS_LIMIT = 100;
 
 export const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
+
+export const FIO_CONTENT_TYPES = {
+  RECORD_OBT_DATA: 'record_obt_data_content',
+  NEW_FUNDS: 'new_funds_content',
+};

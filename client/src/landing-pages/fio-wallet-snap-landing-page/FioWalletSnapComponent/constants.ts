@@ -68,5 +68,8 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   // },
   // { id: ACTIONS.recordObtData, name: 'Record Obt Data' },
   // { id: ACTIONS.rejectFundsRequest, name: 'Reject Funds Request' },
-  // { id: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds], name: 'Request Funds' },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
+    name: 'Create FIO Request',
+  },
 ];

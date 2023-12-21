@@ -4,6 +4,8 @@ import { MetamaskSnapProps } from '../utils/MetamaskSnapContext';
 import { log } from '../../../util/general';
 import {
   ACTIONS,
+  FIO_CHAIN_CODE,
+  FIO_CONTENT_TYPES,
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
@@ -104,13 +106,15 @@ export const useContext = (
     executeFioAction();
   }, [executeFioAction]);
 
-  const onSignTxn = useCallback(() => {
+  const onSignTxn = useCallback(async () => {
     let params: {
       actor?: string;
       apiUrl: string;
       account?: string;
       action?: string;
+      contentType?: string;
       data?: any;
+      payerFioPublicKey?: string;
     } = {
       apiUrl: 'https://fiotestnet.blockpane.com',
       action: activeAction,
@@ -184,10 +188,29 @@ export const useContext = (
         };
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
-        params.data = {
-          ...params.data,
-        };
+        {
+          params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+          params.data = {
+            ...params.data,
+            payer_fio_address: fioActionFormParams.payerFioHandle,
+            payee_fio_address: fioActionFormParams.payeeFioHandle,
+            content: {
+              amount: fioActionFormParams.amount,
+              payee_public_address:
+                fioActionFormParams.payeeTokenPublicAddress || publicKey,
+              chain_code: FIO_CHAIN_CODE,
+              token_code: FIO_CHAIN_CODE,
+              memo: fioActionFormParams.memo || null,
+              hash: fioActionFormParams.hash || null,
+              offline_url: fioActionFormParams.offlineUrl || null,
+            },
+          };
+          params.contentType = FIO_CONTENT_TYPES.NEW_FUNDS;
+          const payerFioPublicKey = await new FioApi().getFioPublicAddress(
+            fioActionFormParams.payerFioHandle,
+          );
+          params.payerFioPublicKey = payerFioPublicKey.public_address;
+        }
         break;
       case TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility]:
         params.data = {

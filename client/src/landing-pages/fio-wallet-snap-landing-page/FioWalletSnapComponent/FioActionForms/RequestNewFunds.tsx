@@ -10,18 +10,32 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
-  fioRequestId?: string;
+  amount?: string;
+  payeeFioHandle?: string;
+  payerFioHandle?: string;
 };
 
 const validateForm = ({
-  fioRequestId,
+  amount,
+  payeeFioHandle,
+  payerFioHandle,
 }: {
-  fioRequestId: string;
+  amount: string;
+  payeeFioHandle: string;
+  payerFioHandle: string;
 }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
-  if (!fioRequestId) {
-    errors.fioRequestId = 'Required';
+  if (!amount) {
+    errors.amount = 'Required';
+  }
+
+  if (!payeeFioHandle) {
+    errors.payeeFioHandle = 'Required';
+  }
+
+  if (!payerFioHandle) {
+    errors.payerFioHandle = 'Required';
   }
 
   return errors;
@@ -57,6 +71,26 @@ export const RequestNewFunds: React.FC<Props> = props => {
                 component={TextInput}
                 placeholder="Type payer FIO Handle"
                 label="Payer FIO Handle"
+                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+              />
+              <Field
+                name="amount"
+                type="text"
+                component={TextInput}
+                placeholder="Type requested amount"
+                label="FIO tokens amount"
+                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+              />
+              <Field
+                name="memo"
+                type="text"
+                component={TextInput}
+                placeholder="Type memo"
+                label="Memo"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}
