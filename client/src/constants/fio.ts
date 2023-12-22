@@ -63,6 +63,7 @@ export const TRANSACTION_ACTION_NAMES = {
   [ACTIONS.registerFioAddress]: 'regaddress',
   [ACTIONS.registerFioDomain]: 'regdomain',
   [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
+  [ACTIONS.recordObtData]: 'recordobt',
   [ACTIONS.rejectFundsRequest]: 'rejectfndreq',
   [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
   [ACTIONS.removePublicAddresses]: 'remaddress',
