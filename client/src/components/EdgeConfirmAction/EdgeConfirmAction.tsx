@@ -5,7 +5,7 @@ import Processing from '../../components/common/TransactionProcessing';
 import { CONFIRM_FIO_ACTIONS } from '../../constants/common';
 
 import { waitForEdgeAccountStop } from '../../util/edge';
-import { removeExtraCharactersFromString } from '../../util/general';
+import { log, removeExtraCharactersFromString } from '../../util/general';
 import {
   fireActionAnalyticsEvent,
   fireActionAnalyticsEventError,
@@ -91,6 +91,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
           setConfirmPinKeys(null);
         } catch (e) {
+          log.error('EDGE action Error', e);
           fireActionAnalyticsEventError(action);
           showGenericErrorModal();
           onCancel();
