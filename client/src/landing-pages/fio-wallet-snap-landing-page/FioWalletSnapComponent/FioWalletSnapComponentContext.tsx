@@ -13,6 +13,8 @@ import { DEFAULT_BUNDLE_SET_VALUE } from '../../../constants/common';
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { CUSTOM_ACTION_NAME } from './constants';
 
+const DEFAULT_ORACLE_FEE_AMOUNT = '150000000000';
+
 type UseContextProps = {
   activeAction: string;
   executedTxn: any;
@@ -319,6 +321,28 @@ export const useContext = (
             .amountToSUF(Number(fioActionFormParams.amount))
             .toString(),
           tpid: 'dashboard@fiotestnet',
+        };
+        break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain]:
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioOracle;
+        params.data = {
+          ...params.data,
+          fio_domain: fioActionFormParams.fioDomain,
+          chain_code: fioActionFormParams.chainCode,
+          public_address: fioActionFormParams.publicAddress,
+          max_oracle_fee: DEFAULT_ORACLE_FEE_AMOUNT,
+        };
+        break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens]:
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioOracle;
+        params.data = {
+          ...params.data,
+          amount: new FioApi()
+            .amountToSUF(Number(fioActionFormParams.amount))
+            .toString(),
+          chain_code: fioActionFormParams.chainCode,
+          public_address: fioActionFormParams.publicAddress,
+          max_oracle_fee: DEFAULT_ORACLE_FEE_AMOUNT,
         };
         break;
       case CUSTOM_ACTION_NAME: {
