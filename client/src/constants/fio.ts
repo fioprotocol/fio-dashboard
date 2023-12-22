@@ -25,6 +25,7 @@ export const FIO_CONTRACT_ACCOUNT_NAMES = {
   fioToken: 'fio.token',
   fioRecordObt: 'fio.reqobt',
   fioStaking: 'fio.staking',
+  fioOracle: 'fio.oracle',
 };
 
 export const ACTIONS = {

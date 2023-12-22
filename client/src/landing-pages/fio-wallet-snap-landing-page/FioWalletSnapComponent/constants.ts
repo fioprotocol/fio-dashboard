@@ -13,6 +13,10 @@ export const FIO_ACTIONS_OBJECT_LIST = [
     name: 'Add Public Address',
   },
   {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility],
+    name: 'Change FIO Domain Visibility',
+  },
+  {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
     name: 'Register FIO Handle',
   },
@@ -31,10 +35,6 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses],
     name: 'Remove Public Address',
-  },
-  {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility],
-    name: 'Change FIO Domain Visibility',
   },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens],
@@ -57,11 +57,9 @@ export const FIO_ACTIONS_OBJECT_LIST = [
     name: 'Unstake FIO Tokens',
   },
   {
-    id: CUSTOM_ACTION_NAME,
-    name: 'Custom action',
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
+    name: 'Create FIO Request',
   },
-  // { id: ACTIONS.wrapFioDomain, name: 'Wrap FIO Domain' },
-  // { id: ACTIONS.wrapFioTokens, name: 'Wrap FIO Tokens' },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
     name: 'Cancel FIO Request',
@@ -75,7 +73,15 @@ export const FIO_ACTIONS_OBJECT_LIST = [
     name: 'Reject FIO Request',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
-    name: 'Create FIO Request',
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain],
+    name: 'Wrap FIO Domain',
+  },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens],
+    name: 'Wrap FIO Tokens',
+  },
+  {
+    id: CUSTOM_ACTION_NAME,
+    name: 'Custom action',
   },
 ];
