@@ -66,7 +66,10 @@ export const FIO_ACTIONS_OBJECT_LIST = [
     id: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
     name: 'Cancel FIO Request',
   },
-  // { id: ACTIONS.recordObtData, name: 'Record Obt Data' },
+  {
+    id: TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData],
+    name: 'Record Obt Data',
+  },
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest],
     name: 'Reject FIO Request',

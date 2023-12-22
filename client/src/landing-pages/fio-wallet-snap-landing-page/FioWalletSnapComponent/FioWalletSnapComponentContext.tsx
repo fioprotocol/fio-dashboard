@@ -171,6 +171,32 @@ export const useContext = (
           fio_request_id: fioActionFormParams.fioRequestId,
         };
         break;
+      case TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData]: {
+        const payeePublicKey = await new FioApi().getFioPublicAddress(
+          fioActionFormParams.payeeFioHandle,
+        );
+        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+        params.data = {
+          ...params.data,
+          content: {
+            payer_public_address: publicKey,
+            payee_public_address: payeePublicKey.public_address,
+            amount: fioActionFormParams.amount,
+            chain_code: FIO_CHAIN_CODE,
+            token_code: FIO_CHAIN_CODE,
+            status: 'sent_to_blockchain',
+            obt_id: fioActionFormParams.obtId,
+            memo: fioActionFormParams.memo || null,
+            hash: fioActionFormParams.hash || null,
+            offline_url: fioActionFormParams.offLineUrl || null,
+          },
+          payer_fio_address: fioActionFormParams.payerFioHandle,
+          payee_fio_address: fioActionFormParams.payeeFioHandle,
+          fio_request_id: fioActionFormParams.fioRequestId || '',
+        };
+        params.contentType = FIO_CONTENT_TYPES.RECORD_OBT_DATA;
+        break;
+      }
       case TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress]:
         params.data = {
           ...params.data,
