@@ -40,7 +40,7 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
     );
   } catch (error) {
     console.log('Failed to obtain installed snap', error);
-    return undefined;
+    throw error;
   }
 };
 
