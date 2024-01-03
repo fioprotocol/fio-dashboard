@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { connectSnap, getPublicKey, getSnap, signTxn } from './snap';
 import { log } from '../../../util/general';
+import { defaultSnapOrigin } from '../constants';
 
 export type MetamaskSnapProps = {
   publicKey: string | null;
@@ -35,7 +36,9 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
       toggleSnapLoading(true);
       setSnapError(null);
 
-      await connectSnap();
+      await connectSnap(defaultSnapOrigin, {
+        version: process.env.REACT_APP_SNAP_VERSION,
+      });
 
       const installedSnap = await getSnap();
 
