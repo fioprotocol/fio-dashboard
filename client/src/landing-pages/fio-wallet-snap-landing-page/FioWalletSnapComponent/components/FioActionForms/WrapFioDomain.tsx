@@ -4,30 +4,37 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
-  amount?: string;
-  payeeFioPublicKey?: string;
+  fioDomain?: string;
+  chainCode?: string;
+  publicAddress?: string;
 };
 
 const validateForm = ({
-  amount,
-  payeeFioPublicKey,
+  fioDomain,
+  chainCode,
+  publicAddress,
 }: {
-  amount: string;
-  payeeFioPublicKey: string;
+  fioDomain: string;
+  chainCode: string;
+  publicAddress: string;
 }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
-  if (!amount) {
-    errors.amount = 'Required';
+  if (!fioDomain) {
+    errors.fioDomain = 'Required';
   }
 
-  if (!payeeFioPublicKey) {
-    errors.payeeFioPublicKey = 'Required';
+  if (!chainCode) {
+    errors.chainCode = 'Required';
+  }
+
+  if (!publicAddress) {
+    errors.publicAddress = 'Required';
   }
 
   return errors;
@@ -37,7 +44,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const TransferFioTokens: React.FC<Props> = props => {
+export const WrapFioDomain: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -48,21 +55,31 @@ export const TransferFioTokens: React.FC<Props> = props => {
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
-                name="amount"
+                name="fioDomain"
                 type="text"
                 component={TextInput}
-                placeholder="Type FIO Amount to send"
-                label="FIO Tokens amount"
+                placeholder="Type FIO Domain"
+                label="FIO Domain"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}
               />
               <Field
-                name="payeeFioPublicKey"
+                name="chainCode"
                 type="text"
                 component={TextInput}
-                placeholder="Type Public Key for receiving tokens"
-                label="FIO Public Key"
+                placeholder="Type Chain Code where to wrap"
+                label="Chain Code"
+                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+              />
+              <Field
+                name="publicAddress"
+                type="text"
+                component={TextInput}
+                placeholder="Type Public Address"
+                label="Public Address"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}

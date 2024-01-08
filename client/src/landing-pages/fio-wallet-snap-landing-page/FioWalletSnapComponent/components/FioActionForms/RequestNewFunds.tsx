@@ -1,27 +1,28 @@
 import React from 'react';
+
 import { Form, Field } from 'react-final-form';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
   amount?: string;
-  chainCode?: string;
-  publicAddress?: string;
+  payeeFioHandle?: string;
+  payerFioHandle?: string;
 };
 
 const validateForm = ({
   amount,
-  chainCode,
-  publicAddress,
+  payeeFioHandle,
+  payerFioHandle,
 }: {
   amount: string;
-  chainCode: string;
-  publicAddress: string;
+  payeeFioHandle: string;
+  payerFioHandle: string;
 }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
@@ -29,12 +30,12 @@ const validateForm = ({
     errors.amount = 'Required';
   }
 
-  if (!chainCode) {
-    errors.chainCode = 'Required';
+  if (!payeeFioHandle) {
+    errors.payeeFioHandle = 'Required';
   }
 
-  if (!publicAddress) {
-    errors.publicAddress = 'Required';
+  if (!payerFioHandle) {
+    errors.payerFioHandle = 'Required';
   }
 
   return errors;
@@ -44,7 +45,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const WrapFioTokens: React.FC<Props> = props => {
+export const RequestNewFunds: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -55,31 +56,41 @@ export const WrapFioTokens: React.FC<Props> = props => {
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
+                name="payeeFioHandle"
+                type="text"
+                component={TextInput}
+                placeholder="Type payee FIO Handle"
+                label="Payee FIO Handle"
+                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+              />
+              <Field
+                name="payerFioHandle"
+                type="text"
+                component={TextInput}
+                placeholder="Type payer FIO Handle"
+                label="Payer FIO Handle"
+                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+              />
+              <Field
                 name="amount"
                 type="text"
                 component={TextInput}
-                placeholder="Type FIO Tokens Amount"
-                label="FIO Tokens Amount"
+                placeholder="Type requested amount"
+                label="FIO tokens amount"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}
               />
               <Field
-                name="chainCode"
+                name="memo"
                 type="text"
                 component={TextInput}
-                placeholder="Type Chain Code where to wrap"
-                label="Chain Code"
-                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
-                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-              />
-              <Field
-                name="publicAddress"
-                type="text"
-                component={TextInput}
-                placeholder="Type Public Address"
-                label="Public Address"
+                placeholder="Type memo"
+                label="Memo"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}

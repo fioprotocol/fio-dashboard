@@ -4,11 +4,11 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import { NFT_CHAIN_CODE_LIST } from '../../../../constants/common';
-import CustomDropdown from '../../../../components/CustomDropdown';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
+import { NFT_CHAIN_CODE_LIST } from '../../../../../constants/common';
+import CustomDropdown from '../../../../../components/CustomDropdown';
 
 type ErrorsProps = {
   fioHandle?: string;

@@ -4,15 +4,18 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 import {
   CHAIN_CODE_REGEXP,
   TOKEN_CODE_REGEXP,
-} from '../../../../constants/regExps';
-import { MAX_CHAIN_LENGTH, MAX_TOKEN_LENGTH } from '../../../../constants/fio';
-import { CHAIN_CODES } from '../../../../constants/common';
+} from '../../../../../constants/regExps';
+import {
+  MAX_CHAIN_LENGTH,
+  MAX_TOKEN_LENGTH,
+} from '../../../../../constants/fio';
+import { CHAIN_CODES } from '../../../../../constants/common';
 
 type ErrorsProps = {
   chainCode?: string;
@@ -79,7 +82,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const RemovePublicAddress: React.FC<Props> = props => {
+export const AddPublicAddressForm: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>

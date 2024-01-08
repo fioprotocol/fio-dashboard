@@ -4,19 +4,19 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
-  fioHandle?: string;
+  fioDomain?: string;
 };
 
-const validateForm = ({ fioHandle }: { fioHandle: string }): ErrorsProps => {
+const validateForm = ({ fioDomain }: { fioDomain: string }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
-  if (!fioHandle) {
-    errors.fioHandle = 'Required';
+  if (!fioDomain) {
+    errors.fioDomain = 'Required';
   }
 
   return errors;
@@ -26,7 +26,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const RegisterFioHandle: React.FC<Props> = props => {
+export const RenewFioDomain: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -37,11 +37,11 @@ export const RegisterFioHandle: React.FC<Props> = props => {
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
-                name="fioHandle"
+                name="fioDomain"
                 type="text"
                 component={TextInput}
-                placeholder="Type FIO Handle"
-                label="FIO Handle"
+                placeholder="Type FIO Domain"
+                label="FIO Domain"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}

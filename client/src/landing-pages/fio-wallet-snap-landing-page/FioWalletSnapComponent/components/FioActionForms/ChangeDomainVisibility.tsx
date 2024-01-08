@@ -4,24 +4,22 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
+import CustomDropdown from '../../../../../components/CustomDropdown';
 
 type ErrorsProps = {
   fioDomain?: string;
-  chainCode?: string;
-  publicAddress?: string;
+  isPublic?: string;
 };
 
 const validateForm = ({
   fioDomain,
-  chainCode,
-  publicAddress,
+  isPublic,
 }: {
   fioDomain: string;
-  chainCode: string;
-  publicAddress: string;
+  isPublic: string;
 }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
@@ -29,12 +27,8 @@ const validateForm = ({
     errors.fioDomain = 'Required';
   }
 
-  if (!chainCode) {
-    errors.chainCode = 'Required';
-  }
-
-  if (!publicAddress) {
-    errors.publicAddress = 'Required';
+  if (!isPublic) {
+    errors.isPublic = 'Reqiured';
   }
 
   return errors;
@@ -44,7 +38,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const WrapFioDomain: React.FC<Props> = props => {
+export const ChangeDomainVisibility: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -52,6 +46,10 @@ export const WrapFioDomain: React.FC<Props> = props => {
         onSubmit={onSubmit}
         validate={validateForm}
         render={formProps => {
+          const onChange = formProps.form.change;
+          const handleDropdownChange = (value: string) => {
+            onChange('isPublic', value);
+          };
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
@@ -64,25 +62,13 @@ export const WrapFioDomain: React.FC<Props> = props => {
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}
               />
-              <Field
-                name="chainCode"
-                type="text"
-                component={TextInput}
-                placeholder="Type Chain Code where to wrap"
-                label="Chain Code"
-                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
-                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-              />
-              <Field
-                name="publicAddress"
-                type="text"
-                component={TextInput}
-                placeholder="Type Public Address"
-                label="Public Address"
-                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
-                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
-                errorColor={COLOR_TYPE.WARN}
+
+              <CustomDropdown
+                options={[
+                  { id: '1', name: 'Public' },
+                  { id: '0', name: 'Private' },
+                ]}
+                onChange={handleDropdownChange}
               />
 
               <SubmitButton
