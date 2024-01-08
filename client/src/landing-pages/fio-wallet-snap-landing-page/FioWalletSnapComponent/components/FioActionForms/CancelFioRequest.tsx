@@ -1,33 +1,27 @@
 import React from 'react';
+
 import { Form, Field } from 'react-final-form';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
-  fioDomain?: string;
-  newOwnerPublicKey?: string;
+  fioRequestId?: string;
 };
 
 const validateForm = ({
-  fioDomain,
-  newOwnerPublicKey,
+  fioRequestId,
 }: {
-  fioDomain: string;
-  newOwnerPublicKey: string;
+  fioRequestId: string;
 }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
-  if (!fioDomain) {
-    errors.fioDomain = 'Required';
-  }
-
-  if (!newOwnerPublicKey) {
-    errors.newOwnerPublicKey = 'Required';
+  if (!fioRequestId) {
+    errors.fioRequestId = 'Required';
   }
 
   return errors;
@@ -37,7 +31,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const TransferFioDomain: React.FC<Props> = props => {
+export const CancelFioRequest: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -48,21 +42,11 @@ export const TransferFioDomain: React.FC<Props> = props => {
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
-                name="fioDomain"
+                name="fioRequestId"
                 type="text"
                 component={TextInput}
-                placeholder="Type FIO Domain"
-                label="FIO Domain"
-                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
-                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-              />
-              <Field
-                name="newOwnerPublicKey"
-                type="text"
-                component={TextInput}
-                placeholder="Type New Owner Public Key"
-                label="FIO Public Key"
+                placeholder="Type FIO Request id"
+                label="FIO Request Id"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}

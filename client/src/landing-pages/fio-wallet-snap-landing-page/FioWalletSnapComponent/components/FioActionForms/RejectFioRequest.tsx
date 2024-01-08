@@ -1,34 +1,27 @@
 import React from 'react';
+
 import { Form, Field } from 'react-final-form';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import CustomDropdown from '../../../../components/CustomDropdown';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
-  fioDomain?: string;
-  isPublic?: string;
+  fioRequestId?: string;
 };
 
 const validateForm = ({
-  fioDomain,
-  isPublic,
+  fioRequestId,
 }: {
-  fioDomain: string;
-  isPublic: string;
+  fioRequestId: string;
 }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
-  if (!fioDomain) {
-    errors.fioDomain = 'Required';
-  }
-
-  if (!isPublic) {
-    errors.isPublic = 'Reqiured';
+  if (!fioRequestId) {
+    errors.fioRequestId = 'Required';
   }
 
   return errors;
@@ -38,7 +31,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const ChangeDomainVisibility: React.FC<Props> = props => {
+export const RejectFioRequest: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -46,29 +39,17 @@ export const ChangeDomainVisibility: React.FC<Props> = props => {
         onSubmit={onSubmit}
         validate={validateForm}
         render={formProps => {
-          const onChange = formProps.form.change;
-          const handleDropdownChange = (value: string) => {
-            onChange('isPublic', value);
-          };
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
-                name="fioDomain"
+                name="fioRequestId"
                 type="text"
                 component={TextInput}
-                placeholder="Type FIO Domain"
-                label="FIO Domain"
+                placeholder="Type FIO Request id"
+                label="FIO Request Id"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}
-              />
-
-              <CustomDropdown
-                options={[
-                  { id: '1', name: 'Public' },
-                  { id: '0', name: 'Private' },
-                ]}
-                onChange={handleDropdownChange}
               />
 
               <SubmitButton

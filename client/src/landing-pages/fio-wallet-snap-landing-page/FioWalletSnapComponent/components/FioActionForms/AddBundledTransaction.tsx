@@ -4,23 +4,19 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
-  customAction?: string;
+  fioHandle?: string;
 };
 
-const validateForm = ({
-  customAction,
-}: {
-  customAction: string;
-}): ErrorsProps => {
+const validateForm = ({ fioHandle }: { fioHandle: string }): ErrorsProps => {
   const errors: ErrorsProps = {};
 
-  if (!customAction) {
-    errors.customAction = 'Required';
+  if (!fioHandle) {
+    errors.fioHandle = 'Required';
   }
 
   return errors;
@@ -30,7 +26,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const CustomActionForm: React.FC<Props> = props => {
+export const AddBundledTransaction: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -41,12 +37,11 @@ export const CustomActionForm: React.FC<Props> = props => {
           return (
             <form onSubmit={formProps.handleSubmit}>
               <Field
-                name="customAction"
-                type="textarea"
-                element="textarea"
+                name="fioHandle"
+                type="text"
                 component={TextInput}
-                placeholder="Type Custom Action Params"
-                label="Custom Action Params"
+                placeholder="Type FIO Handle"
+                label="FIO Handle"
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 errorColor={COLOR_TYPE.WARN}

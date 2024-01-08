@@ -5,9 +5,9 @@ import { Form, Field } from 'react-final-form';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
   amount?: string;

@@ -22,8 +22,11 @@ import { UnstakeFioTokens } from './UnstakeFioTokens';
 import { WrapFioDomain } from './WrapFioDomain';
 import { WrapFioTokens } from './WrapFioTokens';
 
-import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../../constants/fio';
-import { CUSTOM_ACTION_NAME } from '../constants';
+import {
+  ACTIONS,
+  TRANSACTION_ACTION_NAMES,
+} from '../../../../../constants/fio';
+import { CUSTOM_ACTION_NAME } from '../../constants';
 
 type Props = {
   action: string;

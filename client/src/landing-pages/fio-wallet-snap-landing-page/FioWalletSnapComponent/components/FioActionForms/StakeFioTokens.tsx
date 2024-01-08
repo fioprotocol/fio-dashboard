@@ -1,19 +1,31 @@
 import React from 'react';
+
 import { Form, Field } from 'react-final-form';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+} from '../../../../../components/Input/TextInput';
+import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
+import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 
 type ErrorsProps = {
+  amount?: string;
   fioHandle?: string;
 };
 
-const validateForm = ({ fioHandle }: { fioHandle: string }): ErrorsProps => {
+const validateForm = ({
+  amount,
+  fioHandle,
+}: {
+  amount: string;
+  fioHandle: string;
+}): ErrorsProps => {
   const errors: ErrorsProps = {};
+
+  if (!amount) {
+    errors.amount = 'Required';
+  }
 
   if (!fioHandle) {
     errors.fioHandle = 'Required';
@@ -26,7 +38,7 @@ type Props = {
   onSubmit: (values: any) => void;
 };
 
-export const AddBundledTransaction: React.FC<Props> = props => {
+export const StakeFioTokens: React.FC<Props> = props => {
   const { onSubmit } = props;
   return (
     <div>
@@ -36,6 +48,16 @@ export const AddBundledTransaction: React.FC<Props> = props => {
         render={formProps => {
           return (
             <form onSubmit={formProps.handleSubmit}>
+              <Field
+                name="amount"
+                type="text"
+                component={TextInput}
+                placeholder="Type amount to stake"
+                label="FIO Tokens amount"
+                colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+              />
               <Field
                 name="fioHandle"
                 type="text"

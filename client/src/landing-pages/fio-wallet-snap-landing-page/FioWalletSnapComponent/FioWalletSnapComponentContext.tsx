@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 
+import { createHmac, randomBytes } from 'crypto-browserify';
+
 import { MetamaskSnapProps } from '../utils/MetamaskSnapContext';
 import { log } from '../../../util/general';
 import {
@@ -21,11 +23,15 @@ type UseContextProps = {
   executedTxnError: Error | null;
   executedTxnLoading: boolean;
   fioActionFormParams: any;
+  nonce: string | null;
+  signature: string;
   onActionChange: (value: string) => void;
   onConnectClick: () => void;
   onExecuteTxn: () => void;
   onSignTxn: () => void;
   onSubmitActionForm: (values: any) => void;
+  onSubmitSecret: (values: { secret: string }) => void;
+  signNonce: () => void;
 };
 
 export const useContext = (
@@ -34,9 +40,12 @@ export const useContext = (
   const {
     publicKey,
     signedTxn,
+    signature,
     clearSignTx,
+    clearSignNonceResults,
     handleConnectClick,
     signSnapTxn,
+    signNonceSnap,
   } = metamaskSnapContext;
 
   const [activeAction, setActiveAction] = useState<string | null>(null);
@@ -48,6 +57,7 @@ export const useContext = (
   const [fioActionFormParams, setFioActionFormParams] = useState<any | null>(
     null,
   );
+  const [nonce, setNonce] = useState<string | null>(null);
 
   const onActionChange = useCallback((value: string) => {
     setActiveAction(value);
@@ -115,7 +125,49 @@ export const useContext = (
       account?: string;
       action?: string;
       contentType?: string;
-      data?: any;
+      data?: {
+        amount?: string;
+        bundle_sets?: number;
+        chain_code?: string;
+        content?: {
+          payer_public_address?: string;
+          payee_public_address: string;
+          amount: string;
+          chain_code: string;
+          token_code: string;
+          status?: string;
+          obt_id?: string;
+          memo: string | null;
+          hash: string | null;
+          offline_url: string | null;
+        };
+        fio_address?: string;
+        fio_domain?: string;
+        fio_request_id?: string;
+        is_public?: number;
+        max_fee: number;
+        max_oracle_fee?: string;
+        nfts?: {
+          chain_code: string;
+          contract_address: string;
+          token_id: string;
+          url?: string;
+          hash?: string;
+          metadata?: string;
+        }[];
+        new_owner_fio_public_key?: string;
+        owner_fio_public_key?: string;
+        payer_fio_address?: string;
+        payee_fio_address?: string;
+        payee_public_key?: string;
+        public_addresses?: {
+          chain_code: string;
+          token_code: string;
+          public_address: string;
+        }[];
+        public_address?: string;
+        tpid: string;
+      };
       payerFioPublicKey?: string;
     } = {
       apiUrl: 'https://fiotestnet.blockpane.com',
@@ -370,16 +422,39 @@ export const useContext = (
     [clearSignTx],
   );
 
+  const onSubmitSecret = useCallback(
+    (values: { secret: string }) => {
+      const stringToHash = randomBytes(8).toString('hex');
+
+      const generatedNonce = createHmac('sha256', values.secret)
+        .update(stringToHash)
+        .digest('hex');
+
+      setNonce(generatedNonce);
+      clearSignNonceResults();
+    },
+    [clearSignNonceResults],
+  );
+
+  const signNonce = useCallback(() => {
+    if (!nonce) return;
+    signNonceSnap({ nonce });
+  }, [nonce, signNonceSnap]);
+
   return {
     activeAction,
     executedTxn,
     executedTxnError,
     executedTxnLoading,
     fioActionFormParams,
+    nonce,
+    signature,
     onActionChange,
     onConnectClick,
     onExecuteTxn,
     onSignTxn,
     onSubmitActionForm,
+    onSubmitSecret,
+    signNonce,
   };
 };
