@@ -8,7 +8,11 @@ import { useContext } from './FioWalletSnapComponentContext';
 import { FioActionForms } from './components/FioActionForms';
 import { SignNonce } from './components/SignNonce';
 
-import { FIO_ACTIONS_OBJECT_LIST } from './constants';
+import {
+  DECRYPT_FIO_REQUEST_CONTENT_NAME,
+  DECRYPT_OBT_DATA_CONTENT_NAME,
+  FIO_ACTIONS_OBJECT_LIST,
+} from './constants';
 
 import classes from './FioWalletSnapComponent.module.scss';
 
@@ -16,6 +20,9 @@ export const FioWalletSnapComponent: React.FC = () => {
   const metamaskSnapContext = MetamaskSnapContext();
 
   const {
+    decryptedContent,
+    decryptedError,
+    decryptLoading,
     isSignatureVerified,
     publicKey,
     snapLoading,
@@ -39,6 +46,7 @@ export const FioWalletSnapComponent: React.FC = () => {
     onConnectClick,
     onActionChange,
     onExecuteTxn,
+    onDecryptContent,
     onSignTxn,
     onSubmitActionForm,
     onSubmitSecret,
@@ -97,13 +105,40 @@ export const FioWalletSnapComponent: React.FC = () => {
               />
             </div>
             <hr />
-            <SubmitButton
-              onClick={onSignTxn}
-              text="Sign Transaction"
-              disabled={signedTxnLoading || !fioActionFormParams}
-              loading={signedTxnLoading}
-              withTopMargin
-            />
+            {activeAction === DECRYPT_FIO_REQUEST_CONTENT_NAME ||
+            activeAction === DECRYPT_OBT_DATA_CONTENT_NAME ? (
+              <SubmitButton
+                onClick={onDecryptContent}
+                text="Decrypt Content"
+                disabled={decryptLoading || !fioActionFormParams}
+                loading={decryptLoading}
+                withTopMargin
+                withBottomMargin
+              />
+            ) : (
+              <SubmitButton
+                onClick={onSignTxn}
+                text="Sign Transaction"
+                disabled={signedTxnLoading || !fioActionFormParams}
+                loading={signedTxnLoading}
+                withTopMargin
+              />
+            )}
+            {decryptedError && (
+              <p className={classes.snapErrorMessage}>
+                {decryptedError?.message}
+              </p>
+            )}
+            {decryptedContent && (
+              <div>
+                <h5 className="mt-4">Decrypted Content:</h5>
+                {Object.entries(decryptedContent).map(([key, value]) => (
+                  <p className={classes.txn} key={key}>
+                    {key}: {JSON.stringify(value)}
+                  </p>
+                ))}
+              </div>
+            )}
             {signedTxnError && (
               <p className={classes.snapErrorMessage}>
                 {signedTxnError?.message}

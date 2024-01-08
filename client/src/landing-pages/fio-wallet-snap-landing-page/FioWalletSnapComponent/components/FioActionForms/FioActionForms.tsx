@@ -5,6 +5,8 @@ import { AddPublicAddressForm } from './AddPublicAddressForm';
 import { AddNftForm } from './AddNftForm';
 import { CancelFioRequest } from './CancelFioRequest';
 import { CustomActionForm } from './CustomActionForm';
+import { DecryptContentFioRequestForm } from './DecryptContentFioRequestForm';
+import { DecryptContentObtDataForm } from './DecryptContentObtDataForm';
 import { RegisterFioHandle } from './RegisterFioHandle';
 import { RequestNewFunds } from './RequestNewFunds';
 import { RegisterFioDomain } from './RegisterFioDomain';
@@ -26,7 +28,11 @@ import {
   ACTIONS,
   TRANSACTION_ACTION_NAMES,
 } from '../../../../../constants/fio';
-import { CUSTOM_ACTION_NAME } from '../../constants';
+import {
+  CUSTOM_ACTION_NAME,
+  DECRYPT_FIO_REQUEST_CONTENT_NAME,
+  DECRYPT_OBT_DATA_CONTENT_NAME,
+} from '../../constants';
 
 type Props = {
   action: string;
@@ -77,6 +83,10 @@ export const FioActionForms: React.FC<Props> = props => {
       return <WrapFioTokens onSubmit={onSubmit} />;
     case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
       return <UnstakeFioTokens onSubmit={onSubmit} />;
+    case DECRYPT_FIO_REQUEST_CONTENT_NAME:
+      return <DecryptContentFioRequestForm onSubmit={onSubmit} />;
+    case DECRYPT_OBT_DATA_CONTENT_NAME:
+      return <DecryptContentObtDataForm onSubmit={onSubmit} />;
     case CUSTOM_ACTION_NAME:
       return <CustomActionForm onSubmit={onSubmit} />;
     default:

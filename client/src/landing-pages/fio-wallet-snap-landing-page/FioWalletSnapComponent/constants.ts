@@ -1,6 +1,8 @@
 import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../constants/fio';
 
 export const CUSTOM_ACTION_NAME = 'customAction';
+export const DECRYPT_FIO_REQUEST_CONTENT_NAME = 'decryptContent';
+export const DECRYPT_OBT_DATA_CONTENT_NAME = 'decryptObtDataContent';
 
 export const FIO_ACTIONS_OBJECT_LIST = [
   {
@@ -79,6 +81,14 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   {
     id: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens],
     name: 'Wrap FIO Tokens',
+  },
+  {
+    id: DECRYPT_FIO_REQUEST_CONTENT_NAME,
+    name: 'Decrypt content from FIO Request',
+  },
+  {
+    id: DECRYPT_OBT_DATA_CONTENT_NAME,
+    name: 'Decrypt content from OBT Data Record',
   },
   {
     id: CUSTOM_ACTION_NAME,
