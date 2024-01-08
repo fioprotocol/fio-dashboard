@@ -72,3 +72,16 @@ export const signTxn = async (params: any) => {
 
   return txn;
 };
+
+export const signNonce = async (params: { nonce: string }) => {
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: defaultSnapOrigin,
+      request: {
+        method: 'signNonce',
+        params,
+      },
+    },
+  });
+};

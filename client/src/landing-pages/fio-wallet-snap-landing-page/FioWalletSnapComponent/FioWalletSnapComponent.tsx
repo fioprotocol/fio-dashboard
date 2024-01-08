@@ -5,7 +5,8 @@ import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import { MetamaskSnapContext } from '../utils/MetamaskSnapContext';
 
 import { useContext } from './FioWalletSnapComponentContext';
-import { FioActionForms } from './FioActionForms';
+import { FioActionForms } from './components/FioActionForms';
+import { SignNonce } from './components/SignNonce';
 
 import { FIO_ACTIONS_OBJECT_LIST } from './constants';
 
@@ -15,9 +16,13 @@ export const FioWalletSnapComponent: React.FC = () => {
   const metamaskSnapContext = MetamaskSnapContext();
 
   const {
+    isSignatureVerified,
     publicKey,
     snapLoading,
     snapError,
+    signature,
+    signatureError,
+    signatureLoading,
     signedTxn,
     signedTxnError,
     signedTxnLoading,
@@ -30,11 +35,14 @@ export const FioWalletSnapComponent: React.FC = () => {
     executedTxnError,
     executedTxnLoading,
     fioActionFormParams,
+    nonce,
     onConnectClick,
     onActionChange,
     onExecuteTxn,
     onSignTxn,
     onSubmitActionForm,
+    onSubmitSecret,
+    signNonce,
   } = useContext(metamaskSnapContext);
 
   return (
@@ -65,6 +73,19 @@ export const FioWalletSnapComponent: React.FC = () => {
                 <p>{publicKey}</p>
               </div>
             )}
+            <hr />
+            <h5>Sign and verify nonce</h5>
+            <SignNonce
+              signatureError={signatureError}
+              signatureLoading={signatureLoading}
+              isSignatureVerified={isSignatureVerified}
+              nonce={nonce}
+              signature={signature}
+              onSubmit={onSubmitSecret}
+              signNonce={signNonce}
+            />
+            <hr />
+            <h5 className="mb-3">Select a FIO action</h5>
             <div className={classes.dropdown}>
               <CustomDropdown
                 options={FIO_ACTIONS_OBJECT_LIST}

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Ecc } from '@fioprotocol/fiojs';
 
-import { connectSnap, getPublicKey, getSnap, signTxn } from './snap';
+import { connectSnap, getPublicKey, getSnap, signTxn, signNonce } from './snap';
 import { log } from '../../../util/general';
 import { defaultSnapOrigin } from '../constants';
 
 export type MetamaskSnapProps = {
+  isSignatureVerified: boolean | null;
   publicKey: string | null;
   signedTxn: any | null;
   signedTxnError: Error;
@@ -12,9 +14,14 @@ export type MetamaskSnapProps = {
   snapError: Error;
   snapLoading: boolean;
   state: any;
+  signature: string;
+  signatureError: Error | null;
+  signatureLoading: boolean;
   clearSignTx: () => void;
+  clearSignNonceResults: () => void;
   handleConnectClick: () => void;
   signSnapTxn: (params: any) => void;
+  signNonceSnap: (params: { nonce: string }) => void;
 };
 
 export const MetamaskSnapContext = (): MetamaskSnapProps => {
@@ -25,6 +32,12 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   const [signedTxn, setSignedTxn] = useState<any | null>(null);
   const [signedTxnError, setSignedTxnError] = useState<Error | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [signature, setSignature] = useState<string | null>(null);
+  const [isSignatureVerified, setIsSignatureVerified] = useState<
+    boolean | null
+  >(null);
+  const [signatureError, setSignatureError] = useState<Error | null>(null);
+  const [signatureLoading, toggleSignatureLoading] = useState<boolean>(false);
 
   const clearSignTx = useCallback(() => {
     setSignedTxn(null);
@@ -77,6 +90,37 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     }
   }, []);
 
+  const verifySignature = useCallback(
+    async ({ signature, nonce }: { signature: string; nonce: string }) => {
+      const isVerified = await Ecc.verify(signature, nonce, publicKey);
+      setIsSignatureVerified(isVerified);
+    },
+    [publicKey],
+  );
+
+  const clearSignNonceResults = useCallback(() => {
+    setSignature(null);
+    setSignatureError(null);
+  }, []);
+
+  const signNonceSnap = useCallback(
+    async (params: { nonce: string }) => {
+      try {
+        clearSignNonceResults();
+        toggleSignatureLoading(true);
+        const signature = await signNonce(params);
+        setSignature(signature);
+        verifySignature({ signature, nonce: params.nonce });
+      } catch (error) {
+        log.error(error);
+        setSignatureError(error);
+      } finally {
+        toggleSignatureLoading(false);
+      }
+    },
+    [clearSignNonceResults, verifySignature],
+  );
+
   useEffect(() => {
     if (state?.enabled) {
       getPublicKeyFromSnap();
@@ -84,6 +128,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   }, [getPublicKeyFromSnap, state?.enabled]);
 
   return {
+    isSignatureVerified,
     publicKey,
     signedTxn,
     signedTxnError,
@@ -91,8 +136,13 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     snapLoading,
     snapError,
     state,
+    signature,
+    signatureError,
+    signatureLoading,
     clearSignTx,
+    clearSignNonceResults,
     handleConnectClick,
     signSnapTxn,
+    signNonceSnap,
   };
 };
