@@ -44,7 +44,7 @@ export const SignNonce: React.FC<Props> = props => {
     onSubmit,
     signNonce,
   } = props;
-  console.log(signatureError);
+
   return (
     <div className={classes.container}>
       <Form

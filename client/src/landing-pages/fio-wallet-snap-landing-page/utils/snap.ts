@@ -85,3 +85,20 @@ export const signNonce = async (params: { nonce: string }) => {
     },
   });
 };
+
+export const decryptContent = async (params: {
+  content: string;
+  encryptionPublicKey: string;
+  contentType: string;
+}) => {
+  return await window.ethereum.request({
+    method: 'wallet_invokeSnap',
+    params: {
+      snapId: defaultSnapOrigin,
+      request: {
+        method: 'decryptContent',
+        params,
+      },
+    },
+  });
+};

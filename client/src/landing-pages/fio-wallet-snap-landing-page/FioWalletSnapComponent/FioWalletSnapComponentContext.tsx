@@ -12,8 +12,12 @@ import {
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
 import { DEFAULT_BUNDLE_SET_VALUE } from '../../../constants/common';
+import {
+  CUSTOM_ACTION_NAME,
+  DECRYPT_FIO_REQUEST_CONTENT_NAME,
+  DECRYPT_OBT_DATA_CONTENT_NAME,
+} from './constants';
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
-import { CUSTOM_ACTION_NAME } from './constants';
 
 const DEFAULT_ORACLE_FEE_AMOUNT = '150000000000';
 
@@ -28,6 +32,7 @@ type UseContextProps = {
   onActionChange: (value: string) => void;
   onConnectClick: () => void;
   onExecuteTxn: () => void;
+  onDecryptContent: () => void;
   onSignTxn: () => void;
   onSubmitActionForm: (values: any) => void;
   onSubmitSecret: (values: { secret: string }) => void;
@@ -41,8 +46,10 @@ export const useContext = (
     publicKey,
     signedTxn,
     signature,
+    clearDecryptResults,
     clearSignTx,
     clearSignNonceResults,
+    decryptRequestContent,
     handleConnectClick,
     signSnapTxn,
     signNonceSnap,
@@ -59,9 +66,14 @@ export const useContext = (
   );
   const [nonce, setNonce] = useState<string | null>(null);
 
-  const onActionChange = useCallback((value: string) => {
-    setActiveAction(value);
-  }, []);
+  const onActionChange = useCallback(
+    (value: string) => {
+      clearSignTx();
+      clearDecryptResults();
+      setActiveAction(value);
+    },
+    [clearDecryptResults, clearSignTx],
+  );
 
   const onConnectClick = useCallback(() => {
     handleConnectClick();
@@ -125,6 +137,7 @@ export const useContext = (
       account?: string;
       action?: string;
       contentType?: string;
+      content?: string;
       data?: {
         amount?: string;
         bundle_sets?: number;
@@ -168,6 +181,7 @@ export const useContext = (
         public_address?: string;
         tpid: string;
       };
+      encryptionPublicKey?: string;
       payerFioPublicKey?: string;
     } = {
       apiUrl: 'https://fiotestnet.blockpane.com',
@@ -418,8 +432,9 @@ export const useContext = (
       setExecutedTxn(null);
       setExecutedTxnError(null);
       clearSignTx();
+      clearDecryptResults();
     },
-    [clearSignTx],
+    [clearDecryptResults, clearSignTx],
   );
 
   const onSubmitSecret = useCallback(
@@ -441,6 +456,39 @@ export const useContext = (
     signNonceSnap({ nonce });
   }, [nonce, signNonceSnap]);
 
+  const onDecryptContent = useCallback(() => {
+    const params: {
+      content: string;
+      encryptionPublicKey: string;
+      contentType: string;
+    } = {
+      content: fioActionFormParams.content,
+      encryptionPublicKey: fioActionFormParams.encryptionPublicKey,
+      contentType: '',
+    };
+
+    clearDecryptResults();
+
+    switch (activeAction) {
+      case DECRYPT_FIO_REQUEST_CONTENT_NAME:
+        params.contentType = FIO_CONTENT_TYPES.NEW_FUNDS;
+        break;
+      case DECRYPT_OBT_DATA_CONTENT_NAME:
+        params.contentType = FIO_CONTENT_TYPES.RECORD_OBT_DATA;
+        break;
+      default:
+        break;
+    }
+
+    decryptRequestContent(params);
+  }, [
+    activeAction,
+    clearDecryptResults,
+    decryptRequestContent,
+    fioActionFormParams?.content,
+    fioActionFormParams?.encryptionPublicKey,
+  ]);
+
   return {
     activeAction,
     executedTxn,
@@ -451,6 +499,7 @@ export const useContext = (
     signature,
     onActionChange,
     onConnectClick,
+    onDecryptContent,
     onExecuteTxn,
     onSignTxn,
     onSubmitActionForm,

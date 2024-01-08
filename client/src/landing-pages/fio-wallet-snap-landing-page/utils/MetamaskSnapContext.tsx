@@ -1,11 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Ecc } from '@fioprotocol/fiojs';
 
-import { connectSnap, getPublicKey, getSnap, signTxn, signNonce } from './snap';
+import {
+  connectSnap,
+  getPublicKey,
+  getSnap,
+  signTxn,
+  signNonce,
+  decryptContent,
+} from './snap';
 import { log } from '../../../util/general';
 import { defaultSnapOrigin } from '../constants';
 
 export type MetamaskSnapProps = {
+  decryptedContent: any;
+  decryptedError: Error | null;
+  decryptLoading: boolean;
   isSignatureVerified: boolean | null;
   publicKey: string | null;
   signedTxn: any | null;
@@ -17,8 +27,14 @@ export type MetamaskSnapProps = {
   signature: string;
   signatureError: Error | null;
   signatureLoading: boolean;
+  clearDecryptResults: () => void;
   clearSignTx: () => void;
   clearSignNonceResults: () => void;
+  decryptRequestContent: (params: {
+    content: string;
+    encryptionPublicKey: string;
+    contentType: string;
+  }) => void;
   handleConnectClick: () => void;
   signSnapTxn: (params: any) => void;
   signNonceSnap: (params: { nonce: string }) => void;
@@ -38,6 +54,9 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   >(null);
   const [signatureError, setSignatureError] = useState<Error | null>(null);
   const [signatureLoading, toggleSignatureLoading] = useState<boolean>(false);
+  const [decryptedContent, setDecryptedContent] = useState<any | null>(null);
+  const [decryptedError, setDecryptedError] = useState<Error | null>(null);
+  const [decryptLoading, toggleDecryptLoading] = useState<boolean>(false);
 
   const clearSignTx = useCallback(() => {
     setSignedTxn(null);
@@ -121,6 +140,31 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     [clearSignNonceResults, verifySignature],
   );
 
+  const decryptRequestContent = useCallback(
+    async (params: {
+      content: string;
+      encryptionPublicKey: string;
+      contentType: string;
+    }) => {
+      try {
+        toggleDecryptLoading(true);
+        const decryptedContent = await decryptContent(params);
+        setDecryptedContent(decryptedContent);
+      } catch (error) {
+        log.error(error);
+        setDecryptedError(error);
+      } finally {
+        toggleDecryptLoading(false);
+      }
+    },
+    [],
+  );
+
+  const clearDecryptResults = useCallback(() => {
+    setDecryptedError(null);
+    setDecryptedContent(null);
+  }, []);
+
   useEffect(() => {
     if (state?.enabled) {
       getPublicKeyFromSnap();
@@ -128,6 +172,9 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   }, [getPublicKeyFromSnap, state?.enabled]);
 
   return {
+    decryptedContent,
+    decryptedError,
+    decryptLoading,
     isSignatureVerified,
     publicKey,
     signedTxn,
@@ -139,8 +186,10 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     signature,
     signatureError,
     signatureLoading,
+    clearDecryptResults,
     clearSignTx,
     clearSignNonceResults,
+    decryptRequestContent,
     handleConnectClick,
     signSnapTxn,
     signNonceSnap,
