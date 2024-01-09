@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 
 import { createHmac, randomBytes } from 'crypto-browserify';
 
@@ -23,6 +23,7 @@ const DEFAULT_ORACLE_FEE_AMOUNT = '150000000000';
 
 type UseContextProps = {
   activeAction: string;
+  derivationIndex: number;
   executedTxn: any;
   executedTxnError: Error | null;
   executedTxnLoading: boolean;
@@ -33,6 +34,7 @@ type UseContextProps = {
   onConnectClick: () => void;
   onExecuteTxn: () => void;
   onDecryptContent: () => void;
+  onDerivationIndexUpdate: (event: ChangeEvent<HTMLInputElement>) => void;
   onSignTxn: () => void;
   onSubmitActionForm: (values: any) => void;
   onSubmitSecret: (values: { secret: string }) => void;
@@ -43,6 +45,7 @@ export const useContext = (
   metamaskSnapContext: MetamaskSnapProps,
 ): UseContextProps => {
   const {
+    derivationIndex,
     publicKey,
     signedTxn,
     signature,
@@ -53,6 +56,7 @@ export const useContext = (
     handleConnectClick,
     signSnapTxn,
     signNonceSnap,
+    setDerivationIndex,
   } = metamaskSnapContext;
 
   const [activeAction, setActiveAction] = useState<string | null>(null);
@@ -181,6 +185,7 @@ export const useContext = (
         public_address?: string;
         tpid: string;
       };
+      derivationIndex?: number;
       encryptionPublicKey?: string;
       payerFioPublicKey?: string;
     } = {
@@ -191,6 +196,7 @@ export const useContext = (
         tpid: process.env.REACT_APP_DEFAULT_TPID || '',
         max_fee: DEFAULT_ACTION_FEE_AMOUNT,
       },
+      derivationIndex,
     };
 
     switch (activeAction) {
@@ -424,7 +430,13 @@ export const useContext = (
     }
 
     signSnapTxn(params);
-  }, [activeAction, fioActionFormParams, publicKey, signSnapTxn]);
+  }, [
+    activeAction,
+    derivationIndex,
+    fioActionFormParams,
+    publicKey,
+    signSnapTxn,
+  ]);
 
   const onSubmitActionForm = useCallback(
     (values: any) => {
@@ -453,16 +465,18 @@ export const useContext = (
 
   const signNonce = useCallback(() => {
     if (!nonce) return;
-    signNonceSnap({ nonce });
-  }, [nonce, signNonceSnap]);
+    signNonceSnap({ nonce, derivationIndex });
+  }, [derivationIndex, nonce, signNonceSnap]);
 
   const onDecryptContent = useCallback(() => {
     const params: {
       content: string;
+      derivationIndex?: number;
       encryptionPublicKey: string;
       contentType: string;
     } = {
       content: fioActionFormParams.content,
+      derivationIndex,
       encryptionPublicKey: fioActionFormParams.encryptionPublicKey,
       contentType: '',
     };
@@ -485,12 +499,22 @@ export const useContext = (
     activeAction,
     clearDecryptResults,
     decryptRequestContent,
+    derivationIndex,
     fioActionFormParams?.content,
     fioActionFormParams?.encryptionPublicKey,
   ]);
 
+  const onDerivationIndexUpdate = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value: number = parseInt(event.target.value, 10);
+      setDerivationIndex(value);
+    },
+    [setDerivationIndex],
+  );
+
   return {
     activeAction,
+    derivationIndex,
     executedTxn,
     executedTxnError,
     executedTxnLoading,
@@ -500,6 +524,7 @@ export const useContext = (
     onActionChange,
     onConnectClick,
     onDecryptContent,
+    onDerivationIndexUpdate,
     onExecuteTxn,
     onSignTxn,
     onSubmitActionForm,

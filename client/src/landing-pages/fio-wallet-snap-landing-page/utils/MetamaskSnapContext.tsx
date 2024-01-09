@@ -13,6 +13,7 @@ import { log } from '../../../util/general';
 import { defaultSnapOrigin } from '../constants';
 
 export type MetamaskSnapProps = {
+  derivationIndex: number;
   decryptedContent: any;
   decryptedError: Error | null;
   decryptLoading: boolean;
@@ -32,12 +33,14 @@ export type MetamaskSnapProps = {
   clearSignNonceResults: () => void;
   decryptRequestContent: (params: {
     content: string;
+    derivationIndex?: number;
     encryptionPublicKey: string;
     contentType: string;
   }) => void;
   handleConnectClick: () => void;
   signSnapTxn: (params: any) => void;
-  signNonceSnap: (params: { nonce: string }) => void;
+  signNonceSnap: (params: { nonce: string; derivationIndex?: number }) => void;
+  setDerivationIndex: (value: number) => void;
 };
 
 export const MetamaskSnapContext = (): MetamaskSnapProps => {
@@ -57,6 +60,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   const [decryptedContent, setDecryptedContent] = useState<any | null>(null);
   const [decryptedError, setDecryptedError] = useState<Error | null>(null);
   const [decryptLoading, toggleDecryptLoading] = useState<boolean>(false);
+  const [derivationIndex, setDerivationIndex] = useState<number>(0);
 
   const clearSignTx = useCallback(() => {
     setSignedTxn(null);
@@ -83,15 +87,18 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     }
   }, []);
 
-  const getPublicKeyFromSnap = useCallback(async () => {
-    try {
-      const publicKey = await getPublicKey();
+  const getPublicKeyFromSnap = useCallback(
+    async ({ derivationIndex }: { derivationIndex?: number }) => {
+      try {
+        const publicKey = await getPublicKey({ derivationIndex });
 
-      setPublicKey(publicKey);
-    } catch (error) {
-      log.error(error);
-    }
-  }, []);
+        setPublicKey(publicKey);
+      } catch (error) {
+        log.error(error);
+      }
+    },
+    [],
+  );
 
   const signSnapTxn = useCallback(async (params: any) => {
     try {
@@ -123,7 +130,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   }, []);
 
   const signNonceSnap = useCallback(
-    async (params: { nonce: string }) => {
+    async (params: { nonce: string; derviationIndex?: number }) => {
       try {
         clearSignNonceResults();
         toggleSignatureLoading(true);
@@ -143,6 +150,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
   const decryptRequestContent = useCallback(
     async (params: {
       content: string;
+      derivationIndex?: number;
       encryptionPublicKey: string;
       contentType: string;
     }) => {
@@ -167,11 +175,12 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
 
   useEffect(() => {
     if (state?.enabled) {
-      getPublicKeyFromSnap();
+      getPublicKeyFromSnap({ derivationIndex });
     }
-  }, [getPublicKeyFromSnap, state?.enabled]);
+  }, [derivationIndex, getPublicKeyFromSnap, state?.enabled]);
 
   return {
+    derivationIndex,
     decryptedContent,
     decryptedError,
     decryptLoading,
@@ -193,5 +202,6 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
     handleConnectClick,
     signSnapTxn,
     signNonceSnap,
+    setDerivationIndex,
   };
 };

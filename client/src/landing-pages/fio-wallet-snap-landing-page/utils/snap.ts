@@ -44,13 +44,16 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
   }
 };
 
-export const getPublicKey = async () => {
+export const getPublicKey = async (
+  params: { derivationIndex?: number } = {},
+) => {
   const res = await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,
       request: {
         method: 'showPublicKey',
+        params,
       },
     },
   });
@@ -73,7 +76,10 @@ export const signTxn = async (params: any) => {
   return txn;
 };
 
-export const signNonce = async (params: { nonce: string }) => {
+export const signNonce = async (params: {
+  nonce: string;
+  derivationIndex?: number;
+}) => {
   return await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: {
@@ -88,6 +94,7 @@ export const signNonce = async (params: { nonce: string }) => {
 
 export const decryptContent = async (params: {
   content: string;
+  derivationIndex?: number;
   encryptionPublicKey: string;
   contentType: string;
 }) => {
