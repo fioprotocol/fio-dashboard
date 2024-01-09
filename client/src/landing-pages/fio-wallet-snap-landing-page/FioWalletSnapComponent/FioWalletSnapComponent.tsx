@@ -47,6 +47,7 @@ export const FioWalletSnapComponent: React.FC = () => {
     onActionChange,
     onExecuteTxn,
     onDecryptContent,
+    onDerivationIndexUpdate,
     onSignTxn,
     onSubmitActionForm,
     onSubmitSecret,
@@ -69,6 +70,17 @@ export const FioWalletSnapComponent: React.FC = () => {
           loading={snapLoading}
           disabled={snapLoading}
         />
+        <h6 className="mt-4">
+          Type derivation index. Should be an integer (0, 1, 2 ...)
+        </h6>
+
+        <input
+          type="number"
+          onChange={onDerivationIndexUpdate}
+          defaultValue={0}
+          step={1}
+        />
+
         {snapError && (
           <p className={classes.snapErrorMessage}>{snapError.message}</p>
         )}
