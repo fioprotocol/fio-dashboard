@@ -1,5 +1,5 @@
 {
-  "name": "fio-app",
+  "name": "@fioprotocol/fio-app",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
