@@ -20,11 +20,11 @@ module.exports = {
           },
           createdAt: {
             type: DT.DATE,
-            defaultValue: QI.sequelize.literal('CURRENT_TIMESTAMP'),
+            defaultValue: new Date(),
           },
           updatedAt: {
             type: DT.DATE,
-            defaultValue: QI.sequelize.literal('CURRENT_TIMESTAMP'),
+            defaultValue: new Date(),
           },
           deletedAt: {
             type: DT.DATE,
