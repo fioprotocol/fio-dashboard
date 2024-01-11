@@ -16,6 +16,8 @@ module.exports = {
         email: 'DELETEDUSER',
         username: 'DELETEDUSER',
         status: 'DELETED',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     ]);
 
