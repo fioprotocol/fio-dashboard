@@ -18,9 +18,18 @@ module.exports = {
             unique: true,
             allowNull: false,
           },
-          createdAt: { type: DT.DATE },
-          updatedAt: { type: DT.DATE },
-          deletedAt: { type: DT.DATE },
+          createdAt: {
+            type: DT.DATE,
+            defaultValue: QI.sequelize.literal('CURRENT_TIMESTAMP'),
+          },
+          updatedAt: {
+            type: DT.DATE,
+            defaultValue: QI.sequelize.literal('CURRENT_TIMESTAMP'),
+          },
+          deletedAt: {
+            type: DT.DATE,
+            defaultValue: null,
+          },
         },
         { transaction: t },
       );
