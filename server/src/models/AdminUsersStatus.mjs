@@ -14,7 +14,6 @@ export class AdminUsersStatus extends Base {
       {
         sequelize,
         tableName: 'admin-users-statuses',
-        timestamps: true,
       },
     );
   }

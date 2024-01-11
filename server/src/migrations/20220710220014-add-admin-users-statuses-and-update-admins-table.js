@@ -18,18 +18,6 @@ module.exports = {
             unique: true,
             allowNull: false,
           },
-          createdAt: {
-            type: DT.DATE,
-            defaultValue: new Date(),
-          },
-          updatedAt: {
-            type: DT.DATE,
-            defaultValue: new Date(),
-          },
-          deletedAt: {
-            type: DT.DATE,
-            defaultValue: null,
-          },
         },
         { transaction: t },
       );
@@ -37,10 +25,13 @@ module.exports = {
       await QI.bulkInsert(
         'admin-users-statuses',
         [
-          { status: 'NEW' },
-          { status: 'ACTIVE' },
-          { status: 'BLOCKED' },
-          { status: 'NEW_EMAIL_NOT_VERIFIED' },
+          { status: 'NEW', id: ADMIN_STATUS_IDS.NEW },
+          { status: 'ACTIVE', id: ADMIN_STATUS_IDS.ACTIVE },
+          { status: 'BLOCKED', id: ADMIN_STATUS_IDS.BLOCKED },
+          {
+            status: 'NEW_EMAIL_NOT_VERIFIED',
+            id: ADMIN_STATUS_IDS.NEW_EMAIL_NOT_VERIFIED,
+          },
         ],
         { transaction: t },
       );
