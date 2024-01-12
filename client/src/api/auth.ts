@@ -43,6 +43,18 @@ export default class Auth extends Base {
     return this.apiClient.post('auth', data);
   }
 
+  alternateAuth(data: {
+    derivationIndex: number;
+    from: string;
+    nonce: string;
+    publicKey: string;
+    signature: string;
+    referrerCode?: string;
+    timeZone?: string;
+  }): Promise<AuthLoginResponse> {
+    return this.apiClient.post('alternate-auth', { data });
+  }
+
   available(email: string): Promise<AuthAvailableResponse> {
     return this.apiClient.get(`users/available/${email}`);
   }
