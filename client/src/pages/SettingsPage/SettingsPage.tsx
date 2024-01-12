@@ -20,7 +20,10 @@ import { showRecovery as showRecoverySelector } from '../../redux/modal/selector
 import {
   isAuthenticated as isAuthenticatedSelector,
   loading as loadingSelector,
+  user as userSelector,
 } from '../../redux/profile/selectors';
+
+import { USER_PROFILE_TYPE } from '../../constants/profile';
 
 import useEffectOnce from '../../hooks/general';
 
@@ -35,6 +38,7 @@ const SettingsPage: React.FC = () => {
   const loading = useSelector(loadingSelector);
   const showRecovery = useSelector(showRecoverySelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
+  const user = useSelector(userSelector);
 
   const dispatch = useDispatch();
 
@@ -72,15 +76,17 @@ const SettingsPage: React.FC = () => {
         <h5 className={`${classes.title} mt-4`}>Email Notifications</h5>
         <EmailNotifications />
       </div>
-      <div className={`${classes.settingsContainer} mb-4`}>
-        <h5 className={classes.title}>Security</h5>
-        <div className={classes.passwordPinContainer}>
-          <ChangePassword />
-          <ChangePin preopenedModal={preopenedPinModal} />
+      {user.userProfileType === USER_PROFILE_TYPE.PRIMARY && (
+        <div className={`${classes.settingsContainer} mb-4`}>
+          <h5 className={classes.title}>Security</h5>
+          <div className={classes.passwordPinContainer}>
+            <ChangePassword />
+            <ChangePin preopenedModal={preopenedPinModal} />
+          </div>
+          <TwoFactorAuth />
+          <PasswordRecovery />
         </div>
-        <TwoFactorAuth />
-        <PasswordRecovery />
-      </div>
+      )}
       <div className={classes.settingsContainer}>
         <h5 className={classes.title}>Account Management</h5>
         <DeleteMyAccount />

@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -39,6 +40,7 @@ const CheckedIcon: React.FC<CheckedIconProps> = props => {
 
 export const EmailNotifications: React.FC = () => {
   const {
+    disableConfigs,
     emailNotificationParams,
     hasError,
     loading,
@@ -51,7 +53,9 @@ export const EmailNotifications: React.FC = () => {
   return (
     <>
       <p className={classes.text}>
-        Choose which email notification types that you would like to receive.
+        {disableConfigs
+          ? 'Add email to manage email notifications that you would like to receive.'
+          : 'Choose which email notification types that you would like to receive.'}
       </p>
       <div className={classes.checkContainer}>
         {Object.entries(emailNotificationParams).map(
@@ -60,13 +64,18 @@ export const EmailNotifications: React.FC = () => {
             emailNotificationParamItemValue,
           ]) => {
             const onClick = () =>
-              toggleCheckClick(
-                emailNotificationParamItemKey as EmailNotificationParamsNamesType,
-              );
+              disableConfigs
+                ? null
+                : toggleCheckClick(
+                    emailNotificationParamItemKey as EmailNotificationParamsNamesType,
+                  );
 
             return (
               <div
-                className={classes.itemContainer}
+                className={classnames(
+                  classes.itemContainer,
+                  disableConfigs && classes.disabled,
+                )}
                 key={emailNotificationParamItemKey}
               >
                 <CheckedIcon
@@ -94,6 +103,7 @@ export const EmailNotifications: React.FC = () => {
               : 'Update Email Notifications'
           }
           onClick={updateEmailNotification}
+          disabled={disableConfigs}
         />
       </div>
       <SuccessModal
