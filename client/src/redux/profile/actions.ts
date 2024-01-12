@@ -116,6 +116,27 @@ export const login = ({
   isSignUp,
 });
 
+export const ALTERNATE_LOGIN_REUQEST = `${prefix}/ALTERNATE_LOGIN_REUQEST`;
+export const ALTERNATE_LOGIN_SUCCESS = `${prefix}/ALTERNATE_LOGIN_SUCCESS`;
+export const ALTERNATE_LOGIN_FAILURE = `${prefix}/ALTERNATE_LOGIN_FAILURE`;
+
+export const alternateLogin = (params: {
+  derivationIndex: number;
+  from: string;
+  nonce: string;
+  publicKey: string;
+  signature: string;
+  referrerCode?: string;
+  timeZone?: string;
+}) => ({
+  types: [
+    ALTERNATE_LOGIN_REUQEST,
+    ALTERNATE_LOGIN_SUCCESS,
+    ALTERNATE_LOGIN_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.alternateAuth(params),
+});
+
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
 export const SIGNUP_SUCCESS = `${prefix}/SIGNUP_SUCCESS`;
 export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;
@@ -179,7 +200,7 @@ export const resetLastAuthData = (): CommonPromiseAction => ({
   promise: async (api: Api, getState: GetState) => {
     const { profile, edge } = getState();
 
-    if (!profile.lastAuthData || edge.hasTwoFactorAuth) return;
+    if (!profile.lastAuthData?.username || edge.hasTwoFactorAuth) return;
 
     return api.edge.clearCachedUser(profile.lastAuthData.username);
   },
