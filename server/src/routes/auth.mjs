@@ -1,5 +1,6 @@
 import { authCheck, makeServiceRunner, authCheckSimple } from '../tools';
 
+import AlternateAuthenticate from '../services/auth/AlternateAuthenticate.mjs';
 import AuthCreate from '../services/auth/Create';
 import AuthCheck from '../services/auth/Check';
 import AuthCheckSimple from '../services/auth/CheckSimple';
@@ -17,6 +18,7 @@ export default {
   create: makeServiceRunner(AuthCreate, req => req.body),
   nonce: makeServiceRunner(AuthNonce, req => req.query),
   username: makeServiceRunner(AuthUsername, req => req.params),
+  alternateAuth: makeServiceRunner(AlternateAuthenticate, req => req.body),
 
   async checkSimple(req, res, next) {
     return await authCheckSimple(req, res, next, AuthCheckSimple);

@@ -54,12 +54,12 @@ export default class AuthCreate extends Base {
       for (const edgeWallet of edgeWallets) {
         const newWallet = new Wallet({ ...edgeWallet, userId: user.id });
         await newWallet.save();
-        verified = User.verify(challenge, edgeWallet.publicKey, signature);
+        verified = User.verify({ challenge, publicKey: edgeWallet.publicKey, signature });
         if (verified) break;
       }
     } else {
       for (const wallet of wallets) {
-        verified = User.verify(challenge, wallet.publicKey, signature);
+        verified = User.verify({ challenge, publicKey: wallet.publicKey, signature });
         if (verified) break;
       }
     }
