@@ -10,6 +10,7 @@ import {
   loadProfile,
   login,
   setIsNewUser,
+  ALTERNATE_LOGIN_SUCCESS,
   ADMIN_LOGIN_SUCCESS,
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
@@ -85,6 +86,49 @@ export function* loginSuccess(history: History, api: Api): Generator {
       } catch (e) {
         log.error(e);
       }
+    // Need to wait for result, so use hack with two yield
+    // @ts-ignore
+    yield yield put<Action>(loadProfile({ shouldHandleUsersFreeCart: true }));
+    yield put<Action>(listNotifications());
+
+    const locationState: PrivateRedirectLocationState = yield select(
+      locationStateSelector,
+    );
+    if (
+      !hasRedirectTo &&
+      locationState &&
+      locationState.from &&
+      locationState.from.pathname
+    ) {
+      history.push({
+        pathname: locationState.from.pathname,
+        search: locationState.from.search || '',
+      });
+    }
+    if (hasRedirectTo) {
+      history.push(hasRedirectTo.pathname, hasRedirectTo.state);
+      yield put<Action>(setRedirectPath(null));
+    }
+
+    yield put(closeLoginModal());
+  });
+}
+
+export function* alternateLoginSuccess(history: History, api: Api): Generator {
+  yield takeEvery(ALTERNATE_LOGIN_SUCCESS, function*(action: Action) {
+    const hasRedirectTo: { pathname: string; state: object } = yield select(
+      redirectLink,
+    );
+    api.client.setToken(action.data.jwt);
+    if (action.data.isSignUp) {
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
+      yield put<Action>(setIsNewUser(true));
+    }
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
+      method: action.isPinLogin
+        ? ANALYTICS_LOGIN_METHOD.PIN
+        : ANALYTICS_LOGIN_METHOD.PASSWORD,
+    });
     // Need to wait for result, so use hack with two yield
     // @ts-ignore
     yield yield put<Action>(loadProfile({ shouldHandleUsersFreeCart: true }));
