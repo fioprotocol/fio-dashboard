@@ -36,6 +36,7 @@ export type AuthProfileResponse = User;
 export type AuthUsernameResponse = string;
 export type AuthLoginResponse = {
   jwt: string;
+  isSignUp?: boolean;
 };
 export type AuthAvailableResponse = boolean;
 export type AuthNonceResponse = { email: string; nonce: string };
