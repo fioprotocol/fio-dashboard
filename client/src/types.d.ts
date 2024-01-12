@@ -370,6 +370,7 @@ export type User = {
   timeZone: string;
   refProfile: { code?: string } | null;
   affiliateProfile: { code?: string; tpid?: string } | null;
+  userProfileType: string;
 };
 
 export type UserDetails = {
