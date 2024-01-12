@@ -21,6 +21,7 @@ type EmailNotificationParams = {
 };
 
 type UseContextProps = {
+  disableConfigs: boolean;
   emailNotificationParams: EmailNotificationParamsType;
   hasError: boolean;
   loading: boolean;
@@ -98,6 +99,7 @@ export const useContext = (): UseContextProps => {
 
   return {
     emailNotificationParams,
+    disableConfigs: !user?.email,
     hasError,
     loading,
     showSuccessModal,
