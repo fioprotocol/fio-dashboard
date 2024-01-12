@@ -614,6 +614,7 @@ export const ANALYTICS_FIO_NAME_TYPE = {
 export const ANALYTICS_LOGIN_METHOD = {
   PIN: 'pin',
   PASSWORD: 'password',
+  EXTERNAL: 'external',
 };
 
 export const ANALYTICS_WALLET_TYPE = {

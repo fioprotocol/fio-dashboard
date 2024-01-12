@@ -125,9 +125,7 @@ export function* alternateLoginSuccess(history: History, api: Api): Generator {
       yield put<Action>(setIsNewUser(true));
     }
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
-      method: action.isPinLogin
-        ? ANALYTICS_LOGIN_METHOD.PIN
-        : ANALYTICS_LOGIN_METHOD.PASSWORD,
+      method: ANALYTICS_LOGIN_METHOD.EXTERNAL,
     });
     // Need to wait for result, so use hack with two yield
     // @ts-ignore
