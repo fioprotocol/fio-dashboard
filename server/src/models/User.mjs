@@ -12,7 +12,7 @@ import { Order } from './Order';
 import { LockedFch } from './LockedFch.mjs';
 import { DomainsWatchlist } from './DomainsWatchlist.mjs';
 
-import { USER_STATUS } from '../config/constants';
+import { USER_STATUS, USER_PROFILE_TYPE } from '../config/constants';
 
 import { convertToNewDate } from '../utils/general.mjs';
 
@@ -21,6 +21,10 @@ const { DataTypes: DT, Op } = Sequelize;
 export class User extends Base {
   static get STATUS() {
     return USER_STATUS;
+  }
+
+  static get USER_PROFILE_TYPE() {
+    return USER_PROFILE_TYPE;
   }
 
   static init(sequelize) {
@@ -54,6 +58,11 @@ export class User extends Base {
             lowBundles: true,
           },
           allowNull: false,
+        },
+        userProfileType: {
+          type: DT.ENUM,
+          values: Object.values(this.USER_PROFILE_TYPE),
+          defaultValue: this.USER_PROFILE_TYPE.PRIMARY,
         },
       },
       {
@@ -124,6 +133,7 @@ export class User extends Base {
         'timeZone',
         'orders',
         'emailNotificationParams',
+        'userProfileType',
       ],
     };
 
@@ -134,7 +144,7 @@ export class User extends Base {
     return attributes.default;
   }
 
-  static verify(challenge, publicKey, signature) {
+  static verify({ challenge, publicKey, signature }) {
     return fiojs.Ecc.verify(signature, challenge, publicKey);
   }
 

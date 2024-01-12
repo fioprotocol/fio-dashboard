@@ -30,6 +30,7 @@ router.get(
   '/auth/new-device-two-factor/check-rejected',
   routes.newDeviceTwoFactor.checkRejected,
 );
+router.post('/alternate-auth', routes.auth.alternateAuth);
 router.post('/admin-auth', routes.auth.adminLogin);
 router.post('/admin-auth/create', routes.auth.adminCreate);
 router.get('/admin-auth/create/check', routes.auth.adminCreateCheck);
