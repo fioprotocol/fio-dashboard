@@ -2,7 +2,7 @@ import React from 'react';
 
 import CustomDropdown from '../../../components/CustomDropdown';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
-import { MetamaskSnapContext } from '../utils/MetamaskSnapContext';
+import { MetamaskSnap } from '../../../services/MetamaskSnap';
 
 import { useContext } from './FioWalletSnapComponentContext';
 import { FioActionForms } from './components/FioActionForms';
@@ -17,7 +17,7 @@ import {
 import classes from './FioWalletSnapComponent.module.scss';
 
 export const FioWalletSnapComponent: React.FC = () => {
-  const metamaskSnapContext = MetamaskSnapContext();
+  const metamaskSnapContext = MetamaskSnap();
 
   const {
     decryptedContent,
