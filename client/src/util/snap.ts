@@ -1,6 +1,6 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 
-import { defaultSnapOrigin } from '../constants';
+import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
 
 export type GetSnapsResponse = Record<string, Snap>;
 

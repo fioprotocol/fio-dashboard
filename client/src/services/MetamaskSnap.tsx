@@ -8,9 +8,9 @@ import {
   signTxn,
   signNonce,
   decryptContent,
-} from './snap';
-import { log } from '../../../util/general';
-import { defaultSnapOrigin } from '../constants';
+} from '../util/snap';
+import { log } from '../util/general';
+import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
 
 export type MetamaskSnapProps = {
   derivationIndex: number;
@@ -43,7 +43,7 @@ export type MetamaskSnapProps = {
   setDerivationIndex: (value: number) => void;
 };
 
-export const MetamaskSnapContext = (): MetamaskSnapProps => {
+export const MetamaskSnap = (): MetamaskSnapProps => {
   const [state, setState] = useState<any | null>(null);
   const [snapError, setSnapError] = useState<Error | null>(null);
   const [snapLoading, toggleSnapLoading] = useState<boolean>(false);

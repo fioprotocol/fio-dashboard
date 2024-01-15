@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { osName, osVersion } from 'react-device-detect';
-import { useDispatch } from 'react-redux';
 
 import ModalComponent from '../Modal/Modal';
 import Pin from './Pin';
@@ -10,7 +9,7 @@ import TwoFactorCodeModal, {
   BackupFormValues,
 } from './components/TwoFactorCodeModal';
 import PageTitle from '../PageTitle/PageTitle';
-import SubmitButton from '../common/SubmitButton/SubmitButton';
+import { MetamaskLogin } from './components/MetamaskLogin';
 
 import { LINKS } from '../../constants/labels';
 
@@ -18,7 +17,6 @@ import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
 import useEffectOnce from '../../hooks/general';
-import { alternateLogin } from '../../redux/profile/actions';
 
 import { LastAuthData, LoginFailure, RefProfile } from '../../types';
 
@@ -82,7 +80,6 @@ const LoginForm: React.FC<Props> = props => {
   const [voucherDate, setVoucherDate] = useState<string | null>(null);
 
   const timerRef = useRef(null);
-  const dispatch = useDispatch();
 
   useEffect(getCachedUsers, [getCachedUsers]);
 
@@ -228,24 +225,7 @@ const LoginForm: React.FC<Props> = props => {
         onClose={isForgotPass ? onForgotPassClose : onCloseLogin}
         closeButton
       >
-        <SubmitButton
-          text="Sign in with metamask"
-          onClick={() =>
-            dispatch(
-              alternateLogin({
-                derivationIndex: 0,
-                from: 'METAMASK',
-                nonce:
-                  '42f1af14845ffc1ab9ecb83430fc023362e3aafab80c51aa20161155f4f2b787',
-                publicKey:
-                  'FIO6G9Wshxnp19js3DCAeavXwBFu3ouaD69VTbzWsq44HvNezm4Zd',
-                signature:
-                  'SIG_K1_K6LgKzZ9zUdttLDPyH3mc2KSDn4aEsVJdBB5j7696XWBVBDUE5fHJWAVr24uXzqczfHxSMHN3wEBJ3nFkaj8E4REDoXkfM',
-                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-              }),
-            )
-          }
-        />
+        <MetamaskLogin />
         {usePinLogin && lastAuthData ? (
           <Pin
             email={lastAuthData.email}
