@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback, useState } from 'react';
 
 import { createHmac, randomBytes } from 'crypto-browserify';
 
-import { MetamaskSnapProps } from '../utils/MetamaskSnapContext';
+import { MetamaskSnapProps } from '../../../services/MetamaskSnap';
 import { log } from '../../../util/general';
 import {
   ACTIONS,
