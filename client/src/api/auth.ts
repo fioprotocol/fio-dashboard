@@ -21,6 +21,7 @@ import {
   AdminResetPasswordResponse,
   AuthProfileSendEvent,
   GenericStatusResponse,
+  AuthGenerateNonceResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -61,6 +62,10 @@ export default class Auth extends Base {
 
   nonce(username: string): Promise<AuthNonceResponse> {
     return this.apiClient.get('auth/nonce', { username });
+  }
+
+  generateNonce(): Promise<AuthGenerateNonceResponse> {
+    return this.apiClient.get('auth/generate-nonce');
   }
 
   signup(data: {
