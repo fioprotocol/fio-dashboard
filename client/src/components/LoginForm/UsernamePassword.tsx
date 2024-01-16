@@ -13,6 +13,7 @@ import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 import PageTitle from '../PageTitle/PageTitle';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import { MetamaskLogin } from './components/MetamaskLogin';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -190,7 +191,7 @@ const UsernamePassword: React.FC<Props> = props => {
 
   const renderCreateAccount = () => {
     return (
-      <p className="regular-text">
+      <p className={classes.createAccountContainer}>
         Don’t have an account?{' '}
         <Link
           classname={classes.createAccountLink}
@@ -237,6 +238,18 @@ const UsernamePassword: React.FC<Props> = props => {
     return (
       <form onSubmit={login}>
         <FormHeader title={title} />
+        <p className={classes.text}>
+          For the most seamless Web3 experience simply sign in with MetaMask.
+        </p>
+        <MetamaskLogin />
+        <div className={classes.linesContainer}>
+          <hr />
+          <p className={classes.linesText}>OR</p>
+          <hr />
+        </div>
+        <p className={classes.text}>
+          If you've created an account using email and password, sign in below.
+        </p>
         <div
           className={classnames(
             classes.formFields,
@@ -259,21 +272,23 @@ const UsernamePassword: React.FC<Props> = props => {
             disabled={edgeAuthLoading}
           />
           <OnChange name="password">{handleChange}</OnChange>
-          <SubmitButton
-            onClick={login}
-            disabled={edgeAuthLoading}
-            text="Sign In"
-            loading={edgeAuthLoading}
-            withBottomMargin
-          />
           <Link
             classname={classes.forgotPasswordLink}
             to=""
             onClick={onForgotPassHandler}
             isDisabled={edgeAuthLoading}
           >
-            Forgot your password?
+            Forgot password?
           </Link>
+          <SubmitButton
+            onClick={login}
+            disabled={edgeAuthLoading}
+            text="Sign In"
+            loading={edgeAuthLoading}
+            withBottomMargin
+            isTransparent
+            isWhiteBordered
+          />
           {renderCreateAccount()}
         </div>
         {challengeId && challengeUri && (
