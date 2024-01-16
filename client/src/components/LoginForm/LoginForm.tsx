@@ -9,7 +9,6 @@ import TwoFactorCodeModal, {
   BackupFormValues,
 } from './components/TwoFactorCodeModal';
 import PageTitle from '../PageTitle/PageTitle';
-import { MetamaskLogin } from './components/MetamaskLogin';
 
 import { LINKS } from '../../constants/labels';
 
@@ -225,7 +224,6 @@ const LoginForm: React.FC<Props> = props => {
         onClose={isForgotPass ? onForgotPassClose : onCloseLogin}
         closeButton
       >
-        <MetamaskLogin />
         {usePinLogin && lastAuthData ? (
           <Pin
             email={lastAuthData.email}
@@ -244,7 +242,7 @@ const LoginForm: React.FC<Props> = props => {
             edgeLoginFailure={edgeLoginFailure}
             isForgotPass={isForgotPass}
             toggleForgotPass={toggleForgotPass}
-            title="Sign In"
+            title="Sign in to your account"
             onClose={onCloseLogin}
             initialValues={loginParams || {}}
             resetLoginFailure={resetLoginFailure}
