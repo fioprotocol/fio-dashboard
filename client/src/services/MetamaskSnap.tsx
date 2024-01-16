@@ -80,7 +80,7 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
 
       setState(installedSnap);
     } catch (error) {
-      log.error(error);
+      log.error('Metamask snap connection error', error);
       setSnapError(error);
     } finally {
       toggleSnapLoading(false);
@@ -109,7 +109,7 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
 
       setSignedTxn(signedTxn);
     } catch (error) {
-      log.error(error);
+      log.error('Sign metamask transaction error:', error);
       setSignedTxnError(error);
     } finally {
       toggleSignedTxnLoading(false);

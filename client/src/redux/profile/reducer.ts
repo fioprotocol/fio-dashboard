@@ -125,6 +125,18 @@ export default combineReducers({
         return state;
     }
   },
+  alternativeLoginError(state: string | null = null, action) {
+    switch (action.type) {
+      case actions.ALTERNATE_LOGIN_FAILURE:
+      case actions.SET_ALTERNATE_LOGIN_ERROR:
+        return action.error;
+      case actions.ALTERNATE_LOGIN_SUCCESS:
+      case actions.RESET_ALTERNATE_LOGIN_ERROR:
+        return null;
+      default:
+        return state;
+    }
+  },
   successfullyRegistered(state: boolean = false, action) {
     switch (action.type) {
       case actions.SIGNUP_SUCCESS:
