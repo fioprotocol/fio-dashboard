@@ -1,0 +1,41 @@
+@import '../../../../assets/styles/fontMixins.scss';
+
+.textContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  
+  .icon {
+    width: 34px;
+  }
+}
+
+.description {
+  cursor: pointer;
+  text-align: center;
+  @include proxima-nova-semibold;
+  font-size: 0.75em;
+  margin-bottom: 0;
+}
+
+.modalTitle {
+  font-size: 22px;
+  @include proxima-nova-bold;
+  margin-top: 24px;
+  align-self: flex-start;
+  margin-left: 10px;
+  margin-bottom: 0;
+}
+
+.modalList {
+  padding-left: 28px;
+  padding-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  .modalListItem {
+    margin-top: 10px;
+    font-size: 0.9375em;
+  }
+}
