@@ -19,7 +19,7 @@ type Props = {
   message: string | React.ReactNode;
   onClose?: () => void | void;
   show: boolean;
-  title: string | React.ReactNode;
+  title?: string | React.ReactNode;
   type: string;
   mainIcon?: React.ReactElement | null;
   hasNewDesign?: boolean;
@@ -27,6 +27,7 @@ type Props = {
   marginTopZero?: boolean;
   marginBottomZero?: boolean;
   marginAuto?: boolean;
+  messageClassnames?: string;
   withoutMargin?: boolean;
 };
 
@@ -62,6 +63,7 @@ const NotificationBadge: React.FC<Props> = props => {
     marginBottomZero,
     marginTopZero,
     marginAuto,
+    messageClassnames,
     withoutMargin,
   } = props;
 
@@ -87,8 +89,10 @@ const NotificationBadge: React.FC<Props> = props => {
           type === BADGE_TYPES.ALERT ||
           type === BADGE_TYPES.RED) && <WarningIcon />}
         <div className={classes.contentContainer}>
-          <h5 className={classes.title}>{title}</h5>
-          <p className={classes.message}>{message}</p>
+          {title && <h5 className={classes.title}>{title}</h5>}
+          <p className={classnames(classes.message, messageClassnames)}>
+            {message}
+          </p>
         </div>
         {onClose && (
           <ClearButton className={classes.clearIcon} onClick={onClose} />
@@ -106,7 +110,7 @@ const NotificationBadge: React.FC<Props> = props => {
     >
       <ErrorIcon className={classes.icon} />
       <div className={classes.textContainer}>
-        <span className={classes.title}>{title}</span>
+        {title && <span className={classes.title}>{title}</span>}
         {!noDash && ' - '}
         {message}
         {arrowAction && (
