@@ -82,7 +82,9 @@ const ModalComponent: React.FC<Props> = props => {
         isMiddleWidth && classes.isMiddleWidth,
         hasDefaultCloseColor && classes.defaultCloseColor,
       )}
-      backdropClassName={classnames(isSecondModal && classes.backdrop)}
+      backdropClassName={classnames(
+        isSecondModal ? classes.backdropSecondModal : classes.backdrop,
+      )}
       backdrop={backdrop}
     >
       {!hideCloseButton && (
