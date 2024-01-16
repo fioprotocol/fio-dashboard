@@ -143,6 +143,10 @@
 
     &.show {
       left: -100%;
+
+      &:first-child {
+        height: 0
+      }
     }
   }
 
@@ -163,4 +167,15 @@
       padding-left: 15px;
     }
   }
+}
+
+.errorBadge {
+  position: absolute;
+  top: -160px;
+  width: calc(100% + 40px);
+}
+
+.errorMessage {
+  font-size: 13px !important;
+  letter-spacing: normal !important;
 }
