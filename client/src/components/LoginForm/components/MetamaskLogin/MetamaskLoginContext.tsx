@@ -19,10 +19,12 @@ const DEFAULT_METAMASK_ERROR =
   'Sign in with MetaMask has failed. Please try again.';
 
 type UseContextProps = {
-  isModalOpen: boolean;
+  isDescriptionModalOpen: boolean;
+  isLoginModalOpen: boolean;
   connectMetamask: () => void;
   onDetailsClick: () => void;
-  onModalClose: () => void;
+  onDescriptionModalClose: () => void;
+  onLoginModalClose: () => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -34,30 +36,42 @@ export const useContext = (): UseContextProps => {
   } = MetamaskSnap();
   const alternativeLoginError = useSelector(alternativeLoginErrorSelector);
 
-  const [isModalOpen, toggleIsModalOpen] = useState(false);
+  const [isDescriptionModalOpen, toggleIsDescriptionModalOpen] = useState<
+    boolean
+  >(false);
+  const [isLoginModalOpen, toggleIsLoginModalOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
-  const onModalOpen = useCallback(() => {
-    toggleIsModalOpen(true);
+  const onDescriptionModalOpen = useCallback(() => {
+    toggleIsDescriptionModalOpen(true);
   }, []);
 
-  const onModalClose = useCallback(() => {
-    toggleIsModalOpen(false);
+  const onDescriptionModalClose = useCallback(() => {
+    toggleIsDescriptionModalOpen(false);
   }, []);
 
   const onDetailsClick = useCallback(() => {
-    onModalOpen();
-  }, [onModalOpen]);
+    onDescriptionModalOpen();
+  }, [onDescriptionModalOpen]);
+
+  const onLoginModalOpen = useCallback(() => {
+    toggleIsLoginModalOpen(true);
+  }, []);
+
+  const onLoginModalClose = useCallback(() => {
+    toggleIsLoginModalOpen(false);
+  }, []);
 
   const connectMetamask = useCallback(() => {
     if (window.ethereum) {
+      onLoginModalOpen();
       handleConnectClick();
       dispatch(resetAlternativeLoginError());
     } else {
       onDetailsClick();
     }
-  }, [dispatch, handleConnectClick, onDetailsClick]);
+  }, [dispatch, handleConnectClick, onDetailsClick, onLoginModalOpen]);
 
   const metamaskLogin = useCallback(async () => {
     try {
@@ -87,15 +101,23 @@ export const useContext = (): UseContextProps => {
   }, [metamaskLogin, publicKey, alternativeLoginError]);
 
   useEffect(() => {
+    if (alternativeLoginError) {
+      onLoginModalClose();
+    }
+  }, [alternativeLoginError, onLoginModalClose]);
+
+  useEffect(() => {
     if (snapError) {
       dispatch(setAlternativeLoginError(DEFAULT_METAMASK_ERROR));
     }
   }, [dispatch, snapError]);
 
   return {
-    isModalOpen,
+    isDescriptionModalOpen,
+    isLoginModalOpen,
     connectMetamask,
     onDetailsClick,
-    onModalClose,
+    onDescriptionModalClose,
+    onLoginModalClose,
   };
 };
