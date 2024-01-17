@@ -8,6 +8,7 @@ import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
 import { emailAvailable } from '../../../../api/middleware/auth';
 import { minWaitTimeFunction } from '../../../../utils';
@@ -19,7 +20,7 @@ import { User } from '../../../../types';
 import { FormValuesProps } from './types';
 import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
-import classes from '../../styles/ChangeEmail.module.scss';
+import classes from './ChangeEmail.module.scss';
 
 const SUCCESS_MODAL_CONTENT = {
   successModalTitle: 'EMAIL CHANGED!',
@@ -30,16 +31,19 @@ type Props = {
   user: User;
   pinModalIsOpen: boolean;
   loading: boolean;
+  loadProfile: () => void;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, pinModalIsOpen, loading } = props;
+  const { user, pinModalIsOpen, loading, loadProfile } = props;
   const [showModal, toggleModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
     newEmail: string;
   } | null>(null);
+
+  const isPrimaryProfile = user?.userProfileType === USER_PROFILE_TYPE.PRIMARY;
 
   const onCancel = () => {
     setProcessing(false);
@@ -65,7 +69,8 @@ const ChangeEmail: React.FC<Props> = props => {
     try {
       const res = await apis.auth.updateEmail(newEmail);
       if (res) {
-        await apis.auth.profile();
+        // await apis.auth.profile();
+        loadProfile();
         onCloseModal();
         toggleSuccessModal(true);
       }
@@ -84,15 +89,26 @@ const ChangeEmail: React.FC<Props> = props => {
     if (result.error)
       return { newEmail: 'This Email Address is already registered' };
 
-    setSubmitData({ newEmail });
+    if (isPrimaryProfile) {
+      setSubmitData({ newEmail });
+    } else {
+      submit({ data: { newEmail } });
+    }
     return {};
   };
 
   return (
     <div>
+      {!user.email && (
+        <p className={classes.text}>
+          Add your email address in order to receive FIO App notifications.
+        </p>
+      )}
       <div className={classes.badgeContainer}>
         <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.user}>{user.email}</div>
+          <div className={classes.user}>
+            {user.email ? user.email : 'Enter your email address'}
+          </div>
         </Badge>
         <div className={classes.buttonContainer}>
           <ActionButton
@@ -113,17 +129,19 @@ const ChangeEmail: React.FC<Props> = props => {
             initialValues={submitData}
           />
         </ModalUIComponent>
-        <EdgeConfirmAction
-          action={CONFIRM_PIN_ACTIONS.UPDATE_EMAIL}
-          setProcessing={setProcessing}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          processing={processing}
-          data={submitData}
-          submitAction={submit}
-          edgeAccountLogoutBefore={true}
-          hideProcessing={true}
-        />
+        {isPrimaryProfile && (
+          <EdgeConfirmAction
+            action={CONFIRM_PIN_ACTIONS.UPDATE_EMAIL}
+            setProcessing={setProcessing}
+            onSuccess={onSuccess}
+            onCancel={onCancel}
+            processing={processing}
+            data={submitData}
+            submitAction={submit}
+            edgeAccountLogoutBefore={true}
+            hideProcessing={true}
+          />
+        )}
         <SuccessModal
           title={SUCCESS_MODAL_CONTENT.successModalTitle}
           subtitle={SUCCESS_MODAL_CONTENT.successModalSubtitle}
