@@ -84,7 +84,7 @@ export const useContext = (): UseContextProps => {
 
       if (updateNotificationsRes?.success) {
         toggleSuccessModal(true);
-        dispatch(loadProfile({}));
+        dispatch(loadProfile());
       }
       hasError && setHasError(false);
     } catch (err) {
