@@ -29,7 +29,7 @@ export const loadProfile = ({
   shouldHandleUsersFreeCart,
 }: {
   shouldHandleUsersFreeCart?: boolean;
-}): CommonPromiseAction => ({
+} = {}): CommonPromiseAction => ({
   types: [PROFILE_REQUEST, PROFILE_SUCCESS, PROFILE_FAILURE],
   promise: (api: Api) => api.auth.profile(),
   shouldHandleUsersFreeCart,
