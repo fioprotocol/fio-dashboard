@@ -232,24 +232,32 @@ const UsernamePassword: React.FC<Props> = props => {
 
   const renderFormItems = (formRenderProps: FormRenderProps) => {
     const { handleSubmit: login, form } = formRenderProps;
-
     currentForm = form;
+
+    const isAlternativeEthereumWalletSetup =
+      window.ethereum?.isMetaMask || window.ethereum?.isOpera;
 
     return (
       <form onSubmit={login}>
         <FormHeader title={title} />
-        <p className={classes.text}>
-          For the most seamless Web3 experience simply sign in with MetaMask.
-        </p>
-        <MetamaskLogin />
-        <div className={classes.linesContainer}>
-          <hr />
-          <p className={classes.linesText}>OR</p>
-          <hr />
-        </div>
-        <p className={classes.text}>
-          If you've created an account using email and password, sign in below.
-        </p>
+        {isAlternativeEthereumWalletSetup && (
+          <>
+            <p className={classes.text}>
+              For the most seamless Web3 experience simply sign in with
+              MetaMask.
+            </p>
+            {window.ethereum.isMetaMask && <MetamaskLogin />}
+            <div className={classes.linesContainer}>
+              <hr />
+              <p className={classes.linesText}>OR</p>
+              <hr />
+            </div>
+            <p className={classes.text}>
+              If you've created an account using email and password, sign in
+              below.
+            </p>
+          </>
+        )}
         <div
           className={classnames(
             classes.formFields,
