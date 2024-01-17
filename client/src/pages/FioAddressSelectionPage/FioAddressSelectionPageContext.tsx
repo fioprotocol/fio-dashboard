@@ -380,7 +380,7 @@ export const useContext = (): UseContextProps => {
   const usersItemsListJSON = JSON.stringify(usersItemsList);
 
   useEffect(() => {
-    dispatch(loadProfile({}));
+    dispatch(loadProfile());
   }, [dispatch]);
 
   const validateAddress = useCallback(
