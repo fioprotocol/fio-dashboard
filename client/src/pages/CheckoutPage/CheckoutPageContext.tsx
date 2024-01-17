@@ -405,7 +405,7 @@ export const useContext = (): {
   useEffect(() => {
     return () => {
       setOrder(null);
-      dispatch(loadProfile({}));
+      dispatch(loadProfile());
     };
   }, [dispatch]);
 
