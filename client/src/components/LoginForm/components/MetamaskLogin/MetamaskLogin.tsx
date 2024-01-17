@@ -1,4 +1,5 @@
 import React from 'react';
+import { FadeLoader } from 'react-spinners';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import ModalComponent from '../../../Modal/Modal';
@@ -20,10 +21,12 @@ const MODAL_CONTENT_LIST = [
 
 export const MetamaskLogin: React.FC = () => {
   const {
-    isModalOpen,
+    isDescriptionModalOpen,
+    isLoginModalOpen,
     connectMetamask,
     onDetailsClick,
-    onModalClose,
+    onDescriptionModalClose,
+    onLoginModalClose,
   } = useContext();
 
   return (
@@ -33,7 +36,7 @@ export const MetamaskLogin: React.FC = () => {
           <span className={classes.textContainer}>
             <img
               src={MetamaskIcon}
-              alt="Metamask Logo"
+              alt="MetaMask Logo"
               className={classes.icon}
             />
             Sign in with MetaMask
@@ -47,8 +50,8 @@ export const MetamaskLogin: React.FC = () => {
         Want more info on sign in with MetaMask?
       </p>
       <ModalComponent
-        show={isModalOpen}
-        onClose={onModalClose}
+        show={isDescriptionModalOpen}
+        onClose={onDescriptionModalClose}
         closeButton
         isSecondModal
       >
@@ -60,6 +63,33 @@ export const MetamaskLogin: React.FC = () => {
             </li>
           ))}
         </ol>
+      </ModalComponent>
+      <ModalComponent
+        show={isLoginModalOpen}
+        onClose={onLoginModalClose}
+        closeButton
+        isSecondModal
+      >
+        <img
+          alt="MetaMask logo"
+          src={MetamaskIcon}
+          className={classes.loginIcon}
+        />
+        <h5 className={classes.modalLoginTitle}>Sign in to your account</h5>
+        <div className={classes.loader}>
+          <FadeLoader
+            height="8px"
+            width="5px"
+            radius="3px"
+            margin="1px"
+            color="rgb(118, 92, 214)"
+          />
+          <p className={classes.loderText}>Connecting...</p>
+        </div>
+        <p className={classes.loginText}>
+          For the most seamless Web3 experience please complete the actions in
+          the MetaMask window.
+        </p>
       </ModalComponent>
     </>
   );
