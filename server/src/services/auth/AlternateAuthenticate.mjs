@@ -107,7 +107,7 @@ export default class AlternateAuthenticate extends Base {
       data: {
         derivationIndex,
       },
-      name: `My ${from} wallet`,
+      name: `My FIO wallet`,
       from,
       publicKey,
       userId: user.id,
