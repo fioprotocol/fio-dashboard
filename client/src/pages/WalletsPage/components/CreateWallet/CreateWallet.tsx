@@ -61,11 +61,7 @@ const CreateWallet: React.FC<Props> = props => {
       const generateUniqueDefaultName = (existingNames: string[]) => {
         const walletsAmount = existingNames.length;
         let newWalletCount = walletsAmount + 1;
-        let defaultName = `${
-          isMetamaskWalletProvider
-            ? 'My METAMASK wallet'
-            : DEFAULT_WALLET_OPTIONS.name
-        } ${newWalletCount}`;
+        let defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
 
         while (existingNames.includes(defaultName)) {
           newWalletCount++;
