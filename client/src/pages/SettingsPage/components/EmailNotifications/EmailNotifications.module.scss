@@ -3,6 +3,10 @@
 .text {
   margin-top: 10px;
   margin-bottom: 0;
+
+  &.disabled {
+    opacity: 0.6;
+  }
 }
 
 .checkContainer {
