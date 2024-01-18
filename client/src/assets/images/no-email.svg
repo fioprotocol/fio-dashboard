@@ -1,0 +1,15 @@
+<svg width="57" height="55" viewBox="0 0 57 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50.625 0H5.625C2.53125 0 0.028125 2.53125 0.028125 5.625L0 39.375C0 42.4688 2.53125 45 5.625 45H50.625C53.7188 45 56.25 42.4688 56.25 39.375V5.625C56.25 2.53125 53.7188 0 50.625 0ZM50.625 11.25L28.125 25.3125L5.625 11.25V5.625L28.125 19.6875L50.625 5.625V11.25Z" fill="white"/>
+    
+    <!-- Add the second SVG content here with corrected positioning and overflow enabled -->
+    <svg x="28" y="35" width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+        <rect x="11" y="14" width="2" height="2" fill="white"/>
+        <rect x="11" y="8" width="2" height="4" fill="white"/>
+        <mask id="mask0_30_1877" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1" y="0" width="22" height="19">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M23 19L12 0L1 19H23ZM11 16V14H13V16H11ZM11 12H13V8H11V12Z" fill="white"/>
+        </mask>
+        <g mask="url(#mask0_30_1877)">
+            <rect y="-2" width="24" height="24" fill="#D40000"/>
+        </g>
+    </svg>
+</svg>

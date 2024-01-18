@@ -8,6 +8,7 @@ export type DefaultWelcomeComponentProps = {
   hasDomains: boolean;
   hasExpiredDomains: boolean;
   hasFCH: boolean;
+  hasNoEmail: boolean;
   hasNoStakedTokens: boolean;
   hasOneDomain: boolean;
   hasOneFCH: boolean;
@@ -15,4 +16,5 @@ export type DefaultWelcomeComponentProps = {
   loading: boolean;
   noMappedPubAddresses: boolean;
   pageType?: PAGE_TYPES_PROPS;
+  userType: string;
 };
