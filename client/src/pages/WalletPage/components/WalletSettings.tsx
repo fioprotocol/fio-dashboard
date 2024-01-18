@@ -23,8 +23,13 @@ import { copyToClipboard, log } from '../../../util/general';
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { LINKS } from '../../../constants/labels';
+import { USER_PROFILE_TYPE } from '../../../constants/profile';
 
 import apis from '../../../api';
+
+import { updateWalletName } from '../../../redux/account/actions';
+import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../redux/modal/actions';
 
 import { FioWalletDoublet } from '../../../types';
 import {
@@ -33,23 +38,22 @@ import {
   PasswordFormValues,
 } from '../types';
 
-import { updateWalletName } from '../../../redux/account/actions';
-import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
-import { showGenericErrorModal } from '../../../redux/modal/actions';
-
 import classes from '../styles/WalletDetailsModal.module.scss';
 
 type Props = {
   show: boolean;
   fioWallet: FioWalletDoublet;
   fioWalletsAmount: number;
+  userType: string;
   onClose: () => void;
 };
 
 const WalletSettings: React.FC<Props> = props => {
-  const { show, fioWallet, fioWalletsAmount, onClose } = props;
+  const { show, fioWallet, fioWalletsAmount, userType, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const isPrimaryUserProfileType = userType === USER_PROFILE_TYPE.PRIMARY;
 
   const [loading, setLoading] = useState({
     updateWalletName: false,
@@ -139,18 +143,22 @@ const WalletSettings: React.FC<Props> = props => {
   };
 
   const onDeleteConfirmModal = async (values: DeleteWalletFormValues) => {
-    setCurrentDeleteValues(values);
+    if (isPrimaryUserProfileType) {
+      setCurrentDeleteValues(values);
+    }
     setShowDeleteConfirm(true);
   };
 
   const onDeleteConfirm = async () => {
     setLoading({ ...loading, deleteWallet: true });
 
-    const { username, password } = currentDeleteValues;
+    const { username, password } = currentDeleteValues || {};
 
     try {
-      const account = await apis.edge.login(username, password);
-      await apis.edge.deleteWallet(account, fioWallet.edgeId);
+      if (isPrimaryUserProfileType) {
+        const account = await apis.edge.login(username, password);
+        await apis.edge.deleteWallet(account, fioWallet.edgeId);
+      }
 
       await deleteWallet(fioWallet.publicKey);
     } catch (err) {
@@ -282,6 +290,7 @@ const WalletSettings: React.FC<Props> = props => {
             />
             <DeleteWalletForm
               loading={loading.deleteWallet}
+              isPrimaryUserProfileType={isPrimaryUserProfileType}
               onSubmit={onDeleteConfirmModal}
             />
           </>

@@ -3,7 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
-import { profileRefreshed as profileRefreshedSelector } from '../../redux/profile/selectors';
+import {
+  profileRefreshed as profileRefreshedSelector,
+  user as userSelector,
+} from '../../redux/profile/selectors';
 import {
   fioWalletsData as fioWalletsDataSelector,
   fioWalletsTxHistory as fioWalletsTxHistorySelector,
@@ -55,6 +58,7 @@ type UseContextProps = {
   obtDataLoading: boolean;
   sentFioRequestsLoading: boolean;
   receivedFioRequestsLoading: boolean;
+  userType: string;
   welcomeComponentProps: {
     noPaddingTop: boolean;
     onlyActions: boolean;
@@ -71,6 +75,7 @@ export const useContext = (): UseContextProps => {
   const fioWalletsData = useSelector(fioWalletsDataSelector);
   const fioWalletsTxHistory = useSelector(fioWalletsTxHistorySelector);
   const profileRefreshed = useSelector(profileRefreshedSelector);
+  const user = useSelector(userSelector);
 
   const [showWalletSettings, toggleShowWalletSettings] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
@@ -249,6 +254,7 @@ export const useContext = (): UseContextProps => {
     obtDataLoading,
     sentFioRequestsLoading,
     receivedFioRequestsLoading,
+    userType: user.userProfileType,
     welcomeComponentProps,
     closeWalletNameEdit,
     onKeyShow,
