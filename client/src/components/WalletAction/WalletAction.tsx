@@ -35,6 +35,8 @@ const WalletAction: React.FC<Props> = props => {
 
   if (fioWallet.from === WALLET_CREATED_FROM.LEDGER)
     return <LedgerActionWallet fioWallet={fioWallet} {...rest} />;
+
+  return null;
 };
 
 export default WalletAction;
