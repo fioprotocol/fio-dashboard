@@ -122,6 +122,7 @@ const WalletPage: React.FC = () => {
     obtDataLoading,
     sentFioRequestsLoading,
     receivedFioRequestsLoading,
+    userType,
     welcomeComponentProps,
     closeWalletNameEdit,
     onKeyShow,
@@ -153,6 +154,7 @@ const WalletPage: React.FC = () => {
         fioWallet={fioWallet}
         fioWalletsAmount={fioWalletsAmount}
         onClose={onShowPrivateModalClose}
+        userType={userType}
       />
       <EditWalletName
         show={showWalletNameEdit}
