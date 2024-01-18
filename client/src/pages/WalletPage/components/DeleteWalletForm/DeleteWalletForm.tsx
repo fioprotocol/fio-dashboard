@@ -14,36 +14,43 @@ import { DeleteWalletFormValues } from '../../types';
 import classes from '../../../WalletsPage/styles/CreateWalletForm.module.scss';
 
 const DeleteWalletForm: React.FC<{
+  isPrimaryUserProfileType: boolean;
   loading: boolean;
   username: string;
   onSubmit: (values: DeleteWalletFormValues) => Promise<void>;
 }> = props => {
-  const { loading, username, onSubmit } = props;
+  const { isPrimaryUserProfileType, loading, username, onSubmit } = props;
   return (
     <Form
       onSubmit={onSubmit}
-      validate={formValidation.validateForm}
+      validate={isPrimaryUserProfileType ? formValidation.validateForm : null}
       initialValues={{ username }}
     >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
-          <Field name="username" type="hidden" component={Input} />
-          <Field
-            label="Permanently delete this wallet"
-            name="password"
-            type="password"
-            placeholder="Enter Your Password"
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            component={Input}
-            disabled={loading}
-          />
+          {isPrimaryUserProfileType && (
+            <>
+              <Field name="username" type="hidden" component={Input} />
+
+              <Field
+                label="Permanently delete this wallet"
+                name="password"
+                type="password"
+                placeholder="Enter Your Password"
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                component={Input}
+                disabled={loading}
+              />
+            </>
+          )}
 
           <SubmitButton
             disabled={
-              formRenderProps.hasValidationErrors ||
-              formRenderProps.submitting ||
-              loading
+              isPrimaryUserProfileType &&
+              (formRenderProps.hasValidationErrors ||
+                formRenderProps.submitting ||
+                loading)
             }
             loading={loading}
             withBottomMargin={true}
