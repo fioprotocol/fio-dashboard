@@ -11,6 +11,7 @@ import { FormValuesProps } from './types';
 import { formValidation } from './validation';
 
 type Props = {
+  hasNoEmail: boolean;
   onSubmit: (values: FormValuesProps) => void;
   loading: boolean;
   error?: boolean;
@@ -18,7 +19,7 @@ type Props = {
 };
 
 const ChangeEmailForm: React.FC<Props> = props => {
-  const { onSubmit, loading, error, initialValues } = props;
+  const { hasNoEmail, onSubmit, loading, error, initialValues } = props;
 
   const renderForm = (formRenderProps: FormRenderProps<FormValuesProps>) => {
     const {
@@ -41,7 +42,17 @@ const ChangeEmailForm: React.FC<Props> = props => {
             disabled={submitting || loading}
           />
           <SubmitButton
-            text={loading ? 'Updating' : error ? 'Try Again' : 'Update'}
+            text={
+              loading
+                ? hasNoEmail
+                  ? 'Setting up'
+                  : 'Updating'
+                : error
+                ? 'Try Again'
+                : hasNoEmail
+                ? 'Setup'
+                : 'Update'
+            }
             disabled={
               loading || hasValidationErrors || validating || submitting
             }

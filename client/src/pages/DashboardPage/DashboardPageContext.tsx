@@ -27,10 +27,12 @@ type UseContextProps = {
     hasNoStakedTokens: boolean;
     hasOneDomain: boolean;
     hasOneFCH: boolean;
+    hasNoEmail: boolean;
     hasZeroTotalBalance: boolean;
     loading: boolean;
     noMappedPubAddresses: boolean;
     withoutMarginTop: boolean;
+    userType: string;
   };
 };
 
