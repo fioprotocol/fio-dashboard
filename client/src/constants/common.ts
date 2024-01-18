@@ -147,6 +147,7 @@ export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
 export const WALLET_CREATED_FROM = {
   EDGE: 'EDGE',
   LEDGER: 'LEDGER',
+  METAMASK: 'METAMASK',
 };
 
 export const NFT_CHAIN_CODE_LIST = [

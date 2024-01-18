@@ -7,6 +7,7 @@ import {
   showGenericError,
   showPinConfirm,
 } from '../../../../redux/modal/selectors';
+import { user } from '../../../../redux/profile/selectors';
 
 import { addWallet } from '../../../../redux/account/actions';
 
@@ -20,6 +21,7 @@ const reduxConnect = connect(
     genericErrorModalIsActive: showGenericError,
     addWalletLoading,
     pinModalIsOpen: showPinConfirm,
+    user,
   }),
   {
     addWallet,
