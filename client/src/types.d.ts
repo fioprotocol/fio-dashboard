@@ -998,11 +998,13 @@ export type AllFioNamesAndWalletsProps = {
   hasFCH: boolean;
   hasOneDomain: boolean;
   hasOneFCH: boolean;
+  hasNoEmail: boolean;
   hasNoStakedTokens: boolean;
   hasZeroTotalBalance: boolean;
   loading: boolean;
   noMappedPubAddresses: boolean;
   userId: string;
+  userType: string;
 };
 
 export type DomainWatchlistItem = {

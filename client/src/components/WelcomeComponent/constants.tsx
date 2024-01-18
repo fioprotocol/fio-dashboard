@@ -10,6 +10,7 @@ import GroupImgSrc from '../../assets/images/group.svg';
 import GrowthImgSrc from '../../assets/images/growth.svg';
 import LocationPinImgSrc from '../../assets/images/location-pin.svg';
 import NetworkImgSrc from '../../assets/images/network.svg';
+import NoEmailSetup from '../../assets/images/no-email.svg';
 import NotsetupImgSrc from '../../assets/images/notsetup.svg';
 import OpenseaImgSrc from '../../assets/images/opensea.svg';
 import PackageImgSrc from '../../assets/images/package.svg';
@@ -192,6 +193,18 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     },
     isActionLinkExternal: true,
     types: [PAGE_TYPES.ALL, PAGE_TYPES.DOM, PAGE_TYPES.FCH],
+  },
+  USER_EMAIL: {
+    title: 'Enter Your Email Address',
+    text:
+      'Enter your email address on your settings page in order to receive FIO App notifications.',
+    imageSrc: NoEmailSetup,
+    actionButtonText: 'Enter Now',
+    actionButtonLink: {
+      pathname: ROUTES.SETTINGS,
+      state: { openSettingsModal: PREOPENED_MODALS.EMAIL },
+    },
+    types: [PAGE_TYPES.ALL, PAGE_TYPES.DOM, PAGE_TYPES.FCH, PAGE_TYPES.TOK],
   },
 };
 

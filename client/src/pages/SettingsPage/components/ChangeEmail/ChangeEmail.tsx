@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import ActionButton from '../ActionButton';
@@ -30,12 +30,19 @@ const SUCCESS_MODAL_CONTENT = {
 type Props = {
   user: User;
   pinModalIsOpen: boolean;
+  preopenedEmailModal: boolean;
   loading: boolean;
   loadProfile: () => void;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, pinModalIsOpen, loading, loadProfile } = props;
+  const {
+    user,
+    pinModalIsOpen,
+    loading,
+    preopenedEmailModal,
+    loadProfile,
+  } = props;
   const [showModal, toggleModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -64,12 +71,17 @@ const ChangeEmail: React.FC<Props> = props => {
     setSubmitData(null);
   };
 
+  useEffect(() => {
+    if (preopenedEmailModal) {
+      toggleModal(true);
+    }
+  }, [preopenedEmailModal]);
+
   const submit = async ({ data }: SubmitActionParams) => {
     const { newEmail } = data;
     try {
       const res = await apis.auth.updateEmail(newEmail);
       if (res) {
-        // await apis.auth.profile();
         loadProfile();
         onCloseModal();
         toggleSuccessModal(true);
@@ -105,14 +117,16 @@ const ChangeEmail: React.FC<Props> = props => {
         </p>
       )}
       <div className={classes.badgeContainer}>
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.user}>
-            {user.email ? user.email : 'Enter your email address'}
-          </div>
-        </Badge>
+        {user.email && (
+          <Badge show={true} type={BADGE_TYPES.WHITE}>
+            <div className={classes.user}>{user.email}</div>
+          </Badge>
+        )}
         <div className={classes.buttonContainer}>
           <ActionButton
-            title="Update Email Address"
+            title={`${
+              !user.email ? 'Setup Email Address' : 'Update Email Address'
+            }`}
             onClick={onActionButtonClick}
           />
         </div>
@@ -120,10 +134,11 @@ const ChangeEmail: React.FC<Props> = props => {
           onClose={onCloseModal}
           showModal={showModal && !pinModalIsOpen}
           isWide={true}
-          title="Update Email"
+          title={!user.email ? 'Setup Email' : 'Update Email'}
           subtitle="Your email address is used access your FIO App and recover your account."
         >
           <ChangeEmailForm
+            hasNoEmail={!user.email}
             onSubmit={onSubmit}
             loading={loading || processing}
             initialValues={submitData}
