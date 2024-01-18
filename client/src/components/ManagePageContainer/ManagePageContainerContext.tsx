@@ -52,6 +52,7 @@ type UseContextProps = {
     hasDomains: boolean;
     hasExpiredDomains: boolean;
     hasFCH: boolean;
+    hasNoEmail: boolean;
     hasNoStakedTokens: boolean;
     hasOneDomain: boolean;
     hasOneFCH: boolean;
@@ -61,6 +62,7 @@ type UseContextProps = {
     noPaddingTop: boolean;
     onlyActions: boolean;
     pageType: PAGE_TYPES_PROPS;
+    userType: string;
   };
   loadMore: () => void;
   onItemModalClose: () => void;
