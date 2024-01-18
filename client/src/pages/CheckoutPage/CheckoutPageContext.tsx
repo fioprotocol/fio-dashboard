@@ -218,7 +218,7 @@ export const useContext = (): {
           orderParams.publicKey =
             paymentWalletPublicKey ||
             fioWallets.filter(
-              ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+              ({ from }) => from !== WALLET_CREATED_FROM.LEDGER,
             )[0].publicKey;
       }
 
@@ -257,7 +257,7 @@ export const useContext = (): {
         if (!paymentWalletPublicKey && fioWallets.length) {
           setWallet(
             fioWallets.filter(
-              ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+              ({ from }) => from !== WALLET_CREATED_FROM.LEDGER,
             )[0].publicKey,
           );
         }
