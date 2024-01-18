@@ -52,7 +52,9 @@ export const EmailNotifications: React.FC = () => {
 
   return (
     <>
-      <p className={classes.text}>
+      <p
+        className={classnames(classes.text, disableConfigs && classes.disabled)}
+      >
         Choose which email notification types that you would like to receive
       </p>
       <div className={classes.checkContainer}>
