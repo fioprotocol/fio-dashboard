@@ -1,7 +1,7 @@
-@import '../../../assets/styles/colors.scss';
-@import '../../../assets/styles/fontMixins.scss';
-@import '../../../assets/styles/mediaQueriesMixings.scss';
-@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .settingsContainer {
   padding: 40px 30px 30px;
@@ -15,6 +15,10 @@
   .title {
     margin-bottom: 0;
     @include proxima-nova-bold;
+    
+    &.disabled {
+      opacity: 0.6;
+    }
   }
   .passwordPinContainer {
     display: flex;
