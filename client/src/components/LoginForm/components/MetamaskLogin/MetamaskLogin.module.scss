@@ -39,35 +39,3 @@
     font-size: 0.9375em;
   }
 }
-
-.loginIcon {
-  width: 64px;
-  margin-top: 25px;
-}
-
-.modalLoginTitle {
-  margin-top: 17px;
-  font-size: 22px;
-  @include proxima-nova-bold;
-}
-
-.loader {
-  margin-top: 17px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  .loderText {
-    font-size: 0.975em;
-    margin-bottom: 0;
-    @include proxima-nova-semibold;
-  }
-}
-
-.loginText {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-size: 0.875em;
-  @include proxima-nova-semibold;
-  text-align: center;
-}
