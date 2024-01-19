@@ -1,8 +1,8 @@
 import React from 'react';
-import { FadeLoader } from 'react-spinners';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import ModalComponent from '../../../Modal/Modal';
+import { MetamaskConnectionModal } from '../../../Modal/MetamaskConnectionModal';
 
 import { useContext } from './MetamaskLoginContext';
 
@@ -64,33 +64,14 @@ export const MetamaskLogin: React.FC = () => {
           ))}
         </ol>
       </ModalComponent>
-      <ModalComponent
-        show={isLoginModalOpen}
-        onClose={onLoginModalClose}
-        closeButton
+      <MetamaskConnectionModal
+        hasCloseButton
         isSecondModal
-      >
-        <img
-          alt="MetaMask logo"
-          src={MetamaskIcon}
-          className={classes.loginIcon}
-        />
-        <h5 className={classes.modalLoginTitle}>Sign in to your account</h5>
-        <div className={classes.loader}>
-          <FadeLoader
-            height="8px"
-            width="5px"
-            radius="3px"
-            margin="1px"
-            color="rgb(118, 92, 214)"
-          />
-          <p className={classes.loderText}>Connecting...</p>
-        </div>
-        <p className={classes.loginText}>
-          For the most seamless Web3 experience please complete the actions in
-          the MetaMask window.
-        </p>
-      </ModalComponent>
+        show={isLoginModalOpen}
+        title="Sign in to your account"
+        text="For the most seamless Web3 experience please complete the actions in the MetaMask window."
+        onClose={onLoginModalClose}
+      />
     </>
   );
 };
