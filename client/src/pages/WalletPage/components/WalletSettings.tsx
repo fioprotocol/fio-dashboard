@@ -67,6 +67,7 @@ const WalletSettings: React.FC<Props> = props => {
   >();
 
   const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
+  const isMetamaskWallet = fioWallet?.from === WALLET_CREATED_FROM.METAMASK;
 
   const onEditSubmit = (values: EditWalletNameValues) => {
     edit(values.name);
@@ -279,6 +280,11 @@ const WalletSettings: React.FC<Props> = props => {
                       Your private key for this wallet is stored on you ledger
                       device. Once Deleted, it can be added back at any time.
                     </span>
+                  ) : isMetamaskWallet ? (
+                    <span>
+                      Your private key for this wallet is stored on you MetaMask
+                      wallet. Once Deleted, it can be added back at any time.
+                    </span>
                   ) : (
                     <span className={classes.badgeBoldText}>
                       Record your private key as this wallet will be permanently
@@ -313,7 +319,7 @@ const WalletSettings: React.FC<Props> = props => {
         <div className={classes.container}>
           <h3 className={classes.title}>Wallet Settings</h3>
           {renderNameForm()}
-          {!isLedgerWallet && renderPasswordForm()}
+          {!isLedgerWallet && !isMetamaskWallet && renderPasswordForm()}
           {renderKey()}
           {renderCancel()}
           {renderDeleteWalletForm()}
@@ -342,6 +348,13 @@ const WalletSettings: React.FC<Props> = props => {
                 <b>
                   However, this wallet’s private keys are stored on your Ledger
                   device and can be import again at any time.
+                </b>
+              </span>
+            ) : isMetamaskWallet ? (
+              <span className={classes.deleteSecondText}>
+                <b>
+                  However, this wallet’s private keys are stored on your
+                  MetaMask wallet and can be import again at any time.
                 </b>
               </span>
             ) : (
