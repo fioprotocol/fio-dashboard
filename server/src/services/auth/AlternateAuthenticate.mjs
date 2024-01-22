@@ -105,7 +105,7 @@ export default class AlternateAuthenticate extends Base {
 
     const newWallet = new Wallet({
       data: {
-        derivationIndex,
+        derivationIndex: Number(derivationIndex),
       },
       name: `My FIO wallet`,
       from,
