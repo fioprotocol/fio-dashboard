@@ -6,6 +6,7 @@ import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import SetVisibilityResults from '../../components/common/TransactionResults/components/SetVisibilityResults';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { FioDomainStatusChangeMetamaskWallet } from './components/FioDomainStatusChangeMetamaskWallet';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -39,7 +40,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   } = props;
   const { name } = location.query;
 
-  const domainStatus: string = selectedFioDomain.isPublic
+  const domainStatus: string = selectedFioDomain?.isPublic
     ? DOMAIN_STATUS.PUBLIC
     : DOMAIN_STATUS.PRIVATE;
   const statusToChange =
@@ -57,9 +58,9 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     getFee();
-    selectedFioDomain.walletPublicKey &&
-      refreshBalance(selectedFioDomain.walletPublicKey);
-  }, []);
+    selectedFioDomain?.walletPublicKey &&
+      refreshBalance(selectedFioDomain?.walletPublicKey);
+  }, [getFee, refreshBalance, selectedFioDomain?.walletPublicKey]);
 
   // Submit
   const submit = async ({ keys }: SubmitActionParams) => {
@@ -126,7 +127,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
       </>
     );
 
-  if (!selectedFioDomain.walletPublicKey && !processing)
+  if (!selectedFioDomain?.walletPublicKey && !processing)
     return <Redirect to={{ pathname: ROUTES.FIO_DOMAINS }} />;
 
   return (
@@ -149,6 +150,18 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <FioDomainStatusChangeMetamaskWallet
+          derivationIndex={fioWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={{ isPublic: selectedFioDomain.isPublic, name }}
+          startProcessing={!!submitData}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
         />
       ) : null}
 
