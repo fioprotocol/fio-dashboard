@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
 import {
@@ -9,15 +8,14 @@ import {
 } from '../../../constants/fio';
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
-
-import { apiUrls as apiUrlsSelector } from '../../../redux/registrations/selectors';
+import { FioServerResponse } from '../../../types/fio';
 
 type Props = {
   derivationIndex: number;
   processing: boolean;
   submitData: { isPublic: number; name: string };
   startProcessing: boolean;
-  onSuccess: (result: { fee_collected: number }) => void;
+  onSuccess: (result: FioServerResponse) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
 };
@@ -33,12 +31,9 @@ export const FioDomainStatusChangeMetamaskWallet: React.FC<Props> = props => {
     setProcessing,
   } = props;
 
-  const apiUrls = useSelector(apiUrlsSelector);
-
   const { isPublic, name } = submitData;
 
   const actionParams = {
-    apiUrl: apiUrls[0]?.replace('/v1/', ''),
     action: TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility],
     account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
     data: {
