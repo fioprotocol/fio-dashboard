@@ -1,3 +1,12 @@
+export type NFT_ITEM = {
+  chain_code: string;
+  contract_address: string;
+  token_id: string;
+  url?: string;
+  hash?: string;
+  metadata?: string;
+};
+
 export type ActionDataParams = {
   amount?: string;
   bundle_sets?: number;
@@ -20,14 +29,7 @@ export type ActionDataParams = {
   is_public?: number;
   max_fee: number;
   max_oracle_fee?: string;
-  nfts?: {
-    chain_code: string;
-    contract_address: string;
-    token_id: string;
-    url?: string;
-    hash?: string;
-    metadata?: string;
-  }[];
+  nfts?: NFT_ITEM[];
   new_owner_fio_public_key?: string;
   owner_fio_public_key?: string;
   payer_fio_address?: string;

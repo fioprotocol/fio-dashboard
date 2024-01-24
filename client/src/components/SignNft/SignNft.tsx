@@ -7,6 +7,7 @@ import SignResults from '../common/TransactionResults/components/SignResults';
 import EdgeConfirmAction from '../EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import PageTitle from '../PageTitle/PageTitle';
+import { SignNftMetamaskWallet } from './components/SignNftMetamaskWallet';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -18,13 +19,15 @@ import { LINKS } from '../../constants/labels';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import useEffectOnce from '../../hooks/general';
-
+import { handleFioServerResponseActionData } from '../../util/fio';
+import { camelizeObjKeys } from '../../utils';
 import apis from '../../api';
 
 import { FioAddressDoublet, NFTTokenDoublet } from '../../types';
 import { ContainerProps, NftFormValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
+import { FioServerResponse, NFT_ITEM } from '../../types/fio';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -160,12 +163,24 @@ const SignNft: React.FC<ContainerProps> = props => {
     setSubmitData(null);
     setProcessing(false);
   };
-  const onSuccess = async (result: {
-    fee_collected: number;
-    other: { nfts: NFTTokenDoublet[] };
-  }) => {
+  const onSuccess = async (
+    result:
+      | {
+          fee_collected: number;
+          other: { nfts: NFTTokenDoublet[] };
+        }
+      | FioServerResponse,
+  ) => {
     if (result != null) {
-      const { metadata, ...rest } = result.other.nfts[0];
+      let nfts: NFTTokenDoublet | NFT_ITEM;
+
+      if ('fee_collected' in result) {
+        nfts = result.other?.nfts[0];
+      } else {
+        nfts = handleFioServerResponseActionData(result)?.nfts[0];
+      }
+
+      const { metadata, ...rest } = nfts;
       const creatorUrl = (() => {
         try {
           return JSON.parse(metadata || '').creator_url;
@@ -178,7 +193,7 @@ const SignNft: React.FC<ContainerProps> = props => {
         name: selectedFioHandle?.name,
         other: {
           creatorUrl,
-          ...rest,
+          ...camelizeObjKeys(rest),
         },
       });
 
@@ -257,6 +272,18 @@ const SignNft: React.FC<ContainerProps> = props => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {currentWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <SignNftMetamaskWallet
+          derivationIndex={currentWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={submitData}
+          startProcessing={!!submitData}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
         />
       ) : null}
 
