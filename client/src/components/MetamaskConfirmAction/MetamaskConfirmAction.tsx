@@ -1,67 +1,29 @@
 import React, { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { MetamaskConnectionModal } from '../Modal/MetamaskConnectionModal';
 
 import { MetamaskSnap } from '../../services/MetamaskSnap';
 
+import { apiUrls as apiUrlsSelector } from '../../redux/registrations/selectors';
+
 import { log } from '../../util/general';
 import { signTxn } from '../../util/snap';
 import useEffectOnce from '../../hooks/general';
+
+import { ActionDataParams, FioServerResponse } from '../../types/fio';
 
 type Props = {
   actionParams: {
     account: string;
     action: string;
-    apiUrl: string;
     derivationIndex: number;
-    data: {
-      amount?: string;
-      bundle_sets?: number;
-      chain_code?: string;
-      content?: {
-        payer_public_address?: string;
-        payee_public_address: string;
-        amount: string;
-        chain_code: string;
-        token_code: string;
-        status?: string;
-        obt_id?: string;
-        memo: string | null;
-        hash: string | null;
-        offline_url: string | null;
-      };
-      fio_address?: string;
-      fio_domain?: string;
-      fio_request_id?: string;
-      is_public?: number;
-      max_fee: number;
-      max_oracle_fee?: string;
-      nfts?: {
-        chain_code: string;
-        contract_address: string;
-        token_id: string;
-        url?: string;
-        hash?: string;
-        metadata?: string;
-      }[];
-      new_owner_fio_public_key?: string;
-      owner_fio_public_key?: string;
-      payer_fio_address?: string;
-      payee_fio_address?: string;
-      payee_public_key?: string;
-      public_addresses?: {
-        chain_code: string;
-        token_code: string;
-        public_address: string;
-      }[];
-      public_address?: string;
-      tpid: string;
-    };
+    data: ActionDataParams;
   };
   processing: boolean;
   returnOnlySignedTxn?: boolean;
   onCancel: () => void;
-  onSuccess: (result: { fee_collected: number }) => void;
+  onSuccess: (result: FioServerResponse) => void;
   setProcessing: (processing: boolean) => void;
 };
 
@@ -79,22 +41,22 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
 
   const [hasError, toggleHasError] = useState<boolean>(false);
 
+  const apiUrls = useSelector(apiUrlsSelector);
+  const apiUrl = apiUrls[0]?.replace('/v1/', '');
+
   const submitAction = useCallback(async () => {
     try {
       setProcessing(true);
 
-      const signedTxn = await signTxn(actionParams);
+      const signedTxn = await signTxn({ ...actionParams, apiUrl });
 
       if (returnOnlySignedTxn) {
         onSuccess(signedTxn);
       } else {
-        const pushResult = await fetch(
-          `${actionParams.apiUrl}/v1/chain/push_transaction`,
-          {
-            body: JSON.stringify(signedTxn),
-            method: 'POST',
-          },
-        );
+        const pushResult = await fetch(`${apiUrl}/v1/chain/push_transaction`, {
+          body: JSON.stringify(signedTxn),
+          method: 'POST',
+        });
 
         if (
           pushResult.status === 400 ||
@@ -131,7 +93,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         toggleHasError(true);
       }
     }
-  }, [setProcessing, actionParams, returnOnlySignedTxn, onSuccess, onCancel]);
+  }, [
+    actionParams,
+    apiUrl,
+    returnOnlySignedTxn,
+    onSuccess,
+    onCancel,
+    setProcessing,
+  ]);
 
   useEffectOnce(
     () => {
