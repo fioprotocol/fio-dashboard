@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import EdgeConfirmAction from '../EdgeConfirmAction';
@@ -8,6 +8,7 @@ import { TransferForm } from './components/FioNameTransferForm/FioNameTransferFo
 import TransferResults from '../common/TransactionResults/components/TransferResults';
 import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import PageTitle from '../PageTitle/PageTitle';
+import { FioNameTransferMetamaskWallet } from './components/FioNameTransferMetamaskWallet';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ERROR_TYPES } from '../common/TransactionResults/constants';
@@ -26,12 +27,19 @@ import { ACTIONS, DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../constants/fio';
 import { hasFioAddressDelimiter, isDomain } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
 import MathOp from '../../util/math';
+import {
+  handleFioServerResponse,
+  handleFioServerResponseActionData,
+} from '../../util/fio';
+import { log } from '../../util/general';
 
 import apis from '../../api';
 
 import { ContainerProps } from './types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 import { ResultsData } from '../common/TransactionResults/types';
+import { FioNameType } from '../../types';
+import { FioServerResponse } from '../../types/fio';
 
 import classes from './FioNameTransferContainer.module.scss';
 
@@ -65,11 +73,40 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const [submitting, setSubmitting] = useState(false);
   const [submitData, setSubmitData] = useState<{
     transferAddress: string;
-    fioNameType: string;
+    fioNameType: FioNameType;
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [newOwnerPublicKey, setNewOwnerPublicKey] = useState<string | null>(
+    null,
+  );
 
   const { publicKey, edgeId } = currentWallet;
+
+  const setNewOwnerPublicKeyFn = useCallback(async () => {
+    try {
+      const { transferAddress } = submitData || {};
+      if (!transferAddress) return;
+
+      let newOwnerKey = hasFioAddressDelimiter(transferAddress)
+        ? ''
+        : transferAddress;
+      if (!newOwnerKey) {
+        const {
+          public_address: publicAddress,
+        } = await apis.fio.getFioPublicAddress(transferAddress);
+        if (!publicAddress) throw new Error('Public address is invalid.');
+        newOwnerKey = publicAddress;
+      }
+
+      setNewOwnerPublicKey(newOwnerKey);
+    } catch (error) {
+      log.error(error);
+    }
+  }, [submitData]);
+
+  useEffect(() => {
+    setNewOwnerPublicKeyFn();
+  }, [setNewOwnerPublicKeyFn]);
 
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
@@ -127,16 +164,35 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
     setProcessing(false);
     setSubmitting(false);
   };
-  const onSuccess = (result: {
-    fee_collected: number;
-    newOwnerKey?: string;
-    newOwnerFioAddress?: string;
-  }) => {
+  const onSuccess = (
+    result:
+      | {
+          fee_collected: number;
+          newOwnerKey?: string;
+          newOwnerFioAddress?: string;
+        }
+      | FioServerResponse,
+  ) => {
     setSubmitData(null);
+
+    let feeCollected: number;
+    let publicKey: string;
+
+    if ('fee_collected' in result) {
+      feeCollected = result.fee_collected;
+      publicKey = result.newOwnerKey || result.newOwnerFioAddress;
+    } else {
+      feeCollected = handleFioServerResponse(result).fee_collected;
+      publicKey = handleFioServerResponseActionData(result)
+        .new_owner_fio_public_key;
+    }
+
     setResultsData({
-      feeCollected: convertFioPrices(result.fee_collected, roe) || feePrice,
+      feeCollected: feeCollected
+        ? convertFioPrices(feeCollected, roe)
+        : feePrice,
       name,
-      publicKey: result.newOwnerKey || result.newOwnerFioAddress,
+      publicKey,
     });
     setProcessing(false);
   };
@@ -197,6 +253,22 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {currentWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <FioNameTransferMetamaskWallet
+          derivationIndex={currentWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={{
+            fioName: name,
+            newOwnerPublicKey,
+          }}
+          fioNameType={submitData?.fioNameType}
+          startProcessing={!!submitData && !!newOwnerPublicKey}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
         />
       ) : null}
 
