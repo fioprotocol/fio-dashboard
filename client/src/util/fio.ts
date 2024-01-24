@@ -36,6 +36,7 @@ import {
   CartItem,
 } from '../types';
 import { RawTransaction } from '../api/fio';
+import { ActionDataParams, FioServerResponse } from '../types/fio';
 
 export const vaildateFioDomain = (domain: string) => {
   if (!domain) {
@@ -342,3 +343,27 @@ export const checkIsDomainItemExistsOnCart = (
 ): boolean =>
   cartItem.id === id ||
   (cartItem.domainType === DOMAIN_TYPE.CUSTOM && cartItem.domain === id);
+
+export const handleFioServerResponse = (
+  response: FioServerResponse,
+): {
+  status: string;
+  fee_collected?: number;
+} => {
+  try {
+    const parsedResponse: {
+      status: string;
+      fee_collected?: number;
+    } = JSON.parse(response.processed?.action_traces[0]?.receipt?.response);
+
+    return parsedResponse;
+  } catch (error) {
+    log.error(error);
+  }
+};
+
+export const handleFioServerResponseActionData = (
+  response: FioServerResponse,
+): ActionDataParams => {
+  return response?.processed?.action_traces[0]?.act?.data;
+};
