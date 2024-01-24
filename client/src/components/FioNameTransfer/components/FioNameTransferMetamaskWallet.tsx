@@ -49,7 +49,7 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
     };
     derivationIndex: number;
   } = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress],
+    action: '',
     account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
     data: {
       new_owner_fio_public_key: newOwnerPublicKey,
@@ -60,10 +60,12 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
   };
 
   if (fioNameType === ADDRESS) {
+    actionParams.action = TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress];
     actionParams.data.fio_address = fioName;
   }
 
   if (fioNameType === DOMAIN) {
+    actionParams.action = TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain];
     actionParams.data.fio_domain = fioName;
   }
 
