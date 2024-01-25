@@ -23,10 +23,17 @@ type WalletTypeActionProps = {
 type Props = WalletTypeActionProps & {
   FioActionWallet: React.FC<AnyObject>;
   LedgerActionWallet: React.FC<AnyObject>;
+  MetamaskActionWallet?: React.FC<AnyObject>;
 };
 
 const WalletAction: React.FC<Props> = props => {
-  const { fioWallet, FioActionWallet, LedgerActionWallet, ...rest } = props;
+  const {
+    fioWallet,
+    FioActionWallet,
+    LedgerActionWallet,
+    MetamaskActionWallet,
+    ...rest
+  } = props;
 
   if (!fioWallet || !fioWallet.publicKey) return null;
 
@@ -35,6 +42,9 @@ const WalletAction: React.FC<Props> = props => {
 
   if (fioWallet.from === WALLET_CREATED_FROM.LEDGER)
     return <LedgerActionWallet fioWallet={fioWallet} {...rest} />;
+
+  if (fioWallet.from === WALLET_CREATED_FROM.METAMASK && MetamaskActionWallet)
+    return <MetamaskActionWallet fioWallet={fioWallet} {...rest} />;
 
   return null;
 };
