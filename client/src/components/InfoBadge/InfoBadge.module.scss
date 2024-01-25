@@ -15,6 +15,10 @@
 .textContainer {
   text-align: left;
 
+  .message {
+    word-break: break-all;
+  }
+
   .messageOnNewLine {
     display: block;
     margin-top: 10px;

@@ -11,15 +11,11 @@ import { log } from '../../util/general';
 import { signTxn } from '../../util/snap';
 import useEffectOnce from '../../hooks/general';
 
-import { ActionDataParams, FioServerResponse } from '../../types/fio';
+import { ActionParams, FioServerResponse } from '../../types/fio';
 
 type Props = {
-  actionParams: {
-    account: string;
-    action: string;
-    derivationIndex: number;
-    data: ActionDataParams;
-  };
+  actionParams: ActionParams;
+  callSubmitAction?: boolean;
   processing: boolean;
   returnOnlySignedTxn?: boolean;
   onCancel: () => void;
@@ -30,6 +26,7 @@ type Props = {
 export const MetamaskConfirmAction: React.FC<Props> = props => {
   const {
     actionParams,
+    callSubmitAction,
     processing,
     returnOnlySignedTxn,
     onCancel,
@@ -110,6 +107,16 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     },
     [state, submitAction],
     !!state?.enabled,
+  );
+
+  useEffectOnce(
+    () => {
+      if (callSubmitAction && state?.enabled) {
+        submitAction();
+      }
+    },
+    [callSubmitAction, state?.enabled, submitAction],
+    !!state?.enabled && callSubmitAction,
   );
 
   useEffectOnce(() => {

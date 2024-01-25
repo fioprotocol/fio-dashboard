@@ -20,8 +20,8 @@ export type ActionDataParams = {
     status?: string;
     obt_id?: string;
     memo: string | null;
-    hash: string | null;
-    offline_url: string | null;
+    hash?: string | null;
+    offline_url?: string | null;
   };
   fio_address?: string;
   fio_domain?: string;
@@ -44,12 +44,22 @@ export type ActionDataParams = {
   tpid: string;
 };
 
+export type ActionParams = {
+  account: string;
+  action: string;
+  contentType?: string;
+  derivationIndex: number;
+  data: ActionDataParams;
+  payerFioPublicKey?: string;
+};
+
 export type FioServerResponse = {
   processed: {
     action_traces: Array<{
       act: {
         data: ActionDataParams;
       };
+      block_time: string;
       receipt: {
         response: string;
       };

@@ -9,6 +9,7 @@ import TokenTransferResults from '../../components/common/TransactionResults/com
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { RequestTokensMetamaskWallet } from './components/RequestTokensMetamaskWallet';
 
 import { LINKS } from '../../constants/labels';
 import { FIO_CHAIN_CODE, FIO_REQUEST_STATUS_TYPES } from '../../constants/fio';
@@ -205,6 +206,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
         contactsList={contactsList}
         FioActionWallet={RequestTokensEdgeWallet}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={RequestTokensMetamaskWallet}
       />
 
       <PseudoModalContainer
