@@ -349,6 +349,7 @@ export const handleFioServerResponse = (
 ): {
   status: string;
   fee_collected?: number;
+  fio_request_id?: number;
 } => {
   try {
     const parsedResponse: {

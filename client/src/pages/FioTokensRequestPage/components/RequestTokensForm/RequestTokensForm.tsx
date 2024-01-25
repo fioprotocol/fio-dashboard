@@ -19,6 +19,7 @@ import PublicKeyField from './PublicKeyField';
 import { formValidation, submitValidation } from './validation';
 import { minWaitTimeFunction } from '../../../../utils';
 import { fioAddressExistsValidator } from '../../../../util/validators';
+import FioApi from '../../../../api/fio';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { ASTERISK_SIGN, CHAIN_CODES } from '../../../../constants/common';
@@ -50,7 +51,13 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     const validationResult = await submitValidation.validateForm(values);
     if (validationResult) return validationResult;
 
-    return props.onSubmit(values);
+    const payerFioPublicKey = await new FioApi().getFioPublicAddress(
+      values.payerFioAddress,
+    );
+    return props.onSubmit({
+      ...values,
+      payerFioPublicKey: payerFioPublicKey?.public_address,
+    });
   };
 
   if (!isFio) {
