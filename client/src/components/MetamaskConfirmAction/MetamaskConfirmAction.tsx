@@ -8,14 +8,21 @@ import { MetamaskSnap } from '../../services/MetamaskSnap';
 import { apiUrls as apiUrlsSelector } from '../../redux/registrations/selectors';
 
 import { log } from '../../util/general';
-import { signTxn } from '../../util/snap';
+import { decryptContent, signTxn } from '../../util/snap';
 import useEffectOnce from '../../hooks/general';
 
-import { ActionParams, FioServerResponse } from '../../types/fio';
+import {
+  ActionParams,
+  DecryptActionParams,
+  FioServerResponse,
+} from '../../types/fio';
+
+const canceledRegexp = /transaction cacneled|decrypt fio data canceled/i;
 
 type Props = {
-  actionParams: ActionParams;
+  actionParams: ActionParams | DecryptActionParams;
   callSubmitAction?: boolean;
+  isDecryptContent?: boolean;
   processing: boolean;
   returnOnlySignedTxn?: boolean;
   onCancel: () => void;
@@ -27,6 +34,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
   const {
     actionParams,
     callSubmitAction,
+    isDecryptContent,
     processing,
     returnOnlySignedTxn,
     onCancel,
@@ -44,6 +52,11 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
   const submitAction = useCallback(async () => {
     try {
       setProcessing(true);
+
+      if (isDecryptContent && 'content' in actionParams) {
+        const decryptedContent = await decryptContent(actionParams);
+        onSuccess(decryptedContent);
+      }
 
       const signedTxn = await signTxn({ ...actionParams, apiUrl });
 
@@ -84,13 +97,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
       }
     } catch (error) {
       log.error(error);
-      if (error.message?.toLowerCase().includes('transaction cacneled')) {
+      if (canceledRegexp.test(error.message)) {
         onCancel();
       } else {
         toggleHasError(true);
       }
     }
   }, [
+    isDecryptContent,
     actionParams,
     apiUrl,
     returnOnlySignedTxn,
