@@ -1,6 +1,7 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
+import { SignedTxArgs } from '../api/fio';
 
 export type GetSnapsResponse = Record<string, Snap>;
 
@@ -62,7 +63,10 @@ export const getPublicKey = async (
 };
 
 export const signTxn = async (params: any) => {
-  const txn = await window.ethereum.request({
+  const txn: Promise<{
+    successed: SignedTxArgs[];
+    failed: { error: string; id: string }[];
+  }> = await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,

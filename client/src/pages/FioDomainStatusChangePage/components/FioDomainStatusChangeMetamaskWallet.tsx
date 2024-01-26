@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   ACTIONS,
   FIO_CONTRACT_ACCOUNT_NAMES,
@@ -8,14 +11,13 @@ import {
 } from '../../../constants/fio';
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
-import { FioServerResponse } from '../../../types/fio';
 
 type Props = {
   derivationIndex: number;
   processing: boolean;
   submitData: { isPublic: number; name: string };
   startProcessing: boolean;
-  onSuccess: (result: FioServerResponse) => void;
+  onSuccess: (result: OnSuccessResponseResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
 };

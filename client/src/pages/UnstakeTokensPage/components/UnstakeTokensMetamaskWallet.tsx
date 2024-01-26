@@ -1,6 +1,9 @@
 import React, { useCallback } from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   ACTIONS,
   BUNDLES_TX_COUNT,
@@ -13,7 +16,6 @@ import { handleFioServerResponse } from '../../../util/fio';
 import MathOp from '../../../util/math';
 import apis from '../../../api';
 
-import { FioServerResponse } from '../../../types/fio';
 import { StakeTokensValues } from '../types';
 
 type Props = {
@@ -58,17 +60,19 @@ export const UnstakeTokensMetamaskWallet: React.FC<Props> = props => {
   };
 
   const handleUnstakeTokensResult = useCallback(
-    (result: FioServerResponse) => {
+    (result: OnSuccessResponseResult) => {
       if (!result) return;
 
-      const { fee_collected } = handleFioServerResponse(result);
+      if (!Array.isArray(result) && 'transaction_id' in result) {
+        const { fee_collected } = handleFioServerResponse(result);
 
-      const unStakeTokensResult = {
-        fee_collected,
-        bundlesCollected: fee_collected ? 0 : BUNDLES_TX_COUNT.STAKE,
-      };
+        const unStakeTokensResult = {
+          fee_collected,
+          bundlesCollected: fee_collected ? 0 : BUNDLES_TX_COUNT.STAKE,
+        };
 
-      onSuccess(unStakeTokensResult);
+        onSuccess(unStakeTokensResult);
+      }
     },
     [onSuccess],
   );
