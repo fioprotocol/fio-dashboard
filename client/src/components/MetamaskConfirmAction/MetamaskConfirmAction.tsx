@@ -16,17 +16,24 @@ import {
   DecryptActionParams,
   FioServerResponse,
 } from '../../types/fio';
+import { SignedTxArgs } from '../../api/fio';
 
-const canceledRegexp = /transaction cacneled|decrypt fio data canceled/i;
+const canceledRegexp = /transaction canceled|decrypt fio data canceled/i;
+
+export type OnSuccessResponseResult =
+  | FioServerResponse
+  | FioServerResponse[]
+  | SignedTxArgs
+  | SignedTxArgs[];
 
 type Props = {
-  actionParams: ActionParams | DecryptActionParams;
+  actionParams: ActionParams | ActionParams[] | DecryptActionParams;
   callSubmitAction?: boolean;
   isDecryptContent?: boolean;
   processing: boolean;
   returnOnlySignedTxn?: boolean;
   onCancel: () => void;
-  onSuccess: (result: FioServerResponse) => void;
+  onSuccess: (result: OnSuccessResponseResult) => void;
   setProcessing: (processing: boolean) => void;
 };
 
@@ -58,42 +65,102 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         onSuccess(decryptedContent);
       }
 
-      const signedTxn = await signTxn({ ...actionParams, apiUrl });
+      const signedTxns = await signTxn({
+        actionParams:
+          typeof actionParams === 'object' ? [actionParams] : actionParams,
+        apiUrl,
+      });
 
       if (returnOnlySignedTxn) {
-        onSuccess(signedTxn);
+        onSuccess(
+          signedTxns.successed?.length === 1
+            ? signedTxns.successed[0]
+            : signedTxns.successed,
+        );
       } else {
-        const pushResult = await fetch(`${apiUrl}/v1/chain/push_transaction`, {
-          body: JSON.stringify(signedTxn),
-          method: 'POST',
+        const pushTransactionResult = async (
+          signedTxn: SignedTxArgs,
+        ): Promise<
+          | FioServerResponse
+          | {
+              reason: string;
+            }
+        > => {
+          try {
+            const pushResult = await fetch(
+              `${apiUrl}/v1/chain/push_transaction`,
+              {
+                body: JSON.stringify(signedTxn),
+                method: 'POST',
+              },
+            );
+
+            if (
+              pushResult.status === 400 ||
+              pushResult.status === 403 ||
+              pushResult.status === 500
+            ) {
+              const jsonResult = await pushResult.json();
+              const errorMessage = jsonResult.message || 'Something went wrong';
+
+              if (jsonResult.fields) {
+                // Handle specific error structure with "fields" array
+                const fieldErrors = jsonResult.fields.map((field: any) => ({
+                  name: field.name,
+                  value: field.value,
+                  error: field.error,
+                }));
+
+                throw new Error(
+                  `${errorMessage}: ${JSON.stringify(fieldErrors)}`,
+                );
+              } else if (jsonResult.error && jsonResult.error.what) {
+                throw new Error(jsonResult.error.what);
+              } else {
+                throw new Error(errorMessage);
+              }
+            }
+
+            const jsonResult = await pushResult.json();
+            return jsonResult;
+          } catch (error) {
+            return {
+              reason:
+                error instanceof Error ? error.message : 'Something went wrong',
+            };
+          }
+        };
+
+        const results = await Promise.allSettled(
+          signedTxns.successed.map(pushTransactionResult),
+        );
+
+        const successedResults: FioServerResponse[] = [];
+
+        results.forEach(result => {
+          if (result.status === 'fulfilled' && result.value !== null) {
+            if ('transaction_id' in result.value) {
+              successedResults.push(result.value);
+            }
+          } else if (result.status === 'rejected') {
+            if (typeof result.reason === 'string') {
+              log.error(`Transaction failed: ${result.reason}`);
+              if (
+                signedTxns.successed.length === 1 ||
+                canceledRegexp.test(result.reason)
+              ) {
+                throw new Error(result.reason);
+              }
+            }
+          }
         });
 
-        if (
-          pushResult.status === 400 ||
-          pushResult.status === 403 ||
-          pushResult.status === 500
-        ) {
-          const jsonResult = await pushResult.json();
-          const errorMessage = jsonResult.message || 'Something went wrong';
+        const res =
+          successedResults.length === 1
+            ? successedResults[0]
+            : successedResults;
 
-          if (jsonResult.fields) {
-            // Handle specific error structure with "fields" array
-            const fieldErrors = jsonResult.fields.map((field: any) => ({
-              name: field.name,
-              value: field.value,
-              error: field.error,
-            }));
-
-            throw new Error(`${errorMessage}: ${JSON.stringify(fieldErrors)}`);
-          } else if (jsonResult.error && jsonResult.error.what) {
-            throw new Error(jsonResult.error.what);
-          } else {
-            throw new Error(errorMessage);
-          }
-        }
-
-        const jsonResult = await pushResult.json();
-        onSuccess(jsonResult);
+        onSuccess(res);
       }
     } catch (error) {
       log.error(error);
