@@ -8,6 +8,7 @@ import WrapDomainForm from '../WarapDomainForm';
 import WrapDomainEdgeWallet from '../WrapDomainEdgeWallet';
 import WrapTokenResults from '../../../../components/common/TransactionResults/components/WrapTokenResults';
 import PageTitle from '../../../../components/PageTitle/PageTitle';
+import { WrapDomainMetamaskWallet } from '../WrapDomainMetamaskWallet';
 
 import { useFioAddresses, useWalletBalances } from '../../../../util/hooks';
 import useEffectOnce from '../../../../hooks/general';
@@ -167,6 +168,22 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
           onSuccess={onSuccess}
           wrapData={sendData}
           processing={processing}
+          setProcessing={setProcessing}
+        />
+      ) : null}
+
+      {currentWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <WrapDomainMetamaskWallet
+          derivationIndex={currentWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={{
+            ...sendData,
+            oracleFee: oracleFeePrice?.nativeFio,
+            fee: feePrice.nativeFio,
+          }}
+          startProcessing={!!sendData}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
           setProcessing={setProcessing}
         />
       ) : null}
