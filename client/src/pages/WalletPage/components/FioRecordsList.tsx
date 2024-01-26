@@ -10,6 +10,7 @@ import WalletAction from '../../../components/WalletAction/WalletAction';
 import DecryptContentEdge from './DecryptContentEdge';
 import LedgerWalletActionNotSupported from '../../../components/LedgerWalletActionNotSupported';
 import { FioTokensReceive } from '../../../components/FioTokensReceive';
+import { DecryptContentMetamaskWallet } from './DecryptContentMetamaskWallet';
 
 import { transformFioRecord } from '../util';
 
@@ -229,6 +230,7 @@ const FioRecordsList: React.FC<Props> = props => {
         onCancel={onCancel}
         FioActionWallet={DecryptContentEdge}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={DecryptContentMetamaskWallet}
       />
     </div>
   );
