@@ -25,7 +25,7 @@ export type ActionDataParams = {
   };
   fio_address?: string;
   fio_domain?: string;
-  fio_request_id?: string;
+  fio_request_id?: string | number;
   is_public?: number;
   max_fee: number;
   max_oracle_fee?: number;
