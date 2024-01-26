@@ -8,6 +8,7 @@ import StakeTokensEdgeWallet from './components/StakeTokensEdgeWallet';
 import StakeTokensResults from '../../components/common/TransactionResults/components/StakeTokensResults';
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import { StakeTokensMetamaskWallet } from './components/StakeTokensMetamaskWallet';
 
 import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
@@ -143,6 +144,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
         action={CONFIRM_PIN_ACTIONS.STAKE}
         FioActionWallet={StakeTokensEdgeWallet}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={StakeTokensMetamaskWallet}
       />
 
       <PseudoModalContainer
