@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   ACTIONS,
   FIO_CONTRACT_ACCOUNT_NAMES,
@@ -9,14 +12,14 @@ import {
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { NFTTokenDoublet } from '../../../types';
-import { ActionDataParams, FioServerResponse } from '../../../types/fio';
+import { ActionDataParams } from '../../../types/fio';
 
 type Props = {
   derivationIndex: number;
   processing: boolean;
   submitData: NFTTokenDoublet;
   startProcessing: boolean;
-  onSuccess: (result: FioServerResponse) => void;
+  onSuccess: (result: OnSuccessResponseResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
 };
