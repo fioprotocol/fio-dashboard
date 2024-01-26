@@ -65,11 +65,27 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         onSuccess(decryptedContent);
       }
 
-      const signedTxns = await signTxn({
-        actionParams:
-          typeof actionParams === 'object' ? [actionParams] : actionParams,
+      const sendActionParams = Array.isArray(actionParams)
+        ? actionParams
+        : [actionParams];
+
+      const signedTxnsResponse = await signTxn({
+        actionParams: sendActionParams,
         apiUrl,
       });
+
+      const signedTxns: {
+        successed: SignedTxArgs[];
+        failed: { error: string; id: string }[];
+      } = JSON.parse(signedTxnsResponse);
+
+      if (
+        sendActionParams.length === 1 &&
+        !signedTxns.successed.length &&
+        signedTxns.failed.length
+      ) {
+        throw new Error(signedTxns.failed[0].error);
+      }
 
       if (returnOnlySignedTxn) {
         onSuccess(
