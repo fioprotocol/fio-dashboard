@@ -10,6 +10,7 @@ import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceB
 import RejectRequestEdge from './components/RejectRequestEdge';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { RejectRequestMetamaskWallet } from './components/RejectRequestMetamaskWallet';
 
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 import { WALLET_CREATED_FROM } from '../../constants/common';
@@ -191,6 +192,18 @@ const RejectFioRequestPage: React.FC<Props &
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <RejectRequestMetamaskWallet
+          derivationIndex={fioWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={submitData}
+          startProcessing={!!submitData}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
         />
       ) : null}
     </>
