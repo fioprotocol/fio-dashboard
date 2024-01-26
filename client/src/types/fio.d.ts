@@ -28,7 +28,7 @@ export type ActionDataParams = {
   fio_request_id?: string;
   is_public?: number;
   max_fee: number;
-  max_oracle_fee?: string;
+  max_oracle_fee?: number;
   nfts?: NFT_ITEM[];
   new_owner_fio_public_key?: string;
   owner_fio_public_key?: string;
