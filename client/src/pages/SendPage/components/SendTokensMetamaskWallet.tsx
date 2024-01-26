@@ -146,8 +146,8 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
             amount: Number(amount),
             chain_code: FIO_CHAIN_CODE,
             token_code: FIO_CHAIN_CODE,
-            payer_public_address: from,
-            payee_public_address: to,
+            payer_public_address: fromPubKey,
+            payee_public_address: toPubKey,
             memo: memo || '',
             hash: '',
             obt_id: requestResult.transaction_id,
@@ -155,8 +155,8 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
             status: 'sent_to_blockchain',
           },
           fio_request_id: fioRequestId,
-          payer_fio_address: fromPubKey,
-          payee_fio_address: toPubKey,
+          payer_fio_address: from,
+          payee_fio_address: to,
           tpid: apis.fio.tpid,
           max_fee: DEFAULT_ACTION_FEE_AMOUNT,
         },
@@ -209,6 +209,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
       setProcessing={setProcessing}
       onCancel={cancelActionFunction}
       onSuccess={actionFunction}
+      isDecryptContent={false}
     />
   );
 };
