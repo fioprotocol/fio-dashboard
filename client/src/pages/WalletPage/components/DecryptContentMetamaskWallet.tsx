@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   FIO_CONTENT_TYPES,
   FIO_REQUEST_STATUS_TYPES,
@@ -14,7 +17,7 @@ import {
 } from '../../../types';
 import { FIO_RECORD_TYPES } from '../constants';
 import { camelizeObjKeys } from '../../../utils';
-import { ActionDataParams, FioServerResponse } from '../../../types/fio';
+import { ActionDataParams } from '../../../types/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -62,7 +65,7 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
   };
 
   const handleDecryptResults = (
-    result: FioServerResponse | ActionDataParams['content'],
+    result: OnSuccessResponseResult | ActionDataParams['content'],
   ) => {
     if (!result) return;
 

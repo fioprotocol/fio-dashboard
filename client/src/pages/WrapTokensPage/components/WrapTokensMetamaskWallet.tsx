@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -8,7 +11,6 @@ import {
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
 import apis from '../../../api';
-import { FioServerResponse } from '../../../types/fio';
 import MathOp from '../../../util/math';
 import { handleFioServerResponse } from '../../../util/fio';
 
@@ -62,18 +64,20 @@ export const WrapTokensMetamaskWallet: React.FC<Props> = props => {
     derivationIndex,
   };
 
-  const handleWrapResults = (result: FioServerResponse) => {
+  const handleWrapResults = (result: OnSuccessResponseResult) => {
     if (!result) return;
 
-    const { fee_collected, oracle_fee_collected } =
-      handleFioServerResponse(result) || {};
+    if (!Array.isArray(result) && 'transaction_id' in result) {
+      const { fee_collected, oracle_fee_collected } =
+        handleFioServerResponse(result) || {};
 
-    onSuccess({
-      ...result,
-      fee_collected,
-      oracle_fee_collected,
-      transaction_id: result.transaction_id,
-    });
+      onSuccess({
+        ...result,
+        fee_collected,
+        oracle_fee_collected,
+        transaction_id: result.transaction_id,
+      });
+    }
   };
 
   if (!startProcessing) return null;

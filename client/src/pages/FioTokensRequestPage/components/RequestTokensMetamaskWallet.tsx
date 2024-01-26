@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   ACTIONS,
   BUNDLES_TX_COUNT,
@@ -128,7 +131,7 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
   const [actionParams, setActionParams] = useState<ActionParams | null>(null);
   const [requestResult, setRequestResult] = useState<Result | null>(null);
   const [actionFunction, setActionFunction] = useState<
-    (res: FioServerResponse) => void
+    (res: OnSuccessResponseResult) => void
   >(null);
   const [cancelActionFunction, setCancelActionFunction] = useState<() => void>(
     () => onCancel,
@@ -140,7 +143,7 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
   ] = useState<boolean>(false);
 
   const handleMapPublicAddressResults = useCallback(
-    (result: FioServerResponse) => {
+    (result: OnSuccessResponseResult) => {
       if (!result) return;
 
       try {
