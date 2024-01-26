@@ -55,6 +55,7 @@ export interface TrxResponse {
 }
 
 export interface SignedTxArgs {
+  id?: string;
   compression: number;
   packed_context_free_data: string;
   packed_trx: string;
