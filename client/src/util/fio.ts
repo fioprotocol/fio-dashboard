@@ -352,11 +352,13 @@ export const handleFioServerResponse = (
   fio_request_id?: number;
   oracle_fee_collected?: number;
 } => {
+  const serverResponse =
+    response.processed?.action_traces[0]?.receipt?.response;
   try {
     const parsedResponse: {
       status: string;
       fee_collected?: number;
-    } = JSON.parse(response.processed?.action_traces[0]?.receipt?.response);
+    } = serverResponse ? JSON.parse(serverResponse) : {};
 
     return parsedResponse;
   } catch (error) {
