@@ -53,6 +53,13 @@ export type ActionParams = {
   payerFioPublicKey?: string;
 };
 
+export type DecryptActionParams = {
+  content: string;
+  contentType: string;
+  derivationIndex: number;
+  encryptionPublicKey: string;
+};
+
 export type FioServerResponse = {
   processed: {
     action_traces: Array<{
