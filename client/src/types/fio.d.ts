@@ -8,13 +8,13 @@ export type NFT_ITEM = {
 };
 
 export type ActionDataParams = {
-  amount?: string;
+  amount?: string | number;
   bundle_sets?: number;
   chain_code?: string;
   content?: {
     payer_public_address?: string;
     payee_public_address: string;
-    amount: string;
+    amount: string | number;
     chain_code: string;
     token_code: string;
     status?: string;
