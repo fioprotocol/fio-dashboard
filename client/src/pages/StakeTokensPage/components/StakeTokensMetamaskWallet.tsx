@@ -17,10 +17,11 @@ import MathOp from '../../../util/math';
 import apis from '../../../api';
 
 import { StakeTokensValues } from '../types';
+import { FioWalletDoublet } from '../../../types';
 
 type Props = {
-  derivationIndex: number;
   fee: number;
+  fioWallet: FioWalletDoublet;
   processing: boolean;
   submitData: StakeTokensValues;
   onSuccess: (result: {
@@ -33,8 +34,8 @@ type Props = {
 
 export const StakeTokensMetamaskWallet: React.FC<Props> = props => {
   const {
-    derivationIndex,
     fee,
+    fioWallet,
     processing,
     submitData,
     onCancel,
@@ -56,7 +57,7 @@ export const StakeTokensMetamaskWallet: React.FC<Props> = props => {
         .round(0)
         .toNumber(),
     },
-    derivationIndex,
+    derivationIndex: fioWallet?.data?.derivationIndex,
   };
 
   const handleStakeTokensResult = useCallback(
