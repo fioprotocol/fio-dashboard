@@ -8,6 +8,7 @@ import WrapTokensForm from './components/WrapTokensForm';
 import WrapTokensEdgeWallet from './components/WrapTokensEdgeWallet';
 import WrapTokenResults from '../../components/common/TransactionResults/components/WrapTokenResults';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { WrapTokensMetamaskWallet } from './components/WrapTokensMetamaskWallet';
 
 import apis from '../../api';
 
@@ -159,6 +160,22 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
           onSuccess={onSuccess}
           wrapData={sendData}
           processing={processing}
+          setProcessing={setProcessing}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <WrapTokensMetamaskWallet
+          derivationIndex={fioWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={{
+            ...sendData,
+            oracleFee: oracleFeePrice?.nativeFio,
+            fee: feePrice.nativeFio,
+          }}
+          startProcessing={!!sendData}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
           setProcessing={setProcessing}
         />
       ) : null}
