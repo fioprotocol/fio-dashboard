@@ -350,6 +350,7 @@ export const handleFioServerResponse = (
   status: string;
   fee_collected?: number;
   fio_request_id?: number;
+  oracle_fee_collected?: number;
 } => {
   try {
     const parsedResponse: {
