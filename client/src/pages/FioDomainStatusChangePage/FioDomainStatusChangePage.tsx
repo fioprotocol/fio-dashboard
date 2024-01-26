@@ -27,7 +27,7 @@ import { ContainerProps } from './types';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
 import { handleFioServerResponse } from '../../util/fio';
-import { FioServerResponse } from '../../types/fio';
+import { OnSuccessResponseResult } from '../../components/MetamaskConfirmAction';
 
 const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   const {
@@ -83,7 +83,9 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     setSubmitData(null);
     setProcessing(false);
   };
-  const onSuccess = (result: { fee_collected: number } | FioServerResponse) => {
+  const onSuccess = (
+    result: { fee_collected: number } | OnSuccessResponseResult,
+  ) => {
     setSubmitData(null);
 
     let feeCollected: number;
@@ -91,7 +93,9 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     if ('fee_collected' in result) {
       feeCollected = result.fee_collected;
     } else {
-      feeCollected = handleFioServerResponse(result).fee_collected;
+      if (!Array.isArray(result) && 'transaction_id' in result) {
+        feeCollected = handleFioServerResponse(result).fee_collected;
+      }
     }
 
     setResultsData({

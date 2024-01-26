@@ -27,7 +27,8 @@ import { FioAddressDoublet, NFTTokenDoublet } from '../../types';
 import { ContainerProps, NftFormValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
-import { FioServerResponse, NFT_ITEM } from '../../types/fio';
+import { NFT_ITEM } from '../../types/fio';
+import { OnSuccessResponseResult } from '../MetamaskConfirmAction';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -169,7 +170,7 @@ const SignNft: React.FC<ContainerProps> = props => {
           fee_collected: number;
           other: { nfts: NFTTokenDoublet[] };
         }
-      | FioServerResponse,
+      | OnSuccessResponseResult,
   ) => {
     if (result != null) {
       let nfts: NFTTokenDoublet | NFT_ITEM;
@@ -177,7 +178,9 @@ const SignNft: React.FC<ContainerProps> = props => {
       if ('fee_collected' in result) {
         nfts = result.other?.nfts[0];
       } else {
-        nfts = handleFioServerResponseActionData(result)?.nfts[0];
+        if (!Array.isArray(result) && 'transaction_id' in result) {
+          nfts = handleFioServerResponseActionData(result)?.nfts[0];
+        }
       }
 
       const { metadata, ...rest } = nfts;
