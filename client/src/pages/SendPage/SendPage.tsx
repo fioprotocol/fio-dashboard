@@ -8,6 +8,7 @@ import SendEdgeWallet from './components/SendEdgeWallet';
 import SendLedgerWallet from './components/SendLedgerWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { SendTokensMetamaskWallet } from './components/SendTokensMetamaskWallet';
 
 import { fioAddressToPubKey } from '../../util/fio';
 
@@ -194,6 +195,20 @@ const SendPage: React.FC<ContainerProps> = props => {
           setProcessing={setProcessing}
           createContact={createContact}
           contactsList={contactsList}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <SendTokensMetamaskWallet
+          contactsList={contactsList}
+          derivationIndex={fioWallet?.data?.derivationIndex}
+          fee={feePrice.nativeFio}
+          processing={processing}
+          submitData={sendData}
+          createContact={createContact}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
         />
       ) : null}
 
