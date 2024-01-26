@@ -9,6 +9,7 @@ import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import CancelButton from '../../components/common/CancelButton/CancelButton';
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import { UnstakeTokensMetamaskWallet } from './components/UnstakeTokensMetamaskWallet';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
@@ -162,6 +163,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
         action={CONFIRM_PIN_ACTIONS.UNSTAKE}
         FioActionWallet={UnstakeTokensEdgeWallet}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={UnstakeTokensMetamaskWallet}
       />
 
       <PseudoModalContainer
