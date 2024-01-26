@@ -12,6 +12,7 @@ import { useContext } from './CheckoutPageContext';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 
 // Loads captcha files, DO NOT REMOVE
 import '../../helpers/gt-sdk';
@@ -81,7 +82,9 @@ const CheckoutPage: React.FC = () => {
           processing={isProcessing}
         />
       )}
-      <Processing isProcessing={isProcessing} />
+      {paymentWallet?.from === WALLET_CREATED_FROM.METAMASK ? null : (
+        <Processing isProcessing={isProcessing} />
+      )}
     </PseudoModalContainer>
   );
 };
