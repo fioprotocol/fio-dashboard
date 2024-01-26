@@ -4,6 +4,7 @@ import WalletAction from '../WalletAction/WalletAction';
 import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
 import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import { PurchaseMetamaskWallet } from './components/PurchaseMetamaskWallet';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -134,6 +135,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         action={CONFIRM_PIN_ACTIONS.PURCHASE}
         FioActionWallet={PurchaseEdgeWallet}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={PurchaseMetamaskWallet}
       />
       <SubmitButton
         onClick={purchase}
