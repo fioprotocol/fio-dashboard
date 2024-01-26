@@ -1,6 +1,9 @@
 import React, { useCallback } from 'react';
 
-import { MetamaskConfirmAction } from '../../../components/MetamaskConfirmAction';
+import {
+  MetamaskConfirmAction,
+  OnSuccessResponseResult,
+} from '../../../components/MetamaskConfirmAction';
 import {
   ACTIONS,
   FIO_CONTRACT_ACCOUNT_NAMES,
@@ -9,7 +12,6 @@ import {
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { FioRecordViewDecrypted } from '../../WalletPage/types';
-import { FioServerResponse } from '../../../types/fio';
 
 type Props = {
   derivationIndex: number;
@@ -46,18 +48,20 @@ export const RejectRequestMetamaskWallet: React.FC<Props> = props => {
   };
 
   const handleRejectRequestResult = useCallback(
-    (result: FioServerResponse) => {
+    (result: OnSuccessResponseResult) => {
       if (!result) return;
 
-      const rejectedRequestResult = {
-        ...submitData,
-        fioDecryptedContent: {
-          ...fioDecryptedContent,
-          obtId: result.transaction_id,
-        },
-      };
+      if (!Array.isArray(result) && 'transaction_id' in result) {
+        const rejectedRequestResult = {
+          ...submitData,
+          fioDecryptedContent: {
+            ...fioDecryptedContent,
+            obtId: result.transaction_id,
+          },
+        };
 
-      onSuccess(rejectedRequestResult);
+        onSuccess(rejectedRequestResult);
+      }
     },
     [fioDecryptedContent, submitData, onSuccess],
   );

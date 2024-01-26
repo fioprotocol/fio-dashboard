@@ -39,7 +39,7 @@ import { ContainerProps } from './types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 import { ResultsData } from '../common/TransactionResults/types';
 import { FioNameType } from '../../types';
-import { FioServerResponse } from '../../types/fio';
+import { OnSuccessResponseResult } from '../MetamaskConfirmAction';
 
 import classes from './FioNameTransferContainer.module.scss';
 
@@ -171,7 +171,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
           newOwnerKey?: string;
           newOwnerFioAddress?: string;
         }
-      | FioServerResponse,
+      | OnSuccessResponseResult,
   ) => {
     setSubmitData(null);
 
@@ -182,9 +182,11 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
       feeCollected = result.fee_collected;
       publicKey = result.newOwnerKey || result.newOwnerFioAddress;
     } else {
-      feeCollected = handleFioServerResponse(result).fee_collected;
-      publicKey = handleFioServerResponseActionData(result)
-        .new_owner_fio_public_key;
+      if (!Array.isArray(result) && 'transaction_id' in result) {
+        feeCollected = handleFioServerResponse(result).fee_collected;
+        publicKey = handleFioServerResponseActionData(result)
+          .new_owner_fio_public_key;
+      }
     }
 
     setResultsData({
