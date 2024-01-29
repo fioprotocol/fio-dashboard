@@ -6,6 +6,7 @@ import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import PublicAddressEdit from './components/PublicAddressEdit';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import { EditTokenMetamaskWallet } from './components/EditTokenMetamaskWallet';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -37,6 +38,8 @@ const EditTokenPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   } = useContext();
 
@@ -59,6 +62,21 @@ const EditTokenPage: React.FC = () => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <EditTokenMetamaskWallet
+          fioWallet={fioWallet}
+          processing={processing}
+          submitData={submitData}
+          fioHandle={fioCryptoHandleObj?.name}
+          pubAddressesArr={pubAddressesArr}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setSubmitData={setSubmitData}
+          setResultsData={setResultsData}
+          setProcessing={setProcessing}
         />
       ) : null}
 
