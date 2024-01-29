@@ -4,6 +4,7 @@ import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionN
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import CheckedDropdown from '../DeleteTokenPage/components/CheckedDropdown';
+import { DeleteSocialMediaLinkMetamaskWallet } from './components/DeleteSocialMediaLinkMetamaskWallet';
 
 import { DeleteSocialMediaLinkItem } from './components/DeleteSocialMediaLinkItem';
 
@@ -21,7 +22,9 @@ import classes from './DeleteSocialMediaLinksPage.module.scss';
 const DeleteSocialMediaLinksPage: React.FC = () => {
   const {
     allChecked,
+    allowDisconnectAll,
     bundleCost,
+    checkedSocialMediaLinks,
     edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
@@ -40,6 +43,8 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   } = useContext();
 
@@ -62,6 +67,22 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <DeleteSocialMediaLinkMetamaskWallet
+          allowDisconnectAll={allowDisconnectAll}
+          fioWallet={fioWallet}
+          processing={processing}
+          submitData={submitData}
+          fioHandle={fioCryptoHandleObj?.name}
+          checkedSocialMediaLinks={checkedSocialMediaLinks}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setSubmitData={setSubmitData}
+          setResultsData={setResultsData}
+          setProcessing={setProcessing}
         />
       ) : null}
 
