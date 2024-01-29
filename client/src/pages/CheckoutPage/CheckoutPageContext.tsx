@@ -486,12 +486,13 @@ export const useContext = (): {
 
     if (signTxItems.length) {
       return setBeforeSubmitProps({
-        walletConfirmType: WALLET_CREATED_FROM.EDGE,
+        walletConfirmType: paymentWallet.from,
         fee: new MathOp(prices?.nativeFio?.address)
           .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
           .round(0, 2)
           .toNumber(),
         data: { fioAddressItems: signTxItems },
+        paymentWallet,
         onSuccess: (data: BeforeSubmitData) => {
           handleSubmit(data);
           dispatchSetProcessing(false);
