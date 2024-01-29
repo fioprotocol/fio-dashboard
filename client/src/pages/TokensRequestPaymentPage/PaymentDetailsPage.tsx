@@ -10,6 +10,7 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { PaymentDetailsMetemaskWallet } from './components/PaymentDetailsMetemaskWallet';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
@@ -190,6 +191,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
         action={CONFIRM_PIN_ACTIONS.SEND}
         FioActionWallet={PaymentDetailsEdgeWallet}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={PaymentDetailsMetemaskWallet}
       />
 
       <PseudoModalContainer
