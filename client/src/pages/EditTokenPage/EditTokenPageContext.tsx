@@ -196,6 +196,8 @@ export const useContext = () => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   };
 };
