@@ -5,6 +5,7 @@ import arrayMutators from 'final-form-arrays';
 import { AddTokenForm } from './copmonents/AddTokenForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import { AddTokenMetamaskWallet } from './copmonents/AddTokenMetamaskWallet';
 
 import { useContext } from './AddTokenPageContext';
 
@@ -31,7 +32,9 @@ const AddToken: React.FC = () => {
     onRetry,
     onSubmit,
     onSuccess,
+    setSubmitData,
     setProcessing,
+    setResultsData,
     submit,
     validate,
     validateToken,
@@ -57,6 +60,20 @@ const AddToken: React.FC = () => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <AddTokenMetamaskWallet
+          fioWallet={fioWallet}
+          processing={processing}
+          submitData={submitData}
+          fioHandle={fioCryptoHandleObj?.name}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setSubmitData={setSubmitData}
+          setResultsData={setResultsData}
+          setProcessing={setProcessing}
         />
       ) : null}
 
