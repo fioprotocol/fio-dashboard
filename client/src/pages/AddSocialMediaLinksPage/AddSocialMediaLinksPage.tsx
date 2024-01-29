@@ -5,6 +5,7 @@ import { Form } from 'react-final-form';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { AddSocialMediaLinksForm } from './components/AddSocialMediaLinksForm';
+import { AddSocialMediaLinksMetamaskWallet } from './components/AddSocialMediaLinksMetamaskWallet';
 
 import {
   WALLET_CREATED_FROM,
@@ -28,6 +29,8 @@ const AddSocialMediaLinkPage: React.FC = () => {
     onSubmit,
     changeBundleCost,
     onRetry,
+    setResultsData,
+    setSubmitData,
     socialMediaLinksList,
   } = useContext();
 
@@ -52,6 +55,21 @@ const AddSocialMediaLinkPage: React.FC = () => {
           onCancel={onCancel}
         />
       ) : null}
+
+      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <AddSocialMediaLinksMetamaskWallet
+          fioWallet={fioWallet}
+          processing={processing}
+          submitData={submitData}
+          fioHandle={fioCryptoHandleObj?.name}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setSubmitData={setSubmitData}
+          setResultsData={setResultsData}
+          setProcessing={setProcessing}
+        />
+      ) : null}
+
       <Form
         onSubmit={onSubmit}
         render={formProps => (
