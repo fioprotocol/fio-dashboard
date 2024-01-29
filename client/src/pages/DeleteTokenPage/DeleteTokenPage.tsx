@@ -6,6 +6,7 @@ import CheckedDropdown from './components/CheckedDropdown';
 import DeleteTokenItem from './components/DeleteTokenItem';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import { DeleteTokenMetamaskWallet } from './components/DeleteTokenMetamaskWallet';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -19,7 +20,9 @@ import classes from './styles/DeleteToken.module.scss';
 const DeleteTokenPage: React.FC = () => {
   const {
     allChecked,
+    allowDisconnectAll,
     bundleCost,
+    checkedPubAddresses,
     edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
@@ -40,6 +43,8 @@ const DeleteTokenPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   } = useContext();
 
@@ -62,6 +67,22 @@ const DeleteTokenPage: React.FC = () => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <DeleteTokenMetamaskWallet
+          allowDisconnectAll={allowDisconnectAll}
+          fioWallet={fioWallet}
+          processing={processing}
+          submitData={submitData}
+          fioHandle={fioCryptoHandleObj?.name}
+          checkedPubAddresses={checkedPubAddresses}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setSubmitData={setSubmitData}
+          setResultsData={setResultsData}
+          setProcessing={setProcessing}
         />
       ) : null}
 
