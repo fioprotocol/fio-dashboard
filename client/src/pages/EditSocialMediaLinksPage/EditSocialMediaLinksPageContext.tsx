@@ -54,6 +54,12 @@ type UseContextProps = {
   onRetry: () => void;
   onSuccess: () => void;
   setProcessing: (processing: boolean) => void;
+  setResultsData: (
+    results: LinkActionResult & {
+      disconnect: { updated: EditSocialLinkItem[] };
+    },
+  ) => void;
+  setSubmitData: (submitData: boolean | null) => void;
   submit: (params: { keys: WalletKeys }) => Promise<void>;
 };
 
@@ -262,6 +268,8 @@ export const useContext = (): UseContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   };
 };
