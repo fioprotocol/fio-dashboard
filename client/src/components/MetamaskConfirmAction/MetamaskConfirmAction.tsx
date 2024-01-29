@@ -88,11 +88,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
       }
 
       if (returnOnlySignedTxn) {
-        onSuccess(
-          signedTxns.successed?.length === 1
-            ? signedTxns.successed[0]
-            : signedTxns.successed,
-        );
+        onSuccess(signedTxns.successed);
       } else {
         const pushTransactionResult = async (
           signedTxn: SignedTxArgs,
