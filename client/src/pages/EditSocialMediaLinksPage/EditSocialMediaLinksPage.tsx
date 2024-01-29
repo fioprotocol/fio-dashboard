@@ -6,6 +6,7 @@ import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 
 import { EditSocialMediaLinkItem } from './components/EditSocialMediaLinkItem';
+import { EditSocialMediaLinksMetamaskWallet } from './components/EditSocialMediaLinksMetamaskWallet';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -36,6 +37,8 @@ const EditSocialMediaLinksPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   } = useContext();
 
@@ -58,6 +61,21 @@ const EditSocialMediaLinksPage: React.FC = () => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
+        <EditSocialMediaLinksMetamaskWallet
+          fioWallet={fioWallet}
+          processing={processing}
+          submitData={submitData}
+          fioHandle={fioCryptoHandleObj?.name}
+          socialMediaLinksList={socialMediaLinksList}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setSubmitData={setSubmitData}
+          setResultsData={setResultsData}
+          setProcessing={setProcessing}
         />
       ) : null}
 
