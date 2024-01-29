@@ -4,6 +4,7 @@ import { useLocation } from 'react-router';
 import { useSelector } from 'react-redux';
 
 import { fioWalletsBalances as fioWalletsBalancesSelector } from '../../redux/fio/selectors';
+import { user as userSelector } from '../../redux/profile/selectors';
 
 import {
   PAGE_TYPES,
@@ -18,6 +19,7 @@ import {
 } from '../../types';
 import useQuery from '../../hooks/useQuery';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { USER_PROFILE_TYPE } from '../../constants/profile';
 
 const AUTOCLOSE_TIME = 5000;
 const AUTOCLOSE_CREATE_WALLET_TIME = 10000;
@@ -25,6 +27,7 @@ const AUTOCLOSE_CREATE_WALLET_TIME = 10000;
 type UseContextProps = {
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
+  isAlternativeAccountType: boolean;
   showCreateWallet: boolean;
   showWalletCreated: boolean;
   showWalletDeleted: boolean;
@@ -44,6 +47,7 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
+  const user = useSelector(userSelector);
   const [showCreateWallet, setShowCreateWallet] = useState<boolean>(false);
   const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
   const [showWalletCreated, setShowWalletCreated] = useState<boolean>(false);
@@ -119,6 +123,8 @@ export const useContext = (): UseContextProps => {
   return {
     fioWallets,
     fioWalletsBalances,
+    isAlternativeAccountType:
+      user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE,
     showCreateWallet,
     showWalletCreated,
     showWalletDeleted,
