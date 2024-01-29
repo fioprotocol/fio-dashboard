@@ -71,6 +71,7 @@ export type FioServerResponse = {
         response: string;
       };
     }>;
+    block_num: number;
   };
   transaction_id: string;
 };
