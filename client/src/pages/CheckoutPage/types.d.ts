@@ -68,6 +68,7 @@ export type BeforeSubmitState = {
     fioAddressItems: SignFioAddressItem[];
   } | null;
   fee?: number | null;
+  paymentWallet: FioWalletDoublet;
 };
 
 export type BeforeSubmitProps = {
