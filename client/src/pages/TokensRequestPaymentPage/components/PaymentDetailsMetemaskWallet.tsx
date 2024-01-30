@@ -52,6 +52,7 @@ export const PaymentDetailsMetemaskWallet: React.FC<Props> = props => {
     payeeFioAddress,
     payerFioAddress,
     payeePublicAddress,
+    payeeFioPublicKey,
   } = submitData || {};
 
   const { data, publicKey } = fioWallet || {};
@@ -80,6 +81,7 @@ export const PaymentDetailsMetemaskWallet: React.FC<Props> = props => {
       max_fee: DEFAULT_ACTION_FEE_AMOUNT,
     },
     derivationIndex: data?.derivationIndex,
+    payeeFioPublicKey,
   };
 
   const handleRecordObtResult = useCallback(
