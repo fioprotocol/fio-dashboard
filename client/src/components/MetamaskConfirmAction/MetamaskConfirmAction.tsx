@@ -63,6 +63,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
       if (isDecryptContent && 'content' in actionParams) {
         const decryptedContent = await decryptContent(actionParams);
         onSuccess(decryptedContent);
+        return;
       }
 
       const sendActionParams = Array.isArray(actionParams)
