@@ -51,6 +51,7 @@ export type ActionParams = {
   derivationIndex: number;
   data: ActionDataParams;
   payerFioPublicKey?: string;
+  payeeFioPublicKey?: string;
 };
 
 export type DecryptActionParams = {
