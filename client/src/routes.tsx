@@ -263,6 +263,12 @@ const UnwrapTokensPage = lazy(() =>
   import(/* webpackChunkName: 'UnwrapTokensPage' */ './pages/UnwrapTokensPage'),
 );
 
+const MetamaskLandingPage = lazy(() =>
+  import(
+    /* webpackChunkName: 'MetamaskLandingPage' */ './pages/MetamaskLandingPage'
+  ),
+);
+
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
   useGTMGlobalTags();
@@ -611,6 +617,12 @@ const Routes = (): React.ReactElement => {
               <PrivateRoute
                 path={ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED}
                 component={FioAffiliateProgramPage}
+                exact
+              />
+
+              <Route
+                path={ROUTES.METAMASK_LANDING_PAGE}
+                component={MetamaskLandingPage}
                 exact
               />
 
