@@ -14,16 +14,21 @@ module.exports = {
       allowNull: true,
     });
 
-    await QI.bulkInsert('fio-account-profiles', [
+    const actor = TWITTER_ACCOUNT[process.env.FIO_CHAIN_ID];
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    await QI.sequelize.query(
+      `
+      INSERT INTO "fio-account-profiles" (actor, permission, name, domains, "createdAt", "updatedAt")
+      VALUES (:actor, 'regaddress', 'twitter', '{"twitter"}', :createdAt, :updatedAt)
+      ON CONFLICT (id) DO NOTHING
+      `,
       {
-        actor: TWITTER_ACCOUNT[process.env.FIO_CHAIN_ID],
-        permission: 'regaddress',
-        name: 'twitter',
-        domains: '{"twitter"}',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        replacements: { actor, createdAt, updatedAt },
+        type: QI.sequelize.QueryTypes.INSERT,
       },
-    ]);
+    );
   },
 
   down: async QI => {

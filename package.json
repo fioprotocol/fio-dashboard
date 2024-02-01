@@ -1,5 +1,5 @@
 {
-  "name": "fio-app",
+  "name": "@fioprotocol/fio-app",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -28,6 +28,8 @@
     "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build:no-snap",
     "landing-page-fio-id:as:start": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:start",
     "landing-page-fio-id:as:build": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:build:no-snap",
+    "landing-page-fio-wallet-snap:as:start": "export REACT_APP_API_BASE_URL=http://localhost:3002/ PORT=3002 REACT_APP_LANDING_PAGE=fio-wallet-snap && npm run client:start",
+    "landing-page-fio-wallet-snap:as:build": "export REACT_APP_LANDING_PAGE=fio-wallet-snap && npm run client:build:no-snap",
     "migration:create": "npx sequelize migration:create --name",
     "prepare": "husky install",
     "analyze": "source-map-explorer 'client/build/static/js/*.js'"
@@ -113,6 +115,7 @@
     "@lemoncode/fonk": "1.5.4",
     "@lemoncode/fonk-final-form": "2.3.4",
     "@lemoncode/fonk-is-url-validator": "1.0.0",
+    "@metamask/providers": "14.0.2",
     "@mui/icons-material": "5.11.0",
     "@mui/material": "5.11.5",
     "@stripe/react-stripe-js": "1.14.2",
