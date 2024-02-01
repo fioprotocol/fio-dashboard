@@ -18,6 +18,16 @@ export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 
 export const FIO_ORACLE_ACCOUNT_NAME = 'fio.oracle';
 
+export const FIO_DEFAULT_ACCOUNT = 'fio.address';
+
+export const FIO_CONTRACT_ACCOUNT_NAMES = {
+  fioAddress: 'fio.address',
+  fioToken: 'fio.token',
+  fioRecordObt: 'fio.reqobt',
+  fioStaking: 'fio.staking',
+  fioOracle: 'fio.oracle',
+};
+
 export const ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
@@ -45,7 +55,25 @@ export const ACTIONS = {
 };
 
 export const TRANSACTION_ACTION_NAMES = {
+  [ACTIONS.addBundledTransactions]: 'addbundles',
+  [ACTIONS.addPublicAddress]: 'addaddress',
+  [ACTIONS.addPublicAddresses]: 'addaddress',
   [ACTIONS.addNft]: 'addnft',
+  [ACTIONS.cancelFundsRequest]: 'cancelfndreq',
+  [ACTIONS.requestFunds]: 'newfundsreq',
+  [ACTIONS.registerFioAddress]: 'regaddress',
+  [ACTIONS.registerFioDomain]: 'regdomain',
+  [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
+  [ACTIONS.recordObtData]: 'recordobt',
+  [ACTIONS.rejectFundsRequest]: 'rejectfndreq',
+  [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
+  [ACTIONS.removePublicAddresses]: 'remaddress',
+  [ACTIONS.renewFioDomain]: 'renewdomain',
+  [ACTIONS.stakeFioTokens]: 'stakefio',
+  [ACTIONS.transferFioAddress]: 'xferaddress',
+  [ACTIONS.transferFioDomain]: 'xferdomain',
+  [ACTIONS.transferTokens]: 'trnsfiopubky',
+  [ACTIONS.unStakeFioTokens]: 'unstakefio',
   [ACTIONS.wrapFioTokens]: 'wraptokens',
   [ACTIONS.wrapFioDomain]: 'wrapdomain',
 };
@@ -245,3 +273,8 @@ export const LOW_BUNDLES_THRESHOLD = 25;
 export const DEFAULT_FIO_RECORDS_LIMIT = 100;
 
 export const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
+
+export const FIO_CONTENT_TYPES = {
+  RECORD_OBT_DATA: 'record_obt_data_content',
+  NEW_FUNDS: 'new_funds_content',
+};

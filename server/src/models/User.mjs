@@ -59,6 +59,7 @@ export class User extends Base {
       {
         sequelize,
         tableName: 'users',
+        timestamps: true,
       },
     );
   }

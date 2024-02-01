@@ -1,0 +1,398 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+
+  .header {
+    background: url('../../assets/images/metamask-landing/header-background.svg') no-repeat;
+    display: flex;
+    padding: 40px;
+    gap: 50px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-flow: row wrap;
+    align-items: center;
+
+    .content {
+      display: flex;
+      flex-direction: column;
+
+      .badge {
+        border: 1px solid $white;
+        border-radius: 100px;
+        color: $white;
+        width: fit-content;
+        padding: 8px 15px;
+        font-size: 9px;
+        @include inter-regular;
+      }
+
+      .title {
+        margin-top: 40px;
+        margin-bottom: 0;
+        background-color: $gadabout;
+        background-image: linear-gradient(180deg, $gadabout, $purple-magenta 100%);
+        background-size: 100%;
+        background-repeat: repeat;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -moz-text-fill-color: transparent;
+        font-size: 3em;
+        @include inter-bold;
+      }
+
+      .subtitle {
+        margin-top: 40px;
+        color: $white;
+        font-size: 1.375em;
+        line-height: 2em;
+        max-width: 600px;
+        @include inter-regular;
+      }
+
+      .button {
+        background-color: $coral-bisque;
+        align-self: flex-start;
+        padding: 10px 0;
+        margin-top: 0;
+
+        .metamaskIcon {
+          width: 34px;
+          height: 34px;
+          margin-right: 10px;
+        }
+        .buttonText {
+          margin: 0;
+          color: $black;
+          @include inter-bold;
+        }
+      }
+    }
+
+    .images {
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+  
+  .featuresContainer {
+    padding: 40px 50px;
+    background-color: $foundation-white;
+    display: flex;
+    flex-direction: column;
+
+    .title {
+      margin: 0;
+      font-size: 3em;
+      color: $dark-baltic-sea;
+      @include inter-bold;
+
+      span {
+        color: $light-indigo;
+      }
+    }
+
+    .subtitle {
+      max-width: 1000px;
+      margin-top: 20px;
+      margin-bottom: 0;
+      color: $black-suede;
+      font-size: 1.375em;
+    }
+
+    .featureItemsContainer {
+      margin-top: 60px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+
+      .featureItemContainer {
+        display: flex;
+        padding: 20px;
+        border: 1px solid $leadbelcher;
+        border-radius: 20px;
+        box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
+
+        .featureItem {
+          border-radius: 20px;
+          padding: 40px;
+          background-color: rgba(255, 255, 255, 0.50);
+          display: flex;
+          flex-direction: column;
+
+          .img {
+            width: 100%;
+            max-width: 115px;
+            align-self: flex-end;
+          }
+          .title {
+            margin-top: 40px;
+            margin-bottom: 0;
+            color: $dark-baltic-sea;
+            font-size: 2em;
+            @include inter-bold;
+          }
+          .text {
+            margin-top: 20px;
+            margin-bottom: auto;
+            font-size: 1.125em;
+            line-height: 2em;
+          }
+        }
+      }
+    }
+
+    .link {
+      margin-top: 60px;
+      align-self: center;
+
+      .buttonText {
+        @include inter-bold;
+      }
+    }
+  }
+
+  .infoContainer {
+    background: url('../../assets/images/metamask-landing/feature-background.svg');
+    background-size: cover;
+    padding: 40px 50px;
+    color: $white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .img {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .title {
+      margin: 0;
+      background-color: $gadabout;
+      background-image: linear-gradient(180deg, $gadabout, $purple-magenta 100%);
+      background-size: 100%;
+      background-repeat: repeat;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -moz-text-fill-color: transparent;
+      font-size: 3em;
+      @include inter-bold;
+    }
+
+    .infoItemsContainer {
+      margin-top: 80px;
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      gap: 50px;
+
+      .infoItem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 550px;
+        flex-basis: 100%;
+
+        .infoTitle {
+          margin: 0;
+          font-size: 2.25em;
+          @include inter-bold;
+        }
+        .text {
+          margin-top: 20px;
+          font-size: 1.375em;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .fioHandleSection {
+    background: url('../../assets/images/metamask-landing/marketing-background.svg');
+    background-size: cover;
+    padding: 40px 50px;
+
+    .contentContainer {
+      box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      border: 1px solid $bauhaus;
+      padding: 10px;
+
+      .contentItems {
+        padding: 25px;
+        background: url('../../assets/images/metamask-landing/marketing-tile-background.svg');
+        gap: 50px;
+        display: flex;
+        background-size: cover;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 20px;
+
+        .content {
+          width: 100%;
+      
+          .preTitle {
+            margin-top: 0;
+            background-color: $light-indigo;
+            background-image: linear-gradient(180deg, $light-indigo 0%, $purple-magenta 100%);
+            background-size: 100%;
+            background-repeat: repeat;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -moz-text-fill-color: transparent;
+            font-size: 1.75em;
+            @include inter-bold;
+          }
+      
+          .title {
+            margin-top: 20px;
+            margin-bottom: 0;
+            background-color: $gadabout;
+            background-image: linear-gradient(180deg, $gadabout, $purple-magenta 100%);
+            background-size: 100%;
+            background-repeat: repeat;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -moz-text-fill-color: transparent;
+            font-size: 2.25em;
+            line-height: 1.5em;
+            @include inter-bold;
+          }
+      
+          .subtitle {
+            max-width: 580px;
+            margin-top: 30px;
+            font-size: 1.125em;
+            line-height: 2em;
+            color: $white;
+            @include inter-regular;
+          }
+      
+          .button {
+            margin-top: 40px;
+            padding: 10px;
+            background-color: $gadabout;
+            color: $black;
+            @include inter-regular;
+          }
+        }
+      
+        .imageContainer {
+          img {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  .securityAudit {
+    background-color: $dynamic-black;
+    padding: 40px 50px;
+    color: $white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .title {
+      margin: 0;
+      font-size: 2em;
+      @include inter-bold;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      margin-bottom: 0;
+      font-size: 1.125em;
+      text-align: center;
+      @include inter-regular;
+    }
+
+    .img {
+      margin-top: 50px;
+      width: 100%;
+      max-width: 365px;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .header {
+      gap: 100px;
+      padding: 80px;
+      align-items: flex-start;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      
+      .content {
+        .title {
+          font-size: 3.875em;
+        }
+      }
+    }
+
+    .featuresContainer {
+      padding: 100px 80px;
+
+      .featureItemsContainer {
+        justify-content: space-between;
+        gap: 80px;
+
+        .featureItemContainer {
+          flex-basis: 45%;
+        }
+      }
+    }
+
+    .infoContainer {
+      padding: 100px 80px;
+
+      .title {
+        font-size: 3.875em;
+      }
+
+      .infoItemsContainer {
+        margin-top: 40px;
+        gap: 100px;
+
+        .infoItem {
+          flex-basis: 45%;
+        }
+      }
+    }
+
+    .fioHandleSection {
+      padding: 100px 80px;
+
+      .contentContainer {
+        padding: 20px;
+
+        .contentItems {
+          flex-direction: row;
+          gap: 100px;
+          padding: 60px 80px;
+
+          .content {
+            .title {
+              font-size: 3.25em;
+            }
+          }
+
+          .imageContainer {
+            flex-basis: 70%;
+          }
+        }
+      }
+    }
+    .securityAudit {
+      padding: 100px 80px;
+    }
+  }
+}

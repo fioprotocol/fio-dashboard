@@ -18,9 +18,6 @@ module.exports = {
             unique: true,
             allowNull: false,
           },
-          createdAt: { type: DT.DATE },
-          updatedAt: { type: DT.DATE },
-          deletedAt: { type: DT.DATE },
         },
         { transaction: t },
       );

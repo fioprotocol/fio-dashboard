@@ -110,6 +110,8 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_TOKENS: '/unwrapTokens',
   WRAP_STATUS_WRAP_DOMAINS: '/wrapDomains',
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
+
+  METAMASK_LANDING_PAGE: '/metamask',
 };
 
 export const PUBLIC_ROUTES: string[] = [
