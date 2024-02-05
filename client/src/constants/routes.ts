@@ -112,6 +112,7 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
 
   METAMASK_LANDING_PAGE: '/metamask',
+  METAMASK_GATED_REGISTRATION: '/metamask-fio-handle',
 };
 
 export const PUBLIC_ROUTES: string[] = [
