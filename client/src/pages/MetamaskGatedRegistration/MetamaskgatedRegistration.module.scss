@@ -1,0 +1,38 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  background-color: $black !important;
+}
+
+.title {
+  margin-top: 0;
+  font-size: 3.25em;
+  background-color: $gadabout;
+  background-image: linear-gradient(180deg, $gadabout, $purple-magenta 100%);
+  background-size: 100%;
+  background-repeat: repeat;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+  @include inter-bold;
+}
+
+.logoContainer {
+  margin-bottom: 30px !important;
+}
+
+.logo {
+  max-width: 176px !important;
+  max-height: none !important;
+}
+
+.form {
+  flex-direction: column !important;
+  gap: 0 !important;
+  max-width: 335px !important;
+
+  input {
+    padding-right: 70px !important;
+  }
+}
