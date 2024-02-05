@@ -16,6 +16,13 @@ type Props = {
   disabled?: boolean;
   disabledInput?: boolean;
   disabledInputGray?: boolean;
+  classNameActionText?: string;
+  classNameContainer?: string;
+  classNameForm?: string;
+  classNameLogo?: string;
+  classNameLogoContainer?: string;
+  classNameSubtitleTitle?: string;
+  classNameTitle?: string;
   links?: {
     getCryptoHandle: ReactNode;
   };
@@ -27,6 +34,7 @@ type Props = {
   showSignInWidget?: boolean;
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
+  isTransparent?: boolean;
   isDarkWhite?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
@@ -45,12 +53,20 @@ const AddressWidget: React.FC<Props> = props => {
   const {
     actionText,
     children,
+    classNameActionText,
+    classNameContainer,
+    classNameForm,
+    classNameLogo,
+    classNameLogoContainer,
+    classNameSubtitleTitle,
+    classNameTitle,
     disabled,
     disabledInput,
     disabledInputGray,
     hasMinHeight,
     isAuthenticated,
     isReverseColors,
+    isTransparent,
     isDarkWhite,
     links,
     logoSrc,
@@ -77,11 +93,24 @@ const AddressWidget: React.FC<Props> = props => {
         hasMinHeight && classes.hasMinHeight,
         isReverseColors && classes.isReverseColors,
         isDarkWhite && classes.isDarkWhite,
+        classNameContainer,
       )}
     >
-      <TitleComponent logoSrc={logoSrc} title={title} />
-      <SubtitleComponent subtitle={subtitle} />
-      <ActionTextComponent actionText={actionText} />
+      <TitleComponent
+        logoSrc={logoSrc}
+        title={title}
+        classNameLogo={classNameLogo}
+        classNameLogoContainer={classNameLogoContainer}
+        classNameTitle={classNameTitle}
+      />
+      <SubtitleComponent
+        subtitle={subtitle}
+        className={classNameSubtitleTitle}
+      />
+      <ActionTextComponent
+        actionText={actionText}
+        className={classNameActionText}
+      />
       {stepNumber && stepText && (
         <p className={classes.step}>
           <b className="boldText">{stepNumber}:</b> {stepText}
@@ -89,10 +118,12 @@ const AddressWidget: React.FC<Props> = props => {
       )}
 
       <FormComponent
+        classNameForm={classNameForm}
         disabled={disabled}
         disabledInput={disabledInput}
         disabledInputGray={disabledInputGray}
         isReverseColors={isReverseColors}
+        isTransparent={isTransparent}
         links={links}
         suffixText={suffixText}
         convert={convert}
