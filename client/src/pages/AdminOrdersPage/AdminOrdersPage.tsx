@@ -290,7 +290,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
                           QUERY_PARAMS_NAMES.USER_ID
                         }=${order.user ? order.user.id : order.userId}`}
                       >
-                        {order.user ? order.user.email : order.userEmail}
+                        {order?.user?.email ||
+                          order?.userEmail ||
+                          order?.userId}
                       </Link>
                     </th>
                     <th>{order.total || 0}</th>
