@@ -80,13 +80,7 @@ const CreateWallet: React.FC<Props> = props => {
         ledger: false,
       });
     }
-  }, [
-    creationType,
-    existingWalletNamesJSON,
-    isMetamaskWalletProvider,
-    show,
-    walletsAmount,
-  ]);
+  }, [creationType, existingWalletNamesJSON, show, walletsAmount]);
 
   useEffect(() => {
     if (processing && !addWalletLoading) {

@@ -26,17 +26,11 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
     );
 
     const findMissingIndex = () => {
-      const sortedIndexes = metamaskWallets
-        .map(wallet => +wallet.data.derivationIndex)
-        .sort((a, b) => a - b);
+      const maxMetamaskWalletIndex = Math.max(
+        ...metamaskWallets.map(wallet => +wallet.data.derivationIndex),
+      );
 
-      for (let i = 0; i < sortedIndexes.length; i++) {
-        if (sortedIndexes[i] !== i) {
-          return i;
-        }
-      }
-
-      return sortedIndexes.length;
+      return maxMetamaskWalletIndex + 1;
     };
 
     const nextDerivationIndex = findMissingIndex();
