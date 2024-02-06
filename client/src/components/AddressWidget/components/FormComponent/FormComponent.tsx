@@ -33,7 +33,11 @@ type Props = {
   formatOnFocusOut?: boolean;
   loading?: boolean;
   notification?: AddressWidgetNotification;
-  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  customHandleSubmit?: ({
+    address,
+  }: {
+    address: string;
+  }) => Promise<void> | void;
   showSubmitButton?: boolean;
   placeHolderText?: string;
   onInputChanged?: (value: string) => string;
