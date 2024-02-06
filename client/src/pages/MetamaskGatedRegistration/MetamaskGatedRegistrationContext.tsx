@@ -96,7 +96,11 @@ type UseContext = {
     suffixText: string;
     title: React.ReactNode;
     onInputChanged: (value: string) => string;
-    customHandleSubmit: ({ address }: { address: string }) => void;
+    customHandleSubmit: ({
+      address,
+    }: {
+      address: string;
+    }) => Promise<void> | void;
   };
 };
 
@@ -158,7 +162,7 @@ export const useContext = (): UseContext => {
   }, []);
 
   const customHandleSubmitVerified = useCallback(
-    async ({ address }: { address: string }) => {
+    async ({ address }: { address: string }): Promise<void> => {
       try {
         toggleLoading(true);
 
@@ -190,7 +194,7 @@ export const useContext = (): UseContext => {
   }, []);
 
   const handleAddCartItem = useCallback(
-    async ({ address }: { address: string }) => {
+    async ({ address }: { address: string }): Promise<void> => {
       try {
         toggleLoading(true);
 
