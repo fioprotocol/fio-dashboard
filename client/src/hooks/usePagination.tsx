@@ -203,7 +203,11 @@ export default function usePagination(
           1;
       }
       if (addStartDelimiter) {
-        paginationItems.push(<div className="mr-3 ml-3">...</div>);
+        paginationItems.push(
+          <div className="mr-3 ml-3" key="startdelimeter">
+            ...
+          </div>,
+        );
       }
       for (
         let pageMiddle = middleStart;
@@ -213,7 +217,11 @@ export default function usePagination(
         addPage(pageMiddle);
       }
       if (addEndDelimiter) {
-        paginationItems.push(<div className="mr-3 ml-3">...</div>);
+        paginationItems.push(
+          <div className="mr-3 ml-3" key="enddelimeter">
+            ...
+          </div>,
+        );
       }
       for (
         let pageEnd = pages - PAGE_ITEMS_RENDER_CORNER_AMOUNT + 1;
