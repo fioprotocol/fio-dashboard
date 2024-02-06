@@ -286,7 +286,8 @@ export const TextInput: React.ForwardRefRenderFunction<
           hasIconsLeft={
             isVisibleClearButton ||
             isVisiblePasswordButton ||
-            isVisiblePasteButton
+            isVisiblePasteButton ||
+            loading
           }
           disabled={disabled}
           disabledInputGray={disabledInputGray}

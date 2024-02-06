@@ -2,6 +2,10 @@
 @import '../../assets/styles/fontMixins.scss';
 
 .container {
+  width: 100%;
+}
+
+.widgetContainer {
   background-color: $black !important;
 }
 

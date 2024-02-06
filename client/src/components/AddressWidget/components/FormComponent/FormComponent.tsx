@@ -13,7 +13,7 @@ import NotificationBadge from '../../../NotificationBadge';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 import { ROUTES } from '../../../../constants/routes';
 
-import { TwitterNotification } from '../../../../types';
+import { AddressWidgetNotification } from '../../../../types';
 
 import classes from './FormComponent.module.scss';
 
@@ -31,7 +31,8 @@ type Props = {
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
-  notification?: TwitterNotification;
+  loading?: boolean;
+  notification?: AddressWidgetNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
   showSubmitButton?: boolean;
   placeHolderText?: string;
@@ -46,6 +47,7 @@ type ActionButtonProps = {
   links?: {
     getCryptoHandle: React.ReactNode;
   };
+  loading?: boolean;
 };
 
 const ActionButton: React.FC<ActionButtonProps> = props => {
@@ -55,6 +57,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
     isTransparent,
     isWhiteBordered,
     links,
+    loading,
   } = props;
   const form = useForm();
 
@@ -82,6 +85,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
           hasSmallText={true}
           isWhiteBordered={isWhiteBordered}
           isTransparent={isTransparent}
+          loading={loading}
         />
       </a>
     );
@@ -97,6 +101,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
         hasSmallText={true}
         isWhiteBordered={isWhiteBordered}
         isTransparent={isTransparent}
+        loading={loading}
       />
     </div>
   );
@@ -112,6 +117,7 @@ export const FormComponent: React.FC<Props> = props => {
     isReverseColors,
     isTransparent,
     links,
+    loading,
     suffixText,
     convert,
     formatOnFocusOut,
@@ -175,6 +181,7 @@ export const FormComponent: React.FC<Props> = props => {
                 parse={onInputChanged}
                 disabled={disabledInput}
                 disabledInputGray={disabledInputGray}
+                loading={loading}
               />
             </div>
             {showSubmitButton && (
@@ -184,6 +191,7 @@ export const FormComponent: React.FC<Props> = props => {
                 links={links}
                 buttonText={buttonText}
                 isTransparent={isTransparent}
+                loading={loading}
               />
             )}
           </form>
