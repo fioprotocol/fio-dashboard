@@ -8,4 +8,7 @@ export default class Users extends Base {
   > {
     return this.apiClient.put('users/update-email-notification-params', data);
   }
+  verifyAlternativeUser(): Promise<string> {
+    return this.apiClient.get('verify-alternative-user');
+  }
 }
