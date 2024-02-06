@@ -277,13 +277,14 @@ const WalletSettings: React.FC<Props> = props => {
                 <>
                   {isLedgerWallet ? (
                     <span>
-                      Your private key for this wallet is stored on you ledger
+                      Your private key for this wallet is stored on your ledger
                       device. Once Deleted, it can be added back at any time.
                     </span>
                   ) : isMetamaskWallet ? (
                     <span>
-                      Your private key for this wallet is stored on you MetaMask
-                      wallet. Once Deleted, it can be added back at any time.
+                      Your private key for this wallet is stored on your
+                      MetaMask wallet. Once Deleted, it can be added back at any
+                      time.
                     </span>
                   ) : (
                     <span className={classes.badgeBoldText}>
