@@ -8,7 +8,7 @@ import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
 import { FormComponent } from './components/FormComponent';
 
-import { TwitterNotification } from '../../types';
+import { AddressWidgetNotification } from '../../types';
 
 import classes from './AddressWidget.module.scss';
 
@@ -39,7 +39,7 @@ type Props = {
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
-  notification?: TwitterNotification;
+  notification?: AddressWidgetNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
   showSubmitButton?: boolean;
   placeHolderText?: string;
