@@ -26,6 +26,7 @@ type Props = {
   links?: {
     getCryptoHandle: ReactNode;
   };
+  loading?: boolean;
   logoSrc?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -69,6 +70,7 @@ const AddressWidget: React.FC<Props> = props => {
     isTransparent,
     isDarkWhite,
     links,
+    loading,
     logoSrc,
     title,
     showSignInWidget,
@@ -125,6 +127,7 @@ const AddressWidget: React.FC<Props> = props => {
         isReverseColors={isReverseColors}
         isTransparent={isTransparent}
         links={links}
+        loading={loading}
         suffixText={suffixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}

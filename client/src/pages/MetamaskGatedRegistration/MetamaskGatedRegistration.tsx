@@ -7,14 +7,23 @@ import AddressWidget from '../../components/AddressWidget';
 
 import { useContext } from './MetamaskGatedRegistrationContext';
 
+import neverExpiresIcon from '../../assets/images/metamask-gated-registration-page/never-expires.svg';
+import sendReceiveIcon from '../../assets/images/metamask-gated-registration-page/send-receive.svg';
+
+import classes from './MetamaskgatedRegistration.module.scss';
+
 const MetamaskGatedRegistration: React.FC = () => {
   const { addressWidgetContent } = useContext();
 
   return (
-    <div>
+    <div className={classes.container}>
       <AddressWidget isDarkWhite {...addressWidgetContent} />
       <FCHBanner fch="bob@metamask" />
-      <FCHSpecialsBanner />
+      <FCHSpecialsBanner
+        customNeverExpiresIcon={neverExpiresIcon}
+        customNeverExpiresMobileIcon={neverExpiresIcon}
+        customSendReceiveIcon={sendReceiveIcon}
+      />
       <WidelyAdoptedSection />
       <AddressWidget
         isDarkWhite

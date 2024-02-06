@@ -230,6 +230,12 @@ router.get(
 router.get('/external-tokens', routes.external.getAllExternalTokens);
 router.get('/verify-gated-registration', routes.metamask.nftTokenVerification);
 
+router.get(
+  '/verify-alternative-user',
+  checkAuth,
+  routes.users.alternativeUserVerification,
+);
+
 router.get('/gas-oracle', routes.external.getGasOracle);
 router.get(
   '/estimation-of-confirmation-time',
