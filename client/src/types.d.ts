@@ -966,7 +966,7 @@ export type ColorTypes = {
   isRose?: boolean;
 };
 
-export type TwitterNotification = {
+export type AddressWidgetNotification = {
   hasNotification: boolean;
   type: string;
   message: string;
