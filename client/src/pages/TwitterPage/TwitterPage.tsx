@@ -316,8 +316,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     } else if (!address) {
       onEmptyFioHandle();
     } else {
-      setStep(STEPS.TWO);
-
       const isRegistered = await apis.fio.availCheckTableRows(
         setFioName(address, TWITTER_DOMAIN),
       );
@@ -325,6 +323,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       if (isRegistered) {
         setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
       } else if (USERNAME_REGEX.test(address)) {
+        setStep(STEPS.TWO);
         setNotification(TWITTER_NOTIFICATIONS.EMPTY);
 
         const alreadyVerified =
