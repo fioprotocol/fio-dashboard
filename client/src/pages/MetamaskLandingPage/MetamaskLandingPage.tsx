@@ -56,135 +56,146 @@ const MetamaskLandingPage: React.FC = () => {
       </Helmet>
       <div className={classes.container}>
         <section className={classes.header}>
-          <div className={classes.content}>
-            <div className={classes.badge}>NEWLY LAUNCHED</div>
-            <h1 className={classes.title}>
-              MetaMask now
-              <br />
-              supports FIO
-            </h1>
-            <p className={classes.subtitle}>
-              MetaMask users can now self-custody their FIO identity and gain
-              access to the FIO App without setting up new accounts or
-              passwords.
-            </p>
-            <SubmitButton
-              text={
-                <>
-                  <img
-                    src={metamaskIcon}
-                    className={classes.metamaskIcon}
-                    alt="metamask"
-                  />
-                  <p className={classes.buttonText}>{ActionButtonText}</p>
-                </>
-              }
-              hasAutoHeight
-              hasAutoWidth
-              className={classes.button}
-              onClick={() => {}}
-            />
-          </div>
-          <div className={classes.images}>
-            <img src={fioMetamask} alt="FIO - Metamask icons" />
+          <div className={classes.maxContentContainer}>
+            <div className={classes.content}>
+              <div className={classes.badge}>NEWLY LAUNCHED</div>
+              <h1 className={classes.title}>
+                MetaMask now
+                <br />
+                supports FIO
+              </h1>
+              <p className={classes.subtitle}>
+                MetaMask users can now self-custody their FIO identity and gain
+                access to the FIO App without setting up new accounts or
+                passwords.
+              </p>
+              <SubmitButton
+                text={
+                  <>
+                    <img
+                      src={metamaskIcon}
+                      className={classes.metamaskIcon}
+                      alt="metamask"
+                    />
+                    <p className={classes.buttonText}>{ActionButtonText}</p>
+                  </>
+                }
+                hasAutoHeight
+                hasAutoWidth
+                className={classes.button}
+                onClick={() => {}}
+              />
+            </div>
+            <div className={classes.images}>
+              <img src={fioMetamask} alt="FIO - Metamask icons" />
+            </div>
           </div>
         </section>
         <section className={classes.featuresContainer}>
-          <h2 className={classes.title}>
-            The FIO App & MetaMask - <span>Together at Last</span>
-          </h2>
-          <p className={classes.subtitle}>
-            In addition to utilizing MetaMask to connect to the FIO App, you can
-            now seamlessly and easily use the FIO app and MetaMask together.
-          </p>
-          <div className={classes.featureItemsContainer}>
-            {featureItems.map(featureItem => (
-              <div className={classes.featureItemContainer}>
-                <div className={classes.featureItem} key={featureItem.title}>
-                  <img
-                    alt="Feature Icon"
-                    src={featureItem.iconSrc}
-                    className={classes.img}
-                  />
-                  <h5 className={classes.title}>{featureItem.title}</h5>
-                  <p className={classes.text}>{featureItem.text}</p>
+          <div className={classes.maxContentContainer}>
+            <h2 className={classes.title}>
+              The FIO App & MetaMask - <span>Together at Last</span>
+            </h2>
+            <p className={classes.subtitle}>
+              In addition to utilizing MetaMask to connect to the FIO App, you
+              can now seamlessly and easily use the FIO app and MetaMask
+              together.
+            </p>
+            <div className={classes.featureItemsContainer}>
+              {featureItems.map(featureItem => (
+                <div className={classes.featureItemContainer}>
+                  <div className={classes.featureItem} key={featureItem.title}>
+                    <img
+                      alt="Feature Icon"
+                      src={featureItem.iconSrc}
+                      className={classes.img}
+                    />
+                    <h5 className={classes.title}>{featureItem.title}</h5>
+                    <p className={classes.text}>{featureItem.text}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <a
+              href={SeeMoreLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.link}
+            >
+              <SubmitButton
+                text={<span className={classes.buttonText}>See More</span>}
+              />
+            </a>
           </div>
-          <a
-            href={SeeMoreLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={classes.link}
-          >
-            <SubmitButton
-              text={<span className={classes.buttonText}>See More</span>}
-            />
-          </a>
         </section>
         <section className={classes.infoContainer}>
-          <img
-            src={laptopMetamaskIcon}
-            alt="Metamask Laptop"
-            className={classes.img}
-          />
-          <h1 className={classes.title}>FIO + MetaMask = Easier Crypto</h1>
-          <div className={classes.infoItemsContainer}>
-            <div className={classes.infoItem}>
-              <h5 className={classes.infoTitle}>FIO Protocol</h5>
-              <p className={classes.text}>
-                FIO Protocol is powered by Layer 1 FIO Chain purpose-built to
-                help wallets hide the complexity of blockchain transactions
-                across all blockchains.
-              </p>
-            </div>
-            <div className={classes.infoItem}>
-              <h5 className={classes.infoTitle}>MetaMask</h5>
-              <p className={classes.text}>
-                The leading web3 wallet with over 30M monthly active users and
-                de facto standard for accessing web-based dapps with almost
-                every EVM-based dapp supporting it.
-              </p>
+          <div className={classes.maxContentContainer}>
+            <img
+              src={laptopMetamaskIcon}
+              alt="Metamask Laptop"
+              className={classes.img}
+            />
+            <h1 className={classes.title}>FIO + MetaMask = Easier Crypto</h1>
+            <div className={classes.infoItemsContainer}>
+              <div className={classes.infoItem}>
+                <h5 className={classes.infoTitle}>FIO Protocol</h5>
+                <p className={classes.text}>
+                  FIO Protocol is powered by Layer 1 FIO Chain purpose-built to
+                  help wallets hide the complexity of blockchain transactions
+                  across all blockchains.
+                </p>
+              </div>
+              <div className={classes.infoItem}>
+                <h5 className={classes.infoTitle}>MetaMask</h5>
+                <p className={classes.text}>
+                  The leading web3 wallet with over 30M monthly active users and
+                  de facto standard for accessing web-based dapps with almost
+                  every EVM-based dapp supporting it.
+                </p>
+              </div>
             </div>
           </div>
         </section>
         <section className={classes.fioHandleSection}>
-          <div className={classes.contentContainer}>
-            <div className={classes.contentItems}>
-              <div className={classes.content}>
-                <h5 className={classes.preTitle}>For A Limited Time</h5>
-                <h3 className={classes.title}>
-                  Get Your Free
-                  <br />
-                  @metamask Handle
-                </h3>
-                <p className={classes.subtitle}>
-                  Register a FIO handle on the public domain @metamask for free
-                  and share feedback on social media to be randomly selected
-                  from the FIO Prize Pool.
-                </p>
-                <SubmitButton
-                  text={ActionButtonText}
-                  hasAutoHeight
-                  hasAutoWidth
-                  className={classes.button}
-                />
-              </div>
-              <div className={classes.imageContainer}>
-                <img alt="Metamask icon" src={metamaskAtIcon} />
+          <div className={classes.maxContentContainer}>
+            <div className={classes.contentContainer}>
+              <div className={classes.contentItems}>
+                <div className={classes.content}>
+                  <h5 className={classes.preTitle}>For A Limited Time</h5>
+                  <h3 className={classes.title}>
+                    Get Your Free
+                    <br />
+                    @metamask Handle
+                  </h3>
+                  <p className={classes.subtitle}>
+                    Register a FIO handle on the public domain @metamask for
+                    free and share feedback on social media to be randomly
+                    selected from the FIO Prize Pool.
+                  </p>
+                  <SubmitButton
+                    text={ActionButtonText}
+                    hasAutoHeight
+                    hasAutoWidth
+                    className={classes.button}
+                  />
+                </div>
+                <div className={classes.imageContainer}>
+                  <img alt="Metamask icon" src={metamaskAtIcon} />
+                </div>
               </div>
             </div>
           </div>
         </section>
         <section className={classes.securityAudit}>
-          <h3 className={classes.title}>Security Audit</h3>
-          <p className={classes.subtitle}>
-            The FIO MetaMask Snap has been audited by:
-          </p>
-          <a href={SayferLogo} target="_blank" rel="noopener noreferrer">
-            <img src={sayferLogo} alt="Sayfer icon" className={classes.img} />
-          </a>
+          <div className={classes.maxContentContainer}>
+            <h3 className={classes.title}>Security Audit</h3>
+            <p className={classes.subtitle}>
+              The FIO MetaMask Snap has been audited by:
+            </p>
+            <a href={SayferLogo} target="_blank" rel="noopener noreferrer">
+              <img src={sayferLogo} alt="Sayfer icon" className={classes.img} />
+            </a>
+          </div>
         </section>
       </div>
     </>

@@ -2,6 +2,15 @@
 @import '../../assets/styles/fontMixins.scss';
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
+.maxContentContainer {
+  width: 100%;
+  max-width: 1280px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .container {
   width: 100%;
 
@@ -89,6 +98,7 @@
       margin: 0;
       font-size: 3em;
       color: $dark-baltic-sea;
+      align-self: flex-start;
       @include inter-bold;
 
       span {
@@ -102,6 +112,7 @@
       margin-bottom: 0;
       color: $black-suede;
       font-size: 1.375em;
+      align-self: flex-start;
     }
 
     .featureItemsContainer {
@@ -182,6 +193,7 @@
       -webkit-text-fill-color: transparent;
       -moz-text-fill-color: transparent;
       font-size: 3em;
+      text-align: center;
       @include inter-bold;
     }
 
@@ -325,11 +337,14 @@
 @include lg {
   .container {
     .header {
-      gap: 100px;
       padding: 80px;
-      align-items: flex-start;
-      flex-direction: row;
-      flex-wrap: nowrap;
+
+      & > div {
+        align-items: flex-start;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 100px;
+      }
       
       .content {
         .title {
