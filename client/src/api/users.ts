@@ -11,4 +11,11 @@ export default class Users extends Base {
   verifyAlternativeUser(): Promise<string> {
     return this.apiClient.get('verify-alternative-user');
   }
+  getFreeAddresses(data: {
+    name?: string;
+    publicKey?: string;
+    userId?: string;
+  }): Promise<{ name: string; publicKey: string }[]> {
+    return this.apiClient.get('free-addresses', data);
+  }
 }

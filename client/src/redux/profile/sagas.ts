@@ -24,7 +24,10 @@ import {
 
 import { closeLoginModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
-import { handleUsersFreeCartItems } from '../cart/actions';
+import {
+  handleUsersFreeCartItems,
+  deleteItem as deleteCartItem,
+} from '../cart/actions';
 import { setRedirectPath } from '../navigation/actions';
 
 import {
@@ -33,7 +36,14 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
-import { cartId as cartIdSelector } from '../cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../cart/selectors';
+import {
+  roe as roeSelector,
+  prices as pricesSelector,
+} from '../registrations/selectors';
 import {
   user as userSelector,
   isNewUser as isNewUserSelectors,
@@ -44,13 +54,16 @@ import {
   ANALYTICS_LOGIN_METHOD,
 } from '../../constants/common';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
+import { METAMASK_DOMAIN_NAME } from '../../constants/fio';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
 import { Api as AdminApi } from '../../admin/api';
 
 import {
+  CartItem,
   FioWalletDoublet,
+  Prices,
   PrivateRedirectLocationState,
   User,
 } from '../../types';
@@ -88,7 +101,9 @@ export function* loginSuccess(history: History, api: Api): Generator {
       }
     // Need to wait for result, so use hack with two yield
     // @ts-ignore
-    yield yield put<Action>(loadProfile({ shouldHandleUsersFreeCart: true }));
+    yield yield put<
+      Action
+    >(loadProfile({ shouldHandleUsersFreeCart: true, shouldHandleMetamaskCartItem: true }));
     yield put<Action>(listNotifications());
 
     const locationState: PrivateRedirectLocationState = yield select(
@@ -129,7 +144,9 @@ export function* alternateLoginSuccess(history: History, api: Api): Generator {
     });
     // Need to wait for result, so use hack with two yield
     // @ts-ignore
-    yield yield put<Action>(loadProfile({ shouldHandleUsersFreeCart: true }));
+    yield yield put<
+      Action
+    >(loadProfile({ shouldHandleUsersFreeCart: true, shouldHandleMetamaskCartItem: true }));
     yield put<Action>(listNotifications());
 
     const locationState: PrivateRedirectLocationState = yield select(
@@ -163,11 +180,32 @@ export function* profileSuccess(): Generator {
 
     const user: User = yield select(userSelector);
     const cartId: string | null = yield select(cartIdSelector);
+    const cartItems: CartItem[] = yield select(cartItemsSelector);
+    const roe: number = yield select(roeSelector);
+    const prices: Prices = yield select(pricesSelector);
 
     if (cartId && user && action.shouldHandleUsersFreeCart) {
       yield put<Action>(
         handleUsersFreeCartItems({ id: cartId, userId: user.id }),
       );
+    }
+
+    if (cartId && user && action.shouldHandleMetamaskCartItem) {
+      const cartItemOnMetamaskDomain = cartItems.find(
+        cartItem => cartItem.domain === METAMASK_DOMAIN_NAME,
+      );
+
+      if (cartItemOnMetamaskDomain) {
+        yield put<Action>(
+          deleteCartItem({
+            id: cartId,
+            itemId: cartItemOnMetamaskDomain.id,
+            item: cartItemOnMetamaskDomain,
+            roe,
+            prices: prices?.nativeFio,
+          }),
+        );
+      }
     }
   });
 }

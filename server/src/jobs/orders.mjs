@@ -979,6 +979,31 @@ class OrdersJob extends CommonJob {
         // Check if fee/roe changed and handle changes
         if (!useDomainOwnerAuthParams) await this.checkPriceChanges(orderItem, roe);
 
+        if (data && data.metamaskUserPublicKey) {
+          const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
+            publicKey: data && data.metamaskUserPublicKey,
+          });
+
+          const existingUsersFreeAddress =
+            userHasFreeAddressOnPublicKey &&
+            userHasFreeAddressOnPublicKey.find(
+              freeAddress => freeAddress.name.split('@')[1] === domain,
+            );
+
+          if (
+            userHasFreeAddressOnPublicKey &&
+            userHasFreeAddressOnPublicKey.length &&
+            existingUsersFreeAddress
+          ) {
+            logger.error(USER_HAS_FREE_ERROR);
+
+            await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+              errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+            });
+            return this.updateOrderStatus(orderId);
+          }
+        }
+
         try {
           const result = await this.executeOrderItemAction(
             orderItem,
@@ -992,6 +1017,14 @@ class OrdersJob extends CommonJob {
               `Processing item transactions created - ${id} / ${result.transaction_id}`,
             );
             await OrderItem.setPending(result, id, blockchainTransactionId);
+
+            if (data && data.metamaskUserPublicKey) {
+              const freeAddressRecord = new FreeAddress({
+                name: fioName,
+                publicKey: data.metamaskUserPublicKey,
+              });
+              await freeAddressRecord.save();
+            }
 
             return this.updateOrderStatus(orderId);
           }

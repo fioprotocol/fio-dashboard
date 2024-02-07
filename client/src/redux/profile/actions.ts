@@ -27,12 +27,15 @@ export const PROFILE_FAILURE = `${prefix}/PROFILE_FAILURE`;
 
 export const loadProfile = ({
   shouldHandleUsersFreeCart,
+  shouldHandleMetamaskCartItem,
 }: {
   shouldHandleUsersFreeCart?: boolean;
+  shouldHandleMetamaskCartItem?: boolean;
 } = {}): CommonPromiseAction => ({
   types: [PROFILE_REQUEST, PROFILE_SUCCESS, PROFILE_FAILURE],
   promise: (api: Api) => api.auth.profile(),
   shouldHandleUsersFreeCart,
+  shouldHandleMetamaskCartItem,
 });
 
 export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;

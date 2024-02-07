@@ -61,6 +61,7 @@ export type CartItem = {
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
+  metamaskUserPublicKey?: string;
   period?: number;
   allowFree?: boolean;
   showBadge?: boolean;

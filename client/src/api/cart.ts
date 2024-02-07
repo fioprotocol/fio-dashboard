@@ -12,6 +12,7 @@ export default class Cart extends Base {
   addItem(data: {
     id?: string;
     item: CartItem;
+    metamaskUserPublicKey?: string;
     prices?: NativePrices;
     roe?: number;
     userId?: string;

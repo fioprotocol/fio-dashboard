@@ -4,3 +4,5 @@ export const CURRENCY_CODES = {
   USDC: 'USDC',
   USD: 'USD',
 };
+
+export const METAMASK_DOMAIN_NAME = 'metamask';
