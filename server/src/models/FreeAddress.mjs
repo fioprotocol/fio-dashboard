@@ -12,6 +12,7 @@ export class FreeAddress extends Base {
       {
         id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
         name: { type: DT.STRING, allowNull: false },
+        publicKey: { type: DT.STRING },
       },
       {
         sequelize,
@@ -35,10 +36,11 @@ export class FreeAddress extends Base {
     });
   }
 
-  static format({ id, name, createdAt }) {
+  static format({ id, name, publicKey, createdAt }) {
     return {
       id,
       name,
+      publicKey,
       createdAt,
     };
   }

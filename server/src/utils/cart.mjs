@@ -4,7 +4,7 @@ import { CART_ITEM_TYPE, FIO_ACTIONS, ORDER_ERROR_TYPES } from '../config/consta
 
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
-import { CURRENCY_CODES } from '../constants/fio.mjs';
+import { CURRENCY_CODES, METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 import { getROE } from '../external/roe';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
@@ -469,7 +469,16 @@ export const cartItemsToOrderItems = async ({
   );
 
   for (const cartItem of cartItems) {
-    const { address, domain, id, isFree, hasCustomDomainInCart, period, type } = cartItem;
+    const {
+      address,
+      domain,
+      id,
+      isFree,
+      metamaskUserPublicKey,
+      hasCustomDomainInCart,
+      period,
+      type,
+    } = cartItem;
 
     if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
       let domainItem = null;
@@ -584,6 +593,9 @@ export const cartItemsToOrderItems = async ({
             ? '0'
             : convertFioPrices(fioHandlePrice, roe).usdc;
         orderItem.priceCurrency = CURRENCY_CODES.USDC;
+        if (domain === METAMASK_DOMAIN_NAME) {
+          orderItem.data.metamaskUserPublicKey = metamaskUserPublicKey;
+        }
         orderItems.push(orderItem);
         break;
       }

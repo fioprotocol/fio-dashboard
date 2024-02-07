@@ -6,7 +6,10 @@ import { useHistory } from 'react-router';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { user as userSelector } from '../../redux/profile/selectors';
-import { cartId as cartIdSelector } from '../../redux/cart/selectors';
+import {
+  cartId as cartIdSelector,
+  cartItems as cartItemsSelector,
+} from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -20,8 +23,9 @@ import { setFioName } from '../../utils';
 import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
+import { getPublicKey } from '../../util/snap';
 
-import { DOMAIN_TYPE } from '../../constants/fio';
+import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { USER_PROFILE_TYPE } from '../../constants/profile';
@@ -59,6 +63,18 @@ const NOTIFICATIONS = {
       'This handle is already registered. If you own it map it to your public addresses.',
     title: 'FIO Handle Already registered.',
   },
+  USER_HAS_FREE_ADDRESS: {
+    hasNotification: true,
+    type: BADGE_TYPES.ERROR,
+    message: 'You already have a FIO Handle on @metamask domain.',
+    title: 'FIO Handle registration error.',
+  },
+  USER_HAS_METAMASK_FIO_HANDLE_IN_CART: {
+    hasNotification: true,
+    type: BADGE_TYPES.ERROR,
+    message: 'You already have a FIO Handle on @metamask domain in your cart.',
+    title: 'FIO Handle registration error.',
+  },
   NON_METAMASK_USER: {
     hasNotification: true,
     type: BADGE_TYPES.WARNING,
@@ -73,8 +89,6 @@ const NOTIFICATIONS = {
     title: 'Error',
   },
 };
-
-const METAMASK_DOMAIN_NAME = 'metamask';
 
 type UseContext = {
   addressWidgetContent: {
@@ -110,6 +124,7 @@ const TitleComponent = () => (
 
 export const useContext = (): UseContext => {
   const cartId = useSelector(cartIdSelector);
+  const cartItems = useSelector(cartItemsSelector);
   const user = useSelector(userSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
@@ -119,11 +134,15 @@ export const useContext = (): UseContext => {
   );
   const [fioHandle, setFioHandle] = useState<string | null>(null);
   const [loading, toggleLoading] = useState<boolean>(false);
+  const [publicKey, setPublicKey] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const history = useHistory();
 
   const isVerified = window.ethereum?.isMetaMask;
+  const userHasMetamaskFioHandleInCart = cartItems.find(
+    cartItem => cartItem.domain === METAMASK_DOMAIN_NAME,
+  );
 
   const onInputChanged = useCallback((value: string) => {
     setNotification(NOTIFICATIONS.EMPTY);
@@ -198,39 +217,36 @@ export const useContext = (): UseContext => {
       try {
         toggleLoading(true);
 
-        if (user.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE) {
-          const { fio, usdc } = convertFioPrices(prices.nativeFio.address, roe);
+        const { fio, usdc } = convertFioPrices(prices.nativeFio.address, roe);
 
-          const gatedToken = await apis.users.verifyAlternativeUser();
+        const gatedToken = await apis.users.verifyAlternativeUser();
 
-          const cartItem = {
-            id: setFioName(address, METAMASK_DOMAIN_NAME),
-            address,
-            domain: METAMASK_DOMAIN_NAME,
-            costFio: fio,
-            costUsdc: usdc,
-            costNativeFio: prices.nativeFio.address,
-            domainType: DOMAIN_TYPE.PRIVATE,
-            isFree: true,
-            period: 1,
-            type: CART_ITEM_TYPE.ADDRESS,
-          };
+        const cartItem = {
+          id: setFioName(address, METAMASK_DOMAIN_NAME),
+          address,
+          domain: METAMASK_DOMAIN_NAME,
+          costFio: fio,
+          costUsdc: usdc,
+          costNativeFio: prices.nativeFio.address,
+          domainType: DOMAIN_TYPE.PRIVATE,
+          isFree: true,
+          metamaskUserPublicKey: publicKey,
+          period: 1,
+          type: CART_ITEM_TYPE.ADDRESS,
+        };
 
-          dispatch(
-            addItemToCart({
-              id: cartId,
-              item: cartItem,
-              prices: prices?.nativeFio,
-              roe,
-              token: gatedToken,
-              userId: user.id,
-            }),
-          );
+        dispatch(
+          addItemToCart({
+            id: cartId,
+            item: cartItem,
+            prices: prices?.nativeFio,
+            roe,
+            token: gatedToken,
+            userId: user.id,
+          }),
+        );
 
-          history.push(ROUTES.CART);
-        } else {
-          setNotification(NOTIFICATIONS.NON_METAMASK_USER);
-        }
+        history.push(ROUTES.CART);
       } catch (error) {
         log.error(error);
         setNotification(NOTIFICATIONS.GENERAL_ERROR);
@@ -238,22 +254,82 @@ export const useContext = (): UseContext => {
         toggleLoading(false);
       }
     },
+    [cartId, dispatch, history, prices.nativeFio, publicKey, roe, user?.id],
+  );
+
+  const getFreeUserMetamaskAddresses = useCallback(
+    async (publicKey: string) => {
+      try {
+        return await apis.users.getFreeAddresses({ publicKey });
+      } catch (error) {
+        log.error(error);
+        setNotification(NOTIFICATIONS.GENERAL_ERROR);
+      }
+    },
+    [],
+  );
+
+  const handleSubmit = useCallback(
+    async ({
+      fioHandle,
+      publicKey,
+    }: {
+      fioHandle: string;
+      publicKey: string;
+    }) => {
+      try {
+        if (userHasMetamaskFioHandleInCart) {
+          setNotification(NOTIFICATIONS.USER_HAS_METAMASK_FIO_HANDLE_IN_CART);
+          return;
+        }
+
+        const freeAddresses = await getFreeUserMetamaskAddresses(publicKey);
+
+        if (!freeAddresses.length) {
+          setNotification(NOTIFICATIONS.USER_HAS_FREE_ADDRESS);
+          return;
+        }
+
+        handleAddCartItem({ address: fioHandle });
+      } catch (error) {
+        log.error(error);
+        setNotification(NOTIFICATIONS.GENERAL_ERROR);
+      }
+    },
     [
-      cartId,
-      dispatch,
-      history,
-      prices.nativeFio,
-      roe,
-      user?.id,
-      user?.userProfileType,
+      userHasMetamaskFioHandleInCart,
+      getFreeUserMetamaskAddresses,
+      handleAddCartItem,
     ],
   );
 
-  useEffect(() => {
-    if (user && fioHandle) {
-      handleAddCartItem({ address: fioHandle });
+  const getZeroDerivatedIndexPublicKey = useCallback(async () => {
+    try {
+      const zeroDerivationIndexpublicKey = await getPublicKey({
+        derivationIndex: 0,
+      });
+      setPublicKey(zeroDerivationIndexpublicKey);
+    } catch (error) {
+      log.error(error);
+      setNotification(NOTIFICATIONS.GENERAL_ERROR);
     }
-  }, [fioHandle, handleAddCartItem, user]);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      if (user.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE) {
+        handleSubmit({ fioHandle, publicKey });
+      } else {
+        setNotification(NOTIFICATIONS.NON_METAMASK_USER);
+      }
+    }
+  }, [fioHandle, publicKey, user, handleSubmit]);
+
+  useEffect(() => {
+    if (user && isVerified) {
+      getZeroDerivatedIndexPublicKey();
+    }
+  }, [getZeroDerivatedIndexPublicKey, isVerified, user]);
 
   const addressWidgetContent = {
     classNameContainer: classes.widgetContainer,
