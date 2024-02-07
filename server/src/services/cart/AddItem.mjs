@@ -39,6 +39,7 @@ export default class AddItem extends Base {
             domainType: ['string'],
             id: ['required', 'string'],
             isFree: ['boolean'],
+            metamaskUserPublicKey: ['string'],
             hasCustomDomainInCart: ['boolean'],
             period: ['string'],
             type: ['required', 'string'],

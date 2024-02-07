@@ -2,6 +2,8 @@ export const ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION = 5;
 
 export const FIO_CHAIN_CODE = 'FIO';
 
+export const METAMASK_DOMAIN_NAME = 'metamask';
+
 export const MAX_PUBLIC_ADDRESS_LENGTH = 128;
 
 export const TOKEN_LINK_MIN_WAIT_TIME = 2000;

@@ -236,6 +236,8 @@ router.get(
   routes.users.alternativeUserVerification,
 );
 
+router.get('/free-addresses', checkAuth, routes.freeAddresses.getFreeAddresses);
+
 router.get('/gas-oracle', routes.external.getGasOracle);
 router.get(
   '/estimation-of-confirmation-time',
