@@ -285,7 +285,7 @@ export const useContext = (): UseContext => {
 
         const freeAddresses = await getFreeUserMetamaskAddresses(publicKey);
 
-        if (!freeAddresses.length) {
+        if (freeAddresses.length) {
           setNotification(NOTIFICATIONS.USER_HAS_FREE_ADDRESS);
           return;
         }
@@ -318,7 +318,9 @@ export const useContext = (): UseContext => {
   useEffect(() => {
     if (user) {
       if (user.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE) {
-        handleSubmit({ fioHandle, publicKey });
+        if (fioHandle && publicKey) {
+          handleSubmit({ fioHandle, publicKey });
+        }
       } else {
         setNotification(NOTIFICATIONS.NON_METAMASK_USER);
       }
