@@ -304,6 +304,98 @@
     }
   }
 
+  .faqSection {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 40px 50px;
+    background: url('../../assets/images/metamask-landing/faq-background.svg');
+    background-size: cover;
+
+    .title {
+      margin: 0;
+      font-size: 3em;
+      text-align: center;
+      @include inter-bold;
+    }
+
+    .subtitle {
+      margin-top: 24px;
+      margin-bottom: 0;
+      font-size: 1.125em;
+      @include inter-regular;
+    }
+
+    .accordion {
+      margin-top: 35px;
+      max-width: 970px;
+      width: 100%;
+
+      .accordionItem {
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+
+        @include sm {
+          padding: 24px 0;
+        }
+
+        .accordionItemText {
+          max-width: 800px;
+          padding-top: 24px;
+          padding-left: 66px;
+          line-height: 2em;
+          @include inter-regular;
+
+          @include sm {
+            padding-left: 0;
+          }
+        }
+
+        .accordionItemContainer {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+          gap: 24px;
+
+          .contentContainer {
+            margin-top: 10px;
+
+            .accordionItemTitle {
+              cursor: pointer;
+              color: $light-indigo;
+              font-size: 1.125em;
+              @include inter-regular;
+            }
+          }
+
+          .iconContainer {
+            border: 1px solid $buried-gold;
+            border-radius: 100%;
+            padding: 12px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .titleIcon {
+              width: 24px;
+              height: 24px;
+              cursor: pointer;
+              transition: transform 0.3s ease-in-out;
+              color: $light-indigo;
+
+              &.isActiveIcon {
+                transform: rotate(45deg)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .securityAudit {
     background-color: $dynamic-black;
     padding: 40px 50px;
@@ -406,6 +498,11 @@
         }
       }
     }
+
+    .faqSection {
+      padding: 100px 80px;
+    }
+
     .securityAudit {
       padding: 100px 80px;
     }
