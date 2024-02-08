@@ -1,5 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
+import {
+  Accordion,
+  AccordionContext,
+  AccordionToggleProps,
+  useAccordionToggle,
+} from 'react-bootstrap';
+import AddIcon from '@mui/icons-material/Add';
+import classnames from 'classnames';
 
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 
@@ -15,6 +23,37 @@ import metamaskAtIcon from '../../assets/images/metamask-landing/metamask-at.svg
 import sayferLogo from '../../assets/images/metamask-landing/sayfer-logo.svg';
 
 import classes from './MetamaskLangingPage.module.scss';
+
+const accordionContent = [
+  {
+    title: 'Why should I use the FIO Snap with MetaMask Wallet?',
+    text:
+      'The FIO MetaMask Snap allows for self-custody of their FIO identity, allowing users to safely and seamlessly interact with the FIO App without setting up new accounts or passwords.',
+  },
+  {
+    title: 'How does the FIO MetaMask Snap Work?',
+    text:
+      'Snaps are open-source extensions designed to securely extend the functionality of MetaMask, allowing for the creation of new web3 end-user experiences. Specifically, a snap is a JavaScript program that runs in an isolated environment, customizing the wallet experience.',
+  },
+  {
+    title: 'How do I enable the FIO MetaMask Snap?',
+    text: `To enable the FIO MetaMask Snap, visit the FIO App and connect to MetaMask. By doing so, you'll be prompted to install the Snap as a plugin to your existing MetaMask wallet. Once activated, your MetaMask will be equipped to interact with the FIO App allowing you to explore and use everything FIO has to offer.`,
+  },
+  {
+    title:
+      'Is my private key or recovery phrase exposed when using the FIO MetaMask Snap?',
+    text: `No, your private key and recovery phrase are safeguarded within your MetaMask wallet. The FIO MetaMask Snap doesn't have access to them.It operates like a dapp, merely requesting signatures from MetaMask.This means it extends your wallet's capabilities without compromising the security of your private details.`,
+  },
+  {
+    title: 'Is the FIO MetaMask Snap free to use?',
+    text:
+      'Yes, the FIO MetaMask Snap is free to use. Users do need a FIO Handle which utilizes FIO Bundles to cover FIO network fees for transactions on the blockchain.',
+  },
+  {
+    title: 'Did the FIO MetaMask Snap pass any security audits?',
+    text: 'Yes, it has been audited by Sayfer, an external audit team.',
+  },
+];
 
 const featureItems = [
   {
@@ -47,6 +86,43 @@ const SeeMoreLink = 'https://fio.net/discover/features-benefits';
 const SayferLogo =
   'https://sayfer.io/audits/metamask-snap-audit-report-for-fio/';
 const ActionButtonText = 'COMING SOON!';
+
+const CustomToggle = ({
+  eventKey,
+  title,
+  onClick,
+}: AccordionToggleProps & { title: string }) => {
+  const activeEventKey = useContext(AccordionContext);
+
+  const decoratedOnClick = useAccordionToggle(eventKey, onClick);
+
+  const isActive = activeEventKey === eventKey;
+
+  return (
+    <div className={classes.accordionItemContainer}>
+      <div className={classes.iconContainer}>
+        <AddIcon
+          onClick={decoratedOnClick}
+          className={classnames(
+            classes.titleIcon,
+            isActive && classes.isActiveIcon,
+          )}
+        />
+      </div>
+      <div className={classes.contentContainer}>
+        <h5
+          className={classnames(
+            classes.accordionItemTitle,
+            isActive && classes.isActive,
+          )}
+          onClick={decoratedOnClick}
+        >
+          {title}
+        </h5>
+      </div>
+    </div>
+  );
+};
 
 const MetamaskLandingPage: React.FC = () => {
   return (
@@ -184,6 +260,36 @@ const MetamaskLandingPage: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+        <section className={classes.faqSection}>
+          <div className={classes.maxContentContainer}>
+            <h2 className={classes.title}>Frequently Asked Questions</h2>
+            <p className={classes.subtitle}>
+              Here you’ll find some frequently asked questions. If you still
+              need help, feel free to reach us.
+            </p>
+            <Accordion defaultActiveKey="0" className={classes.accordion}>
+              {accordionContent.map((accordionItem, i) => (
+                <div
+                  key={accordionItem.title}
+                  className={classes.accordionItem}
+                >
+                  <CustomToggle
+                    eventKey={i.toString()}
+                    title={accordionItem.title}
+                  ></CustomToggle>
+                  <Accordion.Collapse eventKey={i.toString()}>
+                    <div
+                      className={classes.accordionItemText}
+                      dangerouslySetInnerHTML={{
+                        __html: accordionItem.text,
+                      }}
+                    />
+                  </Accordion.Collapse>
+                </div>
+              ))}
+            </Accordion>
           </div>
         </section>
         <section className={classes.securityAudit}>
