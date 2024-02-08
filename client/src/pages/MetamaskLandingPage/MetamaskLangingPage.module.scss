@@ -62,6 +62,16 @@
         @include inter-regular;
       }
 
+      .errorBadge {
+        margin-top: 0 !important;
+        margin-bottom: 30px !important;
+      }
+
+      .errorMessage {
+        font-size: 13px !important;
+        letter-spacing: normal !important;
+      }
+
       .button {
         background-color: $coral-bisque;
         align-self: flex-start;
@@ -285,13 +295,17 @@
             color: $white;
             @include inter-regular;
           }
-      
-          .button {
-            margin-top: 40px;
-            padding: 10px;
-            background-color: $gadabout;
-            color: $black;
-            @include inter-regular;
+
+          .link {
+            display: block;
+            width: fit-content;
+            .button {
+              margin-top: 40px;
+              padding: 10px;
+              background-color: $gadabout;
+              color: $black;
+              @include inter-regular;
+            }
           }
         }
       
