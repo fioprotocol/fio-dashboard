@@ -8,6 +8,7 @@ import {
   signTxn,
   signNonce,
   decryptContent,
+  Snap,
 } from '../util/snap';
 import { log } from '../util/general';
 import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
@@ -24,7 +25,7 @@ export type MetamaskSnapProps = {
   signedTxnLoading: boolean;
   snapError: Error;
   snapLoading: boolean;
-  state: any;
+  state: Snap;
   signature: string;
   signatureError: Error | null;
   signatureLoading: boolean;
@@ -44,7 +45,7 @@ export type MetamaskSnapProps = {
 };
 
 export const MetamaskSnap = (): MetamaskSnapProps => {
-  const [state, setState] = useState<any | null>(null);
+  const [state, setState] = useState<Snap | null>(null);
   const [snapError, setSnapError] = useState<Error | null>(null);
   const [snapLoading, toggleSnapLoading] = useState<boolean>(false);
   const [signedTxnLoading, toggleSignedTxnLoading] = useState<boolean>(false);
