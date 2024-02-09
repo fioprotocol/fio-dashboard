@@ -122,6 +122,11 @@
       justify-content: center;
       gap: 30px;
 
+      @include sm {
+        margin-left: -20px;
+        margin-right: -20px;
+      }
+
       .featureItemContainer {
         display: flex;
         padding: 20px;
