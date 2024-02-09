@@ -230,6 +230,10 @@
     background-size: cover;
     padding: 40px 50px;
 
+    @include sm {
+      padding: 40px 20px;
+    }
+
     .contentContainer {
       box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.05);
       border-radius: 20px;
@@ -248,6 +252,8 @@
 
         .content {
           width: 100%;
+          display: flex;
+          flex-direction: column;
       
           .preTitle {
             margin-top: 0;
@@ -291,7 +297,11 @@
             padding: 10px;
             background-color: $gadabout;
             color: $black;
+            align-self: flex-start;
             @include inter-regular;
+            @include sm {
+              align-self: center;
+            }
           }
         }
       

@@ -42,7 +42,7 @@ const accordionContent = [
   {
     title:
       'Is my private key or recovery phrase exposed when using the FIO MetaMask Snap?',
-    text: `No, your private key and recovery phrase are safeguarded within your MetaMask wallet. The FIO MetaMask Snap doesn't have access to them.It operates like a dapp, merely requesting signatures from MetaMask.This means it extends your wallet's capabilities without compromising the security of your private details.`,
+    text: `No, your private key and recovery phrase are safeguarded within your MetaMask wallet. The FIO MetaMask Snap doesn't have access to them. It operates like a dapp, merely requesting signatures from MetaMask. This means it extends your wallet's capabilities without compromising the security of your private details.`,
   },
   {
     title: 'Is the FIO MetaMask Snap free to use?',
