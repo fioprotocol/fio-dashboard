@@ -1,5 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
+import {
+  Accordion,
+  AccordionContext,
+  AccordionToggleProps,
+  useAccordionToggle,
+} from 'react-bootstrap';
+import AddIcon from '@mui/icons-material/Add';
+import classnames from 'classnames';
 
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 
@@ -15,6 +23,37 @@ import metamaskAtIcon from '../../assets/images/metamask-landing/metamask-at.svg
 import sayferLogo from '../../assets/images/metamask-landing/sayfer-logo.svg';
 
 import classes from './MetamaskLangingPage.module.scss';
+
+const accordionContent = [
+  {
+    title: 'Why should I use the FIO Snap with MetaMask Wallet?',
+    text:
+      'The FIO MetaMask Snap allows for self-custody of their FIO identity, allowing users to safely and seamlessly interact with the FIO App without setting up new accounts or passwords.',
+  },
+  {
+    title: 'How does the FIO MetaMask Snap Work?',
+    text:
+      'Snaps are open-source extensions designed to securely extend the functionality of MetaMask, allowing for the creation of new web3 end-user experiences. Specifically, a snap is a JavaScript program that runs in an isolated environment, customizing the wallet experience.',
+  },
+  {
+    title: 'How do I enable the FIO MetaMask Snap?',
+    text: `To enable the FIO MetaMask Snap, visit the FIO App and connect to MetaMask. By doing so, you'll be prompted to install the Snap as a plugin to your existing MetaMask wallet. Once activated, your MetaMask will be equipped to interact with the FIO App allowing you to explore and use everything FIO has to offer.`,
+  },
+  {
+    title:
+      'Is my private key or recovery phrase exposed when using the FIO MetaMask Snap?',
+    text: `No, your private key and recovery phrase are safeguarded within your MetaMask wallet. The FIO MetaMask Snap doesn't have access to them. It operates like a dapp, merely requesting signatures from MetaMask. This means it extends your wallet's capabilities without compromising the security of your private details.`,
+  },
+  {
+    title: 'Is the FIO MetaMask Snap free to use?',
+    text:
+      'Yes, the FIO MetaMask Snap is free to use. Users do need a FIO Handle which utilizes FIO Bundles to cover FIO network fees for transactions on the blockchain.',
+  },
+  {
+    title: 'Did the FIO MetaMask Snap pass any security audits?',
+    text: 'Yes, it has been audited by Sayfer, an external audit team.',
+  },
+];
 
 const featureItems = [
   {
@@ -48,6 +87,43 @@ const SayferLogo =
   'https://sayfer.io/audits/metamask-snap-audit-report-for-fio/';
 const ActionButtonText = 'COMING SOON!';
 
+const CustomToggle = ({
+  eventKey,
+  title,
+  onClick,
+}: AccordionToggleProps & { title: string }) => {
+  const activeEventKey = useContext(AccordionContext);
+
+  const decoratedOnClick = useAccordionToggle(eventKey, onClick);
+
+  const isActive = activeEventKey === eventKey;
+
+  return (
+    <div className={classes.accordionItemContainer}>
+      <div className={classes.iconContainer}>
+        <AddIcon
+          onClick={decoratedOnClick}
+          className={classnames(
+            classes.titleIcon,
+            isActive && classes.isActiveIcon,
+          )}
+        />
+      </div>
+      <div className={classes.contentContainer}>
+        <h5
+          className={classnames(
+            classes.accordionItemTitle,
+            isActive && classes.isActive,
+          )}
+          onClick={decoratedOnClick}
+        >
+          {title}
+        </h5>
+      </div>
+    </div>
+  );
+};
+
 const MetamaskLandingPage: React.FC = () => {
   return (
     <>
@@ -56,135 +132,176 @@ const MetamaskLandingPage: React.FC = () => {
       </Helmet>
       <div className={classes.container}>
         <section className={classes.header}>
-          <div className={classes.content}>
-            <div className={classes.badge}>NEWLY LAUNCHED</div>
-            <h1 className={classes.title}>
-              MetaMask now
-              <br />
-              supports FIO
-            </h1>
-            <p className={classes.subtitle}>
-              MetaMask users can now self-custody their FIO identity and gain
-              access to the FIO App without setting up new accounts or
-              passwords.
-            </p>
-            <SubmitButton
-              text={
-                <>
-                  <img
-                    src={metamaskIcon}
-                    className={classes.metamaskIcon}
-                    alt="metamask"
-                  />
-                  <p className={classes.buttonText}>{ActionButtonText}</p>
-                </>
-              }
-              hasAutoHeight
-              hasAutoWidth
-              className={classes.button}
-              onClick={() => {}}
-            />
-          </div>
-          <div className={classes.images}>
-            <img src={fioMetamask} alt="FIO - Metamask icons" />
+          <div className={classes.maxContentContainer}>
+            <div className={classes.content}>
+              <div className={classes.badge}>NEWLY LAUNCHED</div>
+              <h1 className={classes.title}>
+                MetaMask now
+                <br />
+                supports FIO
+              </h1>
+              <p className={classes.subtitle}>
+                MetaMask users can now self-custody their FIO identity and gain
+                access to the FIO App without setting up new accounts or
+                passwords.
+              </p>
+              <SubmitButton
+                text={
+                  <>
+                    <img
+                      src={metamaskIcon}
+                      className={classes.metamaskIcon}
+                      alt="metamask"
+                    />
+                    <p className={classes.buttonText}>{ActionButtonText}</p>
+                  </>
+                }
+                hasAutoHeight
+                hasAutoWidth
+                className={classes.button}
+                onClick={() => {}}
+              />
+            </div>
+            <div className={classes.images}>
+              <img src={fioMetamask} alt="FIO - Metamask icons" />
+            </div>
           </div>
         </section>
         <section className={classes.featuresContainer}>
-          <h2 className={classes.title}>
-            The FIO App & MetaMask - <span>Together at Last</span>
-          </h2>
-          <p className={classes.subtitle}>
-            In addition to utilizing MetaMask to connect to the FIO App, you can
-            now seamlessly and easily use the FIO app and MetaMask together.
-          </p>
-          <div className={classes.featureItemsContainer}>
-            {featureItems.map(featureItem => (
-              <div className={classes.featureItemContainer}>
-                <div className={classes.featureItem} key={featureItem.title}>
-                  <img
-                    alt="Feature Icon"
-                    src={featureItem.iconSrc}
-                    className={classes.img}
-                  />
-                  <h5 className={classes.title}>{featureItem.title}</h5>
-                  <p className={classes.text}>{featureItem.text}</p>
+          <div className={classes.maxContentContainer}>
+            <h2 className={classes.title}>
+              The FIO App & MetaMask - <span>Together at Last</span>
+            </h2>
+            <p className={classes.subtitle}>
+              In addition to utilizing MetaMask to connect to the FIO App, you
+              can now seamlessly and easily use the FIO app and MetaMask
+              together.
+            </p>
+            <div className={classes.featureItemsContainer}>
+              {featureItems.map(featureItem => (
+                <div className={classes.featureItemContainer}>
+                  <div className={classes.featureItem} key={featureItem.title}>
+                    <img
+                      alt="Feature Icon"
+                      src={featureItem.iconSrc}
+                      className={classes.img}
+                    />
+                    <h5 className={classes.title}>{featureItem.title}</h5>
+                    <p className={classes.text}>{featureItem.text}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <a
+              href={SeeMoreLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.link}
+            >
+              <SubmitButton
+                text={<span className={classes.buttonText}>See More</span>}
+              />
+            </a>
           </div>
-          <a
-            href={SeeMoreLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={classes.link}
-          >
-            <SubmitButton
-              text={<span className={classes.buttonText}>See More</span>}
-            />
-          </a>
         </section>
         <section className={classes.infoContainer}>
-          <img
-            src={laptopMetamaskIcon}
-            alt="Metamask Laptop"
-            className={classes.img}
-          />
-          <h1 className={classes.title}>FIO + MetaMask = Easier Crypto</h1>
-          <div className={classes.infoItemsContainer}>
-            <div className={classes.infoItem}>
-              <h5 className={classes.infoTitle}>FIO Protocol</h5>
-              <p className={classes.text}>
-                FIO Protocol is powered by Layer 1 FIO Chain purpose-built to
-                help wallets hide the complexity of blockchain transactions
-                across all blockchains.
-              </p>
-            </div>
-            <div className={classes.infoItem}>
-              <h5 className={classes.infoTitle}>MetaMask</h5>
-              <p className={classes.text}>
-                The leading web3 wallet with over 30M monthly active users and
-                de facto standard for accessing web-based dapps with almost
-                every EVM-based dapp supporting it.
-              </p>
+          <div className={classes.maxContentContainer}>
+            <img
+              src={laptopMetamaskIcon}
+              alt="Metamask Laptop"
+              className={classes.img}
+            />
+            <h1 className={classes.title}>FIO + MetaMask = Easier Crypto</h1>
+            <div className={classes.infoItemsContainer}>
+              <div className={classes.infoItem}>
+                <h5 className={classes.infoTitle}>FIO Protocol</h5>
+                <p className={classes.text}>
+                  FIO Protocol is powered by Layer 1 FIO Chain purpose-built to
+                  help wallets hide the complexity of blockchain transactions
+                  across all blockchains.
+                </p>
+              </div>
+              <div className={classes.infoItem}>
+                <h5 className={classes.infoTitle}>MetaMask</h5>
+                <p className={classes.text}>
+                  The leading web3 wallet with over 30M monthly active users and
+                  de facto standard for accessing web-based dapps with almost
+                  every EVM-based dapp supporting it.
+                </p>
+              </div>
             </div>
           </div>
         </section>
         <section className={classes.fioHandleSection}>
-          <div className={classes.contentContainer}>
-            <div className={classes.contentItems}>
-              <div className={classes.content}>
-                <h5 className={classes.preTitle}>For A Limited Time</h5>
-                <h3 className={classes.title}>
-                  Get Your Free
-                  <br />
-                  @metamask Handle
-                </h3>
-                <p className={classes.subtitle}>
-                  Register a FIO handle on the public domain @metamask for free
-                  and share feedback on social media to be randomly selected
-                  from the FIO Prize Pool.
-                </p>
-                <SubmitButton
-                  text={ActionButtonText}
-                  hasAutoHeight
-                  hasAutoWidth
-                  className={classes.button}
-                />
-              </div>
-              <div className={classes.imageContainer}>
-                <img alt="Metamask icon" src={metamaskAtIcon} />
+          <div className={classes.maxContentContainer}>
+            <div className={classes.contentContainer}>
+              <div className={classes.contentItems}>
+                <div className={classes.content}>
+                  <h5 className={classes.preTitle}>For A Limited Time</h5>
+                  <h3 className={classes.title}>
+                    Get Your Free
+                    <br />
+                    @metamask Handle
+                  </h3>
+                  <p className={classes.subtitle}>
+                    Register a FIO handle on the public domain @metamask for
+                    free and share feedback on social media to be randomly
+                    selected from the FIO Prize Pool.
+                  </p>
+                  <SubmitButton
+                    text={ActionButtonText}
+                    hasAutoHeight
+                    hasAutoWidth
+                    className={classes.button}
+                  />
+                </div>
+                <div className={classes.imageContainer}>
+                  <img alt="Metamask icon" src={metamaskAtIcon} />
+                </div>
               </div>
             </div>
           </div>
         </section>
+        <section className={classes.faqSection}>
+          <div className={classes.maxContentContainer}>
+            <h2 className={classes.title}>Frequently Asked Questions</h2>
+            <p className={classes.subtitle}>
+              Here you’ll find some frequently asked questions. If you still
+              need help, feel free to reach us.
+            </p>
+            <Accordion defaultActiveKey="0" className={classes.accordion}>
+              {accordionContent.map((accordionItem, i) => (
+                <div
+                  key={accordionItem.title}
+                  className={classes.accordionItem}
+                >
+                  <CustomToggle
+                    eventKey={i.toString()}
+                    title={accordionItem.title}
+                  ></CustomToggle>
+                  <Accordion.Collapse eventKey={i.toString()}>
+                    <div
+                      className={classes.accordionItemText}
+                      dangerouslySetInnerHTML={{
+                        __html: accordionItem.text,
+                      }}
+                    />
+                  </Accordion.Collapse>
+                </div>
+              ))}
+            </Accordion>
+          </div>
+        </section>
         <section className={classes.securityAudit}>
-          <h3 className={classes.title}>Security Audit</h3>
-          <p className={classes.subtitle}>
-            The FIO MetaMask Snap has been audited by:
-          </p>
-          <a href={SayferLogo} target="_blank" rel="noopener noreferrer">
-            <img src={sayferLogo} alt="Sayfer icon" className={classes.img} />
-          </a>
+          <div className={classes.maxContentContainer}>
+            <h3 className={classes.title}>Security Audit</h3>
+            <p className={classes.subtitle}>
+              The FIO MetaMask Snap has been audited by:
+            </p>
+            <a href={SayferLogo} target="_blank" rel="noopener noreferrer">
+              <img src={sayferLogo} alt="Sayfer icon" className={classes.img} />
+            </a>
+          </div>
         </section>
       </div>
     </>

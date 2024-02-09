@@ -1,6 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
 import {
+  DomainsWatchlist,
   User,
   Nonce,
   Notification,
@@ -38,6 +39,7 @@ export default class UserDelete extends Base {
       await FreeAddress.destroy(destroyCondition);
       await Wallet.destroy(destroyCondition);
       await NewDeviceTwoFactor.destroy(destroyCondition);
+      await DomainsWatchlist.destroy(destroyCondition);
 
       await Order.update(
         { userId: deletedUser.id },
