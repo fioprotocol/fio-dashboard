@@ -4,12 +4,15 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
+
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+
 import apis from '../../../api';
 import MathOp from '../../../util/math';
 import { handleFioServerResponse } from '../../../util/fio';
@@ -84,6 +87,8 @@ export const WrapTokensMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.WRAP_TOKENS}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

@@ -4,11 +4,14 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
+
 import {
   ACTIONS,
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { FioRecordViewDecrypted } from '../../WalletPage/types';
@@ -70,6 +73,8 @@ export const RejectRequestMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.REJECT_FIO_REQUEST}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

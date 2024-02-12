@@ -12,6 +12,7 @@ import {
   TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -117,6 +118,8 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.REGISTER_ADDRESS_PRIVATE_DOMAIN}
+      analyticsData={data}
       actionParams={actionParams}
       processing={processing}
       returnOnlySignedTxn

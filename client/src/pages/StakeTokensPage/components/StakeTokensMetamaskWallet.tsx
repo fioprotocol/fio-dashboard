@@ -4,6 +4,7 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
+
 import {
   ACTIONS,
   BUNDLES_TX_COUNT,
@@ -11,6 +12,7 @@ import {
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import { handleFioServerResponse } from '../../../util/fio';
 import MathOp from '../../../util/math';
@@ -82,6 +84,8 @@ export const StakeTokensMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.STAKE}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}
