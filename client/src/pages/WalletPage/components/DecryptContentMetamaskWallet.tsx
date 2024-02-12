@@ -107,7 +107,7 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
-      analyticAction={CONFIRM_METAMASK_ACTION.WRAP_DOMAIN}
+      analyticAction={CONFIRM_METAMASK_ACTION.DETAILED_FIO_REQUEST}
       analyticsData={submitData}
       actionParams={actionParams}
       isDecryptContent
