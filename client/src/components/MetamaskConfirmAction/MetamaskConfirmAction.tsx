@@ -7,6 +7,10 @@ import { MetamaskSnap } from '../../services/MetamaskSnap';
 
 import { apiUrls as apiUrlsSelector } from '../../redux/registrations/selectors';
 
+import {
+  fireActionAnalyticsEvent,
+  fireActionAnalyticsEventError,
+} from '../../util/analytics';
 import { log } from '../../util/general';
 import { decryptContent, signTxn } from '../../util/snap';
 import useEffectOnce from '../../hooks/general';
@@ -17,6 +21,7 @@ import {
   FioServerResponse,
 } from '../../types/fio';
 import { SignedTxArgs } from '../../api/fio';
+import { AnyType } from '../../types';
 
 const canceledRegexp = /transaction canceled|decrypt fio data canceled/i;
 
@@ -28,6 +33,8 @@ export type OnSuccessResponseResult =
 
 type Props = {
   actionParams: ActionParams | ActionParams[] | DecryptActionParams;
+  analyticAction: string;
+  analyticsData: AnyType | null;
   callSubmitAction?: boolean;
   isDecryptContent?: boolean;
   processing: boolean;
@@ -40,6 +47,8 @@ type Props = {
 export const MetamaskConfirmAction: React.FC<Props> = props => {
   const {
     actionParams,
+    analyticAction,
+    analyticsData,
     callSubmitAction,
     isDecryptContent,
     processing,
@@ -174,6 +183,8 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
             : successedResults;
 
         onSuccess(res);
+
+        fireActionAnalyticsEvent(analyticAction, analyticsData);
       }
     } catch (error) {
       log.error(error);
@@ -181,11 +192,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         onCancel();
       } else {
         toggleHasError(true);
+        fireActionAnalyticsEventError(analyticAction);
       }
     }
   }, [
     isDecryptContent,
     actionParams,
+    analyticAction,
+    analyticsData,
     apiUrl,
     returnOnlySignedTxn,
     onSuccess,

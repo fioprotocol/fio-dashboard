@@ -7,12 +7,16 @@ import ChangeEmailForm from './ChangeEmailForm';
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+import {
+  CONFIRM_METAMASK_ACTION,
+  CONFIRM_PIN_ACTIONS,
+} from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
 import { emailAvailable } from '../../../../api/middleware/auth';
 import { minWaitTimeFunction } from '../../../../utils';
 import { log } from '../../../../util/general';
+import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
 import apis from '../../../../api';
 
@@ -104,6 +108,15 @@ const ChangeEmail: React.FC<Props> = props => {
     if (isPrimaryProfile) {
       setSubmitData({ newEmail });
     } else {
+      const analyticsData = { newEmail };
+      let analyticAction: string;
+
+      if (window.ethereum?.isMetaMask) {
+        analyticAction = CONFIRM_METAMASK_ACTION.UPDATE_EMAIL;
+      }
+
+      fireActionAnalyticsEvent(analyticAction, analyticsData);
+
       submit({ data: { newEmail } });
     }
     return {};

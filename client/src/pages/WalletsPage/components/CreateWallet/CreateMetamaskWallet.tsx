@@ -1,12 +1,16 @@
 import React from 'react';
 
-import { WALLET_CREATED_FROM } from '../../../../constants/common';
+import {
+  CONFIRM_METAMASK_ACTION,
+  WALLET_CREATED_FROM,
+} from '../../../../constants/common';
 
 import { getPublicKey } from '../../../../util/snap';
 
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
 import { CreateWalletValues } from '../../types';
 import useEffectOnce from '../../../../hooks/general';
+import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
@@ -47,6 +51,8 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
         derivationIndex: nextDerivationIndex,
       },
     });
+
+    fireActionAnalyticsEvent(CONFIRM_METAMASK_ACTION.CREATE_WALLET, values);
 
     setProcessing(false);
   };

@@ -13,7 +13,10 @@ import {
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
-import { CHAIN_CODES } from '../../../constants/common';
+import {
+  CHAIN_CODES,
+  CONFIRM_METAMASK_ACTION,
+} from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
@@ -206,6 +209,8 @@ export const EditSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.EDIT_SOCIAL_MEDIA_LINK}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

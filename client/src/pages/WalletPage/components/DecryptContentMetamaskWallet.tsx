@@ -4,10 +4,12 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
+
 import {
   FIO_CONTENT_TYPES,
   FIO_REQUEST_STATUS_TYPES,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import {
   DecryptedFioRecordContent,
@@ -105,6 +107,8 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.WRAP_DOMAIN}
+      analyticsData={submitData}
       actionParams={actionParams}
       isDecryptContent
       processing={processing}

@@ -4,6 +4,7 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
+
 import {
   ACTIONS,
   BUNDLES_TX_COUNT,
@@ -12,6 +13,8 @@ import {
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { ActionParams, FioServerResponse } from '../../../types/fio';
@@ -221,6 +224,8 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.REQUEST}
+      analyticsData={submitData}
       actionParams={actionParams}
       callSubmitAction={callSubmitAction}
       processing={processing}

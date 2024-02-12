@@ -23,6 +23,7 @@ import {
 } from '../../../constants/purchase';
 import {
   CART_ITEM_TYPE,
+  CONFIRM_METAMASK_ACTION,
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../../../constants/common';
 
@@ -266,6 +267,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

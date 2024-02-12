@@ -4,15 +4,22 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
+
 import {
   ACTIONS,
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
+import {
+  ADDRESS,
+  CONFIRM_METAMASK_ACTION,
+  DOMAIN,
+} from '../../../constants/common';
+
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+
 import { FioNameType } from '../../../types';
-import { ADDRESS, DOMAIN } from '../../../constants/common';
 
 type Props = {
   derivationIndex: number;
@@ -75,6 +82,8 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.TRANSFER}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

@@ -11,6 +11,8 @@ import {
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
 import apis from '../../../api';
@@ -172,6 +174,8 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
 
   return (
     <MetamaskConfirmAction
+      analyticAction={CONFIRM_METAMASK_ACTION.ADD_TOKEN}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}
