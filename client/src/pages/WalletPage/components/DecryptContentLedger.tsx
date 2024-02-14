@@ -9,9 +9,10 @@ import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
 import {
   ACTIONS,
   FIO_ACTION_NAMES,
+  FIO_CONTENT_TYPES,
   FIO_REQUEST_STATUS_TYPES,
 } from '../../../constants/fio';
-import { CONTENT_TYPES, FIO_RECORD_TYPES } from '../constants';
+import { FIO_RECORD_TYPES } from '../constants';
 
 import { getPath } from '../../../util/ledger';
 import { camelizeObjKeys } from '../../../utils';
@@ -47,8 +48,8 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     const { itemData, fioRecordType, paymentOtbData } = submitData;
     const contentType =
       fioRecordType === FIO_RECORD_TYPES.DATA
-        ? CONTENT_TYPES.RECORD_OBT_DATA
-        : CONTENT_TYPES.NEW_FUNDS;
+        ? FIO_CONTENT_TYPES.RECORD_OBT_DATA
+        : FIO_CONTENT_TYPES.NEW_FUNDS;
     const context =
       fioRecordType === FIO_RECORD_TYPES.DATA
         ? FIO_ACTION_NAMES[ACTIONS.recordObtData]
@@ -91,7 +92,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
       const paymentDecryptedContent = camelizeObjKeys(
         deserialize(
           new Serialize.SerialBuffer({ array: paymentDecodedMessage.message }),
-          CONTENT_TYPES.RECORD_OBT_DATA,
+          FIO_CONTENT_TYPES.RECORD_OBT_DATA,
         ),
       );
 

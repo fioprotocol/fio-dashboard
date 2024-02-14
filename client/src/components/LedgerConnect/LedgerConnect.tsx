@@ -9,6 +9,7 @@ import ConnectionModal from '../Modal/ConnectionModal';
 import useEffectOnce from '../../hooks/general';
 import { getPubKeyFromLedger, handleLedgerError } from '../../util/ledger';
 import { fireActionAnalyticsEvent } from '../../util/analytics';
+import { log } from '../../util/general';
 
 import { DISCONNECTED_DEVICE_DURING_OPERATION_ERROR } from '../../constants/errors';
 

@@ -51,7 +51,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
 
   const submit = useCallback(
     async (appFio: LedgerFioApp) => {
-      const { cartItems, prices, isFreeAllowed } = submitData;
+      const { cartItems, prices } = submitData;
 
       const results: RegistrationResult = {
         errors: [],
@@ -63,7 +63,6 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
       const registrations = makeRegistrationOrder(
         [...cartItems],
         prices.nativeFio,
-        isFreeAllowed,
       );
       for (const registration of registrations) {
         if (!registration.isFree) {
