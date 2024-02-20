@@ -245,6 +245,14 @@ export const useContext = (): {
     [cartId, history, prices?.nativeFio, roe, setWallet],
   );
 
+  const cancelOrder = useCallback(() => {
+    if (order?.id) {
+      apis.orders.update(order.id, {
+        status: PURCHASE_RESULTS_STATUS.CANCELED,
+      });
+    }
+  }, [order?.id]);
+
   useEffectOnce(
     () => {
       if (!isEmpty(fioWallets)) {
@@ -346,20 +354,20 @@ export const useContext = (): {
   );
 
   useEffect(() => {
-    const cancelOrder = () => {
-      if (order?.id) {
-        apis.orders.update(order.id, {
-          status: PURCHASE_RESULTS_STATUS.CANCELED,
-        });
-      }
-    };
-
     window.addEventListener('beforeunload', cancelOrder);
 
     return () => {
       window.removeEventListener('beforeunload', cancelOrder);
     };
-  }, [order?.id]);
+  }, [cancelOrder]);
+
+  useEffect(() => {
+    return () => {
+      if (history?.location?.pathname !== ROUTES.PURCHASE) {
+        cancelOrder();
+      }
+    };
+  }, [cancelOrder, history?.location?.pathname]);
 
   useEffect(() => {
     if (noProfileLoaded || !cartItems.length) {
