@@ -57,6 +57,7 @@ export default class PaymentsWebhook extends Base {
     const paymentStatuses = paymentProcessor.mapPaymentStatus(
       webhookData.status,
       webhookData.type,
+      webhookData.outcome,
     );
     // Your IPN handler must always check to see if a payment has already been handled
     // before to avoid double-crediting users, etc. in the case of duplicate IPNs.
