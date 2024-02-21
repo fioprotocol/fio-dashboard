@@ -26,6 +26,7 @@ import { CartItem } from '../../../types';
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
   const {
     cart,
+    order,
     payment,
     paymentOption,
     paymentProviderError,
@@ -95,6 +96,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         cart={cart}
         onFinish={onFinish}
         beforeSubmit={beforePaymentSubmit}
+        orderNumber={order?.number}
         submitDisabled={submitDisabled}
         payment={payment}
       />

@@ -62,4 +62,7 @@ export default class Cart extends Base {
   createCartFromOrder(orderId: string): Promise<CartResponseType> {
     return this.apiClient.post('cart-create-from-order', { orderId });
   }
+  getUsersCart(): Promise<CartResponseType> {
+    return this.apiClient.get('get-users-cart');
+  }
 }

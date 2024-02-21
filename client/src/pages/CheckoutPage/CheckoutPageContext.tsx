@@ -4,7 +4,10 @@ import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
-import { setWallet as setWalletAction } from '../../redux/cart/actions';
+import {
+  getUsersCart,
+  setWallet as setWalletAction,
+} from '../../redux/cart/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 
@@ -33,13 +36,13 @@ import {
 
 import apis from '../../api';
 
-import { onPurchaseFinish } from '../../util/purchase';
 import MathOp from '../../util/math';
 import { totalCost, cartIsRelative } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
+import useQuery from '../../hooks/useQuery';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -51,6 +54,7 @@ import {
 } from '../../constants/purchase';
 import { CART_ITEM_TYPE, WALLET_CREATED_FROM } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import {
   RegistrationResult,
@@ -63,9 +67,12 @@ import {
   PaymentProvider,
   PaymentOptionsProps,
   Order,
+  RedirectLinkData,
 } from '../../types';
 import { BeforeSubmitData, BeforeSubmitState } from './types';
 import { CreateOrderActionData } from '../../redux/types';
+import { STRIPE_REDIRECT_STATUSES } from './constants';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
 const SIGN_TX_MAX_FEE_COEFF = 1.5;
 
@@ -124,6 +131,15 @@ export const useContext = (): {
     (paymentWalletPublicKey: string) =>
       dispatch(setWalletAction(paymentWalletPublicKey)),
     [dispatch],
+  );
+
+  const queryParams = useQuery();
+  const stripePaymentIntentParam = queryParams.get(
+    QUERY_PARAMS_NAMES.STRIPE_PAYMENT_INTENT,
+  );
+  const orderNumberParam = queryParams.get(QUERY_PARAMS_NAMES.ORDER_NUMBER);
+  const stripeRedirectStatusParam = queryParams.get(
+    QUERY_PARAMS_NAMES.STRIPE_REDIRECT_STATUS,
   );
 
   const [
@@ -347,10 +363,45 @@ export const useContext = (): {
     ],
     isAuth &&
       order === null &&
+      !orderNumberParam &&
       !getOrderLoading &&
       !fioLoading &&
       !!paymentWalletPublicKey &&
       !!fioWallets.length,
+  );
+
+  useEffectOnce(
+    () => {
+      if (
+        stripePaymentIntentParam &&
+        orderNumberParam &&
+        stripeRedirectStatusParam &&
+        isAuth
+      ) {
+        if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.SUCCEEDED) {
+          history.push({
+            pathname: ROUTES.PURCHASE,
+            search: `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumberParam}`,
+          });
+        }
+        if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.FAILED) {
+          dispatch(getUsersCart());
+          history.replace(ROUTES.CHECKOUT, {});
+        }
+      }
+    },
+    [
+      history,
+      isAuth,
+      orderNumberParam,
+      stripePaymentIntentParam,
+      stripeRedirectStatusParam,
+      dispatch,
+      getOrder,
+    ],
+    !!stripePaymentIntentParam &&
+      !!stripeRedirectStatusParam &&
+      !!orderNumberParam,
   );
 
   useEffect(() => {
@@ -370,10 +421,31 @@ export const useContext = (): {
   }, [cancelOrder, history?.location?.pathname]);
 
   useEffect(() => {
-    if (noProfileLoaded || !cartItems.length) {
+    if (noProfileLoaded || (!cartItems.length && !stripeRedirectStatusParam)) {
+      if (stripeRedirectStatusParam) {
+        const redirectParams: RedirectLinkData = {
+          pathname: '',
+        };
+
+        if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.SUCCEEDED) {
+          redirectParams.pathname = ROUTES.PURCHASE;
+          redirectParams.search = `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumberParam}`;
+        } else {
+          redirectParams.pathname = ROUTES.CHECKOUT;
+        }
+
+        dispatch(setRedirectPath(redirectParams));
+      }
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [cartItems.length, noProfileLoaded, history]);
+  }, [
+    cartItems?.length,
+    noProfileLoaded,
+    history,
+    orderNumberParam,
+    stripeRedirectStatusParam,
+    dispatch,
+  ]);
 
   // Redirect back to cart when payment option is FIO and not enough FIO tokens
   useEffect(() => {
@@ -430,13 +502,18 @@ export const useContext = (): {
       publicKey: paymentWalletPublicKey,
       results,
     });
-    onPurchaseFinish({
-      order,
-      isCheckout: true,
-      setProcessing: (isProcessing: boolean) =>
-        dispatch(setProcessing(isProcessing)),
-      history,
-    });
+
+    setProcessing(false);
+
+    history.push(
+      {
+        pathname: ROUTES.PURCHASE,
+        search: `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${order.number}`,
+      },
+      {
+        orderId: order.id,
+      },
+    );
   };
 
   const beforePaymentSubmit = async (

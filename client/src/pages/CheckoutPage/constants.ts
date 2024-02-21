@@ -50,3 +50,8 @@ export const STRIPE_ELEMENT_OPTIONS: StripeElementsOptions = {
   appearance: APPEARANCE_STRIPE_OPTIONS,
   loader: 'always',
 };
+
+export const STRIPE_REDIRECT_STATUSES = {
+  FAILED: 'failed',
+  SUCCEEDED: 'succeeded',
+};
