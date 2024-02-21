@@ -10,6 +10,7 @@ export default {
     limit: 1024 * 1024,
     verify: (req, res, buf) => {
       logger.info('buf', buf);
+      logger.info('Buffer:', buf.toString('utf8'));
       try {
         JSON.parse(buf);
         req.rawBody = buf.toString('utf8');
