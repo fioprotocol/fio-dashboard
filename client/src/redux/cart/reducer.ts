@@ -15,6 +15,7 @@ export default combineReducers({
       case actions.GET_CART_REQUEST_REQUEST:
       case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST:
       case actions.CREATE_CART_FROM_ORDER_REQUEST:
+      case actions.GET_USERS_CART_REQUEST:
         return true;
       case actions.ADD_ITEM_SUCCESS:
       case actions.ADD_ITEM_FAILURE:
@@ -30,6 +31,8 @@ export default combineReducers({
       case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE:
       case actions.CREATE_CART_FROM_ORDER_SUCCESS:
       case actions.CREATE_CART_FROM_ORDER_FAILURE:
+      case actions.GET_USERS_CART_SUCCESS:
+      case actions.GET_USERS_CART_FAILURE:
         return false;
       default:
         return state;
@@ -56,6 +59,12 @@ export default combineReducers({
       case actions.CREATE_CART_FROM_ORDER_SUCCESS: {
         return action.data.id;
       }
+      case actions.GET_USERS_CART_SUCCESS: {
+        if (action.data.items?.length === 0) {
+          return null;
+        }
+        return action.data.id;
+      }
       default:
         return state;
     }
@@ -63,21 +72,16 @@ export default combineReducers({
   cartItems(state: CartItem[] = [], action = {}) {
     switch (action.type) {
       case actions.ADD_ITEM_SUCCESS:
-        return action.data.items;
       case actions.DELETE_ITEM_SUCCESS:
+      case actions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+      case actions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS:
+      case actions.GET_CART_REQUEST_SUCCESS:
+      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
+      case actions.CREATE_CART_FROM_ORDER_SUCCESS:
+      case actions.GET_USERS_CART_SUCCESS:
         return action.data.items;
       case actions.CLEAR_CART_SUCCESS:
         return [];
-      case actions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
-        return action.data.items;
-      case actions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS:
-        return action.data.items;
-      case actions.GET_CART_REQUEST_SUCCESS:
-        return action.data.items;
-      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
-        return action.data.items;
-      case actions.CREATE_CART_FROM_ORDER_SUCCESS:
-        return action.data.items;
       default:
         return state;
     }

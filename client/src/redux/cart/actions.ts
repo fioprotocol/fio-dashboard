@@ -163,3 +163,16 @@ export const setWallet = (walletPublicKey: string): CommonAction => ({
 export const unsetWallet = (): CommonAction => ({
   type: UNSET_WALLET_FOR_PAYMENT,
 });
+
+export const GET_USERS_CART_REQUEST = `${prefix}/GET_USERS_CART_REQUEST`;
+export const GET_USERS_CART_SUCCESS = `${prefix}/GET_USERS_CART_SUCCESS`;
+export const GET_USERS_CART_FAILURE = `${prefix}/GET_USERS_CART_FAILURE`;
+
+export const getUsersCart = (): CommonPromiseAction => ({
+  types: [
+    GET_USERS_CART_REQUEST,
+    GET_USERS_CART_SUCCESS,
+    GET_USERS_CART_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.getUsersCart(),
+});

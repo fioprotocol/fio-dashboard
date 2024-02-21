@@ -21,6 +21,7 @@ import {
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
 import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import {
   fireAnalyticsEvent,
@@ -29,6 +30,8 @@ import {
 import { log } from '../../../util/general';
 
 import apis from '../../../api';
+
+import { ROUTES } from '../../../constants/routes';
 
 import { BeforeSubmitData } from '../types';
 import { CartItem as CartItemType, Payment } from '../../../types';
@@ -47,8 +50,16 @@ export const StripeForm: React.FC<{
   onFinish: (success: boolean, data?: BeforeSubmitData) => void;
   beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   submitDisabled?: boolean;
+  orderNumber: string;
   payment: Payment;
-}> = ({ cart, onFinish, beforeSubmit, payment, submitDisabled = false }) => {
+}> = ({
+  cart,
+  onFinish,
+  beforeSubmit,
+  orderNumber,
+  payment,
+  submitDisabled = false,
+}) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -89,6 +100,11 @@ export const StripeForm: React.FC<{
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       redirect: 'if_required',
+      confirmParams: {
+        return_url: `${process.env.REACT_APP_BASE_URL?.slice(0, -1)}${
+          ROUTES.CHECKOUT
+        }?${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumber}`,
+      },
     });
     confirmRef.current = false;
 
