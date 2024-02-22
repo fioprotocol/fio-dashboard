@@ -218,3 +218,8 @@ export const PURCHASE_RESULTS_TITLES: { [key: number]: { title: string } } = {
     title: 'Canceled!',
   },
 };
+
+export const STRIPE_REDIRECT_STATUSES = {
+  FAILED: 'failed',
+  SUCCEEDED: 'succeeded',
+};
