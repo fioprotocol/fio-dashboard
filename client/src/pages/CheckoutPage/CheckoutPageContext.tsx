@@ -10,6 +10,7 @@ import {
 } from '../../redux/cart/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -56,6 +57,7 @@ import {
 import { CART_ITEM_TYPE, WALLET_CREATED_FROM } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { STRIPE_REDIRECT_STATUSES } from '../../constants/purchase';
 
 import {
   RegistrationResult,
@@ -72,8 +74,6 @@ import {
 } from '../../types';
 import { BeforeSubmitData, BeforeSubmitState } from './types';
 import { CreateOrderActionData } from '../../redux/types';
-import { STRIPE_REDIRECT_STATUSES } from './constants';
-import { setRedirectPath } from '../../redux/navigation/actions';
 
 const SIGN_TX_MAX_FEE_COEFF = 1.5;
 

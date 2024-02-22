@@ -30,7 +30,7 @@ import useEffectOnce from '../hooks/general';
 
 import { ROUTES } from '../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
-import { STRIPE_REDIRECT_STATUSES } from '../pages/CheckoutPage/constants';
+import { STRIPE_REDIRECT_STATUSES } from '../constants/purchase';
 
 import { RedirectLinkData, Unknown } from '../types';
 
