@@ -23,6 +23,7 @@ import {
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
+  loading as cartLoadingSelector,
 } from '../../redux/cart/selectors';
 import {
   isAuthenticated as isAuthenticatedSelector,
@@ -123,6 +124,7 @@ export const useContext = (): {
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
   );
+  const cartLoading = useSelector(cartLoadingSelector);
 
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
@@ -153,7 +155,7 @@ export const useContext = (): {
   const [createOrderLoading, setCreateOrderLoading] = useState<boolean>(true);
 
   const {
-    location: { state },
+    location: { state, search },
   } = history;
   const {
     orderParams: orderParamsFromLocation,
@@ -421,7 +423,7 @@ export const useContext = (): {
   }, [cancelOrder, history?.location?.pathname]);
 
   useEffect(() => {
-    if (noProfileLoaded || (!cartItems.length && !stripeRedirectStatusParam)) {
+    if (noProfileLoaded || (isAuth && !cartItems.length && !cartLoading)) {
       if (stripeRedirectStatusParam) {
         const redirectParams: RedirectLinkData = {
           pathname: '',
@@ -432,6 +434,7 @@ export const useContext = (): {
           redirectParams.search = `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumberParam}`;
         } else {
           redirectParams.pathname = ROUTES.CHECKOUT;
+          redirectParams.search = search;
         }
 
         dispatch(setRedirectPath(redirectParams));
@@ -440,9 +443,12 @@ export const useContext = (): {
     }
   }, [
     cartItems?.length,
+    cartLoading,
+    isAuth,
     noProfileLoaded,
     history,
     orderNumberParam,
+    search,
     stripeRedirectStatusParam,
     dispatch,
   ]);
