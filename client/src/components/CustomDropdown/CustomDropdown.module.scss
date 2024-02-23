@@ -129,6 +129,10 @@
   max-height: 250px;
   animation-name: expand;
   animation-duration: 0.4s;
+
+  &.hasRelativePosition {
+    position: relative;
+  }
 }
 
 .optionItem {

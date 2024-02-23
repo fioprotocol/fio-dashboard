@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import Modal from '../../../components/Modal/Modal';
 import Dropdown from '../../../components/Input/Dropdown';
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 
 import { COLOR_TYPE } from '../../../components/Input/ErrorBadge';
 import { INPUT_UI_STYLES } from '../../../components/Input/TextInput';
@@ -16,11 +16,11 @@ import { FormValuesProps } from '../types';
 import classes from '../styles/AffiliateModal.module.scss';
 
 type Props = {
-  showModal: boolean;
-  onCloseModal: () => void;
   fioAddresses: FioAddressDoublet[];
-  onAffiliateUpdate: (values: FormValuesProps) => void;
+  showModal: boolean;
   user: User;
+  onAffiliateUpdate: (values: FormValuesProps) => void;
+  onCloseModal: () => void;
 };
 
 export const AffiliateModal: React.FC<Props> = props => {
@@ -56,7 +56,6 @@ export const AffiliateModal: React.FC<Props> = props => {
           validate={formValidation.validateForm}
         >
           {({ handleSubmit }: FormRenderProps) => (
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             <form onSubmit={handleSubmit}>
               <Field
                 name="fch"
@@ -71,10 +70,9 @@ export const AffiliateModal: React.FC<Props> = props => {
                 isSimple
                 isHigh
                 isWhite
+                hasRelativePosition
               />
-              <Button className={classes.button} type="submit">
-                Update
-              </Button>
+              <SubmitButton className={classes.button} text="Update" />
             </form>
           )}
         </Form>

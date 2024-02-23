@@ -9,6 +9,8 @@ import { AffiliateModal } from './components/AffiliateModal';
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+
 import { useContext } from './FioAffiliateProgramPageContext';
 
 import classes from './styles/FioAffiliateProgramPage.module.scss';
@@ -23,6 +25,7 @@ const FioAffiliateProgramPage: React.FC = () => {
     user,
     link,
     tpid,
+    walletPublicKey,
   } = useContext();
 
   return (
@@ -30,7 +33,7 @@ const FioAffiliateProgramPage: React.FC = () => {
       <div className={classes.textContainer}>
         <h1 className={classes.title}>
           FIO Domain Affiliate Program{' '}
-          <span className={classes.activeBadge}>Active</span>
+          <span className={classes.activeBadge}>ACTIVE</span>
         </h1>
 
         <div className={classes.text}>
@@ -38,6 +41,11 @@ const FioAffiliateProgramPage: React.FC = () => {
           through your link, you earn <span className="throughText">10%</span>{' '}
           50% of that purchase value.
         </div>
+
+        <p className={classes.info}>
+          Please Note: Payouts are only made on the first year of new domain
+          registration, even if registration is made for multiple years.
+        </p>
 
         <div className={classes.text}>
           For additional details,{' '}
@@ -70,6 +78,20 @@ const FioAffiliateProgramPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {walletPublicKey && (
+          <div className={classes.text}>
+            Go to assosiated wallet{' '}
+            <Link
+              to={{
+                pathname: ROUTES.FIO_WALLET,
+                search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${walletPublicKey}`,
+              }}
+            >
+              {walletPublicKey}
+            </Link>
+          </div>
+        )}
 
         <div className="boldText">Payment Information</div>
         <InfoBadge

@@ -13,4 +13,5 @@ export type FioAffiliateProgramPageContextProps = {
   user: User;
   link: string;
   tpid: string;
+  walletPublicKey?: string;
 };
