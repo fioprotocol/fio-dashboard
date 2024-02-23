@@ -27,6 +27,12 @@
     margin: 1% auto;
   }
 
+  .info {
+    @include proxima-nova-thin-it;
+    font-size: 0.875em;
+    margin: 20px 0;
+  }
+
   .buttonContainer {
     margin: 1% auto;
   }

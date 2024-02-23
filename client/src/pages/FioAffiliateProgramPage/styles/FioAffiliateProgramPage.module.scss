@@ -23,21 +23,30 @@
 
   .title {
     font-size: 2rem;
-    @include proxima-nova-thin;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    @include proxima-nova-semibold;
   }
 
   .text {
     margin: 20px 0;
-    @include proxima-nova-bold;
+    @include proxima-nova-regular;
 
     a {
       @include proxima-nova-regular;
+      color: $bright-turquoise;
     }
+  }
+
+  .info {
+    @include proxima-nova-regular-it;
+    font-size: 0.75em;
   }
 
   .fieldsContainer {
     display: flex;
-    margin: 10px 0;
+    margin: 30px 0;
     gap: 20px;
 
     .field {
@@ -65,7 +74,7 @@
         width: 100%;
         background: $gallery;
         border-radius: 5px;
-        @include proxima-nova-regular-it;
+        @include proxima-nova-semibold;
 
         svg {
           top: 0;
@@ -86,9 +95,9 @@
     margin-left: 10px;
     background: $green-main;
     color: $white;
-    padding: 5px 10px;
-    font-size: 0.875rem;
-    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 0.625rem;
+    border-radius: 100px;
     vertical-align: super;
   }
 }
