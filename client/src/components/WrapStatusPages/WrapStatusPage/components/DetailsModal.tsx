@@ -303,12 +303,9 @@ const DetailsModal: React.FC<Props> = props => {
                     </div>
                     <div>{JSON.stringify(!!approvals.isComplete)}</div>
                   </div>
-                  <CommandComponent
-                    commandString={wrapCommand}
-                    show={isFailed}
-                  />
                 </>
               )}
+              <CommandComponent commandString={wrapCommand} show={isFailed} />
               {approvals.txIds && (
                 <>
                   <div className="mr-3 mt-3">
