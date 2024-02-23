@@ -22,7 +22,9 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   const user = useSelector(userSelector);
   const fioAddresses = useSelector(fioAddressesSelector);
   const history = useHistory();
+
   const [showModal, toggleShowModal] = useState(false);
+
   const onOpenModal = useCallback(() => toggleShowModal(true), []);
   const onCloseModal = useCallback(() => toggleShowModal(false), []);
 
@@ -39,9 +41,14 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   const onAffiliateUpdate = useCallback(
     (data: FormValuesProps) => {
       dispatch(updateAffiliate(data.fch));
+      onCloseModal();
     },
-    [dispatch],
+    [dispatch, onCloseModal],
   );
+
+  const walletPublicKey = fioAddresses.find(
+    fioAddressItem => fioAddressItem.name === user?.affiliateProfile?.tpid,
+  )?.walletPublicKey;
 
   return {
     showModal,
@@ -52,5 +59,6 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     user,
     link: `${window.location.origin}/ref/${user?.affiliateProfile?.code}`,
     tpid: user?.affiliateProfile?.tpid,
+    walletPublicKey,
   };
 };
