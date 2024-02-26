@@ -35,7 +35,7 @@ export default class Auth extends Base {
   login(data: {
     email: string;
     edgeWallets?: FioWalletDoublet[];
-    signature: string;
+    signatures: string[];
     challenge: string;
     referrerCode?: string;
     timeZone?: string;
