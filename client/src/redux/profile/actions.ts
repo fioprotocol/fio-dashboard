@@ -62,12 +62,14 @@ export const makeNonce = ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
     const { nonce, email } = await api.auth.nonce(username);
-    const signature: string = Ecc.sign(nonce, Object.values(keys)[0].private);
+    const signatures: string[] = Object.values(keys).map(keysItem =>
+      Ecc.sign(nonce, keysItem.private),
+    );
     return {
       email,
       edgeWallets,
       nonce,
-      signature,
+      signatures,
       otpKey,
       voucherId,
       isPinLogin,
@@ -83,7 +85,7 @@ export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 export const login = ({
   email,
   edgeWallets,
-  signature,
+  signatures,
   challenge,
   referrerCode,
   timeZone,
@@ -94,7 +96,7 @@ export const login = ({
 }: {
   email: string;
   edgeWallets: FioWalletDoublet[];
-  signature: string;
+  signatures: string[];
   challenge: string;
   referrerCode?: string;
   timeZone?: string;
@@ -108,7 +110,7 @@ export const login = ({
     api.auth.login({
       email,
       edgeWallets,
-      signature,
+      signatures,
       challenge,
       referrerCode,
       timeZone,
@@ -335,4 +337,17 @@ export const SET_IS_NEW_USER = `${prefix}/SET_IS_NEW_USER`;
 export const setIsNewUser = (isNewUser: boolean): CommonAction => ({
   type: SET_IS_NEW_USER,
   isNewUser,
+});
+
+export const GET_USERS_WALLETS_REQUEST = `${prefix}/GET_USERS_WALLETS_REQUEST`;
+export const GET_USERS_WALLETS_SUCCESS = `${prefix}/GET_USERS_WALLETS_SUCCESS`;
+export const GET_USERS_WALLETS_FAILURE = `${prefix}/GET_USERS_WALLETS_FAILURE`;
+
+export const getUserWallets = (): CommonPromiseAction => ({
+  types: [
+    GET_USERS_WALLETS_REQUEST,
+    GET_USERS_WALLETS_SUCCESS,
+    GET_USERS_WALLETS_FAILURE,
+  ],
+  promise: (api: Api) => api.account.getWallets(),
 });
