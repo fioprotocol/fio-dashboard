@@ -3,7 +3,7 @@ import Base from '../Base';
 import { Wallet } from '../../models';
 import X from '../Exception';
 
-export default class WalletsUpdate extends Base {
+export default class WalletsUpdateList extends Base {
   static get validationRules() {
     return {
       data: [

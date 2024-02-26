@@ -162,7 +162,7 @@ export function* nonceSuccess(): Generator {
     const {
       email,
       edgeWallets,
-      signature,
+      signatures,
       nonce,
       otpKey,
       voucherId,
@@ -175,7 +175,7 @@ export function* nonceSuccess(): Generator {
       login({
         email,
         edgeWallets,
-        signature,
+        signatures,
         challenge: nonce,
         timeZone,
         otpKey,
