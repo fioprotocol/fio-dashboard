@@ -19,8 +19,7 @@ const accordionContent = [
     title: 'How much can I earn?',
     subtitle:
       'Please Note: Payouts are only made on the first year of new domain registration, even if registration is made for multiple years.',
-    text:
-      'The cost of FIO Domains vary, but is typically around $40 for 1 year. The percentage of payout will remain at 50% until New User Bounty token pool is depleted, at which point it will be reduced to 10%.',
+    text: `The cost of FIO Domains vary, but is typically around $40 for 1 year. The percentage of payout will remain at 50% until <a href="https://fio.net/token/distribution" target="_blank" rel="noreferrer">New User Bounty token pool</a> is depleted, at which point it will be reduced to 10%.`,
   },
   {
     title: 'How will I receive the payment?',
