@@ -59,6 +59,8 @@ export default class AuthCreate extends Base {
           verified = User.verify(challenge, edgeWallet.publicKey, signature);
           if (verified) break;
         }
+
+        if (verified) break;
       }
     } else {
       for (const wallet of wallets) {
@@ -66,6 +68,8 @@ export default class AuthCreate extends Base {
           verified = User.verify(challenge, wallet.publicKey, signature);
           if (verified) break;
         }
+
+        if (verified) break;
       }
     }
 
