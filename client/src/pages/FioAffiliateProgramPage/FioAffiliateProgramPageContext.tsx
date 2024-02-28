@@ -46,10 +46,6 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     [dispatch, onCloseModal],
   );
 
-  const walletPublicKey = fioAddresses.find(
-    fioAddressItem => fioAddressItem.name === user?.affiliateProfile?.tpid,
-  )?.walletPublicKey;
-
   return {
     showModal,
     onCloseModal,
@@ -59,6 +55,5 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     user,
     link: `${window.location.origin}/ref/${user?.affiliateProfile?.code}`,
     tpid: user?.affiliateProfile?.tpid,
-    walletPublicKey,
   };
 };
