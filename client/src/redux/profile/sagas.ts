@@ -58,9 +58,11 @@ import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
 export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
-    const hasRedirectTo: { pathname: string; state: object } = yield select(
-      redirectLink,
-    );
+    const hasRedirectTo: {
+      pathname: string;
+      state: object;
+      search: string;
+    } = yield select(redirectLink);
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
     if (action.isSignUp) {
@@ -105,7 +107,11 @@ export function* loginSuccess(history: History, api: Api): Generator {
       });
     }
     if (hasRedirectTo) {
-      history.push(hasRedirectTo.pathname, hasRedirectTo.state);
+      history.push({
+        pathname: hasRedirectTo.pathname,
+        state: hasRedirectTo.state,
+        search: hasRedirectTo.search,
+      });
       yield put<Action>(setRedirectPath(null));
     }
 
