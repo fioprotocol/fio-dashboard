@@ -9,8 +9,6 @@ import { AffiliateModal } from './components/AffiliateModal';
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-
 import { useContext } from './FioAffiliateProgramPageContext';
 
 import classes from './styles/FioAffiliateProgramPage.module.scss';
@@ -25,7 +23,6 @@ const FioAffiliateProgramPage: React.FC = () => {
     user,
     link,
     tpid,
-    walletPublicKey,
   } = useContext();
 
   return (
@@ -78,20 +75,6 @@ const FioAffiliateProgramPage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {walletPublicKey && (
-          <div className={classes.text}>
-            Go to assosiated wallet{' '}
-            <Link
-              to={{
-                pathname: ROUTES.FIO_WALLET,
-                search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${walletPublicKey}`,
-              }}
-            >
-              {walletPublicKey}
-            </Link>
-          </div>
-        )}
 
         <div className="boldText">Payment Information</div>
         <InfoBadge
