@@ -71,6 +71,7 @@ import {
   PaymentOptionsProps,
   Order,
   RedirectLinkData,
+  AnyObject,
 } from '../../types';
 import { BeforeSubmitData, BeforeSubmitState } from './types';
 import { CreateOrderActionData } from '../../redux/types';
@@ -153,10 +154,14 @@ export const useContext = (): {
   const [orderError, setOrderError] = useState<ApiError>(null);
   const [getOrderLoading, setGetOrderLoading] = useState<boolean>(true);
   const [createOrderLoading, setCreateOrderLoading] = useState<boolean>(true);
+  const [cartLoadingStarted, toggleCartLoadingStarted] = useState<boolean>(
+    false,
+  );
 
-  const {
-    location: { state, search },
-  } = history;
+  const location = history.location;
+
+  const { state, search, query } = (location as AnyObject) || {};
+
   const {
     orderParams: orderParamsFromLocation,
   }: { orderParams?: CreateOrderActionData } = state || {}; // todo: implement setting order params from places where we going to checkout page
@@ -291,7 +296,9 @@ export const useContext = (): {
       getOrder();
     },
     [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
-    fioWallets.length > 0,
+    fioWallets.length > 0 &&
+      (!orderNumberParam ||
+        (orderNumberParam && !cartLoading && cartLoadingStarted)),
   );
 
   const isFree =
@@ -381,6 +388,16 @@ export const useContext = (): {
         isAuth
       ) {
         if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.SUCCEEDED) {
+          const redirectParams = {
+            pathname: ROUTES.PURCHASE,
+            search: `?${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumberParam}`,
+            query: {
+              [QUERY_PARAMS_NAMES.ORDER_NUMBER]: orderNumberParam,
+            },
+          };
+
+          dispatch(setRedirectPath(redirectParams));
+
           history.push({
             pathname: ROUTES.PURCHASE,
             search: `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumberParam}`,
@@ -388,7 +405,6 @@ export const useContext = (): {
         }
         if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.FAILED) {
           dispatch(getUsersCart());
-          history.replace(ROUTES.CHECKOUT, {});
         }
       }
     },
@@ -423,27 +439,32 @@ export const useContext = (): {
   }, [cancelOrder, history?.location?.pathname]);
 
   useEffect(() => {
-    if (noProfileLoaded || (isAuth && !cartItems.length && !cartLoading)) {
+    if (
+      noProfileLoaded ||
+      (isAuth &&
+        !cartItems.length &&
+        (!orderNumberParam ||
+          (orderNumberParam &&
+            stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.FAILED &&
+            !cartLoading &&
+            cartLoadingStarted)))
+    ) {
       if (stripeRedirectStatusParam) {
         const redirectParams: RedirectLinkData = {
-          pathname: '',
+          pathname: ROUTES.CHECKOUT,
+          search,
+          query,
         };
-
-        if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.SUCCEEDED) {
-          redirectParams.pathname = ROUTES.PURCHASE;
-          redirectParams.search = `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${orderNumberParam}`;
-        } else {
-          redirectParams.pathname = ROUTES.CHECKOUT;
-          redirectParams.search = search;
-        }
 
         dispatch(setRedirectPath(redirectParams));
       }
+
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [
-    cartItems?.length,
+    cartItems.length,
     cartLoading,
+    cartLoadingStarted,
     isAuth,
     noProfileLoaded,
     history,
@@ -451,6 +472,7 @@ export const useContext = (): {
     search,
     stripeRedirectStatusParam,
     dispatch,
+    query,
   ]);
 
   // Redirect back to cart when payment option is FIO and not enough FIO tokens
@@ -495,10 +517,20 @@ export const useContext = (): {
     };
   }, [dispatch]);
 
+  useEffectOnce(
+    () => {
+      toggleCartLoadingStarted(cartLoading);
+    },
+    [cartLoading],
+    cartLoading,
+  );
+
   const onClose = useCallback(() => {
-    apis.orders.update(order.id, {
-      status: PURCHASE_RESULTS_STATUS.CANCELED,
-    });
+    if (order?.id) {
+      apis.orders.update(order.id, {
+        status: PURCHASE_RESULTS_STATUS.CANCELED,
+      });
+    }
     history.push(ROUTES.CART);
   }, [order, history]);
 
@@ -509,7 +541,7 @@ export const useContext = (): {
       results,
     });
 
-    setProcessing(false);
+    dispatch(setProcessing(false));
 
     history.push(
       {
