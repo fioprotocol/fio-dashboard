@@ -92,6 +92,7 @@ const featureItems = [
 const SeeMoreLink = 'https://fio.net/discover/features-benefits';
 const SayferLogo =
   'https://sayfer.io/audits/metamask-snap-audit-report-for-fio/';
+const videoId = 'uVoBj2nf9cQ';
 
 const CustomToggle = ({
   eventKey,
@@ -239,6 +240,18 @@ const MetamaskLandingPage: React.FC = () => {
                 text={<span className={classes.buttonText}>See More</span>}
               />
             </a>
+          </div>
+        </section>
+        <section className={classes.videoSectionContainer}>
+          <div className={classes.videoContainer}>
+            <iframe
+              className={classes.videoFrame}
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              frameBorder="0"
+            ></iframe>
           </div>
         </section>
         <section className={classes.infoContainer}>
