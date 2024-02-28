@@ -29,6 +29,7 @@ import { user as userSelector } from '../redux/profile/selectors';
 
 import useEffectOnce from './general';
 import { isDomainExpired } from '../util/fio';
+import apis from '../api';
 
 import { NOT_FOUND } from '../constants/errors';
 import { ROUTES } from '../constants/routes';
@@ -110,7 +111,10 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     walletsFioAddressesLoading;
 
   useEffectOnce(() => {
-    dispatch(getUserWallets());
+    const token = apis.client.getToken();
+    if (token) {
+      dispatch(getUserWallets());
+    }
   }, []);
 
   useEffectOnce(

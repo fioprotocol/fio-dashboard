@@ -24,6 +24,7 @@ import {
   profileRefreshed,
 } from '../redux/profile/selectors';
 import { cartId } from '../redux/cart/selectors';
+import { redirectLink } from '../redux/navigation/selectors';
 
 import { compose } from '../utils';
 import useEffectOnce from '../hooks/general';
@@ -40,6 +41,7 @@ type Props = {
   lastActivityDate: number;
   isAuthenticated: boolean;
   profileRefreshed: boolean;
+  redirectLink: RedirectLinkData;
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
@@ -93,10 +95,8 @@ const AutoLogout = (
     lastActivityDate,
     isAuthenticated,
     profileRefreshed,
+    redirectLink,
     history,
-    history: {
-      location: { pathname, state, search, query },
-    },
     checkAuthToken,
     setLastActivity,
     logout,
@@ -115,7 +115,11 @@ const AutoLogout = (
     new Date().getTime(),
   );
 
+  const redirectParams = redirectLink || history.location;
+
   const enableClearCart = useCallback((): boolean => {
+    const { pathname, query = {} } = redirectParams || {};
+
     if (pathname !== ROUTES.CHECKOUT) {
       return true;
     } else {
@@ -132,7 +136,7 @@ const AutoLogout = (
 
       return !hasFailedStripeRedirect;
     }
-  }, [pathname, query]);
+  }, [redirectParams]);
 
   const clearChecksTimeout = () => {
     timeoutRef.current && clearTimeout(timeoutRef.current);
@@ -146,8 +150,8 @@ const AutoLogout = (
 
   activityTimeout = useCallback(() => {
     removeActivityListener();
-    setRedirectPath({ pathname, state, search, query });
-    enableClearCart &&
+    setRedirectPath(redirectParams);
+    enableClearCart() &&
       cartId &&
       dispatch(clearCart({ id: cartId, isNotify: true }));
     logout({ history });
@@ -156,10 +160,7 @@ const AutoLogout = (
   }, [
     cartId,
     history,
-    pathname,
-    search,
-    state,
-    query,
+    redirectParams,
     enableClearCart,
     logout,
     setRedirectPath,
@@ -284,6 +285,7 @@ const reduxConnect = connect(
     lastActivityDate,
     tokenCheckResult,
     profileRefreshed,
+    redirectLink,
   }),
   {
     setLastActivity,
