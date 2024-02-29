@@ -32,6 +32,7 @@ export const FEES_VAR_KEY = 'FIO_FEES';
 export const FEES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 5; // 5 min
 export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
 export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
+const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 const EndPoint = entities.EndPoint;
 
@@ -265,6 +266,11 @@ class Fio {
       (params.max_fee && new MathOp(params.max_fee).lt(DEFAULT_ACTION_FEE_AMOUNT))
     )
       params.max_fee = DEFAULT_ACTION_FEE_AMOUNT;
+
+    params.max_fee = new MathOp(params.max_fee)
+      .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+      .round(0)
+      .toNumber();
 
     try {
       if (auth.actor) {
