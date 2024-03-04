@@ -40,7 +40,9 @@ import { CheckedSocialMediaLinkType } from './types';
 
 type UseContextProps = {
   allChecked: boolean;
+  allowDisconnectAll: boolean;
   bundleCost: number;
+  checkedSocialMediaLinks: CheckedSocialMediaLinkType[];
   edgeWalletId: string;
   fioCryptoHandleObj: FioAddressWithPubAddresses;
   fioWallet: FioWalletDoublet;
@@ -61,6 +63,8 @@ type UseContextProps = {
   onCheckClick: (checkedId: string) => void;
   onRetry: () => void;
   onSuccess: () => void;
+  setSubmitData: (submitData: boolean | null) => void;
+  setResultsData: (submitData: LinkActionResult) => void;
   submit: ({ keys }: { keys: WalletKeys }) => Promise<void>;
 };
 
@@ -112,6 +116,8 @@ export const useContext = (): UseContextProps => {
       publicAddress.chainCode !== CHAIN_CODES.SOCIALS &&
       publicAddress.chainCode !== FIO_CHAIN_CODE,
   );
+
+  const allowDisconnectAll = allChecked && !hasTokenLinks;
 
   const fioWallet = fioWallets.find(
     ({ publicKey }) => publicKey === walletPublicKey,
@@ -213,7 +219,7 @@ export const useContext = (): UseContextProps => {
       fioAddress: fch,
       disconnectList: checkedSocialMediaLinks,
       keys,
-      disconnectAll: allChecked && !hasTokenLinks,
+      disconnectAll: allowDisconnectAll,
     };
     try {
       const actionResults = await minWaitTimeFunction(
@@ -257,7 +263,9 @@ export const useContext = (): UseContextProps => {
 
   return {
     allChecked,
+    allowDisconnectAll,
     bundleCost,
+    checkedSocialMediaLinks,
     edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
@@ -278,6 +286,8 @@ export const useContext = (): UseContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   };
 };

@@ -76,6 +76,8 @@ export const useContext = (): DeleteTokenContextProps => {
     publicAddress => publicAddress.chainCode === CHAIN_CODES.SOCIALS,
   );
 
+  const allowDisconnectAll = allChecked && !hasSocialMediaLinks;
+
   const fioWallet = fioWallets.find(
     ({ publicKey }) => publicKey === walletPublicKey,
   );
@@ -184,7 +186,7 @@ export const useContext = (): DeleteTokenContextProps => {
       fioAddress: fioCryptoHandleName,
       disconnectList: checkedPubAddresses,
       keys,
-      disconnectAll: allChecked && !hasSocialMediaLinks,
+      disconnectAll: allowDisconnectAll,
     };
     try {
       const actionResults = await minWaitTimeFunction(
@@ -215,7 +217,9 @@ export const useContext = (): DeleteTokenContextProps => {
 
   return {
     allChecked,
+    allowDisconnectAll,
     bundleCost,
+    checkedPubAddresses,
     edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
@@ -237,6 +241,8 @@ export const useContext = (): DeleteTokenContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   };
 };

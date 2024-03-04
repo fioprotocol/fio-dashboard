@@ -1,0 +1,37 @@
+@import '../../../assets/styles/fontMixins.scss';
+
+.icon {
+  width: 64px;
+  margin-top: 25px;
+}
+
+.title {
+  margin-top: 17px;
+  font-size: 22px;
+  @include proxima-nova-bold;
+}
+
+.loader {
+  margin-top: 17px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .loderText {
+    font-size: 0.975em;
+    margin-bottom: 0;
+    @include proxima-nova-semibold;
+  }
+}
+
+.text {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 0.875em;
+  @include proxima-nova-semibold;
+  text-align: center;
+}
+
+.errorMessage {
+  font-size: 13px !important;
+}

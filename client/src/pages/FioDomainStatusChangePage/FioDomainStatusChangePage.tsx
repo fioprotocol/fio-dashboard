@@ -6,6 +6,7 @@ import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import SetVisibilityResults from '../../components/common/TransactionResults/components/SetVisibilityResults';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { FioDomainStatusChangeMetamaskWallet } from './components/FioDomainStatusChangeMetamaskWallet';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -25,6 +26,8 @@ import apis from '../../api';
 import { ContainerProps } from './types';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
+import { handleFioServerResponse } from '../../util/fio';
+import { OnSuccessResponseResult } from '../../components/MetamaskConfirmAction';
 
 const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   const {
@@ -39,7 +42,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   } = props;
   const { name } = location.query;
 
-  const domainStatus: string = selectedFioDomain.isPublic
+  const domainStatus: string = selectedFioDomain?.isPublic
     ? DOMAIN_STATUS.PUBLIC
     : DOMAIN_STATUS.PRIVATE;
   const statusToChange =
@@ -57,9 +60,9 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     getFee();
-    selectedFioDomain.walletPublicKey &&
-      refreshBalance(selectedFioDomain.walletPublicKey);
-  }, []);
+    selectedFioDomain?.walletPublicKey &&
+      refreshBalance(selectedFioDomain?.walletPublicKey);
+  }, [getFee, refreshBalance, selectedFioDomain?.walletPublicKey]);
 
   // Submit
   const submit = async ({ keys }: SubmitActionParams) => {
@@ -80,13 +83,24 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     setSubmitData(null);
     setProcessing(false);
   };
-  const onSuccess = (result: { fee_collected: number }) => {
+  const onSuccess = (
+    result: { fee_collected: number } | OnSuccessResponseResult,
+  ) => {
     setSubmitData(null);
+
+    let feeCollected: number;
+
+    if ('fee_collected' in result) {
+      feeCollected = result.fee_collected;
+    } else {
+      if (!Array.isArray(result) && 'transaction_id' in result) {
+        feeCollected = handleFioServerResponse(result).fee_collected;
+      }
+    }
+
     setResultsData({
       feeCollected:
-        result.fee_collected && roe
-          ? convertFioPrices(result.fee_collected, roe)
-          : feePrice,
+        feeCollected && roe ? convertFioPrices(feeCollected, roe) : feePrice,
       name,
       changedStatus: statusToChange,
     });
@@ -126,7 +140,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
       </>
     );
 
-  if (!selectedFioDomain.walletPublicKey && !processing)
+  if (!selectedFioDomain?.walletPublicKey && !processing)
     return <Redirect to={{ pathname: ROUTES.FIO_DOMAINS }} />;
 
   return (
@@ -149,6 +163,18 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
+        <FioDomainStatusChangeMetamaskWallet
+          derivationIndex={fioWallet?.data?.derivationIndex}
+          processing={processing}
+          submitData={{ isPublic: selectedFioDomain.isPublic, name }}
+          startProcessing={!!submitData}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
         />
       ) : null}
 

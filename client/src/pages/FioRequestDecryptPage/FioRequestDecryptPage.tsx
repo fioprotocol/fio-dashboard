@@ -11,6 +11,7 @@ import FioRequestStatusBadge from '../../components/Badges/FioRequestStatusBadge
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
+import { DecryptContentMetamaskWallet } from '../WalletPage/components/DecryptContentMetamaskWallet';
 
 import { transformFioRecord } from '../WalletPage/util';
 import { isFioChain } from '../../util/fio';
@@ -368,6 +369,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         onSuccess={onSuccess}
         FioActionWallet={DecryptContentEdge}
         LedgerActionWallet={LedgerWalletActionNotSupported}
+        MetamaskActionWallet={DecryptContentMetamaskWallet}
       />
 
       <PseudoModalContainer

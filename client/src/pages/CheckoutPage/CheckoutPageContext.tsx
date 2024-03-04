@@ -218,7 +218,7 @@ export const useContext = (): {
           orderParams.publicKey =
             paymentWalletPublicKey ||
             fioWallets.filter(
-              ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+              ({ from }) => from !== WALLET_CREATED_FROM.LEDGER,
             )[0].publicKey;
       }
 
@@ -257,7 +257,7 @@ export const useContext = (): {
         if (!paymentWalletPublicKey && fioWallets.length) {
           setWallet(
             fioWallets.filter(
-              ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+              ({ from }) => from !== WALLET_CREATED_FROM.LEDGER,
             )[0].publicKey,
           );
         }
@@ -405,7 +405,7 @@ export const useContext = (): {
   useEffect(() => {
     return () => {
       setOrder(null);
-      dispatch(loadProfile({}));
+      dispatch(loadProfile());
     };
   }, [dispatch]);
 
@@ -486,12 +486,13 @@ export const useContext = (): {
 
     if (signTxItems.length) {
       return setBeforeSubmitProps({
-        walletConfirmType: WALLET_CREATED_FROM.EDGE,
+        walletConfirmType: paymentWallet.from,
         fee: new MathOp(prices?.nativeFio?.address)
           .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
           .round(0, 2)
           .toNumber(),
         data: { fioAddressItems: signTxItems },
+        paymentWallet,
         onSuccess: (data: BeforeSubmitData) => {
           handleSubmit(data);
           dispatchSetProcessing(false);

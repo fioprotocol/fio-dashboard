@@ -40,13 +40,15 @@ type UseContextProps = {
   loading: boolean;
   processing: boolean;
   results: LinkActionResult;
-  submitData: FormValues | PublicAddressDoublet[];
+  submitData: FormValues;
   changeBundleCost: (bundle: number) => void;
   onCancel: () => void;
   onRetry: (resultsData: LinkActionResult) => void;
   onSubmit: (values: FormValues) => void;
   onSuccess: () => void;
   setProcessing: (processing: boolean) => void;
+  setResultsData: (results: LinkActionResult) => void;
+  setSubmitData: (submitData: FormValues | null) => void;
   submit: (params: { keys: WalletKeys; data: FormValues }) => Promise<void>;
   socialMediaLinksList: SocialMediaLinkItem[];
 };
@@ -59,9 +61,7 @@ export const useContext = (): UseContextProps => {
     SocialMediaLinkItem[]
   >([]);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<
-    FormValues | PublicAddressDoublet[] | null
-  >(null);
+  const [submitData, setSubmitData] = useState<FormValues | null>(null);
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [results, setResultsData] = useState<LinkActionResult>(null);
 
@@ -98,7 +98,7 @@ export const useContext = (): UseContextProps => {
   };
 
   const onRetry = (resultsData: LinkActionResult) => {
-    setSubmitData(resultsData.connect.failed);
+    setSubmitData(resultsData.connect.failed as any);
   };
 
   const submit = useCallback(
@@ -186,6 +186,8 @@ export const useContext = (): UseContextProps => {
     onSubmit,
     onSuccess,
     setProcessing,
+    setResultsData,
+    setSubmitData,
     submit,
   };
 };

@@ -139,7 +139,7 @@ const AdminOrderModal: React.FC<Props> = ({
                 <Link
                   to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${orderItem.user.id}`}
                 >
-                  {orderItem.user.email}
+                  {orderItem.user.email || orderItem.user.id}
                 </Link>
               </div>
             </div>

@@ -29,11 +29,12 @@ import { Props } from './types';
 import classes from './styles/WalletsPage.module.scss';
 
 type TitleComponentProps = {
+  isAlternativeAccountType: boolean;
   onAdd: () => void;
 };
 
 const TitleComponent: React.FC<TitleComponentProps> = props => {
-  const { onAdd } = props;
+  const { isAlternativeAccountType, onAdd } = props;
 
   return (
     <Title title="FIO Wallets">
@@ -45,12 +46,14 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
           </Button>
         </Link>
 
-        <Link to={ROUTES.IMPORT_WALLET} className={classes.actionButton}>
-          <Button>
-            <SystemUpdateAltIcon fontSize="small" />
-            <span>Import</span>
-          </Button>
-        </Link>
+        {!isAlternativeAccountType ? (
+          <Link to={ROUTES.IMPORT_WALLET} className={classes.actionButton}>
+            <Button>
+              <SystemUpdateAltIcon fontSize="small" />
+              <span>Import</span>
+            </Button>
+          </Link>
+        ) : null}
 
         <Button onClick={onAdd} className={classes.actionButton}>
           <AddCircleIcon />
@@ -65,6 +68,7 @@ const WalletsPage: React.FC<Props> = () => {
   const {
     fioWallets,
     fioWalletsBalances,
+    isAlternativeAccountType,
     showCreateWallet,
     showWalletCreated,
     showWalletDeleted,
@@ -85,7 +89,14 @@ const WalletsPage: React.FC<Props> = () => {
         onClose={closeCreateWallet}
         onWalletCreated={onWalletCreated}
       />
-      <LayoutContainer title={<TitleComponent onAdd={onAdd} />}>
+      <LayoutContainer
+        title={
+          <TitleComponent
+            onAdd={onAdd}
+            isAlternativeAccountType={isAlternativeAccountType}
+          />
+        }
+      >
         <NotificationBadge
           type={BADGE_TYPES.INFO}
           show={showWalletImported}

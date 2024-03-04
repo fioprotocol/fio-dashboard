@@ -50,7 +50,7 @@ import {
   CartItem,
   LastAuthData,
   RedirectLinkData,
-  TwitterNotification,
+  AddressWidgetNotification,
 } from '../../types';
 
 import classes from './TwitterPage.module.scss';
@@ -86,14 +86,14 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   const isValid = (address: string) => {
     return !(
-      address.startsWith('_') ||
-      address.endsWith('_') ||
-      address.startsWith('-') ||
-      address.endsWith('-')
+      address?.startsWith('_') ||
+      address?.endsWith('_') ||
+      address?.startsWith('-') ||
+      address?.endsWith('-')
     );
   };
 
-  const [notification, setNotification] = useState<TwitterNotification>(
+  const [notification, setNotification] = useState<AddressWidgetNotification>(
     TWITTER_NOTIFICATIONS.EMPTY,
   );
   const [showTwitterShare, setShowTwitterShare] = useState(false);
@@ -158,6 +158,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     setShowTwitterShare(false);
   }, []);
 
+  const onEmptyFioHandle = useCallback(() => {
+    setNotification(TWITTER_NOTIFICATIONS.MISSING_HADNLE);
+    setShowTwitterShare(false);
+  }, []);
+
   const fetchTweetsAndVerify = useCallback(async () => {
     setLoading(true);
     try {
@@ -214,12 +219,12 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       return value;
     }
 
-    if (value.includes('_')) {
+    if (value?.includes('_')) {
       includesDash = true;
     }
 
     const convertedValue = convertTwitterToFCH(value);
-    setOriginalUsername(convertedValue.replaceAll('-', '_'));
+    setOriginalUsername(convertedValue?.replaceAll('-', '_'));
 
     const alreadyVerified =
       Cookies.get(
@@ -253,6 +258,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       setStartVerification(false);
       setShowTwitterShare(false);
     }
+
+    setNotification(TWITTER_NOTIFICATIONS.EMPTY);
 
     if (!value) {
       setStep(STEPS.ONE);
@@ -306,9 +313,9 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }) => {
     if (!isValid(address)) {
       onNotSupported();
+    } else if (!address) {
+      onEmptyFioHandle();
     } else {
-      setStep(STEPS.TWO);
-
       const isRegistered = await apis.fio.availCheckTableRows(
         setFioName(address, TWITTER_DOMAIN),
       );
@@ -316,6 +323,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       if (isRegistered) {
         setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
       } else if (USERNAME_REGEX.test(address)) {
+        setStep(STEPS.TWO);
         setNotification(TWITTER_NOTIFICATIONS.EMPTY);
 
         const alreadyVerified =

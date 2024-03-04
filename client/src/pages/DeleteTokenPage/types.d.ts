@@ -13,7 +13,9 @@ export type CheckedTokenType = {
 
 export type DeleteTokenContextProps = {
   allChecked: boolean;
+  allowDisconnectAll: boolean;
   bundleCost: number;
+  checkedPubAddresses: CheckedTokenType[];
   edgeWalletId: string;
   fioCryptoHandleObj: FioAddressWithPubAddresses;
   fioWallet: FioWalletDoublet;
@@ -35,5 +37,7 @@ export type DeleteTokenContextProps = {
   onCheckClick: (checkedId: string) => void;
   onRetry: () => void;
   onSuccess: () => void;
+  setSubmitData: (submitData: boolean | null) => void;
+  setResultsData: (submitData: LinkActionResult) => void;
   submit: ({ keys }: { keys: WalletKeys }) => Promise<void>;
 };

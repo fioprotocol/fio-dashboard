@@ -1,5 +1,6 @@
 import { authCheck, makeServiceRunner, authCheckSimple } from '../tools';
 
+import AlternateAuthenticate from '../services/auth/AlternateAuthenticate.mjs';
 import AuthCreate from '../services/auth/Create';
 import AuthCheck from '../services/auth/Check';
 import AuthCheckSimple from '../services/auth/CheckSimple';
@@ -12,11 +13,14 @@ import AdminLogin from '../services/auth/AdminLogin.mjs';
 import AuthAdminCreateCheck from '../services/auth/AdminCreateCheck.mjs';
 import AuthAdminResetPassword from '../services/auth/AdminResetPassword.mjs';
 import AuthAdminResetPasswordCheck from '../services/auth/AdminResetPasswordCheck.mjs';
+import GenerateNonce from '../services/auth/GenerateNonce.mjs';
 
 export default {
   create: makeServiceRunner(AuthCreate, req => req.body),
   nonce: makeServiceRunner(AuthNonce, req => req.query),
+  generateNonce: makeServiceRunner(GenerateNonce),
   username: makeServiceRunner(AuthUsername, req => req.params),
+  alternateAuth: makeServiceRunner(AlternateAuthenticate, req => req.body),
 
   async checkSimple(req, res, next) {
     return await authCheckSimple(req, res, next, AuthCheckSimple);

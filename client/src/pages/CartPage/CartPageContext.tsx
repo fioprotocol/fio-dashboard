@@ -162,7 +162,7 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalanceForPrivateDomains ||
     (userWallets &&
       userWallets
-        .filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
+        .filter(({ from }) => from !== WALLET_CREATED_FROM.LEDGER)
         .every(
           wallet =>
             wallet.available != null &&
@@ -172,7 +172,7 @@ export const useContext = (): UseContextReturnType => {
 
   const highestBalanceWalletPubKey = userWallets.length
     ? userWallets
-        .filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
+        .filter(({ from }) => from !== WALLET_CREATED_FROM.LEDGER)
         .sort(
           (a, b) => b.available - a.available || a.name.localeCompare(b.name),
         )[0].publicKey

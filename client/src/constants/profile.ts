@@ -1,0 +1,4 @@
+export const USER_PROFILE_TYPE = {
+  PRIMARY: 'PRIMARY',
+  ALTERNATIVE: 'ALTERNATIVE',
+};

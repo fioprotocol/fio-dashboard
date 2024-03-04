@@ -55,6 +55,10 @@ export const TWITTER_NOTIFICATIONS_CONTENT = {
     message:
       'This handle is already registered. If you own it map it to your public addresses.',
   },
+  MISSING_HANDLE: {
+    title: 'Missing Twitter handle',
+    messgae: 'Please type the handle in the input below.',
+  },
   INVALID_FORMAT: {
     title: 'Invalid Format',
     message:
@@ -97,6 +101,12 @@ export const TWITTER_NOTIFICATIONS = {
     type: BADGE_TYPES.ERROR,
     message: TWITTER_NOTIFICATIONS_CONTENT.EXISTING_HANDLE.message,
     title: TWITTER_NOTIFICATIONS_CONTENT.EXISTING_HANDLE.title,
+  },
+  MISSING_HADNLE: {
+    hasNotification: true,
+    type: BADGE_TYPES.ERROR,
+    message: TWITTER_NOTIFICATIONS_CONTENT.MISSING_HANDLE.messgae,
+    title: TWITTER_NOTIFICATIONS_CONTENT.MISSING_HANDLE.title,
   },
   INVALID_FORMAT: {
     hasNotification: true,

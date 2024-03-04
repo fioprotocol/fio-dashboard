@@ -1,10 +1,12 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 
-import { defaultSnapOrigin } from '../constants';
+import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
+import { log } from './general';
 
 export type GetSnapsResponse = Record<string, Snap>;
 
 export type Snap = {
+  enabled: boolean;
   permissionName: string;
   id: string;
   version: string;
@@ -39,7 +41,7 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
         snap.id === defaultSnapOrigin && (!version || snap.version === version),
     );
   } catch (error) {
-    console.log('Failed to obtain installed snap', error);
+    log.error('Failed to obtain installed snap', error);
     throw error;
   }
 };
@@ -62,7 +64,7 @@ export const getPublicKey = async (
 };
 
 export const signTxn = async (params: any) => {
-  const txn = await window.ethereum.request({
+  const txn: Promise<string> = await window.ethereum.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,

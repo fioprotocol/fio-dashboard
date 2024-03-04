@@ -47,7 +47,7 @@ import { FioDomainDoubletResponse } from './responses';
 
 export interface TrxResponse {
   transaction_id?: string;
-  status: string;
+  status?: string;
   expiration?: string;
   fee_collected: number;
   oracle_fee_collected?: number;
@@ -55,6 +55,7 @@ export interface TrxResponse {
 }
 
 export interface SignedTxArgs {
+  id?: string;
   compression: number;
   packed_context_free_data: string;
   packed_trx: string;

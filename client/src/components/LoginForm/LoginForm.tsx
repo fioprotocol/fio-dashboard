@@ -9,6 +9,8 @@ import TwoFactorCodeModal, {
   BackupFormValues,
 } from './components/TwoFactorCodeModal';
 import PageTitle from '../PageTitle/PageTitle';
+import NotificationBadge from '../NotificationBadge';
+import { BADGE_TYPES } from '../Badge/Badge';
 
 import { LINKS } from '../../constants/labels';
 
@@ -18,6 +20,8 @@ import { autoLogin, AutoLoginParams } from '../../util/login';
 import useEffectOnce from '../../hooks/general';
 
 import { LastAuthData, LoginFailure, RefProfile } from '../../types';
+
+import classes from './LoginForm.module.scss';
 
 type FormValues = {
   email?: string;
@@ -32,6 +36,7 @@ type FormValues = {
 };
 
 type Props = {
+  alternativeLoginError: string | null;
   show: boolean;
   onSubmit: (params: FormValues) => void;
   edgeAuthLoading: boolean;
@@ -57,6 +62,7 @@ type Props = {
 
 const LoginForm: React.FC<Props> = props => {
   const {
+    alternativeLoginError,
     show,
     onSubmit,
     edgeAuthLoading,
@@ -223,7 +229,16 @@ const LoginForm: React.FC<Props> = props => {
         backdrop="static"
         onClose={isForgotPass ? onForgotPassClose : onCloseLogin}
         closeButton
+        enableOverflow
       >
+        <NotificationBadge
+          type={BADGE_TYPES.RED}
+          show={!!alternativeLoginError}
+          hasNewDesign
+          message="Sign in with MetaMask has failed. Please try again."
+          className={classes.errorBadge}
+          messageClassnames={classes.errorMessage}
+        />
         {usePinLogin && lastAuthData ? (
           <Pin
             email={lastAuthData.email}
@@ -242,7 +257,7 @@ const LoginForm: React.FC<Props> = props => {
             edgeLoginFailure={edgeLoginFailure}
             isForgotPass={isForgotPass}
             toggleForgotPass={toggleForgotPass}
-            title="Sign In"
+            title="Sign in to your account"
             onClose={onCloseLogin}
             initialValues={loginParams || {}}
             resetLoginFailure={resetLoginFailure}

@@ -8,10 +8,17 @@ import {
 } from 'react-bootstrap';
 import AddIcon from '@mui/icons-material/Add';
 import classnames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
+import { MetamaskConnectionModal } from '../../components/Modal/MetamaskConnectionModal';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import NotificationBadge from '../../components/NotificationBadge';
 
 import { APP_TITLE } from '../../constants/labels';
+import { ROUTES } from '../../constants/routes';
+
+import { useContext as useContextMetamaskLandgingPage } from './MetamaskLandingPageContext';
 
 import metamaskIcon from '../../assets/images/metamask.svg';
 import fioMetamask from '../../assets/images/metamask-landing/fio-metamask.svg';
@@ -85,7 +92,7 @@ const featureItems = [
 const SeeMoreLink = 'https://fio.net/discover/features-benefits';
 const SayferLogo =
   'https://sayfer.io/audits/metamask-snap-audit-report-for-fio/';
-const ActionButtonText = 'COMING SOON!';
+const videoId = 'uVoBj2nf9cQ';
 
 const CustomToggle = ({
   eventKey,
@@ -125,6 +132,13 @@ const CustomToggle = ({
 };
 
 const MetamaskLandingPage: React.FC = () => {
+  const {
+    alternativeLoginError,
+    isLoginModalOpen,
+    noMetamaskExtention,
+    handleConnectClick,
+    onLoginModalClose,
+  } = useContextMetamaskLandgingPage();
   return (
     <>
       <Helmet>
@@ -145,6 +159,27 @@ const MetamaskLandingPage: React.FC = () => {
                 access to the FIO App without setting up new accounts or
                 passwords.
               </p>
+              {!!alternativeLoginError && (
+                <NotificationBadge
+                  type={BADGE_TYPES.RED}
+                  show={!!alternativeLoginError}
+                  hasNewDesign
+                  message="Sign in with MetaMask has failed. Please try again."
+                  className={classes.errorBadge}
+                  messageClassnames={classes.errorMessage}
+                />
+              )}
+              {noMetamaskExtention && (
+                <NotificationBadge
+                  type={BADGE_TYPES.WARNING}
+                  show={noMetamaskExtention}
+                  hasNewDesign
+                  title="MetaMask not detected."
+                  message="Please ensure that the MetaMask browser extension is installed and active. Or refresh the page if it has just been installed."
+                  className={classes.errorBadge}
+                  messageClassnames={classes.errorMessage}
+                />
+              )}
               <SubmitButton
                 text={
                   <>
@@ -153,13 +188,13 @@ const MetamaskLandingPage: React.FC = () => {
                       className={classes.metamaskIcon}
                       alt="metamask"
                     />
-                    <p className={classes.buttonText}>{ActionButtonText}</p>
+                    <p className={classes.buttonText}>Sign in with MetaMask</p>
                   </>
                 }
                 hasAutoHeight
                 hasAutoWidth
                 className={classes.button}
-                onClick={() => {}}
+                onClick={handleConnectClick}
               />
             </div>
             <div className={classes.images}>
@@ -179,7 +214,10 @@ const MetamaskLandingPage: React.FC = () => {
             </p>
             <div className={classes.featureItemsContainer}>
               {featureItems.map(featureItem => (
-                <div className={classes.featureItemContainer}>
+                <div
+                  className={classes.featureItemContainer}
+                  key={featureItem.title}
+                >
                   <div className={classes.featureItem} key={featureItem.title}>
                     <img
                       alt="Feature Icon"
@@ -202,6 +240,18 @@ const MetamaskLandingPage: React.FC = () => {
                 text={<span className={classes.buttonText}>See More</span>}
               />
             </a>
+          </div>
+        </section>
+        <section className={classes.videoSectionContainer}>
+          <div className={classes.videoContainer}>
+            <iframe
+              className={classes.videoFrame}
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              frameBorder="0"
+            ></iframe>
           </div>
         </section>
         <section className={classes.infoContainer}>
@@ -248,12 +298,17 @@ const MetamaskLandingPage: React.FC = () => {
                     free and share feedback on social media to be randomly
                     selected from the FIO Prize Pool.
                   </p>
-                  <SubmitButton
-                    text={ActionButtonText}
-                    hasAutoHeight
-                    hasAutoWidth
-                    className={classes.button}
-                  />
+                  <Link
+                    to={ROUTES.METAMASK_GATED_REGISTRATION}
+                    className={classes.link}
+                  >
+                    <SubmitButton
+                      text="Register Now"
+                      hasAutoHeight
+                      hasAutoWidth
+                      className={classes.button}
+                    />
+                  </Link>
                 </div>
                 <div className={classes.imageContainer}>
                   <img alt="Metamask icon" src={metamaskAtIcon} />
@@ -304,6 +359,13 @@ const MetamaskLandingPage: React.FC = () => {
           </div>
         </section>
       </div>
+      <MetamaskConnectionModal
+        hasCloseButton
+        show={isLoginModalOpen}
+        title="Sign in to your account"
+        text="For the most seamless Web3 experience please complete the actions in the MetaMask window."
+        onClose={onLoginModalClose}
+      />
     </>
   );
 };

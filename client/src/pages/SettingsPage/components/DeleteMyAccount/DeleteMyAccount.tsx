@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Processing from '../../../../components/common/TransactionProcessing';
@@ -8,8 +8,12 @@ import SecurityItem from '../SecurityItem';
 import PasswordForm, { PasswordFormValues } from './PasswordForm';
 
 import { ROUTES } from '../../../../constants/routes';
+import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
 import apis from '../../../../api';
+import { log } from '../../../../util/general';
+
+import { User } from '../../../../types';
 
 import classes from '../../styles/DeleteMyAccount.module.scss';
 
@@ -24,41 +28,78 @@ const ITEM_PROPS = {
 };
 
 type DeleteMyAccountProps = {
+  user: User;
   username: string;
   logout: () => void;
   closeSuccessModal: () => void;
   showSuccessModal: (m: string, t: string) => void;
+  showGenericErrorModal: () => void;
 };
 
 const SUCCESS_MODAL_TIMEOUT_MS = 2000;
 
 const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
+  user,
   username,
   logout,
   closeSuccessModal,
   showSuccessModal,
+  showGenericErrorModal,
 }) => {
   const [showConfirmationModal, toggleConfirmationModal] = useState(false);
   const [showPasswordModal, togglePasswordModal] = useState(false);
   const [checkingPassword, setCheckingPassword] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  const onOpenConfirmationModal = () => {
+  const isProfileTypePrimary =
+    user?.userProfileType === USER_PROFILE_TYPE.PRIMARY;
+
+  const onOpenConfirmationModal = useCallback(() => {
     toggleConfirmationModal(true);
-  };
+  }, []);
 
-  const onConfirmationClose = () => {
+  const onConfirmationClose = useCallback(() => {
     toggleConfirmationModal(false);
-  };
+  }, []);
 
-  const onDeleteConfirmed = () => {
+  const onDeleteConfirmed = useCallback(async () => {
     toggleConfirmationModal(false);
-    togglePasswordModal(true);
-  };
+    if (isProfileTypePrimary) {
+      togglePasswordModal(true);
+    } else {
+      setDeletingAccount(true);
 
-  const onClosePasswordModal = () => {
+      try {
+        await apis.auth.deleteUser();
+
+        showSuccessModal(
+          ITEM_PROPS.successModalSubtitle,
+          ITEM_PROPS.successModalTitle,
+        );
+
+        logout();
+
+        setTimeout(() => {
+          closeSuccessModal();
+        }, SUCCESS_MODAL_TIMEOUT_MS);
+      } catch (error) {
+        log.error(error);
+        showGenericErrorModal();
+      } finally {
+        setDeletingAccount(false);
+      }
+    }
+  }, [
+    closeSuccessModal,
+    isProfileTypePrimary,
+    logout,
+    showGenericErrorModal,
+    showSuccessModal,
+  ]);
+
+  const onClosePasswordModal = useCallback(() => {
     togglePasswordModal(false);
-  };
+  }, []);
 
   const onFormSubmit = async (values: PasswordFormValues) => {
     setCheckingPassword(true);
@@ -121,7 +162,8 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
         showCancel={true}
         title={ITEM_PROPS.dangerTitle}
         subtitle={ITEM_PROPS.dangerSubtitle}
-        notice={renderDangerNotice()}
+        notice={isProfileTypePrimary ? renderDangerNotice() : null}
+        loading={deletingAccount}
       />
       <Modal
         show={showPasswordModal}

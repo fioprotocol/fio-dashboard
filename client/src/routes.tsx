@@ -269,6 +269,12 @@ const MetamaskLandingPage = lazy(() =>
   ),
 );
 
+const MetamaskGatedRegistration = lazy(() =>
+  import(
+    /* webpackChunkName: 'MetamaskGatedRegistration' */ './pages/MetamaskGatedRegistration'
+  ),
+);
+
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
   useGTMGlobalTags();
@@ -623,6 +629,12 @@ const Routes = (): React.ReactElement => {
               <Route
                 path={ROUTES.METAMASK_LANDING_PAGE}
                 component={MetamaskLandingPage}
+                exact
+              />
+
+              <Route
+                path={ROUTES.METAMASK_GATED_REGISTRATION}
+                component={MetamaskGatedRegistration}
                 exact
               />
 

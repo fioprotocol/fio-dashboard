@@ -3,6 +3,10 @@
 .text {
   margin-top: 10px;
   margin-bottom: 0;
+
+  &.disabled {
+    opacity: 0.6;
+  }
 }
 
 .checkContainer {
@@ -17,6 +21,13 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
+
+    &.disabled {
+      opacity: 0.6;
+      .checkIcon {
+        cursor: not-allowed;
+      }
+    }
 
     .title {
       margin: 0;
