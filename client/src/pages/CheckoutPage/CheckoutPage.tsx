@@ -13,9 +13,6 @@ import { useContext } from './CheckoutPageContext';
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 
-// Loads captcha files, DO NOT REMOVE
-import '../../helpers/gt-sdk';
-
 import classes from './CheckoutPage.module.scss';
 
 const CheckoutPage: React.FC = () => {

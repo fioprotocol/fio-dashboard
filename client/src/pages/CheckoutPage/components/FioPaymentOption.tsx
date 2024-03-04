@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PurchaseNow from '../../../components/PurchaseNow';
+import { PurchaseNow } from '../../../components/PurchaseNow';
 
 import { PaymentOptionComponentProps } from '../types';
 
