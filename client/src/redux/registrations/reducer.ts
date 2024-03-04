@@ -75,29 +75,6 @@ export default combineReducers({
         return state;
     }
   },
-  captchaResult(state = {}, action) {
-    switch (action.type) {
-      case actions.CAPTCHA_SUCCESS:
-        return action.data;
-      case actions.CAPTCHA_REQUEST:
-        return {};
-      case actions.CAPTCHA_FAILURE:
-        return { success: false };
-      default:
-        return state;
-    }
-  },
-  captchaResolving(state = false, action) {
-    switch (action.type) {
-      case actions.CAPTCHA_REQUEST:
-        return true;
-      case actions.CAPTCHA_SUCCESS:
-      case actions.CAPTCHA_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
   hasGetPricesError(state: boolean = false, action) {
     switch (action.type) {
       case actions.PRICES_FAILURE: {

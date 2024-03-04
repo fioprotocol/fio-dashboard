@@ -1,5 +1,3 @@
-import { initCaptcha, verifyCaptcha } from '../../helpers/captcha';
-
 import { Api } from '../../api';
 import { CommonAction, CommonPromiseAction } from '../types';
 
@@ -21,19 +19,6 @@ export const DOMAINS_FAILURE = `${prefix}/DOMAINS_FAILURE`;
 export const getDomains = (): CommonPromiseAction => ({
   types: [DOMAINS_REQUEST, DOMAINS_SUCCESS, DOMAINS_FAILURE],
   promise: (api: Api) => api.registration.domainsList(),
-});
-
-export const CAPTCHA_REQUEST = `${prefix}/CAPTCHA_REQUEST`;
-export const CAPTCHA_SUCCESS = `${prefix}/CAPTCHA_SUCCESS`;
-export const CAPTCHA_FAILURE = `${prefix}/CAPTCHA_FAILURE`;
-
-export const checkCaptcha = (): CommonPromiseAction => ({
-  types: [CAPTCHA_REQUEST, CAPTCHA_SUCCESS, CAPTCHA_FAILURE],
-  promise: async (api: Api) => {
-    const data = await api.fioReg.initCaptcha();
-    const captchaObj = await initCaptcha(data);
-    return verifyCaptcha(captchaObj);
-  },
 });
 
 export const SET_PROCESSING = `${prefix}/SET_PROCESSING`;
