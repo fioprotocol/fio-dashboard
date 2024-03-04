@@ -1,4 +1,5 @@
 import { FioRegCaptchaResponse } from '../api/responses';
+import { log } from '../util/general';
 
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -28,6 +29,8 @@ type CaptchaObj = {
   onClose: (cb: (e: Error) => void) => void;
 };
 
+export const GEETESET_SCRIPT_LOADING_ERROR = 'Geetest script loading error';
+
 export const initCaptcha = (data: FioRegCaptchaResponse): Promise<CaptchaObj> =>
   new Promise((resolve, reject) => {
     if (window.initGeetest == null) reject('Geetest init error');
@@ -41,13 +44,18 @@ export const initCaptcha = (data: FioRegCaptchaResponse): Promise<CaptchaObj> =>
         lang: 'en',
         product: 'bind',
         width: '400px',
+        onError: (error: Error) => {
+          log.error(`${GEETESET_SCRIPT_LOADING_ERROR}`, error);
+          reject(GEETESET_SCRIPT_LOADING_ERROR);
+        },
       },
       (captchaObj: CaptchaObj) => {
         captchaObj.onReady(() => {
           resolve(captchaObj);
         });
-        captchaObj.onError(() => {
-          reject();
+        captchaObj.onError(error => {
+          log.error('Geetest script error:', error);
+          reject(error);
         });
       },
     );

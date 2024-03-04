@@ -14,9 +14,6 @@ import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 
-// Loads captcha files, DO NOT REMOVE
-import '../../helpers/gt-sdk';
-
 import classes from './CheckoutPage.module.scss';
 
 const CheckoutPage: React.FC = () => {

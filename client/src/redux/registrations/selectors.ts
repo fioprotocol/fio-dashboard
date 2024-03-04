@@ -15,7 +15,7 @@ import {
   Prices,
   PubilcDomainsType,
 } from '../../types';
-import { DomainsResponse, FioRegCaptchaResponse } from '../../api/responses';
+import { DomainsResponse } from '../../api/responses';
 
 export const loading = (state: ReduxState): boolean =>
   state[prefix].loadingArray.length > 0;
@@ -66,10 +66,6 @@ export const allDomains = createSelector(
   }),
 );
 
-export const captchaResult = (state: ReduxState): FioRegCaptchaResponse =>
-  state[prefix].captchaResult;
-export const captchaResolving = (state: ReduxState): boolean =>
-  state[prefix].captchaResolving;
 export const isProcessing = (state: ReduxState): boolean =>
   state[prefix].isProcessing;
 export const hasGetPricesError = (state: ReduxState): boolean =>
