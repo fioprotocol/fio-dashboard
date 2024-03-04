@@ -29,6 +29,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
     infoBadgeData,
     isAllErrored,
     isPartial,
+    isRetryAvailable,
     errorBadges,
     orderItemsToRender,
     paymentInfo,
@@ -50,6 +51,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
             errorBadges,
           ).map(({ errorType, total, totalCurrency, items }, i) => (
             <InfoBadgeComponent
+              isRetryAvailable={isRetryAvailable}
               purchaseStatus={infoBadgeData.purchaseStatus}
               paymentProvider={infoBadgeData.paymentProvider}
               failedMessage={errorType}
@@ -69,6 +71,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
         <OrderItemsList items={orderItemsToRender} />
         <PaymentDetails {...paymentInfo} />
         <PartialErroredOrderItemsList
+          isRetryAvailable={isRetryAvailable}
           items={partialErrorItems}
           totalCostPrice={partialErrorTotalCost}
           infoBadgeData={infoBadgeData}

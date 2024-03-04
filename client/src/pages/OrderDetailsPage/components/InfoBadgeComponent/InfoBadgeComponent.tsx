@@ -23,8 +23,10 @@ import {
 import classes from './InfoBadgeComponent.module.scss';
 
 const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
+const DEFAULT_FAILED_MESSAGE = 'SINGED_TX_XTOKENS_REFUND_SKIP';
 
 type Props = {
+  isRetryAvailable?: boolean;
   paymentProvider: PaymentProvider;
   paymentStatus?: PaymentStatus;
   purchaseStatus: PurchaseTxStatus;
@@ -37,6 +39,7 @@ type Props = {
 
 export const InfoBadgeComponent: React.FC<Props> = props => {
   const {
+    isRetryAvailable,
     paymentProvider,
     paymentStatus,
     purchaseStatus,
@@ -88,8 +91,11 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
 
     // Custom message for FIO and non FIO providers
     if (paymentProvider === PAYMENT_PROVIDER.FIO || !failedTxsTotalAmount) {
-      message =
-        'There was an error during purchase of some items. No FIO Tokens were deducted from your wallet for the failed items. Go to your cart to try purchase again.';
+      message = `There was an error during purchase of some items. No FIO Tokens were deducted from your wallet for the failed items. ${
+        isRetryAvailable
+          ? 'Go to your cart to try purchase again.'
+          : 'Click close and try purchase again.'
+      }`;
     }
 
     if (paymentProvider === PAYMENT_PROVIDER.STRIPE && failedTxsTotalAmount) {
@@ -98,14 +104,26 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
         failedTxsTotalCurrency === CURRENCY_CODES.USDC ||
         failedTxsTotalCurrency.toUpperCase() === CURRENCY_CODES.USD
       )
-        message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount?.usdcTotalPrice} back to your credit card. Go to your cart to try purchase again.`;
+        message = `There was an error during purchase of some items. As a result we have refunded ${
+          failedTxsTotalAmount?.usdcTotalPrice
+        } back to your credit card. ${
+          isRetryAvailable
+            ? 'Go to your cart to try purchase again.'
+            : 'Click close and try purchase again.'
+        }`;
 
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
         message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
     }
 
     if (paymentProvider === PAYMENT_PROVIDER.BITPAY) {
-      message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount?.usdcTotalPrice} back to your crypto wallet. Go to your cart to try purchase again.`;
+      message = `There was an error during purchase of some items. As a result we have refunded ${
+        failedTxsTotalAmount?.usdcTotalPrice
+      } back to your crypto wallet.  ${
+        isRetryAvailable
+          ? 'Go to your cart to try purchase again.'
+          : 'Click close and try purchase again.'
+      }`;
 
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
         message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
@@ -124,8 +142,12 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
 
     // Custom title and message for FIO provider
     if (paymentProvider === PAYMENT_PROVIDER.FIO) {
-      message =
-        ERROR_MESSAGES[failedMessage] || ERROR_MESSAGES[ERROR_TYPES.default];
+      if (isRetryAvailable && failedMessage === DEFAULT_FAILED_MESSAGE) {
+        message = ERROR_MESSAGES[ERROR_TYPES.hasRetry];
+      } else {
+        message =
+          ERROR_MESSAGES[failedMessage] || ERROR_MESSAGES[ERROR_TYPES.default];
+      }
     }
 
     // Custom title and message for crypto provider
@@ -153,7 +175,7 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
       }
     }
 
-    //Custom message for FREE fch
+    // Custom message for FREE fch
     if (isFree) {
       message =
         ERROR_MESSAGES[failedMessage] ||
