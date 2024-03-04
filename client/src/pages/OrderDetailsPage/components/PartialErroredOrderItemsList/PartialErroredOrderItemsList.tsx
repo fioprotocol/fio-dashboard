@@ -18,6 +18,7 @@ import { InfoBadgeData } from '../../types';
 import classes from './PartialErroredOrderItemsList.module.scss';
 
 type Props = {
+  isRetryAvailable: boolean;
   infoBadgeData: InfoBadgeData;
   items: OrderItemDetailed[];
   errorBadges: ErrBadgesProps;
@@ -25,7 +26,13 @@ type Props = {
 };
 
 export const PartialErroredOrderItemsList: React.FC<Props> = props => {
-  const { infoBadgeData, items, errorBadges, totalCostPrice } = props;
+  const {
+    infoBadgeData,
+    items,
+    isRetryAvailable,
+    errorBadges,
+    totalCostPrice,
+  } = props;
 
   const { fioTotal, freeTotalPrice, usdcTotal } = totalCostPrice || {};
 
@@ -39,6 +46,7 @@ export const PartialErroredOrderItemsList: React.FC<Props> = props => {
       {Object.values(errorBadges).map(
         ({ errorType, total, totalCurrency, items }) => (
           <InfoBadgeComponent
+            isRetryAvailable={isRetryAvailable}
             purchaseStatus={infoBadgeData.purchaseStatus}
             paymentProvider={infoBadgeData.paymentProvider}
             failedMessage={errorType}

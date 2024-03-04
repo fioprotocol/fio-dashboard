@@ -1,6 +1,13 @@
 import { useHistory } from 'react-router';
+import isEmpty from 'lodash/isEmpty';
 
 import { Title } from './components/Title';
+
+import {
+  ALREADY_REGISTERED_ERROR_TEXT,
+  ERROR_TYPES,
+} from '../../constants/errors';
+import { ROUTES } from '../../constants/routes';
 
 import { PaymentProvider, PaymentStatus } from '../../types';
 
@@ -81,11 +88,21 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     delete errorBadgesToShow.SINGED_TX_XTOKENS_REFUND_SKIP;
   }
 
+  const isRetryAvailable =
+    !isEmpty(errItems) &&
+    errItems.filter(
+      ({ errorType, error }) =>
+        errorType !== ERROR_TYPES.userHasFreeAddress &&
+        !error.includes(ALREADY_REGISTERED_ERROR_TEXT),
+    ).length > 0 &&
+    history?.location?.pathname === ROUTES.PURCHASE;
+
   return {
     actionButtonProps,
     infoBadgeData,
     isAllErrored,
     isPartial,
+    isRetryAvailable,
     hideTopCloseButton,
     orderItemsToRender,
     partialErrorItems,

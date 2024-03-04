@@ -39,6 +39,7 @@ export type ContextProps = {
   infoBadgeData: InfoBadgeData;
   isPartial: boolean;
   isAllErrored: boolean;
+  isRetryAvailable: boolean;
   hideTopCloseButton?: boolean;
   title: ReactNode;
   paymentInfo: {
