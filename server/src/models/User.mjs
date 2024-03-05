@@ -60,8 +60,7 @@ export class User extends Base {
           allowNull: false,
         },
         userProfileType: {
-          type: DT.ENUM,
-          values: Object.values(this.USER_PROFILE_TYPE),
+          type: DT.STRING,
           defaultValue: this.USER_PROFILE_TYPE.PRIMARY,
         },
       },
