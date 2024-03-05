@@ -10,6 +10,7 @@ import {
   WelcomeItemProps,
 } from './constants';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { USER_PROFILE_TYPE } from '../../constants/profile';
 
 import {
   hasRecoveryQuestions as hasRecoveryQuestionsSelector,
@@ -52,6 +53,7 @@ export const useContext = (
     hasDomains,
     hasExpiredDomains,
     hasFCH,
+    hasNoEmail,
     hasNoStakedTokens,
     hasOneDomain,
     hasOneFCH,
@@ -59,6 +61,7 @@ export const useContext = (
     loading,
     noMappedPubAddresses,
     pageType = PAGE_TYPES.ALL,
+    userType,
   } = props;
   const isNewUser = useSelector(isNewUserSelector);
 
@@ -179,6 +182,7 @@ export const useContext = (
       }
       if (
         !isPinEnabled &&
+        userType === USER_PROFILE_TYPE.PRIMARY &&
         WELCOME_COMPONENT_ITEM_CONTENT.SETUP_PIN.types.some(
           itemType => itemType === pageType,
         )
@@ -228,12 +232,24 @@ export const useContext = (
 
       if (
         !hasRecoveryQuestions &&
+        userType === USER_PROFILE_TYPE.PRIMARY &&
         WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD.types.some(
           itemType => itemType === pageType,
         )
       ) {
         secondItem = firstItem;
         firstItem = WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD;
+      }
+
+      if (
+        hasNoEmail &&
+        userType === USER_PROFILE_TYPE.ALTERNATIVE &&
+        WELCOME_COMPONENT_ITEM_CONTENT.USER_EMAIL.types.some(
+          itemType => itemType === pageType,
+        )
+      ) {
+        secondItem = firstItem;
+        firstItem = WELCOME_COMPONENT_ITEM_CONTENT.USER_EMAIL;
       }
 
       setFirstWelcomeItem(firstItem);
@@ -251,12 +267,14 @@ export const useContext = (
     hasNoStakedTokens,
     hasOneDomain,
     hasOneFCH,
+    hasNoEmail,
     hasRecoveryQuestions,
     hasZeroTotalBalance,
     isPinEnabled,
     loading,
     noMappedPubAddresses,
     pageType,
+    userType,
   ]);
 
   const content = isNewUser

@@ -112,6 +112,7 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
 
   METAMASK_LANDING_PAGE: '/metamask',
+  METAMASK_GATED_REGISTRATION: '/metamask-fio-handle',
 };
 
 export const PUBLIC_ROUTES: string[] = [
@@ -119,6 +120,8 @@ export const PUBLIC_ROUTES: string[] = [
   ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
   ROUTES.FIO_DOMAIN,
   ROUTES.FIO_DOMAINS_SELECTION,
+  ROUTES.METAMASK_GATED_REGISTRATION,
+  ROUTES.METAMASK_LANDING_PAGE,
 ];
 
 const ADMIN_ROUTES: { [route: string]: string } = {

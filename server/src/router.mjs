@@ -18,6 +18,7 @@ router.get('/ping', routes.general.healthCheck);
 
 router.post('/auth', routes.auth.create);
 router.get('/auth/nonce', routes.auth.nonce);
+router.get('/auth/generate-nonce', routes.auth.generateNonce);
 router.get('/auth/username/:email', routes.auth.username);
 router.post('/auth/new-device-two-factor', routes.newDeviceTwoFactor.create);
 router.put(
@@ -30,6 +31,7 @@ router.get(
   '/auth/new-device-two-factor/check-rejected',
   routes.newDeviceTwoFactor.checkRejected,
 );
+router.post('/alternate-auth', routes.auth.alternateAuth);
 router.post('/admin-auth', routes.auth.adminLogin);
 router.post('/admin-auth/create', routes.auth.adminCreate);
 router.get('/admin-auth/create/check', routes.auth.adminCreateCheck);
@@ -227,6 +229,14 @@ router.get(
 );
 router.get('/external-tokens', routes.external.getAllExternalTokens);
 router.get('/verify-gated-registration', routes.metamask.nftTokenVerification);
+
+router.get(
+  '/verify-alternative-user',
+  checkAuth,
+  routes.users.alternativeUserVerification,
+);
+
+router.get('/free-addresses', checkAuth, routes.freeAddresses.getFreeAddresses);
 
 router.get('/gas-oracle', routes.external.getGasOracle);
 router.get(

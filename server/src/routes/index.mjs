@@ -7,6 +7,7 @@ import chainCodes from './chainCodes';
 import contacts from './contacts';
 import domainsWatchlist from './domainsWatchlist.mjs';
 import external from './external';
+import freeAddresses from './freeAddresses.mjs';
 import general from './general';
 import generatePdf from './generatePdf';
 import history from './wrapStatus.mjs';
@@ -31,6 +32,7 @@ export default {
   contacts,
   domainsWatchlist,
   external,
+  freeAddresses,
   general,
   generatePdf,
   history,

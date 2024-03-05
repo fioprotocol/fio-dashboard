@@ -8,9 +8,10 @@ import {
   signTxn,
   signNonce,
   decryptContent,
-} from './snap';
-import { log } from '../../../util/general';
-import { defaultSnapOrigin } from '../constants';
+  Snap,
+} from '../util/snap';
+import { log } from '../util/general';
+import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
 
 export type MetamaskSnapProps = {
   derivationIndex: number;
@@ -24,7 +25,7 @@ export type MetamaskSnapProps = {
   signedTxnLoading: boolean;
   snapError: Error;
   snapLoading: boolean;
-  state: any;
+  state: Snap;
   signature: string;
   signatureError: Error | null;
   signatureLoading: boolean;
@@ -43,8 +44,8 @@ export type MetamaskSnapProps = {
   setDerivationIndex: (value: number) => void;
 };
 
-export const MetamaskSnapContext = (): MetamaskSnapProps => {
-  const [state, setState] = useState<any | null>(null);
+export const MetamaskSnap = (): MetamaskSnapProps => {
+  const [state, setState] = useState<Snap | null>(null);
   const [snapError, setSnapError] = useState<Error | null>(null);
   const [snapLoading, toggleSnapLoading] = useState<boolean>(false);
   const [signedTxnLoading, toggleSignedTxnLoading] = useState<boolean>(false);
@@ -80,7 +81,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
 
       setState(installedSnap);
     } catch (error) {
-      log.error(error);
+      log.error('Metamask snap connection error', error);
       setSnapError(error);
     } finally {
       toggleSnapLoading(false);
@@ -109,7 +110,7 @@ export const MetamaskSnapContext = (): MetamaskSnapProps => {
 
       setSignedTxn(signedTxn);
     } catch (error) {
-      log.error(error);
+      log.error('Sign metamask transaction error:', error);
       setSignedTxnError(error);
     } finally {
       toggleSignedTxnLoading(false);

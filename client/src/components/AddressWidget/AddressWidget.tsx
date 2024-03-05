@@ -8,7 +8,7 @@ import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
 import { FormComponent } from './components/FormComponent';
 
-import { TwitterNotification } from '../../types';
+import { AddressWidgetNotification } from '../../types';
 
 import classes from './AddressWidget.module.scss';
 
@@ -16,9 +16,17 @@ type Props = {
   disabled?: boolean;
   disabledInput?: boolean;
   disabledInputGray?: boolean;
+  classNameActionText?: string;
+  classNameContainer?: string;
+  classNameForm?: string;
+  classNameLogo?: string;
+  classNameLogoContainer?: string;
+  classNameSubtitleTitle?: string;
+  classNameTitle?: string;
   links?: {
     getCryptoHandle: ReactNode;
   };
+  loading?: boolean;
   logoSrc?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -27,12 +35,17 @@ type Props = {
   showSignInWidget?: boolean;
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
+  isTransparent?: boolean;
   isDarkWhite?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
-  notification?: TwitterNotification;
-  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  notification?: AddressWidgetNotification;
+  customHandleSubmit?: ({
+    address,
+  }: {
+    address: string;
+  }) => Promise<void> | void;
   showSubmitButton?: boolean;
   placeHolderText?: string;
   onInputChanged?: (value: string) => string;
@@ -45,14 +58,23 @@ const AddressWidget: React.FC<Props> = props => {
   const {
     actionText,
     children,
+    classNameActionText,
+    classNameContainer,
+    classNameForm,
+    classNameLogo,
+    classNameLogoContainer,
+    classNameSubtitleTitle,
+    classNameTitle,
     disabled,
     disabledInput,
     disabledInputGray,
     hasMinHeight,
     isAuthenticated,
     isReverseColors,
+    isTransparent,
     isDarkWhite,
     links,
+    loading,
     logoSrc,
     title,
     showSignInWidget,
@@ -77,11 +99,24 @@ const AddressWidget: React.FC<Props> = props => {
         hasMinHeight && classes.hasMinHeight,
         isReverseColors && classes.isReverseColors,
         isDarkWhite && classes.isDarkWhite,
+        classNameContainer,
       )}
     >
-      <TitleComponent logoSrc={logoSrc} title={title} />
-      <SubtitleComponent subtitle={subtitle} />
-      <ActionTextComponent actionText={actionText} />
+      <TitleComponent
+        logoSrc={logoSrc}
+        title={title}
+        classNameLogo={classNameLogo}
+        classNameLogoContainer={classNameLogoContainer}
+        classNameTitle={classNameTitle}
+      />
+      <SubtitleComponent
+        subtitle={subtitle}
+        className={classNameSubtitleTitle}
+      />
+      <ActionTextComponent
+        actionText={actionText}
+        className={classNameActionText}
+      />
       {stepNumber && stepText && (
         <p className={classes.step}>
           <b className="boldText">{stepNumber}:</b> {stepText}
@@ -89,11 +124,14 @@ const AddressWidget: React.FC<Props> = props => {
       )}
 
       <FormComponent
+        classNameForm={classNameForm}
         disabled={disabled}
         disabledInput={disabledInput}
         disabledInputGray={disabledInputGray}
         isReverseColors={isReverseColors}
+        isTransparent={isTransparent}
         links={links}
+        loading={loading}
         suffixText={suffixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}

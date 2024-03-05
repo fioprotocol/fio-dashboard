@@ -7,6 +7,7 @@ import Loader from '../../../components/Loader/Loader';
 import classes from '../styles/ActionButton.module.scss';
 
 type Props = {
+  disabled?: boolean;
   onClick: () => void;
   title: string;
   isGreen?: boolean;
@@ -16,7 +17,15 @@ type Props = {
 };
 
 const ActionButton: React.FC<Props> = props => {
-  const { onClick, title, isGreen, isIndigo, isSmall, loading } = props;
+  const {
+    disabled,
+    onClick,
+    title,
+    isGreen,
+    isIndigo,
+    isSmall,
+    loading,
+  } = props;
   return (
     <Button
       onClick={onClick}
@@ -26,7 +35,7 @@ const ActionButton: React.FC<Props> = props => {
         isIndigo && classes.isIndigo,
         isSmall && classes.isSmall,
       )}
-      disabled={loading}
+      disabled={loading || disabled}
     >
       <p className={classes.title}>{title}</p>
       {loading && <Loader className={classes.loading} />}

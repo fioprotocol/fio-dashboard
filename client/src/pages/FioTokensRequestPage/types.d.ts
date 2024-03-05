@@ -31,6 +31,7 @@ export type RequestTokensValues = {
   amount: string;
   memo?: string;
   mapPubAddress?: boolean;
+  payerFioPublicKey?: string;
 };
 
 export type RequestTokensInitialValues = {

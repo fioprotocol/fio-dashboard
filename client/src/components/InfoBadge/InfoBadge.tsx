@@ -62,6 +62,7 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
             hasBoldMessage ? classes.boldMessage : '',
             messageOnNewLine && classes.messageOnNewLine,
             messageOnLeft && classes.messageOnLeft,
+            classes.message,
           )}
         >
           {message}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Field, Form, useForm } from 'react-final-form';
 import { useHistory } from 'react-router-dom';
+import classnames from 'classnames';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import TextInput, {
@@ -12,12 +13,13 @@ import NotificationBadge from '../../../NotificationBadge';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 import { ROUTES } from '../../../../constants/routes';
 
-import { TwitterNotification } from '../../../../types';
+import { AddressWidgetNotification } from '../../../../types';
 
 import classes from './FormComponent.module.scss';
 
 type Props = {
   buttonText?: string;
+  classNameForm?: string;
   disabled?: boolean;
   disabledInput?: boolean;
   disabledInputGray?: boolean;
@@ -25,11 +27,17 @@ type Props = {
     getCryptoHandle: React.ReactNode;
   };
   isReverseColors?: boolean;
+  isTransparent?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
-  notification?: TwitterNotification;
-  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  loading?: boolean;
+  notification?: AddressWidgetNotification;
+  customHandleSubmit?: ({
+    address,
+  }: {
+    address: string;
+  }) => Promise<void> | void;
   showSubmitButton?: boolean;
   placeHolderText?: string;
   onInputChanged?: (value: string) => string;
@@ -38,14 +46,23 @@ type Props = {
 type ActionButtonProps = {
   buttonText?: string;
   disabled?: boolean;
+  isTransparent?: boolean;
   isWhiteBordered?: boolean;
   links?: {
     getCryptoHandle: React.ReactNode;
   };
+  loading?: boolean;
 };
 
 const ActionButton: React.FC<ActionButtonProps> = props => {
-  const { buttonText = 'GET IT', disabled, isWhiteBordered, links } = props;
+  const {
+    buttonText = 'GET IT',
+    disabled,
+    isTransparent,
+    isWhiteBordered,
+    links,
+    loading,
+  } = props;
   const form = useForm();
 
   if (links && links.getCryptoHandle) {
@@ -71,6 +88,8 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
           text={buttonText}
           hasSmallText={true}
           isWhiteBordered={isWhiteBordered}
+          isTransparent={isTransparent}
+          loading={loading}
         />
       </a>
     );
@@ -85,6 +104,8 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
         text={buttonText}
         hasSmallText={true}
         isWhiteBordered={isWhiteBordered}
+        isTransparent={isTransparent}
+        loading={loading}
       />
     </div>
   );
@@ -93,11 +114,14 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
 export const FormComponent: React.FC<Props> = props => {
   const {
     buttonText,
+    classNameForm,
     disabled,
     disabledInput,
     disabledInputGray,
     isReverseColors,
+    isTransparent,
     links,
+    loading,
     suffixText,
     convert,
     formatOnFocusOut,
@@ -141,7 +165,10 @@ export const FormComponent: React.FC<Props> = props => {
             />
           )}
 
-          <form onSubmit={handleSubmit} className={classes.form}>
+          <form
+            onSubmit={handleSubmit}
+            className={classnames(classes.form, classNameForm)}
+          >
             <div className={classes.field}>
               <Field
                 name="address"
@@ -158,6 +185,7 @@ export const FormComponent: React.FC<Props> = props => {
                 parse={onInputChanged}
                 disabled={disabledInput}
                 disabledInputGray={disabledInputGray}
+                loading={loading}
               />
             </div>
             {showSubmitButton && (
@@ -166,6 +194,8 @@ export const FormComponent: React.FC<Props> = props => {
                 isWhiteBordered={isReverseColors}
                 links={links}
                 buttonText={buttonText}
+                isTransparent={isTransparent}
+                loading={loading}
               />
             )}
           </form>

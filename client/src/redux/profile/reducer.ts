@@ -6,6 +6,7 @@ import {
   CHANGE_RECOVERY_QUESTIONS_CLOSE,
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
+import { CLOSE_LOGIN } from '../modal/actions';
 
 import { INTERNAL_SERVER_ERROR_CODE } from '../../constants/errors';
 
@@ -121,6 +122,19 @@ export default combineReducers({
       case actions.LOGIN_FAILURE:
       case actions.LOGOUT_FAILURE:
         return action.error;
+      default:
+        return state;
+    }
+  },
+  alternativeLoginError(state: string | null = null, action) {
+    switch (action.type) {
+      case actions.ALTERNATE_LOGIN_FAILURE:
+      case actions.SET_ALTERNATE_LOGIN_ERROR:
+        return action.error;
+      case actions.ALTERNATE_LOGIN_SUCCESS:
+      case actions.RESET_ALTERNATE_LOGIN_ERROR:
+      case CLOSE_LOGIN:
+        return null;
       default:
         return state;
     }

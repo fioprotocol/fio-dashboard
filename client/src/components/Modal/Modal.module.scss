@@ -75,6 +75,14 @@
   }
 }
 
+.backdrop {
+  opacity: 0.8 !important;
+}
+
+.backdropSecondModal {
+  z-index: 1050;
+}
+
 @include sm {
   .modal {
     border-bottom-right-radius: 0;

@@ -1,5 +1,6 @@
 import { makeServiceRunner } from '../tools';
 
+import AlternativeUserVerification from '../services/users/AlternativeUserVerification.mjs';
 import UserAvailable from '../services/users/Available';
 import UsersCreate from '../services/users/Create';
 import UsersUpdate from '../services/users/Update';
@@ -18,6 +19,7 @@ import UsersSendEvent from '../services/users/SendEvent';
 import UsersDelete from '../services/users/Delete';
 
 export default {
+  alternativeUserVerification: makeServiceRunner(AlternativeUserVerification),
   available: makeServiceRunner(UserAvailable, req => req.params),
   create: makeServiceRunner(UsersCreate, req => req.body),
   update: makeServiceRunner(UsersUpdate, req => req.body),

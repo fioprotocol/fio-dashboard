@@ -75,7 +75,8 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
 
   const dispatch = useDispatch();
 
-  const hasAffiliate = !!user.affiliateProfile;
+  const hasAffiliate = !!user?.affiliateProfile;
+  const hasNoEmail = !user?.email;
 
   const hasFCH = fioAddresses?.length > 0;
   const hasOneFCH = fioAddresses?.length === 1;
@@ -129,11 +130,11 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
   );
 
   useEffect(() => {
-    if (user.username) {
+    if (user?.username) {
       dispatch(checkRecoveryQuestions(user.username));
       dispatch(setPinEnabled(user.username));
     }
-  }, [dispatch, user.username]);
+  }, [dispatch, user?.username]);
 
   return {
     firstFromListFioAddressName,
@@ -150,10 +151,12 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     hasFCH,
     hasOneDomain,
     hasOneFCH,
+    hasNoEmail,
     hasNoStakedTokens,
     hasZeroTotalBalance,
     loading,
     noMappedPubAddresses,
-    userId: user.id,
+    userId: user?.id,
+    userType: user?.userProfileType,
   };
 };

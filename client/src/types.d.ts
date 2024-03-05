@@ -61,6 +61,7 @@ export type CartItem = {
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
+  metamaskUserPublicKey?: string;
   period?: number;
   allowFree?: boolean;
   showBadge?: boolean;
@@ -370,6 +371,7 @@ export type User = {
   timeZone: string;
   refProfile: { code?: string } | null;
   affiliateProfile: { code?: string; tpid?: string } | null;
+  userProfileType: string;
 };
 
 export type UserDetails = {
@@ -965,7 +967,7 @@ export type ColorTypes = {
   isRose?: boolean;
 };
 
-export type TwitterNotification = {
+export type AddressWidgetNotification = {
   hasNotification: boolean;
   type: string;
   message: string;
@@ -997,11 +999,13 @@ export type AllFioNamesAndWalletsProps = {
   hasFCH: boolean;
   hasOneDomain: boolean;
   hasOneFCH: boolean;
+  hasNoEmail: boolean;
   hasNoStakedTokens: boolean;
   hasZeroTotalBalance: boolean;
   loading: boolean;
   noMappedPubAddresses: boolean;
   userId: string;
+  userType: string;
 };
 
 export type DomainWatchlistItem = {

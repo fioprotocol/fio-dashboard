@@ -27,12 +27,15 @@ export const PROFILE_FAILURE = `${prefix}/PROFILE_FAILURE`;
 
 export const loadProfile = ({
   shouldHandleUsersFreeCart,
+  shouldHandleMetamaskCartItem,
 }: {
   shouldHandleUsersFreeCart?: boolean;
-}): CommonPromiseAction => ({
+  shouldHandleMetamaskCartItem?: boolean;
+} = {}): CommonPromiseAction => ({
   types: [PROFILE_REQUEST, PROFILE_SUCCESS, PROFILE_FAILURE],
   promise: (api: Api) => api.auth.profile(),
   shouldHandleUsersFreeCart,
+  shouldHandleMetamaskCartItem,
 });
 
 export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;
@@ -116,6 +119,40 @@ export const login = ({
   isSignUp,
 });
 
+export const ALTERNATE_LOGIN_REUQEST = `${prefix}/ALTERNATE_LOGIN_REUQEST`;
+export const ALTERNATE_LOGIN_SUCCESS = `${prefix}/ALTERNATE_LOGIN_SUCCESS`;
+export const ALTERNATE_LOGIN_FAILURE = `${prefix}/ALTERNATE_LOGIN_FAILURE`;
+
+export const alternateLogin = (params: {
+  derivationIndex: number;
+  from: string;
+  nonce: string;
+  publicKey: string;
+  signature: string;
+  referrerCode?: string;
+  timeZone?: string;
+}) => ({
+  types: [
+    ALTERNATE_LOGIN_REUQEST,
+    ALTERNATE_LOGIN_SUCCESS,
+    ALTERNATE_LOGIN_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.alternateAuth(params),
+});
+
+export const SET_ALTERNATE_LOGIN_ERROR = `${prefix}/SET_ALTERNATE_LOGIN_ERROR`;
+
+export const setAlternativeLoginError = (error: string): CommonAction => ({
+  type: SET_ALTERNATE_LOGIN_ERROR,
+  error,
+});
+
+export const RESET_ALTERNATE_LOGIN_ERROR = `${prefix}/RESET_ALTERNATE_LOGIN_ERROR`;
+
+export const resetAlternativeLoginError = (): CommonAction => ({
+  type: RESET_ALTERNATE_LOGIN_ERROR,
+});
+
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
 export const SIGNUP_SUCCESS = `${prefix}/SIGNUP_SUCCESS`;
 export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;
@@ -179,7 +216,7 @@ export const resetLastAuthData = (): CommonPromiseAction => ({
   promise: async (api: Api, getState: GetState) => {
     const { profile, edge } = getState();
 
-    if (!profile.lastAuthData || edge.hasTwoFactorAuth) return;
+    if (!profile.lastAuthData?.username || edge.hasTwoFactorAuth) return;
 
     return api.edge.clearCachedUser(profile.lastAuthData.username);
   },

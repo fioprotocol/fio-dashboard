@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
+import classnames from 'classnames';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
@@ -20,25 +21,31 @@ import { showRecovery as showRecoverySelector } from '../../redux/modal/selector
 import {
   isAuthenticated as isAuthenticatedSelector,
   loading as loadingSelector,
+  user as userSelector,
 } from '../../redux/profile/selectors';
+
+import { USER_PROFILE_TYPE } from '../../constants/profile';
 
 import useEffectOnce from '../../hooks/general';
 
-import classes from './styles/Settings.module.scss';
+import classes from './Settings.module.scss';
 
 export const PREOPENED_MODALS = {
   RECOVERY: 'recovery',
   PIN: 'pin',
+  EMAIL: 'email',
 };
 
 const SettingsPage: React.FC = () => {
   const loading = useSelector(loadingSelector);
   const showRecovery = useSelector(showRecoverySelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
+  const user = useSelector(userSelector);
 
   const dispatch = useDispatch();
 
   const [preopenedPinModal, togglePreopenedPinModal] = useState(false);
+  const [preopenedEmailModal, togglePreopenedEmailModal] = useState(false);
 
   const { state } = useLocation<{ openSettingsModal: string }>();
   const { openSettingsModal } = state || {};
@@ -51,6 +58,12 @@ const SettingsPage: React.FC = () => {
       }
       if (openSettingsModal === PREOPENED_MODALS.PIN && !preopenedPinModal) {
         togglePreopenedPinModal(true);
+      }
+      if (
+        openSettingsModal === PREOPENED_MODALS.EMAIL &&
+        !preopenedEmailModal
+      ) {
+        togglePreopenedEmailModal(true);
       }
     }
   }, [dispatch, openSettingsModal, showRecovery]);
@@ -68,19 +81,29 @@ const SettingsPage: React.FC = () => {
     <LayoutContainer title="Settings">
       <div className={`${classes.settingsContainer} mb-4 mt-4`}>
         <h5 className={classes.title}>Email Address</h5>
-        <ChangeEmail />
-        <h5 className={`${classes.title} mt-4`}>Email Notifications</h5>
+        <ChangeEmail preopenedEmailModal={preopenedEmailModal} />
+        <h5
+          className={classnames(
+            classes.title,
+            'mt-4',
+            !user.email && classes.disabled,
+          )}
+        >
+          Email Notifications
+        </h5>
         <EmailNotifications />
       </div>
-      <div className={`${classes.settingsContainer} mb-4`}>
-        <h5 className={classes.title}>Security</h5>
-        <div className={classes.passwordPinContainer}>
-          <ChangePassword />
-          <ChangePin preopenedModal={preopenedPinModal} />
+      {user.userProfileType === USER_PROFILE_TYPE.PRIMARY && (
+        <div className={`${classes.settingsContainer} mb-4`}>
+          <h5 className={classes.title}>Security</h5>
+          <div className={classes.passwordPinContainer}>
+            <ChangePassword />
+            <ChangePin preopenedModal={preopenedPinModal} />
+          </div>
+          <TwoFactorAuth />
+          <PasswordRecovery />
         </div>
-        <TwoFactorAuth />
-        <PasswordRecovery />
-      </div>
+      )}
       <div className={classes.settingsContainer}>
         <h5 className={classes.title}>Account Management</h5>
         <DeleteMyAccount />

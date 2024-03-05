@@ -1,8 +1,13 @@
 import React, { ReactNode } from 'react';
 
+import classnames from 'classnames';
+
 import classes from '../AddressWidget.module.scss';
 
 type Props = {
+  classNameLogo?: string;
+  classNameLogoContainer?: string;
+  classNameTitle?: string;
   logoSrc: string | null;
   title: string | ReactNode | null;
 };
@@ -16,19 +21,29 @@ export const ContainedFlowRegTitle: React.FC = () => {
 };
 
 const TitleComponent: React.FC<Props> = props => {
-  const { logoSrc, title } = props;
+  const {
+    classNameLogo,
+    classNameLogoContainer,
+    classNameTitle,
+    logoSrc,
+    title,
+  } = props;
 
   const renderLogo = () => {
     return logoSrc ? (
-      <div className="mb-5">
-        <img src={logoSrc} className={classes.logoImg} alt="" />
+      <div className={classnames('mb-5', classNameLogoContainer)}>
+        <img
+          src={logoSrc}
+          className={classnames(classes.logoImg, classNameLogo)}
+          alt=""
+        />
       </div>
     ) : null;
   };
   const renderTitle = () => {
     return title ? (
       typeof title === 'string' ? (
-        <h1 className={classes.title}>{title}</h1>
+        <h1 className={classnames(classes.title, classNameTitle)}>{title}</h1>
       ) : (
         <>{title}</>
       )

@@ -62,6 +62,16 @@
         @include inter-regular;
       }
 
+      .errorBadge {
+        margin-top: 0 !important;
+        margin-bottom: 30px !important;
+      }
+
+      .errorMessage {
+        font-size: 13px !important;
+        letter-spacing: normal !important;
+      }
+
       .button {
         background-color: $coral-bisque;
         align-self: flex-start;
@@ -170,6 +180,34 @@
 
       .buttonText {
         @include inter-bold;
+      }
+    }
+  }
+
+  .videoSectionContainer {
+    padding: 40px 30px;
+    display: flex;
+    background-color: $dynamic-black;
+    align-items: center;
+    justify-content: center;
+
+    .videoContainer {
+      padding: 10px;
+      border: 1px solid $bauhaus;
+      border-radius: 20px;
+      box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 880px;
+      height: fit-content;
+
+      .videoFrame {
+        border-radius: 20px;
+        width: 100%;
+        max-width: 840px;
+        aspect-ratio: 16 / 9;
       }
     }
   }
@@ -296,16 +334,20 @@
             color: $white;
             @include inter-regular;
           }
-      
-          .button {
-            margin-top: 40px;
-            padding: 10px;
-            background-color: $gadabout;
-            color: $black;
-            align-self: flex-start;
-            @include inter-regular;
+
+          .link {
+            display: block;
+            width: fit-content;
             @include sm {
               align-self: center;
+            }
+
+            .button {
+              margin-top: 40px;
+              padding: 10px;
+              background-color: $gadabout;
+              color: $black;
+              @include inter-regular;
             }
           }
         }
@@ -459,18 +501,30 @@
         }
       }
     }
+    
+    .videoSectionContainer {
+      padding: 150px 80px;
+
+      .videoContainer {
+        padding: 20px;
+      }
+    }
+
+    .featuresContainer,
+    .infoContainer,
+    .fioHandleSection,
+    .faqSection,
+    .securityAudit {
+      padding: 100px 80px;
+    }
 
     .featuresContainer {
-      padding: 100px 80px;
-
       .featureItemsContainer {
         gap: 80px;
       }
     }
 
     .infoContainer {
-      padding: 100px 80px;
-
       .title {
         font-size: 3.875em;
       }
@@ -486,8 +540,6 @@
     }
 
     .fioHandleSection {
-      padding: 100px 80px;
-
       .contentContainer {
         padding: 20px;
 
@@ -507,14 +559,6 @@
           }
         }
       }
-    }
-
-    .faqSection {
-      padding: 100px 80px;
-    }
-
-    .securityAudit {
-      padding: 100px 80px;
     }
   }
 }

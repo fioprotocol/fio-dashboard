@@ -23,8 +23,13 @@ import { copyToClipboard, log } from '../../../util/general';
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { LINKS } from '../../../constants/labels';
+import { USER_PROFILE_TYPE } from '../../../constants/profile';
 
 import apis from '../../../api';
+
+import { updateWalletName } from '../../../redux/account/actions';
+import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../redux/modal/actions';
 
 import { FioWalletDoublet } from '../../../types';
 import {
@@ -33,23 +38,22 @@ import {
   PasswordFormValues,
 } from '../types';
 
-import { updateWalletName } from '../../../redux/account/actions';
-import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
-import { showGenericErrorModal } from '../../../redux/modal/actions';
-
 import classes from '../styles/WalletDetailsModal.module.scss';
 
 type Props = {
   show: boolean;
   fioWallet: FioWalletDoublet;
   fioWalletsAmount: number;
+  userType: string;
   onClose: () => void;
 };
 
 const WalletSettings: React.FC<Props> = props => {
-  const { show, fioWallet, fioWalletsAmount, onClose } = props;
+  const { show, fioWallet, fioWalletsAmount, userType, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const isPrimaryUserProfileType = userType === USER_PROFILE_TYPE.PRIMARY;
 
   const [loading, setLoading] = useState({
     updateWalletName: false,
@@ -63,6 +67,7 @@ const WalletSettings: React.FC<Props> = props => {
   >();
 
   const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
+  const isMetamaskWallet = fioWallet?.from === WALLET_CREATED_FROM.METAMASK;
 
   const onEditSubmit = (values: EditWalletNameValues) => {
     edit(values.name);
@@ -139,18 +144,22 @@ const WalletSettings: React.FC<Props> = props => {
   };
 
   const onDeleteConfirmModal = async (values: DeleteWalletFormValues) => {
-    setCurrentDeleteValues(values);
+    if (isPrimaryUserProfileType) {
+      setCurrentDeleteValues(values);
+    }
     setShowDeleteConfirm(true);
   };
 
   const onDeleteConfirm = async () => {
     setLoading({ ...loading, deleteWallet: true });
 
-    const { username, password } = currentDeleteValues;
+    const { username, password } = currentDeleteValues || {};
 
     try {
-      const account = await apis.edge.login(username, password);
-      await apis.edge.deleteWallet(account, fioWallet.edgeId);
+      if (isPrimaryUserProfileType) {
+        const account = await apis.edge.login(username, password);
+        await apis.edge.deleteWallet(account, fioWallet.edgeId);
+      }
 
       await deleteWallet(fioWallet.publicKey);
     } catch (err) {
@@ -268,8 +277,14 @@ const WalletSettings: React.FC<Props> = props => {
                 <>
                   {isLedgerWallet ? (
                     <span>
-                      Your private key for this wallet is stored on you ledger
+                      Your private key for this wallet is stored on your ledger
                       device. Once Deleted, it can be added back at any time.
+                    </span>
+                  ) : isMetamaskWallet ? (
+                    <span>
+                      Your private key for this wallet is stored on your
+                      MetaMask wallet. Once Deleted, it can be added back at any
+                      time.
                     </span>
                   ) : (
                     <span className={classes.badgeBoldText}>
@@ -282,6 +297,7 @@ const WalletSettings: React.FC<Props> = props => {
             />
             <DeleteWalletForm
               loading={loading.deleteWallet}
+              isPrimaryUserProfileType={isPrimaryUserProfileType}
               onSubmit={onDeleteConfirmModal}
             />
           </>
@@ -304,7 +320,7 @@ const WalletSettings: React.FC<Props> = props => {
         <div className={classes.container}>
           <h3 className={classes.title}>Wallet Settings</h3>
           {renderNameForm()}
-          {!isLedgerWallet && renderPasswordForm()}
+          {!isLedgerWallet && !isMetamaskWallet && renderPasswordForm()}
           {renderKey()}
           {renderCancel()}
           {renderDeleteWalletForm()}
@@ -333,6 +349,13 @@ const WalletSettings: React.FC<Props> = props => {
                 <b>
                   However, this wallet’s private keys are stored on your Ledger
                   device and can be import again at any time.
+                </b>
+              </span>
+            ) : isMetamaskWallet ? (
+              <span className={classes.deleteSecondText}>
+                <b>
+                  However, this wallet’s private keys are stored on your
+                  MetaMask wallet and can be import again at any time.
                 </b>
               </span>
             ) : (

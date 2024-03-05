@@ -17,6 +17,9 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     showLogin,
   } = props;
 
+  const isAlternativeEthereumWalletSetup =
+    window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+
   if (isAuthenticated)
     return (
       <LoggedNav
@@ -39,7 +42,9 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
       isMenuOpen={isMenuOpen}
       closeMenu={closeMenu}
       showLogin={showLogin}
-      onlyAuth={isContainedFlow || isNotActiveUser}
+      onlyAuth={
+        isContainedFlow || isNotActiveUser || isAlternativeEthereumWalletSetup
+      }
       hideCart={isContainedFlow}
       {...props}
     />

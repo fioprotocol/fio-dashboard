@@ -26,6 +26,7 @@ type Props = {
   withoutPaggingBottom?: boolean;
   enableOverflow?: boolean;
   headerClass?: string;
+  isSecondModal?: boolean;
 };
 
 const ModalComponent: React.FC<Props> = props => {
@@ -51,6 +52,7 @@ const ModalComponent: React.FC<Props> = props => {
     withoutPaggingBottom,
     enableOverflow,
     headerClass,
+    isSecondModal,
   } = props;
   const handleClose = () => {
     if (!onClose) return;
@@ -79,6 +81,9 @@ const ModalComponent: React.FC<Props> = props => {
         isFullWidth && classes.fullWidth,
         isMiddleWidth && classes.isMiddleWidth,
         hasDefaultCloseColor && classes.defaultCloseColor,
+      )}
+      backdropClassName={classnames(
+        isSecondModal ? classes.backdropSecondModal : classes.backdrop,
       )}
       backdrop={backdrop}
     >
