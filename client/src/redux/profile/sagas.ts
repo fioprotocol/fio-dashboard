@@ -133,9 +133,11 @@ export function* loginSuccess(history: History, api: Api): Generator {
 
 export function* alternateLoginSuccess(history: History, api: Api): Generator {
   yield takeEvery(ALTERNATE_LOGIN_SUCCESS, function*(action: Action) {
-    const hasRedirectTo: { pathname: string; state: object } = yield select(
-      redirectLink,
-    );
+    const hasRedirectTo: {
+      pathname: string;
+      state: object;
+      search: string;
+    } = yield select(redirectLink);
     api.client.setToken(action.data.jwt);
     if (action.data.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
