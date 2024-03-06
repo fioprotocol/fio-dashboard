@@ -47,7 +47,11 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
       {icon && <div className="mr-2">{icon}</div>}
       <div className={classes.buttonText}>{buttonText}</div>
       {afterTextIcon && <div className="ml-2">{afterTextIcon}</div>}
-      {loading && <Loader isWhite hasSmallSize />}
+      {loading && (
+        <div>
+          <Loader isWhite hasSmallSize />
+        </div>
+      )}
     </Button>
   );
 };

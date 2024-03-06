@@ -115,6 +115,12 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   }, [onBitPayModalClose]);
 
   useEffect(() => {
+    if (isPaid) {
+      onFinish(submitData);
+    }
+  }, [isPaid, onFinish, submitData]);
+
+  useEffect(() => {
     window.addEventListener('message', handleBitPayPaymentMessage);
     return () => {
       window.removeEventListener('message', handleBitPayPaymentMessage);
