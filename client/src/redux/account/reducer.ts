@@ -25,4 +25,15 @@ export default combineReducers({
         return state;
     }
   },
+  walletHasBeenAdded(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.ADD_WALLET_SUCCESS:
+        return true;
+      case actions.RESET_ADD_WALLET_SUCCESS:
+      case actions.ADD_WALLET_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
 });
