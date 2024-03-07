@@ -64,7 +64,7 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   const connectMetamask = useCallback(() => {
-    if (window.ethereum) {
+    if (window.ethereum.isMetaMask) {
       onLoginModalOpen();
       handleConnectClick();
       dispatch(resetAlternativeLoginError());

@@ -5,6 +5,7 @@ import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 import AddressWidget from '../../components/AddressWidget';
+import { MetamaskConnectionModal } from '../../components/Modal/MetamaskConnectionModal';
 
 import { APP_TITLE } from '../../constants/labels';
 
@@ -16,7 +17,11 @@ import sendReceiveIcon from '../../assets/images/metamask-gated-registration-pag
 import classes from './MetamaskgatedRegistration.module.scss';
 
 const MetamaskGatedRegistration: React.FC = () => {
-  const { addressWidgetContent } = useContext();
+  const {
+    addressWidgetContent,
+    isLoginModalOpen,
+    onLoginModalClose,
+  } = useContext();
 
   return (
     <>
@@ -37,6 +42,13 @@ const MetamaskGatedRegistration: React.FC = () => {
           {...{ ...addressWidgetContent, logoSrc: '' }}
           isReverseColors
           isTransparent
+        />
+        <MetamaskConnectionModal
+          hasCloseButton
+          show={isLoginModalOpen}
+          title="Sign in to your account"
+          text="For the most seamless Web3 experience please complete the actions in the MetaMask window."
+          onClose={onLoginModalClose}
         />
       </div>
     </>
