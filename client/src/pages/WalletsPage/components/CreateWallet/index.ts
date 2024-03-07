@@ -2,14 +2,20 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { fioWallets } from '../../../../redux/fio/selectors';
-import { addWalletLoading } from '../../../../redux/account/selectors';
+import {
+  addWalletLoading,
+  walletHasBeenAdded,
+} from '../../../../redux/account/selectors';
 import {
   showGenericError,
   showPinConfirm,
 } from '../../../../redux/modal/selectors';
 import { user } from '../../../../redux/profile/selectors';
 
-import { addWallet } from '../../../../redux/account/actions';
+import {
+  addWallet,
+  resetAddWalletSuccess,
+} from '../../../../redux/account/actions';
 
 import { compose } from '../../../../utils';
 
@@ -22,9 +28,11 @@ const reduxConnect = connect(
     addWalletLoading,
     pinModalIsOpen: showPinConfirm,
     user,
+    walletHasBeenAdded,
   }),
   {
     addWallet,
+    resetAddWalletSuccess,
   },
 );
 export default compose(reduxConnect)(CreateWallet);

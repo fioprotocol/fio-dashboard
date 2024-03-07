@@ -11,6 +11,8 @@ import {
 } from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
+import useEffectOnce from '../../../../hooks/general';
+
 import { CreateWalletValues } from '../../types';
 import { FioWalletDoublet, NewFioWalletDoublet, User } from '../../../../types';
 
@@ -21,9 +23,11 @@ type Props = {
   pinModalIsOpen: boolean;
   fioWallets: FioWalletDoublet[];
   user: User;
+  walletHasBeenAdded: boolean;
   onClose: () => void;
   onWalletCreated: () => void;
   addWallet: (data: NewFioWalletDoublet) => void;
+  resetAddWalletSuccess: () => void;
 };
 
 const CreateWallet: React.FC<Props> = props => {
@@ -33,10 +37,12 @@ const CreateWallet: React.FC<Props> = props => {
     addWalletLoading,
     pinModalIsOpen,
     user,
-    onClose,
-    addWallet,
+    walletHasBeenAdded,
     fioWallets,
+    addWallet,
+    onClose,
     onWalletCreated,
+    resetAddWalletSuccess,
   } = props;
 
   const walletsAmount = fioWallets.length;
@@ -83,11 +89,14 @@ const CreateWallet: React.FC<Props> = props => {
   }, [creationType, existingWalletNamesJSON, show, walletsAmount]);
 
   useEffect(() => {
-    if (processing && !addWalletLoading) {
+    if (walletHasBeenAdded) {
       onWalletCreated();
-      setProcessing(false);
     }
-  }, [addWalletLoading, processing, onWalletCreated]);
+  }, [onWalletCreated, walletHasBeenAdded]);
+
+  useEffectOnce(() => {
+    resetAddWalletSuccess();
+  }, []);
 
   const onCreateSubmit = (values: CreateWalletValues) => {
     setCurrentValues(values);
@@ -103,6 +112,7 @@ const CreateWallet: React.FC<Props> = props => {
   const onWalletDataPrepared = (walletData: NewFioWalletDoublet) => {
     addWallet(walletData);
     setCreationType(null);
+    setProcessing(false);
   };
 
   const onOptionCancel = () => {
