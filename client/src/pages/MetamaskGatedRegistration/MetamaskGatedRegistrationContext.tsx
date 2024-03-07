@@ -15,7 +15,6 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
-import { showLoginModal } from '../../redux/modal/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
@@ -24,6 +23,7 @@ import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
 import { getPublicKey } from '../../util/snap';
+import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
 import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
@@ -116,6 +116,8 @@ type UseContext = {
       address: string;
     }) => Promise<void> | void;
   };
+  isLoginModalOpen: boolean;
+  onLoginModalClose: () => void;
 };
 
 const TitleComponent = () => (
@@ -138,6 +140,12 @@ export const useContext = (): UseContext => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const {
+    isLoginModalOpen,
+    connectMetamask,
+    onLoginModalClose,
+  } = useContextMetamaskLogin();
 
   const isVerified = window.ethereum?.isMetaMask;
   const userHasMetamaskFioHandleInCart = cartItems.find(
@@ -194,7 +202,7 @@ export const useContext = (): UseContext => {
         if (isRegistered) return;
 
         if (!user) {
-          dispatch(showLoginModal());
+          connectMetamask();
         }
 
         setFioHandle(address);
@@ -205,7 +213,7 @@ export const useContext = (): UseContext => {
         toggleLoading(false);
       }
     },
-    [checkIfFioHandleRegistered, dispatch, user],
+    [checkIfFioHandleRegistered, connectMetamask, user],
   );
 
   const customHandleSubmitUnverified = useCallback(() => {
@@ -351,5 +359,9 @@ export const useContext = (): UseContext => {
       ? customHandleSubmitVerified
       : customHandleSubmitUnverified,
   };
-  return { addressWidgetContent };
+  return {
+    addressWidgetContent,
+    isLoginModalOpen,
+    onLoginModalClose,
+  };
 };
