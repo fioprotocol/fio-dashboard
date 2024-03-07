@@ -15,6 +15,7 @@ const AdminRegularUserDetailsPage: React.FC = () => {
   const {
     affiliateProfile,
     createdAt,
+    id,
     email,
     fioDomains,
     fioWallets,
@@ -32,7 +33,7 @@ const AdminRegularUserDetailsPage: React.FC = () => {
   if (loading) return <Loader />;
 
   return (
-    <LayoutContainer title={email}>
+    <LayoutContainer title={email || id}>
       <UserInfo
         affiliateProfile={affiliateProfile}
         createdAt={createdAt}
