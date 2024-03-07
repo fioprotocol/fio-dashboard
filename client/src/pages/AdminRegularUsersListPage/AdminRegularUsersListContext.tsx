@@ -98,6 +98,7 @@ export const useContext = (): UseContextProps => {
 
     usersList.users?.forEach((user, i) => {
       const {
+        id,
         email,
         createdAt,
         status,
@@ -108,7 +109,7 @@ export const useContext = (): UseContextProps => {
 
       preparedUsersListToCsv.push({
         number: i + 1,
-        email,
+        email: email || id,
         created: formatDateToLocale(createdAt),
         status,
         refProfile: refProfile?.code || 'No Ref profile',

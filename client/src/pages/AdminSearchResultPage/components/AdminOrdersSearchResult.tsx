@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import AdminOrderModal from '../../AdminOrdersPage/components/AdminOrderModal/AdminOrderModal';
 
 import { PURCHASE_RESULTS_STATUS_LABELS } from '../../../constants/purchase';
+import { ADMIN_ROUTES } from '../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 import { formatDateToLocale } from '../../../helpers/stringFormatters';
 
 import { AdminOrderItemProfile, OrderDetails } from '../../../types';
@@ -65,7 +68,13 @@ const AdminOrdersSearchResult: React.FC<Props> = props => {
                 >
                   {order.number}
                 </th>
-                <th>{order.userEmail}</th>
+                <th>
+                  <Link
+                    to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${orderItem.user.id}`}
+                  >
+                    {order.userEmail || order.userId}
+                  </Link>
+                </th>
                 <th>{order.total}</th>
                 <th>{order.paymentProcessor}</th>
                 <th>{order.publicKey || null}</th>
