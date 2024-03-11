@@ -630,7 +630,7 @@ class WalletDataJob extends CommonJob {
     let domainsWatchlistOffset = 0;
 
     const processWallet = wallet => async () => {
-      if (this.isCancelled) return false;
+      if (this.isCancelled || !wallet.User.email) return false;
 
       if (DEBUG_INFO) this.postMessage(`Process wallet - ${wallet.id}`);
 
