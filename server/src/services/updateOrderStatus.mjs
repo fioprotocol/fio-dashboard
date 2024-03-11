@@ -235,8 +235,11 @@ const createPurchaseConfirmationNotification = async order => {
       number,
       payments,
       publicKey,
-      user: { id: userId },
+      user: { id: userId, email },
     } = order;
+
+    if (!email) return; // Do not create notification if user has no email. For example it could be MetaMask user.
+
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
