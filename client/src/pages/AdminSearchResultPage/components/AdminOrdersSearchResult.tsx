@@ -70,7 +70,7 @@ const AdminOrdersSearchResult: React.FC<Props> = props => {
                 </th>
                 <th>
                   <Link
-                    to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${orderItem.user.id}`}
+                    to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${order?.userId}`}
                   >
                     {order.userEmail || order.userId}
                   </Link>
