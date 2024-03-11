@@ -439,6 +439,34 @@ export class Order extends Base {
     return orders;
   }
 
+  static async listSearchByUserId(userId) {
+    const [orders] = await this.sequelize.query(`
+      SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor"
+      FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+      WHERE o."deletedAt" IS NULL
+          AND o."userId" = '${userId}'
+  `);
+
+    return orders;
+  }
+
   static async listSearchByPublicKey(publicKey) {
     const [orders] = await this.sequelize.query(`
         SELECT 
