@@ -17,10 +17,12 @@ type Props = {
 const AdminSearchResultPage: React.FC<Props> = props => {
   const { adminSearch, loading, getOrder, orderItem } = props;
 
-  return (
-    <div>
-      {loading && <Loader />}
+  if (loading && !adminSearch?.result) {
+    return <div className="w-100 mt-5">{loading && <Loader />}</div>;
+  }
 
+  return (
+    <div className="w-100">
       {!adminSearch?.result ||
       (!adminSearch.result.users?.length &&
         !adminSearch.result.orders?.length) ? (
@@ -28,6 +30,7 @@ const AdminSearchResultPage: React.FC<Props> = props => {
       ) : (
         <>
           <div className={classes.infoTitle}>Search results</div>
+          <div className="mt-3">{loading && <Loader />}</div>
           <AdminOrdersSearchResult
             orderItem={orderItem}
             getOrder={getOrder}
