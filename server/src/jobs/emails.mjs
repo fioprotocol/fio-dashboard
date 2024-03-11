@@ -72,10 +72,15 @@ class EmailsJob extends CommonJob {
         const {
           data,
           contentType,
-          User: { email },
+          User: { email, id },
         } = notifications[0];
 
         if (!data.emailData || !Object.keys(data.emailData).length) return false;
+
+        if (!email) {
+          this.postMessage(`Email has not been sent. User ${id} has no email.`);
+          return false;
+        }
 
         let sentEmailId = null;
         try {
