@@ -39,13 +39,13 @@ export default class AddItem extends Base {
             domainType: ['string'],
             id: ['required', 'string'],
             isFree: ['boolean'],
-            metamaskUserPublicKey: ['string'],
             hasCustomDomainInCart: ['boolean'],
             period: ['string'],
             type: ['required', 'string'],
           },
         },
       ],
+      metamaskUserPublicKey: ['string'],
       prices: [
         {
           nested_object: {
@@ -62,7 +62,15 @@ export default class AddItem extends Base {
     };
   }
 
-  async execute({ id, item, prices, roe, token, userId: reqUserId }) {
+  async execute({
+    id,
+    item,
+    metamaskUserPublicKey,
+    prices,
+    roe,
+    token,
+    userId: reqUserId,
+  }) {
     try {
       const { domain, type } = item;
 
@@ -73,11 +81,13 @@ export default class AddItem extends Base {
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-      const userHasFreeAddress =
-        userId &&
-        (await FreeAddress.getItems({
-          userId,
-        }));
+      const userHasFreeAddress = metamaskUserPublicKey
+        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+        : userId
+        ? await FreeAddress.getItems({
+            userId,
+          })
+        : null;
 
       const gatedRefProfile = await ReferrerProfile.findOne({
         where: Sequelize.literal(
@@ -145,6 +155,7 @@ export default class AddItem extends Base {
         const cart = await Cart.create({
           items: [handledFreeCartItem],
           userId,
+          metamaskUserPublicKey,
         });
 
         return { data: Cart.format(cart.get({ plain: true })) };
@@ -173,6 +184,7 @@ export default class AddItem extends Base {
       await existingCart.update({
         items: handledCartItemsWithExistingFioHandleCustomDomain,
         userId,
+        metamaskUserPublicKey,
       });
 
       return {

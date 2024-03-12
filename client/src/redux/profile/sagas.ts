@@ -20,6 +20,7 @@ import {
   PROFILE_SUCCESS,
   RESET_ADMIN_PASSWORD_SUCCESS,
   ACTIVATE_AFFILIATE_SUCCESS,
+  getUsersFreeAddresses,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -57,6 +58,7 @@ import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
 import { METAMASK_DOMAIN_NAME } from '../../constants/fio';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
+import { getZeroIndexPublicKey } from '../../util/snap';
 import { Api } from '../../api';
 import { Api as AdminApi } from '../../admin/api';
 
@@ -192,9 +194,23 @@ export function* profileSuccess(): Generator {
     const roe: number = yield select(roeSelector);
     const prices: Prices = yield select(pricesSelector);
 
+    const metamaskUserPublicKey: string | null = yield getZeroIndexPublicKey(
+      user?.userProfileType,
+    );
+
+    if (metamaskUserPublicKey) {
+      yield put<Action>(
+        getUsersFreeAddresses({ publicKey: metamaskUserPublicKey }),
+      );
+    }
+
     if (cartId && user && action.shouldHandleUsersFreeCart) {
       yield put<Action>(
-        handleUsersFreeCartItems({ id: cartId, userId: user.id }),
+        handleUsersFreeCartItems({
+          id: cartId,
+          userId: user.id,
+          metamaskUserPublicKey,
+        }),
       );
     }
 

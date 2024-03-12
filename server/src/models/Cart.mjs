@@ -27,6 +27,10 @@ export class Cart extends Base {
           onUpdate: 'cascade',
           allowNull: true,
         },
+        metamaskUserPublicKey: {
+          type: DT.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize,
@@ -45,7 +49,7 @@ export class Cart extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'items', 'userId'],
+      default: ['id', 'items', 'metamaskUserPublicKey', 'userId'],
     };
 
     if (type in attributes) {
@@ -55,7 +59,7 @@ export class Cart extends Base {
     return attributes.default;
   }
 
-  static format({ id, items }) {
-    return { id, items };
+  static format({ id, items, metamaskUserPublicKey }) {
+    return { id, items, metamaskUserPublicKey };
   }
 }

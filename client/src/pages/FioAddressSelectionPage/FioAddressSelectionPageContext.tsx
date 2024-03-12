@@ -21,6 +21,7 @@ import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
   userId as userIdSelector,
+  user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
 
@@ -44,6 +45,7 @@ import { setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 import useEffectOnce from '../../hooks/general';
 import apis from '../../api';
+import { getZeroIndexPublicKey } from '../../util/snap';
 
 import {
   DomainsArrItemType,
@@ -301,6 +303,7 @@ export const useContext = (): UseContextProps => {
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
   const userId = useSelector(userIdSelector);
+  const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const dispatch = useDispatch();
@@ -587,18 +590,23 @@ export const useContext = (): UseContextProps => {
   );
 
   const onClick = useCallback(
-    (selectedItem: CartItem) => {
+    async (selectedItem: CartItem) => {
+      const metamaskUserPublicKey = await getZeroIndexPublicKey(
+        user?.userProfileType,
+      );
+
       dispatch(
         addItemToCart({
           id: cartId,
           item: selectedItem,
+          metamaskUserPublicKey,
           prices: prices?.nativeFio,
           roe,
           userId,
         }),
       );
     },
-    [cartId, dispatch, prices?.nativeFio, roe, userId],
+    [cartId, dispatch, prices?.nativeFio, roe, user?.userProfileType, userId],
   );
 
   const getFioRawAbis = useCallback(async () => {

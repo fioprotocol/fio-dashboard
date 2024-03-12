@@ -140,15 +140,19 @@ export default class OrdersCreate extends Base {
       order.number = Order.generateNumber(order.id);
       await order.save({ transaction: t });
 
+      const metamaskUserPublicKey = cart.metamaskUserPublicKey;
+
       const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
-      const userHasFreeAddress =
-        userId &&
-        (await FreeAddress.getItems({
-          userId,
-        }));
+      const userHasFreeAddress = metamaskUserPublicKey
+        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+        : userId
+        ? await FreeAddress.getItems({
+            userId,
+          })
+        : null;
 
       const {
         addBundles: addBundlesPrice,
@@ -198,6 +202,14 @@ export default class OrdersCreate extends Base {
         priceCurrency,
         data: itemData,
       } of items) {
+        let orderItemData = itemData;
+
+        if (metamaskUserPublicKey) {
+          orderItemData = itemData
+            ? { ...itemData, metamaskUserPublicKey }
+            : { metamaskUserPublicKey };
+        }
+
         const orderItem = await OrderItem.create(
           {
             action,
@@ -207,7 +219,7 @@ export default class OrdersCreate extends Base {
             nativeFio,
             price,
             priceCurrency: priceCurrency || Payment.CURRENCY.USDC,
-            data: itemData ? { ...itemData } : null,
+            data: orderItemData ? { ...orderItemData } : null,
             orderId: order.id,
           },
           { transaction: t },

@@ -351,3 +351,18 @@ export const getUserWallets = (): CommonPromiseAction => ({
   ],
   promise: (api: Api) => api.account.getWallets(),
 });
+
+export const GET_USERS_FREE_ADDRESSES_REQUEST = `${prefix}/GET_USERS_FREE_ADDRESSES_REQUEST`;
+export const GET_USERS_FREE_ADDRESSES_SUCCESS = `${prefix}/GET_USERS_FREE_ADDRESSES_SUCCESS`;
+export const GET_USERS_FREE_ADDRESSES_FAILURE = `${prefix}/GET_USERS_FREE_ADDRESSES_FAILURE`;
+
+export const getUsersFreeAddresses = (data: {
+  publicKey: string;
+}): CommonPromiseAction => ({
+  types: [
+    GET_USERS_FREE_ADDRESSES_REQUEST,
+    GET_USERS_FREE_ADDRESSES_SUCCESS,
+    GET_USERS_FREE_ADDRESSES_FAILURE,
+  ],
+  promise: (api: Api) => api.users.getFreeAddresses(data),
+});
