@@ -13,6 +13,7 @@ import {
   isAuthenticated as isAuthenticatedSelector,
   lastAuthData as lastAuthDataSelector,
   userId as userIdSelector,
+  user as userSelector,
 } from '../../redux/profile/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -44,6 +45,7 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
+import { getZeroIndexPublicKey } from '../../util/snap';
 
 import { OptionProps } from '../../components/Input/EditableSelect/EditableSelect';
 import { AllDomains, CartItem } from '../../types';
@@ -74,6 +76,7 @@ export const useContext = (): UseContextProps => {
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
   const cartItems = useSelector(cartItemsSelector);
   const userId = useSelector(userIdSelector);
+  const user = useSelector(userSelector);
 
   const queryParams = useQuery();
   const dispatch = useDispatch();
@@ -118,7 +121,7 @@ export const useContext = (): UseContextProps => {
       })) || [];
 
   const onClick = useCallback(
-    (selectedItem: CartItem) => {
+    async (selectedItem: CartItem) => {
       const newItem = {
         ...selectedItem,
         type:
@@ -127,10 +130,15 @@ export const useContext = (): UseContextProps => {
             : CART_ITEM_TYPE.ADDRESS,
       };
 
+      const metamaskUserPublicKey = await getZeroIndexPublicKey(
+        user?.userProfileType,
+      );
+
       dispatch(
         addItemToCart({
           id: cartId,
           item: newItem,
+          metamaskUserPublicKey,
           prices: prices?.nativeFio,
           roe,
           userId,
@@ -139,7 +147,7 @@ export const useContext = (): UseContextProps => {
 
       toggleHasItemAddedToCart(true);
     },
-    [cartId, dispatch, prices?.nativeFio, roe, userId],
+    [cartId, dispatch, prices?.nativeFio, roe, user?.userProfileType, userId],
   );
 
   const onFieldChange = (value: string) => {

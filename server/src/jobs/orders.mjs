@@ -42,6 +42,8 @@ import {
   ORDER_ERROR_TYPES,
 } from '../config/constants.js';
 
+import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
+
 import logger from '../logger.mjs';
 
 const ERROR_CODES = {
@@ -413,10 +415,14 @@ class OrdersJob extends CommonJob {
     fallbackFreeFioPermision,
     processOrderItem,
     existingDashboardDomain,
+    metamaskUserPublicKey,
   }) {
     const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    const userHasFreeAddress = await FreeAddress.getItems({ userId });
+    const userHasFreeAddress = metamaskUserPublicKey
+      ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      : await FreeAddress.getItems({ userId });
+
     const existingUsersFreeAddress =
       userHasFreeAddress &&
       userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
@@ -444,11 +450,20 @@ class OrdersJob extends CommonJob {
         );
         await OrderItem.setPending(result, id, blockchainTransactionId);
 
-        const freeAddressRecord = new FreeAddress({
-          name: fioName,
-          userId: orderItem.userId,
-        });
-        await freeAddressRecord.save();
+        if (metamaskUserPublicKey) {
+          const freeAddressRecord = new FreeAddress({
+            name: fioName,
+            publicKey: metamaskUserPublicKey,
+          });
+
+          await freeAddressRecord.save();
+        } else {
+          const freeAddressRecord = new FreeAddress({
+            name: fioName,
+            userId: orderItem.userId,
+          });
+          await freeAddressRecord.save();
+        }
 
         return this.updateOrderStatus(orderId);
       }
@@ -939,6 +954,7 @@ class OrdersJob extends CommonJob {
             fallbackFreeFioActor,
             fallbackFreeFioPermision,
             existingDashboardDomain,
+            metamaskUserPublicKey: data && data.metamaskUserPublicKey,
             processOrderItem,
           });
         }
@@ -979,7 +995,12 @@ class OrdersJob extends CommonJob {
         // Check if fee/roe changed and handle changes
         if (!useDomainOwnerAuthParams) await this.checkPriceChanges(orderItem, roe);
 
-        if (data && data.metamaskUserPublicKey) {
+        if (
+          data &&
+          data.metamaskUserPublicKey &&
+          domainOwner &&
+          [METAMASK_DOMAIN_NAME].includes(domain)
+        ) {
           const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
             publicKey: data && data.metamaskUserPublicKey,
           });
@@ -1018,7 +1039,12 @@ class OrdersJob extends CommonJob {
             );
             await OrderItem.setPending(result, id, blockchainTransactionId);
 
-            if (data && data.metamaskUserPublicKey) {
+            if (
+              data &&
+              data.metamaskUserPublicKey &&
+              domainOwner &&
+              [METAMASK_DOMAIN_NAME].includes(domain)
+            ) {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
                 publicKey: data.metamaskUserPublicKey,

@@ -15,10 +15,11 @@ export default class HandleUsersFreeCartItems extends Base {
     return {
       id: ['required', 'string'],
       userId: ['string'],
+      metamaskUserPublicKey: ['string'],
     };
   }
 
-  async execute({ id, userId }) {
+  async execute({ id, userId, metamaskUserPublicKey }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -33,11 +34,13 @@ export default class HandleUsersFreeCartItems extends Base {
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
-      const userHasFreeAddress =
-        userId &&
-        (await FreeAddress.getItems({
-          userId,
-        }));
+      const userHasFreeAddress = metamaskUserPublicKey
+        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+        : userId
+        ? await FreeAddress.getItems({
+            userId,
+          })
+        : null;
 
       const handledFreeCartItems = handleUsersFreeCartItems({
         allRefProfileDomains,
@@ -46,7 +49,11 @@ export default class HandleUsersFreeCartItems extends Base {
         userHasFreeAddress,
       });
 
-      await cart.update({ items: handledFreeCartItems, userId });
+      await cart.update({
+        items: handledFreeCartItems,
+        userId,
+        metamaskUserPublicKey,
+      });
 
       return {
         data: Cart.format(cart.get({ plain: true })),

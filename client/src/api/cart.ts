@@ -37,6 +37,7 @@ export default class Cart extends Base {
   handleUsersFreeCartItems(data: {
     id: string;
     userId?: string;
+    metamaskUserPublicKey?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }

@@ -50,11 +50,15 @@ export default class DeleteItem extends Base {
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
-      const userHasFreeAddress =
-        userId &&
-        (await FreeAddress.getItems({
-          userId,
-        }));
+      const metamaskUserPublicKey = cart.metamaskUserPublicKey;
+
+      const userHasFreeAddress = metamaskUserPublicKey
+        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+        : userId
+        ? await FreeAddress.getItems({
+            userId,
+          })
+        : null;
 
       const { handledPrices, handledRoe } = await handlePrices({
         prices,

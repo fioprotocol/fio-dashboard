@@ -96,6 +96,16 @@ export default combineReducers({
 
         return state;
       }
+      case actions.GET_USERS_FREE_ADDRESSES_SUCCESS: {
+        if (state != null) {
+          return {
+            ...state,
+            freeAddresses: action.data,
+          };
+        }
+
+        return state;
+      }
       default:
         return state;
     }

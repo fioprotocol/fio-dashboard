@@ -17,12 +17,14 @@ import {
 } from '../../redux/cart/selectors';
 import {
   userId as userIdSelector,
+  user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
 
 import apis from '../../api';
 import { log } from '../../util/general';
 import { validateFioAddress } from '../../util/fio';
+import { getZeroIndexPublicKey } from '../../util/snap';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
@@ -38,6 +40,7 @@ import { DOMAIN_TYPE } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
 import { ROUTES } from '../../constants/routes';
+
 import { AnyObject } from '../../types';
 
 type UseContextProps = {
@@ -84,6 +87,7 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
+  const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -322,10 +326,16 @@ export const useContext = (): UseContextProps => {
           period: 1,
           type: CART_ITEM_TYPE.ADDRESS,
         };
+
+        const metamaskUserPublicKey = await getZeroIndexPublicKey(
+          user?.userProfileType,
+        );
+
         dispatch(
           addItemToCart({
             id: cartId,
             item: cartItem,
+            metamaskUserPublicKey,
             prices: prices?.nativeFio,
             roe,
             token: gatedToken,
@@ -354,6 +364,7 @@ export const useContext = (): UseContextProps => {
       refDomainObj,
       roe,
       userId,
+      user,
     ],
   );
 

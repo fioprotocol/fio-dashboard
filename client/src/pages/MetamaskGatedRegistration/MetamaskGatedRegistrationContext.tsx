@@ -238,7 +238,6 @@ export const useContext = (): UseContext => {
           costNativeFio: prices.nativeFio.address,
           domainType: DOMAIN_TYPE.PRIVATE,
           isFree: true,
-          metamaskUserPublicKey: publicKey,
           period: 1,
           type: CART_ITEM_TYPE.ADDRESS,
         };
@@ -247,6 +246,7 @@ export const useContext = (): UseContext => {
           addItemToCart({
             id: cartId,
             item: cartItem,
+            metamaskUserPublicKey: publicKey,
             prices: prices?.nativeFio,
             roe,
             token: gatedToken,
@@ -293,7 +293,13 @@ export const useContext = (): UseContext => {
 
         const freeAddresses = await getFreeUserMetamaskAddresses(publicKey);
 
-        if (freeAddresses.length) {
+        if (
+          freeAddresses.length &&
+          freeAddresses.some(
+            freeAddressItem =>
+              freeAddressItem.name.split('@')[1] === METAMASK_DOMAIN_NAME,
+          )
+        ) {
           setNotification(NOTIFICATIONS.USER_HAS_FREE_ADDRESS);
           return;
         }
