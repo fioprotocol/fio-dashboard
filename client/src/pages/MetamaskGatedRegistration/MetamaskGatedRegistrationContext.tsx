@@ -29,6 +29,7 @@ import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { USER_PROFILE_TYPE } from '../../constants/profile';
+import { METAMASK_UNSUPPORTED_MOBILE_MESSAGE } from '../../constants/errors';
 
 import metamaskAtLogoSrc from '../../assets/images/metamask-landing/metamask-at.svg';
 
@@ -49,6 +50,12 @@ const NOTIFICATIONS = {
     message:
       'Please ensure that the MetaMask browser extension is installed and active. Or refresh the page if it has just been installed.',
     title: 'MetaMask not detected.',
+  },
+  INSTALL_MOBILE_METAMASK: {
+    hasNotification: true,
+    type: BADGE_TYPES.WARNING,
+    message: METAMASK_UNSUPPORTED_MOBILE_MESSAGE,
+    title: 'MetaMask app is not supported.',
   },
   NON_VALID_FIO_HANDLE: {
     hasNotification: true,
@@ -143,11 +150,12 @@ export const useContext = (): UseContext => {
 
   const {
     isLoginModalOpen,
+    isMobileDeviceWithMetamask,
     connectMetamask,
     onLoginModalClose,
   } = useContextMetamaskLogin();
 
-  const isVerified = window.ethereum?.isMetaMask;
+  const isVerified = window.ethereum?.isMetaMask && !isMobileDeviceWithMetamask;
   const userHasMetamaskFioHandleInCart = cartItems.find(
     cartItem => cartItem.domain === METAMASK_DOMAIN_NAME,
   );
@@ -217,8 +225,12 @@ export const useContext = (): UseContext => {
   );
 
   const customHandleSubmitUnverified = useCallback(() => {
-    setNotification(NOTIFICATIONS.INSTALL_METAMASK);
-  }, []);
+    setNotification(
+      isMobileDeviceWithMetamask
+        ? NOTIFICATIONS.INSTALL_MOBILE_METAMASK
+        : NOTIFICATIONS.INSTALL_METAMASK,
+    );
+  }, [isMobileDeviceWithMetamask]);
 
   const handleAddCartItem = useCallback(
     async ({ address }: { address: string }): Promise<void> => {

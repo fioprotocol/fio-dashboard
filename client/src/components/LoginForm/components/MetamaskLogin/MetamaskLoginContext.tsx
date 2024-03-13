@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isMobile } from 'react-device-detect';
 
 import { MetamaskSnap } from '../../../../services/MetamaskSnap';
 import apis from '../../../../api';
@@ -21,6 +22,7 @@ const DEFAULT_METAMASK_ERROR =
 type UseContextProps = {
   isDescriptionModalOpen: boolean;
   isLoginModalOpen: boolean;
+  isMobileDeviceWithMetamask: boolean;
   connectMetamask: () => void;
   onDetailsClick: () => void;
   onDescriptionModalClose: () => void;
@@ -115,6 +117,7 @@ export const useContext = (): UseContextProps => {
   return {
     isDescriptionModalOpen,
     isLoginModalOpen,
+    isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,
     connectMetamask,
     onDetailsClick,
     onDescriptionModalClose,
