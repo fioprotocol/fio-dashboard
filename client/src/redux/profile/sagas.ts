@@ -113,6 +113,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
+
     if (
       !hasRedirectTo &&
       locationState &&
@@ -124,6 +125,16 @@ export function* loginSuccess(history: History, api: Api): Generator {
         search: locationState.from.search || '',
       });
     }
+
+    if (
+      !hasRedirectTo &&
+      history.location?.pathname === ROUTES.CREATE_ACCOUNT
+    ) {
+      history.push({
+        pathname: ROUTES.HOME,
+      });
+    }
+
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);
       yield put<Action>(setRedirectPath(null));
