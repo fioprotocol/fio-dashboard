@@ -98,8 +98,11 @@ const AddressDomainCart: React.FC<Props> = props => {
     }
 
     if (!isAuthenticated) {
+      const isAlternativeUser =
+        window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+
       setRedirectPath({ pathname: route });
-      return lastAuthData
+      return lastAuthData || isAlternativeUser
         ? showLoginModal(route)
         : history.push(ROUTES.CREATE_ACCOUNT);
     }
