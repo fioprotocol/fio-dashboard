@@ -60,6 +60,11 @@ const accordionContent = [
     title: 'Did the FIO MetaMask Snap pass any security audits?',
     text: 'Yes, it has been audited by Sayfer, an external audit team.',
   },
+  {
+    title: 'Can I use Snaps on both MetaMask Extension and Mobile App?',
+    text:
+      'Currently, Snaps are only available in the MetaMask browser extension v11.0 and up.',
+  },
 ];
 
 const featureItems = [
