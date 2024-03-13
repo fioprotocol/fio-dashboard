@@ -54,3 +54,6 @@ export const AUTHENTICATION_FAILED = 'AUTHENTICATION_FAILED';
 export const TWOFA_TOKEN_IS_NOT_VALID = '2FA_TOKEN_IS_NOT_VALID';
 
 export const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
+
+export const METAMASK_UNSUPPORTED_MOBILE_MESSAGE =
+  'Currenty Sign-in with MetaMask only works on Desktop with MetaMask browser extension v11.0 and up.';

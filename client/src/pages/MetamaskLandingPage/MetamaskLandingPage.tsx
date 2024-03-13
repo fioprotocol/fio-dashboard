@@ -17,6 +17,7 @@ import NotificationBadge from '../../components/NotificationBadge';
 
 import { APP_TITLE } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
+import { METAMASK_UNSUPPORTED_MOBILE_MESSAGE } from '../../constants/errors';
 
 import { useContext as useContextMetamaskLandgingPage } from './MetamaskLandingPageContext';
 
@@ -140,6 +141,7 @@ const MetamaskLandingPage: React.FC = () => {
   const {
     alternativeLoginError,
     isLoginModalOpen,
+    isMobileDeviceWithMetamask,
     noMetamaskExtention,
     handleConnectClick,
     onLoginModalClose,
@@ -185,6 +187,16 @@ const MetamaskLandingPage: React.FC = () => {
                   messageClassnames={classes.errorMessage}
                 />
               )}
+              {isMobileDeviceWithMetamask && (
+                <NotificationBadge
+                  type={BADGE_TYPES.WARNING}
+                  show={isMobileDeviceWithMetamask}
+                  hasNewDesign
+                  message={METAMASK_UNSUPPORTED_MOBILE_MESSAGE}
+                  className={classes.errorBadge}
+                  messageClassnames={classes.errorMessage}
+                />
+              )}
               <SubmitButton
                 text={
                   <>
@@ -198,6 +210,7 @@ const MetamaskLandingPage: React.FC = () => {
                 }
                 hasAutoHeight
                 hasAutoWidth
+                disabled={isMobileDeviceWithMetamask}
                 className={classes.button}
                 onClick={handleConnectClick}
               />

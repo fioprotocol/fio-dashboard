@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { isMobile } from 'react-device-detect';
 
 import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
@@ -12,6 +13,7 @@ import { ROUTES } from '../../constants/routes';
 type Props = {
   alternativeLoginError: string;
   isLoginModalOpen: boolean;
+  isMobileDeviceWithMetamask: boolean;
   noMetamaskExtention: boolean;
   handleConnectClick: () => void;
   onLoginModalClose: () => void;
@@ -44,6 +46,7 @@ export const useContext = (): Props => {
   return {
     alternativeLoginError,
     isLoginModalOpen,
+    isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,
     noMetamaskExtention,
     handleConnectClick,
     onLoginModalClose,
