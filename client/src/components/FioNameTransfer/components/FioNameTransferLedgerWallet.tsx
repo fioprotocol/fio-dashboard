@@ -7,7 +7,6 @@ import LedgerConnect from '../../../components/LedgerConnect';
 import { CONFIRM_LEDGER_ACTIONS, DOMAIN } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 
-import { hasFioAddressDelimiter } from '../../../utils';
 import { prepareChainTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
 
@@ -39,17 +38,7 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async (appFio: LedgerFioApp) => {
-    const { transferAddress, fioNameType, name } = submitData;
-    let newOwnerKey = hasFioAddressDelimiter(transferAddress)
-      ? ''
-      : transferAddress;
-    if (!newOwnerKey) {
-      const {
-        public_address: publicAddress,
-      } = await apis.fio.getFioPublicAddress(transferAddress);
-      if (!publicAddress) throw new Error('Public address is invalid.');
-      newOwnerKey = publicAddress;
-    }
+    const { fioNameType, name, newOwnerPublicKey } = submitData;
 
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
@@ -58,7 +47,7 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
         : ACTIONS.transferFioAddress,
       {
         [fioNameType === DOMAIN ? 'fio_domain' : 'fio_address']: name,
-        new_owner_fio_public_key: newOwnerKey,
+        new_owner_fio_public_key: newOwnerPublicKey,
         max_fee: fee,
         tpid: apis.fio.tpid,
       },
@@ -95,7 +84,7 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
       },
     );
 
-    return { ...result, newOwnerKey };
+    return { ...result, newOwnerKey: newOwnerPublicKey };
   };
 
   if (!submitData) return null;

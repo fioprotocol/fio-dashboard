@@ -25,7 +25,6 @@ import { CheckedTokenType, DeleteTokenValues } from '../types';
 
 type Props = {
   allowDisconnectAll: boolean;
-  fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
   checkedPubAddresses: CheckedTokenType[];
@@ -40,8 +39,6 @@ type Props = {
 export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
   const {
     allowDisconnectAll,
-    checkedPubAddresses,
-    fioHandle,
     fioWallet,
     processing,
     submitData,
@@ -51,6 +48,8 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
     setProcessing,
     setResultsData,
   } = props;
+
+  const { fioCryptoHandle, pubAddressesArr } = submitData || {};
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
 
@@ -65,7 +64,7 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
         action: TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses],
         account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
         data: {
-          fio_address: fioHandle,
+          fio_address: fioCryptoHandle?.name,
           tpid: apis.fio.tpid,
           max_fee: DEFAULT_ACTION_FEE_AMOUNT,
         },
@@ -73,8 +72,8 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
       };
       actionParamsArr.push(actionParam);
     } else {
-      for (let i = 0; i < checkedPubAddresses.length; i += chunkSize) {
-        tokensChunks.push(checkedPubAddresses.slice(i, i + chunkSize));
+      for (let i = 0; i < pubAddressesArr.length; i += chunkSize) {
+        tokensChunks.push(pubAddressesArr.slice(i, i + chunkSize));
       }
 
       for (const tokenChunkItem of tokensChunks) {
@@ -93,7 +92,7 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
           action: TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses],
           account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
           data: {
-            fio_address: fioHandle,
+            fio_address: fioCryptoHandle?.name,
             public_addresses,
             tpid: apis.fio.tpid,
             max_fee: DEFAULT_ACTION_FEE_AMOUNT,
@@ -107,8 +106,8 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
     setActionParams(actionParamsArr);
   }, [
     allowDisconnectAll,
-    checkedPubAddresses,
-    fioHandle,
+    pubAddressesArr,
+    fioCryptoHandle,
     fioWallet.data?.derivationIndex,
   ]);
 
@@ -130,7 +129,7 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
       };
 
       if (allowDisconnectAll) {
-        results.disconnect.updated = checkedPubAddresses;
+        results.disconnect.updated = pubAddressesArr;
       } else {
         if (Array.isArray(result)) {
           for (const resultItem of result) {
@@ -177,7 +176,7 @@ export const DeleteTokenMetamaskWallet: React.FC<Props> = props => {
     },
     [
       allowDisconnectAll,
-      checkedPubAddresses,
+      pubAddressesArr,
       onSuccess,
       setResultsData,
       setSubmitData,

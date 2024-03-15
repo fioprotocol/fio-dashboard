@@ -27,17 +27,17 @@ import {
 
 export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    data,
+    submitData,
     fee,
-    paymentWallet,
+    fioWallet,
     processing,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
 
-  const { fioAddressItems } = data || {};
-  const { publicKey, data: paymentWalletData } = paymentWallet || {};
+  const { fioAddressItems } = submitData || {};
+  const { publicKey, data: paymentWalletData } = fioWallet || {};
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
   const [indexedItems, setIndexedItems] = useState<
@@ -111,15 +111,15 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
       setActionParams(actionParamsArr);
     },
     [],
-    !!data,
+    !!submitData,
   );
 
-  if (!data) return null;
+  if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.REGISTER_ADDRESS_PRIVATE_DOMAIN}
-      analyticsData={data}
+      analyticsData={submitData}
       actionParams={actionParams}
       processing={processing}
       returnOnlySignedTxn

@@ -50,17 +50,6 @@ type UseContextProps = {
   onRetry: () => void;
   onSuccess: (resultsData: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (
-    results: LinkActionResult & {
-      disconnect: { updated: EditSocialLinkItem[] };
-    },
-  ) => void;
-  setSubmitData: (
-    submitData: {
-      fch: string;
-      socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
-    } | null,
-  ) => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -227,7 +216,5 @@ export const useContext = (): UseContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   };
 };

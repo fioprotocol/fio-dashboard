@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react';
 
-import { useHistory } from 'react-router-dom';
-
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
@@ -17,9 +15,6 @@ import {
   CHAIN_CODES,
   CONFIRM_METAMASK_ACTION,
 } from '../../../constants/common';
-import { ROUTES } from '../../../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
 
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
@@ -28,57 +23,36 @@ import { handleFioServerResponseActionData } from '../../../util/fio';
 import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
-import {
-  FioWalletDoublet,
-  LinkActionResult,
-  PublicAddressDoublet,
-} from '../../../types';
+import { FioWalletDoublet, LinkActionResult } from '../../../types';
 import { EditSocialLinkItem } from '../types';
 
 type Props = {
-  fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  socialMediaLinksList: EditSocialLinkItem[];
   submitData: {
     fch: string;
-    socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
+    socialMediaLinksList: EditSocialLinkItem[];
   } | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (
-    results: LinkActionResult & {
-      disconnect: { updated: EditSocialLinkItem[] };
-    },
-  ) => void;
-  setSubmitData: (
-    submitData: {
-      fch: string;
-      socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
-    } | null,
-  ) => void;
 };
 
 export const EditSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
   const {
-    fioHandle,
     fioWallet,
     processing,
-    socialMediaLinksList,
     submitData,
     onCancel,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
   } = props;
 
-  const editedSocialLinks = socialMediaLinksList.filter(
+  const { fch: fioHandle, socialMediaLinksList } = submitData || {};
+
+  const editedSocialLinks = socialMediaLinksList?.filter(
     socialMediaLink => socialMediaLink.newUsername,
   );
-
-  const history = useHistory();
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
 
@@ -186,25 +160,8 @@ export const EditSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
       }
 
       onSuccess(results);
-      setResultsData(results);
-      setSubmitData(null);
-
-      history.push({
-        pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-        search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fioHandle}`,
-        state: {
-          actionType: SOCIAL_MEDIA_CONTAINER_NAMES.EDIT_SOCIAL_MEDIA,
-        },
-      });
     },
-    [
-      editedSocialLinks,
-      fioHandle,
-      history,
-      onSuccess,
-      setResultsData,
-      setSubmitData,
-    ],
+    [editedSocialLinks, onSuccess],
   );
 
   useEffectOnce(

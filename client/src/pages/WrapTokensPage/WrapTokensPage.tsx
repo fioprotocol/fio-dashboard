@@ -165,23 +165,8 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
         action={CONFIRM_PIN_ACTIONS.WRAP_TOKENS}
         FioActionWallet={WrapTokensEdgeWallet}
         LedgerActionWallet={WrapTokensLedgerWallet}
+        MetamaskActionWallet={WrapTokensMetamaskWallet}
       />
-
-      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <WrapTokensMetamaskWallet
-          derivationIndex={fioWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={{
-            ...sendData,
-            oracleFee: oracleFeePrice?.nativeFio,
-            fee: feePrice.nativeFio,
-          }}
-          startProcessing={!!sendData}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <PseudoModalContainer
         title="Wrap FIO Tokens"

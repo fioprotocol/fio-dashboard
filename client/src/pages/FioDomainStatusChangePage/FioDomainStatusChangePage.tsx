@@ -9,11 +9,7 @@ import FioDomainStatusLedgerWallet from './components/FioDomainStatusLedgerWalle
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { FioDomainStatusChangeMetamaskWallet } from './components/FioDomainStatusChangeMetamaskWallet';
 
-import {
-  CONFIRM_PIN_ACTIONS,
-  DOMAIN_STATUS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 
 import { LINKS } from '../../constants/labels';
@@ -48,6 +44,8 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
       ? DOMAIN_STATUS.PUBLIC
       : DOMAIN_STATUS.PRIVATE;
 
+  const publicStatusToSet = selectedFioDomain?.isPublic ? 0 : 1;
+
   const [submitData, setSubmitData] = useState<FioDomainStatusValues | null>(
     null,
   );
@@ -66,7 +64,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   const onSubmit = () => {
     setSubmitData({
-      statusToChange,
+      publicStatusToSet,
       name,
     });
   };
@@ -147,19 +145,8 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         action={CONFIRM_PIN_ACTIONS.SET_VISIBILITY}
         FioActionWallet={FioDomainStatusEdgeWallet}
         LedgerActionWallet={FioDomainStatusLedgerWallet}
+        MetamaskActionWallet={FioDomainStatusChangeMetamaskWallet}
       />
-
-      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <FioDomainStatusChangeMetamaskWallet
-          derivationIndex={fioWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={{ isPublic: selectedFioDomain.isPublic, name }}
-          startProcessing={!!submitData}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <FioDomainStatusChangeForm
         statusToChange={statusToChange}

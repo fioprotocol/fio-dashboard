@@ -23,6 +23,8 @@ export type SendTokensValues = {
   nativeAmount: string;
   memo?: string;
   fioRequestId?: number;
+  feeRecordObtData: number;
+  contactsList: string[];
 };
 
 export type InitialValues = {

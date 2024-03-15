@@ -5,8 +5,6 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import { CONFIRM_PIN_ACTIONS, DOMAIN } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 
-import { hasFioAddressDelimiter } from '../../../utils';
-
 import apis from '../../../api';
 
 import { FioWalletDoublet } from '../../../types';
@@ -36,17 +34,8 @@ const FioNameTransferEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    const { transferAddress, fioNameType, name } = data;
-    let newOwnerKey = hasFioAddressDelimiter(transferAddress)
-      ? ''
-      : transferAddress;
-    if (!newOwnerKey) {
-      const {
-        public_address: publicAddress,
-      } = await apis.fio.getFioPublicAddress(transferAddress);
-      if (!publicAddress) throw new Error('Public address is invalid.');
-      newOwnerKey = publicAddress;
-    }
+    const { fioNameType, name, newOwnerPublicKey } = data;
+
     const result = await apis.fio.executeAction(
       keys,
       fioNameType === DOMAIN
@@ -54,11 +43,11 @@ const FioNameTransferEdgeWallet: React.FC<Props> = props => {
         : ACTIONS.transferFioAddress,
       {
         [fioNameType === DOMAIN ? 'fioDomain' : 'fioAddress']: name,
-        newOwnerKey,
+        newOwnerKey: newOwnerPublicKey,
         maxFee: fee,
       },
     );
-    return { ...result, newOwnerKey };
+    return { ...result, newOwnerKey: newOwnerPublicKey };
   };
 
   return (

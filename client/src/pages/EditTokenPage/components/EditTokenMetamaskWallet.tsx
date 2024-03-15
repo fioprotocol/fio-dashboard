@@ -20,36 +20,30 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { EditTokenElement, EditTokenValues } from '../types';
+import { EditTokenValues } from '../types';
 
 type Props = {
-  fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  pubAddressesArr: EditTokenElement[];
   submitData: EditTokenValues | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
-  setSubmitData: (submitData: EditTokenValues | null) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (result: LinkActionResult) => void;
 };
 
 export const EditTokenMetamaskWallet: React.FC<Props> = props => {
   const {
-    fioHandle,
     fioWallet,
     processing,
-    pubAddressesArr,
     submitData,
     onCancel,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
   } = props;
 
-  const editedPubAddresses = pubAddressesArr.filter(
+  const { fioAddressName, pubAddressesArr } = submitData || {};
+
+  const editedPubAddresses = pubAddressesArr?.filter(
     pubAddress => pubAddress.newPublicAddress,
   );
 
@@ -86,7 +80,7 @@ export const EditTokenMetamaskWallet: React.FC<Props> = props => {
         action: TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddresses],
         account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
         data: {
-          fio_address: fioHandle,
+          fio_address: fioAddressName,
           public_addresses,
           tpid: apis.fio.tpid,
           max_fee: DEFAULT_ACTION_FEE_AMOUNT,
@@ -97,7 +91,7 @@ export const EditTokenMetamaskWallet: React.FC<Props> = props => {
     }
 
     setActionParams(actionParamsArr);
-  }, [editedPubAddresses, fioHandle, fioWallet.data?.derivationIndex]);
+  }, [editedPubAddresses, fioAddressName, fioWallet.data?.derivationIndex]);
 
   const handleMapPublicAddressResults = useCallback(
     (result: OnSuccessResponseResult) => {
@@ -155,10 +149,8 @@ export const EditTokenMetamaskWallet: React.FC<Props> = props => {
       }
 
       onSuccess(results);
-      setResultsData(results);
-      setSubmitData(null);
     },
-    [editedPubAddresses, onSuccess, setResultsData, setSubmitData],
+    [editedPubAddresses, onSuccess],
   );
 
   useEffectOnce(

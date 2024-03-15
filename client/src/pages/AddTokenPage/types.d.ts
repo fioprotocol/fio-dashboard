@@ -26,9 +26,7 @@ export type AddTokenContextProps = {
   submitData: SubmitDataProps;
   onCancel: () => void;
   onSubmit: (values: FormValues) => void;
-  setSubmitData: (submitData: SubmitDataProps | null) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (result: LinkActionResult) => void;
   onSuccess: (result: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
   validate: (values: FormValues) => AnyObject | Promise<AnyObject>;

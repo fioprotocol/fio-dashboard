@@ -4,10 +4,7 @@ import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
-import {
-  CONFIRM_LEDGER_ACTIONS,
-  DOMAIN_STATUS,
-} from '../../../constants/common';
+import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 
 import { prepareChainTransaction } from '../../../util/fio';
@@ -41,14 +38,14 @@ const FioDomainStatusLedgerWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async (appFio: LedgerFioApp) => {
-    const { statusToChange, name } = submitData;
+    const { publicStatusToSet, name } = submitData;
 
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
       ACTIONS.setFioDomainVisibility,
       {
         fio_domain: name,
-        is_public: statusToChange === DOMAIN_STATUS.PUBLIC ? 1 : 0,
+        is_public: publicStatusToSet,
         max_fee: fee,
         tpid: apis.fio.tpid,
       },

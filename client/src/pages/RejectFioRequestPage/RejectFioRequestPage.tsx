@@ -14,10 +14,7 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import { RejectRequestMetamaskWallet } from './components/RejectRequestMetamaskWallet';
 
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import {
   FIO_REQUEST_FIELDS_LIST,
@@ -191,17 +188,7 @@ const RejectFioRequestPage: React.FC<Props &
           />
         </div>
       </PseudoModalContainer>
-      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <RejectRequestMetamaskWallet
-          derivationIndex={fioWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={submitData}
-          startProcessing={!!submitData}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+
       <WalletAction
         fee={feePrice.nativeFio}
         fioWallet={fioWallet}
@@ -213,6 +200,7 @@ const RejectFioRequestPage: React.FC<Props &
         action={CONFIRM_PIN_ACTIONS.REJECT_FIO_REQUEST}
         FioActionWallet={RejectRequestEdge}
         LedgerActionWallet={RejectRequestLedger}
+        MetamaskActionWallet={RejectRequestMetamaskWallet}
       />
     </>
   );

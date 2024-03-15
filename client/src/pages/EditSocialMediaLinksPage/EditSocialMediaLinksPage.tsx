@@ -9,10 +9,7 @@ import { EditSocialMediaLinksMetamaskWallet } from './components/EditSocialMedia
 import { EditSocialMediaLinksEdgeWallet } from './components/EditSocialMediaLinksEdgeWallet';
 import { EditSocialMediaLinksLedgerWallet } from './components/EditSocialMediaLinksLedgerWallet';
 
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 
 import { useContext } from './EditSocialMediaLinksPageContext';
@@ -37,8 +34,6 @@ const EditSocialMediaLinksPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   } = useContext();
 
   return (
@@ -53,22 +48,8 @@ const EditSocialMediaLinksPage: React.FC = () => {
         action={CONFIRM_PIN_ACTIONS.EDIT_SOCIAL_MEDIA_LINK}
         FioActionWallet={EditSocialMediaLinksEdgeWallet}
         LedgerActionWallet={EditSocialMediaLinksLedgerWallet}
+        MetamaskActionWallet={EditSocialMediaLinksMetamaskWallet}
       />
-
-      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <EditSocialMediaLinksMetamaskWallet
-          fioWallet={fioWallet}
-          processing={processing}
-          submitData={submitData}
-          fioHandle={fioCryptoHandleObj?.name}
-          socialMediaLinksList={socialMediaLinksList}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setSubmitData={setSubmitData}
-          setResultsData={setResultsData}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT_SOCIAL_MEDIA}

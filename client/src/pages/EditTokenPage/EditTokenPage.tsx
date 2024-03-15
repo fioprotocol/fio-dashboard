@@ -9,10 +9,7 @@ import EditTokenEdgeWallet from './components/EditTokenEdgeWallet';
 import EditTokenLedgerWallet from './components/EditTokenLedgerWallet';
 
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { useContext } from './EditTokenPageContext';
 
@@ -38,8 +35,6 @@ const EditTokenPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   } = useContext();
 
   return (
@@ -54,22 +49,8 @@ const EditTokenPage: React.FC = () => {
         action={CONFIRM_PIN_ACTIONS.EDIT_TOKEN}
         FioActionWallet={EditTokenEdgeWallet}
         LedgerActionWallet={EditTokenLedgerWallet}
+        MetamaskActionWallet={EditTokenMetamaskWallet}
       />
-
-      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <EditTokenMetamaskWallet
-          fioWallet={fioWallet}
-          processing={processing}
-          submitData={submitData}
-          fioHandle={fioCryptoHandleObj?.name}
-          pubAddressesArr={pubAddressesArr}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setSubmitData={setSubmitData}
-          setResultsData={setResultsData}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT}

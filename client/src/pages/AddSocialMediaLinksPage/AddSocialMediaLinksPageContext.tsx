@@ -46,11 +46,6 @@ type UseContextProps = {
   onSubmit: (values: FormValues) => void;
   onSuccess: (resultsData: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (results: LinkActionResult) => void;
-  setSubmitData: (subtmiData: {
-    fch: string;
-    socialMediaLinksList: FormValues | PublicAddressDoublet[];
-  }) => void;
   socialMediaLinksList: SocialMediaLinkItem[];
 };
 
@@ -160,7 +155,5 @@ export const useContext = (): UseContextProps => {
     onSubmit,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   };
 };

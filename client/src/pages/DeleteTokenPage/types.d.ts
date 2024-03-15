@@ -40,7 +40,5 @@ export type DeleteTokenContextProps = {
   onCancel: () => void;
   onCheckClick: (checkedId: string) => void;
   onRetry: () => void;
-  setSubmitData: (submitData: DeleteTokenValues | null) => void;
-  setResultsData: (submitData: LinkActionResult) => void;
   onSuccess: (result: LinkActionResult) => void;
 };

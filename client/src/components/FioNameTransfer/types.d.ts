@@ -10,8 +10,8 @@ import {
 
 export type FioNameTransferValues = {
   name: string;
-  transferAddress: string;
   fioNameType: FioNameType;
+  newOwnerPublicKey: string;
 };
 
 export type ContainerOwnProps = {

@@ -21,7 +21,6 @@ import {
 import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
-  WALLET_CREATED_FROM,
 } from '../../constants/common';
 
 import { hasFioAddressDelimiter } from '../../utils';
@@ -78,31 +77,29 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   const { publicKey } = currentWallet;
 
-  const setNewOwnerPublicKeyFn = useCallback(async () => {
-    try {
-      const { transferAddress } = submitData || {};
-      if (!transferAddress) return;
+  const setNewOwnerPublicKeyFn = useCallback(
+    async (transferAddress: string) => {
+      try {
+        if (!transferAddress) return;
 
-      let newOwnerKey = hasFioAddressDelimiter(transferAddress)
-        ? ''
-        : transferAddress;
-      if (!newOwnerKey) {
-        const {
-          public_address: publicAddress,
-        } = await apis.fio.getFioPublicAddress(transferAddress);
-        if (!publicAddress) throw new Error('Public address is invalid.');
-        newOwnerKey = publicAddress;
+        let newOwnerKey = hasFioAddressDelimiter(transferAddress)
+          ? ''
+          : transferAddress;
+        if (!newOwnerKey) {
+          const {
+            public_address: publicAddress,
+          } = await apis.fio.getFioPublicAddress(transferAddress);
+          if (!publicAddress) throw new Error('Public address is invalid.');
+          newOwnerKey = publicAddress;
+        }
+
+        setNewOwnerPublicKey(newOwnerKey);
+      } catch (error) {
+        log.error(error);
       }
-
-      setNewOwnerPublicKey(newOwnerKey);
-    } catch (error) {
-      log.error(error);
-    }
-  }, [submitData]);
-
-  useEffect(() => {
-    setNewOwnerPublicKeyFn();
-  }, [setNewOwnerPublicKeyFn]);
+    },
+    [],
+  );
 
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
@@ -115,8 +112,14 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
     }
   }, [processing]);
 
+  useEffect(() => {
+    if (newOwnerPublicKey) {
+      setSubmitData({ name, fioNameType, newOwnerPublicKey });
+    }
+  }, [fioNameType, name, newOwnerPublicKey]);
+
   const onSubmit = (transferAddress: string) => {
-    setSubmitData({ name, transferAddress, fioNameType });
+    setNewOwnerPublicKeyFn(transferAddress);
     setSubmitting(true);
   };
   const onCancel = () => {
@@ -208,23 +211,8 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
         action={CONFIRM_PIN_ACTIONS.TRANSFER}
         FioActionWallet={FioNameTransferEdgeWallet}
         LedgerActionWallet={FioNameTransferLedgerWallet}
+        MetamaskActionWallet={FioNameTransferMetamaskWallet}
       />
-
-      {currentWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <FioNameTransferMetamaskWallet
-          derivationIndex={currentWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={{
-            fioName: name,
-            newOwnerPublicKey,
-          }}
-          fioNameType={submitData?.fioNameType}
-          startProcessing={!!submitData && !!newOwnerPublicKey}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <PseudoModalContainer
         link={FIO_NAME_DATA[fioNameType].backLink}

@@ -28,9 +28,10 @@ import useEffectOnce from '../../../hooks/general';
 import { log } from '../../../util/general';
 import { handleFioServerResponse } from '../../../util/fio';
 
+import { FioWalletDoublet } from '../../../types';
+
 type Props = {
-  contactsList: string[];
-  derivationIndex: number;
+  fioWallet: FioWalletDoublet;
   fee: number;
   processing: boolean;
   submitData: SendTokensValues;
@@ -42,8 +43,7 @@ type Props = {
 
 export const SendTokensMetamaskWallet: React.FC<Props> = props => {
   const {
-    contactsList,
-    derivationIndex,
+    fioWallet,
     fee,
     processing,
     submitData,
@@ -53,8 +53,18 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
     setProcessing,
   } = props;
 
-  const { amount, fioRequestId, from, fromPubKey, to, memo, toPubKey } =
-    submitData || {};
+  const derivationIndex = fioWallet?.data?.derivationIndex;
+
+  const {
+    amount,
+    contactsList,
+    fioRequestId,
+    from,
+    fromPubKey,
+    to,
+    memo,
+    toPubKey,
+  } = submitData || {};
 
   const transferTokensActionParams = {
     action: TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens],
@@ -91,9 +101,6 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
       if (!result) return;
 
       try {
-        if (!!to && !contactsList.filter(c => c === to).length)
-          createContact(to);
-
         setRequestResult({
           ...requestResult,
           bundlesCollected:
@@ -106,7 +113,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
         toggleIsTransferTokensFinished(true);
       }
     },
-    [contactsList, createContact, fioRequestId, memo, requestResult, to],
+    [fioRequestId, memo, requestResult],
   );
 
   const handleSendTokensResult = (result: FioServerResponse) => {
@@ -127,6 +134,10 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
   }, [requestResult]);
 
   useEffect(() => {
+    if (requestResult) {
+      if (!!to && !contactsList.filter(c => c === to).length) createContact(to);
+    }
+
     if (requestResult && isTransferTokensFinished) {
       onSuccess(requestResult);
       return;
@@ -169,6 +180,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
       toggleCallSubmitAction(true);
     }
   }, [
+    contactsList,
     requestResult,
     isTransferTokensFinished,
     fioRequestId,
@@ -182,6 +194,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
     handleRecordObtResult,
     onCancelForSecondAction,
     onSuccess,
+    createContact,
   ]);
 
   useEffectOnce(

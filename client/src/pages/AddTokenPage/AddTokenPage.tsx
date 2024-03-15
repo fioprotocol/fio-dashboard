@@ -2,18 +2,15 @@ import React from 'react';
 import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 
-import { AddTokenForm } from './copmonents/AddTokenForm';
-import { AddTokenMetamaskWallet } from './copmonents/AddTokenMetamaskWallet';
+import { AddTokenForm } from './components/AddTokenForm';
+import { AddTokenMetamaskWallet } from './components/AddTokenMetamaskWallet';
 import AddTokenEdgeWallet from './components/AddTokenEdgeWallet';
 import AddTokenLedgerWallet from './components/AddTokenLedgerWallet';
 import WalletAction from '../../components/WalletAction/WalletAction';
 
 import { useContext } from './AddTokenPageContext';
 
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { PublicAddressDoublet } from '../../types';
 
@@ -32,9 +29,7 @@ const AddToken: React.FC = () => {
     onRetry,
     onSubmit,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
     validate,
     validateToken,
     publicAddresses,
@@ -52,20 +47,8 @@ const AddToken: React.FC = () => {
         action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
         FioActionWallet={AddTokenEdgeWallet}
         LedgerActionWallet={AddTokenLedgerWallet}
+        MetamaskActionWallet={AddTokenMetamaskWallet}
       />
-
-      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <AddTokenMetamaskWallet
-          fioWallet={fioWallet}
-          processing={processing}
-          submitData={submitData}
-          fioHandle={fioCryptoHandleObj?.name}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setSubmitData={setSubmitData}
-          setResultsData={setResultsData}
-        />
-      ) : null}
 
       <Form
         onSubmit={onSubmit}

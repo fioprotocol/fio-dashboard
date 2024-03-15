@@ -13,10 +13,7 @@ import { useContext } from './DeleteSocialMediaLinksPageContext';
 
 import { ROUTES } from '../../constants/routes';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './DeleteSocialMediaLinksPage.module.scss';
 
@@ -25,7 +22,6 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
     allChecked,
     allowDisconnectAll,
     bundleCost,
-    checkedSocialMediaLinks,
     fioCryptoHandleObj,
     fioWallet,
     hasLowBalance,
@@ -43,13 +39,12 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   } = useContext();
 
   return (
     <>
       <WalletAction
+        allowDisconnectAll={allowDisconnectAll}
         fioWallet={fioWallet}
         onCancel={onCancel}
         onSuccess={onSuccess}
@@ -59,23 +54,8 @@ const DeleteSocialMediaLinksPage: React.FC = () => {
         action={CONFIRM_PIN_ACTIONS.DELETE_SOCIAL_MEDIA_LINK}
         FioActionWallet={DeleteSocialMediaLinkEdgeWallet}
         LedgerActionWallet={DeleteSocialMediaLinkLedgerWallet}
+        MetamaskActionWallet={DeleteSocialMediaLinkMetamaskWallet}
       />
-
-      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <DeleteSocialMediaLinkMetamaskWallet
-          allowDisconnectAll={allowDisconnectAll}
-          fioWallet={fioWallet}
-          processing={processing}
-          submitData={submitData}
-          fioHandle={fioCryptoHandleObj?.name}
-          checkedSocialMediaLinks={checkedSocialMediaLinks}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setSubmitData={setSubmitData}
-          setResultsData={setResultsData}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE_SOCIAL_MEDIA}

@@ -173,23 +173,8 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
         action={CONFIRM_PIN_ACTIONS.WRAP_DOMAIN}
         FioActionWallet={WrapDomainEdgeWallet}
         LedgerActionWallet={WrapDomainLedgerWallet}
+        MetamaskActionWallet={WrapDomainMetamaskWallet}
       />
-
-      {currentWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <WrapDomainMetamaskWallet
-          derivationIndex={currentWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={{
-            ...sendData,
-            oracleFee: oracleFeePrice?.nativeFio,
-            fee: feePrice.nativeFio,
-          }}
-          startProcessing={!!sendData}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <PseudoModalContainer
         title="Wrap FIO Domain"

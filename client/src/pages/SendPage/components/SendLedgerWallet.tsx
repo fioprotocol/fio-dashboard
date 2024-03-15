@@ -23,29 +23,25 @@ import { SendTokensValues } from '../types';
 import { TrxResponsePaidBundles } from '../../../api/fio';
 
 type Props = {
-  sendData: SendTokensValues | null;
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: TrxResponsePaidBundles) => void;
-  onCancel: () => void;
-  setProcessing: (processing: boolean) => void;
-  contactsList: string[];
-  createContact: (name: string) => void;
-  processing: boolean;
   fee: number;
-  feeRecordObtData?: number | null;
+  processing: boolean;
+  submitData: SendTokensValues | null;
+  createContact: (name: string) => void;
+  onCancel: () => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
+  setProcessing: (processing: boolean) => void;
 };
 
 const SendLedgerWallet: React.FC<Props> = props => {
   const {
-    sendData,
     fioWallet,
-    onSuccess,
-    onCancel,
     fee,
-    feeRecordObtData,
-    setProcessing,
+    submitData,
     createContact,
-    contactsList,
+    onCancel,
+    onSuccess,
+    setProcessing,
   } = props;
 
   const send = async (appFio: LedgerFioApp) => {
@@ -53,8 +49,8 @@ const SendLedgerWallet: React.FC<Props> = props => {
       fioWallet.publicKey,
       ACTIONS.transferTokens,
       {
-        payee_public_key: sendData.toPubKey,
-        amount: new MathOp(sendData.nativeAmount).toNumber(),
+        payee_public_key: submitData.toPubKey,
+        amount: new MathOp(submitData.nativeAmount).toNumber(),
         max_fee: fee,
         tpid: apis.fio.tpid,
       },
@@ -88,35 +84,38 @@ const SendLedgerWallet: React.FC<Props> = props => {
         signatures: [signatureLedger],
       },
     );
-    if (!!sendData.to && !contactsList.filter(c => c === sendData.to).length)
-      createContact(sendData.to);
+    if (
+      !!submitData?.to &&
+      !submitData?.contactsList?.filter(c => c === submitData.to).length
+    )
+      createContact(submitData.to);
 
     let obtError = null;
     let bundlesCollected = 0;
-    if (sendData.memo || sendData.fioRequestId) {
+    if (submitData.memo || submitData.fioRequestId) {
       try {
         const { chainId, transaction } = await prepareChainTransaction(
           fioWallet.publicKey,
           ACTIONS.recordObtData,
           {
-            payer_fio_address: sendData.from,
-            payee_fio_address: sendData.to,
-            other_public_key: Ecc.PublicKey(sendData.toPubKey)
+            payer_fio_address: submitData.from,
+            payee_fio_address: submitData.to,
+            other_public_key: Ecc.PublicKey(submitData.toPubKey)
               .toUncompressed()
               .toBuffer()
               .toString('hex'),
             payer_public_address: fioWallet.publicKey,
-            payee_public_address: sendData.toPubKey,
-            amount: sendData.amount,
+            payee_public_address: submitData.toPubKey,
+            amount: submitData.amount,
             chain_code: FIO_CHAIN_CODE,
             token_code: FIO_CHAIN_CODE,
             obt_id: result.transaction_id,
-            memo: sendData.memo,
+            memo: submitData.memo,
             status: 'sent_to_blockchain',
-            fio_request_id: sendData.fioRequestId
-              ? sendData.fioRequestId.toString()
+            fio_request_id: submitData.fioRequestId
+              ? submitData.fioRequestId.toString()
               : '',
-            max_fee: feeRecordObtData || 0,
+            max_fee: submitData?.feeRecordObtData || 0,
             tpid: apis.fio.tpid,
           },
         );
@@ -161,12 +160,12 @@ const SendLedgerWallet: React.FC<Props> = props => {
     return { ...result, obtError, bundlesCollected };
   };
 
-  if (!sendData) return null;
+  if (!submitData) return null;
 
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.SEND}
-      data={sendData}
+      data={submitData}
       fioWallet={fioWallet}
       onConnect={send}
       onSuccess={onSuccess}

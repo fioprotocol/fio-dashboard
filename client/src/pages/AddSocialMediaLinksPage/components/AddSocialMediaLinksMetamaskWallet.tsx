@@ -1,7 +1,5 @@
 import React, { useCallback, useState } from 'react';
 
-import { useHistory } from 'react-router-dom';
-
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
@@ -13,9 +11,7 @@ import {
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
-import { ROUTES } from '../../../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
+
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import {
   CHAIN_CODES,
@@ -35,50 +31,47 @@ import {
 import { FormValues } from '../types';
 
 type Props = {
-  fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: FormValues;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: FormValues | PublicAddressDoublet[];
+  };
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
-  setSubmitData: (submitData: FormValues | null) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (result: LinkActionResult) => void;
 };
 
 export const AddSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
   const {
-    fioHandle,
     fioWallet,
     processing,
     submitData,
     onCancel,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
   } = props;
 
-  const history = useHistory();
-
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
+
+  const { fch, socialMediaLinksList } = submitData || {};
 
   const handleActionParams = useCallback(() => {
     const actionParamsArr = [];
 
-    const tokens: PublicAddressDoublet[] = Object.entries(submitData).map(
-      ([key, value]) => {
-        let publicAddress = '';
-        if (typeof value !== undefined && typeof value === 'string') {
-          publicAddress = value;
-        }
-        return {
-          chainCode: CHAIN_CODES.SOCIALS,
-          tokenCode: key.toUpperCase(),
-          publicAddress: publicAddress,
-        };
-      },
-    );
+    const tokens: PublicAddressDoublet[] = Object.entries(
+      socialMediaLinksList,
+    ).map(([key, value]) => {
+      let publicAddress = '';
+      if (typeof value !== undefined && typeof value === 'string') {
+        publicAddress = value;
+      }
+      return {
+        chainCode: CHAIN_CODES.SOCIALS,
+        tokenCode: key.toUpperCase(),
+        publicAddress,
+      };
+    });
 
     const tokensChunks = [];
     const chunkSize = ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION;
@@ -103,7 +96,7 @@ export const AddSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
         action: TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddresses],
         account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
         data: {
-          fio_address: fioHandle,
+          fio_address: fch,
           public_addresses,
           tpid: apis.fio.tpid,
           max_fee: DEFAULT_ACTION_FEE_AMOUNT,
@@ -114,7 +107,7 @@ export const AddSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
     }
 
     setActionParams(actionParamsArr);
-  }, [fioHandle, fioWallet.data?.derivationIndex, submitData]);
+  }, [fch, fioWallet.data?.derivationIndex, socialMediaLinksList]);
 
   const handleMapPublicAddressResults = useCallback(
     (result: OnSuccessResponseResult) => {
@@ -173,19 +166,9 @@ export const AddSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
 
       if (results) {
         onSuccess(results);
-        setResultsData(results);
-        setSubmitData(null);
-
-        history.push({
-          pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-          search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fioHandle}`,
-          state: {
-            actionType: SOCIAL_MEDIA_CONTAINER_NAMES.ADD_SOCIAL_MEDIA,
-          },
-        });
       }
     },
-    [fioHandle, history, onSuccess, setResultsData, setSubmitData],
+    [onSuccess],
   );
 
   useEffectOnce(

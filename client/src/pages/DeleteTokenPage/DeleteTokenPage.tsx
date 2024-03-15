@@ -10,10 +10,7 @@ import DeleteTokenEdgeWallet from './components/DeleteTokenEdgeWallet';
 import DeleteTokenLedgerWallet from './components/DeleteTokenLedgerWallet';
 
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { useContext } from './DeleteTokenPageContext';
 
@@ -24,7 +21,6 @@ const DeleteTokenPage: React.FC = () => {
     allChecked,
     allowDisconnectAll,
     bundleCost,
-    checkedPubAddresses,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -44,13 +40,12 @@ const DeleteTokenPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   } = useContext();
 
   return (
     <>
       <WalletAction
+        allowDisconnectAll={allowDisconnectAll}
         fioWallet={fioWallet}
         onCancel={onCancel}
         onSuccess={onSuccess}
@@ -60,23 +55,8 @@ const DeleteTokenPage: React.FC = () => {
         action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
         FioActionWallet={DeleteTokenEdgeWallet}
         LedgerActionWallet={DeleteTokenLedgerWallet}
+        MetamaskActionWallet={DeleteTokenMetamaskWallet}
       />
-
-      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <DeleteTokenMetamaskWallet
-          allowDisconnectAll={allowDisconnectAll}
-          fioWallet={fioWallet}
-          processing={processing}
-          submitData={submitData}
-          fioHandle={fioCryptoHandleObj?.name}
-          checkedPubAddresses={checkedPubAddresses}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setSubmitData={setSubmitData}
-          setResultsData={setResultsData}
-          setProcessing={setProcessing}
-        />
-      ) : null}
 
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE}

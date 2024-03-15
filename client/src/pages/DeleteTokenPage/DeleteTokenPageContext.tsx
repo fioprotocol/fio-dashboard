@@ -99,7 +99,7 @@ export const useContext = (): DeleteTokenContextProps => {
   }, [pubAddressesToDefault]);
 
   useEffect(() => {
-    if (allChecked && !hasSocialMediaLinks) {
+    if (allowDisconnectAll) {
       return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
     }
 
@@ -112,7 +112,7 @@ export const useContext = (): DeleteTokenContextProps => {
     }
 
     if (resultsData?.disconnect?.updated) {
-      if (allChecked && !hasSocialMediaLinks) {
+      if (allowDisconnectAll) {
         return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
       }
       return changeBundleCost(
@@ -124,10 +124,9 @@ export const useContext = (): DeleteTokenContextProps => {
     }
     return changeBundleCost(0);
   }, [
-    allChecked,
+    allowDisconnectAll,
     checkedPubAddresses.length,
     hasChecked,
-    hasSocialMediaLinks,
     resultsData?.disconnect?.updated,
   ]);
 
@@ -216,7 +215,5 @@ export const useContext = (): DeleteTokenContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   };
 };

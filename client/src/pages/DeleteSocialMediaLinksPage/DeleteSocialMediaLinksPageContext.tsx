@@ -59,15 +59,6 @@ type UseContextProps = {
   onBack: () => void;
   onCancel: () => void;
   onCheckClick: (checkedId: string) => void;
-  setSubmitData: (
-    submitData: {
-      fch: string;
-      socialMediaLinksList:
-        | CheckedSocialMediaLinkType[]
-        | PublicAddressDoublet[];
-    } | null,
-  ) => void;
-  setResultsData: (submitData: LinkActionResult) => void;
   onRetry: (resultsData: LinkActionResult) => void;
   onSuccess: (resultsData: LinkActionResult) => void;
 };
@@ -161,7 +152,7 @@ export const useContext = (): UseContextProps => {
   }, [pubAddressesToDefault]);
 
   useEffect(() => {
-    if (allChecked && !hasTokenLinks) {
+    if (allowDisconnectAll) {
       return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
     }
 
@@ -174,7 +165,7 @@ export const useContext = (): UseContextProps => {
       );
     }
     return changeBundleCost(0);
-  }, [allChecked, checkedSocialMediaLinks.length, hasChecked, hasTokenLinks]);
+  }, [allowDisconnectAll, checkedSocialMediaLinks.length, hasChecked]);
 
   useEffect(() => {
     toggleAllChecked(
@@ -276,7 +267,5 @@ export const useContext = (): UseContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
   };
 };

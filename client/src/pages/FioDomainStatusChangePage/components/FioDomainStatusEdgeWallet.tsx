@@ -2,7 +2,7 @@ import React from 'react';
 
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
-import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 
 import apis from '../../../api';
@@ -34,10 +34,10 @@ const FioDomainStatusEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    const { statusToChange, name } = data;
+    const { publicStatusToSet, name } = data;
     return await apis.fio.executeAction(keys, ACTIONS.setFioDomainVisibility, {
       fioDomain: name,
-      isPublic: statusToChange === DOMAIN_STATUS.PUBLIC,
+      isPublic: publicStatusToSet,
       maxFee: fee,
     });
   };
