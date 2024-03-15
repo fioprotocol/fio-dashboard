@@ -8,10 +8,7 @@ import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import {
-  DEFAULT_ACTION_FEE_AMOUNT,
-  TrxResponsePaidBundles,
-} from '../../../api/fio';
+import { TrxResponsePaidBundles } from '../../../api/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
@@ -25,27 +22,25 @@ import {
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  processing: boolean;
+  fee?: number | null;
+  submitData: SendTokensValues | null;
+  createContact: (name: string) => void;
   onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  sendData: SendTokensValues | null;
-  contactsList: string[];
-  createContact: (name: string) => void;
-  processing: boolean;
-  fee?: number | null;
 };
 
 const SendEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
-    setProcessing,
-    onSuccess,
-    onCancel,
-    sendData,
     fee,
+    submitData,
     processing,
     createContact,
-    contactsList,
+    onCancel,
+    onSuccess,
+    setProcessing,
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
@@ -72,7 +67,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           obtId: result.transaction_id,
           payeeFioPublicKey: data.toPubKey,
           memo: data.memo,
-          maxFee: DEFAULT_ACTION_FEE_AMOUNT,
+          maxFee: data.feeRecordObtData,
           fioRequestId: data.fioRequestId,
         });
         bundlesCollected = BUNDLES_TX_COUNT.RECORD_OBT_DATA;
@@ -82,7 +77,10 @@ const SendEdgeWallet: React.FC<Props> = props => {
       }
     }
 
-    if (!!data.to && !contactsList.filter(c => c === data.to).length)
+    if (
+      !!data.to &&
+      !submitData?.contactsList?.filter(c => c === data.to).length
+    )
       createContact(data.to);
 
     return { ...result, obtError, bundlesCollected };
@@ -95,7 +93,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={sendData}
+      data={submitData}
       submitAction={send}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}

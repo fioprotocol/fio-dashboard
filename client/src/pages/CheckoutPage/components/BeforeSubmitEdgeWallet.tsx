@@ -17,7 +17,14 @@ import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types'
 import { BeforeSubmitData, BeforeSubmitProps } from '../types';
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
-  const { setProcessing, onSuccess, onCancel, data, fee, processing } = props;
+  const {
+    setProcessing,
+    onSuccess,
+    onCancel,
+    submitData,
+    fee,
+    processing,
+  } = props;
 
   const send = async ({ allWalletKeysInAccount, data }: SubmitActionParams) => {
     const signedTxs: BeforeSubmitData = {};
@@ -61,7 +68,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={data}
+      data={submitData}
       submitAction={send}
       edgeAccountLogoutBefore={true}
     />

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -33,6 +34,7 @@ type Props = {
   loading?: boolean;
   text?: string | React.ReactNode;
   title?: string;
+  isGrey?: boolean;
   variant?: string;
   withBottomMargin?: boolean;
   withoutMargin?: boolean;
@@ -57,6 +59,7 @@ export const SubmitButton: React.FC<Props> = props => {
     isCobalt,
     isGreen,
     isGreenTeal,
+    isGrey,
     isLightBlack,
     isRed,
     isTransparent,
@@ -102,6 +105,8 @@ export const SubmitButton: React.FC<Props> = props => {
         isWhite && classes.isWhite,
         isWhiteBordered && classes.isWhiteBordered,
         isWhiteViolet && classes.isWhiteViolet,
+        isGrey && classes.isGrey,
+        disabled && classes.disabled,
         loading && classes.loading,
         withBottomMargin && classes.bottomMargin,
         withoutMargin && classes.withoutMargin,

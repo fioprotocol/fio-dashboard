@@ -19,14 +19,13 @@ import {
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
-import { FioNameType } from '../../../types';
+import { FioWalletDoublet } from '../../../types';
+import { FioNameTransferValues } from '../types';
 
 type Props = {
-  derivationIndex: number;
-  fioNameType: FioNameType;
+  fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: { fioName: string; newOwnerPublicKey: string };
-  startProcessing: boolean;
+  submitData: FioNameTransferValues;
   onSuccess: (result: OnSuccessResponseResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -34,17 +33,16 @@ type Props = {
 
 export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
   const {
-    derivationIndex,
-    fioNameType,
+    fioWallet,
     processing,
-    startProcessing,
     submitData,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
 
-  const { fioName, newOwnerPublicKey } = submitData;
+  const { name: fioName, fioNameType, newOwnerPublicKey } = submitData || {};
+  const derivationIndex = fioWallet?.data?.derivationIndex;
 
   const actionParams: {
     action: string;
@@ -78,7 +76,7 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
     actionParams.data.fio_domain = fioName;
   }
 
-  if (!startProcessing) return null;
+  if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction

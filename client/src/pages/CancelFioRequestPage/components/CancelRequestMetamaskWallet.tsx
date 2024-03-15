@@ -15,12 +15,12 @@ import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { FioRecordViewDecrypted } from '../../WalletPage/types';
+import { FioWalletDoublet } from '../../../types';
 
 type Props = {
-  derivationIndex: number;
+  fioWallet: FioWalletDoublet;
   processing: boolean;
   submitData: FioRecordViewDecrypted;
-  startProcessing: boolean;
   onSuccess: (result: FioRecordViewDecrypted & {}) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -28,14 +28,15 @@ type Props = {
 
 export const CancelRequestMetamaskWallet: React.FC<Props> = props => {
   const {
-    derivationIndex,
+    fioWallet,
     processing,
-    startProcessing,
     submitData,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
+
+  const derivationIndex = fioWallet?.data?.derivationIndex;
 
   const { fioRecord, fioDecryptedContent } = submitData || {};
 
@@ -69,7 +70,7 @@ export const CancelRequestMetamaskWallet: React.FC<Props> = props => {
     [fioDecryptedContent, submitData, onSuccess],
   );
 
-  if (!startProcessing) return null;
+  if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction

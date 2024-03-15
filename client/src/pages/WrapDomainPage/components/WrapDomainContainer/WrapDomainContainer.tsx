@@ -5,7 +5,9 @@ import { useHistory } from 'react-router';
 import FioLoader from '../../../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import WrapDomainForm from '../WarapDomainForm';
+import WalletAction from '../../../../components/WalletAction/WalletAction';
 import WrapDomainEdgeWallet from '../WrapDomainEdgeWallet';
+import { WrapDomainLedgerWallet } from '../WrapDomainLedgerWallet';
 import WrapTokenResults from '../../../../components/common/TransactionResults/components/WrapTokenResults';
 import PageTitle from '../../../../components/PageTitle/PageTitle';
 import { WrapDomainMetamaskWallet } from '../WrapDomainMetamaskWallet';
@@ -17,8 +19,8 @@ import MathOp from '../../../../util/math';
 import { ROUTES } from '../../../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CONFIRM_PIN_ACTIONS,
   DOMAIN_WRAP_NETWORKS_LIST,
-  WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 import { emptyWallet } from '../../../../redux/fio/reducer';
 import { LINKS } from '../../../../constants/labels';
@@ -159,34 +161,20 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <WrapDomainEdgeWallet
-          fioWallet={currentWallet}
-          fee={feePrice.nativeFio}
-          oracleFee={oracleFeePrice?.nativeFio}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          wrapData={sendData}
-          processing={processing}
-          setProcessing={setProcessing}
-        />
-      ) : null}
-
-      {currentWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <WrapDomainMetamaskWallet
-          derivationIndex={currentWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={{
-            ...sendData,
-            oracleFee: oracleFeePrice?.nativeFio,
-            fee: feePrice.nativeFio,
-          }}
-          startProcessing={!!sendData}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={currentWallet}
+        fee={feePrice.nativeFio}
+        oracleFee={oracleFeePrice.nativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={sendData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.WRAP_DOMAIN}
+        FioActionWallet={WrapDomainEdgeWallet}
+        LedgerActionWallet={WrapDomainLedgerWallet}
+        MetamaskActionWallet={WrapDomainMetamaskWallet}
+      />
 
       <PseudoModalContainer
         title="Wrap FIO Domain"

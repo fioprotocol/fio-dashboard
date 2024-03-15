@@ -5,9 +5,9 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import StakeTokensForm from './components/StakeTokensForm';
 import StakeTokensEdgeWallet from './components/StakeTokensEdgeWallet';
+import StakeTokensLedgerWallet from './components/StakeTokensLedgerWallet';
 import StakeTokensResults from '../../components/common/TransactionResults/components/StakeTokensResults';
 import WalletAction from '../../components/WalletAction/WalletAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { StakeTokensMetamaskWallet } from './components/StakeTokensMetamaskWallet';
 
 import { ROUTES } from '../../constants/routes';
@@ -143,8 +143,8 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
         setProcessing={setProcessing}
         action={CONFIRM_PIN_ACTIONS.STAKE}
         FioActionWallet={StakeTokensEdgeWallet}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
         MetamaskActionWallet={StakeTokensMetamaskWallet}
+        LedgerActionWallet={StakeTokensLedgerWallet}
       />
 
       <PseudoModalContainer

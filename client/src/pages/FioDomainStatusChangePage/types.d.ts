@@ -16,6 +16,11 @@ type LocationProps = {
   };
 };
 
+export type FioDomainStatusValues = {
+  name: string;
+  publicStatusToSet: number;
+};
+
 export type FormProps = {
   statusToChange: string;
   feePrice: FeePrice;

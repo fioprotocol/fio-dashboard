@@ -23,7 +23,7 @@ type Props = {
   onSuccess: (data: TrxResponse) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  wrapData: WrapTokensValues | null;
+  submitData: WrapTokensValues | null;
   processing: boolean;
   fee?: number | null;
   oracleFee?: number | null;
@@ -35,7 +35,7 @@ const WrapTokensEdgeWallet: React.FC<Props> = props => {
     setProcessing,
     onSuccess,
     onCancel,
-    wrapData,
+    submitData,
     fee,
     oracleFee,
     processing,
@@ -68,7 +68,7 @@ const WrapTokensEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={wrapData}
+      data={submitData}
       submitAction={send}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}

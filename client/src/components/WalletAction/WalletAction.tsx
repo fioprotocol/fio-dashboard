@@ -6,6 +6,7 @@ import { FioWalletDoublet } from '../../types';
 import { AnyObject } from '../../types';
 
 type WalletTypeActionProps = {
+  allowDisconnectAll?: boolean;
   fioWallet: FioWalletDoublet;
   onSuccess: (data: AnyObject) => void;
   onCancel: () => void;
@@ -14,6 +15,7 @@ type WalletTypeActionProps = {
   processing: boolean;
   action: string;
   fee?: number;
+  oracleFee?: number;
   fioWalletEdgeId?: string;
   edgeAccountLogoutBefore?: boolean;
   createContact?: (name: string) => void;

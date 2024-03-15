@@ -7,15 +7,10 @@ import {
   fioWallets as fioWalletsSelector,
 } from '../../redux/fio/selectors';
 
-import { linkTokens } from '../../api/middleware/fio';
-import { minWaitTimeFunction } from '../../utils';
-import { log } from '../../util/general';
-
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
 
-import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import {
@@ -24,12 +19,8 @@ import {
   validateToken as validationToken,
 } from './validation';
 
-import {
-  PublicAddressDoublet,
-  WalletKeys,
-  LinkActionResult,
-} from '../../types';
-import { AddTokenContextProps, FormValues } from './types';
+import { LinkActionResult, PublicAddressDoublet } from '../../types';
+import { AddTokenContextProps, FormValues, SubmitDataProps } from './types';
 
 export const useContext = (): AddTokenContextProps => {
   const queryParams = useQuery();
@@ -44,7 +35,7 @@ export const useContext = (): AddTokenContextProps => {
 
   useGetMappedErrorRedirect(fioCryptoHandleName);
 
-  const { edgeWalletId = '', publicAddresses = [], walletPublicKey = '' } =
+  const { name, publicAddresses = [], walletPublicKey = '' } =
     fioCryptoHandleObj || {};
 
   const fioWallet = fioWallets.find(
@@ -53,51 +44,25 @@ export const useContext = (): AddTokenContextProps => {
 
   const [results, setResultsData] = useState<LinkActionResult>(null);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<
-    FormValues | PublicAddressDoublet[] | null
-  >(null);
+  const [submitData, setSubmitData] = useState<SubmitDataProps>(null);
   const [bundleCost, changeBundleCost] = useState<number>(0);
 
   const onSubmit = (values: FormValues) => {
-    setSubmitData(values);
+    setSubmitData({
+      ...values,
+      name,
+    });
   };
 
-  const onSuccess = () => {
+  const onSuccess = (result: LinkActionResult) => {
+    setResultsData(result);
+    setSubmitData(null);
     setProcessing(false);
   };
 
   const onCancel = () => {
     setSubmitData(null);
     setProcessing(false);
-  };
-
-  const submit = async ({
-    keys,
-    data,
-  }: {
-    keys: WalletKeys;
-    data: FormValues;
-  }) => {
-    const params: {
-      fioAddress: string;
-      connectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-    } = {
-      fioAddress: fioCryptoHandleName,
-      connectList: data.tokens,
-      keys,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData(actionResults);
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
-    }
   };
 
   const onBack = (formProps: FormRenderProps<FormValues>) => {
@@ -109,7 +74,10 @@ export const useContext = (): AddTokenContextProps => {
   };
 
   const onRetry = (resultsData: LinkActionResult) => {
-    setSubmitData(resultsData.connect.failed);
+    setSubmitData({
+      name,
+      tokens: resultsData.connect.failed,
+    });
   };
 
   const validate = (values: FormValues) => validation(values, publicAddresses);
@@ -126,7 +94,6 @@ export const useContext = (): AddTokenContextProps => {
 
   return {
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -139,10 +106,7 @@ export const useContext = (): AddTokenContextProps => {
     onRetry,
     onSubmit,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
-    submit,
     validate,
     validateToken,
     publicAddresses,

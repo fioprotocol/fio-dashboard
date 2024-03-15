@@ -28,6 +28,8 @@ import {
   ACTIONS_TO_END_POINT_KEYS,
   DEFAULT_TABLE_RAWS_LIMIT,
   FIO_PROXY_LIST,
+  FIO_ACCOUNT_NAMES,
+  FIO_ACTION_NAMES,
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
   DEFAULT_FIO_RECORDS_LIMIT,
@@ -580,8 +582,8 @@ export default class Fio {
     fee: number,
   ) => {
     return {
-      account: 'fio.token',
-      name: 'trnsfiopubky',
+      account: FIO_ACCOUNT_NAMES[ACTIONS.transferTokens],
+      name: FIO_ACTION_NAMES[ACTIONS.transferTokens],
       data: {
         payee_public_key: publicKey,
         amount,

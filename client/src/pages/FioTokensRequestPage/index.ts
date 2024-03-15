@@ -5,6 +5,7 @@ import { compose } from '../../utils';
 
 import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 import { createContact, getContactsList } from '../../redux/contacts/actions';
+import { getFee } from '../../redux/fio/actions';
 
 import {
   loading as fioWalletsLoading,
@@ -18,6 +19,12 @@ import { roe } from '../../redux/registrations/selectors';
 
 import FioTokensRequestPage from './FioTokensRequestPage';
 
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
+import apis from '../../api';
+
+import { ReduxState } from '../../redux/init';
+
 const reduxConnect = connect(
   createStructuredSelector({
     fioWalletsLoading,
@@ -25,11 +32,16 @@ const reduxConnect = connect(
     roe,
     contactsList,
     contactsLoading,
+    feePrice: (state: ReduxState) =>
+      state.fio.fees[apis.fio.actionEndPoints.newFundsRequest] ||
+      DEFAULT_FEE_PRICES,
   }),
   {
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
+    getFee: (fioAddress: string) =>
+      getFee(apis.fio.actionEndPoints.newFundsRequest, fioAddress),
   },
 );
 

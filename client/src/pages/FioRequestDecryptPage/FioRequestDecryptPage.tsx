@@ -4,12 +4,12 @@ import { Redirect } from 'react-router-dom';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import DecryptContentEdge from '../WalletPage/components/DecryptContentEdge';
+import DecryptContentLedger from '../WalletPage/components/DecryptContentLedger';
 import FioRequest from './components/FioRequest';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioRequestStatusBadge from '../../components/Badges/FioRequestStatusBadge/FioRequestStatusBadge';
 import WalletAction from '../../components/WalletAction/WalletAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import { DecryptContentMetamaskWallet } from '../WalletPage/components/DecryptContentMetamaskWallet';
 
@@ -368,8 +368,8 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         onCancel={onCancel}
         onSuccess={onSuccess}
         FioActionWallet={DecryptContentEdge}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
         MetamaskActionWallet={DecryptContentMetamaskWallet}
+        LedgerActionWallet={DecryptContentLedger}
       />
 
       <PseudoModalContainer

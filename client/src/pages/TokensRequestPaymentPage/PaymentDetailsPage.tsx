@@ -5,10 +5,10 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import PaymentDetailsForm from './components/PaymentDetailsForm';
 import PaymentDetailsEdgeWallet from './components/PaymentDetailsEdgeWallet';
+import PaymentDetailsLedgerWallet from './components/PaymentDetailsLedgerWallet';
 import PaymentDetailsResults from '../../components/common/TransactionResults/components/PaymentDetailsResults';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import WalletAction from '../../components/WalletAction/WalletAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { PaymentDetailsMetemaskWallet } from './components/PaymentDetailsMetemaskWallet';
 
@@ -42,6 +42,8 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
     getContactsList,
     refreshWalletDataPublicKey,
     location: { query: { publicKey, fioRequestId } = {} },
+    feePrice,
+    getFee,
   } = props;
 
   const [
@@ -94,6 +96,12 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
         fioRequestId: fioRecordDecrypted.fioRecord.id,
       });
   }, [JSON.stringify(fioRecordDecrypted)]);
+
+  useEffect(() => {
+    if (fioRecordDecrypted?.fioRecord?.from) {
+      getFee(fioRecordDecrypted.fioRecord.from);
+    }
+  }, [fioRecordDecrypted, getFee]);
 
   const onSend = async (values: PaymentDetailsValues) => {
     setSendData({ ...values });
@@ -180,6 +188,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
   return (
     <>
       <WalletAction
+        fee={feePrice.nativeFio}
         fioWallet={fioWallet}
         onCancel={onCancel}
         onSuccess={onSuccess}
@@ -188,10 +197,10 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
         setProcessing={setProcessing}
         contactsList={contactsList}
         createContact={createContact}
-        action={CONFIRM_PIN_ACTIONS.SEND}
+        action={CONFIRM_PIN_ACTIONS.PAYMENT_DETAILS}
         FioActionWallet={PaymentDetailsEdgeWallet}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
         MetamaskActionWallet={PaymentDetailsMetemaskWallet}
+        LedgerActionWallet={PaymentDetailsLedgerWallet}
       />
 
       <PseudoModalContainer
