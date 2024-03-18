@@ -50,7 +50,7 @@ const PaymentDetailsEdgeWallet: React.FC<Props> = props => {
       fioRequestId: data.fioRequestId,
     });
 
-    if (!contactsList.filter(c => c === data.payeeFioAddress).length)
+    if (!contactsList?.filter(c => c === data.payeeFioAddress).length)
       createContact(data.payeeFioAddress);
 
     return camelizeObjKeys(result);
