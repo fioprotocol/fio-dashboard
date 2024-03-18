@@ -135,7 +135,8 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
 
   useEffect(() => {
     if (requestResult) {
-      if (!!to && !contactsList.filter(c => c === to).length) createContact(to);
+      if (!!to && !contactsList?.filter(c => c === to).length)
+        createContact(to);
     }
 
     if (requestResult && isTransferTokensFinished) {

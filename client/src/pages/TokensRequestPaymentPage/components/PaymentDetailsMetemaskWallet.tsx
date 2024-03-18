@@ -89,7 +89,7 @@ export const PaymentDetailsMetemaskWallet: React.FC<Props> = props => {
     (result: OnSuccessResponseResult) => {
       if (!result) return;
 
-      if (!contactsList.filter(c => c === payeeFioAddress).length)
+      if (!contactsList?.filter(c => c === payeeFioAddress).length)
         createContact(payeeFioAddress);
 
       if (!Array.isArray(result) && 'transaction_id' in result) {

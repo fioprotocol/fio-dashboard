@@ -126,7 +126,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
       }
     }
 
-    if (!contactsList.filter(c => c === submitData.payerFioAddress).length)
+    if (!contactsList?.filter(c => c === submitData.payerFioAddress).length)
       createContact(submitData.payerFioAddress);
 
     return {

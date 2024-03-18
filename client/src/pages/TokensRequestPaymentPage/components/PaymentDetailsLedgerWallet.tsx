@@ -100,7 +100,7 @@ const PaymentDetailsLedgerWallet: React.FC<Props> = props => {
       },
     );
 
-    if (!contactsList.filter(c => c === submitData.payeeFioAddress).length)
+    if (!contactsList?.filter(c => c === submitData.payeeFioAddress).length)
       createContact(submitData.payeeFioAddress);
 
     return camelizeObjKeys(result);
