@@ -1,5 +1,16 @@
-import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
+import {
+  DeviceStatusCodes,
+  Fio as LedgerFioApp,
+} from 'ledgerjs-hw-app-fio/dist/fio';
 import { Ecc } from '@fioprotocol/fiojs';
+
+import { fireActionAnalyticsEventError } from './analytics';
+import { log } from './general';
+
+import {
+  UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
+  UNSUPPORTED_LEDGER_APP_VERSION_NAME,
+} from '../constants/errors';
 
 const HARDENED = 0x80000000;
 
@@ -27,4 +38,49 @@ export const getPubKeyFromLedger = async (
 
 export const formatLedgerSignature = (witnessSignatureHex: string): string => {
   return Ecc.Signature.fromHex(witnessSignatureHex).toString();
+};
+
+export const handleLedgerError = ({
+  error,
+  action,
+  onCancel,
+  showGenericErrorModal,
+}: {
+  error: Error & { code: number };
+  action: string;
+  onCancel: () => void;
+  showGenericErrorModal: (
+    msg: string,
+    title: string,
+    buttonText?: string | null,
+  ) => void;
+}): void => {
+  fireActionAnalyticsEventError(action);
+  log.error(error, error.code ? error.code.toString() : null);
+  let title = 'Something went wrong';
+  let msg = 'Try to reconnect your ledger device.';
+  let buttonText = '';
+
+  const deviceVersionUnsupportedRegexp = new RegExp(
+    UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
+    'i',
+  );
+
+  if (error.code === DeviceStatusCodes.ERR_REJECTED_BY_USER) {
+    title = 'Rejected';
+    msg = 'Action rejected by user';
+  }
+
+  if (
+    error.name === UNSUPPORTED_LEDGER_APP_VERSION_NAME ||
+    deviceVersionUnsupportedRegexp.test(error.message)
+  ) {
+    title = 'FIO Ledger App version not supported';
+    msg =
+      'Please go to Ledger Live and install the latest version of the FIO Ledger App on your device.';
+    buttonText = 'OK';
+  }
+
+  showGenericErrorModal(msg, title, buttonText);
+  onCancel();
 };

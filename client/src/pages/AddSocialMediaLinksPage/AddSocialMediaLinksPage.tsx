@@ -2,15 +2,15 @@ import React from 'react';
 
 import { Form } from 'react-final-form';
 
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { AddSocialMediaLinksForm } from './components/AddSocialMediaLinksForm';
 import { AddSocialMediaLinksMetamaskWallet } from './components/AddSocialMediaLinksMetamaskWallet';
 
-import {
-  WALLET_CREATED_FROM,
-  CONFIRM_PIN_ACTIONS,
-} from '../../constants/common';
+import WalletAction from '../../components/WalletAction/WalletAction';
+
+import { AddSocialMediaLinksEdgeWallet } from './components/AddSocialMediaLinksEdgeWallet';
+import { AddSocialMediaLinksLedgerWallet } from './components/AddSocialMediaLinksLedgerWallet';
+
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { useContext } from './AddSocialMediaLinksPageContext';
 
@@ -19,56 +19,31 @@ const AddSocialMediaLinkPage: React.FC = () => {
     bundleCost,
     fioCryptoHandleObj,
     fioWallet,
-    onSuccess,
-    onCancel,
-    submit,
-    submitData,
     processing,
-    setProcessing,
-    edgeWalletId,
-    onSubmit,
-    changeBundleCost,
-    onRetry,
-    setResultsData,
-    setSubmitData,
     socialMediaLinksList,
+    submitData,
+    changeBundleCost,
+    onCancel,
+    onRetry,
+    onSuccess,
+    onSubmit,
+    setProcessing,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.ADD_SOCIAL_MEDIA_LINK}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
-
-      {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <AddSocialMediaLinksMetamaskWallet
-          fioWallet={fioWallet}
-          processing={processing}
-          submitData={submitData}
-          fioHandle={fioCryptoHandleObj?.name}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setSubmitData={setSubmitData}
-          setResultsData={setResultsData}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.ADD_SOCIAL_MEDIA_LINK}
+        FioActionWallet={AddSocialMediaLinksEdgeWallet}
+        LedgerActionWallet={AddSocialMediaLinksLedgerWallet}
+        MetamaskActionWallet={AddSocialMediaLinksMetamaskWallet}
+      />
 
       <Form
         onSubmit={onSubmit}

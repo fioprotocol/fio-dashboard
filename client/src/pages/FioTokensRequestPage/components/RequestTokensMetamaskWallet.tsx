@@ -150,7 +150,7 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
       if (!result) return;
 
       try {
-        if (!contactsList.filter(c => c === payerFioAddress).length)
+        if (!contactsList?.filter(c => c === payerFioAddress).length)
           createContact(payerFioAddress);
 
         setRequestResult({

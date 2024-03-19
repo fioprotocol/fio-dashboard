@@ -1,18 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { updatePublicAddresses } from '../../redux/fio/actions';
 import {
   currentFioAddress as currentFioAddressSelector,
   fioWallets as fioWalletsSelector,
 } from '../../redux/fio/selectors';
 
-import { linkTokens } from '../../api/middleware/fio';
-import {
-  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-  TOKEN_LINK_MIN_WAIT_TIME,
-} from '../../constants/fio';
+import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import { ROUTES } from '../../constants/routes';
@@ -21,16 +16,14 @@ import { SOCIAL_MEDIA_LINKS } from '../../constants/socialMediaLinks';
 
 import useQuery from '../../hooks/useQuery';
 
-import { extractLastValueFormUrl, isURL, log } from '../../util/general';
+import { extractLastValueFormUrl, isURL } from '../../util/general';
 import { usePublicAddresses } from '../../util/hooks';
-import { minWaitTimeFunction } from '../../utils';
 
 import {
-  PublicAddressDoublet,
   LinkActionResult,
-  WalletKeys,
   FioAddressWithPubAddresses,
   FioWalletDoublet,
+  PublicAddressDoublet,
 } from '../../types';
 
 import { EditSocialLinkItem } from './types';
@@ -44,7 +37,10 @@ type UseContextProps = {
   isDisabled: boolean;
   processing: boolean;
   results: LinkActionResult;
-  submitData: boolean | null;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
+  } | null;
   socialMediaLinksList: EditSocialLinkItem[];
   changeBundleCost: (bundle: number) => void;
   handleEditTokenItem: (editedId: string, editedUsername: string) => void;
@@ -52,15 +48,8 @@ type UseContextProps = {
   onBack: () => void;
   onCancel: () => void;
   onRetry: () => void;
-  onSuccess: () => void;
+  onSuccess: (resultsData: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (
-    results: LinkActionResult & {
-      disconnect: { updated: EditSocialLinkItem[] };
-    },
-  ) => void;
-  setSubmitData: (submitData: boolean | null) => void;
-  submit: (params: { keys: WalletKeys }) => Promise<void>;
 };
 
 export const useContext = (): UseContextProps => {
@@ -73,7 +62,10 @@ export const useContext = (): UseContextProps => {
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [results, setResultsData] = useState<LinkActionResult>(null);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [submitData, setSubmitData] = useState<{
+    fch: string;
+    socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
+  } | null>(null);
 
   const currentFioAddress = useSelector(state =>
     currentFioAddressSelector(state, fch),
@@ -81,7 +73,6 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
 
   const history = useHistory();
-  const dispatch = useDispatch();
 
   usePublicAddresses(fch);
 
@@ -172,55 +163,9 @@ export const useContext = (): UseContextProps => {
     updatePubAddressArr();
   };
 
-  const onSuccess = () => {
+  const onSuccess = (resultsData: LinkActionResult) => {
     setProcessing(false);
-  };
-
-  const onCancel = () => {
-    setSubmitData(null);
-    setProcessing(false);
-  };
-
-  const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const editedSocialLinks = socialMediaLinksList.filter(
-      socialMediaLink => socialMediaLink.newUsername,
-    );
-    const params: {
-      fioAddress: string;
-      connectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-    } = {
-      fioAddress: fch,
-      connectList: editedSocialLinks.map(socialMediaLinkItem => ({
-        ...socialMediaLinkItem,
-        chainCode: CHAIN_CODES.SOCIALS,
-        tokenCode: socialMediaLinkItem.tokenName.toUpperCase(),
-        publicAddress: socialMediaLinkItem.newUsername,
-      })),
-      keys,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData({
-        ...actionResults,
-        disconnect: {
-          ...actionResults.disconnect,
-          updated: editedSocialLinks,
-        },
-      });
-      dispatch(
-        updatePublicAddresses(fch, {
-          addPublicAddresses: actionResults.connect.updated,
-          deletePublicAddresses: editedSocialLinks.map(editedSocialLink => ({
-            publicAddress: editedSocialLink.username,
-            chainCode: CHAIN_CODES.SOCIALS,
-            tokenCode: editedSocialLink.tokenName.toUpperCase(),
-          })),
-        }),
-      );
+    if (resultsData.connect.updated) {
       history.push({
         pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
         search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
@@ -228,15 +173,18 @@ export const useContext = (): UseContextProps => {
           actionType: SOCIAL_MEDIA_CONTAINER_NAMES.EDIT_SOCIAL_MEDIA,
         },
       });
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
     }
+
+    setSubmitData(null);
+  };
+
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
   };
 
   const onActionButtonClick = () => {
-    setSubmitData(true);
+    setSubmitData({ fch, socialMediaLinksList });
   };
 
   const onBack = () => {
@@ -246,7 +194,7 @@ export const useContext = (): UseContextProps => {
   };
 
   const onRetry = () => {
-    setSubmitData(true);
+    setSubmitData({ fch, socialMediaLinksList });
   };
 
   return {
@@ -268,8 +216,5 @@ export const useContext = (): UseContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
-    submit,
   };
 };

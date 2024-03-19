@@ -83,4 +83,6 @@ export interface ContainerProps extends ContainerOwnProps {
   contactsList: string[];
   getContactsList: () => void;
   createContact: (name: string) => void;
+  feePrice: FeePrice;
+  getFee: (fioAddress: string) => void;
 }

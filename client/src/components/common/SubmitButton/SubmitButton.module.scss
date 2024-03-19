@@ -171,6 +171,17 @@
     }
   }
 
+  &.isGrey {
+    border: $silver-chalice;
+    background-color: $silver-chalice;
+    color: $black;
+
+    &:hover {
+      border: $iron;
+      background-color: $iron;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
   }

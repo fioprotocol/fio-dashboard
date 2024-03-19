@@ -9,6 +9,7 @@ import SendLedgerWallet from './components/SendLedgerWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { SendTokensMetamaskWallet } from './components/SendTokensMetamaskWallet';
+import WalletAction from '../../components/WalletAction/WalletAction';
 
 import { fioAddressToPubKey } from '../../util/fio';
 
@@ -18,13 +19,14 @@ import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { CONFIRM_FIO_ACTIONS } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { LINKS } from '../../constants/labels';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { useFioAddresses } from '../../util/hooks';
 import { convertFioPrices } from '../../util/prices';
+import useEffectOnce from '../../hooks/general';
 
 import classes from './styles/SendPage.module.scss';
 
@@ -34,12 +36,14 @@ const SendPage: React.FC<ContainerProps> = props => {
     balance,
     loading,
     feePrice,
+    feePriceRecordObtData,
     roe,
     history,
     contactsList = [],
     location: { state: { fioRecordDecrypted } = {} },
     refreshBalance,
     getFee,
+    getFeeRecordObtData,
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
@@ -53,11 +57,17 @@ const SendPage: React.FC<ContainerProps> = props => {
     fioWallet && fioWallet.publicKey,
   );
 
-  useEffect(() => {
+  useEffectOnce(() => {
     getFee();
     setSendData(null);
     getContactsList();
   }, []);
+
+  useEffect(() => {
+    if (sendData?.from) {
+      getFeeRecordObtData(sendData.from);
+    }
+  }, [sendData, getFeeRecordObtData]);
 
   useEffect(() => {
     if (!fioWallet?.publicKey) {
@@ -72,7 +82,11 @@ const SendPage: React.FC<ContainerProps> = props => {
   const onSend = async (values: SendTokensValues) => {
     const newSendData = { ...values };
 
-    if (newSendData.toPubKey) return setSendData(newSendData);
+    if (newSendData.toPubKey)
+      return setSendData({
+        ...newSendData,
+        feeRecordObtData: feePriceRecordObtData.nativeFio,
+      });
 
     const pubKey = await fioAddressToPubKey(newSendData.to);
 
@@ -83,7 +97,11 @@ const SendPage: React.FC<ContainerProps> = props => {
       newSendData.to = '';
     }
 
-    setSendData(newSendData);
+    setSendData({
+      ...newSendData,
+      feeRecordObtData: feePriceRecordObtData.nativeFio,
+      contactsList,
+    });
   };
   const onCancel = () => {
     setSendData(null);
@@ -172,45 +190,20 @@ const SendPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
-        <SendLedgerWallet
-          fioWallet={fioWallet}
-          fee={feePrice.nativeFio}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          sendData={sendData}
-          processing={processing}
-          setProcessing={setProcessing}
-        />
-      ) : null}
-
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <SendEdgeWallet
-          fioWallet={fioWallet}
-          fee={feePrice.nativeFio}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          sendData={sendData}
-          processing={processing}
-          setProcessing={setProcessing}
-          createContact={createContact}
-          contactsList={contactsList}
-        />
-      ) : null}
-
-      {fioWallet.from === WALLET_CREATED_FROM.METAMASK ? (
-        <SendTokensMetamaskWallet
-          contactsList={contactsList}
-          derivationIndex={fioWallet?.data?.derivationIndex}
-          fee={feePrice.nativeFio}
-          processing={processing}
-          submitData={sendData}
-          createContact={createContact}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        action={CONFIRM_FIO_ACTIONS.SEND}
+        fioWallet={fioWallet}
+        fee={feePrice?.nativeFio}
+        processing={processing}
+        submitData={sendData}
+        createContact={createContact}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        setProcessing={setProcessing}
+        FioActionWallet={SendEdgeWallet}
+        LedgerActionWallet={SendLedgerWallet}
+        MetamaskActionWallet={SendTokensMetamaskWallet}
+      />
 
       <PseudoModalContainer
         title="Send FIO Tokens"
@@ -234,7 +227,6 @@ const SendPage: React.FC<ContainerProps> = props => {
           obtDataOn={true}
           contactsList={contactsList}
           initialValues={initialValues}
-          isMemoDisabled={fioWallet.from === WALLET_CREATED_FROM.LEDGER}
         />
       </PseudoModalContainer>
     </>

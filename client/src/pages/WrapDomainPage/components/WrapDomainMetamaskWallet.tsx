@@ -17,17 +17,15 @@ import apis from '../../../api';
 import MathOp from '../../../util/math';
 import { handleFioServerResponse } from '../../../util/fio';
 
+import { FioWalletDoublet } from '../../../types';
+import { WrapDomainValues } from '../types';
+
 type Props = {
-  derivationIndex: number;
+  fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: {
-    chainCode: string;
-    fee?: number | null;
-    name: string;
-    oracleFee?: number | null;
-    publicAddress: string;
-  };
-  startProcessing: boolean;
+  submitData: WrapDomainValues;
+  oracleFee: number;
+  fee: number;
   onSuccess: (result: {
     fee_collected: number;
     oracle_fee_collected: number;
@@ -39,16 +37,19 @@ type Props = {
 
 export const WrapDomainMetamaskWallet: React.FC<Props> = props => {
   const {
-    derivationIndex,
+    fioWallet,
+    fee,
+    oracleFee,
     processing,
-    startProcessing,
     submitData,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
 
-  const { chainCode, fee, name, oracleFee, publicAddress } = submitData;
+  const derivationIndex = fioWallet?.data?.derivationIndex;
+
+  const { chainCode, name, publicAddress } = submitData || {};
 
   const actionParams = {
     action: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain],
@@ -83,7 +84,7 @@ export const WrapDomainMetamaskWallet: React.FC<Props> = props => {
     }
   };
 
-  if (!startProcessing) return null;
+  if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction

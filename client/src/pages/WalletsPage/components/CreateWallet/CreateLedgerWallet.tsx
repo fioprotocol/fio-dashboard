@@ -5,7 +5,10 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import LedgerConnect from '../../../../components/LedgerConnect';
 
 import { getPubKeyFromLedger } from '../../../../util/ledger';
-import { log } from '../../../../util/general';
+import {
+  findMissingNumberInFullNumbersRow,
+  log,
+} from '../../../../util/general';
 
 import {
   CONFIRM_LEDGER_ACTIONS,
@@ -35,21 +38,23 @@ const CreateLedgerWallet: React.FC<Props> = props => {
   const createLedgerWallet = async (appFio: LedgerFioApp) => {
     let publicKey = '';
 
-    let derivationIndex = 0;
     const [device] = await TransportWebUSB.list();
-    for (const { data } of fioWallets) {
-      if (data != null && data.device === device.productId) {
-        derivationIndex =
-          derivationIndex <= data.derivationIndex
-            ? derivationIndex + 1
-            : derivationIndex;
-      }
-    }
+
+    const ledgerWalletsDerivationIndexes = fioWallets
+      .filter(
+        fioWallet =>
+          fioWallet.data && fioWallet.data.device === device.productId,
+      )
+      .map(fioWallet => fioWallet.data?.derivationIndex);
+    const derivationIndex = findMissingNumberInFullNumbersRow(
+      ledgerWalletsDerivationIndexes,
+    );
 
     try {
       publicKey = await getPubKeyFromLedger(appFio, derivationIndex);
     } catch (e) {
       log.error(e);
+      throw e;
     }
 
     if (

@@ -18,8 +18,11 @@ import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
   DOMAIN_EXPIRED_DAYS,
   DOMAIN_TYPE,
+  FIO_ACCOUNT_NAMES,
+  FIO_ACTION_NAMES,
   FIO_REQUEST_STATUS_TYPES,
 } from '../constants/fio';
+
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
 import {
   DOMAIN_EXP_DEBUG_AFFIX,
@@ -33,6 +36,7 @@ import {
   Prices,
   PublicAddressDoublet,
   IncomePrices,
+  AnyObject,
   CartItem,
 } from '../types';
 import { RawTransaction } from '../api/fio';
@@ -370,4 +374,26 @@ export const handleFioServerResponseActionData = (
   response: FioServerResponse,
 ): ActionDataParams => {
   return response?.processed?.action_traces[0]?.act?.data;
+};
+
+export const prepareChainTransaction = async (
+  walletPublicKey: string,
+  action: string,
+  data: AnyObject,
+): Promise<{ chainId: string; transaction: RawTransaction }> => {
+  const chainData = await apis.fio.publicFioSDK.transactions.getChainDataForTx();
+  const transaction = await apis.fio.publicFioSDK.transactions.createRawTransaction(
+    {
+      account: FIO_ACCOUNT_NAMES[action],
+      action: FIO_ACTION_NAMES[action],
+      data: data,
+      publicKey: walletPublicKey,
+      chainData,
+    },
+  );
+
+  return {
+    chainId: chainData.chain_id,
+    transaction,
+  };
 };
