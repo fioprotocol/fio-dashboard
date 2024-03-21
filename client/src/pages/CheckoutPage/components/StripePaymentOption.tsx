@@ -30,7 +30,6 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     payment,
     paymentOption,
     paymentProviderError,
-    submitDisabled,
     beforePaymentSubmit,
   } = props;
 
@@ -97,7 +96,6 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         onFinish={onFinish}
         beforeSubmit={beforePaymentSubmit}
         orderNumber={order?.number}
-        submitDisabled={submitDisabled}
         payment={payment}
       />
     </Elements>

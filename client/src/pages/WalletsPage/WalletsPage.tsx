@@ -7,7 +7,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletItem from './components/WalletItem';
-import CreateWallet from './components/CreateWallet';
+import { CreateWallet } from './components/CreateWallet';
 import ActionButtonsContainer from './components/ActionButtonsContainer';
 import TotalBalanceBadge from './components/TotalBalanceBadge';
 import Title from './components/Title';
@@ -69,7 +69,7 @@ const WalletsPage: React.FC<Props> = () => {
     fioWallets,
     fioWalletsBalances,
     isAlternativeAccountType,
-    showCreateWallet,
+    showCreateWalletModal,
     showWalletCreated,
     showWalletDeleted,
     showWalletImported,
@@ -85,7 +85,9 @@ const WalletsPage: React.FC<Props> = () => {
   return (
     <div className={classes.container}>
       <CreateWallet
-        show={showCreateWallet}
+        fioWallets={fioWallets}
+        isAlternativeAccountType={isAlternativeAccountType}
+        show={showCreateWalletModal}
         onClose={closeCreateWallet}
         onWalletCreated={onWalletCreated}
       />

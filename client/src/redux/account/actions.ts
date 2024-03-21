@@ -70,3 +70,10 @@ export const deleteWallet = ({
     publicKey,
   },
 });
+
+export const TOGGLE_IS_WALLET_CREATED = `${prefix}/TOGGLE_IS_WALLET_CREATED`;
+
+export const toggleIsWalletCreated = (isCreated: boolean): CommonAction => ({
+  type: TOGGLE_IS_WALLET_CREATED,
+  isCreated,
+});

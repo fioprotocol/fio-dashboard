@@ -49,17 +49,9 @@ export const StripeForm: React.FC<{
   cart: CartItemType[];
   onFinish: (success: boolean, data?: BeforeSubmitData) => void;
   beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
-  submitDisabled?: boolean;
   orderNumber: string;
   payment: Payment;
-}> = ({
-  cart,
-  onFinish,
-  beforeSubmit,
-  orderNumber,
-  payment,
-  submitDisabled = false,
-}) => {
+}> = ({ cart, orderNumber, onFinish, beforeSubmit, payment }) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -178,7 +170,7 @@ export const StripeForm: React.FC<{
       <SubmitButton
         text={loading ? 'Processing...' : submitData ? 'Continue' : 'Pay'}
         withTopMargin={true}
-        disabled={!stripe || !elements || loading || submitDisabled}
+        disabled={!stripe || !elements || loading}
         loading={loading}
       />
     </form>

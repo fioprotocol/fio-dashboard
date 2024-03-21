@@ -14,14 +14,13 @@ import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
-import { NFTTokenDoublet } from '../../../types';
+import { FioWalletDoublet, NFTTokenDoublet } from '../../../types';
 import { ActionDataParams } from '../../../types/fio';
 
 type Props = {
-  derivationIndex: number;
+  fioWallet: FioWalletDoublet;
   processing: boolean;
   submitData: NFTTokenDoublet;
-  startProcessing: boolean;
   onSuccess: (result: OnSuccessResponseResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -29,14 +28,15 @@ type Props = {
 
 export const SignNftMetamaskWallet: React.FC<Props> = props => {
   const {
-    derivationIndex,
+    fioWallet,
     processing,
-    startProcessing,
     submitData,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
+
+  const derivationIndex = fioWallet?.data?.derivationIndex;
 
   const {
     fioAddress,
@@ -74,7 +74,7 @@ export const SignNftMetamaskWallet: React.FC<Props> = props => {
     derivationIndex,
   };
 
-  if (!startProcessing) return null;
+  if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction

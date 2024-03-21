@@ -57,3 +57,10 @@ export const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
 export const METAMASK_UNSUPPORTED_MOBILE_MESSAGE =
   'Currenty Sign-in with MetaMask only works on Desktop with MetaMask browser extension v11.0 and up.';
+
+// Ledger Errors
+export const UNSUPPORTED_LEDGER_APP_VERSION_NAME = 'DeviceVersionUnsupported';
+export const UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE =
+  'Device app version unsupported';
+export const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
+  'DisconnectedDeviceDuringOperation';

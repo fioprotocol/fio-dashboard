@@ -1,6 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
 
 import {
   MetamaskConfirmAction,
@@ -13,9 +11,7 @@ import {
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
-import { ROUTES } from '../../../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-import { SOCIAL_MEDIA_CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
+
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
@@ -26,39 +22,35 @@ import useEffectOnce from '../../../hooks/general';
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
 import { CheckedSocialMediaLinkType } from '../types';
-import { updatePublicAddresses } from '../../../redux/fio/actions';
 
 type Props = {
   allowDisconnectAll: boolean;
-  fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  checkedSocialMediaLinks: CheckedSocialMediaLinkType[];
-  submitData: boolean | null;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: CheckedSocialMediaLinkType[];
+  } | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (result: LinkActionResult) => void;
-  setSubmitData: (submitData: boolean | null) => void;
 };
 
 export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {
   const {
     allowDisconnectAll,
-    checkedSocialMediaLinks,
-    fioHandle,
     fioWallet,
     processing,
     submitData,
     onCancel,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
   } = props;
 
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const { fch: fioHandle, socialMediaLinksList } = submitData || {};
+  const checkedSocialMediaLinks = socialMediaLinksList?.filter(
+    socialMediaLinksListItem => socialMediaLinksListItem.isChecked,
+  );
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
 
@@ -115,9 +107,9 @@ export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {
     setActionParams(actionParamsArr);
   }, [
     allowDisconnectAll,
-    checkedSocialMediaLinks,
     fioHandle,
     fioWallet.data?.derivationIndex,
+    checkedSocialMediaLinks,
   ]);
 
   const handleMapPublicAddressResults = useCallback(
@@ -138,7 +130,7 @@ export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {
       };
 
       if (allowDisconnectAll) {
-        results.disconnect.updated = checkedSocialMediaLinks;
+        results.disconnect.updated = socialMediaLinksList;
       } else {
         if (Array.isArray(result)) {
           for (const resultItem of result) {
@@ -180,34 +172,8 @@ export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {
       }
 
       onSuccess(results);
-      setResultsData(results);
-      setSubmitData(null);
-
-      dispatch(
-        updatePublicAddresses(fioHandle, {
-          addPublicAddresses: [],
-          deletePublicAddresses: checkedSocialMediaLinks,
-        }),
-      );
-
-      history.push({
-        pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-        search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fioHandle}`,
-        state: {
-          actionType: SOCIAL_MEDIA_CONTAINER_NAMES.DELETE_SOCIAL_MEDIA,
-        },
-      });
     },
-    [
-      allowDisconnectAll,
-      checkedSocialMediaLinks,
-      dispatch,
-      fioHandle,
-      history,
-      onSuccess,
-      setResultsData,
-      setSubmitData,
-    ],
+    [allowDisconnectAll, socialMediaLinksList, onSuccess],
   );
 
   useEffectOnce(

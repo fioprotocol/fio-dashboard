@@ -8,6 +8,12 @@ import {
   FeePrice,
 } from '../../types';
 
+export type FioNameTransferValues = {
+  name: string;
+  fioNameType: FioNameType;
+  newOwnerPublicKey: string;
+};
+
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
   name: string;

@@ -9,20 +9,16 @@ import {
   loading as loadingSelector,
 } from '../../redux/fio/selectors';
 
-import { linkTokens } from '../../api/middleware/fio';
-import { minWaitTimeFunction } from '../../utils';
-import { log } from '../../util/general';
-
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
 
 import {
-  TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
   FIO_CHAIN_CODE,
   ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
 } from '../../constants/fio';
+
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
 import { SOCIAL_MEDIA_LINKS } from '../../constants/socialMediaLinks';
@@ -34,7 +30,6 @@ import {
   FioWalletDoublet,
   LinkActionResult,
   PublicAddressDoublet,
-  WalletKeys,
 } from '../../types';
 import { CheckedSocialMediaLinkType } from './types';
 
@@ -53,7 +48,10 @@ type UseContextProps = {
   processing: boolean;
   socialMediaLinksList: CheckedSocialMediaLinkType[];
   resultsData: LinkActionResult;
-  submitData: boolean;
+  submitData: {
+    fch: string;
+    socialMediaLinksList: CheckedSocialMediaLinkType[] | PublicAddressDoublet[];
+  };
   allCheckedChange: (isChecked: boolean) => void;
   setProcessing: (processing: boolean) => void;
   changeBundleCost: (bundles: number) => void;
@@ -61,11 +59,8 @@ type UseContextProps = {
   onBack: () => void;
   onCancel: () => void;
   onCheckClick: (checkedId: string) => void;
-  onRetry: () => void;
-  onSuccess: () => void;
-  setSubmitData: (submitData: boolean | null) => void;
-  setResultsData: (submitData: LinkActionResult) => void;
-  submit: ({ keys }: { keys: WalletKeys }) => Promise<void>;
+  onRetry: (resultsData: LinkActionResult) => void;
+  onSuccess: (resultsData: LinkActionResult) => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -88,7 +83,10 @@ export const useContext = (): UseContextProps => {
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [allChecked, toggleAllChecked] = useState<boolean>(false);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [submitData, setSubmitData] = useState<{
+    fch: string;
+    socialMediaLinksList: CheckedSocialMediaLinkType[] | PublicAddressDoublet[];
+  } | null>(null);
   const [resultsData, setResultsData] = useState<LinkActionResult>(null);
 
   const history = useHistory();
@@ -154,7 +152,7 @@ export const useContext = (): UseContextProps => {
   }, [pubAddressesToDefault]);
 
   useEffect(() => {
-    if (allChecked && !hasTokenLinks) {
+    if (allowDisconnectAll) {
       return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
     }
 
@@ -167,7 +165,7 @@ export const useContext = (): UseContextProps => {
       );
     }
     return changeBundleCost(0);
-  }, [allChecked, checkedSocialMediaLinks.length, hasChecked, hasTokenLinks]);
+  }, [allowDisconnectAll, checkedSocialMediaLinks.length, hasChecked]);
 
   useEffect(() => {
     toggleAllChecked(
@@ -200,8 +198,23 @@ export const useContext = (): UseContextProps => {
     );
   };
 
-  const onSuccess = () => {
+  const onSuccess = (resultsData: LinkActionResult) => {
     setProcessing(false);
+    setResultsData(resultsData);
+    dispatch(
+      updatePublicAddresses(fch, {
+        addPublicAddresses: [],
+        deletePublicAddresses: resultsData.disconnect.updated,
+      }),
+    );
+    history.push({
+      pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
+      search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
+      state: {
+        actionType: SOCIAL_MEDIA_CONTAINER_NAMES.DELETE_SOCIAL_MEDIA,
+      },
+    });
+    setSubmitData(null);
   };
 
   const onCancel = () => {
@@ -209,46 +222,11 @@ export const useContext = (): UseContextProps => {
     setProcessing(false);
   };
 
-  const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const params: {
-      fioAddress: string;
-      disconnectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-      disconnectAll?: boolean;
-    } = {
-      fioAddress: fch,
-      disconnectList: checkedSocialMediaLinks,
-      keys,
-      disconnectAll: allowDisconnectAll,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData(actionResults);
-      dispatch(
-        updatePublicAddresses(fch, {
-          addPublicAddresses: [],
-          deletePublicAddresses: checkedSocialMediaLinks,
-        }),
-      );
-      history.push({
-        pathname: ROUTES.FIO_SOCIAL_MEDIA_LINKS,
-        search: `${QUERY_PARAMS_NAMES.FIO_HANDLE}=${fch}`,
-        state: {
-          actionType: SOCIAL_MEDIA_CONTAINER_NAMES.DELETE_SOCIAL_MEDIA,
-        },
-      });
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
-    }
-  };
-
   const onActionClick = () => {
-    setSubmitData(true);
+    setSubmitData({
+      fch,
+      socialMediaLinksList,
+    });
   };
 
   const onBack = () => {
@@ -257,8 +235,11 @@ export const useContext = (): UseContextProps => {
     pubAddressesToDefault();
   };
 
-  const onRetry = () => {
-    setSubmitData(true);
+  const onRetry = (resultsData: LinkActionResult) => {
+    setSubmitData({
+      fch,
+      socialMediaLinksList: resultsData.disconnect.failed,
+    });
   };
 
   return {
@@ -286,8 +267,5 @@ export const useContext = (): UseContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
-    setResultsData,
-    setSubmitData,
-    submit,
   };
 };

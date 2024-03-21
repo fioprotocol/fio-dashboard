@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import WalletAction from '../WalletAction/WalletAction';
-import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
-import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { PurchaseMetamaskWallet } from './components/PurchaseMetamaskWallet';
 
@@ -20,6 +18,9 @@ import {
 } from '../../redux/registrations/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
+
+import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
+import PurchaseLedgerWallet from './components/PurchaseLedgerWallet';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -203,8 +204,8 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         setProcessing={setProcessingDispatched}
         action={CONFIRM_PIN_ACTIONS.PURCHASE}
         FioActionWallet={PurchaseEdgeWallet}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
         MetamaskActionWallet={PurchaseMetamaskWallet}
+        LedgerActionWallet={PurchaseLedgerWallet}
       />
       <SubmitButton
         onClick={purchase}

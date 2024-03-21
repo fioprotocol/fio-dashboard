@@ -1,9 +1,13 @@
 import {
   LinkActionResult,
-  WalletKeys,
   FioAddressWithPubAddresses,
   FioWalletDoublet,
 } from '../../types';
+
+export type EditTokenValues = {
+  pubAddressesArr: EditTokenElement[];
+  fioAddressName: string;
+};
 
 export type EditTokenElement = {
   chainCode: string;
@@ -16,7 +20,6 @@ export type EditTokenElement = {
 
 export type EditTokenContextProps = {
   bundleCost: number;
-  edgeWalletId: string;
   fioCryptoHandleObj: FioAddressWithPubAddresses;
   fioWallet: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
@@ -25,14 +28,15 @@ export type EditTokenContextProps = {
   processing: boolean;
   pubAddressesArr: EditTokenElement[];
   resultsData: LinkActionResult;
-  submitData: boolean | null;
+  submitData: EditTokenValues | null;
   changeBundleCost: (bundles: number) => void;
   handleEditTokenItem: (editedId: string, editedPubAddress: string) => void;
   onActionClick: () => void;
   onBack: () => void;
   onCancel: () => void;
   onRetry: () => void;
-  onSuccess: () => void;
+  onSuccess: (result: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
-  submit: ({ keys }: { keys: WalletKeys }) => Promise<void>;
+  setResultsData: (result: LinkActionResult) => void;
+  setSubmitData: (submitData: EditTokenValues | null) => void;
 };

@@ -21,41 +21,28 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { SubmitDataProps } from '../types';
+import { FormValues } from '../types';
 
 type Props = {
-  fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: SubmitDataProps &
-    Partial<{
-      tokens: Array<{
-        chainCode: string;
-        tokenCode: string;
-        publicAddress: string;
-      }>;
-    }>;
+  submitData: FormValues;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
-  setSubmitData: (submitData: SubmitDataProps | null) => void;
   setProcessing: (processing: boolean) => void;
-  setResultsData: (result: LinkActionResult) => void;
 };
 
 export const AddTokenMetamaskWallet: React.FC<Props> = props => {
   const {
-    fioHandle,
     fioWallet,
     processing,
     submitData,
     onCancel,
     onSuccess,
-    setSubmitData,
     setProcessing,
-    setResultsData,
   } = props;
 
-  const { tokens } = submitData || {};
+  const { name: fioHandle, tokens } = submitData || {};
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
 
@@ -154,10 +141,8 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
       }
 
       onSuccess(results);
-      setResultsData(results);
-      setSubmitData(null);
     },
-    [onSuccess, setResultsData, setSubmitData],
+    [onSuccess],
   );
 
   useEffectOnce(

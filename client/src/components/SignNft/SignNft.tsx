@@ -4,16 +4,14 @@ import { useHistory } from 'react-router';
 import PseudoModalContainer from '../PseudoModalContainer';
 import SignNFTForm from './components/SignNftForm/SignNftForm';
 import SignResults from '../common/TransactionResults/components/SignResults';
-import EdgeConfirmAction from '../EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
+import WalletAction from '../WalletAction/WalletAction';
+import SignNftEdgeWallet from './components/SignNftEdgeWallet';
+import SignNftLedgerWallet from './components/SignNftLedgerWallet';
 import PageTitle from '../PageTitle/PageTitle';
 import { SignNftMetamaskWallet } from './components/SignNftMetamaskWallet';
 
 import { ROUTES } from '../../constants/routes';
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import { LINKS } from '../../constants/labels';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
@@ -26,7 +24,6 @@ import apis from '../../api';
 import { FioAddressDoublet, NFTTokenDoublet } from '../../types';
 import { ContainerProps, NftFormValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
-import { SubmitActionParams } from '../EdgeConfirmAction/types';
 import { NFT_ITEM } from '../../types/fio';
 import { OnSuccessResponseResult } from '../MetamaskConfirmAction';
 
@@ -43,6 +40,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     addressSelectOff,
     refreshFioNames,
     getNFTSignatures,
+    feePrice,
   } = props;
 
   const history = useHistory();
@@ -132,12 +130,6 @@ const SignNft: React.FC<ContainerProps> = props => {
       fioWallets.forEach(fioWallet => refreshFioNames(fioWallet.publicKey));
     }
   }, [fioWallets, fioWallets.length, refreshFioNames]);
-
-  const submit = async ({ keys, data }: SubmitActionParams) => {
-    return await apis.fio.singNFT(keys, selectedFioHandle?.name || '', [
-      { ...data },
-    ]);
-  };
 
   const onSubmit = async (values: NftFormValues) => {
     const nftSigned = await checkNftSigned(
@@ -257,38 +249,19 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {currentWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          action={CONFIRM_PIN_ACTIONS.SIGN_NFT}
-          setProcessing={setProcessing}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          processing={processing}
-          data={submitData}
-          submitAction={submit}
-          fioWalletEdgeId={currentWallet?.edgeId || ''}
-          edgeAccountLogoutBefore={true}
-        />
-      ) : null}
-
-      {currentWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
-
-      {currentWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
-        <SignNftMetamaskWallet
-          derivationIndex={currentWallet?.data?.derivationIndex}
-          processing={processing}
-          submitData={submitData}
-          startProcessing={!!submitData}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={currentWallet}
+        fee={feePrice.nativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.SIGN_NFT}
+        FioActionWallet={SignNftEdgeWallet}
+        LedgerActionWallet={SignNftLedgerWallet}
+        MetamaskActionWallet={SignNftMetamaskWallet}
+      />
 
       <PseudoModalContainer title={title} link={backTo} middleWidth={true}>
         <SignNFTForm {...formProps} />
