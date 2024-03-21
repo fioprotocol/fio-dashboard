@@ -169,6 +169,7 @@ export function* alternateLoginSuccess(history: History, api: Api): Generator {
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
+
     if (
       !hasRedirectTo &&
       locationState &&
@@ -180,6 +181,16 @@ export function* alternateLoginSuccess(history: History, api: Api): Generator {
         search: locationState.from.search || '',
       });
     }
+
+    if (
+      !hasRedirectTo &&
+      history.location?.pathname === ROUTES.CREATE_ACCOUNT
+    ) {
+      history.push({
+        pathname: ROUTES.HOME,
+      });
+    }
+
     if (hasRedirectTo) {
       history.push({
         pathname: hasRedirectTo.pathname,
