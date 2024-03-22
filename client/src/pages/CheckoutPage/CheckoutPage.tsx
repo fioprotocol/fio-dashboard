@@ -3,7 +3,6 @@ import { Redirect } from 'react-router';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { CheckoutComponent } from './components/CheckoutComponent';
-import Processing from '../../components/common/TransactionProcessing';
 import BeforeSubmitWalletConfirm from './components/BeforeSubmitWalletConfirm';
 import CancelButton from '../../components/common/CancelButton/CancelButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
@@ -12,7 +11,6 @@ import { useContext } from './CheckoutPageContext';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import classes from './CheckoutPage.module.scss';
 
@@ -78,9 +76,6 @@ const CheckoutPage: React.FC = () => {
           setProcessing={setProcessing}
           processing={isProcessing}
         />
-      )}
-      {paymentWallet?.from === WALLET_CREATED_FROM.METAMASK ? null : (
-        <Processing isProcessing={isProcessing} />
       )}
     </PseudoModalContainer>
   );
