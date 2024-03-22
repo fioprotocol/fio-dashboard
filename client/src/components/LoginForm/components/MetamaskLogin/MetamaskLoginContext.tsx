@@ -1,25 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 
 import { MetamaskSnap } from '../../../../services/MetamaskSnap';
 import apis from '../../../../api';
 import { signNonce } from '../../../../util/snap';
-import {
-  alternateLogin,
-  resetAlternativeLoginError,
-  setAlternativeLoginError,
-} from '../../../../redux/profile/actions';
-
-import { alternativeLoginError as alternativeLoginErrorSelector } from '../../../../redux/profile/selectors';
+import { alternateLogin } from '../../../../redux/profile/actions';
 
 import { WALLET_TYPES } from '../../../../constants/wallets';
 import { log } from '../../../../util/general';
+import useEffectOnce from '../../../../hooks/general';
 
 const DEFAULT_METAMASK_ERROR =
   'Sign in with MetaMask has failed. Please try again.';
 
 type UseContextProps = {
+  alternativeLoginError: string | null;
   isDescriptionModalOpen: boolean;
   isLoginModalOpen: boolean;
   isMobileDeviceWithMetamask: boolean;
@@ -29,19 +25,28 @@ type UseContextProps = {
   onLoginModalClose: () => void;
 };
 
-export const useContext = (): UseContextProps => {
+type Props = {
+  setAlternativeLoginErrorToParentsComponent?: (error: string | null) => void;
+} | null;
+
+export const useContext = (props?: Props): UseContextProps => {
+  const { setAlternativeLoginErrorToParentsComponent } = props || {};
+
   const {
     derivationIndex,
     publicKey,
     snapError,
     handleConnectClick,
+    resetSnap,
   } = MetamaskSnap();
-  const alternativeLoginError = useSelector(alternativeLoginErrorSelector);
 
   const [isDescriptionModalOpen, toggleIsDescriptionModalOpen] = useState<
     boolean
   >(false);
   const [isLoginModalOpen, toggleIsLoginModalOpen] = useState<boolean>(false);
+  const [alternativeLoginError, setAlternativeLoginError] = useState<
+    string | null
+  >(null);
 
   const dispatch = useDispatch();
 
@@ -66,14 +71,14 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   const connectMetamask = useCallback(() => {
-    if (window.ethereum.isMetaMask) {
+    if (window.ethereum?.isMetaMask) {
       onLoginModalOpen();
       handleConnectClick();
-      dispatch(resetAlternativeLoginError());
+      setAlternativeLoginError(null);
     } else {
       onDetailsClick();
     }
-  }, [dispatch, handleConnectClick, onDetailsClick, onLoginModalOpen]);
+  }, [handleConnectClick, onDetailsClick, onLoginModalOpen]);
 
   const metamaskLogin = useCallback(async () => {
     try {
@@ -92,7 +97,7 @@ export const useContext = (): UseContextProps => {
       );
     } catch (error) {
       log.error('Metamask Login error', error);
-      dispatch(setAlternativeLoginError(DEFAULT_METAMASK_ERROR));
+      setAlternativeLoginError(DEFAULT_METAMASK_ERROR);
     }
   }, [derivationIndex, dispatch, publicKey]);
 
@@ -110,11 +115,22 @@ export const useContext = (): UseContextProps => {
 
   useEffect(() => {
     if (snapError) {
-      dispatch(setAlternativeLoginError(DEFAULT_METAMASK_ERROR));
+      setAlternativeLoginError(DEFAULT_METAMASK_ERROR);
     }
-  }, [dispatch, snapError]);
+  }, [snapError]);
+
+  useEffectOnce(() => {
+    resetSnap();
+    setAlternativeLoginError(null);
+  }, []);
+
+  useEffect(() => {
+    setAlternativeLoginErrorToParentsComponent &&
+      setAlternativeLoginErrorToParentsComponent(alternativeLoginError);
+  }, [alternativeLoginError, setAlternativeLoginErrorToParentsComponent]);
 
   return {
+    alternativeLoginError,
     isDescriptionModalOpen,
     isLoginModalOpen,
     isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,

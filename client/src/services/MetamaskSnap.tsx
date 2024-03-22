@@ -39,6 +39,7 @@ export type MetamaskSnapProps = {
     contentType: string;
   }) => void;
   handleConnectClick: () => void;
+  resetSnap: () => void;
   signSnapTxn: (params: any) => void;
   signNonceSnap: (params: { nonce: string; derivationIndex?: number }) => void;
   setDerivationIndex: (value: number) => void;
@@ -174,6 +175,11 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
     setDecryptedContent(null);
   }, []);
 
+  const resetSnap = useCallback(() => {
+    setState(null);
+    setPublicKey(null);
+  }, []);
+
   useEffect(() => {
     if (state?.enabled) {
       getPublicKeyFromSnap({ derivationIndex });
@@ -201,6 +207,7 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
     clearSignNonceResults,
     decryptRequestContent,
     handleConnectClick,
+    resetSnap,
     signSnapTxn,
     signNonceSnap,
     setDerivationIndex,

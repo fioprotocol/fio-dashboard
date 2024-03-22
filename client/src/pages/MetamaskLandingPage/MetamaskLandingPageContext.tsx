@@ -1,11 +1,10 @@
 import { useCallback, useState } from 'react';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 
 import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
-import { alternativeLoginError as alternativeLoginErrorSelector } from '../../redux/profile/selectors';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import { ROUTES } from '../../constants/routes';
@@ -21,6 +20,7 @@ type Props = {
 
 export const useContext = (): Props => {
   const {
+    alternativeLoginError,
     isLoginModalOpen,
     connectMetamask,
     onLoginModalClose,
@@ -29,8 +29,6 @@ export const useContext = (): Props => {
   const [noMetamaskExtention, toggleNoMetamaskExtention] = useState<boolean>(
     false,
   );
-
-  const alternativeLoginError = useSelector(alternativeLoginErrorSelector);
 
   const dispatch = useDispatch();
 

@@ -8,7 +8,6 @@ import {
   LOGIN_FAILURE,
   logout,
   PROFILE_FAILURE,
-  SET_ALTERNATE_LOGIN_ERROR,
   ALTERNATE_LOGIN_FAILURE,
 } from '../profile/actions';
 import {
@@ -48,7 +47,6 @@ export function* notify(history: History): Generator {
       action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE &&
       action.type !== GET_ORACLE_FEES_FAILURE &&
       action.type !== RECOVERY_ACCOUNT_FAILURE &&
-      action.type !== SET_ALTERNATE_LOGIN_ERROR &&
       action.type !== ALTERNATE_LOGIN_FAILURE
     ) {
       const genericErrorIsShowing: boolean = yield select(getShowGenericError);
