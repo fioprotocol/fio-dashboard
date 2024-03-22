@@ -23,6 +23,7 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
 
   return (
     <>
+      <div className="mr-2 text-dark">{index + 1}</div>
       <Field
         name={`${field}.name`}
         type="text"
