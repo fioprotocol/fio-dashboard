@@ -45,7 +45,7 @@ export const handleHomePageContent = ({
 
   if (refProfileInfo?.settings) {
     const {
-      settings: { img, actions, preselectedDomain },
+      settings: { img, actions, domains },
       subTitle,
       title: refTitle,
     } = refProfileInfo;
@@ -53,7 +53,7 @@ export const handleHomePageContent = ({
     logoSrc = img;
 
     initialValues = {
-      domain: preselectedDomain,
+      domain: domains[0]?.name,
     };
 
     if (isContainedFlow) {

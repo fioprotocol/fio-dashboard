@@ -411,7 +411,6 @@ export type RefProfile = {
   subTitle: string;
   settings: {
     domains: RefProfileDomain[];
-    preselectedDomain?: string;
     actions?: Record<
       ContainedFlowActionSettingsKey,
       {
