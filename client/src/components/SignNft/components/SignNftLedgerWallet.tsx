@@ -92,7 +92,7 @@ const SignNftLedgerWallet: React.FC<Props> = props => {
 
   return (
     <LedgerConnect
-      action={CONFIRM_LEDGER_ACTIONS.RENEW}
+      action={CONFIRM_LEDGER_ACTIONS.SIGN_NFT}
       data={submitData}
       fioWallet={fioWallet}
       onConnect={submit}
