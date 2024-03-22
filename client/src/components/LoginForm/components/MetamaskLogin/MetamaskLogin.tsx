@@ -23,7 +23,13 @@ const MODAL_CONTENT_LIST = [
   'Sign the request to verify you are the owner of the private key.',
 ];
 
-export const MetamaskLogin: React.FC = () => {
+type Props = {
+  setAlternativeLoginErrorToParentsComponent?: (error: string | null) => void;
+} | null;
+
+export const MetamaskLogin: React.FC<Props> = (props?) => {
+  const { setAlternativeLoginErrorToParentsComponent } = props || {};
+
   const {
     isDescriptionModalOpen,
     isLoginModalOpen,
@@ -32,7 +38,7 @@ export const MetamaskLogin: React.FC = () => {
     onDetailsClick,
     onDescriptionModalClose,
     onLoginModalClose,
-  } = useContext();
+  } = useContext({ setAlternativeLoginErrorToParentsComponent });
 
   return (
     <>

@@ -12,7 +12,6 @@ import { resetLastAuthData } from '../../redux/profile/actions';
 import { showLogin as show } from '../../redux/modal/selectors';
 import { refProfileInfo } from '../../redux/refProfile/selectors';
 import {
-  alternativeLoginError,
   error as loginFailure,
   lastAuthData,
 } from '../../redux/profile/selectors';
@@ -27,7 +26,6 @@ import LoginForm from './LoginForm';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    alternativeLoginError,
     edgeAuthLoading,
     show,
     cachedUsers,

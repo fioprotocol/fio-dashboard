@@ -142,19 +142,6 @@ export const alternateLogin = (params: {
   promise: (api: Api) => api.auth.alternateAuth(params),
 });
 
-export const SET_ALTERNATE_LOGIN_ERROR = `${prefix}/SET_ALTERNATE_LOGIN_ERROR`;
-
-export const setAlternativeLoginError = (error: string): CommonAction => ({
-  type: SET_ALTERNATE_LOGIN_ERROR,
-  error,
-});
-
-export const RESET_ALTERNATE_LOGIN_ERROR = `${prefix}/RESET_ALTERNATE_LOGIN_ERROR`;
-
-export const resetAlternativeLoginError = (): CommonAction => ({
-  type: RESET_ALTERNATE_LOGIN_ERROR,
-});
-
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
 export const SIGNUP_SUCCESS = `${prefix}/SIGNUP_SUCCESS`;
 export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;

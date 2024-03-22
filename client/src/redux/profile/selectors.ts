@@ -41,8 +41,6 @@ export const error = (
   code?: string;
   message?: string;
 } | null => state[prefix].error;
-export const alternativeLoginError = (state: ReduxState): string | null =>
-  state[prefix].alternativeLoginError;
 export const successfullyRegistered = (state: ReduxState): boolean =>
   state[prefix].successfullyRegistered;
 export const lastAuthData = (state: ReduxState): LastAuthData =>
