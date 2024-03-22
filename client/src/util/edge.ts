@@ -10,7 +10,7 @@ import { log } from './general';
 
 import { EdgeWalletsKeys } from '../types';
 
-const PASSWORD_ERROR = new PasswordError('').name;
+export const PASSWORD_ERROR = new PasswordError('').name;
 const USERNAME_ERROR = new UsernameError('').name;
 const NETWORK_ERROR = new NetworkError('').name;
 
