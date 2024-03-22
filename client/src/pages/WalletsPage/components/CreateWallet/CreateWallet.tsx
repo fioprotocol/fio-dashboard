@@ -88,7 +88,7 @@ export const CreateWallet: React.FC<Props> = props => {
         ledger: false,
       });
     }
-  }, [creationType, existingWalletNamesJSON, show, walletsAmount]);
+  }, [existingWalletNamesJSON, show, walletsAmount]);
 
   useEffect(() => {
     if (walletHasBeenAdded) {

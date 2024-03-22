@@ -66,6 +66,7 @@ const WalletSettings: React.FC<Props> = props => {
     DeleteWalletFormValues
   >();
 
+  const isEdgeWallet = fioWallet?.from === WALLET_CREATED_FROM.EDGE;
   const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
   const isMetamaskWallet = fioWallet?.from === WALLET_CREATED_FROM.METAMASK;
 
@@ -156,7 +157,7 @@ const WalletSettings: React.FC<Props> = props => {
     const { username, password } = currentDeleteValues || {};
 
     try {
-      if (isPrimaryUserProfileType) {
+      if (isPrimaryUserProfileType && isEdgeWallet) {
         const account = await apis.edge.login(username, password);
         await apis.edge.deleteWallet(account, fioWallet.edgeId);
       }
