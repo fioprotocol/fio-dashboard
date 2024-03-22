@@ -5,10 +5,7 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import LedgerConnect from '../../../../components/LedgerConnect';
 
 import { getPubKeyFromLedger } from '../../../../util/ledger';
-import {
-  findMissingNumberInFullNumbersRow,
-  log,
-} from '../../../../util/general';
+import { log } from '../../../../util/general';
 
 import {
   CONFIRM_LEDGER_ACTIONS,
@@ -40,18 +37,26 @@ const CreateLedgerWallet: React.FC<Props> = props => {
 
     const [device] = await TransportWebUSB.list();
 
-    const ledgerWalletsDerivationIndexes = fioWallets
-      .filter(
-        fioWallet =>
-          fioWallet.data && fioWallet.data.device === device.productId,
-      )
-      .map(fioWallet => fioWallet.data?.derivationIndex);
-    const derivationIndex = findMissingNumberInFullNumbersRow(
-      ledgerWalletsDerivationIndexes,
+    const ledgerWallets = fioWallets.filter(
+      wallet => wallet.from === WALLET_CREATED_FROM.LEDGER,
     );
 
+    let nextDerivationIndex = 0;
+
+    if (ledgerWallets?.length) {
+      const findMissingIndex = () => {
+        const maxMetamaskWalletIndex = Math.max(
+          ...ledgerWallets.map(wallet => +wallet.data.derivationIndex),
+        );
+
+        return maxMetamaskWalletIndex + 1;
+      };
+
+      nextDerivationIndex = findMissingIndex();
+    }
+
     try {
-      publicKey = await getPubKeyFromLedger(appFio, derivationIndex);
+      publicKey = await getPubKeyFromLedger(appFio, nextDerivationIndex);
     } catch (e) {
       log.error(e);
       throw e;
@@ -68,7 +73,7 @@ const CreateLedgerWallet: React.FC<Props> = props => {
         publicKey,
         from: WALLET_CREATED_FROM.LEDGER,
         data: {
-          derivationIndex,
+          derivationIndex: nextDerivationIndex,
           device: device.productId,
         },
         edgeId: '',

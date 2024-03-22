@@ -309,27 +309,3 @@ export const convertToNewDate = (
   // If it's neither a valid timestamp nor a valid Date string
   throw new Error('Invalid input: Unable to convert to Date.');
 };
-
-export const findMissingNumberInFullNumbersRow = (
-  numbersArray: number[],
-): number => {
-  const sortedArray = numbersArray.sort((a, b) => a - b);
-  let missing_number = null;
-
-  if (sortedArray[0] !== 0) {
-    missing_number = 0;
-  } else {
-    for (let i = 0; i < sortedArray.length - 1; i++) {
-      if (sortedArray[i + 1] - sortedArray[i] > 1) {
-        missing_number = sortedArray[i] + 1;
-        break;
-      }
-    }
-
-    if (missing_number === null) {
-      missing_number = sortedArray[sortedArray.length - 1] + 1;
-    }
-  }
-
-  return missing_number;
-};
