@@ -41,7 +41,6 @@ export default class PartnerCreate extends Base {
                 },
               },
             },
-            preselectedDomain: 'string',
             img: 'string',
             link: 'string',
             actions: [

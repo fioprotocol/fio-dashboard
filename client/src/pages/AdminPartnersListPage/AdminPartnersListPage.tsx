@@ -109,17 +109,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         // image it's temporary field that used for image upload
         // @ts-ignore
         delete partner.image;
-        if (partner.settings?.domains.length) {
-          const hasPreselectedDomain = partner.settings.domains.find(
-            domain => domain.name === partner.settings.preselectedDomain,
-          );
-          if (!hasPreselectedDomain) {
-            partner.settings.preselectedDomain =
-              partner.settings.domains[0].name;
-          }
-        } else {
-          partner.settings.preselectedDomain = null;
-        }
         if (partner.type === REF_PROFILE_TYPE.AFFILIATE) {
           partner.settings = {
             domains: [],

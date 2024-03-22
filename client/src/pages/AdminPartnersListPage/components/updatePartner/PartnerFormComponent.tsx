@@ -289,12 +289,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
                 <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add
               </Button>
             </div>
-
-            <Field
-              type="hidden"
-              name="settings.preselectedDomain"
-              component={Input}
-            />
             <div className="d-flex flex-column">
               <FieldArray
                 name="settings.domains"
