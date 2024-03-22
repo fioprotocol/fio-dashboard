@@ -19,6 +19,7 @@ import {
   userId as userIdSelector,
   user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
+  lastAuthData as lastAuthDataSelector,
 } from '../../redux/profile/selectors';
 
 import apis from '../../api';
@@ -27,6 +28,7 @@ import { validateFioAddress } from '../../util/fio';
 import { getZeroIndexPublicKey } from '../../util/snap';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
+import { showLoginModal } from '../../redux/modal/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import useInitializeProviderConnection, {
@@ -83,6 +85,7 @@ export const useContext = (): UseContextProps => {
 
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const lastAuthData = useSelector(lastAuthDataSelector);
   const refProfileInfo = useSelector(refProfileInfoSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
@@ -114,18 +117,16 @@ export const useContext = (): UseContextProps => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const isAlternativeUser =
+    window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+
   const cartHasFreeItem = cartItems.some(
     cartItem =>
       cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
-  const preselectedDomain = refProfileInfo?.settings?.preselectedDomain;
-  const refDomainObj = preselectedDomain
-    ? refProfileInfo?.settings?.domains.find(
-        domain => domain.name === preselectedDomain,
-      )
-    : refProfileInfo?.settings?.domains[0];
+  const refDomainObj = refProfileInfo?.settings?.domains[0];
   const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
   const gatedChainId =
     refProfileInfo?.settings?.gatedRegistration?.params?.chainId;
@@ -343,11 +344,15 @@ export const useContext = (): UseContextProps => {
           }),
         );
 
+        const DEFAULT_ROUTE = ROUTES.CART;
+
         if (userId) {
-          history.push(ROUTES.CART);
+          history.push(DEFAULT_ROUTE);
         } else {
-          dispatch(setRedirectPath({ pathname: ROUTES.CART }));
-          history.push(ROUTES.CREATE_ACCOUNT);
+          dispatch(setRedirectPath({ pathname: DEFAULT_ROUTE }));
+          lastAuthData || isAlternativeUser
+            ? dispatch(showLoginModal(DEFAULT_ROUTE))
+            : history.push(ROUTES.CREATE_ACCOUNT);
         }
       } catch (error) {
         log.error(error);
@@ -360,6 +365,8 @@ export const useContext = (): UseContextProps => {
       existingUsersFreeAddress,
       gatedToken,
       history,
+      isAlternativeUser,
+      lastAuthData,
       prices.nativeFio,
       refDomainObj,
       roe,
