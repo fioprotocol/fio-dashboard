@@ -64,3 +64,14 @@ export const UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE =
   'Device app version unsupported';
 export const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
   'DisconnectedDeviceDuringOperation';
+
+export const TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS =
+  'FIO Address NFTs are being burned';
+
+export const CANNOT_TRANSFER_ERROR =
+  'This Handle is not ready to be transferred. Please try again shortly.';
+export const CANNOT_UPDATE_FIO_HANDLE =
+  'Changes to this handle are not allowed at this time. Please try again shortly.';
+
+export const CANNOT_TRANSFER_ERROR_TITLE = 'Cannot Transfer';
+export const CANNOT_UPDATE_FIO_HANDLE_TITLE = 'Cannot Update';

@@ -3,6 +3,14 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Processing from '../../components/common/TransactionProcessing';
 
 import { CONFIRM_FIO_ACTIONS } from '../../constants/common';
+import { ROUTES } from '../../constants/routes';
+import {
+  CANNOT_TRANSFER_ERROR,
+  CANNOT_TRANSFER_ERROR_TITLE,
+  CANNOT_UPDATE_FIO_HANDLE,
+  CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
+} from '../../constants/errors';
 
 import { waitForEdgeAccountStop } from '../../util/edge';
 import { log, removeExtraCharactersFromString } from '../../util/general';
@@ -93,7 +101,25 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         } catch (e) {
           log.error('EDGE action Error', e);
           fireActionAnalyticsEventError(action);
-          showGenericErrorModal();
+          let buttonText, message, title;
+
+          if (
+            e.message &&
+            typeof e.message === 'string' &&
+            e.message === TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS
+          ) {
+            buttonText = 'Close';
+
+            if (window?.location?.pathname === ROUTES.FIO_ADDRESS_OWNERSHIP) {
+              message = CANNOT_TRANSFER_ERROR;
+              title = CANNOT_TRANSFER_ERROR_TITLE;
+            } else {
+              message = CANNOT_UPDATE_FIO_HANDLE;
+              title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
+            }
+          }
+
+          showGenericErrorModal(message, title, buttonText);
           onCancel();
         }
       }

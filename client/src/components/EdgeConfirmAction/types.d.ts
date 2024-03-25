@@ -35,7 +35,11 @@ export type Props = {
   processingProps?: { title?: string; message?: string };
 
   showPinModal: (action: string, data: PinDataType) => void;
-  showGenericErrorModal: (message?: string) => void;
+  showGenericErrorModal: (
+    message?: string,
+    title?: string,
+    buttonText?: string,
+  ) => void;
   submitAction: (params: SubmitActionParams) => Promise<AnyType>;
   onSuccess: (data: AnyType) => void;
   onCancel: () => void;
