@@ -8,9 +8,15 @@ import { fireActionAnalyticsEventError } from './analytics';
 import { log } from './general';
 
 import {
+  CANNOT_TRANSFER_ERROR,
+  CANNOT_TRANSFER_ERROR_TITLE,
+  CANNOT_UPDATE_FIO_HANDLE,
+  CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
   UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
   UNSUPPORTED_LEDGER_APP_VERSION_NAME,
 } from '../constants/errors';
+import { ROUTES } from '../constants/routes';
 
 const HARDENED = 0x80000000;
 
@@ -79,6 +85,22 @@ export const handleLedgerError = ({
     msg =
       'Please go to Ledger Live and install the latest version of the FIO Ledger App on your device.';
     buttonText = 'OK';
+  }
+
+  if (
+    error.message &&
+    typeof error.message === 'string' &&
+    error.message === TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS
+  ) {
+    buttonText = 'Close';
+
+    if (window?.location?.pathname === ROUTES.FIO_ADDRESS_OWNERSHIP) {
+      msg = CANNOT_TRANSFER_ERROR;
+      title = CANNOT_TRANSFER_ERROR_TITLE;
+    } else {
+      msg = CANNOT_UPDATE_FIO_HANDLE;
+      title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
+    }
   }
 
   showGenericErrorModal(msg, title, buttonText);
