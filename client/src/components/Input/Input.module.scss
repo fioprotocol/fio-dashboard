@@ -440,6 +440,24 @@
         padding-right: 0;
       }
     }
+
+    &.connectWallet {
+      padding-right: 120px;
+
+      &.hasPasteButton {
+        padding-right: 150px;
+      }
+
+      input[data-clear='true'] {
+        padding-right: 0;
+      }
+    }
+
+    &.isWalletConnected {
+      input[data-clear='true'] {
+        padding-right: 0;
+      }
+    }
   }
 }
 
