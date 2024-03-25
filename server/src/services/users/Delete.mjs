@@ -1,6 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
 import {
+  Cart,
   DomainsWatchlist,
   User,
   Nonce,
@@ -43,6 +44,16 @@ export default class UserDelete extends Base {
 
       await Order.update(
         { userId: deletedUser.id },
+        {
+          where: {
+            userId: user.id,
+          },
+          transaction: t,
+        },
+      );
+
+      await Cart.update(
+        { userId: null },
         {
           where: {
             userId: user.id,
