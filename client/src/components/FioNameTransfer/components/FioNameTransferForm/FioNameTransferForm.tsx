@@ -15,12 +15,11 @@ import { BADGE_TYPES } from '../../../Badge/Badge';
 
 import { useWalletBalances } from '../../../../util/hooks';
 import MathOp from '../../../../util/math';
+import { useCheckIfMobileScreenSize } from '../../../../screenType';
 
 import { FormProps } from '../../types';
 
 import classes from '../../FioNameTransferContainer.module.scss';
-
-const PLACEHOLDER = 'Enter FIO Handle or FIO Public Key of New Owner';
 
 export const TransferForm: React.FC<FormProps> = props => {
   const {
@@ -38,6 +37,7 @@ export const TransferForm: React.FC<FormProps> = props => {
   const [valid, setValid] = useState<boolean>(true);
 
   const { available: walletBalancesAvailable } = useWalletBalances(publicKey);
+  const isMobileScreenSize = useCheckIfMobileScreenSize();
 
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
@@ -45,6 +45,10 @@ export const TransferForm: React.FC<FormProps> = props => {
     !!publicKey &&
     feePrice &&
     new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
+
+  const PLACEHOLDER = !isMobileScreenSize
+    ? 'Enter FIO Handle or FIO Public Key of New Owner'
+    : `New Owner's FIO Handle or Public Key`;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
