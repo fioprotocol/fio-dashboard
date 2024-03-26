@@ -41,7 +41,7 @@ import classes from './FioNameTransferContainer.module.scss';
 const FIO_NAME_DATA = {
   address: {
     infoMessage:
-      'Transferring of a FIO Handle will purge all NFT signatures and linked wallets.',
+      'Transferring of a FIO Handle will purge all NFT signatures, linked social media accounts and linked wallets.',
     backLink: ROUTES.FIO_ADDRESSES,
     forwardLink: ROUTES.FIO_ADDRESS_TRANSFER_RESULTS,
   },
@@ -225,6 +225,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
             title="Important Information"
             type={BADGE_TYPES.INFO}
             show={true}
+            messageClassName={classes.infoMessage}
           />
           <TransferForm
             {...props}
