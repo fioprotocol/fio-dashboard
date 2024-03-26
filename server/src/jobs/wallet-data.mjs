@@ -101,12 +101,19 @@ class WalletDataJob extends CommonJob {
       publicWalletData: {
         requests: { sent, received },
         meta,
+        createdAt,
       },
     } = wallet;
 
     let sentRequests = [];
     let receivedRequests = [];
     let changed = false;
+
+    let publicWalletDataDate = null;
+
+    if (createdAt) {
+      publicWalletDataDate = new Date(createdAt);
+    }
 
     try {
       try {
@@ -174,7 +181,16 @@ class WalletDataJob extends CommonJob {
           },
         });
 
-        if (!existingNotification && wallet.User.emailNotificationParams.fioRequest) {
+        const sentFioRequestDate = new Date(newRequest.time_stamp);
+
+        const fioRequestOlderThanPublicDataWalletCreated =
+          publicWalletDataDate && publicWalletDataDate > sentFioRequestDate;
+
+        if (
+          !existingNotification &&
+          wallet.User.emailNotificationParams.fioRequest &&
+          !fioRequestOlderThanPublicDataWalletCreated
+        ) {
           changed = true;
           await this.createSentFioRequestNotification({
             sentRequestItem: newRequest,
@@ -218,9 +234,15 @@ class WalletDataJob extends CommonJob {
               status: fetchedItem.status,
             });
 
+            const receivedFioRequestDate = new Date(fetchedItem.time_stamp);
+
+            const fioRequestOlderThanPublicDataWalletCreated =
+              publicWalletDataDate && publicWalletDataDate > receivedFioRequestDate;
+
             if (
               fetchedItem.status === FIO_REQUEST_STATUSES.PENDING &&
-              wallet.User.emailNotificationParams.fioRequest
+              wallet.User.emailNotificationParams.fioRequest &&
+              !fioRequestOlderThanPublicDataWalletCreated
             )
               await Notification.create({
                 type: Notification.TYPE.INFO,
@@ -468,6 +490,8 @@ class WalletDataJob extends CommonJob {
       return;
     }
 
+    const newlyCreated = wallet.publicWalletData && wallet.publicWalletData.newlyCreated;
+
     try {
       let balance = 0;
       try {
@@ -503,7 +527,7 @@ class WalletDataJob extends CommonJob {
       }
 
       let previousBalance = publicWalletData.balance;
-      if (!new MathOp(previousBalance).eq(balance)) {
+      if (!new MathOp(previousBalance).eq(balance) && !newlyCreated) {
         const existsNotification = await Notification.findOne({
           where: {
             type: Notification.TYPE.INFO,
@@ -652,6 +676,8 @@ class WalletDataJob extends CommonJob {
         wallet.publicWalletData.cryptoHandles = newItem.cryptoHandles;
         wallet.publicWalletData.domains = newItem.domains;
         wallet.publicWalletData.meta = newItem.meta;
+        wallet.publicWalletData.createdAt = newItem.createdAt;
+        wallet.publicWalletData.newlyCreated = true;
       }
 
       try {
