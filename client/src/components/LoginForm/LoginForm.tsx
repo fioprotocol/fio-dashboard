@@ -88,7 +88,7 @@ const LoginForm: React.FC<Props> = props => {
 
   const timerRef = useRef(null);
 
-  useEffect(getCachedUsers, [getCachedUsers]);
+  useEffect(() => getCachedUsers(), [getCachedUsers]);
 
   const handlePinLogin = useCallback(() => {
     if (
