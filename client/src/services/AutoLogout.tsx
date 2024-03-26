@@ -14,7 +14,6 @@ import {
   setLastActivity,
   logout,
 } from '../redux/profile/actions';
-import { showLoginModal } from '../redux/modal/actions';
 import { setRedirectPath } from '../redux/navigation/actions';
 import { clearCart } from '../redux/cart/actions';
 import {
@@ -45,7 +44,6 @@ type Props = {
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
-  showLoginModal: () => void;
   setRedirectPath: (route: RedirectLinkData) => void;
 };
 const TIMEOUT = 5000; // 5 sec
@@ -100,7 +98,6 @@ const AutoLogout = (
     checkAuthToken,
     setLastActivity,
     logout,
-    showLoginModal,
     setRedirectPath,
   } = props;
 
@@ -155,7 +152,6 @@ const AutoLogout = (
       cartId &&
       dispatch(clearCart({ id: cartId, isNotify: true }));
     logout({ history });
-    showLoginModal();
     clearChecksTimeout();
   }, [
     cartId,
@@ -164,7 +160,6 @@ const AutoLogout = (
     enableClearCart,
     logout,
     setRedirectPath,
-    showLoginModal,
     dispatch,
   ]);
 
@@ -292,7 +287,6 @@ const reduxConnect = connect(
     checkAuthToken,
     logout,
     clearCart,
-    showLoginModal,
     setRedirectPath,
   },
 );
