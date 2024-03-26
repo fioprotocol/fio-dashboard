@@ -527,7 +527,7 @@ class WalletDataJob extends CommonJob {
       }
 
       let previousBalance = publicWalletData.balance;
-      if (!new MathOp(previousBalance).eq(balance) && !newlyCreated) {
+      if (!new MathOp(previousBalance).eq(balance)) {
         const existsNotification = await Notification.findOne({
           where: {
             type: Notification.TYPE.INFO,
@@ -583,7 +583,7 @@ class WalletDataJob extends CommonJob {
             },
           });
         } else {
-          if (wallet.User.emailNotificationParams.fioBalanceChange) {
+          if (wallet.User.emailNotificationParams.fioBalanceChange && !newlyCreated) {
             await Notification.create({
               type: Notification.TYPE.INFO,
               contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
