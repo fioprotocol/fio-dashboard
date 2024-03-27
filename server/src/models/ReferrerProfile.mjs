@@ -138,6 +138,7 @@ export class ReferrerProfile extends Base {
         refProfile.settings.domains.map(domain => ({
           ...domain,
           hasGatedRegistration: refProfile.settings.gatedRegistration.isOn,
+          code: refProfile.code,
         })),
       )
       .filter(domains => domains.length > 0);
