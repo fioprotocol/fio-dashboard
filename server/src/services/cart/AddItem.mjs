@@ -23,6 +23,8 @@ import {
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
+const REF_COOKIE_NAME = process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME || 'ref';
+
 export default class AddItem extends Base {
   static get validationRules() {
     return {
@@ -59,6 +61,7 @@ export default class AddItem extends Base {
       roe: ['string'],
       token: ['string'],
       userId: ['string'],
+      cookies: ['any_object'],
     };
   }
 
@@ -70,6 +73,7 @@ export default class AddItem extends Base {
     roe,
     token,
     userId: reqUserId,
+    cookies,
   }) {
     try {
       const { domain, type } = item;
@@ -88,6 +92,7 @@ export default class AddItem extends Base {
             userId,
           })
         : null;
+      const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
       const gatedRefProfile = await ReferrerProfile.findOne({
         where: Sequelize.literal(
@@ -95,7 +100,19 @@ export default class AddItem extends Base {
         ),
       });
 
-      if ((gatedRefProfile || freeDomainOwner) && type === CART_ITEM_TYPE.ADDRESS) {
+      const domainExistsInDashboardDomains = dashboardDomains.find(
+        dashboardDomain => dashboardDomain.name === domain,
+      );
+
+      const isRefCookieEqualGatedRefprofile =
+        refCookie && gatedRefProfile && refCookie === gatedRefProfile.code;
+
+      if (
+        ((gatedRefProfile &&
+          (isRefCookieEqualGatedRefprofile || !domainExistsInDashboardDomains)) ||
+          freeDomainOwner) &&
+        type === CART_ITEM_TYPE.ADDRESS
+      ) {
         const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
           where: { token },
         });

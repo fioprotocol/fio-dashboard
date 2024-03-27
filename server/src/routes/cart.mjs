@@ -12,7 +12,7 @@ import UpdateItemPeriod from '../services/cart/UpdateItemPeriod.mjs';
 import UpdateUserId from '../services/cart/UpdateUserId.mjs';
 
 export default {
-  addItem: makeServiceRunner(AddItem, req => req.body),
+  addItem: makeServiceRunner(AddItem, req => ({ ...req.body, cookies: req.cookies })),
   clearCart: makeServiceRunner(ClearCart, req => req.body),
   createCartFromOrder: makeServiceRunner(CreateCartFromOrder, req => req.body),
   deleteItem: makeServiceRunner(DeleteItem, req => req.body),
