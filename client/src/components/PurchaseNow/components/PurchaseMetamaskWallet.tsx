@@ -149,7 +149,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .toNumber(),
             },
             derivationIndex,
-            expirationOffset: hasTheSameItem
+            timeoutOffset: hasTheSameItem
               ? TRANSACTION_DEFAULT_OFFSET_EXPIRATION +
                 DEFAULT_OFFSET_TO_EXISTING_TRANSACTION
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
@@ -180,7 +180,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .toNumber(),
             },
             derivationIndex,
-            expirationOffset: hasTheSameItem
+            timeoutOffset: hasTheSameItem
               ? TRANSACTION_DEFAULT_OFFSET_EXPIRATION +
                 DEFAULT_OFFSET_TO_EXISTING_TRANSACTION
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
@@ -210,7 +210,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .toNumber(),
             },
             derivationIndex,
-            expirationOffset: hasTheSameItem
+            timeoutOffset: hasTheSameItem
               ? TRANSACTION_DEFAULT_OFFSET_EXPIRATION +
                 DEFAULT_OFFSET_TO_EXISTING_TRANSACTION
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
@@ -234,7 +234,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .toNumber(),
             },
             derivationIndex,
-            expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+            timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             id: index,
           };
 
