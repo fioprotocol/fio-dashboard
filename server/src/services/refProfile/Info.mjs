@@ -3,6 +3,8 @@ import X from '../Exception';
 
 import { ReferrerProfile } from '../../models';
 
+import { handleExpiredDomains } from '../../utils/fio.mjs';
+
 export default class RefProfileInfo extends Base {
   static get validationRules() {
     return {
@@ -22,8 +24,18 @@ export default class RefProfileInfo extends Base {
         });
       }
 
+      const refProfileFormated = ReferrerProfile.format(refProfile.get({ plain: true }));
+
+      if (refProfileFormated.settings && refProfileFormated.settings.domains) {
+        const handledExpiredDomains = await handleExpiredDomains({
+          domainsList: refProfileFormated.settings.domains,
+        });
+
+        refProfileFormated.settings.domains = handledExpiredDomains;
+      }
+
       return {
-        data: ReferrerProfile.format(refProfile.get({ plain: true })),
+        data: refProfileFormated,
       };
     } else {
       return { data: null };

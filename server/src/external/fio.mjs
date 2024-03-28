@@ -436,6 +436,18 @@ class Fio {
 
     return params;
   }
+
+  async getFioDomain(domainName) {
+    try {
+      const tableRowsParams = this.setTableRowsParams(domainName);
+
+      const { rows } = await this.getTableRows(tableRowsParams);
+
+      return rows.length ? rows[0] : null;
+    } catch (e) {
+      this.logError(e);
+    }
+  }
 }
 
 export const fioApi = new Fio();

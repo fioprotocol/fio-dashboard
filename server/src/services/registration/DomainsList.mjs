@@ -1,6 +1,8 @@
 import Base from '../Base';
 import { Domain, ReferrerProfile, Username } from '../../models';
 
+import { handleExpiredDomains } from '../../utils/fio.mjs';
+
 const REF_COOKIE_NAME = process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME || 'ref';
 
 export default class DomainsList extends Base {
@@ -18,12 +20,19 @@ export default class DomainsList extends Base {
     const usernamesOnCustomDomains = await Username.findAll({
       order: [['rank', 'DESC']],
     });
-
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
-    const allRefProfileDomainsHandledGatedDomains = allRefProfileDomains.filter(
+    const handledExpiredDashboardDomains = await handleExpiredDomains({
+      domainsList: dashboardDomains,
+    });
+
+    const handledExpiredAllRefProfileDomains = await handleExpiredDomains({
+      domainsList: allRefProfileDomains,
+    });
+
+    const allRefProfileDomainsHandledGatedDomains = handledExpiredAllRefProfileDomains.filter(
       refProfileDomain => {
-        const dashboardDomainList = dashboardDomains.map(
+        const dashboardDomainList = handledExpiredDashboardDomains.map(
           dashboardDomain => dashboardDomain.name,
         );
 
@@ -42,9 +51,9 @@ export default class DomainsList extends Base {
       },
     );
 
-    const dashboardDomainsHandledGatedDomains = dashboardDomains.filter(
+    const dashboardDomainsHandledGatedDomains = handledExpiredDashboardDomains.filter(
       dashboardDomain => {
-        const dashboardDomainExistsInRefProfile = allRefProfileDomains.find(
+        const dashboardDomainExistsInRefProfile = handledExpiredAllRefProfileDomains.find(
           allRefProfileDomain => allRefProfileDomain.name === dashboardDomain.name,
         );
 

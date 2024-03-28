@@ -293,6 +293,7 @@ export type AdminDomain = Rankable & {
   isPremium: boolean;
   isDashboardDomain: boolean;
   isFirstRegFree?: boolean;
+  isExpired?: boolean;
 };
 
 export type SearchTerm = Rankable & {

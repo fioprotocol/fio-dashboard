@@ -45,6 +45,7 @@ import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
 import useQuery from '../../hooks/useQuery';
+import { isDomainExpired } from '../../util/fio';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -54,7 +55,7 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import { CART_ITEM_TYPE, WALLET_CREATED_FROM } from '../../constants/common';
+import { CART_ITEM_TYPE } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { STRIPE_REDIRECT_STATUSES } from '../../constants/purchase';
@@ -236,14 +237,45 @@ export const useContext = (): {
         orderParams = { ...orderParamsFromLocation };
         if (!orderParams.publicKey)
           orderParams.publicKey =
-            paymentWalletPublicKey ||
-            fioWallets.filter(
-              ({ from }) => from !== WALLET_CREATED_FROM.LEDGER,
-            )[0].publicKey;
+            paymentWalletPublicKey || fioWallets[0].publicKey;
+      }
+
+      let cartHasExpiredDomain = false;
+
+      const domains = cartItems
+        .filter(cartItem => {
+          const { domain, type } = cartItem;
+          return (
+            domain &&
+            ![
+              CART_ITEM_TYPE.DOMAIN,
+              CART_ITEM_TYPE.DOMAIN_RENEWAL,
+              CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+            ].includes(type)
+          );
+        })
+        .map(cartItem => cartItem.domain);
+
+      const uniqueDomains = [...new Set(domains)];
+
+      for (const domain of uniqueDomains) {
+        const { expiration } = (await apis.fio.getFioDomain(domain)) || {};
+
+        if (!expiration) {
+          cartHasExpiredDomain = true;
+        }
+
+        const isExpired = expiration && isDomainExpired(domain, expiration);
+
+        if (isExpired) {
+          cartHasExpiredDomain = true;
+          break;
+        }
       }
 
       // There is no order, redirect to cart
-      if (!orderParams) return history.push(ROUTES.CART);
+      if (!orderParams || cartHasExpiredDomain)
+        return history.push(ROUTES.CART);
 
       try {
         result = await apis.orders.create(orderParams);
@@ -262,7 +294,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [cartId, history, prices?.nativeFio, roe, setWallet],
+    [cartId, cartItems, history, prices?.nativeFio, roe, setWallet],
   );
 
   const cancelOrder = useCallback(() => {

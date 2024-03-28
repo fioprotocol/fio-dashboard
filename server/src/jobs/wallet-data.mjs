@@ -20,6 +20,7 @@ import { getROE } from '../external/roe.mjs';
 import logger from '../logger.mjs';
 
 import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
+import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/fio.mjs';
 
 const { Op } = Sequelize;
 
@@ -37,7 +38,7 @@ const DOMAIN_EXP_TABLE = {
 };
 const ITEMS_PER_FETCH = parseInt(process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH) || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
-const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
+
 const DOMAIN_EXP_DEBUG_TABLE = {
   expsoon: DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE,
   exp30: DOMAIN_EXP_PERIOD.EXPIRED_30,
@@ -341,12 +342,10 @@ class WalletDataJob extends CommonJob {
     const { domain, userId } = domainsWatchlistItem;
 
     if (domain) {
-      const tableRowsParams = fioApi.setTableRowsParams(domain);
+      const domainFromChain = await fioApi.getFioDomain(domain);
 
-      const { rows } = await fioApi.getTableRows(tableRowsParams);
-
-      if (rows.length) {
-        const { expiration } = rows[0];
+      if (domainFromChain) {
+        const { expiration } = domainFromChain;
 
         this.handleDomainExpiration({
           domainExpiration: expiration,
