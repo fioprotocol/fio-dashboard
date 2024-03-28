@@ -164,7 +164,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                       lowerCased
                       hideError="true"
                       prefix={FIO_ADDRESS_DELIMITER}
-                      loading={validating}
+                      loading={validating || domainsLoading}
                       disabled={domainsLoading}
                       hasItalicLabel
                       debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}

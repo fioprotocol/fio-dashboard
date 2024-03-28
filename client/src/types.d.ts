@@ -399,6 +399,7 @@ export type RefProfileDomain = {
   domainType?: DomainItemType;
   allowFree?: boolean;
   hasGatedRegistration?: boolean;
+  isExpired?: boolean;
 };
 export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 

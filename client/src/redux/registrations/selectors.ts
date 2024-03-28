@@ -34,18 +34,25 @@ export const domains = createSelector(
       refProfileInfo.type === REF_PROFILE_TYPE.REF
     ) {
       return {
-        allRefProfileDomains: regDomainItems.allRefProfileDomains,
-        dashboardDomains: regDomainItems.dashboardDomains,
-        refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
-          name: refDomain.name,
-          isPremium: refDomain.isPremium,
-          domainType: refDomain.isPremium
-            ? DOMAIN_TYPE.PREMIUM
-            : DOMAIN_TYPE.ALLOW_FREE,
-          rank: refDomain.rank,
-          isFirstRegFree: refDomain.isFirstRegFree,
-          hasGatedRegistration: refProfileInfo.settings.gatedRegistration?.isOn,
-        })),
+        allRefProfileDomains: regDomainItems.allRefProfileDomains?.filter(
+          regDomainItem => !regDomainItem.isExpired,
+        ),
+        dashboardDomains: regDomainItems.dashboardDomains?.filter(
+          dashboardDomainItem => !dashboardDomainItem.isExpired,
+        ),
+        refProfileDomains: refProfileInfo.settings.domains
+          ?.filter(refDomain => !refDomain.isExpired)
+          .map(refDomain => ({
+            name: refDomain.name,
+            isPremium: refDomain.isPremium,
+            domainType: refDomain.isPremium
+              ? DOMAIN_TYPE.PREMIUM
+              : DOMAIN_TYPE.ALLOW_FREE,
+            rank: refDomain.rank,
+            isFirstRegFree: refDomain.isFirstRegFree,
+            hasGatedRegistration:
+              refProfileInfo.settings.gatedRegistration?.isOn,
+          })),
         usernamesOnCustomDomains: regDomainItems.usernamesOnCustomDomains,
         availableDomains: regDomainItems.availableDomains,
       };
