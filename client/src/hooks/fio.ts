@@ -10,6 +10,7 @@ import {
   resetMappedPubAddressError,
 } from '../redux/fio/actions';
 import { checkRecoveryQuestions, setPinEnabled } from '../redux/edge/actions';
+import { getUserWallets } from '../redux/profile/actions';
 
 import {
   fioAddresses as fioAddressesSelector,
@@ -28,6 +29,7 @@ import { user as userSelector } from '../redux/profile/selectors';
 
 import useEffectOnce from './general';
 import { isDomainExpired } from '../util/fio';
+import apis from '../api';
 
 import { NOT_FOUND } from '../constants/errors';
 import { ROUTES } from '../constants/routes';
@@ -107,6 +109,13 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     fioAddressesLoading ||
     isFioWalletsBalanceLoading ||
     walletsFioAddressesLoading;
+
+  useEffectOnce(() => {
+    const token = apis.client.getToken();
+    if (token) {
+      dispatch(getUserWallets());
+    }
+  }, []);
 
   useEffectOnce(
     () => {

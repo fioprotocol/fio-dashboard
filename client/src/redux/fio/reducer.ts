@@ -12,6 +12,7 @@ import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
   SIGNUP_SUCCESS,
+  GET_USERS_WALLETS_SUCCESS,
 } from '../profile/actions';
 import * as actions from './actions';
 
@@ -141,11 +142,14 @@ export default combineReducers({
         }
         return fioWallets;
       }
-      case PROFILE_SUCCESS: {
+      case PROFILE_SUCCESS:
+      case GET_USERS_WALLETS_SUCCESS: {
         const fioWallets: FioWalletDoublet[] = [];
         const existingList = [...state];
 
-        for (const fioWallet of action.data.fioWallets) {
+        const wallets = action.data.fioWallets || action.data;
+
+        for (const fioWallet of wallets) {
           const existingWallet = existingList.find(
             item => item.publicKey === fioWallet.publicKey,
           );

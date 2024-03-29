@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
+import { isMobile } from 'react-device-detect';
 
 import TextInput, {
   INPUT_UI_STYLES,
@@ -57,6 +58,10 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
   const handleSubmit = async (values: WrapDomainValues) =>
     props.onSubmit(values);
 
+  const publicAddressPlaceholder = isMobile
+    ? 'Paste Address or Connect'
+    : 'Paste Public Address or Connect a Wallet';
+
   return (
     <Form
       onSubmit={handleSubmit}
@@ -92,7 +97,7 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
               showConnectWalletButton
               connectWalletModalText="Please connect your wallet in order to wrap and receive your wrapped FIO domain."
               showPasteButton
-              placeholder="Paste Public Address or Connect a Wallet"
+              placeholder={publicAddressPlaceholder}
               label="Public Address"
             />
 

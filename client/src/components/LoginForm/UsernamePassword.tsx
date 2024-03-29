@@ -47,6 +47,7 @@ type Props = {
   title: string;
   initialValues: { email?: string; password?: string };
   resetLoginFailure: () => void;
+  setAlternativeLoginErrorToParentsComponent: (error: string | null) => void;
 };
 
 const UsernamePassword: React.FC<Props> = props => {
@@ -61,6 +62,7 @@ const UsernamePassword: React.FC<Props> = props => {
     title,
     initialValues,
     resetLoginFailure,
+    setAlternativeLoginErrorToParentsComponent,
   } = props;
 
   let currentForm: FormApi | null = null;
@@ -246,7 +248,13 @@ const UsernamePassword: React.FC<Props> = props => {
               For the most seamless Web3 experience simply sign in with
               MetaMask.
             </p>
-            {window.ethereum.isMetaMask && <MetamaskLogin />}
+            {window.ethereum.isMetaMask && (
+              <MetamaskLogin
+                setAlternativeLoginErrorToParentsComponent={
+                  setAlternativeLoginErrorToParentsComponent
+                }
+              />
+            )}
             <div className={classes.linesContainer}>
               <hr />
               <p className={classes.linesText}>OR</p>

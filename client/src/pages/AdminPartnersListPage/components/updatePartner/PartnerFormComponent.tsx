@@ -73,7 +73,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     const subscriptionFn = debounce((subscription: FormState<RefProfile>) => {
       if (!subscription.values) return;
       const items = subscription.values.settings.domains;
-      items.forEach((item, index) => {
+      items?.forEach((item, index) => {
         const expectedRank = index + 1;
         if (item.rank !== expectedRank) {
           form.mutators.update('settings.domains', index, {
@@ -141,6 +141,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
       isPremium: false,
       rank: numberOfDomains + 1,
       isFirstRegFree: false,
+      expirationDate: null,
     });
   }, [form]);
 
@@ -289,12 +290,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
                 <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add
               </Button>
             </div>
-
-            <Field
-              type="hidden"
-              name="settings.preselectedDomain"
-              component={Input}
-            />
             <div className="d-flex flex-column">
               <FieldArray
                 name="settings.domains"

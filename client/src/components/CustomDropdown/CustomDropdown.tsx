@@ -24,6 +24,7 @@ type Props = {
   isBlackPlaceholder?: boolean;
   isWhiteIcon?: boolean;
   hasAutoWidth?: boolean;
+  hasRelativePosition?: boolean;
   fitContentWidth?: boolean;
   isSimple?: boolean;
   isHigh?: boolean;
@@ -58,6 +59,7 @@ const CustomDropdown: React.FC<Props> = props => {
     isSimple,
     isHigh,
     hasAutoHeight,
+    hasRelativePosition,
     withoutMarginBottom,
     hasError,
     noMinWidth,
@@ -123,7 +125,10 @@ const CustomDropdown: React.FC<Props> = props => {
         isWhitePlaceholder && classes.isWhitePlaceholder,
         isBlackPlaceholder && classes.isBlackPlaceholder,
       )}
-      menuClassName={classes.menu}
+      menuClassName={classnames(
+        classes.menu,
+        hasRelativePosition && classes.hasRelativePosition,
+      )}
       arrowClosed={
         <ExpandMoreIcon
           className={classnames(

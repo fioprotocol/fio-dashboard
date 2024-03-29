@@ -159,7 +159,6 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
       onCancel={onCancel}
       setProcessing={setProcessing}
       isTransaction={processing}
-      hideConnectionModal={processing}
     />
   );
 };

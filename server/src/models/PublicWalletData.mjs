@@ -17,12 +17,15 @@ export class PublicWalletData extends Base {
         cryptoHandles: { type: DT.JSON },
         domains: { type: DT.JSON },
         meta: { type: DT.JSON },
+        createdAt: { type: DT.DATE },
+        updatedAt: { type: DT.DATE },
+        deletedAt: { type: DT.DATE },
       },
       {
         sequelize,
         tableName: 'public-wallet-data',
         paranoid: true,
-        timestamps: false,
+        timestamps: true,
       },
     );
   }
@@ -34,11 +37,12 @@ export class PublicWalletData extends Base {
     });
   }
 
-  static format({ id, walletId, balance }) {
+  static format({ id, walletId, balance, createdAt }) {
     return {
       id,
       walletId,
       balance,
+      createdAt,
     };
   }
 }

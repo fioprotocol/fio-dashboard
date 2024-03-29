@@ -13,6 +13,13 @@
       border-top: 1px solid $mountain-mist;
       padding: 20px;
 
+      & a {
+        color: $white;
+       text-decoration: underline;
+       text-underline-offset: 3px;
+       text-decoration-thickness: 0.5px;
+      }
+
       &:last-child {
         border-bottom: 1px solid $mountain-mist;
       }
@@ -28,6 +35,7 @@
           width: fit-content;
           @include proxima-nova-thin;
           cursor: pointer;
+          font-size: 1.125em;
 
           &.isActive {
             @include proxima-nova-semibold;
@@ -45,6 +53,16 @@
             transform: rotate(45deg)
           }
         }
+      }
+
+      .accordionItemSubtitle, .accordionItemText {
+        font-size: 0.9375em;
+      }
+
+      .accordionItemSubtitle {
+        padding-top: 30px;
+        margin-bottom: 0;
+        @include proxima-nova-thin-it;
       }
 
       .accordionItemText {

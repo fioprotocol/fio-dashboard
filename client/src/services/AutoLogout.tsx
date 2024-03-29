@@ -14,7 +14,6 @@ import {
   setLastActivity,
   logout,
 } from '../redux/profile/actions';
-import { showLoginModal } from '../redux/modal/actions';
 import { setRedirectPath } from '../redux/navigation/actions';
 import { clearCart } from '../redux/cart/actions';
 import {
@@ -24,9 +23,14 @@ import {
   profileRefreshed,
 } from '../redux/profile/selectors';
 import { cartId } from '../redux/cart/selectors';
+import { redirectLink } from '../redux/navigation/selectors';
 
 import { compose } from '../utils';
 import useEffectOnce from '../hooks/general';
+
+import { ROUTES } from '../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
+import { STRIPE_REDIRECT_STATUSES } from '../constants/purchase';
 
 import { RedirectLinkData, Unknown } from '../types';
 
@@ -36,10 +40,10 @@ type Props = {
   lastActivityDate: number;
   isAuthenticated: boolean;
   profileRefreshed: boolean;
+  redirectLink: RedirectLinkData;
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
-  showLoginModal: () => void;
   setRedirectPath: (route: RedirectLinkData) => void;
 };
 const TIMEOUT = 5000; // 5 sec
@@ -89,14 +93,11 @@ const AutoLogout = (
     lastActivityDate,
     isAuthenticated,
     profileRefreshed,
+    redirectLink,
     history,
-    history: {
-      location: { pathname, state, search, query },
-    },
     checkAuthToken,
     setLastActivity,
     logout,
-    showLoginModal,
     setRedirectPath,
   } = props;
 
@@ -111,6 +112,29 @@ const AutoLogout = (
     new Date().getTime(),
   );
 
+  const redirectParams = redirectLink || history.location;
+
+  const enableClearCart = useCallback((): boolean => {
+    const { pathname, query = {} } = redirectParams || {};
+
+    if (pathname !== ROUTES.CHECKOUT) {
+      return true;
+    } else {
+      const {
+        ORDER_NUMBER,
+        STRIPE_PAYMENT_INTENT,
+        STRIPE_REDIRECT_STATUS,
+      } = QUERY_PARAMS_NAMES;
+
+      const hasFailedStripeRedirect =
+        query[ORDER_NUMBER] &&
+        query[STRIPE_PAYMENT_INTENT] &&
+        query[STRIPE_REDIRECT_STATUS] === STRIPE_REDIRECT_STATUSES.FAILED;
+
+      return !hasFailedStripeRedirect;
+    }
+  }, [redirectParams]);
+
   const clearChecksTimeout = () => {
     timeoutRef.current && clearTimeout(timeoutRef.current);
     intervalRef.current && clearInterval(intervalRef.current);
@@ -123,21 +147,19 @@ const AutoLogout = (
 
   activityTimeout = useCallback(() => {
     removeActivityListener();
-    setRedirectPath({ pathname, state, search, query });
-    cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
+    setRedirectPath(redirectParams);
+    enableClearCart() &&
+      cartId &&
+      dispatch(clearCart({ id: cartId, isNotify: true }));
     logout({ history });
-    showLoginModal();
     clearChecksTimeout();
   }, [
     cartId,
     history,
-    pathname,
-    search,
-    state,
-    query,
+    redirectParams,
+    enableClearCart,
     logout,
     setRedirectPath,
-    showLoginModal,
     dispatch,
   ]);
 
@@ -217,12 +239,15 @@ const AutoLogout = (
     initLoad,
   );
 
-  //Empty cart when page loaded
+  // Empty cart when page loaded
   useEffectOnce(() => {
     const now = new Date();
     const lastActivity = new Date(lastActivityDate);
 
-    if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
+    if (
+      now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT &&
+      enableClearCart()
+    ) {
       cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
     }
   }, [cartId, dispatch, lastActivityDate]);
@@ -255,13 +280,13 @@ const reduxConnect = connect(
     lastActivityDate,
     tokenCheckResult,
     profileRefreshed,
+    redirectLink,
   }),
   {
     setLastActivity,
     checkAuthToken,
     logout,
     clearCart,
-    showLoginModal,
     setRedirectPath,
   },
 );

@@ -1,8 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import WalletAction from '../WalletAction/WalletAction';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { PurchaseMetamaskWallet } from './components/PurchaseMetamaskWallet';
+
+import { setProcessing } from '../../redux/registrations/actions';
+import { showGenericErrorModal } from '../../redux/modal/actions';
+
+import {
+  cartItems as cartItemsSelector,
+  paymentWalletPublicKey as paymentWalletPublicKeySelector,
+} from '../../redux/cart/selectors';
+import {
+  prices as pricesSelector,
+  isProcessing as isProcessingSelector,
+} from '../../redux/registrations/selectors';
+import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
 
 import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
 import PurchaseLedgerWallet from './components/PurchaseLedgerWallet';
@@ -23,46 +38,66 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { sleep } from '../../utils';
+import { cartHasOnlyFreeItems } from '../../util/cart';
+import api from '../../api';
+import {
+  GEETESET_SCRIPT_LOADING_ERROR,
+  initCaptcha,
+  verifyCaptcha,
+} from '../../helpers/captcha';
+import { log } from '../../util/general';
+
+// Loads captcha files, DO NOT REMOVE
+import '../../helpers/gt-sdk';
 
 import { PurchaseValues, PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
-import { cartHasOnlyFreeItems } from '../../util/cart';
 
 const MIN_WAIT_TIME = 3000;
 
+type CaptchaResult = { success: boolean; verifyParams: {} };
+
 export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
-  const {
-    cartItems,
-    captchaResult,
-    paymentWalletPublicKey,
-    checkCaptcha,
-    captchaResolving,
-    isProcessing,
-    onFinish,
-    setProcessing,
-    fioWallets,
-    prices,
-    refProfileInfo,
-    disabled = false,
-  } = props;
+  const { onFinish, disabled = false } = props;
+
+  const cartItems = useSelector(cartItemsSelector);
+  const fioWallets = useSelector(fioWalletsSelector);
+  const isProcessing = useSelector(isProcessingSelector);
+  const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
+  const prices = useSelector(pricesSelector);
+  const refProfileInfo = useSelector(refProfileInfoSelector);
 
   const [isWaiting, setWaiting] = useState(false);
   const [submitData, setSubmitData] = useState<PurchaseValues | null>(null);
   const t0 = performance.now();
+  const [captchaResolving, toggleCaptchaResolving] = useState<boolean>(false);
+  const [captchaResult, setCaptchaResult] = useState<CaptchaResult | null>(
+    null,
+  );
 
-  const waitFn = async (
-    fn: (results: RegistrationResult) => void,
-    results: RegistrationResult,
-  ) => {
-    const t1 = performance.now();
+  const dispatch = useDispatch();
 
-    if (t1 - t0 < MIN_WAIT_TIME) {
-      await sleep(MIN_WAIT_TIME - (t1 - t0));
-    }
-    fn(results);
-  };
+  const setProcessingDispatched = useCallback(
+    (isSetProcessing: boolean) => {
+      dispatch(setProcessing(isSetProcessing));
+    },
+    [dispatch],
+  );
 
-  const loading = captchaResolving;
+  const waitFn = useCallback(
+    async (
+      fn: (results: RegistrationResult) => void,
+      results: RegistrationResult,
+    ) => {
+      const t1 = performance.now();
+
+      if (t1 - t0 < MIN_WAIT_TIME) {
+        await sleep(MIN_WAIT_TIME - (t1 - t0));
+      }
+      fn(results);
+    },
+    [t0],
+  );
 
   const currentWallet = (paymentWalletPublicKey &&
     fioWallets &&
@@ -70,33 +105,66 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     ...emptyWallet,
   };
 
-  const onProcessingEnd = (results: RegistrationResult) => {
-    results.paymentOption = PAYMENT_OPTIONS.FIO;
-    setWaiting(false);
-    setSubmitData(null);
-    waitFn(onFinish, results);
-  };
+  const checkCaptcha = useCallback(async () => {
+    try {
+      toggleCaptchaResolving(true);
+
+      const data = await api.fioReg.initCaptcha();
+      const captchaObj = await initCaptcha(data);
+      const verifyCaptchaResult = await verifyCaptcha(captchaObj);
+
+      setCaptchaResult(verifyCaptchaResult);
+    } catch (error) {
+      log.error('Check Captcha error', error);
+
+      if (error === GEETESET_SCRIPT_LOADING_ERROR) {
+        const message =
+          'Cannot load captcha. If you are using incognito mode in the browser, please check permissions and enable loading third-party scripts. And try again.';
+        const title = 'Captcha load fail';
+        const buttonText = 'Close';
+
+        dispatch(showGenericErrorModal(message, title, buttonText));
+      } else if (typeof error === 'undefined' || error === 'undefined') {
+        log.info('Skip captcha error');
+      } else {
+        dispatch(showGenericErrorModal());
+      }
+    } finally {
+      toggleCaptchaResolving(false);
+      setWaiting(false);
+    }
+  }, [dispatch]);
+
+  const onProcessingEnd = useCallback(
+    (results: RegistrationResult) => {
+      results.paymentOption = PAYMENT_OPTIONS.FIO;
+      setWaiting(false);
+      setSubmitData(null);
+      waitFn(onFinish, results);
+    },
+    [onFinish, waitFn],
+  );
+
+  const execRegistration = useCallback(() => {
+    setProcessingDispatched(true);
+    onProcessingEnd({
+      errors: [],
+      registered: [],
+      partial: [],
+      paymentProvider: PAYMENT_PROVIDER.FIO,
+      providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
+    });
+  }, [setProcessingDispatched, onProcessingEnd]);
 
   useEffect(() => {
-    const { success } = captchaResult;
+    if (captchaResult) {
+      const { success } = captchaResult;
 
-    async function execRegistration() {
-      setProcessing(true);
+      if (success && isWaiting) execRegistration();
 
-      onProcessingEnd({
-        errors: [],
-        registered: [],
-        partial: [],
-        paymentProvider: PAYMENT_PROVIDER.FIO,
-        providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
-      });
+      if (success === false) setWaiting(false);
     }
-
-    if (success && isWaiting) execRegistration();
-
-    if (success === false) setWaiting(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [captchaResult]); // We need run this hook only on captchaResults change
+  }, [captchaResult, isWaiting, execRegistration, onProcessingEnd]);
 
   const purchase = () => {
     fireAnalyticsEvent(
@@ -118,10 +186,11 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     });
     return;
   };
+
   const onCancel = () => {
     setSubmitData(null);
     setWaiting(false);
-    setProcessing(false);
+    setProcessingDispatched(false);
   };
 
   return (
@@ -132,7 +201,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         onSuccess={onProcessingEnd}
         submitData={submitData}
         processing={isProcessing}
-        setProcessing={setProcessing}
+        setProcessing={setProcessingDispatched}
         action={CONFIRM_PIN_ACTIONS.PURCHASE}
         FioActionWallet={PurchaseEdgeWallet}
         MetamaskActionWallet={PurchaseMetamaskWallet}
@@ -140,8 +209,8 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
       />
       <SubmitButton
         onClick={purchase}
-        disabled={loading || disabled}
-        loading={isWaiting || loading}
+        disabled={captchaResolving || disabled}
+        loading={isWaiting || captchaResolving}
         text="Purchase Now"
       />
     </>

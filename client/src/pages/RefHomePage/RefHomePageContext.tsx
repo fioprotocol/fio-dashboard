@@ -17,14 +17,18 @@ import {
 } from '../../redux/cart/selectors';
 import {
   userId as userIdSelector,
+  user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
+  lastAuthData as lastAuthDataSelector,
 } from '../../redux/profile/selectors';
 
 import apis from '../../api';
 import { log } from '../../util/general';
-import { validateFioAddress } from '../../util/fio';
+import { isDomainExpired, validateFioAddress } from '../../util/fio';
+import { getZeroIndexPublicKey } from '../../util/snap';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
+import { showLoginModal } from '../../redux/modal/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import useInitializeProviderConnection, {
@@ -38,9 +42,11 @@ import { DOMAIN_TYPE } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
 import { ROUTES } from '../../constants/routes';
-import { AnyObject } from '../../types';
+
+import { AnyObject, RefProfileDomain } from '../../types';
 
 type UseContextProps = {
+  connectButtonDisabled?: boolean;
   disabled: boolean;
   gatedChainName?: string;
   hasFioVerificactionError: boolean;
@@ -50,6 +56,7 @@ type UseContextProps = {
   isVerified: boolean;
   isWalletConnected: boolean;
   loaderText: string;
+  refDomainObj: RefProfileDomain;
   showBrowserExtensionErrorModal: boolean;
   showProviderWindowError: boolean;
   showProviderLoadingIcon: boolean;
@@ -80,10 +87,12 @@ export const useContext = (): UseContextProps => {
 
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const lastAuthData = useSelector(lastAuthDataSelector);
   const refProfileInfo = useSelector(refProfileInfoSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
+  const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -110,18 +119,27 @@ export const useContext = (): UseContextProps => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const isAlternativeUser =
+    window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+
   const cartHasFreeItem = cartItems.some(
     cartItem =>
       cartItem.isFree && cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE,
   );
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
-  const preselectedDomain = refProfileInfo?.settings?.preselectedDomain;
-  const refDomainObj = preselectedDomain
-    ? refProfileInfo?.settings?.domains.find(
-        domain => domain.name === preselectedDomain,
-      )
-    : refProfileInfo?.settings?.domains[0];
+
+  const refDomainObj = refProfileInfo?.settings?.domains.find(refDomainItem => {
+    if (!refDomainItem.expirationDate) return false;
+
+    const isExpired = isDomainExpired(
+      refDomainItem.name,
+      refDomainItem.expirationDate,
+    );
+
+    return !isExpired;
+  });
+
   const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
   const gatedChainId =
     refProfileInfo?.settings?.gatedRegistration?.params?.chainId;
@@ -146,6 +164,8 @@ export const useContext = (): UseContextProps => {
     asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
   } Not Confirmed. Please make sure your NFT is held within your Metamask Wallet.`;
   const wrongSignMessage = 'Metamask Sign failed';
+  const allDomainsHasBeenExpiredOrDoesnotExists =
+    'FIO Handle registrations temporarily unavailable.';
 
   const loaderText =
     asset === NFT_LABEL
@@ -322,10 +342,16 @@ export const useContext = (): UseContextProps => {
           period: 1,
           type: CART_ITEM_TYPE.ADDRESS,
         };
+
+        const metamaskUserPublicKey = await getZeroIndexPublicKey(
+          user?.userProfileType,
+        );
+
         dispatch(
           addItemToCart({
             id: cartId,
             item: cartItem,
+            metamaskUserPublicKey,
             prices: prices?.nativeFio,
             roe,
             token: gatedToken,
@@ -333,11 +359,15 @@ export const useContext = (): UseContextProps => {
           }),
         );
 
+        const DEFAULT_ROUTE = ROUTES.CART;
+
         if (userId) {
-          history.push(ROUTES.CART);
+          history.push(DEFAULT_ROUTE);
         } else {
-          dispatch(setRedirectPath({ pathname: ROUTES.CART }));
-          history.push(ROUTES.CREATE_ACCOUNT);
+          dispatch(setRedirectPath({ pathname: DEFAULT_ROUTE }));
+          lastAuthData || isAlternativeUser
+            ? dispatch(showLoginModal(DEFAULT_ROUTE))
+            : history.push(ROUTES.CREATE_ACCOUNT);
         }
       } catch (error) {
         log.error(error);
@@ -350,10 +380,13 @@ export const useContext = (): UseContextProps => {
       existingUsersFreeAddress,
       gatedToken,
       history,
+      isAlternativeUser,
+      lastAuthData,
       prices.nativeFio,
       refDomainObj,
       roe,
       userId,
+      user,
     ],
   );
 
@@ -452,7 +485,17 @@ export const useContext = (): UseContextProps => {
     verifiedMessage,
   ]);
 
+  useEffect(() => {
+    if (refProfileInfo && !refDomainObj?.name) {
+      toggleFioVerificationError(true);
+      setInfoMessage(allDomainsHasBeenExpiredOrDoesnotExists);
+    }
+  }, [refProfileInfo, refDomainObj?.name]);
+
   return {
+    connectButtonDisabled:
+      hasFioVerificactionError &&
+      infoMessage === allDomainsHasBeenExpiredOrDoesnotExists,
     disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
     gatedChainName,
     hasFioVerificactionError,
@@ -462,6 +505,7 @@ export const useContext = (): UseContextProps => {
     isVerified,
     isWalletConnected,
     loaderText,
+    refDomainObj,
     showBrowserExtensionErrorModal,
     showProviderWindowError:
       connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE,

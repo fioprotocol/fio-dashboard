@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { setWallet, recalculateOnPriceUpdate } from '../../redux/cart/actions';
+import {
+  setWallet,
+  recalculateOnPriceUpdate,
+  clearCart,
+} from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -58,6 +62,10 @@ import {
   WalletBalancesItem,
 } from '../../types';
 import { convertFioPrices } from '../../util/prices';
+
+const NOT_FOUND_CART_MESSAGE = `We couldn't find your cart. Please add your items again.`;
+const NOT_FOUND_CART_TITLE = 'Something Went Wrong';
+const NOT_FOUND_CART_BUTTON_TEXT = 'Close';
 
 type UseContextReturnType = {
   cartId: string;
@@ -327,7 +335,21 @@ export const useContext = (): UseContextReturnType => {
 
       return history.push(ROUTES.CHECKOUT);
     } catch (e) {
-      dispatch(showGenericErrorModal());
+      log.error(e);
+
+      if (e?.fields?.cart === 'NOT_FOUND') {
+        dispatch(
+          showGenericErrorModal(
+            NOT_FOUND_CART_MESSAGE,
+            NOT_FOUND_CART_TITLE,
+            NOT_FOUND_CART_BUTTON_TEXT,
+          ),
+        );
+        dispatch(clearCart({ id: cartId }));
+      } else {
+        dispatch(showGenericErrorModal());
+      }
+      setSelectedPaymentProvider(null);
     }
   };
 

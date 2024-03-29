@@ -11,6 +11,7 @@ export const ADD_ITEM_FAILURE = `${prefix}/ADD_ITEM_FAILURE`;
 export const addItem = (data: {
   id?: string;
   item: CartItem;
+  metamaskUserPublicKey?: string;
   prices?: NativePrices;
   roe?: number;
   token?: string;
@@ -67,6 +68,7 @@ export const HANDLE_USERS_FREE_CART_ITEMS_FAILURE = `${prefix}/HANDLE_USERS_FREE
 export const handleUsersFreeCartItems = (data: {
   id: string;
   userId?: string;
+  metamaskUserPublicKey?: string;
 }): CommonPromiseAction => ({
   types: [
     HANDLE_USERS_FREE_CART_ITEMS_REQUEST,
@@ -162,4 +164,17 @@ export const setWallet = (walletPublicKey: string): CommonAction => ({
 
 export const unsetWallet = (): CommonAction => ({
   type: UNSET_WALLET_FOR_PAYMENT,
+});
+
+export const GET_USERS_CART_REQUEST = `${prefix}/GET_USERS_CART_REQUEST`;
+export const GET_USERS_CART_SUCCESS = `${prefix}/GET_USERS_CART_SUCCESS`;
+export const GET_USERS_CART_FAILURE = `${prefix}/GET_USERS_CART_FAILURE`;
+
+export const getUsersCart = (): CommonPromiseAction => ({
+  types: [
+    GET_USERS_CART_REQUEST,
+    GET_USERS_CART_SUCCESS,
+    GET_USERS_CART_FAILURE,
+  ],
+  promise: (api: Api) => api.cart.getUsersCart(),
 });

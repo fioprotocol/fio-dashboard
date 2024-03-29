@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
 import fiojs from '@fioprotocol/fiojs';
+import { findTimeZone } from 'timezone-support';
 
 import Base from './Base';
 import { Notification } from './Notification';
@@ -211,8 +212,14 @@ export class User extends Base {
   static async formatDateWithTimeZone(id, date = undefined) {
     const user = await this.findById(id);
 
-    return (date ? convertToNewDate(date) : new Date()).toLocaleDateString([], {
-      timeZone: user.timeZone,
+    const currentDate = date ? convertToNewDate(date) : new Date();
+
+    const timeZone = user.timeZone
+      ? findTimeZone(user.timeZone)
+      : { name: Intl.DateTimeFormat().resolvedOptions().timeZone };
+
+    return currentDate.toLocaleDateString([], {
+      timeZone: timeZone.name,
       year: 'numeric',
       month: '2-digit',
       day: 'numeric',

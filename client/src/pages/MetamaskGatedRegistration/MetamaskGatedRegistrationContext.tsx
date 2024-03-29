@@ -15,7 +15,6 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
-import { showLoginModal } from '../../redux/modal/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
@@ -24,11 +23,13 @@ import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
 import { getPublicKey } from '../../util/snap';
+import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
 import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { USER_PROFILE_TYPE } from '../../constants/profile';
+import { METAMASK_UNSUPPORTED_MOBILE_MESSAGE } from '../../constants/errors';
 
 import metamaskAtLogoSrc from '../../assets/images/metamask-landing/metamask-at.svg';
 
@@ -49,6 +50,12 @@ const NOTIFICATIONS = {
     message:
       'Please ensure that the MetaMask browser extension is installed and active. Or refresh the page if it has just been installed.',
     title: 'MetaMask not detected.',
+  },
+  INSTALL_MOBILE_METAMASK: {
+    hasNotification: true,
+    type: BADGE_TYPES.WARNING,
+    message: METAMASK_UNSUPPORTED_MOBILE_MESSAGE,
+    title: 'MetaMask app is not supported.',
   },
   NON_VALID_FIO_HANDLE: {
     hasNotification: true,
@@ -116,6 +123,8 @@ type UseContext = {
       address: string;
     }) => Promise<void> | void;
   };
+  isLoginModalOpen: boolean;
+  onLoginModalClose: () => void;
 };
 
 const TitleComponent = () => (
@@ -139,7 +148,14 @@ export const useContext = (): UseContext => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const isVerified = window.ethereum?.isMetaMask;
+  const {
+    isLoginModalOpen,
+    isMobileDeviceWithMetamask,
+    connectMetamask,
+    onLoginModalClose,
+  } = useContextMetamaskLogin();
+
+  const isVerified = window.ethereum?.isMetaMask && !isMobileDeviceWithMetamask;
   const userHasMetamaskFioHandleInCart = cartItems.find(
     cartItem => cartItem.domain === METAMASK_DOMAIN_NAME,
   );
@@ -194,7 +210,7 @@ export const useContext = (): UseContext => {
         if (isRegistered) return;
 
         if (!user) {
-          dispatch(showLoginModal());
+          connectMetamask();
         }
 
         setFioHandle(address);
@@ -205,12 +221,16 @@ export const useContext = (): UseContext => {
         toggleLoading(false);
       }
     },
-    [checkIfFioHandleRegistered, dispatch, user],
+    [checkIfFioHandleRegistered, connectMetamask, user],
   );
 
   const customHandleSubmitUnverified = useCallback(() => {
-    setNotification(NOTIFICATIONS.INSTALL_METAMASK);
-  }, []);
+    setNotification(
+      isMobileDeviceWithMetamask
+        ? NOTIFICATIONS.INSTALL_MOBILE_METAMASK
+        : NOTIFICATIONS.INSTALL_METAMASK,
+    );
+  }, [isMobileDeviceWithMetamask]);
 
   const handleAddCartItem = useCallback(
     async ({ address }: { address: string }): Promise<void> => {
@@ -230,7 +250,6 @@ export const useContext = (): UseContext => {
           costNativeFio: prices.nativeFio.address,
           domainType: DOMAIN_TYPE.PRIVATE,
           isFree: true,
-          metamaskUserPublicKey: publicKey,
           period: 1,
           type: CART_ITEM_TYPE.ADDRESS,
         };
@@ -239,6 +258,7 @@ export const useContext = (): UseContext => {
           addItemToCart({
             id: cartId,
             item: cartItem,
+            metamaskUserPublicKey: publicKey,
             prices: prices?.nativeFio,
             roe,
             token: gatedToken,
@@ -285,7 +305,13 @@ export const useContext = (): UseContext => {
 
         const freeAddresses = await getFreeUserMetamaskAddresses(publicKey);
 
-        if (freeAddresses.length) {
+        if (
+          freeAddresses.length &&
+          freeAddresses.some(
+            freeAddressItem =>
+              freeAddressItem.name.split('@')[1] === METAMASK_DOMAIN_NAME,
+          )
+        ) {
           setNotification(NOTIFICATIONS.USER_HAS_FREE_ADDRESS);
           return;
         }
@@ -351,5 +377,9 @@ export const useContext = (): UseContext => {
       ? customHandleSubmitVerified
       : customHandleSubmitUnverified,
   };
-  return { addressWidgetContent };
+  return {
+    addressWidgetContent,
+    isLoginModalOpen,
+    onLoginModalClose,
+  };
 };

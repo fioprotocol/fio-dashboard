@@ -16,6 +16,15 @@ import { decryptContent, signTxn } from '../../util/snap';
 import useEffectOnce from '../../hooks/general';
 
 import {
+  CANNOT_TRANSFER_ERROR,
+  CANNOT_TRANSFER_ERROR_TITLE,
+  CANNOT_UPDATE_FIO_HANDLE,
+  CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
+} from '../../constants/errors';
+import { ROUTES } from '../../constants/routes';
+
+import {
   ActionParams,
   DecryptActionParams,
   FioServerResponse,
@@ -61,6 +70,11 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
   const { state, handleConnectClick } = MetamaskSnap();
 
   const [hasError, toggleHasError] = useState<boolean>(false);
+  const [errorObj, setErrorObj] = useState<{
+    message: string;
+    title?: string;
+    buttonText?: string;
+  }>(null);
 
   const apiUrls = useSelector(apiUrlsSelector);
   const apiUrl = apiUrls[0]?.replace('/v1/', '');
@@ -108,49 +122,42 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
               reason: string;
             }
         > => {
-          try {
-            const pushResult = await fetch(
-              `${apiUrl}/v1/chain/push_transaction`,
-              {
-                body: JSON.stringify(signedTxn),
-                method: 'POST',
-              },
-            );
+          const pushResult = await fetch(
+            `${apiUrl}/v1/chain/push_transaction`,
+            {
+              body: JSON.stringify(signedTxn),
+              method: 'POST',
+            },
+          );
 
-            if (
-              pushResult.status === 400 ||
-              pushResult.status === 403 ||
-              pushResult.status === 500
-            ) {
-              const jsonResult = await pushResult.json();
-              const errorMessage = jsonResult.message || 'Something went wrong';
-
-              if (jsonResult.fields) {
-                // Handle specific error structure with "fields" array
-                const fieldErrors = jsonResult.fields.map((field: any) => ({
-                  name: field.name,
-                  value: field.value,
-                  error: field.error,
-                }));
-
-                throw new Error(
-                  `${errorMessage}: ${JSON.stringify(fieldErrors)}`,
-                );
-              } else if (jsonResult.error && jsonResult.error.what) {
-                throw new Error(jsonResult.error.what);
-              } else {
-                throw new Error(errorMessage);
-              }
-            }
-
+          if (
+            pushResult.status === 400 ||
+            pushResult.status === 403 ||
+            pushResult.status === 500
+          ) {
             const jsonResult = await pushResult.json();
-            return jsonResult;
-          } catch (error) {
-            return {
-              reason:
-                error instanceof Error ? error.message : 'Something went wrong',
-            };
+            const errorMessage = jsonResult.message || 'Something went wrong';
+
+            if (jsonResult.fields) {
+              // Handle specific error structure with "fields" array
+              const fieldErrors = jsonResult.fields.map((field: any) => ({
+                name: field.name,
+                value: field.value,
+                error: field.error,
+              }));
+
+              throw new Error(
+                `${errorMessage}: ${JSON.stringify(fieldErrors)}`,
+              );
+            } else if (jsonResult.error && jsonResult.error.what) {
+              throw new Error(jsonResult.error.what);
+            } else {
+              throw new Error(errorMessage);
+            }
           }
+
+          const jsonResult = await pushResult.json();
+          return jsonResult;
         };
 
         const results = await Promise.allSettled(
@@ -158,6 +165,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         );
 
         const successedResults: FioServerResponse[] = [];
+        const erroredResults: Error[] = [];
 
         results.forEach(result => {
           if (result.status === 'fulfilled' && result.value !== null) {
@@ -173,6 +181,8 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
               ) {
                 throw new Error(result.reason);
               }
+            } else {
+              erroredResults.push(result.reason);
             }
           }
         });
@@ -181,6 +191,13 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           successedResults.length === 1
             ? successedResults[0]
             : successedResults;
+
+        if (
+          (!res || (res && Array.isArray(res) && !res.length)) &&
+          erroredResults.length
+        ) {
+          throw new Error(erroredResults[0].message);
+        }
 
         onSuccess(res);
 
@@ -192,6 +209,26 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         onCancel();
       } else {
         toggleHasError(true);
+        if (
+          error &&
+          typeof error?.message === 'string' &&
+          error?.message.includes(TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS)
+        ) {
+          let message, title;
+
+          const buttonText = 'Close';
+
+          if (window?.location?.pathname === ROUTES.FIO_ADDRESS_OWNERSHIP) {
+            message = CANNOT_TRANSFER_ERROR;
+            title = CANNOT_TRANSFER_ERROR_TITLE;
+          } else {
+            message = CANNOT_UPDATE_FIO_HANDLE;
+            title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
+          }
+
+          setErrorObj({ message, title, buttonText });
+        }
+
         fireActionAnalyticsEventError(analyticAction);
       }
     }
@@ -235,6 +272,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     <MetamaskConnectionModal
       hasError={hasError}
       hasCloseButton={hasError}
+      errorObj={errorObj}
       show={processing}
       onClose={onCancel}
     />

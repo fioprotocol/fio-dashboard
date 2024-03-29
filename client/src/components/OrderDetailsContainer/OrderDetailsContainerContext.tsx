@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import useQuery from '../../hooks/useQuery';
-
 import { useWebsocket } from '../../hooks/websocket';
+import api from '../../api';
 
 import { ORDER_NUMBER_PARAM_NAME } from '../../constants/order';
 import { ROUTES } from '../../constants/routes';
@@ -20,12 +20,19 @@ export const useContext = (): ContextProps => {
   const queryParams = useQuery();
 
   const orderNumber = queryParams.get(ORDER_NUMBER_PARAM_NAME);
-
   const [orderItem, setOrderItem] = useState<OrderDetailed>(null);
+
+  const token = api.client.getToken();
 
   useEffect(() => {
     if (!orderNumber) history.push(ROUTES.ORDERS);
   }, [orderNumber, history]);
+
+  useEffect(() => {
+    if (!token) {
+      history.push(ROUTES.FIO_ADDRESSES_SELECTION);
+    }
+  }, [token, history]);
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;

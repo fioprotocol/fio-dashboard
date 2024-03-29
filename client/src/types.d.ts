@@ -61,7 +61,6 @@ export type CartItem = {
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
-  metamaskUserPublicKey?: string;
   period?: number;
   allowFree?: boolean;
   showBadge?: boolean;
@@ -400,6 +399,8 @@ export type RefProfileDomain = {
   domainType?: DomainItemType;
   allowFree?: boolean;
   hasGatedRegistration?: boolean;
+  isExpired?: boolean;
+  expirationDate?: string | number;
 };
 export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
@@ -412,7 +413,6 @@ export type RefProfile = {
   subTitle: string;
   settings: {
     domains: RefProfileDomain[];
-    preselectedDomain?: string;
     actions?: Record<
       ContainedFlowActionSettingsKey,
       {

@@ -46,6 +46,12 @@ export function useCheckIfDesktop(): boolean {
   return width >= TABLET_THRESHOLD;
 }
 
+export function useCheckIfMobileScreenSize(): boolean {
+  const { width } = useWindowSize();
+
+  return width <= MOBILE_THRESHOLD;
+}
+
 export function useCheckIfSmallDesktop(): boolean {
   const { width } = useWindowSize();
 

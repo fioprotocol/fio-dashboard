@@ -14,7 +14,7 @@ export default class AuthCreate extends Base {
   static get validationRules() {
     return {
       email: ['required', 'trim', 'email', 'to_lc'],
-      signature: ['string'],
+      signatures: [{ list_of: 'string' }],
       challenge: ['string'],
       timeZone: ['string'],
       edgeWallets: [
@@ -32,7 +32,7 @@ export default class AuthCreate extends Base {
     };
   }
 
-  async execute({ email, edgeWallets, signature, challenge, timeZone }) {
+  async execute({ email, edgeWallets, signatures, challenge, timeZone }) {
     const user = await User.findOneWhere({
       email,
       status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED },
@@ -54,12 +54,25 @@ export default class AuthCreate extends Base {
       for (const edgeWallet of edgeWallets) {
         const newWallet = new Wallet({ ...edgeWallet, userId: user.id });
         await newWallet.save();
-        verified = User.verify({ challenge, publicKey: edgeWallet.publicKey, signature });
+
+        for (const signature of signatures) {
+          verified = User.verify({
+            challenge,
+            publicKey: edgeWallet.publicKey,
+            signature,
+          });
+          if (verified) break;
+        }
+
         if (verified) break;
       }
     } else {
       for (const wallet of wallets) {
-        verified = User.verify({ challenge, publicKey: wallet.publicKey, signature });
+        for (const signature of signatures) {
+          verified = User.verify({ challenge, publicKey: wallet.publicKey, signature });
+          if (verified) break;
+        }
+
         if (verified) break;
       }
     }

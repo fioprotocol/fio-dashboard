@@ -221,6 +221,7 @@ router.patch('/cart-handle-free-items', routes.cart.handleUsersFreeCartItems);
 router.put('/cart-recalculate-updated-prices', routes.cart.recalculateOnPriceUpdate);
 router.patch('/cart-update-item-period', routes.cart.updateItemPeriod);
 router.patch('/cart-update-user-id', checkAuth, routes.cart.updateUserId);
+router.get('/get-users-cart', checkAuth, routes.cart.getUsersCart);
 
 router.get('/external-provider-nfts', routes.external.externalProviderNfts);
 router.get(

@@ -20,6 +20,7 @@ import {
   PROFILE_SUCCESS,
   RESET_ADMIN_PASSWORD_SUCCESS,
   ACTIVATE_AFFILIATE_SUCCESS,
+  getUsersFreeAddresses,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -57,6 +58,7 @@ import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
 import { METAMASK_DOMAIN_NAME } from '../../constants/fio';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
+import { getZeroIndexPublicKey } from '../../util/snap';
 import { Api } from '../../api';
 import { Api as AdminApi } from '../../admin/api';
 
@@ -72,9 +74,11 @@ import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
 export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
-    const hasRedirectTo: { pathname: string; state: object } = yield select(
-      redirectLink,
-    );
+    const hasRedirectTo: {
+      pathname: string;
+      state: object;
+      search: string;
+    } = yield select(redirectLink);
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
     if (action.isSignUp) {
@@ -109,6 +113,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
+
     if (
       !hasRedirectTo &&
       locationState &&
@@ -120,6 +125,16 @@ export function* loginSuccess(history: History, api: Api): Generator {
         search: locationState.from.search || '',
       });
     }
+
+    if (
+      !hasRedirectTo &&
+      history.location?.pathname === ROUTES.CREATE_ACCOUNT
+    ) {
+      history.push({
+        pathname: ROUTES.HOME,
+      });
+    }
+
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);
       yield put<Action>(setRedirectPath(null));
@@ -131,9 +146,11 @@ export function* loginSuccess(history: History, api: Api): Generator {
 
 export function* alternateLoginSuccess(history: History, api: Api): Generator {
   yield takeEvery(ALTERNATE_LOGIN_SUCCESS, function*(action: Action) {
-    const hasRedirectTo: { pathname: string; state: object } = yield select(
-      redirectLink,
-    );
+    const hasRedirectTo: {
+      pathname: string;
+      state: object;
+      search: string;
+    } = yield select(redirectLink);
     api.client.setToken(action.data.jwt);
     if (action.data.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
@@ -152,6 +169,7 @@ export function* alternateLoginSuccess(history: History, api: Api): Generator {
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
+
     if (
       !hasRedirectTo &&
       locationState &&
@@ -163,8 +181,22 @@ export function* alternateLoginSuccess(history: History, api: Api): Generator {
         search: locationState.from.search || '',
       });
     }
+
+    if (
+      !hasRedirectTo &&
+      history.location?.pathname === ROUTES.CREATE_ACCOUNT
+    ) {
+      history.push({
+        pathname: ROUTES.HOME,
+      });
+    }
+
     if (hasRedirectTo) {
-      history.push(hasRedirectTo.pathname, hasRedirectTo.state);
+      history.push({
+        pathname: hasRedirectTo.pathname,
+        state: hasRedirectTo.state,
+        search: hasRedirectTo.search,
+      });
       yield put<Action>(setRedirectPath(null));
     }
 
@@ -184,9 +216,23 @@ export function* profileSuccess(): Generator {
     const roe: number = yield select(roeSelector);
     const prices: Prices = yield select(pricesSelector);
 
+    const metamaskUserPublicKey: string | null = yield getZeroIndexPublicKey(
+      user?.userProfileType,
+    );
+
+    if (metamaskUserPublicKey) {
+      yield put<Action>(
+        getUsersFreeAddresses({ publicKey: metamaskUserPublicKey }),
+      );
+    }
+
     if (cartId && user && action.shouldHandleUsersFreeCart) {
       yield put<Action>(
-        handleUsersFreeCartItems({ id: cartId, userId: user.id }),
+        handleUsersFreeCartItems({
+          id: cartId,
+          userId: user.id,
+          metamaskUserPublicKey,
+        }),
       );
     }
 
@@ -242,7 +288,7 @@ export function* nonceSuccess(): Generator {
     const {
       email,
       edgeWallets,
-      signature,
+      signatures,
       nonce,
       otpKey,
       voucherId,
@@ -255,7 +301,7 @@ export function* nonceSuccess(): Generator {
       login({
         email,
         edgeWallets,
-        signature,
+        signatures,
         challenge: nonce,
         timeZone,
         otpKey,

@@ -100,12 +100,12 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   }, []);
 
   const onBitPayModalClose = useCallback(() => {
-    window.bitpay.onModalWillLeave(function() {
+    window.bitpay?.onModalWillLeave(function() {
       if (isPaid) {
         onFinish(submitData);
       }
     });
-    window.bitpay.onModalWillEnter(function() {
+    window.bitpay?.onModalWillEnter(function() {
       setIsLoadingBitPay(false);
     });
   }, [isPaid, onFinish, submitData]);
@@ -113,6 +113,12 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   useEffect(() => {
     onBitPayModalClose();
   }, [onBitPayModalClose]);
+
+  useEffect(() => {
+    if (isPaid) {
+      onFinish(submitData);
+    }
+  }, [isPaid, onFinish, submitData]);
 
   useEffect(() => {
     window.addEventListener('message', handleBitPayPaymentMessage);

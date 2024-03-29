@@ -74,8 +74,7 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
   if (currentDomainGated) {
     succeeded = false;
-    message =
-      'Unfortunately this domain is not available. Please search again or select from the additional domains for sale below.';
+    message = DOMAIN_ALREADY_EXISTS;
   }
 
   const fchValue = setFioName(address, domain);

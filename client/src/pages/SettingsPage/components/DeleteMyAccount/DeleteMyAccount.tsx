@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Processing from '../../../../components/common/TransactionProcessing';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import Modal from '../../../../components/Modal/Modal';
 import SecurityItem from '../SecurityItem';
@@ -171,19 +170,15 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
         closeButton={true}
         backdrop="static"
       >
-        {deletingAccount ? (
-          <Processing isProcessing={deletingAccount} />
-        ) : (
-          <>
-            <h3>Confirm Deletion</h3>
-            <p>Enter your password to confirm deleting of this account</p>
-            <PasswordForm
-              onSubmit={onFormSubmit}
-              loading={checkingPassword}
-              username={username}
-            />
-          </>
-        )}
+        <>
+          <h3>Confirm Deletion</h3>
+          <p>Enter your password to confirm deleting of this account</p>
+          <PasswordForm
+            onSubmit={onFormSubmit}
+            loading={checkingPassword || deletingAccount}
+            username={username}
+          />
+        </>
       </Modal>
     </SecurityItem>
   );

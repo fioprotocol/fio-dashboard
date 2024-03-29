@@ -18,6 +18,7 @@ import MetamaskImgSrc from '../../assets/images/metamask.svg';
 import classes from './GateVerificationComponent.module.scss';
 
 type Props = {
+  connectButtonDisabled?: boolean;
   hasFioVerificactionError: boolean;
   hasVerifiedError: boolean;
   gatedChainName?: string;
@@ -40,6 +41,7 @@ type Props = {
 
 export const GateVerificationComponent: React.FC<Props> = props => {
   const {
+    connectButtonDisabled,
     gatedChainName,
     hasFioVerificactionError,
     hasVerifiedError,
@@ -125,6 +127,7 @@ export const GateVerificationComponent: React.FC<Props> = props => {
             withBottomMargin
             hasLowHeight
             hasAutoWidth
+            disabled={connectButtonDisabled}
           />
           <div className={classes.securityNote}>
             <VerifiedUserOutlinedIcon />

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
+import { isMobile } from 'react-device-detect';
 
 import TextInput, {
   INPUT_UI_STYLES,
@@ -72,6 +73,10 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
 
   const walletBalances = useWalletBalances(fioWallet.publicKey);
 
+  const publicAddressPlaceholder = isMobile
+    ? 'Paste Address or Connect'
+    : 'Paste Public Address or Connect a Wallet';
+
   return (
     <Form
       onSubmit={handleSubmit}
@@ -111,7 +116,7 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               connectWalletProps={providerData}
               connectWalletModalText="Please connect your wallet in order to wrap and receive your FIO tokens."
               showPasteButton
-              placeholder="Paste Public Address or Connect a Wallet"
+              placeholder={publicAddressPlaceholder}
               label="Public Address"
             />
 

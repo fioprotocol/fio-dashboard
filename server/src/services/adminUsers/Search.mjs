@@ -14,6 +14,10 @@ const validateEmail = email => {
   );
 };
 
+const uuidv4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const validateUserId = userId => uuidv4Regex.test(userId);
+
 export default class Search extends Base {
   static get requiredPermissions() {
     return [ADMIN_ROLES_IDS.ADMIN, ADMIN_ROLES_IDS.SUPER_ADMIN];
@@ -38,6 +42,7 @@ export default class Search extends Base {
     }
 
     const isEmail = validateEmail(valueToSearch);
+    const isUserId = validateUserId(valueToSearch);
     let isFioAddress = false;
     let isDomain = false;
     let isPublicKey = false;
@@ -73,6 +78,11 @@ export default class Search extends Base {
       result.orders = [...result.orders, ...orders];
     }
 
+    if (isUserId) {
+      const orders = await Order.listSearchByUserId(valueToSearch);
+      result.orders = [...result.orders, ...orders];
+    }
+
     if (isFioAddress) {
       const fioAddressParts = valueToSearch.split('@');
 
@@ -94,7 +104,7 @@ export default class Search extends Base {
       result.orders = [...result.orders, ...orders];
     }
 
-    if (!isEmail && !isFioAddress && !isPublicKey) {
+    if (!isEmail && !isFioAddress && !isPublicKey && !isUserId) {
       const orders = await Order.listSearchByNumber(valueToSearch);
       result.orders = [...result.orders, ...orders];
     }

@@ -11,6 +11,11 @@ import MetamaskIcon from '../../../assets/images/metamask.svg';
 import classes from './MetamaskConnectionModal.module.scss';
 
 type Props = {
+  errorObj?: {
+    message: string;
+    title?: string;
+    buttonText?: string;
+  };
   hasCloseButton?: boolean;
   hasError?: boolean;
   isSecondModal?: boolean;
@@ -25,6 +30,7 @@ const DEFAULT_TRANSACTION_ERROR = 'Transaction failed. Please try again.';
 
 export const MetamaskConnectionModal: React.FC<Props> = props => {
   const {
+    errorObj,
     hasCloseButton,
     hasError,
     isSecondModal,
@@ -48,13 +54,14 @@ export const MetamaskConnectionModal: React.FC<Props> = props => {
           <p className={classes.text}>{text}</p>
           <NotificationBadge
             show
-            message={DEFAULT_TRANSACTION_ERROR}
+            title={errorObj?.title}
+            message={errorObj?.message || DEFAULT_TRANSACTION_ERROR}
             type={BADGE_TYPES.RED}
             hasNewDesign
             messageClassnames={classes.errorMessage}
           />
           <SubmitButton
-            text="Try Again"
+            text={errorObj?.buttonText || 'Try Again'}
             onClick={onClose}
             withTopMargin
             withBottomMargin

@@ -11,6 +11,7 @@ import classes from '../styles/LinksSection.module.scss';
 
 type Props = {
   isBig?: boolean;
+  faqInfoPosition?: string;
   title?: string;
   showSubtitle?: boolean;
 };
@@ -20,6 +21,7 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
     isAuthenticated,
     isAffiliateEnabled,
     isBig,
+    faqInfoPosition = 'below',
     title,
     showSubtitle,
     showLogin,
@@ -40,10 +42,14 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
           of that purchase value.
         </p>
       )}
+      <p className={classes.info}>
+        Please see the FAQs {faqInfoPosition} for more information regarding
+        earning andpayout.
+      </p>
       <div className={classes.buttonContainer}>
         {isAuthenticated && !isAffiliateEnabled && (
           <Button className={classes.button} onClick={showAffiliateModal}>
-            Get Started
+            Activate
           </Button>
         )}
         {isAuthenticated && isAffiliateEnabled && (

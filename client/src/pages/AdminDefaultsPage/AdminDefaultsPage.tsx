@@ -13,7 +13,9 @@ import OutboundSwitch from './components/OutboundSwitch';
 
 import api from '../../api';
 
-import { AdminDefaults } from '../../api/responses';
+import { log } from '../../util/general';
+
+import { AdminDefaults, AdminDomain } from '../../api/responses';
 
 import classes from './styles/AdminDefaultsPage.module.scss';
 
@@ -29,10 +31,31 @@ const AdminDefaultsPage: React.FC = () => {
     fetchDefaults();
   }, [fetchDefaults]);
 
-  const handleSubmit = useCallback(async values => {
-    await api.admin.saveDefaults(values);
-    await fetchDefaults();
-  }, []);
+  const handleSubmit = useCallback(
+    async values => {
+      if (values.dashboardDomains) {
+        const handleExpiredDateDomains: AdminDomain[] = [];
+        const domainsPromises = values.dashboardDomains?.map(
+          async (domainItem: AdminDomain) => {
+            try {
+              const { expiration } =
+                (await api.fio.getFioDomain(domainItem.name)) || {};
+
+              domainItem.expirationDate = expiration;
+            } catch (error) {
+              log.error('Handle settings domain expiration error:', error);
+            }
+            handleExpiredDateDomains.push(domainItem);
+          },
+        );
+        await Promise.all(domainsPromises);
+        values.dashboardDomains = handleExpiredDateDomains;
+      }
+      await api.admin.saveDefaults(values);
+      await fetchDefaults();
+    },
+    [fetchDefaults],
+  );
 
   return (
     <div className={classes.container}>

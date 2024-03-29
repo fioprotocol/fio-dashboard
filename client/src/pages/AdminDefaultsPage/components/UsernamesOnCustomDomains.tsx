@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import TextInput, {
-  INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
 } from '../../../components/Input/TextInput';
 
@@ -86,7 +85,6 @@ const UsernamesOnCustomDomains: React.FC<UsernamesOnCustomDomainsProps> = ({
                               component={TextInput}
                               withoutBottomMargin
                               uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                              colorScheme={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
                             />
                           </div>
                           <Button

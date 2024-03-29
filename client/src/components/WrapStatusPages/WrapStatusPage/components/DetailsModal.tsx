@@ -49,8 +49,8 @@ const DetailsModal: React.FC<Props> = props => {
   const isPending = status === WRAP_ITEM_STATUS.PENDING;
   const isFailed = status === WRAP_ITEM_STATUS.FAILED;
 
-  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${from} ${transactionId}`;
-  const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${from} ${transactionId}`;
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${to} ${transactionId}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${to} ${transactionId}`;
   const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${amount} ${to} ${transactionId}`;
   const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${domain} ${to} ${transactionId}`;
 
@@ -303,12 +303,9 @@ const DetailsModal: React.FC<Props> = props => {
                     </div>
                     <div>{JSON.stringify(!!approvals.isComplete)}</div>
                   </div>
-                  <CommandComponent
-                    commandString={wrapCommand}
-                    show={isFailed}
-                  />
                 </>
               )}
+              <CommandComponent commandString={wrapCommand} show={isFailed} />
               {approvals.txIds && (
                 <>
                   <div className="mr-3 mt-3">

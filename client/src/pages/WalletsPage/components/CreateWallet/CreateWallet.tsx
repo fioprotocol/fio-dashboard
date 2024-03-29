@@ -7,7 +7,10 @@ import CreateEdgeWallet from './CreateEdgeWallet';
 import CreateLedgerWallet from './CreateLedgerWallet';
 import { CreateMetamaskWallet } from './CreateMetamaskWallet';
 
-import { addWallet } from '../../../../redux/account/actions';
+import {
+  addWallet,
+  resetAddWalletSuccess,
+} from '../../../../redux/account/actions';
 
 import { fioWallets as fioWalletsSelector } from '../../../../redux/fio/selectors';
 import { addWalletLoading as addWalletLoadingSelector } from '../../../../redux/account/selectors';
@@ -15,12 +18,14 @@ import {
   showGenericError as showGenericErrorSelector,
   showPinConfirm as showPinConfirmSelector,
 } from '../../../../redux/modal/selectors';
-import { isWalletCreated as isWalletCreatedSelector } from '../../../../redux/account/selectors';
+import { walletHasBeenAdded as walletHasBeenAddedSelector } from '../../../../redux/account/selectors';
 
 import {
   WALLET_CREATED_FROM,
   DEFAULT_WALLET_OPTIONS,
 } from '../../../../constants/common';
+
+import useEffectOnce from '../../../../hooks/general';
 
 import { CreateWalletValues } from '../../types';
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
@@ -38,7 +43,7 @@ export const CreateWallet: React.FC<Props> = props => {
 
   const addWalletLoading = useSelector(addWalletLoadingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
-  const isWalletCreated = useSelector(isWalletCreatedSelector);
+  const walletHasBeenAdded = useSelector(walletHasBeenAddedSelector);
   const showGenericError = useSelector(showGenericErrorSelector);
   const showPinConfirm = useSelector(showPinConfirmSelector);
 
@@ -83,14 +88,17 @@ export const CreateWallet: React.FC<Props> = props => {
         ledger: false,
       });
     }
-  }, [creationType, existingWalletNamesJSON, show, walletsAmount]);
+  }, [existingWalletNamesJSON, show, walletsAmount]);
 
   useEffect(() => {
-    if (isWalletCreated && !addWalletLoading && !showGenericError) {
+    if (walletHasBeenAdded) {
       onWalletCreated();
-      setProcessing(false);
     }
-  }, [isWalletCreated, addWalletLoading, showGenericError, onWalletCreated]);
+  }, [onWalletCreated, walletHasBeenAdded]);
+
+  useEffectOnce(() => {
+    resetAddWalletSuccess();
+  }, []);
 
   const onCreateSubmit = useCallback(
     (values: CreateWalletValues) => {
@@ -106,13 +114,11 @@ export const CreateWallet: React.FC<Props> = props => {
     [isMetamaskWalletProvider],
   );
 
-  const onWalletDataPrepared = useCallback(
-    (walletData: NewFioWalletDoublet) => {
-      dispatch(addWallet(walletData));
-      setCreationType(null);
-    },
-    [dispatch],
-  );
+  const onWalletDataPrepared = (walletData: NewFioWalletDoublet) => {
+    dispatch(addWallet(walletData));
+    setCreationType(null);
+    setProcessing(false);
+  };
 
   const onOptionCancel = useCallback(() => {
     setCreationType(null);
