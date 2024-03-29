@@ -1,7 +1,7 @@
 import Base from '../Base';
 import { Domain, ReferrerProfile, Username } from '../../models';
 
-// import { handleExpiredDomains } from '../../utils/fio.mjs';
+import { isDomainExpired } from '../../utils/fio.mjs';
 
 const REF_COOKIE_NAME = process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME || 'ref';
 
@@ -22,23 +22,37 @@ export default class DomainsList extends Base {
     });
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
-    // todo: move to cron job expiration domain handling
+    for (const dashboardDomainItem of dashboardDomains) {
+      if (!dashboardDomainItem.expirationDate) {
+        dashboardDomainItem.isExpired = true;
+        continue;
+      }
 
-    // const handledExpiredDashboardDomains = await handleExpiredDomains({
-    //   domainsList: dashboardDomains,
-    // });
+      const isExpired = isDomainExpired(
+        dashboardDomainItem.name,
+        dashboardDomainItem.expirationDate,
+      );
 
-    // const handledExpiredAllRefProfileDomains = await handleExpiredDomains({
-    //   domainsList: allRefProfileDomains,
-    // });
+      dashboardDomainItem.isExpired = isExpired;
+    }
 
-    const handledExpiredDashboardDomains = dashboardDomains;
+    for (const refProfileDomain of allRefProfileDomains) {
+      if (!refProfileDomain.expirationDate) {
+        refProfileDomain.isExpired = true;
+        continue;
+      }
 
-    const handledExpiredAllRefProfileDomains = allRefProfileDomains;
+      const isExpired = isDomainExpired(
+        refProfileDomain.name,
+        refProfileDomain.expirationDate,
+      );
 
-    const allRefProfileDomainsHandledGatedDomains = handledExpiredAllRefProfileDomains.filter(
+      refProfileDomain.isExpired = isExpired;
+    }
+
+    const allRefProfileDomainsHandledGatedDomains = dashboardDomains.filter(
       refProfileDomain => {
-        const dashboardDomainList = handledExpiredDashboardDomains.map(
+        const dashboardDomainList = allRefProfileDomains.map(
           dashboardDomain => dashboardDomain.name,
         );
 
@@ -57,9 +71,9 @@ export default class DomainsList extends Base {
       },
     );
 
-    const dashboardDomainsHandledGatedDomains = handledExpiredDashboardDomains.filter(
+    const dashboardDomainsHandledGatedDomains = dashboardDomains.filter(
       dashboardDomain => {
-        const dashboardDomainExistsInRefProfile = handledExpiredAllRefProfileDomains.find(
+        const dashboardDomainExistsInRefProfile = allRefProfileDomains.find(
           allRefProfileDomain => allRefProfileDomain.name === dashboardDomain.name,
         );
 
