@@ -400,6 +400,7 @@ export type RefProfileDomain = {
   allowFree?: boolean;
   hasGatedRegistration?: boolean;
   isExpired?: boolean;
+  expirationDate?: string | number;
 };
 export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 

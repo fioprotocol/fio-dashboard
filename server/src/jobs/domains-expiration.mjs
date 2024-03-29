@@ -68,6 +68,8 @@ class DomainsExpirationJob extends CommonJob {
                 }
               }),
             );
+
+            refProfileItem.settings = { ...refProfileItem.settings };
             await refProfileItem.save();
           }
         } catch (error) {

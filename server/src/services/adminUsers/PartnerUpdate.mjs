@@ -26,6 +26,7 @@ export default class PartnerUpdate extends Base {
                   isPremium: 'boolean',
                   rank: { min_number: 0 },
                   isFirstRegFree: 'boolean',
+                  expirationDate: ['string'],
                 },
               ],
             },
