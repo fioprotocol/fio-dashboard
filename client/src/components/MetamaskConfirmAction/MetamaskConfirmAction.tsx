@@ -164,8 +164,6 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           signedTxns.successed.map(pushTransactionResult),
         );
 
-        console.log('results', results);
-
         const successedResults: FioServerResponse[] = [];
         const erroredResults: Error[] = [];
 
