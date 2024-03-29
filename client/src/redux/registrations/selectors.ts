@@ -58,7 +58,15 @@ export const domains = createSelector(
       };
     }
 
-    return regDomainItems;
+    return {
+      ...regDomainItems,
+      allRefProfileDomains: regDomainItems.allRefProfileDomains?.filter(
+        regDomainItem => !regDomainItem.isExpired,
+      ),
+      dashboardDomains: regDomainItems.dashboardDomains?.filter(
+        dashboardDomainItem => !dashboardDomainItem.isExpired,
+      ),
+    };
   },
 );
 export const allDomains = createSelector(
