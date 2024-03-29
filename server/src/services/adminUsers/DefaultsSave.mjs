@@ -33,6 +33,7 @@ export default class DefaultsSave extends Base {
                   isPremium: 'boolean',
                   isDashboardDomain: 'boolean',
                   rank: { min_number: 0 },
+                  expirationDate: ['string'],
                 },
               ],
             },
@@ -103,11 +104,17 @@ export default class DefaultsSave extends Base {
     });
 
     for (const domain of [...availableDomains, ...dashboardDomains]) {
-      const { id, name, rank, isPremium, isDashboardDomain } = domain;
+      const { id, name, rank, isPremium, expirationDate, isDashboardDomain } = domain;
       if (id) {
-        await Domain.update({ name, rank, isPremium }, { where: { id } });
+        await Domain.update({ name, rank, isPremium, expirationDate }, { where: { id } });
       } else {
-        await Domain.create({ name, rank, isPremium, isDashboardDomain });
+        await Domain.create({
+          name,
+          rank,
+          isPremium,
+          expirationDate,
+          isDashboardDomain,
+        });
       }
     }
 

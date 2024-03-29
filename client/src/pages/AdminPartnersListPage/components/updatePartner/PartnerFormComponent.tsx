@@ -141,6 +141,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
       isPremium: false,
       rank: numberOfDomains + 1,
       isFirstRegFree: false,
+      expirationDate: null,
     });
   }, [form]);
 

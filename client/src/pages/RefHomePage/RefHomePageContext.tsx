@@ -24,7 +24,7 @@ import {
 
 import apis from '../../api';
 import { log } from '../../util/general';
-import { validateFioAddress } from '../../util/fio';
+import { isDomainExpired, validateFioAddress } from '../../util/fio';
 import { getZeroIndexPublicKey } from '../../util/snap';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -43,9 +43,10 @@ import { CART_ITEM_TYPE } from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
 import { ROUTES } from '../../constants/routes';
 
-import { AnyObject } from '../../types';
+import { AnyObject, RefProfileDomain } from '../../types';
 
 type UseContextProps = {
+  connectButtonDisabled?: boolean;
   disabled: boolean;
   gatedChainName?: string;
   hasFioVerificactionError: boolean;
@@ -55,6 +56,7 @@ type UseContextProps = {
   isVerified: boolean;
   isWalletConnected: boolean;
   loaderText: string;
+  refDomainObj: RefProfileDomain;
   showBrowserExtensionErrorModal: boolean;
   showProviderWindowError: boolean;
   showProviderLoadingIcon: boolean;
@@ -126,7 +128,18 @@ export const useContext = (): UseContextProps => {
   );
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
-  const refDomainObj = refProfileInfo?.settings?.domains[0];
+
+  const refDomainObj = refProfileInfo?.settings?.domains.find(refDomainItem => {
+    if (!refDomainItem.expirationDate) return false;
+
+    const isExpired = isDomainExpired(
+      refDomainItem.name,
+      refDomainItem.expirationDate,
+    );
+
+    return !isExpired;
+  });
+
   const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
   const gatedChainId =
     refProfileInfo?.settings?.gatedRegistration?.params?.chainId;
@@ -151,6 +164,8 @@ export const useContext = (): UseContextProps => {
     asset === NFT_LABEL ? 'NFT' : asset === TOKEN_LABEL ? 'Token' : ''
   } Not Confirmed. Please make sure your NFT is held within your Metamask Wallet.`;
   const wrongSignMessage = 'Metamask Sign failed';
+  const allDomainsHasBeenExpiredOrDoesnotExists =
+    'FIO Handle registrations temporarily unavailable.';
 
   const loaderText =
     asset === NFT_LABEL
@@ -470,7 +485,17 @@ export const useContext = (): UseContextProps => {
     verifiedMessage,
   ]);
 
+  useEffect(() => {
+    if (refProfileInfo && !refDomainObj?.name) {
+      toggleFioVerificationError(true);
+      setInfoMessage(allDomainsHasBeenExpiredOrDoesnotExists);
+    }
+  }, [refProfileInfo, refDomainObj?.name]);
+
   return {
+    connectButtonDisabled:
+      hasFioVerificactionError &&
+      infoMessage === allDomainsHasBeenExpiredOrDoesnotExists,
     disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
     gatedChainName,
     hasFioVerificactionError,
@@ -480,6 +505,7 @@ export const useContext = (): UseContextProps => {
     isVerified,
     isWalletConnected,
     loaderText,
+    refDomainObj,
     showBrowserExtensionErrorModal,
     showProviderWindowError:
       connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE,

@@ -20,7 +20,7 @@ import apis from '../../api';
 import { log } from '../../util/general';
 
 import { Props } from './types';
-import { RefProfile } from '../../types';
+import { RefProfile, RefProfileDomain } from '../../types';
 
 import classes from './AdminPartnersListPage.module.scss';
 
@@ -66,6 +66,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             isPremium: false,
             rank: 1,
             isFirstRegFree: false,
+            expirationDate: null,
           },
         ],
         gatedRegistration: {
@@ -113,7 +114,25 @@ const AdminPartnersListPage: React.FC<Props> = props => {
           partner.settings = {
             domains: [],
           };
+        } else {
+          const handleExpiredDateDomains: RefProfileDomain[] = [];
+          const domainsPromises = partner.settings.domains?.map(
+            async domainItem => {
+              try {
+                const { expiration } =
+                  (await apis.fio.getFioDomain(domainItem.name)) || {};
+
+                domainItem.expirationDate = expiration;
+              } catch (error) {
+                log.error('Handle settings domain expiration error:', error);
+              }
+              handleExpiredDateDomains.push(domainItem);
+            },
+          );
+          await Promise.all(domainsPromises);
+          partner.settings.domains = handleExpiredDateDomains;
         }
+
         partner.title = partner.title || '';
         partner.subTitle = partner.subTitle || '';
         partner.tpid = partner.tpid || '';
