@@ -37,6 +37,12 @@ export const addWallet = ({
     }),
 });
 
+export const RESET_ADD_WALLET_SUCCESS = `${prefix}/RESET_ADD_WALLET_SUCCESS`;
+
+export const resetAddWalletSuccess = (): CommonAction => ({
+  type: RESET_ADD_WALLET_SUCCESS,
+});
+
 export const UPDATE_WALLET_NAME = `${prefix}/UPDATE_WALLET_NAME`;
 export const DELETE_WALLET = `${prefix}/DELETE_WALLET`;
 

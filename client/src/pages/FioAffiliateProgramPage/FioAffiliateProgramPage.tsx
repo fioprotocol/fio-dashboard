@@ -30,7 +30,7 @@ const FioAffiliateProgramPage: React.FC = () => {
       <div className={classes.textContainer}>
         <h1 className={classes.title}>
           FIO Domain Affiliate Program{' '}
-          <span className={classes.activeBadge}>Active</span>
+          <span className={classes.activeBadge}>ACTIVE</span>
         </h1>
 
         <div className={classes.text}>
@@ -38,6 +38,11 @@ const FioAffiliateProgramPage: React.FC = () => {
           through your link, you earn <span className="throughText">10%</span>{' '}
           50% of that purchase value.
         </div>
+
+        <p className={classes.info}>
+          Please Note: Payouts are only made on the first year of new domain
+          registration, even if registration is made for multiple years.
+        </p>
 
         <div className={classes.text}>
           For additional details,{' '}

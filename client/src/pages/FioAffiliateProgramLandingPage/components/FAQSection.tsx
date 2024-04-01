@@ -17,7 +17,9 @@ import classes from '../styles/FAQSection.module.scss';
 const accordionContent = [
   {
     title: 'How much can I earn?',
-    text: `For every FIO Domain that is registered by a person which you referred, you will receive up to 50% of the amount paid by that person. The cost of FIO Domains vary, but is typically around $40. The percentage of payout will remain at 50% until <a href="https://fio.net/token/distribution" target="_blank" rel="noreferrer">New User Bounty token pool</a> is depleted, at which point it will be reduced to 10%.`,
+    subtitle:
+      'Please Note: Payouts are only made on the first year of new domain registration, even if registration is made for multiple years.',
+    text: `The cost of FIO Domains vary, but is typically around $40 for 1 year. The percentage of payout will remain at 50% until <a href="https://fio.net/token/distribution" target="_blank" rel="noreferrer">New User Bounty token pool</a> is depleted, at which point it will be reduced to 10%.`,
   },
   {
     title: 'How will I receive the payment?',
@@ -95,10 +97,18 @@ export const FAQSection: React.FC<CommonComponentProps> = props => {
               {accordionItem.title}
             </CustomToggle>
             <Accordion.Collapse eventKey={i.toString()}>
-              <div
-                className={classes.accordionItemText}
-                dangerouslySetInnerHTML={{ __html: accordionItem.text }}
-              />
+              <>
+                {accordionItem.subtitle && (
+                  <p
+                    className={classes.accordionItemSubtitle}
+                    dangerouslySetInnerHTML={{ __html: accordionItem.subtitle }}
+                  />
+                )}
+                <div
+                  className={classes.accordionItemText}
+                  dangerouslySetInnerHTML={{ __html: accordionItem.text }}
+                />
+              </>
             </Accordion.Collapse>
           </div>
         ))}
@@ -106,6 +116,7 @@ export const FAQSection: React.FC<CommonComponentProps> = props => {
       <LinksSection
         isAuthenticated={isAuthenticated}
         isAffiliateEnabled={isAffiliateEnabled}
+        faqInfoPosition="above"
         title="Get Your Link Now"
         showSubtitle
         showLogin={showLogin}

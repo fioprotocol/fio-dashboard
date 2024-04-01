@@ -25,9 +25,19 @@ const getFioWalletName = async (publicKey, userId) => {
 };
 
 const getCreditCardName = creditCardData => {
-  const { payment_method_details: { card: { brand, last4 } = {} } = {} } =
+  const { payment_method_details: { card: { brand, last4 } = {}, type } = {} } =
     creditCardData || {};
-  return brand && last4 ? `${brand.toUpperCase()} ending in ${last4}` : 'N/A';
+
+  let creditCardName = 'N/A';
+  if (type) {
+    if (type === 'card' && brand && last4) {
+      creditCardName = `${brand.toUpperCase()} ending in ${last4}`;
+    } else {
+      creditCardName = type.toUpperCase().replace('_', ' ');
+    }
+  }
+
+  return creditCardName;
 };
 
 export const getPaidWith = async ({

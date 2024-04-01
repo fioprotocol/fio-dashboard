@@ -28,3 +28,15 @@
   cursor: pointer;
   color: $light-indigo;
 }
+
+.table {
+  table-layout: auto;
+  margin-top: 30px;
+
+  th {
+    width: auto;
+    max-width: 250px;
+    word-wrap: break-word;
+    width: fit-content;
+  }
+}

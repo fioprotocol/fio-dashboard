@@ -226,13 +226,17 @@ export const TextInput: React.ForwardRefRenderFunction<
             hasRegularHeight && classes.hasRegularHeight,
             prefix && classes.prefixSpace,
             suffix && classes.suffixSpace,
-            showPasteButton && classes.hasPasteButton,
+            showPasteButton && !isWalletConnected && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             type === 'textarea' && classes.textarea,
             isLowHeight && classes.lowHeight,
             isMiddleHeight && classes.middleHeight,
-            isWalletConnected ? classes.dark : '',
+            isWalletConnected ? classes.isWalletConnected && classes.dark : '',
             disabled && disabledInputGray && classes.disabledGray,
+            connectWalletProps &&
+              showConnectWalletButton &&
+              !isWalletConnected &&
+              classes.connectWallet,
           )}
         >
           <PrefixLabel
@@ -262,7 +266,9 @@ export const TextInput: React.ForwardRefRenderFunction<
             type={showPass ? 'text' : type}
             data-clear={isInputHasValue}
             disabled={disabled || isWalletConnected}
-            className={isWalletConnected ? classes.dark : ''}
+            className={
+              isWalletConnected ? classes.isWalletConnected && classes.dark : ''
+            }
           />
         </div>
         {connectWalletProps ? (

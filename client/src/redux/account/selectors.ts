@@ -4,5 +4,5 @@ import { ReduxState } from '../init';
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const addWalletLoading = (state: ReduxState): boolean =>
   state[prefix].addWalletLoading;
-export const isWalletCreated = (state: ReduxState): boolean =>
-  state[prefix].isWalletCreated;
+export const walletHasBeenAdded = (state: ReduxState): boolean =>
+  state[prefix].walletHasBeenAdded;

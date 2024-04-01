@@ -12,6 +12,10 @@
 
     &.show {
       left: -100%;
+
+      &:first-of-type {
+        height: 0;
+      }
     }
 
     .pinContainer {

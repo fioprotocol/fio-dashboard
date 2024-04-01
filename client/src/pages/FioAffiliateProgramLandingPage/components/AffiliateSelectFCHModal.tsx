@@ -49,6 +49,7 @@ export const AffiliateSelectFCHModal: React.FC<Props> = props => {
               isSimple
               isHigh
               isWhite
+              hasRelativePosition
             />
             <SubmitButton className={classes.button} text="ACTIVATE" />
           </form>

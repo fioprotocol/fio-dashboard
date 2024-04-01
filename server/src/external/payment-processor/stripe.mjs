@@ -13,10 +13,16 @@ export const STRIPE_STATUSES = {
   WAITING: 'processing',
   NEW: 'created',
   COMPLETED: 'succeeded',
+  REQUIRES_ACTION: 'requires_action',
+  CHARGE_SUCCEEDED: 'charge.succeeded',
+  CHARGE_FAILED: 'failed',
 };
+
 const OBJ_TYPES = {
   payment_intent: 'payment_intent',
+  charge: 'charge',
 };
+
 const PI_TYPES = {
   succeeded: 'payment_intent.succeeded',
   created: 'payment_intent.created',
@@ -25,8 +31,15 @@ const PI_TYPES = {
   partially_funded: 'payment_intent.partially_funded',
   payment_failed: 'payment_intent.payment_failed',
   requires_action: 'payment_intent.requires_action',
+  charge_failed: 'charge.failed',
 };
+
 const STRIPE_USER_AGENT = 'Stripe/1.0';
+
+const CHARGE_FAIL_REASON = {
+  INSUFFICIENT_FUNDS: 'insufficient_funds',
+  BLOCKED: 'blocked',
+};
 
 const stripe = new StripeLib(process.env.STRIPE_SECRET);
 class Stripe extends PaymentProcessor {
@@ -43,8 +56,7 @@ class Stripe extends PaymentProcessor {
       data: { object },
     } = body;
     let data = { id, type, created };
-
-    if (object.object === OBJ_TYPES.payment_intent) {
+    if ([OBJ_TYPES.payment_intent, OBJ_TYPES.charge].includes(object.object)) {
       const {
         id: txn_id,
         receipt_email,
@@ -58,12 +70,14 @@ class Stripe extends PaymentProcessor {
         customer,
         invoice,
         client_secret,
+        outcome,
+        payment_intent,
       } = object;
 
       data = {
         ...data,
         email: receipt_email,
-        txn_id,
+        txn_id: object.object === OBJ_TYPES.payment_intent ? txn_id : payment_intent,
         status,
         amount: new MathOp(amount).div(100).toString(),
         amount_cents: amount,
@@ -80,6 +94,7 @@ class Stripe extends PaymentProcessor {
         invoice,
         customer,
         client_secret,
+        outcome,
       };
     }
 
@@ -96,7 +111,7 @@ class Stripe extends PaymentProcessor {
     return status === STRIPE_STATUSES.COMPLETED;
   }
 
-  mapPaymentStatus(stripeStatus, webhookType) {
+  mapPaymentStatus(stripeStatus, webhookType, reason) {
     if (this.isCompleted(stripeStatus)) {
       return {
         payment: PAYMENTS_STATUSES.COMPLETED,
@@ -121,16 +136,42 @@ class Stripe extends PaymentProcessor {
           payment: PAYMENTS_STATUSES.CANCELLED,
           event: PAYMENT_EVENT_STATUSES.CANCEL,
         };
-      case STRIPE_STATUSES.FAILED:
+      case STRIPE_STATUSES.FAILED: {
         return {
           payment: PAYMENTS_STATUSES.EXPIRED,
           event: PAYMENT_EVENT_STATUSES.FAILED,
         };
+      }
       case STRIPE_STATUSES.WAITING:
         return {
           payment: PAYMENTS_STATUSES.PENDING,
           event: PAYMENT_EVENT_STATUSES.PENDING,
         };
+      case STRIPE_STATUSES.REQUIRES_ACTION:
+        return {
+          payment: PAYMENTS_STATUSES.USER_ACTION_PENDING,
+          event: PAYMENT_EVENT_STATUSES.USER_ACTION_PENDING,
+        };
+      case STRIPE_STATUSES.CHARGE_FAILED: {
+        if (reason) {
+          if (reason.reason === CHARGE_FAIL_REASON.INSUFFICIENT_FUNDS)
+            return {
+              payment: PAYMENTS_STATUSES.INSUFFICIENT_FUNDS,
+              event: PAYMENT_EVENT_STATUSES.INSUFFICIENT_FUNDS,
+            };
+          if (reason.type === CHARGE_FAIL_REASON.BLOCKED) {
+            return {
+              payment: PAYMENTS_STATUSES.BLOCKED,
+              event: PAYMENT_EVENT_STATUSES.BLOCKED,
+            };
+          }
+        }
+
+        return {
+          payment: PAYMENTS_STATUSES.CHARGE_FAILED,
+          event: PAYMENT_EVENT_STATUSES.CHARGE_FAILED,
+        };
+      }
       default:
         return {
           payment: PAYMENTS_STATUSES.PENDING,

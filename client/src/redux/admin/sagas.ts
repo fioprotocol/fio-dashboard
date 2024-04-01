@@ -77,7 +77,7 @@ export function* exportOrdersDataSuccess(): Generator {
         number: order.number,
         item: order.createdAt ? formatDateToLocale(order.createdAt) : '',
         refProfileName: order.refProfileName || 'FIO App',
-        userEmail: order.userEmail,
+        userEmail: order.userEmail || order.userId,
         paymentProcessor:
           PAYMENT_PROVIDER_LABEL[order.paymentProcessor] || 'N/A',
         total: order.total || 0,

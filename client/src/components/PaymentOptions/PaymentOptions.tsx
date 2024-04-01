@@ -85,10 +85,8 @@ const PAYMENT_OPTIONS_PROPS = {
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.BITPAY,
     hasCobaltBackground: true,
     isTextCentered: true,
-    hideButton:
-      cartItems?.length === 0 ||
-      disabled ||
-      new MathOp(totlaCartUsdcAmount).lte(1),
+    disabled: cartItems?.length === 0 || disabled,
+    hideButton: new MathOp(totlaCartUsdcAmount).lte(1),
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };

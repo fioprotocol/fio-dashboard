@@ -35,7 +35,10 @@ import {
 } from '../../constants/containedFlow';
 import { PURCHASE_RESULTS_STATUS } from '../../constants/purchase';
 
-import { ERROR_TYPES } from '../../constants/errors';
+import {
+  ALREADY_REGISTERED_ERROR_TEXT,
+  ERROR_TYPES,
+} from '../../constants/errors';
 
 import { Order, OrderDetailed } from '../../types';
 import { CreateOrderActionData } from '../../redux/types';
@@ -43,8 +46,6 @@ import { CreateOrderActionData } from '../../redux/types';
 type ContextProps = {
   orderItem: OrderDetailed;
 };
-
-const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
 export const useContext = (
   props: ContextProps,

@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import multipart from 'connect-multiparty';
 import cookieParser from 'cookie-parser';
 
+import logger from './logger.mjs';
+
 export default {
   json: bodyParser.json({
     limit: 1024 * 1024,
@@ -11,6 +13,7 @@ export default {
         JSON.parse(buf);
         req.rawBody = buf.toString('utf8');
       } catch (e) {
+        logger.error(e);
         res.send({
           status: 0,
           error: {

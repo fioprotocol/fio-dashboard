@@ -26,17 +26,20 @@
 }
 
 .wallet {
-  margin-right: 1.875rem;
-
   .title {
     margin-bottom: 0.2rem;
+    & > span {
+      word-break: break-all;
+    }
   }
 
   .balance {
     margin-bottom: 0;
+    margin-top: 10px;
     font-size: 0.875em;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     @include proxima-nova-thin
   }
 }

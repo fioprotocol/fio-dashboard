@@ -37,6 +37,7 @@ export default class Cart extends Base {
   handleUsersFreeCartItems(data: {
     id: string;
     userId?: string;
+    metamaskUserPublicKey?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }
@@ -61,5 +62,8 @@ export default class Cart extends Base {
   }
   createCartFromOrder(orderId: string): Promise<CartResponseType> {
     return this.apiClient.post('cart-create-from-order', { orderId });
+  }
+  getUsersCart(): Promise<CartResponseType> {
+    return this.apiClient.get('get-users-cart');
   }
 }

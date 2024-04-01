@@ -17,6 +17,7 @@ import NotificationBadge from '../../components/NotificationBadge';
 
 import { APP_TITLE } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
+import { METAMASK_UNSUPPORTED_MOBILE_MESSAGE } from '../../constants/errors';
 
 import { useContext as useContextMetamaskLandgingPage } from './MetamaskLandingPageContext';
 
@@ -59,6 +60,11 @@ const accordionContent = [
   {
     title: 'Did the FIO MetaMask Snap pass any security audits?',
     text: 'Yes, it has been audited by Sayfer, an external audit team.',
+  },
+  {
+    title: 'Can I use Snaps on both MetaMask Extension and Mobile App?',
+    text:
+      'Currently, Snaps are only available in the MetaMask browser extension v11.0 and up.',
   },
 ];
 
@@ -135,6 +141,7 @@ const MetamaskLandingPage: React.FC = () => {
   const {
     alternativeLoginError,
     isLoginModalOpen,
+    isMobileDeviceWithMetamask,
     noMetamaskExtention,
     handleConnectClick,
     onLoginModalClose,
@@ -180,6 +187,16 @@ const MetamaskLandingPage: React.FC = () => {
                   messageClassnames={classes.errorMessage}
                 />
               )}
+              {isMobileDeviceWithMetamask && (
+                <NotificationBadge
+                  type={BADGE_TYPES.WARNING}
+                  show={isMobileDeviceWithMetamask}
+                  hasNewDesign
+                  message={METAMASK_UNSUPPORTED_MOBILE_MESSAGE}
+                  className={classes.errorBadge}
+                  messageClassnames={classes.errorMessage}
+                />
+              )}
               <SubmitButton
                 text={
                   <>
@@ -193,6 +210,7 @@ const MetamaskLandingPage: React.FC = () => {
                 }
                 hasAutoHeight
                 hasAutoWidth
+                disabled={isMobileDeviceWithMetamask}
                 className={classes.button}
                 onClick={handleConnectClick}
               />

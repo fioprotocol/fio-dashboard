@@ -36,7 +36,6 @@ type FormValues = {
 };
 
 type Props = {
-  alternativeLoginError: string | null;
   show: boolean;
   onSubmit: (params: FormValues) => void;
   edgeAuthLoading: boolean;
@@ -62,7 +61,6 @@ type Props = {
 
 const LoginForm: React.FC<Props> = props => {
   const {
-    alternativeLoginError,
     show,
     onSubmit,
     edgeAuthLoading,
@@ -83,10 +81,14 @@ const LoginForm: React.FC<Props> = props => {
   const [showCodeModal, toggleCodeModal] = useState(false);
   const [loginParams, setLoginParams] = useState<AutoLoginParams | null>(null);
   const [voucherDate, setVoucherDate] = useState<string | null>(null);
+  const [
+    alternativeLoginError,
+    setAlternativeLoginErrorToParentsComponent,
+  ] = useState<string | null>(null);
 
   const timerRef = useRef(null);
 
-  useEffect(getCachedUsers, [getCachedUsers]);
+  useEffect(() => getCachedUsers(), [getCachedUsers]);
 
   const handlePinLogin = useCallback(() => {
     if (
@@ -235,7 +237,7 @@ const LoginForm: React.FC<Props> = props => {
           type={BADGE_TYPES.RED}
           show={!!alternativeLoginError}
           hasNewDesign
-          message="Sign in with MetaMask has failed. Please try again."
+          message={alternativeLoginError}
           className={classes.errorBadge}
           messageClassnames={classes.errorMessage}
         />
@@ -261,6 +263,9 @@ const LoginForm: React.FC<Props> = props => {
             onClose={onCloseLogin}
             initialValues={loginParams || {}}
             resetLoginFailure={resetLoginFailure}
+            setAlternativeLoginErrorToParentsComponent={
+              setAlternativeLoginErrorToParentsComponent
+            }
           />
         )}
       </ModalComponent>

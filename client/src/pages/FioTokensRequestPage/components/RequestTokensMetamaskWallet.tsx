@@ -67,7 +67,7 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
     mapPubAddress,
   } = submitData || {};
 
-  const requestActionParams = {
+  const requestActionParams: ActionParams = {
     action: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
     account: FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt,
     data: {
@@ -78,9 +78,9 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
         payee_public_address: payeeTokenPublicAddress,
         chain_code: chainCode,
         token_code: tokenCode,
-        memo: memo || '',
-        hash: '',
-        offline_url: '',
+        memo: memo || null,
+        hash: null,
+        offline_url: null,
       },
       tpid: apis.fio.tpid,
       max_fee: DEFAULT_ACTION_FEE_AMOUNT,
@@ -150,9 +150,6 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
       if (!result) return;
 
       try {
-        if (!contactsList?.filter(c => c === payerFioAddress).length)
-          createContact(payerFioAddress);
-
         setRequestResult({
           ...requestResult,
           bundlesCollected:
@@ -166,7 +163,7 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
         toggleIsPublicAddressMappedFinished(true);
       }
     },
-    [contactsList, createContact, payerFioAddress, requestResult],
+    [requestResult],
   );
 
   const onCancelForSecondAction = useCallback(() => {
@@ -175,6 +172,11 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
   }, [requestResult]);
 
   useEffect(() => {
+    if (requestResult) {
+      if (!contactsList?.filter(c => c === payerFioAddress).length)
+        createContact(payerFioAddress);
+    }
+
     if (requestResult && isPublicAddressMappedFinished) {
       onSuccess(requestResult);
       return;
@@ -198,10 +200,13 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
     }
   }, [
     chainCode,
+    contactsList,
     isPublicAddressMappedFinished,
     mapAddressActionParams,
     mapPubAddress,
+    payerFioAddress,
     requestResult,
+    createContact,
     onCancelForSecondAction,
     onSuccess,
     handleMapPublicAddressResults,

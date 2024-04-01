@@ -1,39 +1,9 @@
-import { History } from 'history';
-
 import MathOp from './math';
 import apis from '../api';
 
-import { ROUTES } from '../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
 import { ACTIONS } from '../constants/fio';
 
-import { Order, OrderItem } from '../types';
-
-export const onPurchaseFinish = ({
-  order,
-  isCheckout,
-  history,
-  setProcessing,
-}: {
-  order: Order;
-  isCheckout?: boolean;
-  history: History;
-  setProcessing: (isProcessing: boolean) => void;
-}): void => {
-  setProcessing(false);
-
-  if (isCheckout) {
-    history.push(
-      {
-        pathname: ROUTES.PURCHASE,
-        search: `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${order.number}`,
-      },
-      {
-        orderId: order.id,
-      },
-    );
-  }
-};
+import { OrderItem } from '../types';
 
 export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
   const orderItems: OrderItem[] = [];

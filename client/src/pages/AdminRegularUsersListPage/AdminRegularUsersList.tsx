@@ -83,7 +83,7 @@ const AdminRegularUsersList: React.FC = () => {
                       ? formatDateToLocale(regularUser.createdAt)
                       : null}
                   </th>
-                  <th>{regularUser.email}</th>
+                  <th>{regularUser.email || regularUser.id}</th>
                   <th>{regularUser.status}</th>
                   <th>{regularUser.timeZone}</th>
                 </tr>

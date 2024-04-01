@@ -1,9 +1,9 @@
 import {
   CartItem,
   CartItemType,
-  FioWalletDoublet,
   Prices,
   RefProfile,
+  RegistrationResult,
 } from '../../types';
 
 export type PurchaseValues = {
@@ -13,19 +13,8 @@ export type PurchaseValues = {
 };
 
 export type PurchaseNowTypes = {
-  hasFreeAddress: boolean;
-  cartItems: CartItem[];
-  captchaResult: { success: boolean; verifyParams: {} };
-  paymentWalletPublicKey: string;
-  checkCaptcha: () => void;
-  captchaResolving: boolean;
-  isProcessing: boolean;
-  onFinish: () => void;
-  setProcessing: (isProcessing: boolean) => void;
-  fioWallets: FioWalletDoublet[];
-  prices: Prices;
-  refProfileInfo: RefProfile | null;
   disabled?: boolean;
+  onFinish: (results: RegistrationResult) => void;
 };
 
 export type RegistrationType = {

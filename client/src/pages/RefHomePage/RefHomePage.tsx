@@ -62,6 +62,7 @@ export const RefHomePage: React.FC<Props &
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
   const {
+    connectButtonDisabled,
     disabled,
     gatedChainName,
     hasFioVerificactionError,
@@ -70,6 +71,7 @@ export const RefHomePage: React.FC<Props &
     isGatedFlow,
     isVerified,
     loaderText,
+    refDomainObj,
     showBrowserExtensionErrorModal,
     showProviderWindowError,
     showProviderLoadingIcon,
@@ -139,7 +141,7 @@ export const RefHomePage: React.FC<Props &
     });
 
     const refTitle = addressWidgetContent?.title as string;
-    const refDomain = refProfileInfo?.settings?.domains[0]?.name;
+    const refDomain = refDomainObj?.name;
 
     const domainName = refDomain || 'rulez';
 
@@ -181,11 +183,12 @@ export const RefHomePage: React.FC<Props &
           isAuthenticated={isAuthenticated}
           isDarkWhite
           formatOnFocusOut
-          suffixText={`@${refDomain}`}
+          suffixText={refDomain && `@${refDomain}`}
           showSignInWidget={!isGatedFlow}
         >
           {isGatedFlow && (
             <GateVerificationComponent
+              connectButtonDisabled={connectButtonDisabled}
               gatedChainName={gatedChainName}
               hasFioVerificactionError={hasFioVerificactionError}
               hasVerifiedError={hasVerifiedError}

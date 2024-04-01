@@ -12,6 +12,8 @@ export const QUERY_PARAMS_NAMES = {
   ORDER_NUMBER: 'orderNumber',
   PUBLIC_KEY: 'publicKey',
   REF_CODE: 'refCode',
+  STRIPE_PAYMENT_INTENT: 'payment_intent',
+  STRIPE_REDIRECT_STATUS: 'redirect_status',
   TOKEN: 'token',
   TX_IDS: 'txIds',
   USER_ID: 'userId',

@@ -23,6 +23,10 @@ export class Domain extends Base {
           type: DT.BOOLEAN,
           defaultValue: false,
         },
+        expirationDate: {
+          type: DT.STRING,
+          defaultValue: null,
+        },
       },
       {
         sequelize,
@@ -59,11 +63,12 @@ export class Domain extends Base {
     });
   }
 
-  static format({ id, isDashboardDomain, isPremium, name, rank }) {
+  static format({ id, isDashboardDomain, isPremium, expirationDate, name, rank }) {
     return {
       id,
       isDashboardDomain,
       isPremium,
+      expirationDate,
       name,
       rank,
     };

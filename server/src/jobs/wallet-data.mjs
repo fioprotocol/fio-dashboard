@@ -20,6 +20,7 @@ import { getROE } from '../external/roe.mjs';
 import logger from '../logger.mjs';
 
 import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
+import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/fio.mjs';
 
 const { Op } = Sequelize;
 
@@ -37,7 +38,7 @@ const DOMAIN_EXP_TABLE = {
 };
 const ITEMS_PER_FETCH = parseInt(process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH) || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
-const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
+
 const DOMAIN_EXP_DEBUG_TABLE = {
   expsoon: DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE,
   exp30: DOMAIN_EXP_PERIOD.EXPIRED_30,
@@ -101,12 +102,19 @@ class WalletDataJob extends CommonJob {
       publicWalletData: {
         requests: { sent, received },
         meta,
+        createdAt,
       },
     } = wallet;
 
     let sentRequests = [];
     let receivedRequests = [];
     let changed = false;
+
+    let publicWalletDataDate = null;
+
+    if (createdAt) {
+      publicWalletDataDate = new Date(createdAt);
+    }
 
     try {
       try {
@@ -174,7 +182,16 @@ class WalletDataJob extends CommonJob {
           },
         });
 
-        if (!existingNotification && wallet.User.emailNotificationParams.fioRequest) {
+        const sentFioRequestDate = new Date(newRequest.time_stamp);
+
+        const fioRequestOlderThanPublicDataWalletCreated =
+          publicWalletDataDate && publicWalletDataDate > sentFioRequestDate;
+
+        if (
+          !existingNotification &&
+          wallet.User.emailNotificationParams.fioRequest &&
+          !fioRequestOlderThanPublicDataWalletCreated
+        ) {
           changed = true;
           await this.createSentFioRequestNotification({
             sentRequestItem: newRequest,
@@ -218,9 +235,15 @@ class WalletDataJob extends CommonJob {
               status: fetchedItem.status,
             });
 
+            const receivedFioRequestDate = new Date(fetchedItem.time_stamp);
+
+            const fioRequestOlderThanPublicDataWalletCreated =
+              publicWalletDataDate && publicWalletDataDate > receivedFioRequestDate;
+
             if (
               fetchedItem.status === FIO_REQUEST_STATUSES.PENDING &&
-              wallet.User.emailNotificationParams.fioRequest
+              wallet.User.emailNotificationParams.fioRequest &&
+              !fioRequestOlderThanPublicDataWalletCreated
             )
               await Notification.create({
                 type: Notification.TYPE.INFO,
@@ -319,12 +342,10 @@ class WalletDataJob extends CommonJob {
     const { domain, userId } = domainsWatchlistItem;
 
     if (domain) {
-      const tableRowsParams = fioApi.setTableRowsParams(domain);
+      const domainFromChain = await fioApi.getFioDomain(domain);
 
-      const { rows } = await fioApi.getTableRows(tableRowsParams);
-
-      if (rows.length) {
-        const { expiration } = rows[0];
+      if (domainFromChain) {
+        const { expiration } = domainFromChain;
 
         this.handleDomainExpiration({
           domainExpiration: expiration,
@@ -468,6 +489,8 @@ class WalletDataJob extends CommonJob {
       return;
     }
 
+    const newlyCreated = wallet.publicWalletData && wallet.publicWalletData.newlyCreated;
+
     try {
       let balance = 0;
       try {
@@ -559,7 +582,7 @@ class WalletDataJob extends CommonJob {
             },
           });
         } else {
-          if (wallet.User.emailNotificationParams.fioBalanceChange) {
+          if (wallet.User.emailNotificationParams.fioBalanceChange && !newlyCreated) {
             await Notification.create({
               type: Notification.TYPE.INFO,
               contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
@@ -630,7 +653,7 @@ class WalletDataJob extends CommonJob {
     let domainsWatchlistOffset = 0;
 
     const processWallet = wallet => async () => {
-      if (this.isCancelled) return false;
+      if (this.isCancelled || !wallet.User.email) return false;
 
       if (DEBUG_INFO) this.postMessage(`Process wallet - ${wallet.id}`);
 
@@ -652,6 +675,8 @@ class WalletDataJob extends CommonJob {
         wallet.publicWalletData.cryptoHandles = newItem.cryptoHandles;
         wallet.publicWalletData.domains = newItem.domains;
         wallet.publicWalletData.meta = newItem.meta;
+        wallet.publicWalletData.createdAt = newItem.createdAt;
+        wallet.publicWalletData.newlyCreated = true;
       }
 
       try {

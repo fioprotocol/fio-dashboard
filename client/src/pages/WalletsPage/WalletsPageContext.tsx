@@ -4,6 +4,8 @@ import { useHistory, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { LocationState } from 'history';
 
+import { resetAddWalletSuccess } from '../../redux/account/actions';
+
 import { toggleIsWalletCreated } from '../../redux/account/actions';
 
 import { fioWalletsBalances as fioWalletsBalancesSelector } from '../../redux/fio/selectors';
@@ -13,16 +15,17 @@ import {
   PAGE_TYPES,
   PAGE_TYPES_PROPS,
 } from '../../components/WelcomeComponent/constants';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { USER_PROFILE_TYPE } from '../../constants/profile';
 
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
+import useQuery from '../../hooks/useQuery';
+
 import {
   AllFioNamesAndWalletsProps,
   FioWalletDoublet,
   WalletsBalances,
 } from '../../types';
-import useQuery from '../../hooks/useQuery';
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-import { USER_PROFILE_TYPE } from '../../constants/profile';
 
 const AUTOCLOSE_CREATE_WALLET_TIME = 10000;
 
@@ -93,10 +96,12 @@ export const useContext = (): UseContextProps => {
   const onAdd = useCallback(() => {
     setShowCreateWalletModal(true);
   }, []);
+
   const onWalletCreated = useCallback(() => {
     setShowCreateWalletModal(false);
     setShowWalletCreated(true);
-  }, []);
+    dispatch(resetAddWalletSuccess());
+  }, [dispatch]);
 
   useEffect(() => {
     if (importedWallet) {

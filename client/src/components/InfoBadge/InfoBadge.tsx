@@ -13,6 +13,7 @@ export type InfoBadgeProps = {
   message: string | ReactElement;
   messageOnNewLine?: boolean;
   messageOnLeft?: boolean;
+  messageClassName?: string;
   show: boolean;
   title: string;
   type: string;
@@ -47,6 +48,7 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
     messageOnNewLine,
     messageOnLeft,
     hasBoldMessage,
+    messageClassName,
     ...rest
   } = props;
   return (
@@ -63,6 +65,7 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
             messageOnNewLine && classes.messageOnNewLine,
             messageOnLeft && classes.messageOnLeft,
             classes.message,
+            messageClassName,
           )}
         >
           {message}

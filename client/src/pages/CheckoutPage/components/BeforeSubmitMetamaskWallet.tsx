@@ -10,7 +10,7 @@ import {
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+  TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
@@ -99,7 +99,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
               .toNumber(),
           },
           derivationIndex: paymentWalletData?.derivationIndex,
-          expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+          timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
           id: index,
         };
 

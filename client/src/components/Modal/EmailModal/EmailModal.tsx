@@ -16,7 +16,7 @@ type Props = {
 const EmailModal: React.FC<Props> = props => {
   const { children, show, title, subtitle, onClose } = props;
   return (
-    <Modal show={show} isInfo={true} closeButton={true} onClose={onClose}>
+    <Modal show={show} isIndigo closeButton onClose={onClose}>
       <EmailIcon className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
