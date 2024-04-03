@@ -28,10 +28,6 @@ import { redirectLink } from '../redux/navigation/selectors';
 import { compose } from '../utils';
 import useEffectOnce from '../hooks/general';
 
-import { ROUTES } from '../constants/routes';
-import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
-import { STRIPE_REDIRECT_STATUSES } from '../constants/purchase';
-
 import { RedirectLinkData, Unknown } from '../types';
 
 type Props = {
@@ -114,27 +110,6 @@ const AutoLogout = (
 
   const redirectParams = redirectLink || history.location;
 
-  const enableClearCart = useCallback((): boolean => {
-    const { pathname, query = {} } = redirectParams || {};
-
-    if (pathname !== ROUTES.CHECKOUT) {
-      return true;
-    } else {
-      const {
-        ORDER_NUMBER,
-        STRIPE_PAYMENT_INTENT,
-        STRIPE_REDIRECT_STATUS,
-      } = QUERY_PARAMS_NAMES;
-
-      const hasFailedStripeRedirect =
-        query[ORDER_NUMBER] &&
-        query[STRIPE_PAYMENT_INTENT] &&
-        query[STRIPE_REDIRECT_STATUS] === STRIPE_REDIRECT_STATUSES.FAILED;
-
-      return !hasFailedStripeRedirect;
-    }
-  }, [redirectParams]);
-
   const clearChecksTimeout = () => {
     timeoutRef.current && clearTimeout(timeoutRef.current);
     intervalRef.current && clearInterval(intervalRef.current);
@@ -148,20 +123,10 @@ const AutoLogout = (
   activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath(redirectParams);
-    enableClearCart() &&
-      cartId &&
-      dispatch(clearCart({ id: cartId, isNotify: true }));
+    cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
     logout({ history });
     clearChecksTimeout();
-  }, [
-    cartId,
-    history,
-    redirectParams,
-    enableClearCart,
-    logout,
-    setRedirectPath,
-    dispatch,
-  ]);
+  }, [cartId, history, redirectParams, logout, setRedirectPath, dispatch]);
 
   const activityWatcher = () => {
     let lastActivity = new Date().getTime();
@@ -244,10 +209,7 @@ const AutoLogout = (
     const now = new Date();
     const lastActivity = new Date(lastActivityDate);
 
-    if (
-      now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT &&
-      enableClearCart()
-    ) {
+    if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
       cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
     }
   }, [cartId, dispatch, lastActivityDate]);

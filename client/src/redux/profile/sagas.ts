@@ -28,6 +28,7 @@ import { listNotifications } from '../notifications/actions';
 import {
   handleUsersFreeCartItems,
   deleteItem as deleteCartItem,
+  clearCart,
 } from '../cart/actions';
 import { setRedirectPath } from '../navigation/actions';
 
@@ -261,8 +262,8 @@ export function* logoutSuccess(history: History, api: Api): Generator {
     api.client.removeToken();
 
     const cartId: string | null = yield select(cartIdSelector);
-    if (cartId && action.shouldHandleUsersFreeCart) {
-      yield put<Action>(handleUsersFreeCartItems({ id: cartId }));
+    if (cartId) {
+      yield put<Action>(clearCart({ id: cartId }));
     }
 
     const { redirect } = action;
