@@ -5,12 +5,14 @@ import isEmpty from 'lodash/isEmpty';
 
 import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
 import {
+  clearCart,
   getUsersCart,
   setWallet as setWalletAction,
 } from '../../redux/cart/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
+import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -46,6 +48,7 @@ import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
 import useQuery from '../../hooks/useQuery';
 import { isDomainExpired } from '../../util/fio';
+import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -55,10 +58,15 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import { CART_ITEM_TYPE } from '../../constants/common';
+import { CART_ITEM_TYPE, NOT_FOUND_CODE } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { STRIPE_REDIRECT_STATUSES } from '../../constants/purchase';
+import {
+  NOT_FOUND_CART_BUTTON_TEXT,
+  NOT_FOUND_CART_MESSAGE,
+  NOT_FOUND_CART_TITLE,
+} from '../../constants/cart';
 
 import {
   RegistrationResult,
@@ -280,7 +288,21 @@ export const useContext = (): {
       try {
         result = await apis.orders.create(orderParams);
       } catch (e) {
+        log.error(e);
         setOrderError(e);
+
+        if (e?.fields?.cart === NOT_FOUND_CODE) {
+          dispatch(
+            showGenericErrorModal(
+              NOT_FOUND_CART_MESSAGE,
+              NOT_FOUND_CART_TITLE,
+              NOT_FOUND_CART_BUTTON_TEXT,
+            ),
+          );
+          dispatch(clearCart({ id: cartId }));
+        } else {
+          dispatch(showGenericErrorModal());
+        }
       }
 
       if (result && result.id) {
@@ -294,7 +316,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [cartId, cartItems, history, prices?.nativeFio, roe, setWallet],
+    [cartId, cartItems, dispatch, history, prices?.nativeFio, roe, setWallet],
   );
 
   const cancelOrder = useCallback(() => {
@@ -478,9 +500,21 @@ export const useContext = (): {
         dispatch(setRedirectPath(redirectParams));
       }
 
+      if (!cartItems.length) {
+        dispatch(
+          showGenericErrorModal(
+            NOT_FOUND_CART_MESSAGE,
+            NOT_FOUND_CART_TITLE,
+            NOT_FOUND_CART_BUTTON_TEXT,
+          ),
+        );
+        dispatch(clearCart({ id: cartId }));
+      }
+
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [
+    cartId,
     cartItems.length,
     cartLoading,
     cartLoadingStarted,

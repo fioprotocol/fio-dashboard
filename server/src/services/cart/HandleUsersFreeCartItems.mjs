@@ -24,12 +24,9 @@ export default class HandleUsersFreeCartItems extends Base {
       const cart = await Cart.findById(id);
 
       if (!cart) {
-        throw new X({
-          code: 'NOT_FOUND',
-          fields: {
-            cart: 'NOT_FOUND',
-          },
-        });
+        return {
+          data: { items: [] },
+        };
       }
 
       const dashboardDomains = await Domain.getDashboardDomains();
