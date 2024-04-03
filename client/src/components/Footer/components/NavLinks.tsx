@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 
 import { ROUTES } from '../../../constants/routes';
+import config from '../../../config';
 
 import classes from './NavComponent.module.scss';
 
@@ -19,6 +20,14 @@ export const NavLinks: React.FC<Props> = props => {
 
   return (
     <>
+      <Nav.Link
+        to={config.supportUrl}
+        as={Link}
+        target="_blank"
+        className={classnames(classes.navItem, 'text-white', 'p-0')}
+      >
+        Support
+      </Nav.Link>
       <Nav.Link
         to={ROUTES.PRIVACY_POLICY}
         as={Link}

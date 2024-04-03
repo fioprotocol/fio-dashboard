@@ -1,4 +1,13 @@
 .navItem {
   font-size: 15px;
-  margin-right: 2.5rem;
+}
+
+.navItem:after {
+  content: '|';
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.navItem:last-child:after {
+  display: none;
 }
