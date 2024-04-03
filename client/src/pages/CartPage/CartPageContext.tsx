@@ -46,7 +46,13 @@ import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
+  NOT_FOUND_CODE,
 } from '../../constants/common';
+import {
+  NOT_FOUND_CART_BUTTON_TEXT,
+  NOT_FOUND_CART_MESSAGE,
+  NOT_FOUND_CART_TITLE,
+} from '../../constants/cart';
 
 import { log } from '../../util/general';
 import { isDomainExpired } from '../../util/fio';
@@ -62,10 +68,6 @@ import {
   WalletBalancesItem,
 } from '../../types';
 import { convertFioPrices } from '../../util/prices';
-
-const NOT_FOUND_CART_MESSAGE = `We couldn't find your cart. Please add your items again.`;
-const NOT_FOUND_CART_TITLE = 'Something Went Wrong';
-const NOT_FOUND_CART_BUTTON_TEXT = 'Close';
 
 type UseContextReturnType = {
   cartId: string;
@@ -337,7 +339,7 @@ export const useContext = (): UseContextReturnType => {
     } catch (e) {
       log.error(e);
 
-      if (e?.fields?.cart === 'NOT_FOUND') {
+      if (e?.fields?.cart === NOT_FOUND_CODE) {
         dispatch(
           showGenericErrorModal(
             NOT_FOUND_CART_MESSAGE,
