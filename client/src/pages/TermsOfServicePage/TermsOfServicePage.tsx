@@ -3,6 +3,7 @@ import React from 'react';
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
 import { ROUTES } from '../../constants/routes';
+import config from '../../config';
 
 import classes from '../PrivacyPolicyPage/PrivacyPolicyPage.module.scss';
 
@@ -706,8 +707,8 @@ const TermsOfServicePage: React.FC = () => {
           In order to resolve a complaint regarding the Site or to receive
           further information regarding use of the Site, please contact us by{' '}
           <a
-            href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-            title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+            href={config.supportUrl}
+            title={config.supportUrl}
             target="_blank"
             rel="noreferrer"
           >
