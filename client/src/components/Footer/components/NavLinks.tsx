@@ -21,8 +21,7 @@ export const NavLinks: React.FC<Props> = props => {
   return (
     <>
       <Nav.Link
-        to={config.supportUrl}
-        as={Link}
+        href={config.supportUrl}
         target="_blank"
         className={classnames(classes.navItem, 'text-white', 'p-0')}
       >
