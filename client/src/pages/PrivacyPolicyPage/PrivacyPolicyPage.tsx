@@ -6,6 +6,7 @@ import { AnchorComponent } from '../../components/AnchorComponent';
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
 import { ROUTES } from '../../constants/routes';
+import config from '../../config';
 
 import classes from './PrivacyPolicyPage.module.scss';
 
@@ -45,8 +46,8 @@ const PrivacyPolicyPage: React.FC = () => {
         agree with our policies and practices, please do not use our Services.If
         you still have any questions or concerns, please contact us by{' '}
         <a
-          href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-          title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+          href={config.supportUrl}
+          title={config.supportUrl}
           target="_blank"
           rel="noreferrer"
         >
@@ -144,8 +145,8 @@ const PrivacyPolicyPage: React.FC = () => {
         <strong>How do you exercise your rights?</strong>&nbsp;The easiest way
         to exercise your rights is by by{' '}
         <a
-          href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-          title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+          href={config.supportUrl}
+          title={config.supportUrl}
           target="_blank"
           rel="noreferrer"
         >
@@ -887,8 +888,8 @@ const PrivacyPolicyPage: React.FC = () => {
         delete such data from our records. If you become aware of any data we
         may have collected from children under age 18, please contact us by{' '}
         <a
-          href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-          title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+          href={config.supportUrl}
+          title={config.supportUrl}
           target="_blank"
           rel="noreferrer"
         >
@@ -1005,8 +1006,8 @@ const PrivacyPolicyPage: React.FC = () => {
       <p>
         Upon your{' '}
         <a
-          href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-          title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+          href={config.supportUrl}
+          title={config.supportUrl}
           target="_blank"
           rel="noreferrer"
         >
@@ -1547,8 +1548,8 @@ const PrivacyPolicyPage: React.FC = () => {
         If you have questions or comments about this notice, you may contact us
         by{' '}
         <a
-          href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-          title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+          href={config.supportUrl}
+          title={config.supportUrl}
           target="_blank"
           rel="noreferrer"
         >
@@ -1568,8 +1569,8 @@ const PrivacyPolicyPage: React.FC = () => {
         that information, or delete it. To request to review, update, or delete
         your personal information, please&nbsp; contact us by{' '}
         <a
-          href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
-          title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
+          href={config.supportUrl}
+          title={config.supportUrl}
           target="_blank"
           rel="noreferrer"
         >
