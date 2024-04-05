@@ -500,7 +500,7 @@ export const useContext = (): {
         dispatch(setRedirectPath(redirectParams));
       }
 
-      if (!cartItems.length) {
+      if (!cartItems.length && cartId) {
         dispatch(
           showGenericErrorModal(
             NOT_FOUND_CART_MESSAGE,
