@@ -9,7 +9,6 @@ import {
   getUsersCart,
   setWallet as setWalletAction,
 } from '../../redux/cart/actions';
-import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -551,9 +550,8 @@ export const useContext = (): {
   useEffect(() => {
     return () => {
       setOrder(null);
-      dispatch(loadProfile());
     };
-  }, [dispatch]);
+  }, []);
 
   useEffectOnce(
     () => {
