@@ -29,6 +29,8 @@ type UseContextProps = {
   onItemClick: (publicAddress: PublicAddressItem) => void;
 };
 
+const ANY_TOKEN_CODE = '*';
+
 export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   const [publicAddresses, setPublicAddresses] = useState<PublicAddressItem[]>(
     [],
@@ -40,12 +42,9 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     PublicAddressItem
   >(null);
 
-  const imagesJSON = JSON.stringify(images);
-
   const getPublicAddresses = useCallback(async () => {
     toggleLoading(true);
     try {
-      const imagesParsed: ImageData = JSON.parse(imagesJSON);
       const pubAddressesRes = await apis.fio.getPublicAddresses(fch);
       const pubAddresses = pubAddressesRes?.public_addresses
         .filter(pubAddress => pubAddress.chain_code !== CHAIN_CODES.SOCIALS)
@@ -70,17 +69,37 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
               pubAddress.chainCode.toUpperCase(),
           );
 
-          const tokenCodeName = chainCode?.tokens?.find(
+          const chainCodeToken = chainCode?.tokens?.find(
             tokenCode => tokenCode.tokenCodeId === pubAddress.tokenCode,
           );
 
+          const imageId =
+            pubAddress.chainCode +
+            '-' +
+            (pubAddress.tokenCode === ANY_TOKEN_CODE
+              ? pubAddress.chainCode
+              : pubAddress.tokenCode);
+
+          const tokenCodeName =
+            chainCodeToken?.tokenCodeName ||
+            (pubAddress.tokenCode === ANY_TOKEN_CODE
+              ? null
+              : pubAddress.tokenCode);
+
+          const chainCodeName =
+            chainCode?.chainCodeName || pubAddress.chainCode;
+
+          const tokenCode =
+            pubAddress.tokenCode === ANY_TOKEN_CODE
+              ? null
+              : pubAddress.tokenCode;
+
           return {
-            iconSrc:
-              imagesParsed[pubAddress.chainCode + '-' + pubAddress.tokenCode] ||
-              defaultImageSrc,
-            chainCodeName: chainCode?.chainCodeName || pubAddress.chainCode,
-            tokenCodeName: tokenCodeName?.tokenCodeName || pubAddress.tokenCode,
             ...pubAddress,
+            iconSrc: images[imageId] || defaultImageSrc,
+            tokenCode,
+            tokenCodeName,
+            chainCodeName,
           };
         }),
       );
@@ -89,7 +108,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     }
 
     toggleLoading(false);
-  }, [fch, imagesJSON]);
+  }, [fch, images]);
 
   const onModalClose = useCallback(async () => {
     toggleModal(false);
@@ -103,7 +122,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   }, []);
 
   useEffect(() => {
-    getPublicAddresses();
+    void getPublicAddresses();
   }, [getPublicAddresses]);
 
   useEffect(() => {
@@ -129,7 +148,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       setImages(imagesData);
     };
 
-    importImages();
+    void importImages();
   }, []);
 
   return {

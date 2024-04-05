@@ -29,7 +29,7 @@ export const PublicAddressDetailsComponent: React.FC<Props> = props => {
   } = props;
 
   const onCopy = useCallback(() => {
-    copyToClipboard(publicAddress);
+    void copyToClipboard(publicAddress);
   }, [publicAddress]);
 
   return (
@@ -43,11 +43,17 @@ export const PublicAddressDetailsComponent: React.FC<Props> = props => {
       />
       <InfoBadge
         message={
-          <span>
-            You’re sending {tokenCodeName} ({tokenCode}) on the {chainCodeName}{' '}
-            chain.&nbsp;
-            <span className="boldText">Please make sure this is correct.</span>
-          </span>
+          tokenCode ? (
+            <span>
+              You’re sending {tokenCodeName} ({tokenCode}) on the&nbsp;
+              {chainCodeName} chain.&nbsp;
+              <span className="boldText">
+                Please make sure this is correct.
+              </span>
+            </span>
+          ) : (
+            <span>You can send any {chainCodeName} token to this address.</span>
+          )
         }
         show={chainCodeName !== tokenCodeName}
         title="Chain"
