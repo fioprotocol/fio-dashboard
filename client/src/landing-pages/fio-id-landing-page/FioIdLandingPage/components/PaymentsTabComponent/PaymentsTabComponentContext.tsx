@@ -5,14 +5,11 @@ import { log } from '../../../../../util/general';
 import { sleep } from '../../../../../utils';
 
 import { CHAIN_CODES } from '../../../../../constants/common';
+import { tokensIcons } from '../../../../../constants/tokensIcons';
 
 import defaultImageSrc from '../../../../../assets/images/chain.svg';
 
 import { PublicAddressDoublet } from '../../../../../types';
-
-interface ImageData {
-  [key: string]: string;
-}
 
 export type PublicAddressItem = {
   chainCodeName: string;
@@ -36,79 +33,84 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     [],
   );
   const [loading, toggleLoading] = useState<boolean>(false);
-  const [images, setImages] = useState<ImageData>({});
   const [showModal, toggleModal] = useState<boolean>(false);
   const [activePublicAddress, setActivePublicAddress] = useState<
     PublicAddressItem
   >(null);
 
-  const getPublicAddresses = useCallback(async () => {
-    toggleLoading(true);
-    try {
-      const pubAddressesRes = await apis.fio.getPublicAddresses(fch);
-      const pubAddresses = pubAddressesRes?.public_addresses
-        .filter(pubAddress => pubAddress.chain_code !== CHAIN_CODES.SOCIALS)
-        .map(pubAddress => ({
-          chainCode: pubAddress.chain_code,
-          publicAddress: pubAddress.public_address,
-          tokenCode: pubAddress.token_code,
-        }));
-      const chainCodesList = pubAddresses.map(
-        pubAddress => pubAddress.chainCode,
-      );
+  useEffect(() => {
+    const getPublicAddresses = async () => {
+      toggleLoading(true);
+      try {
+        const pubAddressesRes = await apis.fio.getPublicAddresses(fch);
+        const pubAddresses = pubAddressesRes?.public_addresses
+          .filter(pubAddress => pubAddress.chain_code !== CHAIN_CODES.SOCIALS)
+          .map(pubAddress => ({
+            chainCode: pubAddress.chain_code,
+            publicAddress: pubAddress.public_address,
+            tokenCode: pubAddress.token_code,
+          }));
+        const chainCodesList = pubAddresses.map(
+          pubAddress => pubAddress.chainCode,
+        );
 
-      const selectedChainCodesList = await apis.chainCode.selectedList(
-        chainCodesList,
-      );
+        const selectedChainCodesList = await apis.chainCode.selectedList(
+          chainCodesList,
+        );
 
-      setPublicAddresses(
-        pubAddresses.map(pubAddress => {
-          const chainCode = selectedChainCodesList.find(
-            selectedChainCode =>
-              selectedChainCode.chainCodeId.toUpperCase() ===
-              pubAddress.chainCode.toUpperCase(),
-          );
+        setPublicAddresses(
+          pubAddresses.map(pubAddress => {
+            const chainCode = selectedChainCodesList.find(
+              selectedChainCode =>
+                selectedChainCode.chainCodeId.toUpperCase() ===
+                pubAddress.chainCode.toUpperCase(),
+            );
 
-          const chainCodeToken = chainCode?.tokens?.find(
-            tokenCode => tokenCode.tokenCodeId === pubAddress.tokenCode,
-          );
+            const chainCodeToken = chainCode?.tokens?.find(
+              tokenCode => tokenCode.tokenCodeId === pubAddress.tokenCode,
+            );
 
-          const imageId =
-            pubAddress.chainCode +
-            '-' +
-            (pubAddress.tokenCode === ANY_TOKEN_CODE
-              ? pubAddress.chainCode
-              : pubAddress.tokenCode);
+            const imageId =
+              pubAddress.chainCode +
+              '_' +
+              (pubAddress.tokenCode === ANY_TOKEN_CODE
+                ? pubAddress.chainCode
+                : pubAddress.tokenCode);
 
-          const tokenCodeName =
-            chainCodeToken?.tokenCodeName ||
-            (pubAddress.tokenCode === ANY_TOKEN_CODE
-              ? null
-              : pubAddress.tokenCode);
+            const tokenCodeName =
+              chainCodeToken?.tokenCodeName ||
+              (pubAddress.tokenCode === ANY_TOKEN_CODE
+                ? null
+                : pubAddress.tokenCode);
 
-          const chainCodeName =
-            chainCode?.chainCodeName || pubAddress.chainCode;
+            const chainCodeName =
+              chainCode?.chainCodeName || pubAddress.chainCode;
 
-          const tokenCode =
-            pubAddress.tokenCode === ANY_TOKEN_CODE
-              ? null
-              : pubAddress.tokenCode;
+            const tokenCode =
+              pubAddress.tokenCode === ANY_TOKEN_CODE
+                ? null
+                : pubAddress.tokenCode;
 
-          return {
-            ...pubAddress,
-            iconSrc: images[imageId] || defaultImageSrc,
-            tokenCode,
-            tokenCodeName,
-            chainCodeName,
-          };
-        }),
-      );
-    } catch (error) {
-      log.error(error);
-    }
+            return {
+              ...pubAddress,
+              iconSrc:
+                (tokensIcons as Record<string, string>)[imageId] ??
+                defaultImageSrc,
+              tokenCode,
+              tokenCodeName,
+              chainCodeName,
+            };
+          }),
+        );
+      } catch (error) {
+        log.error(error);
+      }
 
-    toggleLoading(false);
-  }, [fch, images]);
+      toggleLoading(false);
+    };
+
+    void getPublicAddresses();
+  }, [fch]);
 
   const onModalClose = useCallback(async () => {
     toggleModal(false);
@@ -119,36 +121,6 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   const onItemClick = useCallback((publicAddress: PublicAddressItem) => {
     setActivePublicAddress(publicAddress);
     toggleModal(true);
-  }, []);
-
-  useEffect(() => {
-    void getPublicAddresses();
-  }, [getPublicAddresses]);
-
-  useEffect(() => {
-    const importImages = async () => {
-      // @ts-ignore
-      const context = require.context(
-        '../../../../../assets/images/token-icons',
-        false,
-        /\.(png|jpe?g|svg)$/,
-      );
-      const keys = context.keys();
-
-      const imagesData: ImageData = {};
-
-      for (const key of keys) {
-        const imageName = key.replace('./', '') as string;
-        const imageUrl = await import(
-          `../../../../../assets/images/token-icons/${imageName}`
-        );
-        imagesData[imageName.replace(/\.\w+$/, '')] = imageUrl.default;
-      }
-
-      setImages(imagesData);
-    };
-
-    void importImages();
   }, []);
 
   return {
