@@ -123,10 +123,9 @@ const AutoLogout = (
   activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath(redirectParams);
-    cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
     logout({ history });
     clearChecksTimeout();
-  }, [cartId, history, redirectParams, logout, setRedirectPath, dispatch]);
+  }, [history, redirectParams, logout, setRedirectPath]);
 
   const activityWatcher = () => {
     let lastActivity = new Date().getTime();
@@ -206,13 +205,15 @@ const AutoLogout = (
 
   // Empty cart when page loaded
   useEffectOnce(() => {
-    const now = new Date();
-    const lastActivity = new Date(lastActivityDate);
+    if (!initLoad) {
+      const now = new Date();
+      const lastActivity = new Date(lastActivityDate);
 
-    if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-      cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
+      if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
+        cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
+      }
     }
-  }, [cartId, dispatch, lastActivityDate]);
+  }, [cartId, dispatch, initLoad, lastActivityDate]);
 
   useEffect(() => {
     if (tokenCheckResult === null) return;
