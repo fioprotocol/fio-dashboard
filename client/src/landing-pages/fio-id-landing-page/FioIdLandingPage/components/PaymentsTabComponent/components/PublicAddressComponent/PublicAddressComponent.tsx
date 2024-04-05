@@ -6,7 +6,7 @@ import Badge, {
   BADGE_TYPES,
 } from '../../../../../../../components/Badge/Badge';
 
-import { PublicAddressItem } from '../../../PaymentsTabComponent/PaymentsTabComponentContext';
+import { PublicAddressItem } from '../../PaymentsTabComponentContext';
 
 import { ChainComponent } from '../ChainComponent';
 
