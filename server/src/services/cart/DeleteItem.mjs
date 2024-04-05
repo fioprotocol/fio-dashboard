@@ -17,7 +17,7 @@ import {
 export default class DeleteItem extends Base {
   static get validationRules() {
     return {
-      id: ['required', 'string'],
+      id: ['string'],
       itemId: ['required', 'string'],
       prices: [
         {
