@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -24,7 +24,7 @@ import binanceSrc from '../../../assets/images/coin/binance.svg';
 import binanceDarkSrc from '../../../assets/images/coin/binance-dark.svg';
 import ethereumSrc from '../../../assets/images/coin/ethereum.svg';
 import tetherSrc from '../../../assets/images/coin/tether.svg';
-import usdcIconSrc from '../../../assets/images/token-icons/ETH-USDC.svg';
+import { tokensIcons } from '../../../constants/tokensIcons';
 
 const POPULAR_CURRENCIES: AnyObject[] = [
   {
@@ -72,7 +72,7 @@ const POPULAR_CURRENCIES: AnyObject[] = [
     title: 'USDC',
     chainCode: 'ETH',
     tokenCode: 'USDC',
-    tokenLogo: usdcIconSrc,
+    tokenLogo: tokensIcons.ETH_USDC,
     tokenLogoClass: classes.popularListItemLogoUSDC,
     chainLogo: ethereumSrc,
     chainLogoClass: classes.popularListItemLogoETH,
@@ -99,9 +99,10 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
     null,
   );
 
-  const tokens: FormValues['tokens'] = values?.tokens?.length
-    ? values.tokens
-    : [];
+  const tokens = useMemo<FormValues['tokens']>(
+    () => (values?.tokens?.length ? values.tokens : []),
+    [values?.tokens],
+  );
 
   const addTokenRow = useCallback(
     (data: PublicAddressDoublet = null) => {
