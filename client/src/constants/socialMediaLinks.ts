@@ -4,7 +4,7 @@ import FarcasterSrc from '../assets/images/social-network-icons-rounded-dark-lig
 import HiveSrc from '../assets/images/social-network-icons-rounded-dark-light/hive.svg';
 import IntsagramSrc from '../assets/images/social-network-icons-rounded-dark-light/instagram.svg';
 import LinkedinSrc from '../assets/images/social-network-icons-rounded-dark-light/linkedin.svg';
-import MastedonSrc from '../assets/images/social-network-icons-rounded-dark-light/mastedon.svg';
+import MastodonSrc from '../assets/images/social-network-icons-rounded-dark-light/mastodon.svg';
 import NostrSrc from '../assets/images/social-network-icons-rounded-dark-light/nostr.svg';
 import RedditSrc from '../assets/images/social-network-icons-rounded-dark-light/reddit.svg';
 import TelegramSrc from '../assets/images/social-network-icons-rounded-dark-light/telegram.svg';
@@ -18,7 +18,7 @@ import FarcasterRoundedSrc from '../assets/images/social-network-icons-rounded/f
 import HiveRoundedSrc from '../assets/images/social-network-icons-rounded/hive.svg';
 import IntsagramRoundedSrc from '../assets/images/social-network-icons-rounded/instagram.svg';
 import LinkedinRoundedSrc from '../assets/images/social-network-icons-rounded/linkedin.svg';
-import MastedonRoundedSrc from '../assets/images/social-network-icons-rounded/mastedon.svg';
+import MastodonRoundedSrc from '../assets/images/social-network-icons-rounded/mastodon.svg';
 import NostrRoundedSrc from '../assets/images/social-network-icons-rounded/nostr.svg';
 import RedditRoundedSrc from '../assets/images/social-network-icons-rounded/reddit.svg';
 import TelegramRoundedSrc from '../assets/images/social-network-icons-rounded/telegram.svg';
@@ -122,8 +122,8 @@ export const SOCIAL_MEDIA_LINKS: SocialMediaLinkItem[] = [
     link: 'https://www.linkedin.com/company/',
   },
   {
-    iconSrc: MastedonSrc,
-    roundedIconSrc: MastedonRoundedSrc,
+    iconSrc: MastodonSrc,
+    roundedIconSrc: MastodonRoundedSrc,
     tokenName: SOCIAL_MEDIA_IDS.MASTODON,
     name: SOCIAL_MEDIA_NAMES.MASTODON,
     link: 'https://mastodon.social/@',
@@ -168,6 +168,6 @@ export const SOCIAL_MEDIA_LINKS: SocialMediaLinkItem[] = [
     roundedIconSrc: YoutubeRoundedSrc,
     tokenName: SOCIAL_MEDIA_IDS.YOUTUBE,
     name: SOCIAL_MEDIA_NAMES.YOUTUBE,
-    link: 'https://www.youtube.com/channel/',
+    link: 'https://www.youtube.com/@',
   },
 ];
