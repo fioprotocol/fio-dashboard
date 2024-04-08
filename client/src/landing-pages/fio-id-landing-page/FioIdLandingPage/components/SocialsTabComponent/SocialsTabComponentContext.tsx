@@ -1,18 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import apis from '../../../api';
-import useEffectOnce from '../../../../../hooks/general';
 
 import { CHAIN_CODES } from '../../../../../constants/common';
-import {
-  SOCIAL_MEDIA_IDS,
-  SOCIAL_MEDIA_LINKS,
-  SOCIAL_MEDIA_NAMES,
-} from '../../../../../constants/socialMediaLinks';
-
-interface ImageData {
-  [key: string]: string;
-}
+import { SOCIAL_MEDIA_LINKS } from '../../../../../constants/socialMediaLinks';
 
 type SocialLinks = {
   iconSrc: string;
@@ -28,17 +19,13 @@ type UseContextProps = {
 const DEFAULT_LIMIT = 100;
 
 export const useContext = ({ fch }: { fch: string }): UseContextProps => {
-  const [loading, toggeLoading] = useState<boolean>(false);
+  const [loading, toggleLoading] = useState<boolean>(false);
   const [socialLinks, setSocialLinks] = useState<SocialLinks[]>([]);
-  const [images, setImages] = useState<ImageData>({});
   const [offset, setOffset] = useState<number>(0);
-  const [hasMore, toggleHasMore] = useState<boolean>(false);
-
-  const imagesJSON = JSON.stringify(images);
+  const [hasMore, toggleHasMore] = useState<boolean>(true);
 
   const getSocialLinks = useCallback(async () => {
-    toggeLoading(true);
-    const imagesParsed: ImageData = JSON.parse(imagesJSON);
+    toggleLoading(true);
 
     const { more, public_addresses } = await apis.fio.getPublicAddresses(
       fch,
@@ -64,76 +51,21 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       });
 
     if (!socialLinksList?.length) {
-      toggeLoading(false);
+      toggleLoading(false);
       return;
     }
 
     setSocialLinks(
-      socialLinksList.map(socialLinkItem => {
-        let iconSrc = imagesParsed[socialLinkItem.name];
-
-        if (
-          socialLinkItem.name ===
-          SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.DISCORDSER]
-        ) {
-          iconSrc = imagesParsed[SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.DISCORD]];
-        }
-
-        if (
-          socialLinkItem.name ===
-          SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.LINKEDINCO]
-        ) {
-          iconSrc = imagesParsed[SOCIAL_MEDIA_NAMES[SOCIAL_MEDIA_IDS.LINKEDIN]];
-        }
-
-        return {
-          ...socialLinkItem,
-          iconSrc,
-        };
-      }),
+      socialLinksList.map(it => ({ ...it, iconSrc: it.roundedIconSrc })),
     );
-    toggeLoading(false);
-  }, [fch, imagesJSON, offset]);
-
-  useEffectOnce(
-    () => {
-      getSocialLinks();
-    },
-    [getSocialLinks],
-    !!Object.keys(images).length,
-  );
+    toggleLoading(false);
+  }, [fch, offset]);
 
   useEffect(() => {
     if (hasMore) {
-      getSocialLinks();
+      void getSocialLinks();
     }
   }, [hasMore, getSocialLinks]);
-
-  useEffect(() => {
-    const importImages = async () => {
-      // @ts-ignore
-      const context = require.context(
-        '../../../../../assets/images/social-network-icons-rounded',
-        false,
-        /\.(png|jpe?g|svg)$/,
-      );
-      const keys = context.keys();
-
-      const imagesData: ImageData = {};
-
-      for (const key of keys) {
-        const imageName = key.replace('./', '') as string;
-        const imageUrl = await import(
-          `../../../../../assets/images/social-network-icons-rounded/${imageName}`
-        );
-        imagesData[imageName.replace(/\.\w+$/, '')] = imageUrl.default;
-      }
-
-      setImages(imagesData);
-    };
-
-    importImages();
-  }, []);
 
   return { loading, socialLinks };
 };
