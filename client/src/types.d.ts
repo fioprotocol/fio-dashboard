@@ -979,6 +979,7 @@ export type SocialMediaLinkIdProp = typeof SOCIAL_MEDIA_IDS[keyof typeof SOCIAL_
 
 export type SocialMediaLinkItem = {
   iconSrc: string;
+  roundedIconSrc: string;
   tokenName: SocialMediaLinkIdProp;
   name: SocialMediaLinkNameProp;
   link: string;
