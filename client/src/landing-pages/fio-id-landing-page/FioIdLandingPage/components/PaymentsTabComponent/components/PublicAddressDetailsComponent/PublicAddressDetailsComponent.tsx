@@ -42,6 +42,7 @@ export const PublicAddressDetailsComponent: React.FC<Props> = props => {
         tokenCode={tokenCode}
       />
       <InfoBadge
+        className={classes.infoMessage}
         message={
           tokenCode ? (
             <span>
