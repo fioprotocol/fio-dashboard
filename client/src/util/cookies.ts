@@ -8,5 +8,8 @@ export const setCookies = (
   },
 ): void => {
   if (!cookieValue) return Cookies.remove(cookieName, params);
-  Cookies.set(cookieName, cookieValue, params);
+  Cookies.set(cookieName, cookieValue, {
+    ...params,
+    secure: document.location.protocol === 'https:',
+  });
 };
