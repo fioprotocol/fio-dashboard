@@ -5,6 +5,10 @@
 .container {
   width: 100%;
 
+  .infoMessage * {
+    word-break: break-word;
+  }
+
   .fch {
     margin-top: 20px;
     margin-bottom: 0;
