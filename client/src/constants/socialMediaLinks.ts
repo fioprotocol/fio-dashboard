@@ -91,7 +91,7 @@ export const SOCIAL_MEDIA_LINKS: SocialMediaLinkItem[] = [
     roundedIconSrc: FarcasterRoundedSrc,
     tokenName: SOCIAL_MEDIA_IDS.FARCASTER,
     name: SOCIAL_MEDIA_NAMES.FARCASTER,
-    link: '',
+    link: 'https://warpcast.com/',
   },
   {
     iconSrc: HiveSrc,
