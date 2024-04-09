@@ -15,7 +15,7 @@ import {
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_CONTRACT_ACCOUNT_NAMES,
   TRANSACTION_ACTION_NAMES,
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+  TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
 import {
   PAYMENT_PROVIDER,
@@ -31,7 +31,11 @@ import { PurchaseValues, RegistrationType } from '../types';
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, RegistrationResult } from '../../../types';
 
-const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION = 10;
+const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS = 10 * 1000;
+
+const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
+  DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS +
+  TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS;
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -150,9 +154,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex,
             timeoutOffset: hasTheSameItem
-              ? TRANSACTION_DEFAULT_OFFSET_EXPIRATION +
-                DEFAULT_OFFSET_TO_EXISTING_TRANSACTION
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
+              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
             id: index,
           };
 
@@ -181,9 +184,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex,
             timeoutOffset: hasTheSameItem
-              ? TRANSACTION_DEFAULT_OFFSET_EXPIRATION +
-                DEFAULT_OFFSET_TO_EXISTING_TRANSACTION
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
+              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
             id: index,
           };
 
@@ -211,9 +213,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex,
             timeoutOffset: hasTheSameItem
-              ? TRANSACTION_DEFAULT_OFFSET_EXPIRATION +
-                DEFAULT_OFFSET_TO_EXISTING_TRANSACTION
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
+              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
             id: index,
           };
 
@@ -234,7 +235,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .toNumber(),
             },
             derivationIndex,
-            timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+            timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
             id: index,
           };
 
