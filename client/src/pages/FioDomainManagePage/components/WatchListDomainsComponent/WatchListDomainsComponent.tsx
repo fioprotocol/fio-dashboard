@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ReplayIcon from '@mui/icons-material/Replay';
 
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import { ListItemsComponent } from '../../../../components/ManagePageContainer/components/ListItemsComponent';
 import {
   DesktopView,
@@ -12,13 +11,12 @@ import {
 } from '../../../../components/ManagePageContainer/components/ItemsScreenView';
 import Modal from '../../../../components/Modal/Modal';
 import DangerModal from '../../../../components/Modal/DangerModal';
+import { ActionButton } from '../../../../components/common/ActionButton';
 import { DomainItemComponent } from '../../../../components/ManagePageContainer/components/ItemCopmonent';
 import { DomainsWatchlistSettingsItem } from '../../../../components/ManagePageContainer/components/SettingsItem';
 
 import { AddDomainToWatchListModal } from '../AddDomainToWatchListModal';
 import { ListNameTitle } from '../ListNameTitle';
-
-import { useContext } from './WatchListDomainsComponentContext';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -87,7 +85,6 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
     onSettingsOpen,
     openDomainWatchlistModal,
   } = props;
-  const { isSmallDesktop } = useContext();
 
   const listItemsDefaultProps = {
     fioNameList: domainsWatchlistList,
@@ -112,32 +109,16 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
           <ListNameTitle title="Domain Watchlist" className={classes.title} />
           <div className={classes.actionButtons}>
             <Link to={ROUTES.UNWRAP_DOMAIN}>
-              <SubmitButton
-                hasAutoWidth
-                withoutMargin
-                hasNoSidePaddings
-                className={classes.button}
+              <ActionButton
                 title="Unwrap"
-                text={
-                  <>
-                    <ReplayIcon />
-                    {!isSmallDesktop && 'Unwrap Domain'}
-                  </>
-                }
+                icon={<ReplayIcon />}
+                largeScreenTitle="Unwrap Domain"
               />
             </Link>
-            <SubmitButton
-              hasAutoWidth
-              withoutMargin
-              hasNoSidePaddings
-              className={classes.button}
+            <ActionButton
               title="Add to Watchlist"
-              text={
-                <>
-                  <AddCircleIcon />
-                  {!isSmallDesktop && 'Add to Watchlist'}
-                </>
-              }
+              icon={<AddCircleIcon />}
+              largeScreenTitle="Add to Watchlist"
               onClick={openDomainWatchlistModal}
             />
           </div>

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+
+import { ActionButton } from '../../components/common/ActionButton';
 import { ManagePageContainer } from '../../components/ManagePageContainer';
 import Title from '../WalletsPage/components/Title';
 import { WatchListDomainsComponent } from './components/WatchListDomainsComponent';
@@ -38,13 +41,26 @@ const FioDomainManagePage: React.FC = () => {
     onPurchaseButtonClick,
     onDomainWatchlistItemSettingsClose,
     onDomainWatchlistItemSettingsOpen,
+    onBuyDomainAction,
     openDomainWatchlistModal,
   } = useContext();
 
   return (
     <ManagePageContainer
       emptyStateContent={emptyStateContent}
-      listNameTitle={<ListNameTitle title="My Domains" />}
+      listNameTitle={
+        <ListNameTitle
+          title="My Domains"
+          action={
+            <ActionButton
+              icon={<AddShoppingCartIcon />}
+              title="Buy"
+              largeScreenTitle="Buy Domain"
+              onClick={onBuyDomainAction}
+            />
+          }
+        />
+      }
       pageName={PAGE_NAME.DOMAIN}
       showTopBadge={!!successMessage}
       title={<Title title="Manage My FIO Domain" />}
