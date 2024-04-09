@@ -1,42 +1,38 @@
 import { useState } from 'react';
 
 import apis from '../api';
-import { HealthCheckResponse, VarsResponse } from '../api/responses';
 
 import { VARS_KEYS, HEALTH_CHECK_TIME } from '../constants/vars';
+import { HIDDEN_PAGE_SKIP_MESSAGE } from '../constants/errors';
 
 import useEffectOnce from './general';
+import { log } from '../util/general';
 
 export default function useMaintenance() {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const checkHealthAndMaintenance = () => {
-    apis.healthCheck
-      .ping()
-      .then((data: HealthCheckResponse) => {
-        if (!data.success) {
-          setIsMaintenance(true);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!navigator?.onLine) return;
-        setIsMaintenance(true);
-        setIsLoading(false);
-      });
+  const checkHealthAndMaintenance = async () => {
+    try {
+      if (!navigator?.onLine) return;
 
-    apis.vars
-      .getVar(VARS_KEYS.IS_MAINTENANCE)
-      .then((data: VarsResponse) => {
-        setIsMaintenance(data.value === 'false' ? false : true);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        if (!navigator?.onLine) return;
+      const healthResponse = await apis.healthCheck.ping();
+      if (!healthResponse.success) {
         setIsMaintenance(true);
-        setIsLoading(false);
-      });
+      }
+
+      const varsResponse = await apis.vars.getVar(VARS_KEYS.IS_MAINTENANCE);
+      setIsMaintenance(varsResponse.value !== 'false');
+    } catch (error) {
+      log.error(error);
+
+      if (!navigator?.onLine || error?.message === HIDDEN_PAGE_SKIP_MESSAGE)
+        return;
+
+      setIsMaintenance(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffectOnce(() => {

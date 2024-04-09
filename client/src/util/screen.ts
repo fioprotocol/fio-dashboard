@@ -11,3 +11,5 @@ export const getPagePrintScreenDimensions = (params?: {
 
   return PRINT_SCREEN_PARAMS.default;
 };
+
+export const getIsPageVisible = () => document.visibilityState === 'visible';
