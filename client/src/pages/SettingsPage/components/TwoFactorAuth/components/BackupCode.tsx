@@ -65,7 +65,7 @@ const BackupCode: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <p className={classes.title}>2FA Code</p>
+      <p className={classes.title}>Access Code</p>
       <Badge
         show={true}
         type={BADGE_TYPES.WHITE}
