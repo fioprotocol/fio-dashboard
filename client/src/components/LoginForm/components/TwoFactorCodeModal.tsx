@@ -63,7 +63,7 @@ const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
       <OnChange name="backupCode">{handleError}</OnChange>
       <Field
         name="backupCode"
-        placeholder="Enter Backup Code"
+        placeholder="Enter Access Code"
         lowerCased={false}
         component={Input}
         type="text"
@@ -107,13 +107,14 @@ const TwoFactorCodeModal: React.FC<Props> = props => {
       hasDefaultCloseColor={true}
     >
       <div className={classes.codeModalContainer}>
-        <h3 className={classes.title}>Enter Backup Code</h3>
+        <h3 className={classes.title}>Approve Access</h3>
         <p className={classes.subtitle}>
-          Sign into your account using the device you setup 2FA.
+          Please approve access for this device by entering in your access code.
         </p>
         <p className={classes.message}>
-          Go to Settings &gt; 2 Factor Authentication to find the code if you do
-          not already have it recorded.
+          <b>To find your access code:</b> Go to Settings &gt; Access Approval
+          from an approved device to locate the code if you do not already have
+          it recorded.
         </p>
         <Form
           onSubmit={onSubmit}
