@@ -1,0 +1,27 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.button {
+  height: 36px;
+  font-size: 0.8125em;
+  @include sf-pro-display-thin;
+
+  & > div:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  & > div:nth-child(2) svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@include sm {
+  .button {
+    height: auto;
+    min-height: 36px;
+    padding: 5px 10px;
+  }
+}
