@@ -60,6 +60,7 @@ type UseContextProps = {
   };
   warningContent: WarningContentItem[];
   handleAddBundles: (name: string) => void;
+  onBuyFioHandleAction: () => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -261,6 +262,11 @@ export const useContext = (): UseContextProps => {
     !fioAddressesLoading,
   );
 
+  const onBuyFioHandleAction = useCallback(
+    () => history.push(ROUTES.FIO_ADDRESSES_SELECTION),
+    [],
+  );
+
   return {
     emptyStateContent: EMPTY_STATE_CONTENT,
     warningContent: [
@@ -274,5 +280,6 @@ export const useContext = (): UseContextProps => {
       },
     ],
     handleAddBundles,
+    onBuyFioHandleAction,
   };
 };
