@@ -34,18 +34,15 @@ const TwoFactorDangerModal: React.FC<Props> = props => {
       onClose={onClose}
       show={show}
       buttonText="Enter Backup Code"
-      title="Cannot Sign In"
+      title="Approve New Device"
       subtitle={
         <>
-          <span>
-            This device cannot sign in because it does not have the right 2FA
-            code.
-          </span>
+          <span>New Device Approval has been enabled for this account.</span>
           <br />
           <br />
           <span className="boldText">
-            Please approve this request from another logged in device or enter
-            the Backup Code.
+            Please approve this device from a signed-in device. Alternatively
+            you can enter the backup code.
           </span>
         </>
       }
