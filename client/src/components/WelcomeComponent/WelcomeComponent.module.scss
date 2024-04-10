@@ -3,9 +3,10 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  border-radius: 24px;
-  border: 10px solid $vista-white;
-  background-color: $vista-white;
+  border-radius: 14px;
+  border: 1px solid $leadbelcher;
+  padding: 9px;
+  background-color: $white;
   margin-top: 40px;
   width: 100%;
 
@@ -14,7 +15,7 @@
   }
 
   .contentContainer {
-    border-radius: 24px;
+    border-radius: 12px;
     background-image: $black-gradient;
     padding: 20px;
     color: $white;
@@ -22,20 +23,20 @@
     &.noPaddingTop {
       padding-top: 1px;
     }
-  
+
     .title {
       font-size: 1.75em;
       margin: 0;
       @include comfortaa-bold;
     }
-  
+
     .text {
       font-size: 1.0625em;
       margin-top: 20px;
       margin-bottom: 0;
       @include proxima-nova-thin;
     }
-  
+
     .actionItemContainer {
       display: flex;
       flex-direction: column;
