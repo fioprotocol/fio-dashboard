@@ -171,7 +171,7 @@
     "jsonpath": "1.1.1",
     "jsonwebtoken": "8.5.1",
     "jspdf": "2.5.1",
-    "ledgerjs-hw-app-fio": "https://gitpkg.now.sh/vacuumlabs/ledger-fio/ledgerjs-fio?master",
+    "ledgerjs-hw-app-fio": "https://gitpkg.now.sh/vacuumlabs/ledger-fio/ledgerjs-fio#55f2b4332d3b3c44197a51d903750182b2636dac",
     "livr": "2.4.0",
     "livr-extra-rules": "1.3.0",
     "moralis": "2.23.2",
