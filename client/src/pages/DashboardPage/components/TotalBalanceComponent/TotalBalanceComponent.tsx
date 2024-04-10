@@ -35,7 +35,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
   const { loading, totalBalance } = props;
 
   return (
-    <ItemWrapper hasSmallBorderRadius>
+    <ItemWrapper>
       <Badge
         show
         type={BADGE_TYPES.BLACK}
