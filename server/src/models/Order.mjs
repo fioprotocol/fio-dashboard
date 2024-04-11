@@ -20,6 +20,8 @@ import {
   combineOrderItems,
 } from '../utils/order.mjs';
 
+import { convertToIsoString, startDayMask, endDayMask } from '../utils/date.mjs';
+
 import {
   FIO_ADDRESS_DELIMITER,
   FIO_ACTIONS_LABEL,
@@ -202,47 +204,22 @@ export class Order extends Base {
   static async listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
     const { createdAt, dateRange, total: freeStatus, status } = filters;
 
-    const convertDataToIsoString = dateString => {
-      const isoDate = dateString.toISOString();
-      return isoDate.slice(0, 19).replace('T', ' ');
-    };
-    const parseDate = dateString => {
-      const date = new Date(dateString);
-      return convertDataToIsoString(date); // Remove the 'Z' from the end of the ISO string
-    };
-
     const dateRangeConditions = {
       today: {
-        gte: convertDataToIsoString(new Date(new Date().setHours(0, 0, 0, 0))),
+        gte: convertToIsoString({ mask: startDayMask }),
       },
       yesterday: {
-        gte: convertDataToIsoString(
-          new Date(
-            new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date().getDate() - 1),
-          ),
-        ),
-        lt: convertDataToIsoString(new Date(new Date().setHours(0, 0, 0, 0))),
+        gte: convertToIsoString({ mask: startDayMask, offset: [0, 0, -1] }),
+        lt: convertToIsoString({ mask: endDayMask, offset: [0, 0, -1] }),
       },
       last7days: {
-        gte: convertDataToIsoString(
-          new Date(
-            new Date(new Date().setHours(0, 0, 0, 0)).setDate(new Date().getDate() - 7),
-          ),
-        ),
+        gte: convertToIsoString({ mask: startDayMask, offset: [0, 0, -7] }),
       },
       lastMonth: {
-        gte: convertDataToIsoString(
-          new Date(
-            new Date(new Date().setHours(0, 0, 0, 0)).setMonth(new Date().getMonth() - 1),
-          ),
-        ),
+        gte: convertToIsoString({ mask: startDayMask, offset: [0, -1] }),
       },
       lastHalfOfYear: {
-        gte: convertDataToIsoString(
-          new Date(
-            new Date(new Date().setHours(0, 0, 0, 0)).setMonth(new Date().getMonth() - 6),
-          ),
-        ),
+        gte: convertToIsoString({ mask: startDayMask, offset: [0, -6] }),
       },
     };
 
@@ -251,12 +228,8 @@ export class Order extends Base {
     const customDateFilter =
       dateRange && dateRange.startDate && dateRange.endDate
         ? {
-            gte: parseDate(
-              new Date(new Date(dateRange.startDate).setUTCHours(0, 0, 0, 0)),
-            ),
-            lt: parseDate(
-              new Date(new Date(dateRange.endDate).setUTCHours(23, 59, 59, 999)),
-            ),
+            gte: convertToIsoString({ ms: dateRange.startDate, mask: startDayMask }),
+            lt: convertToIsoString({ ms: dateRange.endDate, mask: endDayMask }),
           }
         : {};
 
