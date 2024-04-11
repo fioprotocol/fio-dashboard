@@ -106,11 +106,11 @@ const WrapStatus: React.FC<PageProps> = props => {
       ...filters,
       createdAt: null,
       dateRange: {
-        startDate: new Date(dateRange[0]).setHours(0, 0, 0, 0),
-        endDate: new Date(dateRange[1]).setHours(23, 59, 59, 999),
+        startDate: startDate.setHours(0, 0, 0, 0),
+        endDate: endDate.setHours(23, 59, 59, 999),
       },
     }));
-  }, [dateRange]);
+  }, [startDate, endDate]);
 
   const handleChangeDateFilter = useCallback(
     (newValue: string) => {
