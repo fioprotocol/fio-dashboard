@@ -1,4 +1,4 @@
-export const convertToIsoString = ({ ms = 0, mask = [], offset = [] }) => {
+export const convertToIsoString = ({ ms = Date.now(), mask = [], offset = [] } = {}) => {
   const date = new Date(ms);
 
   const [mYear, mMonth, mDate, mHours, mMinutes, mSeconds, mMs] = Array(7)
@@ -8,19 +8,17 @@ export const convertToIsoString = ({ ms = 0, mask = [], offset = [] }) => {
     .fill(0)
     .map((emp, i) => (i < offset.length ? offset[i] || emp : emp));
 
-  const utcMs = Date.UTC(
-    (typeof mYear === 'number' ? mYear : date.getUTCFullYear()) + oYear,
-    (typeof mMonth === 'number' ? mMonth : date.getUTCMonth()) + oMonth,
-    (typeof mDate === 'number' ? mDate : date.getUTCDate()) + oDate,
-    (typeof mHours === 'number' ? mHours : date.getUTCHours()) + oHours,
-    (typeof mMinutes === 'number' ? mMinutes : date.getUTCMinutes()) + oMinutes,
-    (typeof mSeconds === 'number' ? mSeconds : date.getUTCSeconds()) + oSeconds,
-    (typeof mMs === 'number' ? mMs : date.getUTCMilliseconds()) + oMs,
+  const resolvedDate = new Date(
+    (typeof mYear === 'number' ? mYear : date.getFullYear()) + oYear,
+    (typeof mMonth === 'number' ? mMonth : date.getMonth()) + oMonth,
+    (typeof mDate === 'number' ? mDate : date.getDate()) + oDate,
+    (typeof mHours === 'number' ? mHours : date.getHours()) + oHours,
+    (typeof mMinutes === 'number' ? mMinutes : date.getMinutes()) + oMinutes,
+    (typeof mSeconds === 'number' ? mSeconds : date.getSeconds()) + oSeconds,
+    (typeof mMs === 'number' ? mMs : date.getMilliseconds()) + oMs,
   );
 
-  const utcDate = new Date(utcMs);
-
-  return utcDate
+  return resolvedDate
     .toISOString()
     .slice(0, 19)
     .replace('T', ' ');
