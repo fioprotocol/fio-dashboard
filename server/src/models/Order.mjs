@@ -201,7 +201,7 @@ export class Order extends Base {
     return this.count(query);
   }
 
-  static async listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
+  static listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
     const { createdAt, dateRange, total: freeStatus, status } = filters;
 
     const dateRangeConditions = {
@@ -273,15 +273,14 @@ export class Order extends Base {
           }
           ${dateFilter.gte ? `AND o."createdAt" >= '${dateFilter.gte}'` : ``}
           ${dateFilter.lt ? `AND o."createdAt" < '${dateFilter.lt}'` : ``}
-        ORDER BY o.id DESC
+        ORDER BY o."createdAt" DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}
       `;
-    const orders = await this.sequelize.query(query, {
+
+    return this.sequelize.query(query, {
       type: this.sequelize.QueryTypes.SELECT,
     });
-
-    return orders;
   }
 
   static async orderInfo(id, useFormatDetailed) {
