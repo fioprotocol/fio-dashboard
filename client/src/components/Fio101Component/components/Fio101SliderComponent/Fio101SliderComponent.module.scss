@@ -9,6 +9,7 @@
   align-items: center;
 
   .mediaContainer {
+    flex: 1;
     width: 100%;
     max-width: 335px;
 
@@ -62,6 +63,7 @@
   }
 
   .textContainer {
+    flex: 2;
     margin-top: 30px;
     display: flex;
     flex-direction: column;
@@ -94,7 +96,7 @@
 
 @include lg {
   .container {
-    padding: 50px 50px 83px 70px;
+    padding: 50px;
     flex-direction: row;
     align-items: center;
     gap: 50px;

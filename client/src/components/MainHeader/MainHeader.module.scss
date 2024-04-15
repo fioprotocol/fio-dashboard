@@ -140,6 +140,11 @@
   align-items: center;
   gap: 10px;
 
+  .buttonIcon {
+    width: 24px;
+    height: 24px;
+  }
+
   .buttonText {
     margin: 0;
     flex-shrink: 0;
@@ -171,6 +176,16 @@
   &:hover {
     background-color: $iris;
     border-color: $iris;
+  }
+
+  &.alternativeWallet {
+    background-color: $black;
+    border-color: $black;
+  }
+
+  &.alternativeWallet:hover {
+    background-color: $black-medium;
+    border-color: $black-medium;
   }
 }
 
@@ -213,7 +228,7 @@
           margin: 0;
           flex-shrink: 0;
         }
-      
+
         .buttonLoader {
           width: auto;
           & > span {
