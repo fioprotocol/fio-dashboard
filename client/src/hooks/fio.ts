@@ -84,6 +84,7 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
   const hasOneFCH = fioAddresses?.length === 1;
 
   const hasDomains = fioDomains?.length > 0;
+  const hasAddresses = fioAddresses?.length > 0;
   const hasOneDomain = fioDomains?.length === 1;
   const hasExpiredDomains = fioDomains.some(fioDomain =>
     isDomainExpired(fioDomain.name, fioDomain.expiration),
@@ -156,6 +157,7 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     isFioWalletsBalanceLoading,
     hasAffiliate,
     hasDomains,
+    hasAddresses,
     hasExpiredDomains,
     hasFCH,
     hasOneDomain,

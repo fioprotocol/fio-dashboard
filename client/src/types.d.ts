@@ -996,6 +996,7 @@ export type AllFioNamesAndWalletsProps = {
   isFioWalletsBalanceLoading: boolean;
   hasAffiliate: boolean;
   hasDomains: boolean;
+  hasAddresses: boolean;
   hasExpiredDomains: boolean;
   hasFCH: boolean;
   hasOneDomain: boolean;

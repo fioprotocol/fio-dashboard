@@ -1,6 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import superagent from 'superagent';
+
+import { useHistory } from 'react-router';
 
 import { isNewUser as isNewUserSelector } from '../../redux/profile/selectors';
 import {
@@ -21,6 +29,7 @@ import useEffectOnce from '../../hooks/general';
 import { log } from '../../util/general';
 
 import { DefaultWelcomeComponentProps } from './types';
+import { ROUTES } from '../../constants/routes';
 
 const MAIN_CONTENT = {
   USER_IS_BACK: {
@@ -32,14 +41,21 @@ const MAIN_CONTENT = {
     text:
       'There’s loads that you can do with FIO, here are just a few things to start with.',
   },
+  USER_NOT_HAVE_ADDRESS: {
+    title: 'Welcome!',
+    text: 'We see you don’t have a FIO Handle, so let’s start there!',
+  },
 };
 
 type UseContextProps = {
   text: string;
   title: string;
+  fioAddress: string;
   firstWelcomeItem: WelcomeItemProps | null;
   secondWelcomeItem: WelcomeItemProps | null;
   loading: boolean;
+  handleGetFioAddress: () => void;
+  handleChangeFioAddress: ChangeEventHandler<HTMLInputElement>;
 };
 
 export const useContext = (
@@ -51,6 +67,7 @@ export const useContext = (
     firstFromListFioWalletPublicKey,
     hasAffiliate,
     hasDomains,
+    hasAddresses,
     hasExpiredDomains,
     hasFCH,
     hasNoEmail,
@@ -63,6 +80,9 @@ export const useContext = (
     pageType = PAGE_TYPES.ALL,
     userType,
   } = props;
+
+  const history = useHistory();
+
   const isNewUser = useSelector(isNewUserSelector);
 
   const [
@@ -76,6 +96,7 @@ export const useContext = (
   ] = useState<WelcomeItemProps | null>(null);
 
   const [APY, setAPY] = useState<string>(null);
+  const [fioAddress, setFioAddress] = useState<string>(null);
 
   const hasRecoveryQuestions = useSelector(hasRecoveryQuestionsSelector);
   const isPinEnabled = useSelector(isPinEnabledSelector);
@@ -94,7 +115,7 @@ export const useContext = (
   }, []);
 
   useEffectOnce(() => {
-    getAPY();
+    void getAPY();
   }, []);
 
   useEffect(() => {
@@ -277,16 +298,35 @@ export const useContext = (
     userType,
   ]);
 
-  const content = isNewUser
-    ? MAIN_CONTENT.USER_IS_FIRST_TIME
-    : MAIN_CONTENT.USER_IS_BACK;
+  const handleGetFioAddress = useCallback(() => {
+    history.push(
+      `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress}`,
+    );
+  }, [history, fioAddress]);
+
+  const handleChangeFioAddress = useCallback(
+    (evt: ChangeEvent<HTMLInputElement>) => {
+      setFioAddress(evt.target.value);
+    },
+    [setFioAddress],
+  );
+
+  const content = hasAddresses
+    ? isNewUser
+      ? MAIN_CONTENT.USER_IS_FIRST_TIME
+      : MAIN_CONTENT.USER_IS_BACK
+    : MAIN_CONTENT.USER_NOT_HAVE_ADDRESS;
+
   const { text, title } = content;
 
   return {
     text,
     title,
+    fioAddress,
     firstWelcomeItem,
     secondWelcomeItem,
     loading,
+    handleGetFioAddress,
+    handleChangeFioAddress,
   };
 };

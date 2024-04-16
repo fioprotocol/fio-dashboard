@@ -50,6 +50,7 @@ type UseContextProps = {
     firstFromListFioWalletPublicKey: string;
     hasAffiliate: boolean;
     hasDomains: boolean;
+    hasAddresses: boolean;
     hasExpiredDomains: boolean;
     hasFCH: boolean;
     hasNoEmail: boolean;
