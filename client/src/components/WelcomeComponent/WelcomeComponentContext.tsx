@@ -299,7 +299,9 @@ export const useContext = (
   ]);
 
   const handleGetFioAddress = useCallback(() => {
-    history.push(ROUTES.FIO_ADDRESSES_SELECTION + `?address=${fioAddress}`);
+    history.push(
+      `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress}`,
+    );
   }, [history, fioAddress]);
 
   const handleChangeFioAddress = useCallback(

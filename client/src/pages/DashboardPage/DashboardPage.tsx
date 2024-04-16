@@ -6,11 +6,11 @@ import { FioRequestActionComponent } from '../../components/FioRequestActionComp
 import { ItemWrapper } from './components/ItemWrapper';
 import { TotalBalanceComponent } from './components/TotalBalanceComponent';
 import { WelcomeComponent } from '../../components/WelcomeComponent';
+import { BigDealComponent } from '../../components/BigDealComponent';
 
 import { useContext } from './DashboardPageContext';
 
 import classes from './DashboardPage.module.scss';
-import { BigDealComponent } from '../../components/BigDealComponent';
 
 const DashboardPage: React.FC = () => {
   const {
