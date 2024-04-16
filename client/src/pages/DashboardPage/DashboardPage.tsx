@@ -6,6 +6,7 @@ import { FioRequestActionComponent } from '../../components/FioRequestActionComp
 import { ItemWrapper } from './components/ItemWrapper';
 import { TotalBalanceComponent } from './components/TotalBalanceComponent';
 import { WelcomeComponent } from '../../components/WelcomeComponent';
+import { BigDealComponent } from '../../components/BigDealComponent';
 
 import { useContext } from './DashboardPageContext';
 
@@ -15,6 +16,7 @@ const DashboardPage: React.FC = () => {
   const {
     fio101ComponentProps,
     isDesktop,
+    hasAddresses,
     totalBalance,
     totalBalanceLoading,
     welcomeComponentProps,
@@ -33,7 +35,7 @@ const DashboardPage: React.FC = () => {
           hasFullWidth={!isDesktop}
           isShrinked
         >
-          <FioRequestActionComponent />
+          {hasAddresses ? <FioRequestActionComponent /> : <BigDealComponent />}
         </ItemWrapper>
       </div>
       <Fio101Component {...fio101ComponentProps} />

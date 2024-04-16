@@ -14,6 +14,7 @@ type UseContextProps = {
     noMappedPubAddresses: boolean;
   };
   isDesktop: boolean;
+  hasAddresses: boolean;
   totalBalance: WalletBalancesItem;
   totalBalanceLoading: boolean;
   welcomeComponentProps: {
@@ -22,6 +23,7 @@ type UseContextProps = {
     firstFromListFioWalletPublicKey: string;
     hasAffiliate: boolean;
     hasDomains: boolean;
+    hasAddresses: boolean;
     hasExpiredDomains: boolean;
     hasFCH: boolean;
     hasNoStakedTokens: boolean;
@@ -66,6 +68,7 @@ export const useContext = (): UseContextProps => {
   return {
     fio101ComponentProps,
     isDesktop,
+    hasAddresses: allFioNamesAndWallets.hasAddresses,
     totalBalance,
     totalBalanceLoading: isFioWalletsBalanceLoading,
     welcomeComponentProps: { ...allFioNamesAndWallets, withoutMarginTop: true },

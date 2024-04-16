@@ -9,6 +9,9 @@ import Loader from '../../Loader/Loader';
 
 import { ROUTES } from '../../../constants/routes';
 
+import metamaskSrc from '../../../assets/images/metamask.svg';
+import operaSrc from '../../../assets/images/opera.svg';
+
 import classes from '../MainHeader.module.scss';
 
 type ActionButtonsProps = {
@@ -117,6 +120,10 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
     );
   }
 
+  const isOperaWallet = window.ethereum?.isOpera;
+  const isMetamaskWallet = window.ethereum?.isMetaMask;
+  const isAlternativeWallet = isMetamaskWallet || isOperaWallet;
+
   return (
     <div
       className={classnames(
@@ -144,12 +151,31 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
 
       <Nav.Link href="#" className="pr-0">
         <Button
-          className={classnames(classes.button, !isMenuOpen && 'ml-4')}
+          className={classnames(classes.button, {
+            'ml-4': !isMenuOpen,
+            [classes.alternativeWallet]: isAlternativeWallet,
+          })}
           onClick={logout}
           size="lg"
           disabled={edgeAuthLoading}
         >
-          <p className={classes.buttonText}>Sign Out </p>
+          {isMetamaskWallet && (
+            <img
+              alt="MetaMask logo"
+              src={metamaskSrc}
+              className={classes.buttonIcon}
+            />
+          )}
+          {isOperaWallet && (
+            <img
+              alt="Opera logo"
+              src={operaSrc}
+              className={classes.buttonIcon}
+            />
+          )}
+          <p className={classes.buttonText}>
+            {isAlternativeWallet ? 'Disconnect' : 'Sign Out'}{' '}
+          </p>
           {(edgeAuthLoading || profileLoading) && (
             <Loader isWhite className={classes.buttonLoader} />
           )}

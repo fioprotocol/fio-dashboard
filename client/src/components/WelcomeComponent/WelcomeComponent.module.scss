@@ -15,26 +15,77 @@
   }
 
   .contentContainer {
-    border-radius: 12px;
-    background-image: $black-gradient;
+    border-radius: 8px;
+    background-color: $dynamic-black;
     padding: 20px;
     color: $white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
 
     &.noPaddingTop {
       padding-top: 1px;
     }
 
+    .content {
+      flex: 2;
+    }
+
     .title {
-      font-size: 1.75em;
+      font-size: 1.75rem;
+      line-height: 2.25rem;
       margin: 0;
-      @include comfortaa-bold;
+      @include proxima-nova-bold;
     }
 
     .text {
-      font-size: 1.0625em;
-      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.25rem;
+      margin-top: 15px;
       margin-bottom: 0;
-      @include proxima-nova-thin;
+      @include inter-bold;
+    }
+
+    .form {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      max-width: 420px;
+    }
+
+    .inputWrapper {
+      flex: 1;
+      margin-right: 12px;
+    }
+
+    .input {
+      width: 100%;
+      height: 45px;
+      padding-left: 20px;
+      outline: transparent;
+      border: 1px solid $light-indigo;
+      border-radius: 24px;
+    }
+
+    .input::placeholder {
+      color: $light-indigo;
+      opacity: 1;
+      font-style: italic;
+      @include proxima-nova-semibold
+    }
+
+    .promo {
+      flex: 1;
+      max-width: 180px;
+    }
+
+    .promo > img {
+      width: 100%;
+      height: 100%;
     }
 
     .actionItemContainer {
@@ -46,10 +97,20 @@
   }
 }
 
+@include tablet {
+  .container {
+    .contentContainer {
+      .promo {
+        display: none;
+      }
+    }
+  }
+}
+
 @include lg {
   .container {
     .contentContainer {
-      padding: 40px 100px 40px 40px;
+      padding: 40px;
       height: 100%;
 
       &.noPaddingTop {
@@ -57,12 +118,13 @@
       }
 
       .title {
-        font-size: 2.375em;
+        font-size: 2.5rem;
+        line-height: 3.5rem;
       }
 
       .text {
-        font-size: 10px;
-        font-size: 1em;
+        font-size: 1rem;
+        line-height: 1.25rem;
       }
 
       .actionItemContainer {
