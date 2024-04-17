@@ -74,7 +74,7 @@ export const WelcomeComponent: FC<Props> = props => {
                 <div className={classes.inputWrapper}>
                   <input
                     className={classes.input}
-                    placeholder="Enter your handle names"
+                    placeholder="Enter your handle name"
                     value={fioAddress}
                     onChange={handleChangeFioAddress}
                   />

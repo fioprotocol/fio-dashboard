@@ -4,6 +4,8 @@ import { Button, Nav } from 'react-bootstrap';
 import SettingsIcon from '@mui/icons-material/Settings';
 import classnames from 'classnames';
 
+import { useSelector } from 'react-redux';
+
 import Navigation from '../../Navigation';
 import Loader from '../../Loader/Loader';
 
@@ -13,6 +15,8 @@ import metamaskSrc from '../../../assets/images/metamask.svg';
 import operaSrc from '../../../assets/images/opera.svg';
 
 import classes from '../MainHeader.module.scss';
+import { USER_PROFILE_TYPE } from '../../../constants/profile';
+import { user as userSelector } from '../../../redux/profile/selectors';
 
 type ActionButtonsProps = {
   edgeAuthLoading: boolean;
@@ -95,6 +99,8 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
     closeMenu,
   } = props;
 
+  const user = useSelector(userSelector);
+
   if (onlyAuth) {
     return (
       <div
@@ -120,8 +126,12 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
     );
   }
 
-  const isOperaWallet = window.ethereum?.isOpera;
-  const isMetamaskWallet = window.ethereum?.isMetaMask;
+  const isOperaWallet =
+    window.ethereum?.isOpera &&
+    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
+  const isMetamaskWallet =
+    window.ethereum?.isMetaMask &&
+    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
   const isAlternativeWallet = isMetamaskWallet || isOperaWallet;
 
   return (
