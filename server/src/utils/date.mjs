@@ -18,10 +18,7 @@ export const convertToIsoString = ({ ms = Date.now(), mask = [], offset = [] } =
     (typeof mMs === 'number' ? mMs : date.getMilliseconds()) + oMs,
   );
 
-  return resolvedDate
-    .toISOString()
-    .slice(0, 19)
-    .replace('T', ' ');
+  return resolvedDate.toISOString();
 };
 
 export const startDayMask = [null, null, null, 0, 0, 0, 1];
