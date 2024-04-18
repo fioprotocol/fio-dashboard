@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import apis from '../api';
@@ -44,48 +44,58 @@ export function useWebsocket({
     [ws],
   );
 
+  const createWebSocketConnection = useCallback(() => {
+    let query = `?${QUERY_PARAMS_NAMES.ENDPOINT}=${endpoint}&${queryString}`;
+    if (AUTH_REQ_ENDPOINTS[endpoint]) {
+      query += `&${QUERY_PARAMS_NAMES.TOKEN}=${apis.client.token}`;
+    }
+    setWs(new WebSocket(`${config.wsBaseUrl}ws${query}`));
+  }, [endpoint, queryString]);
+
+  const connectWebSocket = useCallback(() => {
+    // websocket onopen event listener
+    ws.onopen = () => {
+      onOpen && onOpen();
+    };
+
+    // websocket onclose event listener
+    ws.onclose = (e: Error & { reason: string; wasClean: boolean }) => {
+      if (e.wasClean) {
+        onClose && onClose(e);
+      } else {
+        createWebSocketConnection();
+      }
+    };
+
+    // websocket onerror event listener
+    ws.onerror = (err: Error) => {
+      log.error(`Socket encountered error: ${err.message}. Closing socket`);
+
+      onError && onError(err.message);
+
+      ws.close();
+    };
+
+    // websocket onerror event listener
+    ws.onmessage = (evt: { data: string }) => {
+      const message = JSON.parse(evt.data);
+      onMessage && onMessage(message.data);
+    };
+  }, [createWebSocketConnection, onClose, onError, onMessage, onOpen, ws]);
+
   useEffectOnce(
     () => {
-      let query = `?${QUERY_PARAMS_NAMES.ENDPOINT}=${endpoint}&${queryString}`;
-      if (AUTH_REQ_ENDPOINTS[endpoint]) {
-        query += `&${QUERY_PARAMS_NAMES.TOKEN}=${apis.client.token}`;
-      }
-      setWs(new WebSocket(`${config.wsBaseUrl}ws${query}`));
+      createWebSocketConnection();
     },
-    [endpoint, isAuth, queryString],
+    [],
     authCondition,
   );
 
-  useEffectOnce(
-    () => {
-      // websocket onopen event listener
-      ws.onopen = () => {
-        onOpen && onOpen();
-      };
-
-      // websocket onclose event listener
-      ws.onclose = (e: Error & { reason: string }) => {
-        onClose && onClose(e);
-      };
-
-      // websocket onerror event listener
-      ws.onerror = (err: Error) => {
-        log.error(`Socket encountered error: ${err.message}. Closing socket`);
-
-        onError && onError(err.message);
-
-        ws.close();
-      };
-
-      // websocket onerror event listener
-      ws.onmessage = (evt: { data: string }) => {
-        const message = JSON.parse(evt.data);
-        onMessage && onMessage(message.data);
-      };
-    },
-    [ws],
-    !!ws,
-  );
+  useEffect(() => {
+    if (ws && authCondition) {
+      connectWebSocket();
+    }
+  }, [authCondition, connectWebSocket, ws]);
 
   return ws;
 }
