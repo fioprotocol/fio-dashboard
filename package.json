@@ -49,8 +49,7 @@
     },
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-error-overlay": "6.0.9",
-    "@ledgerhq/hw-transport": "6.27.6"
+    "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
     "@redux-devtools/extension": "3.2.3",
@@ -121,8 +120,8 @@
     "@fortawesome/free-regular-svg-icons": "5.15.4",
     "@fortawesome/free-solid-svg-icons": "5.15.4",
     "@fortawesome/react-fontawesome": "0.2.0",
-    "@ledgerhq/hw-transport": "6.27.6",
-    "@ledgerhq/hw-transport-webusb": "6.27.6",
+    "@ledgerhq/hw-transport": "6.30.6",
+    "@ledgerhq/hw-transport-webusb": "6.28.6",
     "@lemoncode/fonk": "1.5.4",
     "@lemoncode/fonk-final-form": "2.3.4",
     "@lemoncode/fonk-is-url-validator": "1.0.0",
