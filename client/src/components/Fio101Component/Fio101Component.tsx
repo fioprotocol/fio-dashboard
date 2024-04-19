@@ -4,11 +4,12 @@ import classnames from 'classnames';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 
+import FioLoader from '../common/FioLoader/FioLoader';
+
 import { Fio101SliderComponent } from './components/Fio101SliderComponent';
 import { useContext } from './Fio101ComponentContext';
 
 import classes from './Fio101Component.module.scss';
-import FioLoader from '../common/FioLoader/FioLoader';
 
 type Props = {
   firstFromListFioAddressName: string;
@@ -84,7 +85,6 @@ export const Fio101Component: React.FC<Props> = props => {
                   {...fio101Item}
                   key={fio101Item.title}
                   useMobileView={useMobileView}
-                  loading={loading}
                 />
               ))}
             </Slider>
