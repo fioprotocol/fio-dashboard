@@ -32,14 +32,19 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import classes from './styles/AdminOrdersListPage.module.scss';
 
+type OrderListFilter = Partial<OrderDetails> & {
+  timezoneOffset: number;
+  dateRange: { startDate: number; endDate: number } | null;
+};
+
 type Props = {
   loading: boolean;
-  getOrdersList: (limit?: number, offset?: number) => Promise<void>;
-  exportOrdersData: (
-    filters: Partial<OrderDetails> & {
-      dateRange: { startDate: number; endDate: number } | null;
-    },
-  ) => void;
+  getOrdersList: (
+    limit: number,
+    offset: number,
+    filters: OrderListFilter,
+  ) => Promise<void>;
+  exportOrdersData: (filters: OrderListFilter) => void;
   adminUser: AdminUser;
   ordersList: OrderDetails[];
   orderItem: OrderDetails;
@@ -61,11 +66,8 @@ const AdminOrdersPage: React.FC<Props> = props => {
   const location = useLocation<{ orderId?: string }>();
   const orderId = location?.state?.orderId;
 
-  const [filters, setFilters] = useState<
-    Partial<OrderDetails> & {
-      dateRange: { startDate: number; endDate: number } | null;
-    }
-  >({
+  const [filters, setFilters] = useState<OrderListFilter>({
+    timezoneOffset: new Date().getTimezoneOffset(),
     createdAt: null,
     dateRange: null,
     status: null,

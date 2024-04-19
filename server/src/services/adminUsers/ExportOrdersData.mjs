@@ -17,6 +17,7 @@ export default class ExportOrdersData extends Base {
         {
           nested_object: {
             createdAt: 'string',
+            timezoneOffset: 'integer',
             dateRange: [
               {
                 nested_object: {

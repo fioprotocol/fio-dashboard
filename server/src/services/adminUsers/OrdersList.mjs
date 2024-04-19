@@ -15,6 +15,7 @@ export default class OrdersList extends Base {
         {
           nested_object: {
             createdAt: 'string',
+            timezoneOffset: 'integer',
             dateRange: [
               {
                 nested_object: {

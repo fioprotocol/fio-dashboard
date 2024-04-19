@@ -202,24 +202,32 @@ export class Order extends Base {
   }
 
   static listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
-    const { createdAt, dateRange, total: freeStatus, status } = filters;
+    const { createdAt, dateRange, timezoneOffset, total: freeStatus, status } = filters;
 
     const dateRangeConditions = {
       today: {
-        gte: convertToIsoString({ mask: startDayMask }),
+        gte: convertToIsoString({ mask: startDayMask, timezoneOffset }),
       },
       yesterday: {
-        gte: convertToIsoString({ mask: startDayMask, offset: [0, 0, -1] }),
-        lt: convertToIsoString({ mask: endDayMask, offset: [0, 0, -1] }),
+        gte: convertToIsoString({
+          mask: startDayMask,
+          offset: [0, 0, -1],
+          timezoneOffset,
+        }),
+        lt: convertToIsoString({ mask: endDayMask, offset: [0, 0, -1], timezoneOffset }),
       },
       last7days: {
-        gte: convertToIsoString({ mask: startDayMask, offset: [0, 0, -7] }),
+        gte: convertToIsoString({
+          mask: startDayMask,
+          offset: [0, 0, -7],
+          timezoneOffset,
+        }),
       },
       lastMonth: {
-        gte: convertToIsoString({ mask: startDayMask, offset: [0, -1] }),
+        gte: convertToIsoString({ mask: startDayMask, offset: [0, -1], timezoneOffset }),
       },
       lastHalfOfYear: {
-        gte: convertToIsoString({ mask: startDayMask, offset: [0, -6] }),
+        gte: convertToIsoString({ mask: startDayMask, offset: [0, -6], timezoneOffset }),
       },
     };
 
@@ -228,8 +236,16 @@ export class Order extends Base {
     const customDateFilter =
       dateRange && dateRange.startDate && dateRange.endDate
         ? {
-            gte: convertToIsoString({ ms: dateRange.startDate, mask: startDayMask }),
-            lt: convertToIsoString({ ms: dateRange.endDate, mask: endDayMask }),
+            gte: convertToIsoString({
+              ms: dateRange.startDate,
+              mask: startDayMask,
+              timezoneOffset,
+            }),
+            lt: convertToIsoString({
+              ms: dateRange.endDate,
+              mask: endDayMask,
+              timezoneOffset,
+            }),
           }
         : {};
 

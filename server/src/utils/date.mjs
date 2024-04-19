@@ -1,4 +1,9 @@
-export const convertToIsoString = ({ ms = Date.now(), mask = [], offset = [] } = {}) => {
+export const convertToIsoString = ({
+  ms = Date.now(),
+  mask = [],
+  offset = [],
+  timezoneOffset = 0,
+} = {}) => {
   const date = new Date(ms);
 
   const [mYear, mMonth, mDate, mHours, mMinutes, mSeconds, mMs] = Array(7)
@@ -8,12 +13,17 @@ export const convertToIsoString = ({ ms = Date.now(), mask = [], offset = [] } =
     .fill(0)
     .map((emp, i) => (i < offset.length ? offset[i] || emp : emp));
 
+  const serverTimezoneOffset = new Date().getTimezoneOffset();
+
   const resolvedDate = new Date(
     (typeof mYear === 'number' ? mYear : date.getFullYear()) + oYear,
     (typeof mMonth === 'number' ? mMonth : date.getMonth()) + oMonth,
     (typeof mDate === 'number' ? mDate : date.getDate()) + oDate,
     (typeof mHours === 'number' ? mHours : date.getHours()) + oHours,
-    (typeof mMinutes === 'number' ? mMinutes : date.getMinutes()) + oMinutes,
+    (typeof mMinutes === 'number' ? mMinutes : date.getMinutes()) +
+      oMinutes -
+      serverTimezoneOffset +
+      timezoneOffset,
     (typeof mSeconds === 'number' ? mSeconds : date.getSeconds()) + oSeconds,
     (typeof mMs === 'number' ? mMs : date.getMilliseconds()) + oMs,
   );
