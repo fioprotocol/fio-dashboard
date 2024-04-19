@@ -4,6 +4,7 @@ import logoAnimation from './logo-animation.json';
 
 type Props = {
   wrap?: boolean;
+  wrapCenter?: boolean;
 };
 
 const FioLoader: React.FC<Props> = props => {
@@ -17,11 +18,15 @@ const FioLoader: React.FC<Props> = props => {
     />
   );
 
-  if (props.wrap) {
+  if (props.wrap || props.wrapCenter) {
     return (
       <div
         className="d-flex justify-content-center align-items-center align-self-center"
-        style={{ width: '70px', height: '70px' }}
+        style={
+          props.wrapCenter
+            ? { width: '100%', height: '100%' }
+            : { width: '70px', height: '70px' }
+        }
       >
         {renderLoader()}
       </div>

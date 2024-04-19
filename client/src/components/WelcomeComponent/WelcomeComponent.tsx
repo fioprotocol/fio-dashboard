@@ -2,6 +2,7 @@ import { FC } from 'react';
 import classnames from 'classnames';
 
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import FioLoader from '../common/FioLoader/FioLoader';
 
 import { WelcomeComponentItem } from './components/WelcomeComponentItem';
 
@@ -50,7 +51,9 @@ export const WelcomeComponent: FC<Props> = props => {
           noPaddingTop && classes.noPaddingTop,
         )}
       >
-        {hasAddresses ? (
+        {loading ? (
+          <FioLoader wrapCenter />
+        ) : hasAddresses ? (
           <div className={classes.content}>
             {!onlyActions && <h2 className={classes.title}>{title}</h2>}
             {!onlyActions && <p className={classes.text}>{text}</p>}

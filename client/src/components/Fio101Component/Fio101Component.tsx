@@ -8,6 +8,7 @@ import { Fio101SliderComponent } from './components/Fio101SliderComponent';
 import { useContext } from './Fio101ComponentContext';
 
 import classes from './Fio101Component.module.scss';
+import FioLoader from '../common/FioLoader/FioLoader';
 
 type Props = {
   firstFromListFioAddressName: string;
@@ -63,25 +64,31 @@ export const Fio101Component: React.FC<Props> = props => {
       )}
       <div className={classes.sliderContainer}>
         <div className={classes.sliderComponentContainer}>
-          <Slider
-            arrows
-            dots={isDesktop && !useMobileView}
-            appendDots={dots => <ul className={classes.sliderDots}>{dots}</ul>}
-            dotsClass={classes.sliderDots}
-            customPaging={() => <div className={classes.dot}></div>}
-            prevArrow={<PrevArrow useMobileView={useMobileView} />}
-            nextArrow={<NextArrow useMobileView={useMobileView} />}
-            infinite
-          >
-            {fio101Items.map(fio101Item => (
-              <Fio101SliderComponent
-                {...fio101Item}
-                key={fio101Item.title}
-                useMobileView={useMobileView}
-                loading={loading}
-              />
-            ))}
-          </Slider>
+          {loading ? (
+            <FioLoader wrapCenter />
+          ) : (
+            <Slider
+              arrows
+              dots={isDesktop && !useMobileView}
+              appendDots={dots => (
+                <ul className={classes.sliderDots}>{dots}</ul>
+              )}
+              dotsClass={classes.sliderDots}
+              customPaging={() => <div className={classes.dot}></div>}
+              prevArrow={<PrevArrow useMobileView={useMobileView} />}
+              nextArrow={<NextArrow useMobileView={useMobileView} />}
+              infinite
+            >
+              {fio101Items.map(fio101Item => (
+                <Fio101SliderComponent
+                  {...fio101Item}
+                  key={fio101Item.title}
+                  useMobileView={useMobileView}
+                  loading={loading}
+                />
+              ))}
+            </Slider>
+          )}
         </div>
       </div>
     </div>
