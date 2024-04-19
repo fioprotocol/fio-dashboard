@@ -13,7 +13,7 @@ type Props = {
   alternativeLoginError: string;
   isLoginModalOpen: boolean;
   isMobileDeviceWithMetamask: boolean;
-  noMetamaskExtention: boolean;
+  noMetamaskExtension: boolean;
   handleConnectClick: () => void;
   onLoginModalClose: () => void;
 };
@@ -26,7 +26,7 @@ export const useContext = (): Props => {
     onLoginModalClose,
   } = useContextMetamaskLogin();
 
-  const [noMetamaskExtention, toggleNoMetamaskExtention] = useState<boolean>(
+  const [noMetamaskExtension, toggleNoMetamaskExtension] = useState<boolean>(
     false,
   );
 
@@ -37,7 +37,7 @@ export const useContext = (): Props => {
       connectMetamask();
       dispatch(setRedirectPath({ pathname: ROUTES.HOME }));
     } else {
-      toggleNoMetamaskExtention(true);
+      toggleNoMetamaskExtension(true);
     }
   }, [connectMetamask, dispatch]);
 
@@ -45,7 +45,7 @@ export const useContext = (): Props => {
     alternativeLoginError,
     isLoginModalOpen,
     isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,
-    noMetamaskExtention,
+    noMetamaskExtension,
     handleConnectClick,
     onLoginModalClose,
   };
