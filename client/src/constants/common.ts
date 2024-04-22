@@ -779,6 +779,6 @@ export const ORDER_DATE_FILTER_OPTIONS = [
     id: 'custom',
     name: 'Custom Dates',
   },
-];
+] as const;
 
 export const NOT_FOUND_CODE = 'NOT_FOUND';
