@@ -226,6 +226,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           fioAddresses={walletFioAddresses}
           onSubmit={onSend}
           fee={feePrice}
+          roe={roe}
           obtDataOn={true}
           contactsList={contactsList}
           initialValues={initialValues}

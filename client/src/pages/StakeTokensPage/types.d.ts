@@ -29,6 +29,7 @@ export type InitialValues = {
 export type StakeTokensProps = {
   fioAddresses: FioAddressDoublet[];
   fee: FeePrice;
+  roe: number;
   balance: WalletBalances;
   loading: boolean;
   initialValues?: InitialValues;

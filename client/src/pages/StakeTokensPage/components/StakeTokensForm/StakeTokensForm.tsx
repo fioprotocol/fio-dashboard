@@ -3,8 +3,7 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
-import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
-import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Dropdown from '../../../../components/Input/Dropdown';
 import AmountInput from '../../../../components/Input/AmountInput';
@@ -32,6 +31,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     loading,
     fioAddresses,
     fee,
+    roe,
     initialValues,
     isWalletFioAddressesLoading,
     balance,
@@ -262,7 +262,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               isWhite={true}
             />
 
-            <p className={classes.transactionTitle}>Transaction cost</p>
+            <p className={classes.transactionTitle}>Transaction Details</p>
             <InfoBadge
               className={classes.infoBadgeError}
               type={BADGE_TYPES.ERROR}
@@ -283,19 +283,19 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                 </>
               }
             />
-            {!selectedAddress || notEnoughBundles ? (
-              <PriceBadge
-                title="Fees"
-                type={BADGE_TYPES.BLACK}
-                costFio={fee.fio}
-                costUsdc={fee.usdc}
-              />
-            ) : (
-              <BundledTransactionBadge
-                bundles={BUNDLES_TX_COUNT.STAKE}
-                remaining={selectedAddress.remaining}
-              />
-            )}
+            <TransactionDetails
+              roe={roe}
+              feeInFio={fee.nativeFio}
+              amountInFio={apis.fio.amountToSUF(amount)}
+              bundles={
+                selectedAddress && !notEnoughBundles
+                  ? {
+                      fee: BUNDLES_TX_COUNT.STAKE,
+                      remaining: selectedAddress.remaining,
+                    }
+                  : null
+              }
+            />
 
             <SubmitButton
               text="Stake FIO Tokens"

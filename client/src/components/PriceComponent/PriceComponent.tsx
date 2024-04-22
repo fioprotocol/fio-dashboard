@@ -37,18 +37,21 @@ export const PriceComponent: React.FC<Props> = props => {
   if (isNew) {
     return (
       <>
-        {loading ? (
-          <LoaderComponent loaderComponent={loaderComponent} />
-        ) : (
-          <Amount value={costFio} />
-        )}{' '}
-        FIO /{' '}
+        <span className="boldText">
+          {loading ? (
+            <LoaderComponent loaderComponent={loaderComponent} />
+          ) : (
+            <Amount value={costFio} />
+          )}
+          &nbsp;FIO
+        </span>
+        &nbsp;(
         {loading ? (
           <LoaderComponent loaderComponent={loaderComponent} />
         ) : (
           <Amount value={costUsdc} />
-        )}{' '}
-        USDC
+        )}
+        &nbsp;USDC)
       </>
     );
   } else {
