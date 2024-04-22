@@ -1,0 +1,33 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  color: $baltic-sea;
+
+  .name {
+    @include proxima-nova-bold;
+    word-break: break-all;
+    margin-right: 15px;
+    font-weight: bold;
+  }
+
+  .value {
+    margin: 0 1.875rem 0 auto;
+    flex-shrink: 0;
+  }
+}
+
+@include sm {
+  .item {
+    flex-direction: column;
+
+    .value {
+      margin: 10px 0 0 0;
+    }
+  }
+}
