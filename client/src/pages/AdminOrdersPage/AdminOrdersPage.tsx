@@ -26,20 +26,32 @@ import {
   ORDER_STATUS_FILTER_OPTIONS,
 } from '../../constants/common';
 
-import { AdminUser, OrderDetails } from '../../types';
+import {
+  AdminUser,
+  DateRange,
+  OrderDetails,
+  OrderListFilters,
+} from '../../types';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 import classes from './styles/AdminOrdersListPage.module.scss';
+import {
+  localDateToUtc,
+  endDayMask,
+  startDayMask,
+  DateRangeConditions,
+  dateRangeConditions,
+} from '../../util/date';
 
 type Props = {
   loading: boolean;
-  getOrdersList: (limit?: number, offset?: number) => Promise<void>;
-  exportOrdersData: (
-    filters: Partial<OrderDetails> & {
-      dateRange: { startDate: number; endDate: number } | null;
-    },
-  ) => void;
+  getOrdersList: (
+    limit: number,
+    offset: number,
+    filters: OrderListFilters,
+  ) => Promise<void>;
+  exportOrdersData: (filters: OrderListFilters) => void;
   adminUser: AdminUser;
   ordersList: OrderDetails[];
   orderItem: OrderDetails;
@@ -61,15 +73,12 @@ const AdminOrdersPage: React.FC<Props> = props => {
   const location = useLocation<{ orderId?: string }>();
   const orderId = location?.state?.orderId;
 
-  const [filters, setFilters] = useState<
-    Partial<OrderDetails> & {
-      dateRange: { startDate: number; endDate: number } | null;
-    }
-  >({
-    createdAt: null,
+  const [dateRange, setDateRange] = useState<[Date, Date]>([null, null]);
+  const [createdAt, setCreatedAt] = useState<DateRangeConditions>(null);
+  const [filters, setFilters] = useState<OrderListFilters>({
     dateRange: null,
     status: null,
-    total: '',
+    freeStatus: '',
   });
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState<boolean>(
     false,
@@ -77,10 +86,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
     null,
   );
-  const [dateRange, setDateRange] = useState<[Date, Date]>([null, null]);
   const [showDatePicker, toggleShowDatePicker] = useState<boolean>(false);
-
-  const [startDate, endDate] = dateRange;
 
   const openDatePicker = useCallback(() => {
     toggleShowDatePicker(true);
@@ -88,9 +94,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
 
   const closeDatePicker = useCallback(() => {
     toggleShowDatePicker(false);
+    setCreatedAt(null);
     setFilters(filters => ({
       ...filters,
-      createdAt: null,
       dateRange: null,
     }));
   }, []);
@@ -102,38 +108,61 @@ const AdminOrdersPage: React.FC<Props> = props => {
     }));
   }, []);
 
-  const handleChangeAmountFilter = useCallback((newValue: string) => {
+  const handleChangeFreeStatusFilter = useCallback((newValue: string) => {
     setFilters(filters => ({
       ...filters,
-      total: newValue,
+      freeStatus: newValue,
     }));
   }, []);
 
+  const [startDate, endDate] = dateRange;
+
+  const handleSetDateRangeFilter = useCallback(() => {
+    setCreatedAt(null);
+
+    const dateRange: DateRange = {};
+
+    if (startDate) {
+      dateRange.startDate = localDateToUtc({
+        ms: startDate.getTime(),
+        mask: startDayMask,
+      });
+    }
+
+    if (endDate) {
+      dateRange.endDate = localDateToUtc({
+        ms: endDate.getTime(),
+        mask: endDayMask,
+      });
+    }
+
+    setFilters(filters => ({
+      ...filters,
+      dateRange,
+    }));
+  }, [startDate, endDate]);
+
   const handleChangeDateFilter = useCallback(
-    (newValue: string) => {
-      if (newValue === 'custom') {
-        openDatePicker();
-      } else {
+    (newValue: DateRangeConditions | '' | 'custom') => {
+      if (newValue === '') {
+        setCreatedAt(null);
         setFilters(filters => ({
           ...filters,
-          createdAt: newValue,
           dateRange: null,
+        }));
+      } else if (newValue === 'custom') {
+        setCreatedAt(null);
+        openDatePicker();
+      } else {
+        setCreatedAt(newValue);
+        setFilters(filters => ({
+          ...filters,
+          dateRange: dateRangeConditions[newValue],
         }));
       }
     },
     [openDatePicker],
   );
-
-  const setFilterWithDateRange = useCallback(() => {
-    setFilters(filters => ({
-      ...filters,
-      createdAt: null,
-      dateRange: {
-        startDate: new Date(dateRange[0]).setHours(0, 0, 0, 0),
-        endDate: new Date(dateRange[1]).setHours(23, 59, 59, 999),
-      },
-    }));
-  }, [dateRange]);
 
   const { paginationComponent, range } = usePagination(
     getOrdersList,
@@ -194,9 +223,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
             <div className="d-flex align-items-center mr-2">
               Filter Amount:&nbsp;
               <CustomDropdown
-                value={filters.total}
+                value={filters.freeStatus}
                 options={ORDER_AMOUNT_FILTER_OPTIONS}
-                onChange={handleChangeAmountFilter}
+                onChange={handleChangeFreeStatusFilter}
                 isDark
                 withoutMarginBottom
                 fitContentWidth
@@ -225,14 +254,12 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     selectsRange={true}
                     startDate={startDate}
                     endDate={endDate}
-                    onChange={update => {
-                      setDateRange(update);
-                    }}
+                    onChange={setDateRange}
                     isClearable={true}
                   />
                   <Button
                     className="btn btn-primary ml-2 mr-2"
-                    onClick={setFilterWithDateRange}
+                    onClick={handleSetDateRangeFilter}
                   >
                     Set Date
                   </Button>
@@ -242,9 +269,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
                 </div>
               ) : (
                 <CustomDropdown
-                  value={filters.createdAt}
-                  options={ORDER_DATE_FILTER_OPTIONS}
-                  onChange={handleChangeDateFilter}
+                  value={createdAt}
+                  options={[...ORDER_DATE_FILTER_OPTIONS]}
+                  onChange={handleChangeDateFilter as (id: string) => void}
                   isDark
                   withoutMarginBottom
                   fitContentWidth

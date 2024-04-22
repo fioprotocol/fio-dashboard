@@ -836,6 +836,14 @@ export type OrderDetails = {
   updatedAt: string;
 };
 
+export type DateRange = { startDate?: number; endDate?: number };
+
+export type OrderListFilters = {
+  status: number;
+  freeStatus: string;
+  dateRange: DateRange | null;
+};
+
 export type UserOrderDetails = {
   id: string;
   number: string;
