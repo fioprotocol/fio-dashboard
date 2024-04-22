@@ -20,8 +20,6 @@ import {
   combineOrderItems,
 } from '../utils/order.mjs';
 
-import { convertToIsoString, startDayMask, endDayMask } from '../utils/date.mjs';
-
 import {
   FIO_ADDRESS_DELIMITER,
   FIO_ACTIONS_LABEL,
@@ -202,58 +200,14 @@ export class Order extends Base {
   }
 
   static listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
-    const { createdAt, dateRange, timezoneOffset, total: freeStatus, status } = filters;
+    const { dateRange = {}, freeStatus, status } = filters;
 
-    const dateRangeConditions = {
-      today: {
-        gte: convertToIsoString({ mask: startDayMask, timezoneOffset }),
-      },
-      yesterday: {
-        gte: convertToIsoString({
-          mask: startDayMask,
-          offset: [0, 0, -1],
-          timezoneOffset,
-        }),
-        lt: convertToIsoString({ mask: endDayMask, offset: [0, 0, -1], timezoneOffset }),
-      },
-      last7days: {
-        gte: convertToIsoString({
-          mask: startDayMask,
-          offset: [0, 0, -7],
-          timezoneOffset,
-        }),
-      },
-      lastMonth: {
-        gte: convertToIsoString({ mask: startDayMask, offset: [0, -1], timezoneOffset }),
-      },
-      lastHalfOfYear: {
-        gte: convertToIsoString({ mask: startDayMask, offset: [0, -6], timezoneOffset }),
-      },
-    };
-
-    const predefinedDateFilter = createdAt ? dateRangeConditions[createdAt] : {};
-
-    const customDateFilter =
-      dateRange && dateRange.startDate && dateRange.endDate
-        ? {
-            gte: convertToIsoString({
-              ms: dateRange.startDate,
-              mask: startDayMask,
-              timezoneOffset,
-            }),
-            lt: convertToIsoString({
-              ms: dateRange.endDate,
-              mask: endDayMask,
-              timezoneOffset,
-            }),
-          }
-        : {};
-
-    const dateFilter = createdAt
-      ? { ...predefinedDateFilter }
-      : dateRange
-      ? { ...customDateFilter }
-      : {};
+    const createdAtGte = dateRange.startDate
+      ? new Date(dateRange.startDate).toISOString()
+      : undefined;
+    const createdAtLt = dateRange.endDate
+      ? new Date(dateRange.endDate).toISOString()
+      : undefined;
 
     const query = `
         SELECT 
@@ -287,8 +241,8 @@ export class Order extends Base {
                 : `AND o."total"::numeric > 0`
               : ``
           }
-          ${dateFilter.gte ? `AND o."createdAt" >= '${dateFilter.gte}'` : ``}
-          ${dateFilter.lt ? `AND o."createdAt" < '${dateFilter.lt}'` : ``}
+          ${createdAtGte ? `AND o."createdAt" >= '${createdAtGte}'` : ``}
+          ${createdAtLt ? `AND o."createdAt" < '${createdAtLt}'` : ``}
         ORDER BY o."createdAt" DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}

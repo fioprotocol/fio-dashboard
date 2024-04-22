@@ -16,8 +16,6 @@ export default class ExportOrdersData extends Base {
       filters: [
         {
           nested_object: {
-            createdAt: 'string',
-            timezoneOffset: 'integer',
             dateRange: [
               {
                 nested_object: {
@@ -27,7 +25,7 @@ export default class ExportOrdersData extends Base {
               },
             ],
             status: 'integer',
-            total: 'integer',
+            freeStatus: 'integer',
           },
         },
       ],
