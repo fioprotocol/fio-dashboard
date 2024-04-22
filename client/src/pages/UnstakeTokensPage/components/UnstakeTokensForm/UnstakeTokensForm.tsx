@@ -3,8 +3,6 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
-import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
-import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Dropdown from '../../../../components/Input/Dropdown';
 import AmountInput from '../../../../components/Input/AmountInput';
@@ -27,9 +25,10 @@ import { UnstakeTokensProps, StakeTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../../StakeTokensPage/styles/StakeTokensForm.module.scss';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
-  const { loading, fioAddresses, fee, initialValues, balance } = props;
+  const { loading, fioAddresses, fee, roe, initialValues, balance } = props;
 
   const walletStakedTokens = apis.fio.sufToAmount(
     balance?.staked?.nativeFio || 0,
@@ -198,7 +197,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               label="Unstake Amount"
             />
 
-            <p className={classes.transactionTitle}>Transaction cost</p>
+            <p className={classes.transactionTitle}>Transaction Details</p>
 
             <LowBalanceBadge
               hasLowBalance={notEnoughStaked}
@@ -243,19 +242,19 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                 />
               </>
             )}
-            {!selectedAddress || notEnoughBundles ? (
-              <PriceBadge
-                title="Fees"
-                type={BADGE_TYPES.BLACK}
-                costFio={fee.fio}
-                costUsdc={fee.usdc}
-              />
-            ) : (
-              <BundledTransactionBadge
-                bundles={BUNDLES_TX_COUNT.UNSTAKE}
-                remaining={selectedAddress.remaining}
-              />
-            )}
+            <TransactionDetails
+              roe={roe}
+              feeInFio={fee.nativeFio}
+              amountInFio={apis.fio.amountToSUF(amount)}
+              bundles={
+                selectedAddress && !notEnoughBundles
+                  ? {
+                      fee: BUNDLES_TX_COUNT.UNSTAKE,
+                      remaining: selectedAddress.remaining,
+                    }
+                  : null
+              }
+            />
             <SubmitButton
               text="Unstake FIO Tokens"
               disabled={submitDisabled}

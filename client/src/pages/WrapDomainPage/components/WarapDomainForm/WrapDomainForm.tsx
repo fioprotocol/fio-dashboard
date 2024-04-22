@@ -6,11 +6,9 @@ import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
-import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
@@ -101,12 +99,11 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
               label="Public Address"
             />
 
-            <p className={classes.transactionTitle}>Transaction Fees</p>
-            <PriceBadge
-              title="Fees"
-              type={BADGE_TYPES.BLACK}
-              costFio={unitedFee.fio}
-              costUsdc={unitedFee.usdc}
+            <p className={classes.transactionTitle}>Transaction Details</p>
+            <TransactionDetails
+              roe={roe}
+              feeInFio={fee.nativeFio}
+              amountInFio={fee.nativeFio}
             />
 
             <div className={classes.additionalSubInfo}>
