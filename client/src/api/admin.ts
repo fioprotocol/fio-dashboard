@@ -19,7 +19,7 @@ import {
   UsersDetailsResponse,
   UsersListResponse,
 } from './responses';
-import { FioApiUrl, OrderDetails, RefProfile } from '../types';
+import { FioApiUrl, OrderListFilters, RefProfile } from '../types';
 
 export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
@@ -63,13 +63,13 @@ export default class Admin extends Base {
   ordersList(
     limit: number,
     offset: number,
-    filters?: Partial<OrderDetails> & { startDate: number; endDate: number },
+    filters: OrderListFilters,
   ): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders', { limit, offset, filters });
   }
 
   exportOrdersData(
-    filters: Partial<OrderDetails> & { startDate: number; endDate: number },
+    filters: OrderListFilters,
   ): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders/export', { filters });
   }
