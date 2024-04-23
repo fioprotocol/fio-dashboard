@@ -40,7 +40,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     roe,
     history,
     contactsList = [],
-    location: { state: { fioRecordDecrypted } = {} },
+    location,
     refreshBalance,
     getFee,
     getFeeRecordObtData,
@@ -48,6 +48,8 @@ const SendPage: React.FC<ContainerProps> = props => {
     getContactsList,
     refreshWalletDataPublicKey,
   } = props;
+
+  const fioRecordDecrypted = location.state?.fioRecordDecrypted;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [sendData, setSendData] = useState<SendTokensValues | null>(null);
