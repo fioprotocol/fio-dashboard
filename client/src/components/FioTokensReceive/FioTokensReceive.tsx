@@ -13,6 +13,7 @@ import { DataValue } from './components/DataValue';
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import config from '../../config';
 
 import { FioAddressDoublet, FioWalletDoublet } from '../../types';
 
@@ -122,17 +123,18 @@ export const FioTokensReceive: React.FC<Props> = props => {
         Get FIO Token from one of our partners today.
       </p>
 
-      <Link
-        to={{
-          pathname: ROUTES.FIO_TOKENS_GET,
-        }}
+      <a
+        href={config.getTokensUrl}
+        title={config.getTokensUrl}
+        target="_blank"
+        rel="noreferrer"
         className={classes.actionButton}
       >
         <Button>
           <AddShoppingCartIcon />
           Get FIO Tokens
         </Button>
-      </Link>
+      </a>
     </PseudoModalContainer>
   );
 };

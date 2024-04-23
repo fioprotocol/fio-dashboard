@@ -19,3 +19,9 @@ export type DefaultWelcomeComponentProps = {
   pageType?: PAGE_TYPES_PROPS;
   userType: string;
 };
+
+export type ActionButtonLink = {
+  pathname: string;
+  state?: { openSettingsModal: string };
+  search?: string;
+};
