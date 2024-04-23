@@ -233,12 +233,16 @@ export const reorder = (
   return result;
 };
 
-export const transformBaseUrl = () => {
-  const baseUrl = config.baseUrl;
-  return baseUrl.charAt(baseUrl.length - 1) === '/'
-    ? baseUrl.slice(0, -1)
-    : baseUrl;
+export const removeTrailingSlashFromUrl = (url: string) => {
+  if (typeof url === 'string' && url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+
+  return url;
 };
+
+export const transformBaseUrl = () =>
+  removeTrailingSlashFromUrl(config.baseUrl);
 
 export const loadImage = async (url?: string): Promise<string | null> => {
   if (!url) return null;
