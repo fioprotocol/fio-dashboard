@@ -6,31 +6,41 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import classes from './BackButton.module.scss';
 
 type Props = {
+  classNames?: string;
   hide?: boolean;
   isWhite?: boolean;
   link?: string;
+  text?: string;
   onClick?: () => void;
 };
 
 const BackButton: React.FC<Props> = props => {
-  const { hide, isWhite, link, onClick } = props;
+  const { classNames, hide, isWhite, link, text, onClick } = props;
 
   if (hide) return null;
 
   if (onClick != null) {
     return (
-      <ArrowBackIcon
-        className={classnames(classes.arrow, isWhite && classes.isWhite)}
-        onClick={onClick}
-      />
+      <div className={classes.container}>
+        <ArrowBackIcon
+          className={classnames(
+            classes.arrow,
+            isWhite && classes.isWhite,
+            classNames,
+          )}
+          onClick={onClick}
+        />
+        {text && <p>{text}</p>}
+      </div>
     );
   }
 
   return (
-    <Link to={link}>
+    <Link to={link} className={classnames(classes.container, classNames)}>
       <ArrowBackIcon
         className={classnames(classes.arrow, isWhite && classes.isWhite)}
       />
+      {text && <p>{text}</p>}
     </Link>
   );
 };
