@@ -694,6 +694,7 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
       case FIO_ACTIONS.registerFioDomain:
         cartItemId = fioName;
         costNativeFio = domainPrice;
+        domainType = DOMAIN_TYPE.CUSTOM;
         break;
       case FIO_ACTIONS.renewFioDomain:
         cartItemId = `${fioName}-${FIO_ACTIONS.renewFioDomain}-${+new Date()}`;
