@@ -7,8 +7,11 @@ import InfoBadge from '../../../InfoBadge/InfoBadge';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
 
+import { removeTrailingSlashFromUrl } from '../../../../util/general';
+
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
+import config from '../../../../config';
 
 import { ResultsProps } from '../types';
 import { AnyObject } from '../../../../types';
@@ -71,7 +74,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
             time for this transaction can vary and your {itemName} will not be
             immediately available in your wallet. <br /> Please check the{' '}
             <a
-              href={`${process.env.REACT_APP_WRAP_STATUS_PAGE_BASE_URL}${
+              href={`${removeTrailingSlashFromUrl(config.wrapStatusPage)}${
                 isTokens
                   ? ROUTES.WRAP_STATUS_UNWRAP_TOKENS
                   : ROUTES.WRAP_STATUS_UNWRAP_DOMAINS
