@@ -18,6 +18,7 @@ import WalletTabs from './components/WalletTabs';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import { WelcomeComponent } from '../../components/WelcomeComponent';
 import { WrapIcon } from '../../components/WrapIcon';
+import BackButton from '../../components/common/BackButton/BackButton';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
@@ -51,55 +52,62 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
   );
 
   return (
-    <Title title={title}>
-      <ActionButtonsContainer>
-        <Link
-          to={{
-            pathname: ROUTES.FIO_TOKENS_RECEIVE,
-            search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
-          }}
-          className={classes.actionButton}
-        >
-          <Button>
-            <ArrowDownwardIcon />
-            <span>Receive</span>
-          </Button>
-        </Link>
+    <>
+      <BackButton
+        link={ROUTES.TOKENS}
+        text="Back"
+        classNames={classes.backButton}
+      />
+      <Title title={title}>
+        <ActionButtonsContainer>
+          <Link
+            to={{
+              pathname: ROUTES.FIO_TOKENS_RECEIVE,
+              search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
+            }}
+            className={classes.actionButton}
+          >
+            <Button>
+              <ArrowDownwardIcon />
+              <span>Receive</span>
+            </Button>
+          </Link>
 
-        <Link
-          to={{
-            pathname: ROUTES.SEND,
-            search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
-          }}
-          className={classes.actionButton}
-        >
-          <Button>
-            <ArrowUpwardIcon />
-            <span>Send</span>
-          </Button>
-        </Link>
+          <Link
+            to={{
+              pathname: ROUTES.SEND,
+              search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
+            }}
+            className={classes.actionButton}
+          >
+            <Button>
+              <ArrowUpwardIcon />
+              <span>Send</span>
+            </Button>
+          </Link>
 
-        <Link
-          to={`${ROUTES.WRAP_TOKENS}?publicKey=${publicKey}`}
-          className={classes.actionButton}
-        >
-          <Button>
-            <WrapIcon />
-            <span>Wrap</span>
-          </Button>
-        </Link>
+          <Link
+            to={`${ROUTES.WRAP_TOKENS}?publicKey=${publicKey}`}
+            className={classes.actionButton}
+          >
+            <Button>
+              <WrapIcon />
+              <span>Wrap</span>
+            </Button>
+          </Link>
 
-        <Link
-          to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${publicKey}`}
-          className={classes.actionButton}
-        >
-          <Button>
-            <ReplayIcon />
-            <span>Unwrap</span>
-          </Button>
-        </Link>
-      </ActionButtonsContainer>
-    </Title>
+          <Link
+            to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${publicKey}`}
+            className={classes.actionButton}
+          >
+            <Button>
+              <ReplayIcon />
+              <span>Unwrap</span>
+            </Button>
+          </Link>
+        </ActionButtonsContainer>
+      </Title>
+    </>
   );
 };
 
