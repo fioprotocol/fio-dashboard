@@ -2,6 +2,8 @@ import { ROUTES } from '../../constants/routes';
 import { PAGE_TYPES } from '../WelcomeComponent/constants';
 import { ADDRESS, DOMAIN } from '../../constants/common';
 
+import config from '../../config';
+
 import colors from '../../assets/styles/colorsToJs.module.scss';
 
 export const CTA_BADGE_TYPE = {
@@ -26,7 +28,7 @@ export const CTA_BADGE = {
     color: colors['dark-slate-blue'],
   },
   [CTA_BADGE_TYPE.TOKENS]: {
-    link: ROUTES.FIO_TOKENS_GET,
+    externalLink: config.getTokensUrl,
     button: 'Get Now',
     title: 'Need to Get FIO Tokens?',
     text:

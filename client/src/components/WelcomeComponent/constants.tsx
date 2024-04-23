@@ -15,6 +15,9 @@ import NotsetupImgSrc from '../../assets/images/notsetup.svg';
 import OpenseaImgSrc from '../../assets/images/opensea.svg';
 import PackageImgSrc from '../../assets/images/package.svg';
 import PasswordImgSrc from '../../assets/images/password.svg';
+import config from '../../config';
+
+import { ActionButtonLink } from './types';
 
 export const PAGE_TYPES = {
   ALL: 'ALL',
@@ -30,11 +33,7 @@ export type WelcomeItemProps = {
   text: ReactNode;
   imageSrc: string;
   actionButtonText: string;
-  actionButtonLink: {
-    pathname: string;
-    state?: { openSettingsModal: string };
-    search?: string;
-  };
+  actionButtonLink: ActionButtonLink;
   isRed?: boolean;
   isActionLinkExternal?: boolean;
   types: PAGE_TYPES_PROPS[];
@@ -119,9 +118,10 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     imageSrc: Addbox,
     actionButtonText: 'Buy Now',
     actionButtonLink: {
-      pathname: ROUTES.FIO_TOKENS_GET,
+      pathname: config.getTokensUrl,
     },
     types: [PAGE_TYPES.ALL, PAGE_TYPES.TOK],
+    isActionLinkExternal: true,
   },
   GET_CUSTOM_FIO_DOMAIN: {
     title: 'Get a custom FIO Domain',
