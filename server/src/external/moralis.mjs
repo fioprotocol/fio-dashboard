@@ -85,9 +85,9 @@ class GetMoralis {
     contractAddresses,
     chainName = config.nfts.defaultChainName,
     cursor,
+    nftsList = [],
   }) {
     await this.init();
-    const nftsList = [];
 
     let walletNftsRes = {};
     if (cursor) {
@@ -108,7 +108,13 @@ class GetMoralis {
       nftsList.push(...walletNftsResData.result);
 
       if (walletNftsRes.hasNext()) {
-        await this.getAllWalletNfts({ cursor: walletNftsRes });
+        await this.getAllWalletNfts({
+          address,
+          contractAddresses,
+          chainName,
+          cursor: walletNftsRes,
+          nftsList,
+        });
       }
     }
 
