@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import classnames from 'classnames';
 
 import { CTA_BADGE } from './constants';
+import config from '../../config';
 
 import classes from './ManagePageContainer.module.scss';
 
@@ -14,7 +15,9 @@ type Props = {
 
 export const ManagePageCtaBadge: React.FC<Props> = props => {
   const { name } = props;
-  const { button, link, title, text, color, ctaText } = CTA_BADGE[name];
+  const { button, externalLink, link, title, text, color, ctaText } = CTA_BADGE[
+    name
+  ];
   return (
     <div className={classes.badgeContainer} style={{ background: color }}>
       <h5 className={classes.title}>{title}</h5>
@@ -22,9 +25,22 @@ export const ManagePageCtaBadge: React.FC<Props> = props => {
       {ctaText && (
         <p className={classnames(classes.text, classes.ctaText)}>{ctaText}</p>
       )}
-      <Link to={link} className={classes.link}>
-        <Button className={classes.button}>{button}</Button>
-      </Link>
+      {link && (
+        <Link to={link} className={classes.link}>
+          <Button className={classes.button}>{button}</Button>
+        </Link>
+      )}
+      {externalLink && (
+        <a
+          href={config.getTokensUrl}
+          title={config.getTokensUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={classes.link}
+        >
+          <Button className={classes.button}>{button}</Button>
+        </a>
+      )}
     </div>
   );
 };
