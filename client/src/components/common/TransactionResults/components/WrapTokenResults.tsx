@@ -7,8 +7,11 @@ import InfoBadge from '../../../InfoBadge/InfoBadge';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
 
+import { removeTrailingSlashFromUrl } from '../../../../util/general';
+
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
+import config from '../../../../config';
 
 import { ResultsProps } from '../types';
 import { AnyType } from '../../../../types';
@@ -85,7 +88,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
             {name ? 'domain' : 'tokens'} will not be immediately available in
             your wallet. <br /> Please check the{' '}
             <a
-              href={`${process.env.REACT_APP_WRAP_STATUS_PAGE_BASE_URL}${
+              href={`${removeTrailingSlashFromUrl(config.wrapStatusPage)}${
                 name
                   ? ROUTES.WRAP_STATUS_WRAP_DOMAINS
                   : ROUTES.WRAP_STATUS_WRAP_TOKENS
