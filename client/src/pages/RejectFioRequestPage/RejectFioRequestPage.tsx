@@ -52,22 +52,22 @@ const RejectFioRequestPage: React.FC<Props &
   RouteComponentProps &
   Location> = props => {
   const {
-    location: {
-      state: { fioRecordDecrypted, fioWallet, fioRecordType },
-    },
+    location,
     history,
     refreshWalletDataPublicKey,
     feePrice,
     getFee,
   } = props;
 
-  const [walletFioCryptoHandles] = useFioAddresses(fioWallet.publicKey);
+  const { fioRecordDecrypted, fioWallet, fioRecordType } = location.state || {};
+
+  const [walletFioCryptoHandles] = useFioAddresses(fioWallet?.publicKey);
 
   const fioCryptoHandle =
     walletFioCryptoHandles &&
     walletFioCryptoHandles.find(
       walletFioCryptoHandle =>
-        walletFioCryptoHandle.name === fioRecordDecrypted.fioRecord.to,
+        walletFioCryptoHandle.name === fioRecordDecrypted?.fioRecord.to,
     );
 
   const { remaining = 0 } = fioCryptoHandle || {};
@@ -93,14 +93,25 @@ const RejectFioRequestPage: React.FC<Props &
   const hasLowBalance = remaining - BUNDLES_TX_COUNT.REJECT_FIO_REQUEST < 0;
 
   const onBack = () => {
-    history.push({
+    const goToFioWalletRouteParams = {
       pathname: ROUTES.FIO_WALLET,
-      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet?.publicKey}`,
       state: {
         fioRecordDecrypted,
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
       },
-    });
+    };
+
+    const gotToFioWalletsListRputeParams = {
+      pathname: ROUTES.TOKENS,
+      state: {},
+    };
+
+    history.push(
+      fioWallet?.publicKey
+        ? goToFioWalletRouteParams
+        : gotToFioWalletsListRputeParams,
+    );
   };
 
   const onClick = () => {
@@ -111,7 +122,7 @@ const RejectFioRequestPage: React.FC<Props &
     rejectResult: FioRecordViewDecrypted & { error?: string },
   ) => {
     setResultsData({ ...rejectResult, remaining });
-    !rejectResult.error && refreshWalletDataPublicKey(fioWallet.publicKey);
+    !rejectResult.error && refreshWalletDataPublicKey(fioWallet?.publicKey);
     setSubmitData(null);
     setProcessing(false);
   };
@@ -124,7 +135,7 @@ const RejectFioRequestPage: React.FC<Props &
   const onCloseResults = () => {
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet?.publicKey}`,
       state: {
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
       },
@@ -134,6 +145,11 @@ const RejectFioRequestPage: React.FC<Props &
   const onResultsRetry = () => {
     setResultsData(null);
   };
+
+  if (!fioRecordType && !fioRecordDecrypted) {
+    history.push(ROUTES.TOKENS);
+    return null;
+  }
 
   if (resultsData)
     return (
