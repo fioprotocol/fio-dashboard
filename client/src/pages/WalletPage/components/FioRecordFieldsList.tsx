@@ -28,7 +28,7 @@ const FioRecordFieldsList: React.FC<Props> = props => {
     fioRecordDetailedType,
     fioRecordType,
   } = props;
-  const { fioRecord, fioDecryptedContent } = fioRecordDecrypted;
+  const { fioRecord, fioDecryptedContent } = fioRecordDecrypted || {};
 
   return (
     <div className={classes.fieldsContainer}>
@@ -41,12 +41,17 @@ const FioRecordFieldsList: React.FC<Props> = props => {
 
         const value = () => {
           if (isDataType) return fioRecordDetailedType;
-          // @ts-ignore
-          if (fioRecord[field] != null)
-            // @ts-ignore
-            return fioRecord[field];
-          // @ts-ignore
-          return fioDecryptedContent[field];
+
+          if (fioRecord && field in fioRecord)
+            return fioRecord[field as keyof typeof fioRecord] as string;
+
+          if (fioDecryptedContent && field in fioDecryptedContent) {
+            return fioDecryptedContent[
+              field as keyof typeof fioDecryptedContent
+            ];
+          }
+
+          return null;
         };
 
         if (value() == null) return null;
@@ -95,8 +100,8 @@ const FioRecordFieldsList: React.FC<Props> = props => {
                   <FioRecordFieldContent
                     value={value()}
                     field={field}
-                    chain={fioDecryptedContent.chainCode}
-                    token={fioDecryptedContent.tokenCode}
+                    chain={fioDecryptedContent?.chainCode}
+                    token={fioDecryptedContent?.tokenCode}
                   />
                 </p>
               </div>

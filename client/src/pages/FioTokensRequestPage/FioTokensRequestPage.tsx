@@ -48,15 +48,17 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
     history,
     contactsList,
     contactsLoading,
-    location: {
-      state: { payeeFioAddress } = {},
-      query: { publicKey: publicKeyFromPath } = {},
-    },
+    location,
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
     getFee,
   } = props;
+
+  const { state, query } = location;
+
+  const payeeFioAddress = state?.payeeFioAddress;
+  const publicKeyFromPath = query?.publicKey;
 
   const [fioWallet, setFioWallet] = useState<FioWalletDoublet | undefined>(
     emptyWallet,
