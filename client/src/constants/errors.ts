@@ -75,5 +75,3 @@ export const CANNOT_UPDATE_FIO_HANDLE =
 
 export const CANNOT_TRANSFER_ERROR_TITLE = 'Cannot Transfer';
 export const CANNOT_UPDATE_FIO_HANDLE_TITLE = 'Cannot Update';
-
-export const HIDDEN_PAGE_SKIP_MESSAGE = 'Page is hidden, skipping request.';
