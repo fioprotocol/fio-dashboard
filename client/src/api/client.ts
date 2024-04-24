@@ -1,9 +1,6 @@
 import superagent, { SuperAgentRequest } from 'superagent';
 
 import config from '../config';
-import { HIDDEN_PAGE_SKIP_MESSAGE } from '../constants/errors';
-
-import { getIsPageVisible } from '../util/screen';
 
 import { ApisResponse } from './responses';
 
@@ -85,12 +82,6 @@ export default class ApiClient {
     params?: Object;
     body?: Object;
   }): Promise<ApisResponse> {
-    const isPageVisible = getIsPageVisible();
-
-    if (!isPageVisible) {
-      throw new Error(HIDDEN_PAGE_SKIP_MESSAGE);
-    }
-
     const req: SuperAgentRequest = superagent[method](
       `${this.baseUrl}${this.prefix}${url}`,
     );

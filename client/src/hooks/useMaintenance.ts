@@ -3,18 +3,20 @@ import { useState } from 'react';
 import apis from '../api';
 
 import { VARS_KEYS, HEALTH_CHECK_TIME } from '../constants/vars';
-import { HIDDEN_PAGE_SKIP_MESSAGE } from '../constants/errors';
 
 import useEffectOnce from './general';
 import { log } from '../util/general';
+import { getIsPageVisible } from '../util/screen';
 
 export default function useMaintenance() {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const isPageVisible = getIsPageVisible();
+
   const checkHealthAndMaintenance = async () => {
     try {
-      if (!navigator?.onLine) return;
+      if (!navigator?.onLine || !isPageVisible) return;
 
       const healthResponse = await apis.healthCheck.ping();
       if (!healthResponse.success) {
@@ -26,8 +28,7 @@ export default function useMaintenance() {
     } catch (error) {
       log.error(error);
 
-      if (!navigator?.onLine || error?.message === HIDDEN_PAGE_SKIP_MESSAGE)
-        return;
+      if (!navigator?.onLine || !isPageVisible) return;
 
       setIsMaintenance(true);
     } finally {
