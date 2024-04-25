@@ -769,7 +769,7 @@ export const ORDER_DATE_FILTER_OPTIONS = [
   },
   {
     id: 'lastMonth',
-    name: 'Last month',
+    name: 'Last 30 days',
   },
   {
     id: 'lastHalfOfYear',
