@@ -1,5 +1,7 @@
 import { FC } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
 import { PriceComponent } from '../PriceComponent';
@@ -9,9 +11,9 @@ import { TransactionDetailsItem } from './components/TransactionDetailsItem';
 import { convertFioPrices } from '../../util/prices';
 
 import classes from './TransactionDetails.module.scss';
+import { roe as roeSelector } from '../../redux/registrations/selectors';
 
 type Props = {
-  roe?: number;
   feeInFio?: number;
   amountInFio?: number;
   bundles?: {
@@ -21,13 +23,14 @@ type Props = {
 };
 
 export const TransactionDetails: FC<Props> = ({
-  roe,
   feeInFio,
   amountInFio,
   bundles,
 }) => {
+  const roe = useSelector(roeSelector);
+
   const feeRender = () => {
-    if (!bundles && (typeof feeInFio !== 'number' || typeof roe !== 'number')) {
+    if (!!bundles || typeof feeInFio !== 'number') {
       return null;
     }
 
@@ -40,7 +43,6 @@ export const TransactionDetails: FC<Props> = ({
           <PriceComponent
             costFio={fee.fio}
             costUsdc={fee.usdc}
-            isNew
             isFree={feeInFio === 0}
           />
         }
@@ -50,10 +52,10 @@ export const TransactionDetails: FC<Props> = ({
 
   const totalRender = () => {
     if (
-      !bundles &&
-      (typeof feeInFio !== 'number' ||
-        typeof amountInFio !== 'number' ||
-        typeof roe !== 'number')
+      !!bundles ||
+      typeof feeInFio !== 'number' ||
+      typeof amountInFio !== 'number' ||
+      feeInFio === amountInFio
     ) {
       return null;
     }
@@ -69,7 +71,6 @@ export const TransactionDetails: FC<Props> = ({
           <PriceComponent
             costFio={total.fio}
             costUsdc={total.usdc}
-            isNew
             isFree={totalFio === 0}
           />
         }

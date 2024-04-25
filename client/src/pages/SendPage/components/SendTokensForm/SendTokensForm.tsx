@@ -42,7 +42,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     fioWallet,
     fioAddresses,
     fee,
-    roe,
     obtDataOn,
     contactsList,
     initialValues,
@@ -219,7 +218,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
             <p className={classes.transactionTitle}>Transaction Details</p>
             <TransactionDetails
-              roe={roe}
               feeInFio={fee.nativeFio}
               amountInFio={apis.fio.amountToSUF(amount)}
               bundles={

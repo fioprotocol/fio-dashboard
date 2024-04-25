@@ -2,13 +2,12 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import CartItem from '../../../components/Cart/CartItem';
-import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
+import { TransactionDetails } from '../../../components/TransactionDetails/TransactionDetails';
 import { PaymentWallet } from './PaymentWallet';
 import { PaymentOptionComponent } from './PaymentOptionComponent';
 
 import { totalCost } from '../../../util/cart';
 
-import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 
 import { CheckoutComponentProps } from '../types';
@@ -17,7 +16,7 @@ import classes from '../CheckoutPage.module.scss';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
-  const { costNativeFio, costFree, costFio, costUsdc } = totalCost(cart, roe);
+  const { costNativeFio, costFree } = totalCost(cart, roe);
 
   return (
     <>
@@ -27,14 +26,8 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           cart.map(item => <CartItem item={item} key={item.id} />)}
       </div>
       <div className={classes.details}>
-        <h6 className={classes.subtitle}>Payment Details</h6>
-        <PriceBadge
-          costFio={costFio}
-          costUsdc={costUsdc}
-          costFree={!costNativeFio && costFree}
-          title="Total Cost"
-          type={BADGE_TYPES.BLACK}
-        />
+        <h6 className={classes.subtitle}>Transaction Details</h6>
+        <TransactionDetails feeInFio={0} amountInFio={costNativeFio} />
       </div>
       <div className={classes.details}>
         <PaymentWallet

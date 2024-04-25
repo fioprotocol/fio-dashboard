@@ -26,7 +26,6 @@ export const TransferForm: React.FC<FormProps> = props => {
     name,
     walletName,
     feePrice,
-    roe,
     publicKey,
     onSubmit,
     processing,
@@ -94,11 +93,7 @@ export const TransferForm: React.FC<FormProps> = props => {
           loading={validating}
         />
         <p className={classes.label}>{fioNameLabel} Transaction Details</p>
-        <TransactionDetails
-          roe={roe}
-          feeInFio={feePrice.nativeFio}
-          amountInFio={feePrice.nativeFio}
-        />
+        <TransactionDetails feeInFio={feePrice.nativeFio} />
         <PayWithBadge
           walletBalances={walletBalancesAvailable}
           walletName={walletName}

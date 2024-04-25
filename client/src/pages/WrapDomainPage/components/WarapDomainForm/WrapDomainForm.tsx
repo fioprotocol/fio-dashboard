@@ -100,11 +100,7 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
             />
 
             <p className={classes.transactionTitle}>Transaction Details</p>
-            <TransactionDetails
-              roe={roe}
-              feeInFio={fee.nativeFio}
-              amountInFio={fee.nativeFio}
-            />
+            <TransactionDetails feeInFio={unitedFee.nativeFio} />
 
             <div className={classes.additionalSubInfo}>
               <span>Available FIO balance:</span>

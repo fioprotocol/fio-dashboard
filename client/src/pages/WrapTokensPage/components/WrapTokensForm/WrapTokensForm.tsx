@@ -140,7 +140,6 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
 
             <p className={classes.transactionTitle}>Transaction Details</p>
             <TransactionDetails
-              roe={roe}
               feeInFio={unitedFee.nativeFio}
               amountInFio={apis.fio.amountToSUF(amount)}
             />

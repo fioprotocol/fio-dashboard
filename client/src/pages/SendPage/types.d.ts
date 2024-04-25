@@ -41,7 +41,6 @@ export type SendTokensProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
   fee: FeePrice;
-  roe: number;
   balance: WalletBalances;
   loading: boolean;
   obtDataOn?: boolean;

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
 import { BADGE_TYPES } from '../../Badge/Badge';
-import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import CancelButton from '../CancelButton/CancelButton';
@@ -15,11 +14,12 @@ import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/errors';
 import { ResultsContainerProps } from './types';
 
 import classes from './styles/Results.module.scss';
+import { TransactionDetails } from '../../TransactionDetails/TransactionDetails';
 
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
-      feeCollected: { nativeFio, fio, usdc } = {
+      feeCollected: { nativeFio } = {
         nativeFio: 0,
         fio: '0',
         usdc: '0',
@@ -53,18 +53,11 @@ const Results: React.FC<ResultsContainerProps> = props => {
   const paymentDetailsTitle = () => {
     if (!nativeFio && !bundlesCollected) return null;
 
-    return <p className={classes.label}>Payment Details</p>;
+    return <p className={classes.label}>Transactions Details</p>;
   };
   const totalCost = () => {
     if (!nativeFio) return null;
-    return (
-      <PriceBadge
-        costFio={fio}
-        costUsdc={usdc}
-        title="Total Cost"
-        type={BADGE_TYPES.BLACK}
-      />
-    );
+    return <TransactionDetails feeInFio={nativeFio} />;
   };
 
   const totalBundlesCost = () => {

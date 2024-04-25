@@ -31,7 +31,6 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     loading,
     fioAddresses,
     fee,
-    roe,
     initialValues,
     isWalletFioAddressesLoading,
     balance,
@@ -284,7 +283,6 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               }
             />
             <TransactionDetails
-              roe={roe}
               feeInFio={fee.nativeFio}
               amountInFio={apis.fio.amountToSUF(amount)}
               bundles={

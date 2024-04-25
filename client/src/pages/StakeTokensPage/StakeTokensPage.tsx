@@ -164,7 +164,6 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
           fioAddresses={walletFioAddresses}
           onSubmit={onStakeTokens}
           fee={feePrice}
-          roe={roe}
           initialValues={initialValues}
           proxyList={proxyList}
         />

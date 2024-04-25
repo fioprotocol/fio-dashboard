@@ -28,7 +28,7 @@ import classes from '../../../StakeTokensPage/styles/StakeTokensForm.module.scss
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
-  const { loading, fioAddresses, fee, roe, initialValues, balance } = props;
+  const { loading, fioAddresses, fee, initialValues, balance } = props;
 
   const walletStakedTokens = apis.fio.sufToAmount(
     balance?.staked?.nativeFio || 0,
@@ -243,7 +243,6 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               </>
             )}
             <TransactionDetails
-              roe={roe}
               feeInFio={fee.nativeFio}
               amountInFio={apis.fio.amountToSUF(amount)}
               bundles={
