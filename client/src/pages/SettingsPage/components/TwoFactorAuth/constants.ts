@@ -7,12 +7,14 @@ export const ITEM_PROPS = {
   modalTitle: 'Confirm Recovery Questions',
   dangerTitle: 'Are You Sure?',
   dangerSubtitle:
-    '2FA is recommended to keep your device secure from unauthorized access from other devices.',
-  dangerButtonText: 'Disable 2FA',
-  successDisableModalTitle: '2FA DISABLED',
-  successDisableModalSubtitle: 'Your 2FA has been successfully disabled.',
-  successEnableModalTitle: '2FA ENABLED',
-  successEnableModalSubtitle: 'Your 2FA has been successfully enabled.',
+    'New Device Approval is recommended to keep your device secure from unauthorized access from other devices.',
+  dangerButtonText: 'Disable',
+  successDisableModalTitle: 'NEW DEVICE APPROVAL DISABLED',
+  successDisableModalSubtitle:
+    'New Device Approval has been successfully disabled.',
+  successEnableModalTitle: 'NEW DEVICE APPROVAL ENABLED',
+  successEnableModalSubtitle:
+    'New Device Approval has been successfully enabled.',
 };
 
 export const MIN_WAIT_TIME = 2000;
