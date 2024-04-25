@@ -9,6 +9,7 @@
   align-items: center;
 
   .mediaContainer {
+    flex: 1;
     width: 100%;
     max-width: 335px;
 
@@ -19,7 +20,9 @@
     .videoContainer {
       position: relative;
       width: 100%;
-      height: fit-content;
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+      overflow: hidden;
 
       .cover {
         position: absolute;
@@ -36,12 +39,13 @@
         }
 
         .icon {
+          --size: 54px;
           position: absolute;
-          top: 30px;
-          left: 30px;
+          top: calc(50% - var(--size) / 2);
+          left: calc(50% - var(--size) / 2);
           color: $white;
-          width: 54px;
-          height: 54px;
+          width: var(--size);
+          height: var(--size);
         }
       }
       .videoFrame {
@@ -59,6 +63,7 @@
   }
 
   .textContainer {
+    flex: 2;
     margin-top: 30px;
     display: flex;
     flex-direction: column;
@@ -91,9 +96,9 @@
 
 @include lg {
   .container {
-    padding: 50px 50px 83px 70px;
+    padding: 50px;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     gap: 50px;
 
     &.useMobileView {

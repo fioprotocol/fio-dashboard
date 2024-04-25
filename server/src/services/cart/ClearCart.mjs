@@ -8,13 +8,16 @@ import logger from '../../logger.mjs';
 export default class ClearCart extends Base {
   static get validationRules() {
     return {
-      id: ['required', 'string'],
+      id: ['string'],
     };
   }
 
   async execute({ id }) {
     try {
-      await Cart.destroy({ where: { id } });
+      if (id) {
+        await Cart.destroy({ where: { id } });
+      }
+
       return {
         data: { success: true },
       };

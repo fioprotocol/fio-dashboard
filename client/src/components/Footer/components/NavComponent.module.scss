@@ -1,4 +1,25 @@
-.navItem {
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.navItem, .navItemDate {
   font-size: 15px;
-  margin-right: 2.5rem;
+}
+
+.navItem {
+  &:after {
+    content: '|';
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  @include tablet {
+    &:last-of-type:after {
+      display: none;
+    }
+  }
+}
+
+.navItemDate {
+  @include tablet {
+    width: 100%;
+  }
 }

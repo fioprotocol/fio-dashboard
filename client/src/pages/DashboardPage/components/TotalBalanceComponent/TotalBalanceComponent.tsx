@@ -9,6 +9,7 @@ import { PriceComponent } from '../../../../components/PriceComponent';
 import { ItemWrapper } from '../ItemWrapper';
 
 import { ROUTES } from '../../../../constants/routes';
+import config from '../../../../config';
 
 import MathOp from '../../../../util/math';
 
@@ -35,7 +36,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
   const { loading, totalBalance } = props;
 
   return (
-    <ItemWrapper hasSmallBorderRadius>
+    <ItemWrapper>
       <Badge
         show
         type={BADGE_TYPES.BLACK}
@@ -61,7 +62,12 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
             <ActionButtonContainer
               show={!loading && new MathOp(totalBalance?.fio).eq(0)}
             >
-              <Link to={ROUTES.FIO_TOKENS_GET}>
+              <a
+                href={config.getTokensUrl}
+                title={config.getTokensUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SubmitButton
                   hasAutoHeight
                   isButtonType
@@ -71,7 +77,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
                     <span className={classes.actionText}>Buy FIO Tokens</span>
                   }
                 />
-              </Link>
+              </a>
             </ActionButtonContainer>
             <ActionButtonContainer
               show={!loading && new MathOp(totalBalance?.fio).eq(0)}

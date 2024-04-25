@@ -23,7 +23,9 @@ export default function apiMiddleware(api: Api): Middleware {
     next({ ...rest, type: REQUEST });
 
     return promise(api, getState).then(
-      (data: AnyType) => next({ ...rest, data, type: SUCCESS }),
+      (data: AnyType) => {
+        next({ ...rest, data, type: SUCCESS });
+      },
       (error: AnyType) => next({ ...rest, error, type: FAILURE }),
     );
   };

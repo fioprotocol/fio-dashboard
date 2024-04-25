@@ -142,7 +142,7 @@ const MetamaskLandingPage: React.FC = () => {
     alternativeLoginError,
     isLoginModalOpen,
     isMobileDeviceWithMetamask,
-    noMetamaskExtention,
+    noMetamaskExtension,
     handleConnectClick,
     onLoginModalClose,
   } = useContextMetamaskLandgingPage();
@@ -155,7 +155,6 @@ const MetamaskLandingPage: React.FC = () => {
         <section className={classes.header}>
           <div className={classes.maxContentContainer}>
             <div className={classes.content}>
-              <div className={classes.badge}>NEWLY LAUNCHED</div>
               <h1 className={classes.title}>
                 MetaMask now
                 <br />
@@ -176,10 +175,10 @@ const MetamaskLandingPage: React.FC = () => {
                   messageClassnames={classes.errorMessage}
                 />
               )}
-              {noMetamaskExtention && (
+              {noMetamaskExtension && (
                 <NotificationBadge
                   type={BADGE_TYPES.WARNING}
-                  show={noMetamaskExtention}
+                  show={noMetamaskExtension}
                   hasNewDesign
                   title="MetaMask not detected."
                   message="Please ensure that the MetaMask browser extension is installed and active. Or refresh the page if it has just been installed."

@@ -17,7 +17,9 @@ export const NavComponent: React.FC<Props> = props => {
   return (
     <Nav className="pr-0 align-items-center">
       {!props.isMaintenance && <NavLinks {...props} />}
-      <Nav.Item className={classnames(classes.navItem, 'text-white', 'p-0')}>
+      <Nav.Item
+        className={classnames(classes.navItemDate, 'text-white', 'p-0')}
+      >
         © {currentYear()} FIO
       </Nav.Item>
     </Nav>

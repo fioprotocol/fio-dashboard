@@ -7,12 +7,17 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import 'react-dropdown/style.css';
 import classes from './CustomDropdown.module.scss';
 
+type Option = {
+  id: string;
+  name: string | React.ReactNode;
+};
+
 type Props = {
-  options: { id: string; name: string | React.ReactNode }[];
+  options: Option[];
   value?: string;
   placeholder?: string;
   onChange: (id: string) => void;
-  customValue?: { id: string; name: string | React.ReactNode };
+  customValue?: Option;
   toggleToCustom?: (isCustom: boolean) => void;
   isShort?: boolean;
   isSmall?: boolean;

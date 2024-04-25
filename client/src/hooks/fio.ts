@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -75,6 +75,8 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     walletsFioAddressesLoadingSelector,
   );
 
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
   const dispatch = useDispatch();
 
   const hasAffiliate = !!user?.affiliateProfile;
@@ -84,6 +86,7 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
   const hasOneFCH = fioAddresses?.length === 1;
 
   const hasDomains = fioDomains?.length > 0;
+  const hasAddresses = fioAddresses?.length > 0;
   const hasOneDomain = fioDomains?.length === 1;
   const hasExpiredDomains = fioDomains.some(fioDomain =>
     isDomainExpired(fioDomain.name, fioDomain.expiration),
@@ -104,39 +107,33 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
   const hasZeroTotalBalance = totalBalance?.nativeFio === 0;
 
   const loading =
+    !initialLoadComplete ||
     fioLoading ||
     edgeLoading ||
     fioAddressesLoading ||
     isFioWalletsBalanceLoading ||
     walletsFioAddressesLoading;
 
-  useEffectOnce(() => {
+  const fetchData = useCallback(async () => {
     const token = apis.client.getToken();
     if (token) {
-      dispatch(getUserWallets());
+      await Promise.all([
+        dispatch(getUserWallets()),
+        ...fioWallets.map(wallet => dispatch(refreshBalance(wallet.publicKey))),
+        ...fioWallets.map(wallet =>
+          dispatch(refreshFioNames(wallet.publicKey)),
+        ),
+        ...fioAddresses.map(address =>
+          dispatch(getAllFioPubAddresses(address.name, 0, 0)),
+        ),
+      ]);
     }
+    setInitialLoadComplete(true);
+  }, [dispatch, fioAddresses, fioWallets]);
+
+  useEffectOnce(() => {
+    fetchData();
   }, []);
-
-  useEffectOnce(
-    () => {
-      for (const { publicKey } of fioWallets) {
-        dispatch(refreshBalance(publicKey));
-        dispatch(refreshFioNames(publicKey));
-      }
-    },
-    [fioWallets, dispatch],
-    fioWallets.length > 0,
-  );
-
-  useEffectOnce(
-    () => {
-      for (const fioAddress of fioAddresses) {
-        dispatch(getAllFioPubAddresses(fioAddress.name, 0, 0));
-      }
-    },
-    [dispatch, fioAddresses],
-    fioAddresses.length > 0,
-  );
 
   useEffect(() => {
     if (user?.username) {
@@ -156,6 +153,7 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     isFioWalletsBalanceLoading,
     hasAffiliate,
     hasDomains,
+    hasAddresses,
     hasExpiredDomains,
     hasFCH,
     hasOneDomain,

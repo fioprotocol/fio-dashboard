@@ -13,7 +13,7 @@ import { FIO_DATA_TRANSACTION_LINK } from '../../../constants/common';
 import { FioRecordViewKeysProps } from '../types';
 
 type Props = {
-  value: string;
+  value: string | null;
   field: FioRecordViewKeysProps;
   chain: string;
   token: string;
@@ -21,6 +21,8 @@ type Props = {
 
 const FioRecordFieldContent: React.FC<Props> = props => {
   const { field, value, chain, token } = props;
+
+  if (value == null) return;
 
   if (
     field === FIO_RECORD_DETAILED_FIELDS.obtId &&

@@ -120,9 +120,6 @@ const FioTokensReceivePage = lazy(() =>
     /* webpackChunkName: 'fioTokensReceivePage' */ './pages/FioTokensReceivePage'
   ),
 );
-const FioTokensGetPage = lazy(() =>
-  import(/* webpackChunkName: 'fioTokensGetPage' */ './pages/FioTokensGetPage'),
-);
 const FioSocialLinksPage = lazy(() =>
   import(
     /* webpackChunkName: 'fioSocialMediaLinksPage' */ './pages/FioSocialMediaLinksPage'
@@ -514,12 +511,6 @@ const Routes = (): React.ReactElement => {
               <PrivateRoute
                 path={ROUTES.FIO_TOKENS_RECEIVE}
                 component={FioTokensReceivePage}
-                exact
-              />
-
-              <PrivateRoute
-                path={ROUTES.FIO_TOKENS_GET}
-                component={FioTokensGetPage}
                 exact
               />
 

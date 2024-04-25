@@ -5,16 +5,14 @@ import { Link } from 'react-router-dom';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import Loader from '../../../Loader/Loader';
 
+import { ActionButtonLink } from '../../types';
+
 import classes from './WelcomeComponentItem.module.scss';
 
 type Props = {
   content: {
     actionButtonText: string;
-    actionButtonLink: {
-      pathname: string;
-      state?: { openSettingsModal: string };
-      search?: string;
-    };
+    actionButtonLink: ActionButtonLink;
     imageSrc: string;
     isActionLinkExternal?: boolean;
     isRed?: boolean;
@@ -25,12 +23,8 @@ type Props = {
 };
 
 type ActionButtonProps = {
-  actionButtonLink: {
-    pathname: string;
-    state?: { openSettingsModal: string };
-    search?: string;
-  };
   actionButtonText: string;
+  actionButtonLink: ActionButtonLink;
   isExternal: boolean;
   isRed: boolean;
 };

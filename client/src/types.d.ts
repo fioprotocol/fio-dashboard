@@ -836,6 +836,14 @@ export type OrderDetails = {
   updatedAt: string;
 };
 
+export type DateRange = { startDate?: number; endDate?: number };
+
+export type OrderListFilters = {
+  status: number;
+  freeStatus: string;
+  dateRange: DateRange | null;
+};
+
 export type UserOrderDetails = {
   id: string;
   number: string;
@@ -979,6 +987,7 @@ export type SocialMediaLinkIdProp = typeof SOCIAL_MEDIA_IDS[keyof typeof SOCIAL_
 
 export type SocialMediaLinkItem = {
   iconSrc: string;
+  roundedIconSrc: string;
   tokenName: SocialMediaLinkIdProp;
   name: SocialMediaLinkNameProp;
   link: string;
@@ -995,6 +1004,7 @@ export type AllFioNamesAndWalletsProps = {
   isFioWalletsBalanceLoading: boolean;
   hasAffiliate: boolean;
   hasDomains: boolean;
+  hasAddresses: boolean;
   hasExpiredDomains: boolean;
   hasFCH: boolean;
   hasOneDomain: boolean;

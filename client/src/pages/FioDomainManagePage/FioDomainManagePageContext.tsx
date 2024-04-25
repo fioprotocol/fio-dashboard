@@ -89,6 +89,7 @@ type UseContextProps = {
   onBagdeClose: () => void;
   onDangerModalAction: (id: string) => void;
   onDangerModalClose: () => void;
+  onBuyDomainAction: () => void;
   onDangerModalOpen: () => void;
   onDomainWatchlistItemModalClose: () => void;
   onDomainWatchlistItemModalOpen: (fioNameItem: FioNameItemProps) => void;
@@ -412,6 +413,11 @@ export const useContext = (): UseContextProps => {
     [domainWatchlistItemDelete, onDangerModalClose],
   );
 
+  const onBuyDomainAction = useCallback(
+    () => history.push(ROUTES.FIO_DOMAINS_SELECTION),
+    [],
+  );
+
   useEffect(() => {
     dispatch(getFee(apis.fio.actionEndPoints.renewFioDomain));
   }, [dispatch]);
@@ -494,6 +500,7 @@ export const useContext = (): UseContextProps => {
     onBagdeClose,
     onDangerModalAction,
     onDangerModalClose,
+    onBuyDomainAction,
     onDangerModalOpen,
     onDomainWatchlistItemModalClose,
     onDomainWatchlistItemModalOpen,

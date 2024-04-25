@@ -29,7 +29,6 @@ const ROUTES: { [route: string]: string } = {
   FIO_WALLET: '/fio-wallet', // ?publicKey=
   FIO_WALLET_OLD: '/fio-wallet/:publicKey', // ?publicKey=
   FIO_WALLET_DETAILS: '/fio-wallet-details',
-  FIO_TOKENS_GET: '/get-fio-tokens',
   FIO_TOKENS_RECEIVE: '/receive-fio-tokens', // ?publicKey=
   TOKENS: '/tokens',
   IMPORT_WALLET: '/import',

@@ -33,7 +33,8 @@ export const ChainComponent: React.FC<Props> = props => {
         <img src={iconSrc} alt={tokenCodeName} />
       </div>
       <p className={classes.tokenCodeName}>
-        {tokenCodeName} <span>({tokenCode})</span>
+        {tokenCodeName || `${chainCodeName} Tokens`}&nbsp;
+        {tokenCode && <span>({tokenCode})</span>}
       </p>
       {chainCodeName !== tokenCodeName && (
         <div className={classes.chainCodeBagde}>

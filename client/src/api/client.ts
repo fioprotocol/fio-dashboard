@@ -94,7 +94,7 @@ export default class ApiClient {
       req.set('Authorization', `Bearer ${this.getAdminToken()}`);
     else if (this.token) req.set('Authorization', `Bearer ${this.getToken()}`);
 
-    // TODO: pass refcode to request
+    // TODO: pass refcode to request?
 
     return req.then(
       (res: {

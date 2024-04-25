@@ -6,6 +6,7 @@ export type DefaultWelcomeComponentProps = {
   firstFromListFioWalletPublicKey: string;
   hasAffiliate: boolean;
   hasDomains: boolean;
+  hasAddresses: boolean;
   hasExpiredDomains: boolean;
   hasFCH: boolean;
   hasNoEmail: boolean;
@@ -17,4 +18,10 @@ export type DefaultWelcomeComponentProps = {
   noMappedPubAddresses: boolean;
   pageType?: PAGE_TYPES_PROPS;
   userType: string;
+};
+
+export type ActionButtonLink = {
+  pathname: string;
+  state?: { openSettingsModal: string };
+  search?: string;
 };
