@@ -14,15 +14,17 @@ import classes from './TransactionDetails.module.scss';
 import { roe as roeSelector } from '../../redux/registrations/selectors';
 
 type Props = {
+  className?: string;
   feeInFio?: number;
   amountInFio?: number;
   bundles?: {
     fee: number;
-    remaining: number;
+    remaining?: number;
   };
 };
 
 export const TransactionDetails: FC<Props> = ({
+  className,
   feeInFio,
   amountInFio,
   bundles,
@@ -89,9 +91,11 @@ export const TransactionDetails: FC<Props> = ({
         value={
           <>
             <span className="boldText">{bundles.fee} Bundles&nbsp;</span>
-            <span className={classes.remaining}>
-              ({bundles.remaining} Remaining)
-            </span>
+            {bundles.remaining && (
+              <span className={classes.remaining}>
+                ({bundles.remaining} Remaining)
+              </span>
+            )}
           </>
         }
       />
@@ -99,7 +103,7 @@ export const TransactionDetails: FC<Props> = ({
   };
 
   return (
-    <Badge type={BADGE_TYPES.SIMPLE} show>
+    <Badge type={BADGE_TYPES.SIMPLE} show className={className}>
       <div className={classes.wrapper}>
         {feeRender()}
         {totalRender()}

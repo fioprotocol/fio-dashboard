@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
+import { TransactionDetails } from '../../TransactionDetails/TransactionDetails';
 import { BADGE_TYPES } from '../../Badge/Badge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import CancelButton from '../CancelButton/CancelButton';
-import BundledTransactionBadge from '../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 
 import { ERROR_MESSAGES } from './constants';
 
@@ -14,7 +14,6 @@ import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/errors';
 import { ResultsContainerProps } from './types';
 
 import classes from './styles/Results.module.scss';
-import { TransactionDetails } from '../../TransactionDetails/TransactionDetails';
 
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
@@ -64,10 +63,10 @@ const Results: React.FC<ResultsContainerProps> = props => {
     if (!bundlesCollected) return null;
     return (
       <>
-        <BundledTransactionBadge
-          bundles={bundlesCollected}
-          remaining={0}
-          hideRemaining
+        <TransactionDetails
+          bundles={{
+            fee: bundlesCollected,
+          }}
         />
       </>
     );
