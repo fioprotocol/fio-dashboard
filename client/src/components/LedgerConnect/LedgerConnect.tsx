@@ -42,11 +42,11 @@ const LedgerConnect: React.FC<Props> = props => {
     isTransaction,
     fioWallet,
     hideConnectionModal,
-    onConnect,
-    onSuccess,
-    onCancel,
-    showGenericErrorModal,
-    setProcessing,
+    onConnect = () => {},
+    onSuccess = () => {},
+    onCancel = () => {},
+    showGenericErrorModal = () => {},
+    setProcessing = () => {},
   } = props;
   const connectFioAppIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,

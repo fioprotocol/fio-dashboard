@@ -46,6 +46,7 @@ const DeleteWalletForm: React.FC<{
           )}
 
           <SubmitButton
+            className={classes.submitButton}
             disabled={
               isPrimaryUserProfileType &&
               (formRenderProps.hasValidationErrors ||
@@ -53,7 +54,9 @@ const DeleteWalletForm: React.FC<{
                 loading)
             }
             loading={loading}
-            withBottomMargin={true}
+            hasLowHeight
+            hasAutoWidth
+            withoutMargin
             text="Delete Wallet"
           />
         </form>

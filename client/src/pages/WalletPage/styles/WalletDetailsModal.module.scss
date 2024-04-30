@@ -7,6 +7,11 @@
   display: flex;
   flex-direction: column;
 
+  .submitButton {
+    align-self: start;
+    margin-top: 10px;
+  }
+
   .ledgerContainer {
     position: absolute;
     top: -28px;

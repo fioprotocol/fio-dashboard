@@ -40,14 +40,17 @@ const PasswordForm: React.FC<{
           />
 
           <SubmitButton
+            className={classes.submitButton}
             disabled={
               formRenderProps.hasValidationErrors ||
               formRenderProps.submitting ||
               loading
             }
             loading={loading}
-            withBottomMargin={true}
             text="Show Private Key"
+            hasLowHeight
+            hasAutoWidth
+            withoutMargin
           />
         </form>
       )}

@@ -9,6 +9,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Badge from '../../components/Badge/Badge';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { DataValue } from './components/DataValue';
+import { LedgerCheckPublicAddress } from '../LedgerCheckPublicAddress/LedgerCheckPublicAddress';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
@@ -71,6 +72,10 @@ export const FioTokensReceive: React.FC<Props> = props => {
             <div className={classes.dataContainer}>
               <div className={classes.title}>Public Address</div>
               <DataValue value={fioWallet.publicKey} />
+              <LedgerCheckPublicAddress
+                fioWallet={fioWallet}
+                className={classes.showOnLedgerAddressButton}
+              />
             </div>
           </Badge>
 

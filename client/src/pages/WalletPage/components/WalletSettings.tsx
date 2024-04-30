@@ -16,6 +16,8 @@ import PageTitle from '../../../components/PageTitle/PageTitle';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
+import { LedgerCheckPublicAddress } from '../../../components/LedgerCheckPublicAddress/LedgerCheckPublicAddress';
+import { PublicAddressBadge } from './PublicAddressBadge';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard, log } from '../../../util/general';
@@ -239,6 +241,20 @@ const WalletSettings: React.FC<Props> = props => {
     );
   };
 
+  const renderPublicKey = () => {
+    if (key != null) return null;
+    return (
+      <>
+        <h6 className={classes.settingTitle}>FIO Public Address</h6>
+        <PublicAddressBadge publicKey={fioWallet.publicKey} />
+        <LedgerCheckPublicAddress
+          fioWallet={fioWallet}
+          className={classes.submitButton}
+        />
+      </>
+    );
+  };
+
   const renderCancel = () => {
     if (key != null)
       return (
@@ -321,6 +337,7 @@ const WalletSettings: React.FC<Props> = props => {
         <div className={classes.container}>
           <h3 className={classes.title}>Wallet Settings</h3>
           {renderNameForm()}
+          {renderPublicKey()}
           {!isLedgerWallet && !isMetamaskWallet && renderPasswordForm()}
           {renderKey()}
           {renderCancel()}
