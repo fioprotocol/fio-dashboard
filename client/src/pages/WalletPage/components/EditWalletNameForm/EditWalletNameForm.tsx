@@ -32,12 +32,15 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
           />
 
           <SubmitButton
+            className={classes.submitButton}
             text="Update"
             disabled={
               !formRenderProps.valid || formRenderProps.submitting || loading
             }
             loading={loading}
-            withBottomMargin={true}
+            hasLowHeight
+            hasAutoWidth
+            withoutMargin
           />
         </form>
       )}
