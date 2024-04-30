@@ -33,10 +33,11 @@ export const getPath = (derivationIndex?: number): number[] => {
 export const getPubKeyFromLedger = async (
   appFio: LedgerFioApp,
   derivationIndex?: number,
+  showOnLedger = false,
 ): Promise<string> => {
   const { publicKeyWIF } = await appFio.getPublicKey({
     path: getPath(derivationIndex),
-    show_or_not: false,
+    show_or_not: showOnLedger,
   });
 
   return publicKeyWIF;

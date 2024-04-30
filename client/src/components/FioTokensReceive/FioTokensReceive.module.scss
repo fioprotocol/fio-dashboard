@@ -53,6 +53,11 @@
     margin-top: 0;
     @include sf-pro-display-medium;
   }
+
+  .showOnLedgerAddressButton {
+    margin-top: 12px;
+    align-self: start;
+  }
 }
 
 .dataContainerValue {
