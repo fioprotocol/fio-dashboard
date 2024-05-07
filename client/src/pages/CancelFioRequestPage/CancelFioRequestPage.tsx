@@ -5,13 +5,13 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import CancelFioRequestResults from '../../components/common/TransactionResults/components/CancelFioRequestResults';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import FioRecordFieldsList from '../WalletPage/components/FioRecordFieldsList';
-import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import CancelRequestEdge from './components/CancelRequestEdge';
 import CancelRequestLedger from './components/CancelRequestLedger';
 import WalletAction from '../../components/WalletAction/WalletAction';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { CancelRequestMetamaskWallet } from './components/CancelRequestMetamaskWallet';
+import { TransactionDetails } from '../../components/TransactionDetails/TransactionDetails';
 
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
@@ -186,10 +186,12 @@ const CancelFioRequestPage: React.FC<Props &
               fioRecordType={fioRecordType}
             />
           </div>
-          <h5 className={classes.bundleSubtitle}>Transaction Cost</h5>
-          <BundledTransactionBadge
-            bundles={BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST}
-            remaining={remaining}
+          <h5 className={classes.bundleSubtitle}>Transaction Details</h5>
+          <TransactionDetails
+            bundles={{
+              fee: BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST,
+              remaining,
+            }}
           />
           <LowBalanceBadge
             hasLowBalance={hasLowBalance}

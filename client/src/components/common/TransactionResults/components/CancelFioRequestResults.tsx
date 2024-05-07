@@ -1,8 +1,8 @@
 import React from 'react';
 
 import Results from '../';
-import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import FioRecordFieldsList from '../../../../pages/WalletPage/components/FioRecordFieldsList';
+import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 
 import {
   FIO_REQUEST_FIELDS_LIST,
@@ -35,16 +35,16 @@ const CancelFioRequestResults: React.FC<Props> = props => {
         fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.RESULT}
         fioRecordType={fioRecordType}
       />
-      <div className={classes.bundleContainer}>
-        <BundledTransactionBadge
-          bundles={BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST}
-          remaining={
+      <TransactionDetails
+        className={classes.bundleContainer}
+        bundles={{
+          fee: BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST,
+          remaining:
             results.error != null
               ? results.remaining
-              : results.remaining - BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST
-          }
-        />
-      </div>
+              : results.remaining - BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST,
+        }}
+      />
     </Results>
   );
 };

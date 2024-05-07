@@ -2,11 +2,11 @@ import React from 'react';
 
 import PseudoModalContainer from '../../../components/PseudoModalContainer';
 import DomainStatusBadge from '../../../components/Badges/DomainStatusBadge/DomainStatusBadge';
-import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../../../components/Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
+import { TransactionDetails } from '../../../components/TransactionDetails/TransactionDetails';
 
 import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { ROUTES } from '../../../constants/routes';
@@ -35,8 +35,6 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
     handleSubmit,
   } = props;
 
-  const { fio, usdc } = feePrice;
-
   return (
     <PseudoModalContainer
       link={ROUTES.FIO_DOMAINS}
@@ -58,14 +56,9 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
             <DomainStatusBadge status={statusToChange} />
           </div>
         </div>
-        <h5 className={classes.label}>Change Change Cost</h5>
+        <h5 className={classes.label}>Transaction Details</h5>
         <div className={classes.badge}>
-          <PriceBadge
-            costFio={fio}
-            costUsdc={usdc}
-            type={BADGE_TYPES.BLACK}
-            title="Status Change Fee"
-          />
+          <TransactionDetails feeInFio={feePrice.nativeFio} />
         </div>
 
         <PayWithBadge

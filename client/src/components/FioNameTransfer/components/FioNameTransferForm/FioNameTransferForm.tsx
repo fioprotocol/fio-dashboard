@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 
 import { Field, FieldValue } from '../../../Input/Field';
-import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
+import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 import PayWithBadge from '../../../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
@@ -11,7 +11,6 @@ import { validate } from './validation';
 import { INPUT_UI_STYLES } from '../../../Input/InputRedux';
 import { fioNameLabels } from '../../../../constants/labels';
 import { ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
-import { BADGE_TYPES } from '../../../Badge/Badge';
 
 import { useWalletBalances } from '../../../../util/hooks';
 import MathOp from '../../../../util/math';
@@ -39,12 +38,13 @@ export const TransferForm: React.FC<FormProps> = props => {
   const { available: walletBalancesAvailable } = useWalletBalances(publicKey);
   const isMobileScreenSize = useCheckIfMobileScreenSize();
 
-  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
     !!publicKey &&
     feePrice &&
-    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(
+      feePrice.nativeFio || 0,
+    );
 
   const PLACEHOLDER = !isMobileScreenSize
     ? 'Enter FIO Handle or FIO Public Key of New Owner'
@@ -92,13 +92,8 @@ export const TransferForm: React.FC<FormProps> = props => {
           errorType={ERROR_UI_TYPE.BADGE}
           loading={validating}
         />
-        <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
-        <PriceBadge
-          costFio={fio}
-          costUsdc={usdc}
-          title={`${fioNameLabel} Transfer Fee`}
-          type={BADGE_TYPES.BLACK}
-        />
+        <p className={classes.label}>{fioNameLabel} Transaction Details</p>
+        <TransactionDetails feeInFio={feePrice.nativeFio} />
         <PayWithBadge
           walletBalances={walletBalancesAvailable}
           walletName={walletName}
