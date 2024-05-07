@@ -2,16 +2,14 @@ import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
-import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
-import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import AmountInput from '../../../../components/Input/AmountInput';
 import Dropdown from '../../../../components/Input/Dropdown';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import { submitValidation, formValidation } from './validation';
 import {
@@ -151,8 +149,8 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
             <Field
               name="to"
-              placeholder="FIO Handle or Public Key"
-              modalPlaceholder="Enter or select FIO Handle or Public Key"
+              placeholder="FIO Handle or Public Address"
+              modalPlaceholder="Enter or select FIO Handle or Public Address"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
@@ -218,19 +216,19 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
             <Field name="fioRequestId" type="hidden" component={Input} />
 
-            <p className={classes.transactionTitle}>Transaction cost</p>
-            <PriceBadge
-              title="Transaction Fee"
-              type={BADGE_TYPES.BLACK}
-              costFio={fee.fio}
-              costUsdc={fee.usdc}
+            <p className={classes.transactionTitle}>Transaction Details</p>
+            <TransactionDetails
+              feeInFio={fee.nativeFio}
+              amountInFio={apis.fio.amountToSUF(amount)}
+              bundles={
+                showMemo && memo
+                  ? {
+                      fee: BUNDLES_TX_COUNT.RECORD_OBT_DATA,
+                      remaining: selectedAddress.remaining,
+                    }
+                  : null
+              }
             />
-            {showMemo && memo ? (
-              <BundledTransactionBadge
-                bundles={BUNDLES_TX_COUNT.RECORD_OBT_DATA}
-                remaining={selectedAddress.remaining}
-              />
-            ) : null}
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
               messageText={`Not enough FIO. Balance: ${apis.fio

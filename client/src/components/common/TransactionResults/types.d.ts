@@ -37,7 +37,6 @@ export type ResultsProps = {
   pageName?: string;
   errorType?: string;
   results: ResultsData;
-  roe?: number;
   onClose: () => void;
   onRetry?: () => void;
   onCancel?: () => void;

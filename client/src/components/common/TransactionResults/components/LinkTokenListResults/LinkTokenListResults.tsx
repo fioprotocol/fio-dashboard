@@ -3,8 +3,8 @@ import { useHistory } from 'react-router-dom';
 
 import Results from '../../';
 import TokenBadge from '../../../../Badges/TokenBadge/TokenBadge';
+import { TransactionDetails } from '../../../../TransactionDetails/TransactionDetails';
 import FioName from '../../../FioName/FioName';
-import BundledTransactionBadge from '../../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 
 import { genericTokenId } from '../../../../../util/fio';
 import { ROUTES } from '../../../../../constants/routes';
@@ -180,10 +180,12 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
         {error && failed?.length && renderTokens(failed, 'Errored Links')}
         {(updated?.length || 0) > 0 && (
           <>
-            <h5 className={classes.subtitle}>Bundled Transaction Details</h5>
-            <BundledTransactionBadge
-              bundles={bundleCost}
-              remaining={remaining}
+            <h5 className={classes.subtitle}>Transaction Details</h5>
+            <TransactionDetails
+              bundles={{
+                fee: bundleCost,
+                remaining,
+              }}
             />
           </>
         )}

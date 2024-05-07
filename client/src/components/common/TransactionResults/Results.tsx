@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
+import { TransactionDetails } from '../../TransactionDetails/TransactionDetails';
 import { BADGE_TYPES } from '../../Badge/Badge';
-import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import CancelButton from '../CancelButton/CancelButton';
-import BundledTransactionBadge from '../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 
 import { ERROR_MESSAGES } from './constants';
 
@@ -19,7 +18,7 @@ import classes from './styles/Results.module.scss';
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
-      feeCollected: { nativeFio, fio, usdc } = {
+      feeCollected: { nativeFio } = {
         nativeFio: 0,
         fio: '0',
         usdc: '0',
@@ -53,28 +52,21 @@ const Results: React.FC<ResultsContainerProps> = props => {
   const paymentDetailsTitle = () => {
     if (!nativeFio && !bundlesCollected) return null;
 
-    return <p className={classes.label}>Payment Details</p>;
+    return <p className={classes.label}>Transactions Details</p>;
   };
   const totalCost = () => {
     if (!nativeFio) return null;
-    return (
-      <PriceBadge
-        costFio={fio}
-        costUsdc={usdc}
-        title="Total Cost"
-        type={BADGE_TYPES.BLACK}
-      />
-    );
+    return <TransactionDetails feeInFio={nativeFio} />;
   };
 
   const totalBundlesCost = () => {
     if (!bundlesCollected) return null;
     return (
       <>
-        <BundledTransactionBadge
-          bundles={bundlesCollected}
-          remaining={0}
-          hideRemaining
+        <TransactionDetails
+          bundles={{
+            fee: bundlesCollected,
+          }}
         />
       </>
     );
