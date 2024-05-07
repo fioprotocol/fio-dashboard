@@ -32,7 +32,7 @@ export const TransactionDetails: FC<Props> = ({
   const roe = useSelector(roeSelector);
 
   const feeRender = () => {
-    if (!!bundles || typeof feeInFio !== 'number') {
+    if (typeof feeInFio !== 'number') {
       return null;
     }
 
@@ -54,7 +54,6 @@ export const TransactionDetails: FC<Props> = ({
 
   const totalRender = () => {
     if (
-      !!bundles ||
       typeof feeInFio !== 'number' ||
       typeof amountInFio !== 'number' ||
       feeInFio === amountInFio
