@@ -1,5 +1,8 @@
 import { FC, useState } from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
+import EyeIcon from '@mui/icons-material/RemoveRedEye';
+
+import classnames from 'classnames';
 
 import { FioWalletDoublet } from '../../types';
 import {
@@ -12,14 +15,18 @@ import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import LedgerConnect from '../LedgerConnect';
 
+import classes from './LedgerCheckPublicAddress.module.scss';
+
 type Props = {
   className?: string;
   fioWallet: FioWalletDoublet;
+  withEye?: boolean;
 };
 
 export const LedgerCheckPublicAddress: FC<Props> = ({
   className,
   fioWallet,
+  withEye,
 }) => {
   const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
 
@@ -44,8 +51,13 @@ export const LedgerCheckPublicAddress: FC<Props> = ({
   return (
     <>
       <SubmitButton
-        className={className}
-        text="Show Public Address on Ledger"
+        className={classnames(classes.button, className)}
+        text={
+          <div className={classes.content}>
+            {withEye && <EyeIcon />}
+            <span>Show Public Address on Ledger</span>
+          </div>
+        }
         hasLowHeight
         hasAutoWidth
         withoutMargin
