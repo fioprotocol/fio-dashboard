@@ -41,7 +41,7 @@ import {
 } from '../../util/fio';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 import useEffectOnce from '../../hooks/general';
 import apis from '../../api';
@@ -64,6 +64,25 @@ const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
   SECOND: 'second',
   THIRD: 'third',
 } as const;
+
+type HanldedFioHandleType = {
+  id: string;
+  address: string;
+  domain: string;
+  costFio: string;
+  costUsdc: string;
+  costNativeFio: number;
+  nativeFioAddressPrice: number;
+  domainType: string;
+  isFree: boolean;
+  isSelected: boolean;
+  isExist: boolean;
+  period: number;
+  type: string;
+  hasCustomDomainInCart: boolean;
+  rank: number;
+  swapAddressAndDomainPlaces: boolean;
+};
 
 const handleFCHItems = async ({
   address,
@@ -331,6 +350,9 @@ export const useContext = (): UseContextProps => {
     SelectedItemProps[] | []
   >([]);
   const [error, setError] = useState<string>(null);
+  const [infoMessage, setInfo] = useState<{ title: string; message: string }>(
+    null,
+  );
   const [loading, toggleLoading] = useState<boolean>(false);
   const [previousAddressValue, setPreviousAddressValue] = useState<string>(
     null,
@@ -393,23 +415,91 @@ export const useContext = (): UseContextProps => {
         setSuggestedItemsList([]);
         setUsersItemsList([]);
         setError(null);
+        setInfo(null);
         return;
       }
 
       if (previousAddressValue === address) return;
 
       setError(null);
+      setInfo(null);
 
       toggleLoading(true);
 
-      const parsedUsersDomains = JSON.parse(userDomainsJSON);
-      const parsedNonPremiumDomains = JSON.parse(nonPremiumPublicDomainsJSON);
-      const parsedPremiumDomains = JSON.parse(premiumPublicDomainsJSON);
-      const parsedCustomDomains = JSON.parse(customDomainsJSON);
+      const fioHandleHasDomainPart =
+        address.indexOf(FIO_ADDRESS_DELIMITER) > 0 &&
+        address.indexOf(FIO_ADDRESS_DELIMITER) < address.length - 1;
+
+      const fioHandlePart = fioHandleHasDomainPart
+        ? address.split(FIO_ADDRESS_DELIMITER)[0]
+        : address;
+
+      const fioDomainPart = fioHandleHasDomainPart
+        ? address.split(FIO_ADDRESS_DELIMITER)[1]
+        : null;
+
+      const parsedUsersDomains: DomainsArrItemType = JSON.parse(
+        userDomainsJSON,
+      );
+      const parsedNonPremiumDomains: DomainsArrItemType = JSON.parse(
+        nonPremiumPublicDomainsJSON,
+      );
+      const parsedPremiumDomains: DomainsArrItemType = JSON.parse(
+        premiumPublicDomainsJSON,
+      );
+      const parsedCustomDomains: DomainsArrItemType = JSON.parse(
+        customDomainsJSON,
+      );
       const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
 
+      const handleFioDomainPart = (domainArr: DomainsArrItemType) => {
+        const existingFioDomainPartIndex = domainArr.findIndex(
+          domainItem => domainItem.name === fioDomainPart,
+        );
+
+        if (existingFioDomainPartIndex !== -1) {
+          const existingFioDomainPart = domainArr[existingFioDomainPartIndex];
+          domainArr.splice(existingFioDomainPartIndex, 1);
+          domainArr.unshift(existingFioDomainPart);
+
+          return true;
+        }
+
+        return false;
+      };
+
+      if (fioDomainPart) {
+        const fioDomainPartExistsOnUsersDomains = handleFioDomainPart(
+          parsedUsersDomains,
+        );
+
+        const fioDomainPartExistsOnNonPremiumDomains = handleFioDomainPart(
+          parsedNonPremiumDomains,
+        );
+        const fioDomainPartExistsOnPremiumDomains = handleFioDomainPart(
+          parsedPremiumDomains,
+        );
+        const fioDomainPartExistsOnParsedCustomDomains = handleFioDomainPart(
+          parsedCustomDomains,
+        );
+
+        if (
+          !fioDomainPartExistsOnNonPremiumDomains &&
+          !fioDomainPartExistsOnPremiumDomains &&
+          !fioDomainPartExistsOnParsedCustomDomains &&
+          !fioDomainPartExistsOnUsersDomains
+        ) {
+          parsedCustomDomains.unshift({
+            name: fioDomainPart,
+            domainType: DOMAIN_TYPE.CUSTOM,
+            rank: 0,
+            swapAddressAndDomainPlaces: false,
+          });
+        }
+      }
+
       const defaultParams = {
-        address,
+        address: fioHandlePart,
         cartItems: parsedCartItems,
         cartHasFreeItem,
         hasFreeAddress,
@@ -456,6 +546,31 @@ export const useContext = (): UseContextProps => {
         ? validatedCustomFCH.filter(customFCH => !customFCH.isExist)
         : [];
 
+      const findExistingFioHandleInBlockChain = (
+        fioHandlesArray: HanldedFioHandleType[],
+      ) => {
+        if (!fioHandlesArray) return false;
+
+        return fioHandlesArray.some(
+          fioHandleItem =>
+            fioHandleItem.isExist && fioHandleItem.id === address,
+        );
+      };
+
+      const ifFullFioHandleExists =
+        fioDomainPart &&
+        (findExistingFioHandleInBlockChain(validatedUserFCH) ||
+          findExistingFioHandleInBlockChain(validatedNonPremiumFCH) ||
+          findExistingFioHandleInBlockChain(validatedPremiumFCH) ||
+          findExistingFioHandleInBlockChain(validatedCustomFCH));
+
+      if (ifFullFioHandleExists)
+        setInfo({
+          title: 'Unavailable',
+          message:
+            'The handle you entered is not available. We have made some alter suggestions below.',
+        });
+
       if (
         !avaliableUserFCH &&
         !availableNonPremiumFCH &&
@@ -491,7 +606,7 @@ export const useContext = (): UseContextProps => {
 
       let availableCustomFCHWithSwapped = [
         ...availableCustomFCH.filter(
-          availabelCustom => availabelCustom.domain !== address,
+          availabelCustom => availabelCustom.domain !== fioHandlePart,
         ),
       ];
 
@@ -711,6 +826,7 @@ export const useContext = (): UseContextProps => {
     additionalItemsList,
     addressValue,
     error,
+    infoMessage,
     loading: loading || domainsLoaing || isRawAbiLoading,
     suggestedItemsList,
     usersItemsList,
