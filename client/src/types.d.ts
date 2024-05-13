@@ -522,17 +522,6 @@ export type FioDecryptedRecordData = {
   paymentOtbData?: FioRecordDecrypted;
 };
 
-export type ResponseFioRecord = {
-  content: string;
-  fio_request_id: number;
-  payee_fio_address: string;
-  payee_fio_public_key: string;
-  payer_fio_address: string;
-  payer_fio_public_key: string;
-  status: string;
-  time_stamp: string;
-};
-
 export type FioWalletData = {
   id: string;
   receivedFioRequests: FioRecord[];

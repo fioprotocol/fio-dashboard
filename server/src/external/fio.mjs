@@ -278,11 +278,11 @@ class Fio {
         params.permission = auth.permission;
       }
       const fioSdk = await this.getMasterFioSDK();
-      const preparedTrx = await fioSdk.pushTransaction(
-        FIO_ACCOUNT_NAMES[action] || '',
-        FIO_ACTION_NAMES[action],
-        params,
-      );
+      const preparedTrx = await fioSdk.pushTransaction({
+        account: FIO_ACCOUNT_NAMES[action] || '',
+        action: FIO_ACTION_NAMES[action],
+        data: params,
+      });
       const result = await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
