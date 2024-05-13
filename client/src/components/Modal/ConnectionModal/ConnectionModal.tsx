@@ -11,7 +11,7 @@ import classes from './ConnectionModal.module.scss';
 import { AnyType } from '../../../types';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import apis from '../../../api';
-import { LedgerStatus } from './LedgerStatus/LedgerStatus';
+import LedgerBadge from '../../Badges/LedgerBadge/LedgerBadge';
 
 type TransactionDetails = {
   amount: string;
@@ -80,7 +80,7 @@ const ConnectionModal: React.FC<Props> = props => {
 
     return (
       <div className={classes.transactionContent}>
-        <LedgerStatus />
+        <LedgerBadge />
         <h4 className={classes.transactionTitle}>
           Confirm & Complete Transaction
         </h4>
