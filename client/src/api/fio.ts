@@ -17,6 +17,7 @@ import { Action } from 'ledgerjs-hw-app-fio/dist/types/public';
 import { ReceivedFioRequestsResponse } from '@fioprotocol/fiosdk/src/entities/ReceivedFioRequestsResponse';
 import { SentFioRequestResponse } from '@fioprotocol/fiosdk/src/entities/SentFioRequestsResponse';
 import { GetObtDataResponse } from '@fioprotocol/fiosdk/src/entities/GetObtDataResponse';
+import { GetObtDataRecord } from '@fioprotocol/fiosdk/src/entities/GetObtDataRecord';
 
 import MathOp from '../util/math';
 import { log } from '../util/general';
@@ -42,7 +43,6 @@ import {
   FioRecord,
   NFTTokenDoublet,
   Proxy,
-  ResponseFioRecord,
   WalletKeys,
 } from '../types';
 import { FioDomainDoubletResponse } from './responses';
@@ -842,7 +842,7 @@ export default class Fio {
           offset,
         });
 
-        let fioRequestsItems: ResponseFioRecord[] = [];
+        let fioRequestsItems: GetObtDataRecord[] = [];
 
         if ('requests' in fioRequests) {
           fioRequestsItems = fioRequests.requests;
