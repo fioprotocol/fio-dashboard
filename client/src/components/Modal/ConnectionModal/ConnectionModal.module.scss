@@ -12,8 +12,13 @@
   transform: rotate(270deg) scale(-1, 1.5);
 }
 
-.transactionTitle {
-  margin-top: 30px;
+.transactionContent {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.dialog {
+  width: 480px;
 }
 
 .title {
@@ -22,8 +27,8 @@
 }
 
 .transactionTitle {
-  text-align: center;
-  font-size: 1.5em;
+  margin-top: 20px;
+  font-size: 1.125em;
   margin-bottom: 0;
   @include sf-pro-display-medium;
 }
@@ -34,12 +39,25 @@
 }
 
 .transactionText {
-  font-size: 0.875em;
+  font-size: 0.75em;
   margin-top: 15px;
-  margin-bottom: 30px;
-  max-width: 290px;
-  text-align: center;
   @include sf-pro-display-medium;
+}
+
+.transactionBadgeLabel {
+  margin: 18px 0 12px 0;
+  line-height: 1;
+  @include proxima-nova-semibold;
+}
+
+.badgeContent {
+  color: $baltic-sea;
+  position: relative;
+  font-size: 1em;
+  word-break: break-all;
+  width: 100%;
+  margin: 0;
+  @include proxima-nova-semibold;
 }
 
 .button {

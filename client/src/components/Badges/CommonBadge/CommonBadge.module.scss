@@ -4,6 +4,7 @@
   background-color: $white;
   padding: 6px;
   border-radius: 4px;
+  width: fit-content;
 
   &.isBlack {
     background-color: $tuna;
@@ -22,6 +23,9 @@
   }
   &.isRose {
     background-color: $purple-pink;
+  }
+  &.isPurple {
+    background-color: $light-indigo;
   }
   &.isRed {
     background-color: $crimson;

@@ -37,6 +37,10 @@ const WalletAction: React.FC<Props> = props => {
     ...rest
   } = props;
 
+  if (rest.submitData) {
+    rest.submitData.fee = rest.fee;
+  }
+
   if (!fioWallet || !fioWallet.publicKey) return null;
 
   if (fioWallet.from === WALLET_CREATED_FROM.EDGE)

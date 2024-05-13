@@ -16,6 +16,7 @@ export type StakeTokensValues = {
   publicKey: string;
   fioAddress?: string;
   amount: string;
+  fee?: number;
   nativeAmount: string;
   proxy: string;
 };
