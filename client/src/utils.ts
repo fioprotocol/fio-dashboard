@@ -3,12 +3,12 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
 import camelCase from 'camelcase';
+import { GetObtDataRecord } from '@fioprotocol/fiosdk/src/entities/GetObtDataRecord';
 
 import {
   Domain,
   FioNameItemProps,
   FioRecord,
-  ResponseFioRecord,
   WalletKeys,
   EdgeWalletsKeys,
   DecryptedFioRecordContent,
@@ -145,10 +145,10 @@ export const getElementByFioName = ({
 };
 
 export const camelizeFioRequestsData = (
-  data: ResponseFioRecord[],
+  data: GetObtDataRecord[],
 ): FioRecord[] => {
   const result: FioRecord[] = [];
-  data.forEach((o: ResponseFioRecord, i: number) => {
+  data.forEach((o: GetObtDataRecord, i: number) => {
     const resultItem: FioRecord = {
       content: '',
       fioRequestId: 0,
