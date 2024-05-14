@@ -9,6 +9,7 @@ type Props = {
   isBlueGreen?: boolean;
   isGreen?: boolean;
   isOrange?: boolean;
+  isPurple?: boolean;
   isRose?: boolean;
   isRed?: boolean;
   isYellowGreen?: boolean;
@@ -26,6 +27,7 @@ const CommonBadge: React.FC<Props> = props => {
     isBlueGreen,
     isGreen,
     isOrange,
+    isPurple,
     isRose,
     isRed,
     isYellowGreen,
@@ -41,6 +43,7 @@ const CommonBadge: React.FC<Props> = props => {
         isBlueGreen && classes.isBlueGreen,
         isGreen && classes.isGreen,
         isOrange && classes.isOrange,
+        isPurple && classes.isPurple,
         isRose && classes.isRose,
         isRed && classes.isRed,
         isYellowGreen && classes.isYellowGreen,

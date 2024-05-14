@@ -88,7 +88,7 @@ export const WrapTokensLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.WRAP_TOKENS}
-      data={submitData}
+      data={{ ...submitData, fee }}
       fioWallet={fioWallet}
       onConnect={send}
       onSuccess={onSuccess}

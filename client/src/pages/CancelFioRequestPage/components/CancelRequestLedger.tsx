@@ -94,7 +94,7 @@ const CancelRequestLedger: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.CANCEL_FIO_REQUEST}
-      data={submitData}
+      data={{ ...submitData, fee }}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

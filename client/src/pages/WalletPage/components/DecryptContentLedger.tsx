@@ -36,6 +36,7 @@ type Props = {
 
 const RequestTokensLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -126,7 +127,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.DETAILED_FIO_REQUEST}
-      data={submitData}
+      data={{ ...submitData, fee }}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

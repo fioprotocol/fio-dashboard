@@ -1,0 +1,1 @@
+export { TransactionInfoBadge } from './TransactionInfoBadge';
