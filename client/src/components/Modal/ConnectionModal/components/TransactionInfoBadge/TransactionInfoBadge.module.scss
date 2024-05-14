@@ -1,0 +1,23 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+
+
+.badgeLabel {
+  margin: 18px 0 12px 0;
+  line-height: 1;
+  @include proxima-nova-semibold;
+}
+
+.badgeContent {
+  color: $baltic-sea;
+  position: relative;
+  line-height: 2;
+  font-size: 1em;
+  word-break: break-all;
+  width: 100%;
+  margin: 0;
+  @include proxima-nova-regular;
+  & > b {
+    @include proxima-nova-semibold;
+  }
+}

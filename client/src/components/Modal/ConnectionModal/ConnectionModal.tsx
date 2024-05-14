@@ -7,16 +7,20 @@ import classnames from 'classnames';
 
 import Modal from '../Modal';
 
-import classes from './ConnectionModal.module.scss';
-import { AnyType } from '../../../types';
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+import { AnyType, PublicAddressDoublet } from '../../../types';
 import apis from '../../../api';
+
 import LedgerBadge from '../../Badges/LedgerBadge/LedgerBadge';
+import { TransactionInfoBadge } from './components/TransactionInfoBadge';
+
+import classes from './ConnectionModal.module.scss';
 
 type TransactionDetails = {
   amount: string;
   fee?: number;
   contactsList: string[];
+  tokens: PublicAddressDoublet[];
+  socialMediaLinksList: Record<string, string>;
   feeRecordObtData: number;
   fromPubKey: string;
   nativeAmount: string;
@@ -76,7 +80,14 @@ const ConnectionModal: React.FC<Props> = props => {
     </>
   );
   const renderTransaction = () => {
-    const { amount, nativeAmount, fee, toPubKey } = data as TransactionDetails;
+    const {
+      fee,
+      amount,
+      nativeAmount,
+      toPubKey,
+      tokens,
+      socialMediaLinksList,
+    } = data as TransactionDetails;
 
     return (
       <div className={classes.transactionContent}>
@@ -90,32 +101,40 @@ const ConnectionModal: React.FC<Props> = props => {
         </p>
         {renderContinue()}
         {toPubKey && (
-          <>
-            <p className={classes.transactionBadgeLabel}>FIO Public Address</p>
-            <Badge type={BADGE_TYPES.WHITE} show withoutMargin>
-              <p className={classes.badgeContent}>{toPubKey}</p>
-            </Badge>
-          </>
+          <TransactionInfoBadge title="FIO Public Address">
+            {toPubKey}
+          </TransactionInfoBadge>
         )}
         {(nativeAmount || amount) && (
-          <>
-            <p className={classes.transactionBadgeLabel}>Send Amount</p>
-            <Badge type={BADGE_TYPES.WHITE} show withoutMargin>
-              <p className={classes.badgeContent}>
-                {amount ?? apis.fio.sufToAmount(parseFloat(nativeAmount))} FIO
-              </p>
-            </Badge>
-          </>
+          <TransactionInfoBadge title="Send Amount">
+            {amount ?? apis.fio.sufToAmount(parseFloat(nativeAmount))} FIO
+          </TransactionInfoBadge>
         )}
         {fee && (
-          <>
-            <p className={classes.transactionBadgeLabel}>Transaction Fee</p>
-            <Badge type={BADGE_TYPES.WHITE} show withoutMargin>
-              <p className={classes.badgeContent}>
-                {apis.fio.sufToAmount(fee)} FIO
-              </p>
-            </Badge>
-          </>
+          <TransactionInfoBadge title="Transaction Fee">
+            {apis.fio.sufToAmount(fee)} FIO
+          </TransactionInfoBadge>
+        )}
+        {socialMediaLinksList &&
+          Object.keys(socialMediaLinksList).length > 0 && (
+            <TransactionInfoBadge title="Mappings">
+              {Object.keys(socialMediaLinksList).map(socialKey => [
+                <b>SOCIAL:{socialKey}:</b>,
+                socialMediaLinksList[socialKey],
+                <br />,
+              ])}
+            </TransactionInfoBadge>
+          )}
+        {tokens && tokens.length > 0 && (
+          <TransactionInfoBadge title="Mappings">
+            {tokens.map(({ publicAddress, chainCode, tokenCode }) => [
+              <b>
+                {tokenCode}:{chainCode}:
+              </b>,
+              publicAddress,
+              <br />,
+            ])}
+          </TransactionInfoBadge>
         )}
       </div>
     );
