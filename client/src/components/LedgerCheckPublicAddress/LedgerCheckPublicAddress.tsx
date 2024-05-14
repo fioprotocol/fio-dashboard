@@ -54,7 +54,7 @@ export const LedgerCheckPublicAddress: FC<Props> = ({
         className={classnames(classes.button, className)}
         text={
           <div className={classes.content}>
-            {withEye && <EyeIcon />}
+            {withEye && <EyeIcon className={classes.icon} />}
             <span>Show Public Address on Ledger</span>
           </div>
         }

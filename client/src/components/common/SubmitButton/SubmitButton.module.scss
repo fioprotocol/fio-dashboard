@@ -25,7 +25,7 @@
   }
 
   & > div {
-    min-width: 20px;
+    min-width: 16px;
 
     display: flex;
     align-items: center;
@@ -214,6 +214,8 @@
   .loader {
     & > span {
       color: inherit !important;
+      margin-top: -4px;
+      margin-bottom: -4px;
       width: 16px !important;
       height: 16px !important;
     }
