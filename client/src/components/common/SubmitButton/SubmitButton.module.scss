@@ -18,15 +18,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
 
   &:focus {
     box-shadow: none;
   }
 
   & > div {
-    min-width: 30px;
-    padding-left: 5px;
-    padding-right: 5px;
+    min-width: 20px;
 
     display: flex;
     align-items: center;
@@ -35,7 +34,6 @@
 
   &.hasNoSidePaddings > div {
     min-width: auto;
-    padding: 0;
   }
 
   &.topMargin {
@@ -205,7 +203,12 @@
 
   &.hasSmallText {
     font-size: 0.875em;
-    line-height: 0.875em;
+    line-height: 1;
+  }
+
+  &.hasSmallPaddings {
+    height: auto;
+    padding: 10px 5px;
   }
 
   .loader {

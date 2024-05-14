@@ -244,12 +244,16 @@ const WalletSettings: React.FC<Props> = props => {
 
   const renderPublicKey = () => {
     if (key != null) return null;
+
     return (
       <>
         <h6 className={classes.settingTitle}>FIO Public Address</h6>
         <PublicAddressBadge
-          className={classes.infoBadge}
           publicKey={fioWallet.publicKey}
+          classNames={{
+            badgeContainer: classes.infoBadge,
+            value: classes.infoBadgeValue,
+          }}
         />
         <LedgerCheckPublicAddress
           className={classes.ledgerShowAddress}

@@ -58,6 +58,8 @@ const DeleteWalletForm: React.FC<{
                 loading)
             }
             loading={loading}
+            hasSmallPaddings
+            hasSmallText
             hasLowHeight
             hasAutoWidth
             withoutMargin

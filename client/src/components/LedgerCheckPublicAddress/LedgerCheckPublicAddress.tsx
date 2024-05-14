@@ -58,8 +58,10 @@ export const LedgerCheckPublicAddress: FC<Props> = ({
             <span>Show Public Address on Ledger</span>
           </div>
         }
-        hasLowHeight
         hasAutoWidth
+        hasSmallPaddings
+        hasSmallText
+        hasLowHeight
         withoutMargin
         onClick={handleShowPublicAddress}
       />

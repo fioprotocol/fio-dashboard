@@ -8,20 +8,29 @@ import { DataValue } from '../../../../components/FioTokensReceive/components/Da
 import classes from './PublicAddressBadge.module.scss';
 
 type Props = {
-  className: string;
   publicKey: string;
+  classNames?: {
+    badgeContainer?: string;
+    dataContainer?: string;
+    title?: string;
+    value?: string;
+  };
 };
 
-export const PublicAddressBadge: FC<Props> = ({ className, publicKey }) => {
+export const PublicAddressBadge: FC<Props> = ({ classNames, publicKey }) => {
   return (
     <Badge
       type={BADGE_TYPES.WHITE}
       show
-      className={classnames(classes.badgeContainer, className)}
+      className={classnames(classes.badgeContainer, classNames.badgeContainer)}
     >
-      <div className={classes.dataContainer}>
-        <div className={classes.title}>Public Address</div>
-        <div className={classes.value}>
+      <div
+        className={classnames(classes.dataContainer, classNames.dataContainer)}
+      >
+        <div className={classnames(classes.title, classNames.title)}>
+          Public Address
+        </div>
+        <div className={classnames(classes.value, classNames.value)}>
           <DataValue value={publicKey} />
         </div>
       </div>

@@ -40,9 +40,11 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
               !formRenderProps.valid || formRenderProps.submitting || loading
             }
             loading={loading}
-            hasLowHeight
-            hasAutoWidth
             withoutMargin
+            hasAutoWidth
+            hasSmallPaddings
+            hasSmallText
+            hasLowHeight
           />
         </form>
       )}
