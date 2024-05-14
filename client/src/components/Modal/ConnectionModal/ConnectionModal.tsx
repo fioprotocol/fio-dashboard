@@ -1,17 +1,16 @@
 import React from 'react';
-
+import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
+
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 
-import classnames from 'classnames';
-
 import Modal from '../Modal';
-
-import { AnyType, PublicAddressDoublet } from '../../../types';
-import apis from '../../../api';
-
 import LedgerBadge from '../../Badges/LedgerBadge/LedgerBadge';
+
 import { TransactionInfoBadge } from './components/TransactionInfoBadge';
+
+import apis from '../../../api';
+import { AnyType, PublicAddressDoublet } from '../../../types';
 
 import classes from './ConnectionModal.module.scss';
 
@@ -95,10 +94,7 @@ const ConnectionModal: React.FC<Props> = props => {
         <h4 className={classes.transactionTitle}>
           Confirm & Complete Transaction
         </h4>
-        <p className={classes.transactionText}>
-          Please connect your Ledger device, confirm these transaction details,
-          and complete your transaction from your ledger device.
-        </p>
+        <p className={classes.transactionText}>{message}</p>
         {renderContinue()}
         {toPubKey && (
           <TransactionInfoBadge title="FIO Public Address">
