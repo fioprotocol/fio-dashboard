@@ -4,9 +4,14 @@
 .form {
   margin-top: 20px;
 
+  .field {
+    width: 100%;
+    margin-bottom: -15px !important;
+  }
+
   .submitButton {
     align-self: start;
-    margin-top: -20px !important;
+    font-weight: bold !important;
   }
 
   .checkboxContainer {

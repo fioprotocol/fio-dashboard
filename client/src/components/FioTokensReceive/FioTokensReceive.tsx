@@ -73,8 +73,9 @@ export const FioTokensReceive: React.FC<Props> = props => {
               <div className={classes.title}>Public Address</div>
               <DataValue value={fioWallet.publicKey} />
               <LedgerCheckPublicAddress
-                fioWallet={fioWallet}
                 className={classes.showOnLedgerAddressButton}
+                fioWallet={fioWallet}
+                withEye
               />
             </div>
           </Badge>
