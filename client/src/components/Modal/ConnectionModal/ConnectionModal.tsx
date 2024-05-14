@@ -1,29 +1,48 @@
 import React from 'react';
-
+import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
+
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 
-import Loader from '../../Loader/Loader';
 import Modal from '../Modal';
+import LedgerBadge from '../../Badges/LedgerBadge/LedgerBadge';
 
-import ledgerIcon from '../../../assets/images/ledger-logo-svg-vector.svg';
+import { TransactionInfoBadge } from './components/TransactionInfoBadge';
+
+import apis from '../../../api';
+import { AnyType, PublicAddressDoublet } from '../../../types';
 
 import classes from './ConnectionModal.module.scss';
 
+type TransactionDetails = {
+  amount: string;
+  fee?: number;
+  contactsList: string[];
+  tokens: PublicAddressDoublet[];
+  socialMediaLinksList: Record<string, string>;
+  feeRecordObtData: number;
+  fromPubKey: string;
+  nativeAmount: string;
+  to: string;
+  toPubKey: string;
+};
+
 type Props = {
+  data: AnyType | null;
   show: boolean;
   onClose: () => void;
   onContinue?: () => void;
   message?: string;
   isTransaction?: boolean;
-  awaitingLedger?: boolean;
+  isAwaiting?: boolean;
 };
 
 const ConnectionModal: React.FC<Props> = props => {
   const {
+    data,
     show,
     message,
-    awaitingLedger,
+    isAwaiting,
     isTransaction,
     onClose,
     onContinue,
@@ -52,33 +71,80 @@ const ConnectionModal: React.FC<Props> = props => {
           : 'Please connect your Ledger device and open FIO App.'}
       </p>
       {renderContinue()}
-      {!awaitingLedger && !onContinue ? (
+      {!isAwaiting && !onContinue ? (
         <Button className={classes.button} onClick={onClose}>
           Close
         </Button>
       ) : null}
     </>
   );
-  const renderTransaction = () => (
-    <>
-      <img src={ledgerIcon} alt="LedgerIcon" className={classes.icon} />
-      <h4 className={classes.transactionTitle}>Confirm Transaction</h4>
-      <p className={classes.transactionText}>
-        {message
-          ? message
-          : 'Please connect your Ledger device, open FIO App and confirm your transactions.'}
-      </p>
-      {renderContinue()}
-      {awaitingLedger ? <Loader isWhite hasSmallSize className="mb-4" /> : null}
-    </>
-  );
+  const renderTransaction = () => {
+    const {
+      fee,
+      amount,
+      nativeAmount,
+      toPubKey,
+      tokens,
+      socialMediaLinksList,
+    } = data as TransactionDetails;
+
+    return (
+      <div className={classes.transactionContent}>
+        <LedgerBadge />
+        <h4 className={classes.transactionTitle}>
+          Confirm & Complete Transaction
+        </h4>
+        <p className={classes.transactionText}>{message}</p>
+        {renderContinue()}
+        {toPubKey && (
+          <TransactionInfoBadge title="FIO Public Address">
+            {toPubKey}
+          </TransactionInfoBadge>
+        )}
+        {(nativeAmount || amount) && (
+          <TransactionInfoBadge title="Send Amount">
+            {amount ?? apis.fio.sufToAmount(parseFloat(nativeAmount))} FIO
+          </TransactionInfoBadge>
+        )}
+        {fee && (
+          <TransactionInfoBadge title="Transaction Fee">
+            {apis.fio.sufToAmount(fee)} FIO
+          </TransactionInfoBadge>
+        )}
+        {socialMediaLinksList &&
+          Object.keys(socialMediaLinksList).length > 0 && (
+            <TransactionInfoBadge title="Mappings">
+              {Object.keys(socialMediaLinksList).map(socialKey => [
+                <b>SOCIAL:{socialKey}:</b>,
+                socialMediaLinksList[socialKey],
+                <br />,
+              ])}
+            </TransactionInfoBadge>
+          )}
+        {tokens && tokens.length > 0 && (
+          <TransactionInfoBadge title="Mappings">
+            {tokens.map(({ publicAddress, chainCode, tokenCode }) => [
+              <b>
+                {tokenCode}:{chainCode}:
+              </b>,
+              publicAddress,
+              <br />,
+            ])}
+          </TransactionInfoBadge>
+        )}
+      </div>
+    );
+  };
 
   return (
     <Modal
+      classNames={{
+        dialog: classnames(isTransaction && classes.dialog),
+      }}
       show={show}
       isBlue={!isTransaction}
-      closeButton={!awaitingLedger}
-      onClose={!awaitingLedger ? onClose : null}
+      closeButton={!isAwaiting}
+      onClose={!isAwaiting ? onClose : null}
     >
       {isTransaction ? renderTransaction() : renderRegular()}
     </Modal>

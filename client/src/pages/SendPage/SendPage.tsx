@@ -84,11 +84,13 @@ const SendPage: React.FC<ContainerProps> = props => {
   const onSend = async (values: SendTokensValues) => {
     const newSendData = { ...values };
 
-    if (newSendData.toPubKey)
-      return setSendData({
+    if (newSendData.toPubKey) {
+      setSendData({
         ...newSendData,
         feeRecordObtData: feePriceRecordObtData.nativeFio,
       });
+      return;
+    }
 
     const pubKey = await fioAddressToPubKey(newSendData.to);
 

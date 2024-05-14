@@ -21,6 +21,7 @@ type Props = {
   action?: string;
   data: AnyType | null;
   isTransaction?: boolean;
+  fee?: number;
   fioWallet?: FioWalletDoublet;
   hideConnectionModal?: boolean;
 
@@ -42,12 +43,13 @@ const LedgerConnect: React.FC<Props> = props => {
     isTransaction,
     fioWallet,
     hideConnectionModal,
-    onConnect = () => {},
-    onSuccess = () => {},
-    onCancel = () => {},
-    showGenericErrorModal = () => {},
-    setProcessing = () => {},
+    onConnect = () => null,
+    onSuccess = () => null,
+    onCancel = () => null,
+    showGenericErrorModal = () => null,
+    setProcessing = () => null,
   } = props;
+
   const connectFioAppIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -221,19 +223,22 @@ const LedgerConnect: React.FC<Props> = props => {
   }, [connect]);
 
   let message = 'Please connect your Ledger device and confirm';
-  if (awaitingLedger) message = 'Please confirm action in your Ledger device';
+  if (awaitingLedger)
+    message =
+      'Please connect your Ledger device, confirm these transaction details, and complete your transaction from your ledger device';
   if (awaitingFioApp) message = 'Connecting...';
   if (awaitingUnlock)
     message = 'Please unlock your device and then press continue';
 
   return (
     <ConnectionModal
+      data={data}
       show={connecting && !hideConnectionModal}
       onClose={closeConnection}
       onContinue={onContinue}
-      awaitingLedger={awaitingLedger || awaitingFioApp}
       message={message}
       isTransaction={isTransaction}
+      isAwaiting={awaitingLedger || awaitingFioApp}
     />
   );
 };

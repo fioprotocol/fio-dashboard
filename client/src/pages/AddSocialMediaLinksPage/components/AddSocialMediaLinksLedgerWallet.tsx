@@ -28,6 +28,7 @@ type Props = {
 
 export const AddSocialMediaLinksLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -72,7 +73,7 @@ export const AddSocialMediaLinksLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.ADD_TOKEN}
-      data={submitData}
+      data={{ ...submitData, fee }}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}
