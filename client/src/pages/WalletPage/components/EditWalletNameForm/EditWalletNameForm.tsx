@@ -21,15 +21,17 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
-          <Field
-            name="name"
-            type="text"
-            placeholder="Enter Wallet Name"
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            component={Input}
-            disabled={loading}
-          />
+          <div className={classes.field}>
+            <Field
+              name="name"
+              type="text"
+              placeholder="Enter Wallet Name"
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              errorColor={COLOR_TYPE.WARN}
+              component={Input}
+              disabled={loading}
+            />
+          </div>
 
           <SubmitButton
             className={classes.submitButton}
@@ -38,9 +40,11 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
               !formRenderProps.valid || formRenderProps.submitting || loading
             }
             loading={loading}
-            hasLowHeight
-            hasAutoWidth
             withoutMargin
+            hasAutoWidth
+            hasSmallPaddings
+            hasSmallText
+            hasLowHeight
           />
         </form>
       )}

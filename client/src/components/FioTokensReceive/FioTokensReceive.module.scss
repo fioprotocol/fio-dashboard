@@ -57,6 +57,7 @@
   .showOnLedgerAddressButton {
     margin-top: 12px;
     align-self: start;
+    @include proxima-nova-semibold;
   }
 }
 

@@ -7,22 +7,34 @@
   display: flex;
   flex-direction: column;
 
+  .ledgerShowAddress,
   .submitButton {
     align-self: start;
-    margin-top: 10px;
+  }
+
+  .ledgerShowAddress {
+    margin-top: 15px;
+    font-family: "Proxima Nova Bold", sans-serif;
+    font-weight: bold !important;
   }
 
   .ledgerContainer {
     position: absolute;
     top: -28px;
   }
+
   .title {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 0;
     font-size: 1.875em;
   }
 
   .settingTitle {
-    font-family: 'Proxima Nova Bold' !important;
+    font-family: 'Proxima Nova Semibold', sans-serif !important;
     margin-bottom: -10px;
     margin-top: 30px;
     display: flex;
@@ -31,6 +43,14 @@
 
   .deleteText {
     margin-top: 15px;
+  }
+
+  .infoBadge {
+    margin-top: 20px;
+  }
+
+  .infoBadgeValue {
+    font-size: 0.8em;
   }
 
   .qrCode {
@@ -131,7 +151,7 @@
 
 .deleteSecondText,
 .badgeBoldText {
-  font-family: 'Proxima Nova Bold';
+  font-family: 'Proxima Nova Bold', sans-serif;
 }
 
 @include lg {
