@@ -65,6 +65,19 @@ const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
   THIRD: 'third',
 } as const;
 
+const INFO_MESSAGES = {
+  FIO_HANDLE_ALREADY_EXISTS: {
+    title: 'Unavailable',
+    message:
+      'The handle you entered is not available. We have made some alter suggestions below.',
+  },
+  EXISTING_DOMAIN_IS_NOT_PUBLIC: {
+    title: 'Unavailable',
+    message:
+      'Domain you entered is not public. We have made some alter suggestions below',
+  },
+};
+
 type HanldedFioHandleType = {
   id: string;
   address: string;
@@ -489,12 +502,29 @@ export const useContext = (): UseContextProps => {
           !fioDomainPartExistsOnParsedCustomDomains &&
           !fioDomainPartExistsOnUsersDomains
         ) {
-          parsedCustomDomains.unshift({
-            name: fioDomainPart,
-            domainType: DOMAIN_TYPE.CUSTOM,
-            rank: 0,
-            swapAddressAndDomainPlaces: false,
-          });
+          const domainExistInBlockChain = await apis.fio.getFioDomain(
+            fioDomainPart,
+          );
+
+          if (!domainExistInBlockChain) {
+            parsedCustomDomains.unshift({
+              name: fioDomainPart,
+              domainType: DOMAIN_TYPE.CUSTOM,
+              rank: 0,
+              swapAddressAndDomainPlaces: false,
+            });
+          } else {
+            if (domainExistInBlockChain.is_public) {
+              parsedPremiumDomains.unshift({
+                name: fioDomainPart,
+                domainType: DOMAIN_TYPE.PREMIUM,
+                rank: 0,
+                swapAddressAndDomainPlaces: false,
+              });
+            } else {
+              setInfo(INFO_MESSAGES.EXISTING_DOMAIN_IS_NOT_PUBLIC);
+            }
+          }
         }
       }
 
@@ -565,11 +595,7 @@ export const useContext = (): UseContextProps => {
           findExistingFioHandleInBlockChain(validatedCustomFCH));
 
       if (ifFullFioHandleExists)
-        setInfo({
-          title: 'Unavailable',
-          message:
-            'The handle you entered is not available. We have made some alter suggestions below.',
-        });
+        setInfo(INFO_MESSAGES.FIO_HANDLE_ALREADY_EXISTS);
 
       if (
         !avaliableUserFCH &&
