@@ -31,6 +31,10 @@
     align-items: center;
     margin-bottom: 0;
     font-size: 1.875em;
+
+    & > b {
+      @include proxima-nova-bold
+    }
   }
 
   .settingTitle {
@@ -149,14 +153,13 @@
   color: black;
 }
 
-.deleteSecondText,
-.badgeBoldText {
+.deleteSecondText {
   font-family: 'Proxima Nova Bold', sans-serif;
 }
 
 @include lg {
   .container {
-    padding: 0 10px;
+    padding: 0 10px 10px;
 
     .publicAddressContainer {
       flex-direction: row;

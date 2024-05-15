@@ -218,6 +218,7 @@ const WalletSettings: React.FC<Props> = props => {
       <>
         <h6 className={classes.settingTitle}>Show Private Key</h6>
         <InfoBadge
+          className={classes.infoBadge}
           show={true}
           type={BADGE_TYPES.INFO}
           title="Warning!"
@@ -293,22 +294,11 @@ const WalletSettings: React.FC<Props> = props => {
               type={isLedgerWallet ? BADGE_TYPES.INFO : BADGE_TYPES.WARNING}
               title={isLedgerWallet ? 'Private Key' : 'Warning!'}
               message={
-                isLedgerWallet ? (
-                  <span>
-                    Your private key for this wallet is stored on your ledger
-                    device. Once Deleted, it can be added back at any time.
-                  </span>
-                ) : isMetamaskWallet ? (
-                  <span>
-                    Your private key for this wallet is stored on your MetaMask
-                    wallet. Once Deleted, it can be added back at any time.
-                  </span>
-                ) : (
-                  <span className={classes.badgeBoldText}>
-                    Record your private key as this wallet will be permanently
-                    lost.
-                  </span>
-                )
+                isLedgerWallet
+                  ? 'Your private key for this wallet is stored on your ledger device. Once Deleted, it can be added back at any time.'
+                  : isMetamaskWallet
+                  ? 'Your private key for this wallet is stored on your MetaMask wallet. Once Deleted, it can be added back at any time.'
+                  : 'Record your private key as this wallet will be permanently lost.'
               }
             />
             <DeleteWalletForm
@@ -335,7 +325,7 @@ const WalletSettings: React.FC<Props> = props => {
       >
         <div className={classes.container}>
           <h3 className={classes.title}>
-            <span>Wallet Settings </span>
+            <b>Wallet Settings </b>
             <span>{isLedgerWallet && <LedgerBadge />}</span>
           </h3>
           {renderNameForm()}
