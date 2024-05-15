@@ -649,7 +649,12 @@ export const useContext = (): UseContextProps => {
 
         if (
           availableNonPremiumFCH[0] &&
-          suggestedType === SUGGESTED_TYPE.FIRST
+          ((suggestedType === SUGGESTED_TYPE.FIRST &&
+            (!fioHandleHasDomainPart ||
+              (fioHandleHasDomainPart && availableNonPremiumFCH[0]?.isFree))) ||
+            (suggestedType === SUGGESTED_TYPE.SECOND &&
+              fioHandleHasDomainPart &&
+              !availableNonPremiumFCH[0]?.isFree))
         ) {
           suggestedElement = availableNonPremiumFCH[0];
           availableNonPremiumFCH.shift();
