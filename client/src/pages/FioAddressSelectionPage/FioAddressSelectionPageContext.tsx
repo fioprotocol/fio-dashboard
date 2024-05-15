@@ -74,7 +74,7 @@ const INFO_MESSAGES = {
   EXISTING_DOMAIN_IS_NOT_PUBLIC: {
     title: 'Unavailable',
     message:
-      'Domain you entered is not public. We have made some alter suggestions below',
+      'Domain you entered is not public. We have made some alter suggestions below.',
   },
 };
 
@@ -637,9 +637,16 @@ export const useContext = (): UseContextProps => {
       ];
 
       if (swapedCustomFCH) {
-        availableCustomFCHWithSwapped = [swapedCustomFCH].concat(
-          availableCustomFCHWithSwapped,
-        );
+        if (
+          availableCustomFCHWithSwapped[0]?.id === address &&
+          fioHandleHasDomainPart
+        ) {
+          availableCustomFCHWithSwapped.splice(1, 0, swapedCustomFCH);
+        } else {
+          availableCustomFCHWithSwapped = [swapedCustomFCH].concat(
+            availableCustomFCHWithSwapped,
+          );
+        }
       }
 
       const handleSuggestedElement = (
@@ -649,12 +656,7 @@ export const useContext = (): UseContextProps => {
 
         if (
           availableNonPremiumFCH[0] &&
-          ((suggestedType === SUGGESTED_TYPE.FIRST &&
-            (!fioHandleHasDomainPart ||
-              (fioHandleHasDomainPart && availableNonPremiumFCH[0]?.isFree))) ||
-            (suggestedType === SUGGESTED_TYPE.SECOND &&
-              fioHandleHasDomainPart &&
-              !availableNonPremiumFCH[0]?.isFree))
+          suggestedType === SUGGESTED_TYPE.FIRST
         ) {
           suggestedElement = availableNonPremiumFCH[0];
           availableNonPremiumFCH.shift();
@@ -687,8 +689,20 @@ export const useContext = (): UseContextProps => {
       const secondSuggested = handleSuggestedElement(SUGGESTED_TYPE.SECOND);
       const thirdSuggested = handleSuggestedElement(SUGGESTED_TYPE.THIRD);
 
-      firstSuggested && suggestedPublicDomains.push(firstSuggested);
-      secondSuggested && suggestedPublicDomains.push(secondSuggested);
+      const shouldChangePlacesNonPremiumWithPremium =
+        fioHandleHasDomainPart &&
+        firstSuggested.domainType === DOMAIN_TYPE.ALLOW_FREE &&
+        !firstSuggested?.isFree &&
+        secondSuggested?.id === address;
+
+      if (shouldChangePlacesNonPremiumWithPremium) {
+        secondSuggested && suggestedPublicDomains.push(secondSuggested);
+        firstSuggested && suggestedPublicDomains.push(firstSuggested);
+      } else {
+        firstSuggested && suggestedPublicDomains.push(firstSuggested);
+        secondSuggested && suggestedPublicDomains.push(secondSuggested);
+      }
+
       thirdSuggested && suggestedPublicDomains.push(thirdSuggested);
 
       const additionalPublicDomains: SelectedItemProps[] = [
@@ -705,7 +719,8 @@ export const useContext = (): UseContextProps => {
         if (a.domainType === DOMAIN_TYPE.PREMIUM) return -1;
         if (b.domainType === DOMAIN_TYPE.PREMIUM) return 1;
 
-        if (a.domainType === DOMAIN_TYPE.CUSTOM) return -1;
+        if (a.domainType === DOMAIN_TYPE.CUSTOM && a.swapAddressAndDomainPlaces)
+          return -1;
         if (b.domainType === DOMAIN_TYPE.CUSTOM) return 1;
 
         return 0;
