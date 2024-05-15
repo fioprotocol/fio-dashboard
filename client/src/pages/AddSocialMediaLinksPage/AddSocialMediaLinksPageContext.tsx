@@ -25,13 +25,8 @@ import {
   PublicAddressDoublet,
   SocialMediaLinkItem,
 } from '../../types';
-import { FormValues } from './types';
+import { FormValues, AddSocialMediaLinkValues } from './types';
 import { updatePublicAddresses } from '../../redux/fio/actions';
-
-export type AddSocialMediaLinkValues = {
-  fch: string;
-  socialMediaLinksList: FormValues;
-};
 
 type UseContextProps = {
   bundleCost: number;

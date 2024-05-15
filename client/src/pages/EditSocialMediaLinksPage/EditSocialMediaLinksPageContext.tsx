@@ -25,12 +25,7 @@ import {
   FioWalletDoublet,
 } from '../../types';
 
-import { EditSocialLinkItem } from './types';
-
-export type EditSocialLinkValues = {
-  fch: string;
-  socialMediaLinksList: EditSocialLinkItem[];
-};
+import { EditSocialLinkItem, EditSocialLinkValues } from './types';
 
 type UseContextProps = {
   bundleCost: number;
