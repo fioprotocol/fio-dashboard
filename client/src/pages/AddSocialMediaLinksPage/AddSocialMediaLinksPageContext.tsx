@@ -28,6 +28,11 @@ import {
 import { FormValues } from './types';
 import { updatePublicAddresses } from '../../redux/fio/actions';
 
+export type AddSocialMediaLinkValues = {
+  fch: string;
+  socialMediaLinksList: FormValues;
+};
+
 type UseContextProps = {
   bundleCost: number;
   edgeWalletId: string;
@@ -36,13 +41,9 @@ type UseContextProps = {
   loading: boolean;
   processing: boolean;
   results: LinkActionResult;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: FormValues | PublicAddressDoublet[];
-  };
+  submitData: AddSocialMediaLinkValues;
   changeBundleCost: (bundle: number) => void;
   onCancel: () => void;
-  onRetry: (resultsData: LinkActionResult) => void;
   onSubmit: (values: FormValues) => void;
   onSuccess: (resultsData: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
@@ -57,10 +58,9 @@ export const useContext = (): UseContextProps => {
     SocialMediaLinkItem[]
   >([]);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<{
-    fch: string;
-    socialMediaLinksList: FormValues | PublicAddressDoublet[];
-  } | null>(null);
+  const [submitData, setSubmitData] = useState<AddSocialMediaLinkValues | null>(
+    null,
+  );
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [results, setResultsData] = useState<LinkActionResult>(null);
 
@@ -112,10 +112,6 @@ export const useContext = (): UseContextProps => {
     setProcessing(false);
   };
 
-  const onRetry = (resultsData: LinkActionResult) => {
-    setSubmitData({ fch, socialMediaLinksList: resultsData.connect.failed });
-  };
-
   const publicAddressesJson = JSON.stringify(publicAddresses);
 
   useEffect(() => {
@@ -151,7 +147,6 @@ export const useContext = (): UseContextProps => {
     submitData,
     changeBundleCost,
     onCancel,
-    onRetry,
     onSubmit,
     onSuccess,
     setProcessing,

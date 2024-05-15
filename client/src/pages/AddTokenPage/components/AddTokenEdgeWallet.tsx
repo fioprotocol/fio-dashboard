@@ -14,14 +14,14 @@ import {
   PublicAddressDoublet,
   WalletKeys,
 } from '../../../types';
-import { FormValues } from '../types';
+import { AddTokenValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: FormValues | null;
+  submitData: AddTokenValues | null;
   processing: boolean;
   fee?: number | null;
 };
@@ -41,7 +41,7 @@ const AddTokenEdgeWallet: React.FC<Props> = props => {
     data,
   }: {
     keys: WalletKeys;
-    data: FormValues;
+    data: AddTokenValues;
   }) => {
     const params: {
       fioAddress: string;

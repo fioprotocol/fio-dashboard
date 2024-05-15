@@ -31,7 +31,11 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { emptyWallet } from '../../redux/fio/reducer';
 
-import { ContainerProps, LocationProps } from './types';
+import {
+  ContainerProps,
+  LocationProps,
+  FioRequestDecryptValues,
+} from './types';
 import {
   FioDecryptedRecordData,
   FioRecord,
@@ -58,11 +62,9 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
       (walletItem: FioWalletDoublet) => publicKey === walletItem.publicKey,
     ) || emptyWallet;
   const fioRequestId = Number(id);
-  const [submitData, setDecryptData] = useState<{
-    itemData: FioRecord;
-    paymentOtbData: FioRecord | null;
-    fioRecordType: string;
-  } | null>(null);
+  const [submitData, setDecryptData] = useState<FioRequestDecryptValues | null>(
+    null,
+  );
   const [initDecrypt, setInitDecrypt] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [fioRequest, setFioRequest] = useState<FioRecord | null>(null);
