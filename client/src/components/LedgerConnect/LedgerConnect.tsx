@@ -22,6 +22,7 @@ type Props = {
   data: AnyType | null;
   isTransaction?: boolean;
   fee?: number;
+  oracleFee?: number;
   fioWallet?: FioWalletDoublet;
   hideConnectionModal?: boolean;
 
@@ -40,6 +41,8 @@ const LedgerConnect: React.FC<Props> = props => {
   const {
     action,
     data,
+    fee,
+    oracleFee,
     isTransaction,
     fioWallet,
     hideConnectionModal,
@@ -232,7 +235,11 @@ const LedgerConnect: React.FC<Props> = props => {
 
   return (
     <ConnectionModal
+      action={action}
       data={data}
+      fioWallet={fioWallet}
+      fee={fee}
+      oracleFee={oracleFee}
       show={connecting && !hideConnectionModal}
       onClose={closeConnection}
       onContinue={onContinue}

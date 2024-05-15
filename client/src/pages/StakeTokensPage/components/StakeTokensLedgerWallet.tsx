@@ -90,7 +90,8 @@ const StakeTokensLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.STAKE}
-      data={{ ...submitData, fee }}
+      data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={stake}
       onSuccess={onSuccess}

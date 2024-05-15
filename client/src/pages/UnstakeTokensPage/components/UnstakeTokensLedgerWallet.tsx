@@ -89,7 +89,8 @@ const UnstakeTokensLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.UNSTAKE}
-      data={{ ...submitData, fee }}
+      data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={unstake}
       onSuccess={onSuccess}

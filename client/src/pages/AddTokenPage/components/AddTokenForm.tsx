@@ -14,7 +14,7 @@ import { CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
 
 import { genericTokenId } from '../../../util/fio';
 
-import { FormValues, AddTokenFormProps } from '../types';
+import { AddTokenValues, AddTokenFormProps } from '../types';
 import { AnyObject, PublicAddressDoublet } from '../../../types';
 
 import classes from '../styles/AddToken.module.scss';
@@ -99,7 +99,7 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
     null,
   );
 
-  const tokens = useMemo<FormValues['tokens']>(
+  const tokens = useMemo<AddTokenValues['tokens']>(
     () => (values?.tokens?.length ? values.tokens : []),
     [values?.tokens],
   );

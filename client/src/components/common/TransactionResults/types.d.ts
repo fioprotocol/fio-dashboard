@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormRenderProps } from 'react-final-form';
 
-import { FormValues } from '../../../pages/AddTokenPage/types';
+import { AddTokenValues } from '../../../pages/AddTokenPage/types';
 
 import {
   FeePrice,
@@ -54,6 +54,6 @@ export type LinkTokenResultsProps = {
   results: LinkActionResult;
   bundleCost: number;
   changeBundleCost: (bundleCost: number) => void;
-  onBack: (formProps?: FormRenderProps<FormValues>) => void;
+  onBack: (formProps?: FormRenderProps<AddTokenValues>) => void;
   onRetry: (results: LinkActionResult) => void;
 };

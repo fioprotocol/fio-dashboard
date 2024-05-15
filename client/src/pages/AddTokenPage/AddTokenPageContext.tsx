@@ -20,7 +20,7 @@ import {
 } from './validation';
 
 import { LinkActionResult, PublicAddressDoublet } from '../../types';
-import { AddTokenContextProps, FormValues, SubmitDataProps } from './types';
+import { AddTokenContextProps, AddTokenValues, SubmitDataProps } from './types';
 
 export const useContext = (): AddTokenContextProps => {
   const queryParams = useQuery();
@@ -47,7 +47,7 @@ export const useContext = (): AddTokenContextProps => {
   const [submitData, setSubmitData] = useState<SubmitDataProps>(null);
   const [bundleCost, changeBundleCost] = useState<number>(0);
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = (values: AddTokenValues) => {
     setSubmitData({
       ...values,
       name,
@@ -65,7 +65,7 @@ export const useContext = (): AddTokenContextProps => {
     setProcessing(false);
   };
 
-  const onBack = (formProps: FormRenderProps<FormValues>) => {
+  const onBack = (formProps: FormRenderProps<AddTokenValues>) => {
     const { form } = formProps;
     form.reset();
     form.mutators.push('tokens');
@@ -80,8 +80,12 @@ export const useContext = (): AddTokenContextProps => {
     });
   };
 
-  const validate = (values: FormValues) => validation(values, publicAddresses);
-  const validateToken = (token: PublicAddressDoublet, values: FormValues) => {
+  const validate = (values: AddTokenValues) =>
+    validation(values, publicAddresses);
+  const validateToken = (
+    token: PublicAddressDoublet,
+    values: AddTokenValues,
+  ) => {
     const results = validationToken(
       token,
       [...(values?.tokens || []), ...publicAddresses].filter(Boolean),
