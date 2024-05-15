@@ -114,7 +114,7 @@ export const EditSocialMediaLinksMetamaskWallet: React.FC<Props> = props => {
         disconnect: {
           error: null,
           failed: [],
-          updated: editedSocialLinks as any,
+          updated: editedSocialLinks as [],
         },
       };
 
