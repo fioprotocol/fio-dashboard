@@ -9,6 +9,7 @@ import CustomDropdown from '../../components/CustomDropdown';
 import { useContext } from './AdminRegularUsersListContext';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
+import { handleUserProfileType } from '../../util/user';
 
 import { USERS_FILTER_OPTIONS } from './constants';
 
@@ -21,7 +22,7 @@ const AdminRegularUsersList: React.FC = () => {
     paginationComponent,
     regularUsersList,
     range,
-    handleChangeFailedSyncFilter,
+    handleChangeOptionsFilter,
     onClick,
     onExportCsv,
   } = useContext();
@@ -46,11 +47,15 @@ const AdminRegularUsersList: React.FC = () => {
         </Button>
 
         <div className="d-flex align-items-center">
-          Filter Type:&nbsp;
+          Filter Options:&nbsp;
           <CustomDropdown
-            value={filters.failedSyncedWithEdge}
+            value={
+              USERS_FILTER_OPTIONS.find(
+                userOption => userOption.id === filters.userOption,
+              ).id
+            }
             options={USERS_FILTER_OPTIONS}
-            onChange={handleChangeFailedSyncFilter}
+            onChange={handleChangeOptionsFilter}
             isDark
             withoutMarginBottom
             fitContentWidth
@@ -67,6 +72,7 @@ const AdminRegularUsersList: React.FC = () => {
             <th scope="col">User</th>
             <th scope="col">Status</th>
             <th scope="col">Timezone</th>
+            <th scope="col">Type</th>
           </tr>
         </thead>
         <tbody>
@@ -86,6 +92,12 @@ const AdminRegularUsersList: React.FC = () => {
                   <th>{regularUser.email || regularUser.id}</th>
                   <th>{regularUser.status}</th>
                   <th>{regularUser.timeZone}</th>
+                  <th>
+                    {handleUserProfileType({
+                      userProfileType: regularUser.userProfileType,
+                      fioWallets: regularUser.fioWallets,
+                    })}
+                  </th>
                 </tr>
               ))
             : null}

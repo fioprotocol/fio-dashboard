@@ -1,6 +1,7 @@
 const WALLET_CREATED_FROM = {
   EDGE: 'EDGE',
   LEDGER: 'LEDGER',
+  METAMASK: 'METAMASK',
 };
 
 const DOMAIN_EXP_PERIOD = {

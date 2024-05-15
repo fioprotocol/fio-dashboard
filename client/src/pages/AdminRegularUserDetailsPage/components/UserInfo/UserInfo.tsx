@@ -10,15 +10,27 @@ type Props = {
   refProfile: { code?: string };
   status: string;
   timeZone: string;
+  userProfileType: string;
 };
 
 export const UserInfo: React.FC<Props> = props => {
-  const { affiliateProfile, createdAt, refProfile, status, timeZone } = props;
+  const {
+    affiliateProfile,
+    createdAt,
+    refProfile,
+    status,
+    timeZone,
+    userProfileType,
+  } = props;
 
   const userInfoData: { title: string; value: string }[] = [
     {
       title: 'Created',
       value: formatDateToLocale(createdAt),
+    },
+    {
+      title: 'Type',
+      value: userProfileType,
     },
     {
       title: 'Status',
