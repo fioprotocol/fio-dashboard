@@ -51,11 +51,13 @@ const PasswordForm: React.FC<{
               formRenderProps.submitting ||
               loading
             }
-            loading={loading}
             text="Show Private Key"
-            hasLowHeight
-            hasAutoWidth
+            loading={loading}
             withoutMargin
+            hasAutoWidth
+            hasSmallPaddings
+            hasSmallText
+            hasLowHeight
           />
         </form>
       )}
