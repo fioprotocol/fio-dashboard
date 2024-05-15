@@ -29,14 +29,14 @@ import { WrapDomainValues } from '../../../pages/WrapDomainPage/types';
 import { EditTokenValues } from '../../../pages/EditTokenPage/types';
 import { AddTokenValues } from '../../../pages/AddTokenPage/types';
 import { DeleteTokenValues } from '../../../pages/DeleteTokenPage/types';
-import { EditSocialLinkValues } from '../../../pages/EditSocialMediaLinksPage/EditSocialMediaLinksPageContext';
-import { AddSocialMediaLinkValues } from '../../../pages/AddSocialMediaLinksPage/AddSocialMediaLinksPageContext';
-import { DeleteSocialMediaLinkValues } from '../../../pages/DeleteSocialMediaLinksPage/DeleteSocialMediaLinksPageContext';
 import { FioNameTransferValues } from '../../FioNameTransfer/types';
 import { FioRequestDecryptValues } from '../../../pages/FioRequestDecryptPage/types';
 import { RequestTokensValues } from '../../../pages/FioTokensRequestPage/types';
 import { FioRecordViewDecrypted } from '../../../pages/WalletPage/types';
 import { FioDomainStatusValues } from '../../../pages/FioDomainStatusChangePage/types';
+import { AddSocialMediaLinkValues } from '../../../pages/AddSocialMediaLinksPage/types';
+import { DeleteSocialMediaLinkValues } from '../../../pages/DeleteSocialMediaLinksPage/types';
+import { EditSocialLinkValues } from '../../../pages/EditSocialMediaLinksPage/types';
 
 type Props = {
   action: string;

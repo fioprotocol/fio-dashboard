@@ -28,15 +28,12 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
 } from '../../../types';
-import { FormValues } from '../types';
+import { AddSocialMediaLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: FormValues | PublicAddressDoublet[];
-  };
+  submitData: AddSocialMediaLinkValues;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;

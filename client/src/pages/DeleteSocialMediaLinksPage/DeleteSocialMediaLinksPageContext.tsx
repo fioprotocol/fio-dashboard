@@ -30,12 +30,10 @@ import {
   FioWalletDoublet,
   LinkActionResult,
 } from '../../types';
-import { CheckedSocialMediaLinkType } from './types';
-
-export type DeleteSocialMediaLinkValues = {
-  fch: string;
-  socialMediaLinksList: CheckedSocialMediaLinkType[];
-};
+import {
+  CheckedSocialMediaLinkType,
+  DeleteSocialMediaLinkValues,
+} from './types';
 
 type UseContextProps = {
   allChecked: boolean;
