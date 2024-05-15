@@ -14,17 +14,14 @@ import {
   PublicAddressDoublet,
   WalletKeys,
 } from '../../../types';
-import { CheckedSocialMediaLinkType } from '../types';
+import { DeleteSocialMediaLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: CheckedSocialMediaLinkType[] | null;
-  };
+  submitData: DeleteSocialMediaLinkValues;
   processing: boolean;
   fee?: number | null;
 };
@@ -43,10 +40,7 @@ export const DeleteSocialMediaLinkEdgeWallet: React.FC<Props> = props => {
     data,
     keys,
   }: {
-    data: {
-      fch: string;
-      socialMediaLinksList: CheckedSocialMediaLinkType[];
-    };
+    data: DeleteSocialMediaLinkValues;
     keys: WalletKeys;
   }) => {
     const disconnectList = data.socialMediaLinksList.filter(

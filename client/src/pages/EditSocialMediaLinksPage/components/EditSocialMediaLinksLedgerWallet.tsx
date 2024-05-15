@@ -14,17 +14,14 @@ import {
   PublicAddressDoublet,
   LinkActionResult,
 } from '../../../types';
-import { EditSocialLinkItem } from '../types';
+import { EditSocialLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: EditSocialLinkItem[] | null;
-  };
+  submitData: EditSocialLinkValues;
   processing: boolean;
   fee: number;
 };

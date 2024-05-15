@@ -24,15 +24,12 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { EditSocialLinkItem } from '../types';
+import { EditSocialLinkItem, EditSocialLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: EditSocialLinkItem[];
-  } | null;
+  submitData: EditSocialLinkValues | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
