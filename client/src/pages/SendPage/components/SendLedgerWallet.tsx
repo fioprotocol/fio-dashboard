@@ -165,7 +165,8 @@ const SendLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.SEND}
-      data={{ ...submitData, fee }}
+      data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={send}
       onSuccess={onSuccess}

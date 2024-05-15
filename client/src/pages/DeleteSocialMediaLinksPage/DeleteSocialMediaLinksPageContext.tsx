@@ -29,9 +29,13 @@ import {
   FioAddressWithPubAddresses,
   FioWalletDoublet,
   LinkActionResult,
-  PublicAddressDoublet,
 } from '../../types';
 import { CheckedSocialMediaLinkType } from './types';
+
+export type DeleteSocialMediaLinkValues = {
+  fch: string;
+  socialMediaLinksList: CheckedSocialMediaLinkType[];
+};
 
 type UseContextProps = {
   allChecked: boolean;
@@ -48,10 +52,7 @@ type UseContextProps = {
   processing: boolean;
   socialMediaLinksList: CheckedSocialMediaLinkType[];
   resultsData: LinkActionResult;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: CheckedSocialMediaLinkType[] | PublicAddressDoublet[];
-  };
+  submitData: DeleteSocialMediaLinkValues;
   allCheckedChange: (isChecked: boolean) => void;
   setProcessing: (processing: boolean) => void;
   changeBundleCost: (bundles: number) => void;
@@ -83,10 +84,10 @@ export const useContext = (): UseContextProps => {
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [allChecked, toggleAllChecked] = useState<boolean>(false);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<{
-    fch: string;
-    socialMediaLinksList: CheckedSocialMediaLinkType[] | PublicAddressDoublet[];
-  } | null>(null);
+  const [
+    submitData,
+    setSubmitData,
+  ] = useState<DeleteSocialMediaLinkValues | null>(null);
   const [resultsData, setResultsData] = useState<LinkActionResult>(null);
 
   const history = useHistory();
@@ -238,7 +239,8 @@ export const useContext = (): UseContextProps => {
   const onRetry = (resultsData: LinkActionResult) => {
     setSubmitData({
       fch,
-      socialMediaLinksList: resultsData.disconnect.failed,
+      socialMediaLinksList: resultsData.disconnect
+        .failed as CheckedSocialMediaLinkType[],
     });
   };
 

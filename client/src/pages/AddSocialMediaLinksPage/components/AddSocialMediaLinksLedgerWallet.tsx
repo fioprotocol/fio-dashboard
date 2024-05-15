@@ -73,7 +73,8 @@ export const AddSocialMediaLinksLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.ADD_TOKEN}
-      data={{ ...submitData, fee }}
+      data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

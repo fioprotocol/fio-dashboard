@@ -66,7 +66,8 @@ const DeleteTokenLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.DELETE_TOKEN}
-      data={{ ...submitData, fee }}
+      data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}
