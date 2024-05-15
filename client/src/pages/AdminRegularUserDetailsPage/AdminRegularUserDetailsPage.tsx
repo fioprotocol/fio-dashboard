@@ -28,6 +28,7 @@ const AdminRegularUserDetailsPage: React.FC = () => {
     handleOrderClick,
     handleOrderClose,
     orderInfo,
+    userProfileType,
   } = useContext();
 
   if (loading) return <Loader />;
@@ -40,6 +41,7 @@ const AdminRegularUserDetailsPage: React.FC = () => {
         refProfile={refProfile}
         status={status}
         timeZone={timeZone}
+        userProfileType={userProfileType}
       />
       <WalletsTable fioWallets={fioWallets} />
       <FioDomainsTable fioDomains={fioDomains} />

@@ -1,5 +1,7 @@
 export const USERS_FILTER_OPTIONS_IDS = {
   FAILED_SYNC_WITH_EDGE: 'FAILED_SYNC_WITH_EDGE',
+  EDGE_USERS: 'EDGE_USERS',
+  METAMASK_USERS: 'METAMASK_USERS',
 };
 
 export const USERS_FILTER_OPTIONS = [
@@ -11,4 +13,6 @@ export const USERS_FILTER_OPTIONS = [
     id: USERS_FILTER_OPTIONS_IDS.FAILED_SYNC_WITH_EDGE,
     name: 'With Failed Edge sync',
   },
+  { id: USERS_FILTER_OPTIONS_IDS.EDGE_USERS, name: 'EDGE Users' },
+  { id: USERS_FILTER_OPTIONS_IDS.METAMASK_USERS, name: 'MetaMask Users' },
 ];
