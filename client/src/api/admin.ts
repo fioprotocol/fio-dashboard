@@ -152,7 +152,7 @@ export default class Admin extends Base {
     offset: number;
     includeMoreDetailedInfo?: boolean;
     filters?: {
-      failedSyncedWithEdge?: string;
+      userOption?: string;
     };
   }): Promise<UsersListResponse> {
     return this.apiClient.get('admin/reg-users', {

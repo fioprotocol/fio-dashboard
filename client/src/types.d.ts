@@ -389,6 +389,7 @@ export type UserDetails = {
   refProfile: { code?: string } | null;
   affiliateProfile: { code?: string; tpid?: string } | null;
   orders: OrderDefault[];
+  userProfileType: string;
 };
 
 export type RefProfileDomain = {
