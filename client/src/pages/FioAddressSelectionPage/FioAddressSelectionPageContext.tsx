@@ -71,11 +71,6 @@ const INFO_MESSAGES = {
     message:
       'The handle you entered is not available. We have made some alter suggestions below.',
   },
-  EXISTING_DOMAIN_IS_NOT_PUBLIC: {
-    title: 'Unavailable',
-    message:
-      'Domain you entered is not public. We have made some alter suggestions below.',
-  },
 };
 
 type HanldedFioHandleType = {
@@ -522,7 +517,7 @@ export const useContext = (): UseContextProps => {
                 swapAddressAndDomainPlaces: false,
               });
             } else {
-              setInfo(INFO_MESSAGES.EXISTING_DOMAIN_IS_NOT_PUBLIC);
+              setInfo(INFO_MESSAGES.FIO_HANDLE_ALREADY_EXISTS);
             }
           }
         }
