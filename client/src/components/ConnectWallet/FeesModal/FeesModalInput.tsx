@@ -546,26 +546,23 @@ const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             (hasError || showErrorBorder) && !showModal && classes.error,
           )}
         >
-          <div>
-            <b>{prefixLabel}</b>
-          </div>
-          <div className={classes.valueContainer}>
-            <div className="px-2">
-              {(input.value.gasPrice
-                ? calculateGasFee(
-                    input.value.gasPrice,
-                    input.value.gasLimit ? +input.value.gasLimit : undefined,
-                  )
-                : 0) +
-                ' ' +
-                valueTitle}
+          <b>{prefixLabel}</b>
+          <span className="flex-grow-1" />
+          <span>
+            {(input.value.gasPrice
+              ? calculateGasFee(
+                  input.value.gasPrice,
+                  input.value.gasLimit ? +input.value.gasLimit : undefined,
+                )
+              : 0) +
+              ' ' +
+              valueTitle}
+          </span>
+          {!loading && (
+            <div className={classes.editButtonContainer}>
+              <Button onClick={handleOpenModal}>Edit</Button>
             </div>
-            {!loading && (
-              <div className={classes.editButtonContainer}>
-                <Button onClick={handleOpenModal}>Edit</Button>
-              </div>
-            )}
-          </div>
+          )}
         </div>
         <LoadingIcon isVisible={loading} />
       </div>

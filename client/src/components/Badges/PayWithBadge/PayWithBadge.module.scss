@@ -27,6 +27,7 @@
 
 .wallet {
   .title {
+    text-wrap: nowrap;
     margin-bottom: 0.2rem;
     & > span {
       word-break: break-all;
@@ -34,12 +35,12 @@
   }
 
   .balance {
+    text-wrap: nowrap;
     margin-bottom: 0;
     margin-top: 10px;
     font-size: 0.875em;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     @include proxima-nova-thin
   }
 }

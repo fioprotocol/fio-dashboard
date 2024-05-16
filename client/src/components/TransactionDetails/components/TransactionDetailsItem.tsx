@@ -1,17 +1,24 @@
 import { FC, ReactNode } from 'react';
 
+import classnames from 'classnames';
+
 import classes from './TransactionDetailsItem.module.scss';
 
 type Props = {
   name: string;
   value: ReactNode;
+  position?: 'left' | 'right';
 };
 
-export const TransactionDetailsItem: FC<Props> = ({ name, value }) => {
+export const TransactionDetailsItem: FC<Props> = ({
+  name,
+  value,
+  position = 'left',
+}) => {
   return (
-    <div className={classes.item}>
+    <>
       <span className={classes.name}>{name}</span>
-      <div className={classes.value}>{value}</div>
-    </div>
+      <div className={classnames(classes.value, position)}>{value}</div>
+    </>
   );
 };

@@ -90,6 +90,10 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
         ...stakeTokensData,
         ...res,
       },
+      payWith: {
+        walletName: fioWallet.name,
+        walletBalances: balance.available,
+      },
     });
     refreshWalletDataPublicKey(fioWallet.publicKey);
   };
@@ -158,6 +162,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
         </p>
 
         <StakeTokensForm
+          fioWallet={fioWallet}
           balance={balance}
           isWalletFioAddressesLoading={isWalletFioAddressesLoading}
           loading={loading || processing}

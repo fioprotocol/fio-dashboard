@@ -17,6 +17,7 @@ import { ResultsProps } from '../types';
 import { AnyType } from '../../../../types';
 
 import classes from '../styles/Results.module.scss';
+import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 
 type ResultsData = {
   amount?: string;
@@ -24,7 +25,6 @@ type ResultsData = {
   chainCode: string;
   block_num?: number;
   publicAddress: string;
-  feeCollectedAmount: number;
   nativeFeeCollectedAmount: number;
   other?: { transaction_id?: string } & AnyType;
   error?: string | null;
@@ -41,7 +41,6 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
       name,
       chainCode,
       publicAddress,
-      feeCollectedAmount,
       nativeFeeCollectedAmount,
       amount,
       other: { transaction_id },
@@ -58,20 +57,6 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
   const displayUsdcAmount = (
     <>
       <ConvertedAmount fioAmount={fioAmount} />
-    </>
-  );
-
-  const displayFeesAmount = (
-    <>
-      <Amount value={feeCollectedAmount.toFixed(2)} /> {FIO_CHAIN_CODE}
-    </>
-  );
-  const displayUsdcFeesAmount = (
-    <>
-      <ConvertedAmount
-        fioAmount={feeCollectedAmount}
-        nativeAmount={nativeFeeCollectedAmount}
-      />
     </>
   );
 
@@ -104,58 +89,57 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
           </>
         }
       />
-      <p className={classes.label}>Transaction Details</p>
-      <Badge show={!!chainCode} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Wrap Chain</p>
-          <p className={classes.item}>{chainCode}</p>
-        </div>
-      </Badge>
-      <Badge show={!!publicAddress} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Public Address</p>
-          <p className={classes.item}>{publicAddress}</p>
-        </div>
-      </Badge>
-      <Badge show={!!name} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Domain Wrapped</p>
-          <p className={classes.item}>{name}</p>
-        </div>
-      </Badge>
+      {publicAddress && (
+        <>
+          <p className={classes.label}>Public Address</p>
+          <Badge show type={BADGE_TYPES.SIMPLE}>
+            <div className={classnames(classes.badgeContainer)}>
+              <p className={classes.item}>{publicAddress}</p>
+            </div>
+          </Badge>
+        </>
+      )}
 
-      <Badge show={!!amount} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>FIO Wrapped</p>
-          <p className={classes.item}>
-            {displayUsdcAmount} ({displayAmount})
-          </p>
-        </div>
-      </Badge>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Fees</p>
-          <p className={classes.item}>
-            {displayUsdcFeesAmount} ({displayFeesAmount})
-          </p>
-        </div>
-      </Badge>
-      <Badge show={!!transaction_id} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>ID</p>
-          <p className={classnames(classes.item, classes.isIndigo)}>
-            <a
-              href={`${
-                process.env.REACT_APP_FIO_BLOCKS_TX_URL
-              }${transaction_id as string}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {transaction_id}
-            </a>
-          </p>
-        </div>
-      </Badge>
+      {name && (
+        <>
+          <p className={classes.label}>Domain Wrapped</p>
+          <Badge show type={BADGE_TYPES.SIMPLE}>
+            <div className={classnames(classes.badgeContainer)}>
+              <p className={classes.item}>{name}</p>
+            </div>
+          </Badge>
+        </>
+      )}
+      {amount && (
+        <>
+          <p className={classes.label}>FIO Wrapped</p>
+          <Badge show type={BADGE_TYPES.SIMPLE}>
+            <div className={classnames(classes.badgeContainer)}>
+              <p className={classes.item}>
+                {displayUsdcAmount} ({displayAmount})
+              </p>
+            </div>
+          </Badge>
+        </>
+      )}
+      <p className={classes.label}>Transaction Details</p>
+      <TransactionDetails
+        feeInFio={nativeFeeCollectedAmount}
+        additional={[
+          {
+            label: 'Wrap Chain',
+            value: chainCode,
+          },
+          {
+            label: 'ID',
+            value: transaction_id,
+            wrap: true,
+            link: `${
+              process.env.REACT_APP_FIO_BLOCKS_TX_URL
+            }${transaction_id as string}`,
+          },
+        ]}
+      />
     </Results>
   );
 };

@@ -22,11 +22,11 @@
   }
 
   .badgeContainer {
+    margin: 0;
     color: $baltic-sea;
-    font-size: 1.072em;
+    font-size: 1em;
+    line-height: 1;
     @include proxima-nova-bold;
-    display: grid;
-    grid-template-columns: 90px auto;
 
     .title, .item {
       margin-bottom: 0;
@@ -37,17 +37,9 @@
     }
     .item {
       word-break: break-all;
-      padding-left: 15px;
 
       &.isIndigo {
         color: $light-indigo;
-      }
-    }
-
-    &.longTitle {
-      grid-template-columns: 130px auto;
-      .title {
-        white-space: normal;
       }
     }
   }
@@ -80,7 +72,7 @@
       display: flex;
       flex-direction: row;
       color: $baltic-sea;
-      font-size: 1.072em;
+      font-size: 1em;
       line-height: 26px;
     }
     .badgeItem, .badgeItemNext {

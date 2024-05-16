@@ -3,8 +3,27 @@
 @import '../../assets/styles/fontMixins.scss';
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-left: 0 !important;
+  row-gap: 16px;
+  column-gap: 8px;
   width: 100%;
+  color: $baltic-sea;
+
+  .value {
+    @include proxima-nova-bold;
+
+    &.wrap {
+      text-wrap: wrap;
+      word-wrap: break-word;
+    }
+  }
+}
+
+@include sm {
+  .wrapper {
+    grid-template-columns: auto;
+    row-gap: 10px;
+  }
 }

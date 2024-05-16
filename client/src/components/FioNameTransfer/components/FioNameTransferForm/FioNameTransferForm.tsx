@@ -2,7 +2,6 @@ import React, { FormEvent, useState } from 'react';
 
 import { Field, FieldValue } from '../../../Input/Field';
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
-import PayWithBadge from '../../../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 
@@ -93,10 +92,12 @@ export const TransferForm: React.FC<FormProps> = props => {
           loading={validating}
         />
         <p className={classes.label}>{fioNameLabel} Transaction Details</p>
-        <TransactionDetails feeInFio={feePrice.nativeFio} />
-        <PayWithBadge
-          walletBalances={walletBalancesAvailable}
-          walletName={walletName}
+        <TransactionDetails
+          feeInFio={feePrice.nativeFio}
+          payWith={{
+            walletBalances: walletBalancesAvailable,
+            walletName: walletName,
+          }}
         />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton

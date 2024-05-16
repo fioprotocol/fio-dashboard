@@ -2,6 +2,8 @@ import { FC } from 'react';
 
 import { useSelector } from 'react-redux';
 
+import classnames from 'classnames';
+
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
 import { PriceComponent } from '../PriceComponent';
@@ -10,8 +12,19 @@ import { TransactionDetailsItem } from './components/TransactionDetailsItem';
 
 import { convertFioPrices } from '../../util/prices';
 
-import classes from './TransactionDetails.module.scss';
 import { roe as roeSelector } from '../../redux/registrations/selectors';
+import { WalletBalancesItem } from '../../types';
+import { PayWalletInfo } from '../Badges/PayWithBadge/PayWalletInfo';
+
+import classes from './TransactionDetails.module.scss';
+
+type AdditionalDetails = {
+  label: string;
+  value: string;
+  link?: string;
+  hide?: boolean;
+  wrap?: boolean;
+};
 
 type Props = {
   className?: string;
@@ -21,6 +34,11 @@ type Props = {
     fee: number;
     remaining?: number;
   };
+  payWith?: {
+    walletBalances: WalletBalancesItem;
+    walletName?: string;
+  };
+  additional?: AdditionalDetails[];
 };
 
 export const TransactionDetails: FC<Props> = ({
@@ -28,11 +46,15 @@ export const TransactionDetails: FC<Props> = ({
   feeInFio,
   amountInFio,
   bundles,
+  payWith,
+  additional = [],
 }) => {
   const roe = useSelector(roeSelector);
 
+  const valuePosition: 'left' | 'right' = payWith ? 'left' : 'right';
+
   const feeRender = () => {
-    if (typeof feeInFio !== 'number') {
+    if (typeof feeInFio !== 'number' || feeInFio === 0) {
       return null;
     }
 
@@ -40,14 +62,9 @@ export const TransactionDetails: FC<Props> = ({
 
     return (
       <TransactionDetailsItem
+        position={valuePosition}
         name="Transaction Fee"
-        value={
-          <PriceComponent
-            costFio={fee.fio}
-            costUsdc={fee.usdc}
-            isFree={feeInFio === 0}
-          />
-        }
+        value={<PriceComponent costFio={fee.fio} costUsdc={fee.usdc} />}
       />
     );
   };
@@ -67,6 +84,7 @@ export const TransactionDetails: FC<Props> = ({
 
     return (
       <TransactionDetailsItem
+        position={valuePosition}
         name="Total"
         value={
           <PriceComponent
@@ -86,10 +104,13 @@ export const TransactionDetails: FC<Props> = ({
 
     return (
       <TransactionDetailsItem
-        name="Bundle Fee"
+        position={valuePosition}
+        name="Bundled Transaction Amount"
         value={
           <>
-            <span className="boldText">{bundles.fee} Bundles&nbsp;</span>
+            <span className={classnames(classes.value)}>
+              {bundles.fee} Bundles&nbsp;
+            </span>
             {bundles.remaining && (
               <span className={classes.remaining}>
                 ({bundles.remaining} Remaining)
@@ -101,12 +122,74 @@ export const TransactionDetails: FC<Props> = ({
     );
   };
 
+  const payWithRender = () => {
+    if (!payWith) {
+      return null;
+    }
+
+    return (
+      <TransactionDetailsItem
+        position={valuePosition}
+        name="Paying With"
+        value={
+          <PayWalletInfo
+            walletName={payWith.walletName}
+            fioBalance={payWith.walletBalances.fio}
+            usdcBalance={payWith.walletBalances.usdc}
+          />
+        }
+      />
+    );
+  };
+
+  const additionalRender = () => {
+    if (additional.length === 0) {
+      return null;
+    }
+
+    return (
+      <>
+        {additional
+          .filter(it => !it.hide)
+          .map(({ label, value, link, wrap }) => (
+            <TransactionDetailsItem
+              key={`${label}-${value}`}
+              position={valuePosition}
+              name={label}
+              value={
+                link ? (
+                  <a href={link} target="_blank" rel="noreferrer">
+                    <span
+                      className={classnames(
+                        classes.value,
+                        wrap && classes.wrap,
+                      )}
+                    >
+                      {value}
+                    </span>
+                  </a>
+                ) : (
+                  <span
+                    className={classnames(classes.value, wrap && classes.wrap)}
+                  >
+                    {value}
+                  </span>
+                )
+              }
+            />
+          ))}
+      </>
+    );
+  };
+
   return (
     <Badge type={BADGE_TYPES.SIMPLE} show className={className}>
       <div className={classes.wrapper}>
         {feeRender()}
         {totalRender()}
         {bundlesRender()}
+        {payWithRender()}
+        {additionalRender()}
       </div>
     </Badge>
   );
