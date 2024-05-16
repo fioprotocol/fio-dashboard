@@ -2,12 +2,14 @@ import React from 'react';
 
 import Results from '../index';
 
-import classes from '../styles/Results.module.scss';
 import { PaymentDetailsResultValues } from '../../../../pages/TokensRequestPaymentPage/types';
-import { priceToNumber } from '../../../../utils';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
-import Amount from '../../Amount';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+import Amount from '../../Amount';
+
+import { priceToNumber } from '../../../../utils';
+
+import classes from '../styles/Results.module.scss';
 
 type TokenTransferResultsProps = {
   title: string;

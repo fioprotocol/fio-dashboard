@@ -36,8 +36,9 @@ import { ContainerProps, FioNameTransferValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 import { OnSuccessResponseResult } from '../MetamaskConfirmAction';
 
-import classes from './FioNameTransferContainer.module.scss';
 import { useWalletBalances } from '../../util/hooks';
+
+import classes from './FioNameTransferContainer.module.scss';
 
 const FIO_NAME_DATA = {
   address: {

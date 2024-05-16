@@ -17,6 +17,7 @@ import { WalletBalancesItem } from '../../types';
 import { PayWalletInfo } from '../Badges/PayWithBadge/PayWalletInfo';
 
 import classes from './TransactionDetails.module.scss';
+import { POSITIONS, PositionValue } from './constants';
 
 type AdditionalDetails = {
   label: string;
@@ -51,7 +52,9 @@ export const TransactionDetails: FC<Props> = ({
 }) => {
   const roe = useSelector(roeSelector);
 
-  const valuePosition: 'left' | 'right' = payWith ? 'left' : 'right';
+  const valuePosition: PositionValue = payWith
+    ? POSITIONS.LEFT
+    : POSITIONS.RIGHT;
 
   const feeRender = () => {
     if (typeof feeInFio !== 'number' || feeInFio === 0) {

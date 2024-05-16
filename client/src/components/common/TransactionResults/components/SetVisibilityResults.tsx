@@ -4,8 +4,9 @@ import Results from '../index';
 
 import { ResultsProps } from '../types';
 
-import classes from '../styles/Results.module.scss';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+
+import classes from '../styles/Results.module.scss';
 
 const SetVisibilityResults: React.FC<ResultsProps> = props => {
   const {

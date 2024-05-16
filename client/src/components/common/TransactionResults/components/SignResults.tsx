@@ -5,8 +5,9 @@ import FioName from '../../FioName/FioName';
 
 import { ResultsProps } from '../types';
 
-import classes from '../styles/Results.module.scss';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+
+import classes from '../styles/Results.module.scss';
 
 const SignResults: React.FC<ResultsProps> = props => {
   const {
