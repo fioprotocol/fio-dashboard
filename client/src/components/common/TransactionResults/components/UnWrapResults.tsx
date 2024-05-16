@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import Results from '../index';
-import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
@@ -15,6 +15,9 @@ import config from '../../../../config';
 
 import { ResultsProps } from '../types';
 import { AnyObject } from '../../../../types';
+
+import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 
 import classes from '../styles/Results.module.scss';
 
@@ -90,58 +93,54 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
           </>
         }
       />
-      <p className={classes.label}>Transaction Details</p>
-      <Badge show={!!chainCode} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Unwrap Chain</p>
-          <p className={classes.item}>{chainCode}</p>
-        </div>
-      </Badge>
-      <Badge show={!!publicAddress} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Public Address</p>
-          <p className={classes.item}>{publicAddress}</p>
-        </div>
-      </Badge>
-      <Badge show={!!receivingAddress} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Receiving Address</p>
-          <p className={classes.item}>{receivingAddress}</p>
-        </div>
-      </Badge>
 
-      <Badge show={!!amount} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>FIO Unwrapped</p>
-          <p className={classes.item}>
+      <ResultDetails
+        show={!!publicAddress}
+        label="Public Address"
+        value={publicAddress}
+      />
+
+      <ResultDetails
+        show={!!receivingAddress}
+        label="Receiving Address"
+        value={receivingAddress}
+      />
+
+      <ResultDetails
+        show={!!amount}
+        label="FIO Unwrapped"
+        value={
+          <>
             {displayUsdcAmount} ({displayAmount})
-          </p>
-        </div>
-      </Badge>
-      <Badge show={!!fioDomain} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Fio Domain Unwrapped</p>
-          <p className={classes.item}>{fioDomain}</p>
-        </div>
-      </Badge>
-      <Badge show={!!transaction_id} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>ID</p>
-          <p className={classnames(classes.item, classes.isIndigo)}>
-            <a
-              href={`${
-                isTokens
-                  ? process.env.REACT_APP_ETH_HISTORY_URL
-                  : process.env.REACT_APP_POLYGON_HISTORY_URL
-              }${transaction_id as string}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {transaction_id}
-            </a>
-          </p>
-        </div>
-      </Badge>
+          </>
+        }
+      />
+
+      <ResultDetails
+        show={!!fioDomain}
+        label="Fio Domain Unwrapped"
+        value={fioDomain}
+      />
+
+      <p className={classes.label}>Transaction Details</p>
+      <TransactionDetails
+        additional={[
+          {
+            label: 'Unwrap Chain',
+            value: chainCode,
+          },
+          {
+            label: 'ID',
+            value: transaction_id,
+            wrap: true,
+            link: `${
+              isTokens
+                ? process.env.REACT_APP_ETH_HISTORY_URL
+                : process.env.REACT_APP_POLYGON_HISTORY_URL
+            }${transaction_id as string}`,
+          },
+        ]}
+      />
     </Results>
   );
 };

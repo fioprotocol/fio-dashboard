@@ -1,13 +1,13 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import Results from '../index';
-import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 
 import { ResultsProps } from '../types';
+
+import { ResultDetails } from '../../../ResultDetails/ResultDetails';
 
 import classes from '../styles/Results.module.scss';
 
@@ -43,14 +43,14 @@ const StakeTokensResults: React.FC<TokenTransferResultsProps & {
       {topElement}
 
       <p className={classes.label}>{labelAmount}</p>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>{titleAmount}</p>
-          <p className={classes.item}>
+      <ResultDetails
+        label={titleAmount}
+        value={
+          <>
             {displayUsdcAmount} ({displayAmount})
-          </p>
-        </div>
-      </Badge>
+          </>
+        }
+      />
     </Results>
   );
 };

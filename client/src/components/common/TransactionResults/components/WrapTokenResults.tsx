@@ -1,8 +1,9 @@
-import React from 'react';
 import classnames from 'classnames';
 
+import { FC } from 'react';
+
 import Results from '../index';
-import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
@@ -16,8 +17,10 @@ import config from '../../../../config';
 import { ResultsProps } from '../types';
 import { AnyType } from '../../../../types';
 
-import classes from '../styles/Results.module.scss';
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
+import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+
+import classes from '../styles/Results.module.scss';
 
 type ResultsData = {
   amount?: string;
@@ -35,7 +38,7 @@ type WrapTokenResultsProps = {
   results: ResultsData;
 } & ResultsProps;
 
-const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
+const WrapTokenResults: FC<WrapTokenResultsProps> = props => {
   const {
     results: {
       name,
@@ -89,39 +92,25 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
           </>
         }
       />
-      {publicAddress && (
-        <>
-          <p className={classes.label}>Public Address</p>
-          <Badge show type={BADGE_TYPES.SIMPLE}>
-            <div className={classnames(classes.badgeContainer)}>
-              <p className={classes.item}>{publicAddress}</p>
-            </div>
-          </Badge>
-        </>
-      )}
 
-      {name && (
-        <>
-          <p className={classes.label}>Domain Wrapped</p>
-          <Badge show type={BADGE_TYPES.SIMPLE}>
-            <div className={classnames(classes.badgeContainer)}>
-              <p className={classes.item}>{name}</p>
-            </div>
-          </Badge>
-        </>
-      )}
-      {amount && (
-        <>
-          <p className={classes.label}>FIO Wrapped</p>
-          <Badge show type={BADGE_TYPES.SIMPLE}>
-            <div className={classnames(classes.badgeContainer)}>
-              <p className={classes.item}>
-                {displayUsdcAmount} ({displayAmount})
-              </p>
-            </div>
-          </Badge>
-        </>
-      )}
+      <ResultDetails
+        show={!!publicAddress}
+        label="Public Address"
+        value={publicAddress}
+      />
+
+      <ResultDetails show={!!name} label="Domain Wrapped" value={name} />
+
+      <ResultDetails
+        show={!!amount}
+        label="FIO Wrapped"
+        value={
+          <>
+            {displayUsdcAmount} ({displayAmount})
+          </>
+        }
+      />
+
       <p className={classes.label}>Transaction Details</p>
       <TransactionDetails
         feeInFio={nativeFeeCollectedAmount}
