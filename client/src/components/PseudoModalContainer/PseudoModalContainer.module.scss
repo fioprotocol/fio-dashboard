@@ -51,9 +51,8 @@
 
 @include lg {
   .container {
-    max-width: 650px;
-    width: 42%;
-    padding: 1.875rem 1.875rem 3.125rem;
+    max-width: 560px;
+    padding: 30px;
     margin: 6.25rem auto;
 
     .actionContainer {

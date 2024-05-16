@@ -28,6 +28,11 @@
   }
 }
 
+.submitButton {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @include sm {
   .badges {
     flex-direction: column;

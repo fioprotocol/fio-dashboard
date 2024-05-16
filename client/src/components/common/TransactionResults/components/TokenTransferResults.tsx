@@ -1,16 +1,16 @@
 import React from 'react';
 
 import Results from '../index';
+import Amount from '../../Amount';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
+import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 
 import { ResultsProps } from '../types';
 
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
-import Amount from '../../Amount';
-import { ResultDetails } from '../../../ResultDetails/ResultDetails';
-
 import classes from '../styles/Results.module.scss';
 
 type TokenTransferResultsProps = ResultsProps & {
@@ -37,12 +37,16 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         mapPubAddress,
         payeeTokenPublicAddress,
       },
+      bundlesCollected,
+      feeCollected,
+      payWith,
     },
     titleTo,
     titleFrom,
     titleAmount,
   } = props;
 
+  const fioNativeAmount = Number(nativeAmount);
   const fioAmount = Number(amount);
   let displayAmount = (
     <>
@@ -62,8 +66,9 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       </>
     );
   }
+
   return (
-    <Results {...props}>
+    <Results {...props} isPaymentDetailsVisible={false}>
       <InfoBadge
         show={!!obtError}
         type={BADGE_TYPES.ERROR}
@@ -115,28 +120,25 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         }
       />
 
-      <ResultDetails
-        show={!!toFioAddress}
-        label={titleTo || 'Send to FIO Handle'}
-        value={toFioAddress}
-      />
-
-      <ResultDetails
-        label="ID"
-        value={
-          <a
-            href={`${
-              process.env.REACT_APP_FIO_BLOCKS_TX_URL
-            }${transaction_id as string}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {transaction_id}
-          </a>
-        }
-      />
-
       <ResultDetails show={!!memo} label="Memo" value={memo} />
+
+      <p className={classes.label}>Transaction Details</p>
+      <TransactionDetails
+        feeInFio={feeCollected.nativeFio ? feeCollected.nativeFio : null}
+        amountInFio={fioNativeAmount}
+        bundles={bundlesCollected ? { fee: bundlesCollected } : null}
+        payWith={payWith}
+        additional={[
+          {
+            label: 'ID',
+            value: transaction_id,
+            link: `${
+              process.env.REACT_APP_FIO_BLOCKS_TX_URL
+            }${transaction_id as string}`,
+            wrap: true,
+          },
+        ]}
+      />
 
       <InfoBadge
         show={

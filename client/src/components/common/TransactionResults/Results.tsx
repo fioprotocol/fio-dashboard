@@ -98,7 +98,12 @@ const Results: React.FC<ResultsContainerProps> = props => {
                 />
               </>
             )}
-            <SubmitButton onClick={handleClose} text="Close" withTopMargin />
+            <SubmitButton
+              className={classes.submitButton}
+              onClick={handleClose}
+              text="Close"
+              withTopMargin
+            />
             {onCancel && (
               <CancelButton
                 text="Cancel Request"
@@ -111,6 +116,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
         )}
         {error && onRetry != null ? (
           <SubmitButton
+            className={classes.submitButton}
             onClick={onRetry}
             text="Try Again"
             withTopMargin={true}

@@ -4,10 +4,10 @@
 
 .wrapper {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   margin-left: 0 !important;
   row-gap: 16px;
-  column-gap: 8px;
+  column-gap: 24px;
   width: 100%;
   color: $baltic-sea;
 
