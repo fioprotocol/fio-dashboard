@@ -36,7 +36,6 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
   const providerData = useInitializeProviderConnection();
 
   const [unitedFee, setUnitedFee] = useState<FeePrice>(DEFAULT_FEE_PRICES);
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
 
   useEffect(() => {
     setUnitedFee(
@@ -48,10 +47,6 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
       ),
     );
   }, [fee, oracleFee, roe]);
-
-  useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
-  }, [balance]);
 
   const handleSubmit = async (values: WrapDomainValues) =>
     props.onSubmit(values);
@@ -100,17 +95,13 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
             />
 
             <p className={classes.transactionTitle}>Transaction Details</p>
-            <TransactionDetails feeInFio={unitedFee.nativeFio} />
-
-            <div className={classes.additionalSubInfo}>
-              <span>Available FIO balance:</span>
-              <b>
-                {new MathOp(
-                  apis.fio.sufToAmount(walletAvailableAmount),
-                ).toString()}{' '}
-                FIO
-              </b>
-            </div>
+            <TransactionDetails
+              feeInFio={unitedFee.nativeFio}
+              payWith={{
+                walletName: fioWallet.name,
+                walletBalances: balance?.available,
+              }}
+            />
 
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}

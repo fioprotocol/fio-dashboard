@@ -34,6 +34,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     initialValues,
     isWalletFioAddressesLoading,
     balance,
+    fioWallet,
     proxyList,
   } = props;
 
@@ -293,6 +294,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                     }
                   : null
               }
+              payWith={{
+                walletName: fioWallet.name,
+                walletBalances: balance.available,
+              }}
             />
 
             <SubmitButton

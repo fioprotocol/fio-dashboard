@@ -9,6 +9,7 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
   AnyType,
+  WalletBalancesItem,
 } from '../../../types';
 
 export type ResultsData = {
@@ -23,6 +24,10 @@ export type ResultsData = {
   failed?: PublicAddressDoublet[];
   obtError?: string;
   fioRequestId?: number;
+  payWith?: {
+    walletBalances: WalletBalancesItem;
+    walletName?: string;
+  };
 };
 
 export type ResultsProps = {

@@ -18,6 +18,7 @@ import classes from './styles/Results.module.scss';
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
+      payWith,
       feeCollected: { nativeFio } = {
         nativeFio: 0,
         fio: '0',
@@ -47,29 +48,6 @@ const Results: React.FC<ResultsContainerProps> = props => {
   const handleClose = () => {
     onTxResultsClose();
     onClose();
-  };
-
-  const paymentDetailsTitle = () => {
-    if (!nativeFio && !bundlesCollected) return null;
-
-    return <p className={classes.label}>Transactions Details</p>;
-  };
-  const totalCost = () => {
-    if (!nativeFio) return null;
-    return <TransactionDetails feeInFio={nativeFio} />;
-  };
-
-  const totalBundlesCost = () => {
-    if (!bundlesCollected) return null;
-    return (
-      <>
-        <TransactionDetails
-          bundles={{
-            fee: bundlesCollected,
-          }}
-        />
-      </>
-    );
   };
 
   const errorBadge = () => {
@@ -104,14 +82,28 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {children}
         {!error && (
           <>
-            {isPaymentDetailsVisible && (
+            {isPaymentDetailsVisible && (nativeFio || bundlesCollected) && (
               <>
-                {paymentDetailsTitle()}
-                {totalCost()}
-                {totalBundlesCost()}
+                <p className={classes.label}>Transaction Details</p>
+                <TransactionDetails
+                  feeInFio={nativeFio ? nativeFio : null}
+                  bundles={
+                    bundlesCollected
+                      ? {
+                          fee: bundlesCollected,
+                        }
+                      : null
+                  }
+                  payWith={payWith}
+                />
               </>
             )}
-            <SubmitButton onClick={handleClose} text="Close" withTopMargin />
+            <SubmitButton
+              className={classes.submitButton}
+              onClick={handleClose}
+              text="Close"
+              withTopMargin
+            />
             {onCancel && (
               <CancelButton
                 text="Cancel Request"
@@ -124,6 +116,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
         )}
         {error && onRetry != null ? (
           <SubmitButton
+            className={classes.submitButton}
             onClick={onRetry}
             text="Try Again"
             withTopMargin={true}

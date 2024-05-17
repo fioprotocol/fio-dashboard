@@ -43,8 +43,9 @@ export const PaymentWallet: React.FC<Props> = props => {
   if (
     paymentAssignmentWallets.length === 0 ||
     !fioWalletsBalances.wallets[paymentWalletPublicKey]
-  )
+  ) {
     return <Loader />;
+  }
 
   const walletsList = paymentAssignmentWallets.reduce((acc, wallet) => {
     const walletBalances = fioWalletsBalances.wallets[wallet.publicKey];

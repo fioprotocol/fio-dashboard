@@ -1,12 +1,9 @@
 import React from 'react';
-import classnames from 'classnames';
-
-import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
-import { PriceComponent } from '../../../../components/PriceComponent';
 
 import { OrderDetailedTotalCost } from '../../../../types';
 
 import classes from './PaymentDetails.module.scss';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 type Props = {
   orderNumber: string;
@@ -18,7 +15,7 @@ export const PaymentDetails: React.FC<Props> = props => {
   const {
     orderNumber,
     paidWith,
-    totalCostPrice: { fioTotal, freeTotalPrice, usdcTotal } = {},
+    totalCostPrice: { freeTotalPrice, fioNativeTotal } = {},
   } = props;
 
   const isFree = freeTotalPrice === 'FREE';
@@ -27,42 +24,22 @@ export const PaymentDetails: React.FC<Props> = props => {
   return (
     <div className={classes.details}>
       <h6 className={classes.subtitle}>Payment Details</h6>
-      <Badge type={BADGE_TYPES.BLACK} show={true}>
-        <div className={classnames(classes.item, classes.hasWhiteText)}>
-          <span className={classnames(classes.name, 'boldText')}>
-            Total Cost
-          </span>
-          <div
-            className={classnames(classes.itemValue, classes.withAutoMargin)}
-          >
-            <PriceComponent
-              costFio={fioTotal}
-              costUsdc={usdcTotal?.toString()}
-              isFree={!!freeTotalPrice}
-            />
-          </div>
-        </div>
-      </Badge>
-      <Badge type={BADGE_TYPES.WHITE} show={!isFree && !!paidWith}>
-        <div className={classes.item}>
-          <span className={classnames(classes.name, 'boldText')}>
-            {paidWithTitle}
-          </span>
-          <p className={classes.itemValue}>
-            <span className="boldText">{paidWith}</span>
-          </p>
-        </div>
-      </Badge>
-      <Badge type={BADGE_TYPES.WHITE} show={!!orderNumber}>
-        <div className={classes.item}>
-          <span className={classnames(classes.name, 'boldText')}>
-            Order No.
-          </span>
-          <p className={classes.itemValue}>
-            <span className="boldText">{orderNumber}</span>
-          </p>
-        </div>
-      </Badge>
+      <TransactionDetails
+        feeInFio={0}
+        amountInFio={fioNativeTotal}
+        additional={[
+          {
+            label: paidWithTitle,
+            value: paidWith,
+            hide: isFree || !paidWith,
+          },
+          {
+            label: 'Order No.',
+            value: orderNumber,
+            hide: !orderNumber,
+          },
+        ]}
+      />
     </div>
   );
 };
