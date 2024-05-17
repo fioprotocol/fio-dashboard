@@ -1,11 +1,11 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import Results from '../index';
-import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import FioName from '../../FioName/FioName';
 
 import { ResultsProps } from '../types';
+
+import { ResultDetails } from '../../../ResultDetails/ResultDetails';
 
 import classes from '../styles/Results.module.scss';
 
@@ -24,72 +24,17 @@ const SignResults: React.FC<ResultsProps> = props => {
       <h5 className={classes.label}>Signed NFT Details</h5>
       <div className={classes.badges}>
         <div className={classes.halfWidth}>
-          <Badge show={true} type={BADGE_TYPES.WHITE}>
-            <div className={classes.badgeContainer}>
-              <p className={classes.badgeItem}>Chain Code</p>
-              <p className={classes.badgeItemNext}>{chainCode}</p>
-            </div>
-          </Badge>
+          <ResultDetails label="Chain Code" value={chainCode} />
         </div>
-        <div className={classnames(classes.statusBadge, classes.halfWidth)}>
-          <Badge show={true} type={BADGE_TYPES.WHITE}>
-            <div className={classes.badgeContainer}>
-              <span className={classes.badgeItem}>Token ID</span>
-              <span
-                className={classnames(classes.badgeItemNext, classes.breakWord)}
-              >
-                {tokenId || dashSign}
-              </span>
-            </div>
-          </Badge>
+        <div className={classes.halfWidth}>
+          <ResultDetails label="Token ID" value={tokenId || dashSign} />
         </div>
       </div>
-      <div className={classes.badges}>
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.badgeContainer}>
-            <span className={classes.badgeItem}>Contract Address</span>
-            <span
-              className={classnames(classes.badgeItemNext, classes.breakWord)}
-            >
-              {contractAddress}
-            </span>
-          </div>
-        </Badge>
-      </div>
-      <div className={classes.badges}>
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.badgeContainer}>
-            <span className={classes.badgeItem}>URL</span>
-            <span
-              className={classnames(classes.badgeItemNext, classes.breakWord)}
-            >
-              {url || dashSign}
-            </span>
-          </div>
-        </Badge>
-      </div>
-      <div className={classes.badges}>
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.badgeContainer}>
-            <span className={classes.badgeItem}>Hash</span>
-            <span
-              className={classnames(classes.badgeItemNext, classes.breakWord)}
-            >
-              {hash || dashSign}
-            </span>
-          </div>
-        </Badge>
-      </div>
-      <div className={classes.badges}>
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.badgeContainer}>
-            <span className={classes.badgeItem}>Creator URL</span>
-            <span className={classes.badgeItemNext}>
-              {creatorUrl || dashSign}
-            </span>
-          </div>
-        </Badge>
-      </div>
+
+      <ResultDetails label="Contract Address" value={contractAddress} />
+      <ResultDetails label="URL" value={url || dashSign} />
+      <ResultDetails label="Hash" value={hash || dashSign} />
+      <ResultDetails label="Creator URL" value={creatorUrl || dashSign} />
     </Results>
   );
 };

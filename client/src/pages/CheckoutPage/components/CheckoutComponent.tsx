@@ -16,7 +16,26 @@ import classes from '../CheckoutPage.module.scss';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
+  const { fioWalletsBalances, paymentAssignmentWallets } = rest;
   const { costNativeFio, costFree } = totalCost(cart, roe);
+
+  const getPayWithDefaultDetails = () => {
+    if (paymentAssignmentWallets.length > 1) {
+      return;
+    }
+
+    const [wallet] = paymentAssignmentWallets;
+    const balance = fioWalletsBalances.wallets[wallet.publicKey];
+
+    if (!balance) {
+      return;
+    }
+
+    return {
+      walletName: wallet.name,
+      walletBalances: balance.available,
+    };
+  };
 
   return (
     <>
@@ -27,15 +46,21 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       </div>
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Transaction Details</h6>
-        <TransactionDetails feeInFio={0} amountInFio={costNativeFio} />
-      </div>
-      <div className={classes.details}>
-        <PaymentWallet
-          {...rest}
-          totalCost={costNativeFio}
-          includePaymentMessage={rest.paymentOption === PAYMENT_OPTIONS.FIO}
+        <TransactionDetails
+          feeInFio={0}
+          amountInFio={costNativeFio}
+          payWith={getPayWithDefaultDetails()}
         />
       </div>
+      {paymentAssignmentWallets.length > 1 && (
+        <div className={classes.details}>
+          <PaymentWallet
+            {...rest}
+            totalCost={costNativeFio}
+            includePaymentMessage={rest.paymentOption === PAYMENT_OPTIONS.FIO}
+          />
+        </div>
+      )}
       <PaymentOptionComponent
         {...rest}
         cart={cart}

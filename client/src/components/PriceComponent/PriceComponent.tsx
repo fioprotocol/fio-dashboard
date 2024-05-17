@@ -27,7 +27,7 @@ export const PriceComponent: React.FC<Props> = props => {
   if (isFree) return <span className="boldText">FREE</span>;
 
   return (
-    <div className="d-flex flex-direction-row">
+    <span className="d-flex flex-direction-row">
       <span className="boldText d-flex flex-direction-row">
         $
         {loading ? (
@@ -46,6 +46,6 @@ export const PriceComponent: React.FC<Props> = props => {
         )}{' '}
         FIO)
       </span>
-    </div>
+    </span>
   );
 };

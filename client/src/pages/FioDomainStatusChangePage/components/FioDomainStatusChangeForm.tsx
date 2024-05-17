@@ -2,7 +2,6 @@ import React from 'react';
 
 import PseudoModalContainer from '../../../components/PseudoModalContainer';
 import DomainStatusBadge from '../../../components/Badges/DomainStatusBadge/DomainStatusBadge';
-import PayWithBadge from '../../../components/Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
@@ -58,13 +57,15 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
         </div>
         <h5 className={classes.label}>Transaction Details</h5>
         <div className={classes.badge}>
-          <TransactionDetails feeInFio={feePrice.nativeFio} />
+          <TransactionDetails
+            feeInFio={feePrice.nativeFio}
+            payWith={{
+              walletBalances: walletBalancesAvailable,
+              walletName: fioWallet.name,
+            }}
+          />
         </div>
 
-        <PayWithBadge
-          walletBalances={walletBalancesAvailable}
-          walletName={fioWallet.name}
-        />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           onClick={handleSubmit}

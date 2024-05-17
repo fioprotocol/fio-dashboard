@@ -1,13 +1,12 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import Results from '../../';
-import Badge, { BADGE_TYPES } from '../../../../Badge/Badge';
 
 import { fioNameLabels } from '../../../../../constants/labels';
-import { PAGE_NAME } from '../../../../ManagePageContainer/constants';
 
 import { ResultsProps } from '../../types';
+
+import { ResultDetails } from '../../../../ResultDetails/ResultDetails';
 
 import classes from '../../styles/Results.module.scss';
 
@@ -31,23 +30,10 @@ const TransferResults: React.FC<ResultsProps &
   return (
     <Results {...props} onClose={onClose}>
       <p className={classes.label}>Transfer Information</p>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div
-          className={classnames(
-            classes.badgeContainer,
-            pageName === PAGE_NAME.ADDRESS && classes.longTitle,
-          )}
-        >
-          <p className={classes.title}>{fioNameLabel}</p>
-          <p className={classes.item}>{name}</p>
-        </div>
-      </Badge>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classes.badgeContainer}>
-          <p className={classes.title}>Public Key</p>
-          <p className={classes.item}>{publicKey}</p>
-        </div>
-      </Badge>
+
+      <ResultDetails label={fioNameLabel} value={name} />
+
+      <ResultDetails label="Public Key" value={publicKey} />
     </Results>
   );
 };

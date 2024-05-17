@@ -36,6 +36,8 @@ import { ContainerProps, FioNameTransferValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 import { OnSuccessResponseResult } from '../MetamaskConfirmAction';
 
+import { useWalletBalances } from '../../util/hooks';
+
 import classes from './FioNameTransferContainer.module.scss';
 
 const FIO_NAME_DATA = {
@@ -77,6 +79,10 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   );
 
   const { publicKey } = currentWallet;
+
+  const { available: walletBalancesAvailable } = useWalletBalances(
+    currentWallet.publicKey,
+  );
 
   const setNewOwnerPublicKeyFn = useCallback(
     async (transferAddress: string) => {
@@ -159,6 +165,10 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
         : feePrice,
       name,
       publicKey,
+      payWith: {
+        walletName: currentWallet.name,
+        walletBalances: walletBalancesAvailable,
+      },
     });
     setProcessing(false);
   };
