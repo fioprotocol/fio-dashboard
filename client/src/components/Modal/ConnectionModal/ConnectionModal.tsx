@@ -117,7 +117,7 @@ const ConnectionModal: React.FC<Props> = props => {
             {fromPubKey}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Send Amount">
-            {amount ?? apis.fio.sufToAmount(parseFloat(nativeAmount))} FIO
+            {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
           </TransactionInfoBadge>
           {fee && (
             <TransactionInfoBadge title="Transaction Fee">
