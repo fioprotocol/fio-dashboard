@@ -20,7 +20,7 @@ import apis from '../../api';
 import { log } from '../../util/general';
 
 import { Props } from './types';
-import { RefProfile, RefProfileDomain } from '../../types';
+import { RefProfile } from '../../types';
 
 import classes from './AdminPartnersListPage.module.scss';
 
@@ -115,7 +115,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             domains: [],
           };
         } else {
-          const handleExpiredDateDomains: RefProfileDomain[] = [];
           const domainsPromises = partner.settings.domains?.map(
             async domainItem => {
               try {
@@ -126,11 +125,10 @@ const AdminPartnersListPage: React.FC<Props> = props => {
               } catch (error) {
                 log.error('Handle settings domain expiration error:', error);
               }
-              handleExpiredDateDomains.push(domainItem);
+              return domainItem;
             },
           );
-          await Promise.all(domainsPromises);
-          partner.settings.domains = handleExpiredDateDomains;
+          partner.settings.domains = await Promise.all(domainsPromises);
         }
 
         partner.title = partner.title || '';
