@@ -58,13 +58,15 @@ export type SignFioAddressItem = {
   ownerKey: string;
 };
 
+export type BeforeSubmitValues = {
+  fioAddressItems: SignFioAddressItem[];
+};
+
 export type BeforeSubmitState = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
-  submitData: {
-    fioAddressItems: SignFioAddressItem[];
-  } | null;
+  submitData: BeforeSubmitValues | null;
   fee?: number | null;
 };
 

@@ -38,6 +38,7 @@ import { DeleteSocialMediaLinkValues } from '../../../pages/DeleteSocialMediaLin
 import { EditSocialLinkValues } from '../../../pages/EditSocialMediaLinksPage/types';
 import { PurchaseValues } from '../../PurchaseNow/types';
 import { PaymentDetailsValues } from '../../../pages/TokensRequestPaymentPage/types';
+import { BeforeSubmitValues } from '../../../pages/CheckoutPage/types';
 
 type Props = {
   action: string;
@@ -110,10 +111,10 @@ const ConnectionModal: React.FC<Props> = props => {
 
       return (
         <>
-          <TransactionInfoBadge title="FIO Public Address">
+          <TransactionInfoBadge title="Payee Pubkey">
             {toPubKey}
           </TransactionInfoBadge>
-          <TransactionInfoBadge title="From FIO Public Address">
+          <TransactionInfoBadge title="Sign with">
             {fromPubKey}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Send Amount">
@@ -185,30 +186,32 @@ const ConnectionModal: React.FC<Props> = props => {
     }
 
     if (action === CONFIRM_LEDGER_ACTIONS.WRAP_TOKENS) {
-      const { tpid, amount, publicAddress } = data as WrapTokensValues;
+      const { amount, publicAddress, chainCode } = data as WrapTokensValues;
 
       return (
         <>
-          <TransactionInfoBadge title="FIO Handle">{tpid}</TransactionInfoBadge>
           {fioWallet && (
             <TransactionInfoBadge title="FIO Public Address">
               {fioWallet.publicKey}
             </TransactionInfoBadge>
           )}
-          <TransactionInfoBadge title="ETH Public Address">
+          <TransactionInfoBadge title="Chain Code">
+            {chainCode}
+          </TransactionInfoBadge>
+          <TransactionInfoBadge title="Public Address">
             {publicAddress}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Wrap Amount">
             {amount} FIO
           </TransactionInfoBadge>
-          {fee && (
-            <TransactionInfoBadge title="Transaction Fee">
-              {apis.fio.sufToAmount(fee)} FIO
-            </TransactionInfoBadge>
-          )}
           {oracleFee && (
             <TransactionInfoBadge title="Oracle Fee">
               {apis.fio.sufToAmount(oracleFee)} FIO
+            </TransactionInfoBadge>
+          )}
+          {fee && (
+            <TransactionInfoBadge title="Transaction Fee">
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
         </>
@@ -216,30 +219,32 @@ const ConnectionModal: React.FC<Props> = props => {
     }
 
     if (action === CONFIRM_LEDGER_ACTIONS.WRAP_DOMAIN) {
-      const { tpid, name, publicAddress } = data as WrapDomainValues;
+      const { name, publicAddress, chainCode } = data as WrapDomainValues;
 
       return (
         <>
           <TransactionInfoBadge title="Wrap Domain">
             {name}
           </TransactionInfoBadge>
-          <TransactionInfoBadge title="FIO Handle">{tpid}</TransactionInfoBadge>
           {fioWallet && (
             <TransactionInfoBadge title="FIO Public Address">
               {fioWallet.publicKey}
             </TransactionInfoBadge>
           )}
-          <TransactionInfoBadge title="MATIC Public Address">
+          <TransactionInfoBadge title="Chain Code">
+            {chainCode}
+          </TransactionInfoBadge>
+          <TransactionInfoBadge title="Public Address">
             {publicAddress}
           </TransactionInfoBadge>
-          {fee && (
-            <TransactionInfoBadge title="Transaction Fee">
-              {apis.fio.sufToAmount(fee)} FIO
-            </TransactionInfoBadge>
-          )}
           {oracleFee && (
             <TransactionInfoBadge title="Oracle Fee">
               {apis.fio.sufToAmount(oracleFee)} FIO
+            </TransactionInfoBadge>
+          )}
+          {fee && (
+            <TransactionInfoBadge title="Transaction Fee">
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
         </>
@@ -437,11 +442,19 @@ const ConnectionModal: React.FC<Props> = props => {
     }
 
     if (action === CONFIRM_LEDGER_ACTIONS.TRANSFER) {
-      const { name, newOwnerPublicKey } = data as FioNameTransferValues;
+      const {
+        name,
+        newOwnerPublicKey,
+        fioNameType,
+      } = data as FioNameTransferValues;
 
       return (
         <>
-          <TransactionInfoBadge title="FIO Handle">{name}</TransactionInfoBadge>
+          <TransactionInfoBadge
+            title={`FIO ${fioNameType === 'domain' ? 'Domain' : 'Handle'}`}
+          >
+            {name}
+          </TransactionInfoBadge>
           {fioWallet && (
             <TransactionInfoBadge title="FIO Public Address">
               {fioWallet.publicKey}
@@ -534,10 +547,10 @@ const ConnectionModal: React.FC<Props> = props => {
       return (
         <>
           <TransactionInfoBadge title="Request ID">
-            {fioRecord.id} FIO
+            {fioRecord.id}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Sign with FIO Public Address">
-            {fioRecord.payeeFioPublicKey} FIO
+            {fioRecord.payeeFioPublicKey}
           </TransactionInfoBadge>
         </>
       );
@@ -548,7 +561,7 @@ const ConnectionModal: React.FC<Props> = props => {
 
       return (
         <>
-          <TransactionInfoBadge title="FIO Handle">{name}</TransactionInfoBadge>
+          <TransactionInfoBadge title="FIO Domain">{name}</TransactionInfoBadge>
           {fioWallet && (
             <TransactionInfoBadge title="FIO Public Address">
               {fioWallet.publicKey}
@@ -569,13 +582,8 @@ const ConnectionModal: React.FC<Props> = props => {
       );
     }
 
-    if (action === CONFIRM_LEDGER_ACTIONS.PURCHASE) {
-      const { cartItems } = data as PurchaseValues;
-
-      const totalFee = cartItems
-        .map(it => it.costNativeFio)
-        .map(fee => apis.fio.sufToAmount(fee))
-        .reduce((sum, fee) => sum + fee, 0);
+    if (action === CONFIRM_LEDGER_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN) {
+      const { fioAddressItems } = data as BeforeSubmitValues;
 
       return (
         <>
@@ -584,9 +592,43 @@ const ConnectionModal: React.FC<Props> = props => {
               {fioWallet.publicKey}
             </TransactionInfoBadge>
           )}
-          <TransactionInfoBadge title="Transaction Fee">
-            {totalFee} FIO
-          </TransactionInfoBadge>
+          {fioAddressItems.map((it, index) => (
+            <TransactionInfoBadge key={it.name} title={`Item ${index + 1}`}>
+              <span>
+                <b>FIO Handle</b>: {it.name}
+              </span>
+              <br />
+              <span>
+                <b>Max Fee</b>: {apis.fio.sufToAmount(fee)} FIO
+              </span>
+            </TransactionInfoBadge>
+          ))}
+        </>
+      );
+    }
+
+    if (action === CONFIRM_LEDGER_ACTIONS.PURCHASE) {
+      const { cartItems } = data as PurchaseValues;
+
+      return (
+        <>
+          {fioWallet && (
+            <TransactionInfoBadge title="FIO Public Address">
+              {fioWallet.publicKey}
+            </TransactionInfoBadge>
+          )}
+          {cartItems.map((it, index) => (
+            <TransactionInfoBadge key={it.id} title={`Item ${index + 1}`}>
+              <span>
+                <b>{it.type === 'fch' ? 'FIO Handle' : 'FIO Domain'}</b>:{' '}
+                {it.id}
+              </span>
+              <br />
+              <span>
+                <b>Max Fee</b>: {apis.fio.sufToAmount(it.costNativeFio)} FIO
+              </span>
+            </TransactionInfoBadge>
+          ))}
         </>
       );
     }
@@ -619,11 +661,9 @@ const ConnectionModal: React.FC<Props> = props => {
               {fioWallet.publicKey}
             </TransactionInfoBadge>
           )}
-          {fioWallet && (
-            <TransactionInfoBadge title="Payee FIO Public Address">
-              {payeePublicAddress}
-            </TransactionInfoBadge>
-          )}
+          <TransactionInfoBadge title="Payee FIO Public Address">
+            {payeePublicAddress}
+          </TransactionInfoBadge>
           <TransactionInfoBadge title="Obt ID">{obtId}</TransactionInfoBadge>
           <TransactionInfoBadge title="Chain Code">
             {chainCode}
