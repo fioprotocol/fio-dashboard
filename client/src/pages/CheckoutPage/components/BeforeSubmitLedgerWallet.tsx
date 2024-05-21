@@ -13,7 +13,7 @@ import { formatLedgerSignature, getPath } from '../../../util/ledger';
 import apis from '../../../api';
 
 import { FioWalletDoublet } from '../../../types';
-import { BeforeSubmitData, BeforeSubmitValues } from '../types';
+import { BeforeSubmitData, SignFioAddressItem } from '../types';
 import { TrxResponsePaidBundles } from '../../../api/fio';
 
 type Props = {
@@ -21,7 +21,9 @@ type Props = {
   onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: BeforeSubmitValues | null;
+  submitData: {
+    fioAddressItems: SignFioAddressItem[];
+  } | null;
   processing: boolean;
   fee: number;
 };
