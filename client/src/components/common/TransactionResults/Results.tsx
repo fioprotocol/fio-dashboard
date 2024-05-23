@@ -82,7 +82,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {children}
         {!error && (
           <>
-            {isPaymentDetailsVisible && (nativeFio || bundlesCollected) && (
+            {isPaymentDetailsVisible && (!!nativeFio || !!bundlesCollected) && (
               <>
                 <p className={classes.label}>Transaction Details</p>
                 <TransactionDetails
@@ -105,12 +105,14 @@ const Results: React.FC<ResultsContainerProps> = props => {
               withTopMargin
             />
             {onCancel && (
-              <CancelButton
-                text="Cancel Request"
-                onClick={onCancel}
-                isIndigo
-                withTopMargin
-              />
+              <div className={classes.cancelButton}>
+                <CancelButton
+                  text="Cancel Request"
+                  onClick={onCancel}
+                  isIndigo
+                  withTopMargin
+                />
+              </div>
             )}
           </>
         )}

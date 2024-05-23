@@ -91,7 +91,7 @@ export const TransferForm: React.FC<FormProps> = props => {
           errorType={ERROR_UI_TYPE.BADGE}
           loading={validating}
         />
-        <p className={classes.label}>{fioNameLabel} Transaction Details</p>
+        <p className={classes.label}>Transaction Details</p>
         <TransactionDetails
           feeInFio={feePrice.nativeFio}
           payWith={{

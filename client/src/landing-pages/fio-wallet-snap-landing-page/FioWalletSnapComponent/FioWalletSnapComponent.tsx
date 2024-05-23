@@ -175,7 +175,7 @@ export const FioWalletSnapComponent: React.FC = () => {
               loading={executedTxnLoading}
             />
             <div className="mt-4">
-              <h5>Transaction details</h5>
+              <h5>Transaction Details</h5>
               {executedTxnError && (
                 <p className={classes.snapErrorMessage}>
                   {executedTxnError?.message}

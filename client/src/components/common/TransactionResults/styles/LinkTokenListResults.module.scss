@@ -17,18 +17,3 @@
     @include proxima-nova-semibold;
   }
 }
-
-.actionElement {
-  font-size: 0.875em;
-  align-self: center;
-  margin-top: 30px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  @include sf-pro-display-medium;
-}
-
-@include lg {
-  .actionElement {
-    margin-bottom: -20px;
-  }
-}

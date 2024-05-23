@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import classes from './CancelButton.module.scss';
 
 type Props = {
+  className?: string;
   onClick: () => void;
   disabled?: boolean;
   isBlack?: boolean;
@@ -16,6 +17,7 @@ type Props = {
 
 const CancelButton: React.FC<Props> = props => {
   const {
+    className,
     onClick,
     disabled,
     isBlack,
@@ -35,6 +37,7 @@ const CancelButton: React.FC<Props> = props => {
         isIndigo && classes.indigo,
         withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
+        className,
       )}
       onClick={onClick}
       disabled={disabled}
