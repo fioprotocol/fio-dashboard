@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import CartItem from '../../../components/Cart/CartItem';
 import { TransactionDetails } from '../../../components/TransactionDetails/TransactionDetails';
+import { VALUE_POSITIONS } from '../../../components/TransactionDetails/constants';
 import { PaymentWallet } from './PaymentWallet';
 import { PaymentOptionComponent } from './PaymentOptionComponent';
 
@@ -13,7 +14,6 @@ import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 import { CheckoutComponentProps } from '../types';
 
 import classes from '../CheckoutPage.module.scss';
-import { VALUE_POSITIONS } from '../../../components/TransactionDetails/constants';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;

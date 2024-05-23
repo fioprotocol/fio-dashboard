@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import Amount from '../common/Amount';
 import Loader from '../Loader/Loader';
+
 import { FIO_CHAIN_CODE } from '../../constants/fio';
 
 type Props = {

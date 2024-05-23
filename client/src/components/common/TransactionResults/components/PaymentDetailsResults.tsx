@@ -4,10 +4,11 @@ import Results from '../index';
 
 import { PaymentDetailsResultValues } from '../../../../pages/TokensRequestPaymentPage/types';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+import { PriceComponent } from '../../../PriceComponent';
+
+import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 import classes from '../styles/Results.module.scss';
-import { PriceComponent } from '../../../PriceComponent';
-import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 type TokenTransferResultsProps = {
   title: string;

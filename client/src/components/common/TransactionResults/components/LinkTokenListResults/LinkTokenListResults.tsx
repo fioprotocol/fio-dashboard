@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import Results from '../../';
 import TokenBadge from '../../../../Badges/TokenBadge/TokenBadge';
+import CancelButton from '../../../CancelButton/CancelButton';
 import { TransactionDetails } from '../../../../TransactionDetails/TransactionDetails';
 import FioName from '../../../FioName/FioName';
 
@@ -19,7 +20,6 @@ import { LinkTokenResultsProps } from '../../types';
 import { PublicAddressDoublet } from '../../../../../types';
 
 import classes from '../../styles/LinkTokenListResults.module.scss';
-import CancelButton from '../../../CancelButton/CancelButton';
 
 const CONTAINER_TYPES = {
   [CONTAINER_NAMES.DELETE]: {

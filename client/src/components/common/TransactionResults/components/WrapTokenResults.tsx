@@ -16,10 +16,11 @@ import { AnyType } from '../../../../types';
 
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+import { PriceComponent } from '../../../PriceComponent';
+
+import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 import classes from '../styles/Results.module.scss';
-import { PriceComponent } from '../../../PriceComponent';
-import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 type ResultsData = {
   amount?: string;

@@ -5,14 +5,13 @@ import Results from '../index';
 import { ResultsProps } from '../types';
 
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
-
-import classes from '../styles/Results.module.scss';
 import { PriceComponent } from '../../../PriceComponent';
+
 import { useConvertFioToUsdc } from '../../../../util/hooks';
 
-type TokenTransferResultsProps = ResultsProps;
+import classes from '../styles/Results.module.scss';
 
-const StakeTokensResults: React.FC<TokenTransferResultsProps & {
+const StakeTokensResults: React.FC<ResultsProps & {
   labelAmount?: string;
   topElement?: React.ReactNode;
 }> = props => {
