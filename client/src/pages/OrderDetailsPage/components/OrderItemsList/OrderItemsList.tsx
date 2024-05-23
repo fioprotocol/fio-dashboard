@@ -8,11 +8,11 @@ import classes from './OrderItemsList.module.scss';
 
 type Props = {
   items: OrderItemDetailed[];
-  isOrdered?: boolean;
+  isEditable?: boolean;
 };
 
 export const OrderItemsList: FC<Props> = props => {
-  const { items, isOrdered } = props;
+  const { items, isEditable } = props;
 
   if (!items) return null;
 
@@ -20,7 +20,7 @@ export const OrderItemsList: FC<Props> = props => {
     <div className={classes.details}>
       <h6 className={classes.subtitle}>Transaction Details</h6>
       {items.map(orderItem => (
-        <OrderItem key={orderItem.id} {...orderItem} isOrdered={isOrdered} />
+        <OrderItem key={orderItem.id} {...orderItem} isEditable={isEditable} />
       ))}
     </div>
   );

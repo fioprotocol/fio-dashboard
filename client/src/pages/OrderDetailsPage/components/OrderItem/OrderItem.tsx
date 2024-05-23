@@ -15,7 +15,7 @@ import { OrderItemDetailed } from '../../../../types';
 import classes from './OrderItem.module.scss';
 
 type Props = OrderItemDetailed & {
-  isOrdered?: boolean;
+  isEditable?: boolean;
 };
 
 export const OrderItem: FC<Props> = props => {
@@ -30,7 +30,7 @@ export const OrderItem: FC<Props> = props => {
     fee_collected,
     costUsdc,
     transaction_ids,
-    isOrdered,
+    isEditable,
   } = props;
 
   const item = {
@@ -53,7 +53,7 @@ export const OrderItem: FC<Props> = props => {
 
   return (
     <>
-      <CartItem item={item} isOrdered={isOrdered} />
+      <CartItem item={item} isEditable={isEditable} />
       {transaction_ids?.length > 0 &&
         transaction_ids
           .filter(transaction_id => !!transaction_id)
