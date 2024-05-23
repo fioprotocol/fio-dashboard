@@ -13,6 +13,7 @@ import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 import { CheckoutComponentProps } from '../types';
 
 import classes from '../CheckoutPage.module.scss';
+import { VALUE_POSITIONS } from '../../../components/TransactionDetails/constants';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
@@ -37,6 +38,8 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
     };
   };
 
+  const payWith = getPayWithDefaultDetails();
+
   return (
     <>
       <div className={classes.details}>
@@ -47,9 +50,10 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Transaction Details</h6>
         <TransactionDetails
+          valuePosition={payWith ? VALUE_POSITIONS.LEFT : VALUE_POSITIONS.RIGHT}
           feeInFio={0}
           amountInFio={costNativeFio}
-          payWith={getPayWithDefaultDetails()}
+          payWith={payWith}
         />
       </div>
       {paymentAssignmentWallets.length > 1 && (

@@ -6,26 +6,6 @@
   .container {
     margin-bottom: -15px;
     flex-basis: 100%;
-
-    .badgeContainer {
-      color: $baltic-sea;
-      display: flex;
-      flex-direction: column;
-      font-size: 1.1em;
-      @include proxima-nova-regular;
-
-      .title {
-        text-transform: capitalize;
-        margin-right: 30px;
-        margin-bottom: 0;
-      }
-
-      .content {
-        margin-top: 15px;
-        margin-bottom: 0;
-        word-break: break-word;
-      }
-    }
   }
 }
 
@@ -42,13 +22,6 @@
 
         &:nth-of-type(2) {
           flex-basis: 61%;
-        }
-      }
-      .badgeContainer {
-        flex-direction: row;
-
-        .content {
-          margin-top: 0;
         }
       }
     }

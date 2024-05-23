@@ -19,6 +19,7 @@ import { LinkTokenResultsProps } from '../../types';
 import { PublicAddressDoublet } from '../../../../../types';
 
 import classes from '../../styles/LinkTokenListResults.module.scss';
+import CancelButton from '../../../CancelButton/CancelButton';
 
 const CONTAINER_TYPES = {
   [CONTAINER_NAMES.DELETE]: {
@@ -61,15 +62,6 @@ const renderTokens = (tokens: PublicAddressDoublet[], subtitle: string) => (
       />
     ))}
   </>
-);
-
-const RenderBottomElement: React.FC<{
-  onClick: () => void;
-  containerName: string;
-}> = ({ onClick, containerName }) => (
-  <p className={classes.actionElement} onClick={onClick}>
-    {CONTAINER_TYPES[containerName].actionText}
-  </p>
 );
 
 type Props = {
@@ -163,7 +155,14 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
       title={title}
       fullWidth={true}
       bottomElement={
-        <RenderBottomElement onClick={onBack} containerName={containerName} />
+        <div className={classes.cancelButton}>
+          <CancelButton
+            onClick={onBack}
+            isBlack={true}
+            withTopMargin={true}
+            text={CONTAINER_TYPES[containerName].actionText}
+          />
+        </div>
       }
       onClose={onClose}
       onRetry={handleOnRetry}

@@ -1,17 +1,16 @@
 import React from 'react';
 
 import Results from '../index';
-import Amount from '../../Amount';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
-import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 
 import { ResultsProps } from '../types';
 
-import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import classes from '../styles/Results.module.scss';
+import { PriceComponent } from '../../../PriceComponent';
+import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 type TokenTransferResultsProps = ResultsProps & {
   roe: number;
@@ -48,24 +47,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
 
   const fioNativeAmount = Number(nativeAmount);
   const fioAmount = Number(amount);
-  let displayAmount = (
-    <>
-      <Amount value={fioAmount.toFixed(2)} /> {tokenCode}
-    </>
-  );
-  let displayUsdcAmount;
-  if (tokenCode === FIO_CHAIN_CODE || tokenCode == null) {
-    displayAmount = (
-      <>
-        <Amount value={fioAmount.toFixed(2)} /> {FIO_CHAIN_CODE}
-      </>
-    );
-    displayUsdcAmount = (
-      <>
-        <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />
-      </>
-    );
-  }
+  const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
     <Results {...props} isPaymentDetailsVisible={false}>
@@ -114,9 +96,12 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       <ResultDetails
         label={titleAmount || 'Amount Sent'}
         value={
-          <>
-            {displayUsdcAmount} ({displayAmount})
-          </>
+          <PriceComponent
+            className={classes.priceValue}
+            costFio={fioAmount.toString(10)}
+            costUsdc={usdcPrice.toString(10)}
+            tokenCode={tokenCode}
+          />
         }
       />
 
@@ -124,7 +109,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
 
       <p className={classes.label}>Transaction Details</p>
       <TransactionDetails
-        feeInFio={feeCollected.nativeFio ? feeCollected.nativeFio : null}
+        feeInFio={feeCollected?.nativeFio ? feeCollected.nativeFio : null}
         amountInFio={fioNativeAmount}
         bundles={bundlesCollected ? { fee: bundlesCollected } : null}
         payWith={payWith}

@@ -68,7 +68,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
             withoutTopMargin={true}
           />
         )}
-        <OrderItemsList items={orderItemsToRender} />
+        <OrderItemsList items={orderItemsToRender} isOrdered />
         <PaymentDetails {...paymentInfo} />
         <PartialErroredOrderItemsList
           isRetryAvailable={isRetryAvailable}

@@ -3,13 +3,11 @@ import React from 'react';
 import Results from '../index';
 
 import { PaymentDetailsResultValues } from '../../../../pages/TokensRequestPaymentPage/types';
-import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
-import Amount from '../../Amount';
-
-import { priceToNumber } from '../../../../utils';
 
 import classes from '../styles/Results.module.scss';
+import { PriceComponent } from '../../../PriceComponent';
+import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 type TokenTransferResultsProps = {
   title: string;
@@ -30,7 +28,8 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
     },
   } = props;
 
-  const price = priceToNumber(amount);
+  const fioAmount = Number(amount);
+  const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
     <Results {...props}>
@@ -41,10 +40,12 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
       <ResultDetails
         label="Amount"
         value={
-          <span>
-            <ConvertedAmount fioAmount={price} /> (<Amount value={price} />
-            {' ' + tokenCode})
-          </span>
+          <PriceComponent
+            className={classes.priceValue}
+            costFio={fioAmount.toString(10)}
+            costUsdc={usdcPrice.toString(10)}
+            tokenCode={tokenCode}
+          />
         }
       />
 

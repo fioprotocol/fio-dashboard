@@ -180,14 +180,12 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                   isDesktop={isDesktop}
                   onClick={onClick}
                 />
-                <div className={classes.erroInfoBadge}>
-                  <InfoBadge
-                    title="Try again!"
-                    message={error}
-                    show={!!error}
-                    type={BADGE_TYPES.ERROR}
-                  />
-                </div>
+                <InfoBadge
+                  title="Try again!"
+                  message={error}
+                  show={!!error}
+                  type={BADGE_TYPES.ERROR}
+                />
               </>
             );
           }}

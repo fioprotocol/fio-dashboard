@@ -26,6 +26,7 @@ type Props = {
     cartItem: CartItemType;
     newPeriod: number;
   }) => void;
+  isOrdered?: boolean;
   isPeriodEditable?: boolean;
 };
 
@@ -46,7 +47,13 @@ export const CartItemPrice = (props: CartItemProps) => {
 };
 
 const CartItem: React.FC<Props> = props => {
-  const { item, onDelete, onUpdatePeriod, isPeriodEditable = false } = props;
+  const {
+    item,
+    onDelete,
+    onUpdatePeriod,
+    isPeriodEditable = false,
+    isOrdered,
+  } = props;
 
   const {
     address,
@@ -76,7 +83,7 @@ const CartItem: React.FC<Props> = props => {
     <>
       <Badge
         show
-        type={BADGE_TYPES.WHITE}
+        type={isOrdered ? BADGE_TYPES.SIMPLE : BADGE_TYPES.WHITE}
         className={shouldShowPeriod && classes.itemWithPeriod}
       >
         <div className={classes.itemContainer}>

@@ -22,6 +22,7 @@ const TransferResults: React.FC<ResultsProps &
     resetFioNames,
   } = props;
   const fioNameLabel = fioNameLabels[pageName || ''];
+
   const onClose = () => {
     resetFioNames();
     props.onClose();
