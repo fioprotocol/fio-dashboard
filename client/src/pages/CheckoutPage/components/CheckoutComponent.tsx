@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import CartItem from '../../../components/Cart/CartItem';
 import { TransactionDetails } from '../../../components/TransactionDetails/TransactionDetails';
+import { VALUE_POSITIONS } from '../../../components/TransactionDetails/constants';
 import { PaymentWallet } from './PaymentWallet';
 import { PaymentOptionComponent } from './PaymentOptionComponent';
 
@@ -37,6 +38,8 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
     };
   };
 
+  const payWith = getPayWithDefaultDetails();
+
   return (
     <>
       <div className={classes.details}>
@@ -47,9 +50,10 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Transaction Details</h6>
         <TransactionDetails
+          valuePosition={payWith ? VALUE_POSITIONS.LEFT : VALUE_POSITIONS.RIGHT}
           feeInFio={0}
           amountInFio={costNativeFio}
-          payWith={getPayWithDefaultDetails()}
+          payWith={payWith}
         />
       </div>
       {paymentAssignmentWallets.length > 1 && (

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import Results from '../../';
 import TokenBadge from '../../../../Badges/TokenBadge/TokenBadge';
+import CancelButton from '../../../CancelButton/CancelButton';
 import { TransactionDetails } from '../../../../TransactionDetails/TransactionDetails';
 import FioName from '../../../FioName/FioName';
 
@@ -61,15 +62,6 @@ const renderTokens = (tokens: PublicAddressDoublet[], subtitle: string) => (
       />
     ))}
   </>
-);
-
-const RenderBottomElement: React.FC<{
-  onClick: () => void;
-  containerName: string;
-}> = ({ onClick, containerName }) => (
-  <p className={classes.actionElement} onClick={onClick}>
-    {CONTAINER_TYPES[containerName].actionText}
-  </p>
 );
 
 type Props = {
@@ -163,7 +155,14 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
       title={title}
       fullWidth={true}
       bottomElement={
-        <RenderBottomElement onClick={onBack} containerName={containerName} />
+        <div className={classes.cancelButton}>
+          <CancelButton
+            onClick={onBack}
+            isBlack={true}
+            withTopMargin={true}
+            text={CONTAINER_TYPES[containerName].actionText}
+          />
+        </div>
       }
       onClose={onClose}
       onRetry={handleOnRetry}

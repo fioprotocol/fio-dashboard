@@ -4,12 +4,9 @@ import classnames from 'classnames';
 import Results from '../index';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
-import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
-import Amount from '../../Amount';
 
 import { removeTrailingSlashFromUrl } from '../../../../util/general';
 
-import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
 import config from '../../../../config';
 
@@ -18,6 +15,9 @@ import { AnyObject } from '../../../../types';
 
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
+import { PriceComponent } from '../../../PriceComponent';
+
+import { useConvertFioToUsdc } from '../../../../util/hooks';
 
 import classes from '../styles/Results.module.scss';
 
@@ -53,17 +53,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
   } = props;
 
   const fioAmount = Number(amount);
-
-  const displayAmount = (
-    <>
-      <Amount value={fioAmount.toFixed(2)} /> {FIO_CHAIN_CODE}
-    </>
-  );
-  const displayUsdcAmount = (
-    <>
-      <ConvertedAmount fioAmount={fioAmount} />
-    </>
-  );
+  const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
     <Results {...props} isPaymentDetailsVisible={false}>
@@ -110,9 +100,11 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
         show={!!amount}
         label="FIO Unwrapped"
         value={
-          <>
-            {displayUsdcAmount} ({displayAmount})
-          </>
+          <PriceComponent
+            className={classes.priceValue}
+            costFio={fioAmount.toString(10)}
+            costUsdc={usdcPrice.toString(10)}
+          />
         }
       />
 

@@ -1,11 +1,17 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 import Amount from '../common/Amount';
 import Loader from '../Loader/Loader';
 
+import { FIO_CHAIN_CODE } from '../../constants/fio';
+
 type Props = {
+  className?: string;
   costFio: string;
-  costUsdc: string;
+  costUsdc?: string;
+  tokenCode?: string;
   isFree?: boolean;
   loading?: boolean;
   loaderComponent?: React.ReactElement;
@@ -22,21 +28,33 @@ const LoaderComponent = ({
 );
 
 export const PriceComponent: React.FC<Props> = props => {
-  const { costFio, costUsdc, isFree, loading, loaderComponent } = props;
+  const {
+    className,
+    costFio,
+    costUsdc,
+    tokenCode = FIO_CHAIN_CODE,
+    isFree,
+    loading,
+    loaderComponent,
+  } = props;
 
   if (isFree) return <span className="boldText">FREE</span>;
 
   return (
-    <span className="d-flex flex-direction-row">
-      <span className="boldText d-flex flex-direction-row">
-        $
-        {loading ? (
-          <LoaderComponent loaderComponent={loaderComponent} />
-        ) : (
-          <Amount value={costUsdc} />
-        )}
-      </span>
-      &nbsp;
+    <span className={classnames('d-flex flex-direction-row', className)}>
+      {costUsdc && (
+        <>
+          <span className="boldText d-flex flex-direction-row">
+            $
+            {loading ? (
+              <LoaderComponent loaderComponent={loaderComponent} />
+            ) : (
+              <Amount value={costUsdc} />
+            )}
+          </span>
+          &nbsp;
+        </>
+      )}
       <span className="d-flex flex-direction-row">
         (
         {loading ? (
@@ -44,7 +62,7 @@ export const PriceComponent: React.FC<Props> = props => {
         ) : (
           <Amount value={costFio} />
         )}{' '}
-        FIO)
+        {tokenCode})
       </span>
     </span>
   );

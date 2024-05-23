@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
-
+import { PayWalletInfo } from '../Badges/PayWithBadge/PayWalletInfo';
 import { PriceComponent } from '../PriceComponent';
 
 import { TransactionDetailsItem } from './components/TransactionDetailsItem';
@@ -14,10 +14,9 @@ import { convertFioPrices } from '../../util/prices';
 
 import { roe as roeSelector } from '../../redux/registrations/selectors';
 import { WalletBalancesItem } from '../../types';
-import { PayWalletInfo } from '../Badges/PayWithBadge/PayWalletInfo';
+import { VALUE_POSITIONS, ValuePosition } from './constants';
 
 import classes from './TransactionDetails.module.scss';
-import { POSITIONS, PositionValue } from './constants';
 
 type AdditionalDetails = {
   label: string;
@@ -29,6 +28,7 @@ type AdditionalDetails = {
 
 type Props = {
   className?: string;
+  valuePosition?: ValuePosition;
   feeInFio?: number;
   amountInFio?: number;
   bundles?: {
@@ -44,6 +44,7 @@ type Props = {
 
 export const TransactionDetails: FC<Props> = ({
   className,
+  valuePosition = VALUE_POSITIONS.LEFT,
   feeInFio,
   amountInFio,
   bundles,
@@ -51,10 +52,6 @@ export const TransactionDetails: FC<Props> = ({
   additional = [],
 }) => {
   const roe = useSelector(roeSelector);
-
-  const valuePosition: PositionValue = payWith
-    ? POSITIONS.LEFT
-    : POSITIONS.RIGHT;
 
   const feeRender = () => {
     if (typeof feeInFio !== 'number' || feeInFio === 0) {
@@ -112,7 +109,7 @@ export const TransactionDetails: FC<Props> = ({
         value={
           <>
             <span className={classnames(classes.value)}>
-              {bundles.fee} Bundles&nbsp;
+              {bundles.fee} Bundle{bundles.fee > 1 ? 's' : ''}&nbsp;
             </span>
             {bundles.remaining && (
               <span className={classes.remaining}>

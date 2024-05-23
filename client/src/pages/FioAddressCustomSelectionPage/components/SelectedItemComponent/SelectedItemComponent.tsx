@@ -27,7 +27,7 @@ export const SelectedItemComponent: React.FC<SelectedItemComponentProps> = props
   if (!show) return null;
 
   return (
-    <div>
+    <>
       <SelectionItem
         {...selectedItemProps}
         isDesktop={isDesktop}
@@ -49,6 +49,6 @@ export const SelectedItemComponent: React.FC<SelectedItemComponentProps> = props
         show={showPremiumInfoBadge}
         type={BADGE_TYPES.INFO}
       />
-    </div>
+    </>
   );
 };

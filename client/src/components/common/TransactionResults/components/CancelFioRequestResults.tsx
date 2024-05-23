@@ -35,6 +35,7 @@ const CancelFioRequestResults: React.FC<Props> = props => {
         fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.RESULT}
         fioRecordType={fioRecordType}
       />
+      <h5 className={classes.subtitle}>Transaction Details</h5>
       <TransactionDetails
         className={classes.bundleContainer}
         bundles={{
