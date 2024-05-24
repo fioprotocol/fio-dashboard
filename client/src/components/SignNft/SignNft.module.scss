@@ -69,8 +69,8 @@
 }
 
 .subTitleSection {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
+  @include proxima-nova-semibold;
 }
 
 .fioAddress {

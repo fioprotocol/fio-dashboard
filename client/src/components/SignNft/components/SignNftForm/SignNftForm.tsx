@@ -107,7 +107,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                   </Row>
                 </>
               ) : (
-                <div className="mt-3 mb-4">
+                <div className="mt-3 mb-3">
                   <FioName name={fioAddress?.name} />
                   <Row>
                     <Col className={classes.subTitleSection}>
