@@ -19,7 +19,8 @@ const FIO_APP_INIT_TIMEOUT = 2000;
 
 type Props = {
   action?: string;
-  data: AnyType | null;
+  result: AnyType;
+  data: AnyType;
   isTransaction?: boolean;
   fee?: number;
   oracleFee?: number;
@@ -40,6 +41,7 @@ type Props = {
 const LedgerConnect: React.FC<Props> = props => {
   const {
     action,
+    result,
     data,
     fee,
     oracleFee,
@@ -237,6 +239,7 @@ const LedgerConnect: React.FC<Props> = props => {
     <ConnectionModal
       action={action}
       data={data}
+      result={result}
       fioWallet={fioWallet}
       fee={fee}
       oracleFee={oracleFee}

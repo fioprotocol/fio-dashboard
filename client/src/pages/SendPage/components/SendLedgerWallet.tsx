@@ -1,7 +1,8 @@
-import React from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 import { Ecc } from '@fioprotocol/fiojs';
+
+import { FC, useEffect, useState } from 'react';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
@@ -20,7 +21,7 @@ import MathOp from '../../../util/math';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
-import { TrxResponsePaidBundles } from '../../../api/fio';
+import { TrxResponse, TrxResponsePaidBundles } from '../../../api/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -33,7 +34,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
 };
 
-const SendLedgerWallet: React.FC<Props> = props => {
+const SendLedgerWallet: FC<Props> = props => {
   const {
     fioWallet,
     fee,
@@ -43,6 +44,12 @@ const SendLedgerWallet: React.FC<Props> = props => {
     onSuccess,
     setProcessing,
   } = props;
+
+  const [result, setResult] = useState<TrxResponse>();
+
+  useEffect(() => {
+    setResult(undefined);
+  }, [submitData]);
 
   const send = async (appFio: LedgerFioApp) => {
     const { chainId, transaction } = await prepareChainTransaction(
@@ -73,7 +80,7 @@ const SendLedgerWallet: React.FC<Props> = props => {
       transaction,
     });
 
-    const result = await apis.fio.publicFioSDK.executePreparedTrx(
+    const result: TrxResponse = await apis.fio.publicFioSDK.executePreparedTrx(
       apis.fio.actionEndPoints.transferTokens,
       {
         compression: 0,
@@ -84,14 +91,19 @@ const SendLedgerWallet: React.FC<Props> = props => {
         signatures: [signatureLedger],
       },
     );
+
+    setResult(result);
+
     if (
       !!submitData?.to &&
       !submitData?.contactsList?.filter(c => c === submitData.to).length
-    )
+    ) {
       createContact(submitData.to);
+    }
 
     let obtError = null;
     let bundlesCollected = 0;
+
     if (submitData.memo || submitData.fioRequestId) {
       try {
         const { chainId, transaction } = await prepareChainTransaction(
@@ -128,6 +140,7 @@ const SendLedgerWallet: React.FC<Props> = props => {
           chainId,
           tx: transaction,
         });
+
         const signatureLedger = formatLedgerSignature(witnessSignatureHex);
         transaction.actions[0].data.content = dhEncryptedData;
 
@@ -165,6 +178,7 @@ const SendLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.SEND}
+      result={result}
       data={submitData}
       fee={fee}
       fioWallet={fioWallet}

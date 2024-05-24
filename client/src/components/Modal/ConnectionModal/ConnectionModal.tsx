@@ -41,10 +41,12 @@ import { EditSocialLinkValues } from '../../../pages/EditSocialMediaLinksPage/ty
 import { PaymentDetailsValues } from '../../../pages/TokensRequestPaymentPage/types';
 import { BeforeSubmitValues } from '../../../pages/CheckoutPage/types';
 import { PurchaseValues } from '../../PurchaseNow/types';
+import { TrxResponse } from '../../../api/fio';
 
 type Props = {
   action: string;
-  data: AnyType | null;
+  data: AnyType;
+  result: AnyType;
   fioWallet?: FioWalletDoublet;
   fee: number;
   oracleFee: number;
@@ -60,6 +62,7 @@ const ConnectionModal: React.FC<Props> = props => {
   const {
     action,
     data,
+    result,
     fioWallet,
     fee,
     oracleFee,
@@ -115,20 +118,20 @@ const ConnectionModal: React.FC<Props> = props => {
         memo,
       } = data as SendTokensValues;
 
+      const trxResult = result as TrxResponse;
+
+      const isTwoStepSend = fioRequestId || memo;
+
       return (
         <>
-          <TransactionInfoBadge title="Payee Pubkey">
-            {toPubKey}
-          </TransactionInfoBadge>
-          <TransactionInfoBadge title="Amount">
-            {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
-          </TransactionInfoBadge>
-          {fee && (
-            <TransactionInfoBadge title="Max Fee">
-              {apis.fio.sufToAmount(fee)} FIO
-            </TransactionInfoBadge>
+          {isTwoStepSend && (
+            <p className={classes.transactionText}>
+              Transaction (
+              {trxResult ? 'Record Metadata' : 'Transfer FIO Tokens'})&nbsp;
+              {trxResult ? 2 : 1} of 2
+            </p>
           )}
-          {(fioRequestId || memo) && (
+          {trxResult && isTwoStepSend ? (
             <>
               {fioRequestId && (
                 <TransactionInfoBadge title="Request ID">
@@ -163,11 +166,31 @@ const ConnectionModal: React.FC<Props> = props => {
               <TransactionInfoBadge title="Status">
                 sent_to_blockchain
               </TransactionInfoBadge>
+              <TransactionInfoBadge title="Obt ID">
+                {trxResult.transaction_id}
+              </TransactionInfoBadge>
+              <TransactionInfoBadge title="Sign With">
+                {fromPubKey}
+              </TransactionInfoBadge>
+            </>
+          ) : (
+            <>
+              <TransactionInfoBadge title="Payee Pubkey">
+                {toPubKey}
+              </TransactionInfoBadge>
+              <TransactionInfoBadge title="Amount">
+                {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
+              </TransactionInfoBadge>
+              {fee && (
+                <TransactionInfoBadge title="Max Fee">
+                  {apis.fio.sufToAmount(fee)} FIO
+                </TransactionInfoBadge>
+              )}
+              <TransactionInfoBadge title="Sign With">
+                {fromPubKey}
+              </TransactionInfoBadge>
             </>
           )}
-          <TransactionInfoBadge title="Sign With">
-            {fromPubKey}
-          </TransactionInfoBadge>
         </>
       );
     }
