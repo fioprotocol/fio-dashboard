@@ -45,7 +45,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Purchase Details</h6>
         {!isEmpty(cart) &&
-          cart.map(item => <CartItem item={item} key={item.id} />)}
+          cart.map(item => <CartItem item={item} key={item.id} isEditable />)}
       </div>
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Transaction Details</h6>
