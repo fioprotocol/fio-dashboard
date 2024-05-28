@@ -32,6 +32,7 @@ const FioDomainManagePage: React.FC = () => {
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
     handleRenewDomain,
+    handleRenewWatchedDomain,
     onBagdeClose,
     onDangerModalAction,
     onDangerModalClose,
@@ -90,7 +91,7 @@ const FioDomainManagePage: React.FC = () => {
         showSettingsModal={showDomainWatchlistSettingsModal}
         closeDomainWatchlistModal={closeDomainWatchlistModal}
         domainWatchlistItemCreate={domainWatchlistItemCreate}
-        handleRenewDomain={handleRenewDomain}
+        handleRenewDomain={handleRenewWatchedDomain}
         onDangerModalAction={onDangerModalAction}
         onDangerModalClose={onDangerModalClose}
         onDangerModalOpen={onDangerModalOpen}
