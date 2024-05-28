@@ -41,6 +41,7 @@ export default class AddItem extends Base {
             domainType: ['string'],
             id: ['required', 'string'],
             isFree: ['boolean'],
+            isWatchedDomain: ['boolean'],
             hasCustomDomainInCart: ['boolean'],
             period: ['string'],
             type: ['required', 'string'],

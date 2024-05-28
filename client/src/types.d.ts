@@ -69,6 +69,7 @@ export type CartItem = {
   errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
+  isWatchedDomain?: boolean;
   type?: CartItemType;
   domainType?: DomainItemType;
 };
