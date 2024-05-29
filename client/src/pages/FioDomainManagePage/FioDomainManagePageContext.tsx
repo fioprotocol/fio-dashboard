@@ -222,8 +222,11 @@ export const useContext = (): UseContextProps => {
 
   const handleRenewDomain = (domain: string) => renewDomain(domain);
 
-  const handleRenewWatchedDomain = (domain: string) =>
-    renewDomain(domain, true);
+  const handleRenewWatchedDomain = (domain: string) => {
+    const isOwned = !!fioDomains.find(it => it.name === domain);
+
+    renewDomain(domain, !isOwned);
+  };
 
   const onDomainWatchlistItemModalOpen = useCallback(
     (fioNameItem: FioNameItemProps) => {
@@ -341,8 +344,7 @@ export const useContext = (): UseContextProps => {
             };
 
             if (account !== FIO_ORACLE_ACCOUNT_NAME) {
-              const publicKey = await apis.fio.getAccountPubKey(account);
-              walletPublicKey = publicKey;
+              walletPublicKey = await apis.fio.getAccountPubKey(account);
             }
 
             if (!walletPublicKey) {
