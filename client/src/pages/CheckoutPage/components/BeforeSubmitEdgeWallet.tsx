@@ -14,7 +14,11 @@ import {
 } from '../../../constants/fio';
 
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import { BeforeSubmitData, BeforeSubmitProps } from '../types';
+import {
+  BeforeSubmitData,
+  BeforeSubmitValues,
+  BeforeSubmitProps,
+} from '../types';
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
   const {
@@ -26,8 +30,12 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     processing,
   } = props;
 
-  const send = async ({ allWalletKeysInAccount, data }: SubmitActionParams) => {
+  const send = async ({
+    allWalletKeysInAccount,
+    data,
+  }: SubmitActionParams<BeforeSubmitValues>) => {
     const signedTxs: BeforeSubmitData = {};
+
     for (const item of data.fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
@@ -35,7 +43,9 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         signedTxs[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioAddress,
+            item.withDomain
+              ? ACTIONS.registerFioDomainAddress
+              : ACTIONS.registerFioAddress,
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,

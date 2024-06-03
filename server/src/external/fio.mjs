@@ -39,6 +39,7 @@ const EndPoint = entities.EndPoint;
 const FIO_ACTION_NAMES = {
   [FIO_ACTIONS.registerFioAddress]: 'regaddress',
   [FIO_ACTIONS.registerFioDomain]: 'regdomain',
+  [FIO_ACTIONS.registerFioDomainAddress]: 'regdomadd',
   [FIO_ACTIONS.renewFioDomain]: 'renewdomain',
   [FIO_ACTIONS.setFioDomainVisibility]: 'setdomainpub',
   [FIO_ACTIONS.transferFioAddress]: 'xferaddress',
@@ -283,12 +284,10 @@ class Fio {
         action: FIO_ACTION_NAMES[action],
         data: params,
       });
-      const result = await fioSdk.executePreparedTrx(
+      return await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
       );
-
-      return result;
     } catch (err) {
       this.logError(err);
 
@@ -307,12 +306,10 @@ class Fio {
   async executeTx(action, signedTx) {
     try {
       const fioSdk = await this.getMasterFioSDK();
-      const result = await fioSdk.executePreparedTrx(
+      return await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         signedTx,
       );
-
-      return result;
     } catch (err) {
       this.logError(err);
 

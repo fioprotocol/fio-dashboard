@@ -39,6 +39,8 @@ type Props = {
 
 const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 
+const DEFAULT_LONG_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 5000;
+
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
@@ -71,7 +73,35 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       if (!registration.isFree) {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         let signedTx: SignedTxArgs;
-        if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+        if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+          const [address, domain] = registration.fioName.split('@');
+
+          const hasAdditionalHandlesOnDomain = registrations.some(
+            registrationItem => {
+              const [itemAddress, itemDomain] = registrationItem.fioName.split(
+                '@',
+              );
+              return itemDomain === domain && itemAddress !== address;
+            },
+          );
+
+          if (hasAdditionalHandlesOnDomain) {
+            await sleep(DEFAULT_LONG_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS);
+          }
+
+          signedTx = await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.registerFioDomainAddress,
+            {
+              fioAddress: registration.fioName,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
+              technologyProviderId: apis.fio.tpid,
+              expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+            },
+          );
+        } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
               registrationItem.fioName === registration.fioName &&

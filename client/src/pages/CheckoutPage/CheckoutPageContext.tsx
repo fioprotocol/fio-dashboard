@@ -36,6 +36,7 @@ import {
   isProcessing as isProcessingSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { CreateOrderActionData } from '../../redux/types';
 
 import apis from '../../api';
 
@@ -81,8 +82,11 @@ import {
   RedirectLinkData,
   AnyObject,
 } from '../../types';
-import { BeforeSubmitData, BeforeSubmitState } from './types';
-import { CreateOrderActionData } from '../../redux/types';
+import {
+  BeforeSubmitData,
+  BeforeSubmitState,
+  SignFioAddressItem,
+} from './types';
 
 const SIGN_TX_MAX_FEE_COEFF = 1.5;
 
@@ -596,10 +600,11 @@ export const useContext = (): {
     const privateDomainList: { [domain: string]: boolean } = {};
     for (const cartItem of cartItems) {
       if (
-        userDomains.findIndex(({ name }) => name === cartItem.domain) < 0 &&
+        userDomains.findIndex(({ name }) => name === cartItem.domain) === -1 &&
         cartItem.domainType !== DOMAIN_TYPE.CUSTOM
-      )
+      ) {
         continue;
+      }
 
       privateDomainList[cartItem.domain] = false;
     }
@@ -617,7 +622,7 @@ export const useContext = (): {
       }
     }
 
-    const signTxItems = [];
+    const signTxItems: SignFioAddressItem[] = [];
     for (const cartItem of cartItems) {
       if (
         [
@@ -639,6 +644,7 @@ export const useContext = (): {
           ),
           name: setFioName(cartItem.address, cartItem.domain),
           ownerKey: paymentWalletPublicKey,
+          withDomain: !domainWallet,
         });
       }
     }

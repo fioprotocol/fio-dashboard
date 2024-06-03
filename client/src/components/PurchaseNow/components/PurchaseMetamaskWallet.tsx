@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
-} from '../../../components/MetamaskConfirmAction';
+} from '../../MetamaskConfirmAction';
 
 import MathOp from '../../../util/math';
 import useEffectOnce from '../../../hooks/general';
@@ -132,7 +132,41 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
     for (const [index, registration] of registrations.entries()) {
       if (!registration.isFree) {
-        if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+        if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+          const [address, domain] = registration.fioName.split('@');
+
+          const hasAdditionalHandlesOnDomain = registrations.some(
+            registrationItem => {
+              const [itemAddress, itemDomain] = registrationItem.fioName.split(
+                '@',
+              );
+              return itemDomain === domain && itemAddress !== address;
+            },
+          );
+
+          const addBundlesActionParams = {
+            action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioDomainAddress],
+            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            data: {
+              owner_fio_public_key: fioWallet.publicKey,
+              fio_address: registration.fioName,
+              tpid: apis.fio.tpid,
+              max_fee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
+            },
+            derivationIndex,
+            timeoutOffset: hasAdditionalHandlesOnDomain
+              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
+              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            id: index,
+          };
+
+          handleRegistrationIndexedItems({ registration, index });
+
+          actionParamsArr.push(addBundlesActionParams);
+        } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
               registrationItem.fioName === registration.fioName &&

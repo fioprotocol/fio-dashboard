@@ -67,8 +67,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
               indexedItem => indexedItem.indexId === Number(resultItem.id),
             );
 
-            const signedTxItem = resultItem;
-            delete signedTxItem.id;
+            delete resultItem.id;
 
             signedTxs[indexedItem.name] = {
               signedTx: resultItem,
@@ -86,8 +85,12 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     () => {
       const actionParamsArr = [];
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
+        const actionName = fioAddressItem.withDomain
+          ? ACTIONS.registerFioDomainAddress
+          : ACTIONS.registerFioAddress;
+
         const fioHandleActionParams = {
-          action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
+          action: TRANSACTION_ACTION_NAMES[actionName],
           account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
           data: {
             owner_fio_public_key: fioAddressItem.ownerKey,

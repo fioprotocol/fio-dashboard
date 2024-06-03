@@ -45,6 +45,7 @@ import {
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
+import { checkIfDomainOnOrderRegistered } from '../utils/jobs/orders.mjs';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -512,32 +513,19 @@ class OrdersJob extends CommonJob {
   }
 
   async checkIfDomainOnOrderRegistered(orderItem) {
-    const { domain, orderId } = orderItem;
-    const domainOnOrder = await OrderItem.findOne({
-      where: {
-        action: FIO_ACTIONS.registerFioDomain,
-        domain,
-        orderId,
-      },
-      include: [{ model: OrderItemStatus }],
+    await checkIfDomainOnOrderRegistered(orderItem, {
+      action: FIO_ACTIONS.registerFioDomain,
+      errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+      onFail: err => this.handleFail(orderItem, err),
     });
+  }
 
-    if (domainOnOrder) {
-      const ordersDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
-
-      if (
-        ordersDomain &&
-        ordersDomain.orderItemStatus &&
-        (ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
-          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL ||
-          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.EXPIRE)
-      ) {
-        const errorMessage = `RenewDomain has been canceled because domain - ${domain} - from this order has not been registered`;
-
-        await this.handleFail(orderItem, errorMessage);
-        throw new Error(errorMessage);
-      }
-    }
+  async checkIfComboOnOrderRegistered(orderItem) {
+    await checkIfDomainOnOrderRegistered(orderItem, {
+      action: FIO_ACTIONS.registerFioDomainAddress,
+      errorMessage: `RegisterFioHandle has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+      onFail: err => this.handleFail(orderItem, err),
+    });
   }
 
   async enableCheckBalanceNotificationCreate(currentWallet) {
@@ -651,6 +639,12 @@ class OrdersJob extends CommonJob {
       await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
       await this.checkIfDomainOnOrderRegistered(orderItem);
     }
+
+    if (action === FIO_ACTIONS.registerFioAddress) {
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      await this.checkIfComboOnOrderRegistered(orderItem);
+    }
+
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
     if (!result.transaction_id) {

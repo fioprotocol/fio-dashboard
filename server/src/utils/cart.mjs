@@ -476,7 +476,7 @@ export const cartItemsToOrderItems = async ({
 
       if (!hasCustomDomainInCart) {
         domainItem = {
-          action: FIO_ACTIONS.registerFioDomain,
+          action: FIO_ACTIONS.registerFioDomainAddress,
           domain,
           nativeFio: fioDomainPrice.toString(),
           price: convertFioPrices(fioDomainPrice, roe).usdc,
