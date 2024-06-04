@@ -16,7 +16,6 @@ import {
   FIO_ACTIONS_TO_END_POINT_KEYS,
   FIO_ADDRESS_DELIMITER,
   DEFAULT_BUNDLE_SET_VALUE,
-  GET_TABLE_ROWS_URL,
 } from '../config/constants.js';
 
 import { isDomain } from '../utils/fio.mjs';
@@ -396,15 +395,28 @@ class Fio {
   }
 
   async getTableRows(params) {
-    try {
-      const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
+    const apiUrls = await FioApiUrl.getApiUrls();
+
+    const getTableRowsRequest = async ({ params, url }) => {
+      const response = await superagent.post(url).send(params);
 
       const { rows, more } = response.body;
 
       return { rows, more };
-    } catch (err) {
-      this.logError(err);
-      throw err;
+    };
+
+    for (let i = 0; i < apiUrls.length; i++) {
+      const url = `${apiUrls[i]}chain/get_table_rows`;
+
+      try {
+        return await getTableRowsRequest({ params, url });
+      } catch (err) {
+        this.logError(err);
+        // If this was the last URL, throw the error
+        if (i === apiUrls.length - 1) {
+          throw err;
+        }
+      }
     }
   }
 
