@@ -335,6 +335,15 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
 
           <div className="d-flex align-self-start mb-4">
             <Field
+              name="settings.isBranded"
+              type="checkbox"
+              component={Input}
+              label="Partner branded"
+            />
+          </div>
+
+          <div className="d-flex align-self-start mb-4">
+            <Field
               name="settings.gatedRegistration.isOn"
               type="checkbox"
               component={Input}
