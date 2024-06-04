@@ -30,7 +30,6 @@ import {
   FIO_PROXY_LIST,
   FIO_ACCOUNT_NAMES,
   FIO_ACTION_NAMES,
-  GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
   DEFAULT_FIO_RECORDS_LIMIT,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -84,6 +83,20 @@ export type RawTransaction = {
   }[];
   transaction_extensions: AnyObject[];
 };
+
+type GetTableRawsParams = {
+  code: string;
+  scope: string;
+  table: string;
+  lower_bound: string;
+  upper_bound?: string;
+  key_type?: string;
+  index_position?: string;
+  json?: boolean;
+  reverse?: boolean;
+  limit?: number;
+};
+
 export type FIOSDK_LIB = typeof FIOSDK;
 
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
@@ -366,20 +379,15 @@ export default class Fio {
     return await this.walletFioSDK.registerFioAddress(fioName, fee);
   };
 
-  getTableRows = async (params: {
-    code: string;
-    scope: string;
-    table: string;
-    lower_bound: string;
-    upper_bound?: string;
-    key_type?: string;
-    index_position?: string;
-    json?: boolean;
-    reverse?: boolean;
-    limit?: number;
-  }) => {
-    try {
-      const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
+  getTableRows = async (params: GetTableRawsParams) => {
+    const getTableRowsRequest = async ({
+      params,
+      url,
+    }: {
+      params: GetTableRawsParams;
+      url: string;
+    }) => {
+      const response = await superagent.post(url).send(params);
 
       const {
         rows,
@@ -387,9 +395,20 @@ export default class Fio {
       }: { rows: AnyObject[]; more: boolean } = response.body;
 
       return { rows, more };
-    } catch (err) {
-      this.logError(err);
-      throw err;
+    };
+
+    for (let i = 0; i < this.baseurls.length; i++) {
+      const url = `${this.baseurls[i]}chain/get_table_rows`;
+
+      try {
+        return await getTableRowsRequest({ params, url });
+      } catch (err) {
+        this.logError(err);
+        // If this was the last URL, throw the error
+        if (i === this.baseurls.length - 1) {
+          throw err;
+        }
+      }
     }
   };
 
