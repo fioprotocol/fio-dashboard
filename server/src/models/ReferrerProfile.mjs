@@ -43,6 +43,7 @@ export class ReferrerProfile extends Base {
         //   gatedRegistration: {'isOn': boolean, params: {'asset': 'NFT || TOKEN', chainId: '1' (1 - Ethereum), contractAddress: ''}}
         //   img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3A/wD/A...',
         //   link: 'https://www.ref.profile/',
+        //   isBranded: boolean
         // },
         simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
         simpleRegIpWhitelist: {
