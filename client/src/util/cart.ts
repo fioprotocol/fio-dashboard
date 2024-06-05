@@ -1,54 +1,14 @@
-import isEmpty from 'lodash/isEmpty';
-
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../constants/common';
-import { DOMAIN_TYPE } from '../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
 import { CartItem, CartItemType, NativePrices, OrderItem } from '../types';
-import { DomainsArrItemType } from '../pages/FioAddressSelectionPage/types';
-
-export const cartHasFreeItemsOnDomains = ({
-  cartItems,
-  domains,
-}: {
-  cartItems: CartItem[];
-  domains: DomainsArrItemType;
-}) => {
-  return (
-    cartItems &&
-    cartItems.some(cartItem => {
-      const { domain, isFree, domainType } = cartItem;
-      const existingDomain = domains.find(
-        domainItem => domainItem.name === domain,
-      );
-
-      return (
-        existingDomain &&
-        existingDomain.domainType !== DOMAIN_TYPE.PREMIUM &&
-        isFree &&
-        domainType === DOMAIN_TYPE.ALLOW_FREE
-      );
-    })
-  );
-};
-
-export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
-  return (
-    !isEmpty(cartItems) &&
-    cartItems.some(
-      item =>
-        item.domainType === DOMAIN_TYPE.ALLOW_FREE &&
-        item.isFree &&
-        !!item.address,
-    )
-  );
-};
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   cart.length &&
@@ -94,7 +54,7 @@ export const cartIsRelative = (
 ): boolean => {
   const cartItemsLength = cartItems.reduce(
     (length, item) =>
-      CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
+      CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && Number(item.period) > 1
         ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
           ? length + Number(item.period) + 1
           : length + Number(item.period)
@@ -106,7 +66,15 @@ export const cartIsRelative = (
     0,
   );
 
-  if (!new MathOp(cartItemsLength).eq(orderItems.length)) return false;
+  const orderItemsLength = orderItems.reduce(
+    (length, item) =>
+      item.action === ACTIONS.registerFioDomainAddress
+        ? length + 2
+        : length + 1,
+    0,
+  );
+
+  if (!new MathOp(cartItemsLength).eq(orderItemsLength)) return false;
 
   for (const cartItem of cartItems) {
     if (

@@ -7,11 +7,12 @@ import {
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
-import { CartItem } from '../../types';
+import { CartItem, NativePrices } from '../../types';
 
 export const makeRegistrationOrder = (
   cartItems: CartItem[],
-  fees: { address: number; domain: number },
+  fees: NativePrices,
+  supportCombo = false,
 ): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
@@ -30,6 +31,9 @@ export const makeRegistrationOrder = (
         cartItem.type,
       )
         ? cartItem.costNativeFio
+        : cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+          supportCombo
+        ? fees.combo
         : cartItem.address
         ? fees.address
         : fees.domain,
@@ -62,7 +66,11 @@ export const makeRegistrationOrder = (
       continue;
     }
 
-    if (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
+    if (
+      !!cartItem.address &&
+      !supportCombo &&
+      cartItem.domainType === DOMAIN_TYPE.CUSTOM
+    ) {
       registrations.push({
         cartItemId: cartItem.id,
         fioName: cartItem.domain,

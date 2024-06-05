@@ -61,10 +61,12 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
         paymentProvider: PAYMENT_PROVIDER.FIO,
         providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
       };
+
       const registrations = makeRegistrationOrder(
         [...cartItems],
         prices.nativeFio,
       );
+
       for (const registration of registrations) {
         if (!registration.isFree) {
           const isDomainRegistration = isDomain(registration.fioName);

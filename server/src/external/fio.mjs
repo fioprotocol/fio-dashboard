@@ -142,19 +142,6 @@ class Fio {
     }
   }
 
-  async registrationFee(forDomain = false) {
-    try {
-      const publicFioSDK = await this.getPublicFioSDK();
-
-      const { fee } = await publicFioSDK.getFee(
-        forDomain ? EndPoint.registerFioDomain : EndPoint.registerFioAddress,
-      );
-      return fee;
-    } catch (e) {
-      logger.error('Get Registration Fee Error: ', e);
-    }
-  }
-
   async getRawAbi() {
     const abisVar = await Var.getByKey(ABIS_VAR_KEY);
     if (abisVar && !Var.updateRequired(abisVar.updatedAt, ABIS_UPDATE_TIMEOUT_SEC)) {
@@ -353,18 +340,23 @@ class Fio {
         !prices.renewDomain ||
         !prices.addBundles ||
         !prices.address ||
-        !prices.domain
+        !prices.domain ||
+        !prices.combo
       ) {
-        const registrationAddressFeePromise = this.registrationFee();
-        const registrationDomainFeePromise = this.registrationFee(true);
-        const renewDomainFeePromise = this.getFee(FIO_ACTIONS.renewFioDomain);
-        const addBundlesFeePromise = this.getFee(FIO_ACTIONS.addBundledTransactions);
+        const [registrationAddressFee, registrationDomainFee, registerDomainAddress, renewDomainFee, addBundlesFee] = await Promise.all([
+          this.getFee(FIO_ACTIONS.registerFioAddress),
+          this.getFee(FIO_ACTIONS.registerFioDomain),
+          this.getFee(FIO_ACTIONS.registerFioDomainAddress),
+          this.getFee(FIO_ACTIONS.renewFioDomain),
+          this.getFee(FIO_ACTIONS.addBundledTransactions),
+        ]);
 
         prices = {
-          address: await registrationAddressFeePromise,
-          domain: await registrationDomainFeePromise,
-          renewDomain: await renewDomainFeePromise,
-          addBundles: await addBundlesFeePromise,
+          address: registrationAddressFee,
+          domain: registrationDomainFee,
+          combo: registerDomainAddress,
+          renewDomain: renewDomainFee,
+          addBundles: addBundlesFee,
         };
 
         await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));

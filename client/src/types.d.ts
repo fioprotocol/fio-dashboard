@@ -101,6 +101,7 @@ export type NativePrices = {
   addBundles: number;
   address: number;
   domain: number;
+  combo: number;
   renewDomain: number;
 };
 

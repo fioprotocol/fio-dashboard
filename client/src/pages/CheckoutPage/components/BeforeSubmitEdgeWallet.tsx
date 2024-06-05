@@ -1,12 +1,14 @@
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { CART_ITEM_TYPE, CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -19,16 +21,12 @@ import {
   BeforeSubmitValues,
   BeforeSubmitProps,
 } from '../types';
+import { prices as pricesSelector } from '../../../redux/registrations/selectors';
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
-  const {
-    setProcessing,
-    onSuccess,
-    onCancel,
-    submitData,
-    fee,
-    processing,
-  } = props;
+  const { setProcessing, onSuccess, onCancel, submitData, processing } = props;
+
+  const prices = useSelector(pricesSelector);
 
   const send = async ({
     allWalletKeysInAccount,
@@ -39,11 +37,23 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     for (const item of data.fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
+      // TODO to util
+      const fee = [
+        CART_ITEM_TYPE.DOMAIN_RENEWAL,
+        CART_ITEM_TYPE.ADD_BUNDLES,
+      ].includes(item.cartItem.type)
+        ? item.cartItem.costNativeFio
+        : item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+        ? prices.nativeFio.combo
+        : item.cartItem.address
+        ? prices.nativeFio.address
+        : prices.nativeFio.domain;
+
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         signedTxs[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
-            item.withDomain
+            item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
               ? ACTIONS.registerFioDomainAddress
               : ACTIONS.registerFioAddress,
             {
@@ -53,6 +63,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           ),

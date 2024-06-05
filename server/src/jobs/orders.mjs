@@ -368,7 +368,14 @@ class OrdersJob extends CommonJob {
   }
 
   async checkPriceChanges(orderItem, currentRoe) {
-    let fee = await this.getFeeForAction(orderItem.action);
+    let fee = 0
+
+    if (orderItem.action === FIO_ACTIONS.registerFioDomainAddress) {
+      fee += await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
+      fee += await this.getFeeForAction(FIO_ACTIONS.registerFioAddress);
+    } else {
+      fee += await this.getFeeForAction(orderItem.action);
+    }
 
     if (orderItem.data && orderItem.data.hasCustomDomain) {
       const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
@@ -856,6 +863,7 @@ class OrdersJob extends CommonJob {
       addBundles: addBundlesPrice,
       address: addressPrice,
       domain: domainPrice,
+      combo: domainAddressPrice,
       renewDomain: renewDomainPrice,
     } = prices;
     // get order items ready to process
@@ -919,9 +927,12 @@ class OrdersJob extends CommonJob {
           permission: freePermission || freeFioPermision,
         };
 
+        console.error('>>>> STEP - 1', orderItem);
+
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
+        // TODO check
         const useDomainOwnerAuthParams =
-          domainOwner && action === FIO_ACTIONS.registerFioAddress;
+          domainOwner && (action === FIO_ACTIONS.registerFioAddress/* || action === FIO_ACTIONS.registerFioDomainAddress*/);
 
         if (useDomainOwnerAuthParams) {
           const { actor, permission } = domainOwner;
@@ -960,6 +971,9 @@ class OrdersJob extends CommonJob {
           let nativeFio = null;
 
           switch (action) {
+            case FIO_ACTIONS.registerFioDomainAddress:
+              nativeFio = domainAddressPrice;
+              break;
             case FIO_ACTIONS.registerFioAddress:
               nativeFio = addressPrice;
               break;

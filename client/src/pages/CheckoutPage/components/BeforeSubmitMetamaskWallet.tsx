@@ -85,12 +85,8 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     () => {
       const actionParamsArr = [];
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
-        const actionName = fioAddressItem.withDomain
-          ? ACTIONS.registerFioDomainAddress
-          : ACTIONS.registerFioAddress;
-
         const fioHandleActionParams = {
-          action: TRANSACTION_ACTION_NAMES[actionName],
+          action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
           account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
           data: {
             owner_fio_public_key: fioAddressItem.ownerKey,

@@ -9,6 +9,7 @@ import {
   Payment,
   ApiError,
   PaymentProvider,
+  CartItem,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
 
@@ -57,6 +58,7 @@ export type SignFioAddressItem = {
   name: string;
   ownerKey: string;
   withDomain: boolean;
+  cartItem: CartItem;
 };
 
 export type BeforeSubmitValues = {

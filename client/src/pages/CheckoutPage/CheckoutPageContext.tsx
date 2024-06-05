@@ -645,6 +645,7 @@ export const useContext = (): {
           name: setFioName(cartItem.address, cartItem.domain),
           ownerKey: paymentWalletPublicKey,
           withDomain: !domainWallet,
+          cartItem,
         });
       }
     }
