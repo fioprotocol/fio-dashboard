@@ -65,6 +65,10 @@ export type BeforeSubmitValues = {
   fioAddressItems: SignFioAddressItem[];
 };
 
+export type BeforeSubmitValues = {
+  fioAddressItems: SignFioAddressItem[];
+};
+
 export type BeforeSubmitState = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: BeforeSubmitData) => void;

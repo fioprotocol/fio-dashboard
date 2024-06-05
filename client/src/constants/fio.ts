@@ -138,8 +138,6 @@ export const BUNDLES_TX_COUNT = {
   UNSTAKE: 1,
 };
 
-export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
-
 export const FIO_ACCOUNT_NAMES = {
   [ACTIONS.transferTokens]: 'fio.token',
   [ACTIONS.recordObtData]: 'fio.reqobt',
@@ -301,6 +299,7 @@ export const FIO_PROXY_LIST = {
     'lethanhmy@cm',
     'proxy@zenblocks',
     'andy@secux',
+    'stake@bpkiwi',
   ],
   [FIO_CHAIN_ID.TESTNET]: [
     'congle@fiotestnet',
