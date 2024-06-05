@@ -145,7 +145,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           );
 
           const addBundlesActionParams = {
-            action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
+            action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioDomainAddress],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
               owner_fio_public_key: fioWallet.publicKey,

@@ -8,7 +8,7 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import { CART_ITEM_TYPE, CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -37,29 +37,21 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     for (const item of data.fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
-      // TODO to util
-      const fee = [
-        CART_ITEM_TYPE.DOMAIN_RENEWAL,
-        CART_ITEM_TYPE.ADD_BUNDLES,
-      ].includes(item.cartItem.type)
-        ? item.cartItem.costNativeFio
-        : item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-        ? prices.nativeFio.combo
-        : item.cartItem.address
-        ? prices.nativeFio.address
-        : prices.nativeFio.domain;
-
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         signedTxs[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
-            item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+            item.withDomain
               ? ACTIONS.registerFioDomainAddress
               : ACTIONS.registerFioAddress,
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
-              maxFee: new MathOp(fee)
+              maxFee: new MathOp(
+                item.withDomain
+                  ? prices.nativeFio.combo
+                  : prices.nativeFio.address,
+              )
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),

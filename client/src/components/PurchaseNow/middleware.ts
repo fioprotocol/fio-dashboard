@@ -16,8 +16,17 @@ export const makeRegistrationOrder = (
 ): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
-    !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM ? -1 : 1,
+    !!item.address &&
+    item.domainType === DOMAIN_TYPE.CUSTOM &&
+    !item.hasCustomDomainInCart
+      ? -1
+      : 1,
   )) {
+    const isCombo =
+      cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      supportCombo &&
+      !cartItem.hasCustomDomainInCart;
+
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
@@ -32,11 +41,13 @@ export const makeRegistrationOrder = (
       )
         ? cartItem.costNativeFio
         : cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
-          supportCombo
+          supportCombo &&
+          !cartItem.hasCustomDomainInCart
         ? fees.combo
         : cartItem.address
         ? fees.address
         : fees.domain,
+      isCombo,
       type: cartItem.type,
     };
 
@@ -69,6 +80,7 @@ export const makeRegistrationOrder = (
     if (
       !!cartItem.address &&
       !supportCombo &&
+      !cartItem.hasCustomDomainInCart &&
       cartItem.domainType === DOMAIN_TYPE.CUSTOM
     ) {
       registrations.push({

@@ -458,6 +458,7 @@ export const cartItemsToOrderItems = async ({
     addBundles: addBundlesPrice,
     address: fioHandlePrice,
     domain: fioDomainPrice,
+    combo: fioDomainHandlePrice,
     renewDomain: renewDomainPrice,
   } = prices;
   const orderItems = [];
@@ -495,18 +496,22 @@ export const cartItemsToOrderItems = async ({
             ? FIO_ACTIONS.registerFioAddress
             : FIO_ACTIONS.registerFioDomainAddress;
           orderItem.address = address;
-          orderItem.nativeFio = (fioDomainPrice + fioHandlePrice).toString();
-          orderItem.price = convertFioPrices((fioDomainPrice + fioHandlePrice), roe).usdc;
+          orderItem.nativeFio = (hasCustomDomainInCart ? fioHandlePrice : fioDomainHandlePrice).toString();
+          orderItem.price = convertFioPrices((hasCustomDomainInCart ? fioHandlePrice : fioDomainHandlePrice), roe).usdc;
           orderItems.push(orderItem);
 
-          for (let i = 1; i < period; i++) {
+          if (hasCustomDomainInCart) {
+            break;
+          }
+
+          for (let i = 1; i < Number(period); i++) {
             orderItems.push(renewOrderItem);
           }
         }
         break;
       case CART_ITEM_TYPE.DOMAIN_RENEWAL:
         {
-          for (let i = 0; i < period; i++) {
+          for (let i = 0; i < Number(period); i++) {
             orderItems.push(renewOrderItem);
           }
         }
@@ -568,7 +573,7 @@ export const cartItemsToOrderItems = async ({
 
           orderItems.push(orderItem);
 
-          for (let i = 1; i < period; i++) {
+          for (let i = 1; i < Number(period); i++) {
             orderItems.push(renewOrderItem);
           }
         }

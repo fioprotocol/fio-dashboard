@@ -368,19 +368,13 @@ class OrdersJob extends CommonJob {
   }
 
   async checkPriceChanges(orderItem, currentRoe) {
-    let fee = 0
+    let fee = await this.getFeeForAction(orderItem.action);
 
-    if (orderItem.action === FIO_ACTIONS.registerFioDomainAddress) {
-      fee += await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
-      fee += await this.getFeeForAction(FIO_ACTIONS.registerFioAddress);
-    } else {
-      fee += await this.getFeeForAction(orderItem.action);
-    }
-
-    if (orderItem.data && orderItem.data.hasCustomDomain) {
-      const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
-      fee = new MathOp(fee).add(domainFee).toNumber();
-    }
+    // TODO check if we really need it?
+    // if (orderItem.data && orderItem.data.hasCustomDomain) {
+    //   const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
+    //   fee = new MathOp(fee).add(domainFee).toNumber();
+    // }
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
 
@@ -927,12 +921,9 @@ class OrdersJob extends CommonJob {
           permission: freePermission || freeFioPermision,
         };
 
-        console.error('>>>> STEP - 1', orderItem);
-
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
-        // TODO check
         const useDomainOwnerAuthParams =
-          domainOwner && (action === FIO_ACTIONS.registerFioAddress/* || action === FIO_ACTIONS.registerFioDomainAddress*/);
+          domainOwner && (action === FIO_ACTIONS.registerFioAddress);
 
         if (useDomainOwnerAuthParams) {
           const { actor, permission } = domainOwner;

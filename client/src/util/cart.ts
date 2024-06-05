@@ -2,7 +2,7 @@ import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
+import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import MathOp from './math';
@@ -54,27 +54,16 @@ export const cartIsRelative = (
 ): boolean => {
   const cartItemsLength = cartItems.reduce(
     (length, item) =>
-      CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && Number(item.period) > 1
-        ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
-          ? length + Number(item.period) + 1
-          : length + Number(item.period)
-        : !!item.address &&
-          item.domainType === DOMAIN_TYPE.CUSTOM &&
-          !item.hasCustomDomainInCart
-        ? length + 2
-        : length + 1,
+      length +
+      1 +
+      (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) &&
+      !item.hasCustomDomainInCart
+        ? Number(item.period) - 1
+        : 0),
     0,
   );
 
-  const orderItemsLength = orderItems.reduce(
-    (length, item) =>
-      item.action === ACTIONS.registerFioDomainAddress
-        ? length + 2
-        : length + 1,
-    0,
-  );
-
-  if (!new MathOp(cartItemsLength).eq(orderItemsLength)) return false;
+  if (!new MathOp(cartItemsLength).eq(orderItems.length)) return false;
 
   for (const cartItem of cartItems) {
     if (
@@ -83,8 +72,9 @@ export const cartIsRelative = (
           setFioName(address, domain) ===
           setFioName(cartItem.address, cartItem.domain),
       )
-    )
+    ) {
       return false;
+    }
   }
   return true;
 };
