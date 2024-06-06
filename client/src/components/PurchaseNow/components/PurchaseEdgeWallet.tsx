@@ -179,6 +179,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         }
 
         result.registered.push({
+          action: registration.action,
           fioName: registration.fioName,
           isFree: false,
           cartItemId: registration.cartItemId,

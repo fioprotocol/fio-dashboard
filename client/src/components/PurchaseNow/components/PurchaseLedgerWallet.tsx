@@ -127,6 +127,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           });
 
           results.registered.push({
+            action: registration.action,
             fioName: registration.fioName,
             isFree: false,
             cartItemId: registration.cartItemId,
@@ -146,6 +147,8 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           });
         }
       }
+
+      console.error('>>>> SIGNING', results);
 
       return results;
     },

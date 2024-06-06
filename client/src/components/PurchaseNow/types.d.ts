@@ -18,6 +18,7 @@ export type PurchaseNowTypes = {
 };
 
 export type RegistrationType = {
+  action: string;
   cartItemId: string;
   fioName: string;
   isFree: boolean;

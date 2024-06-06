@@ -91,6 +91,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             );
 
             registrationResult.registered.push({
+              action: registrationItem.action,
               fioName: registrationItem.fioName,
               isFree: false,
               cartItemId: registrationItem.cartItemId,
@@ -135,7 +136,9 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
     for (const [index, registration] of registrations.entries()) {
       if (!registration.isFree) {
         if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-          const [address, domain] = registration.fioName.split('@');
+          const [address, domain] = registration.fioName.split(
+            FIO_ADDRESS_DELIMITER,
+          );
 
           const hasAdditionalHandlesOnDomain = registrations.some(
             registrationItem => {

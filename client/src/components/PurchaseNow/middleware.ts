@@ -4,7 +4,7 @@ import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
-import { DOMAIN_TYPE } from '../../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
 import { CartItem, NativePrices } from '../../types';
@@ -20,7 +20,7 @@ export const makeRegistrationOrder = ({
   fees,
   isComboSupport = false,
 }: MakeRegistrationOrder): RegistrationType[] => {
-  const registrations = [];
+  const registrations: RegistrationType[] = [];
   const sortedCartItems = [...cartItems].sort(item =>
     !!item.address &&
     item.domainType === DOMAIN_TYPE.CUSTOM &&
@@ -44,6 +44,16 @@ export const makeRegistrationOrder = ({
           cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
         !!cartItem.address &&
         cartItem.type === CART_ITEM_TYPE.ADDRESS,
+      action:
+        cartItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL
+          ? ACTIONS.renewFioDomain
+          : cartItem.type === CART_ITEM_TYPE.ADD_BUNDLES
+          ? ACTIONS.addBundledTransactions
+          : cartItem.type === CART_ITEM_TYPE.DOMAIN
+          ? ACTIONS.registerFioDomain
+          : isCombo
+          ? ACTIONS.registerFioDomainAddress
+          : ACTIONS.registerFioAddress,
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
       )
@@ -76,8 +86,9 @@ export const makeRegistrationOrder = ({
       ) {
         for (let i = 1; i < cartItem.period; i++) {
           registrations.push({
-            cartItemId: cartItem.id,
+            action: ACTIONS.renewFioDomain,
             fioName: cartItem.domain,
+            cartItemId: cartItem.id,
             fee: fees.domain,
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             isFree: false,
@@ -95,8 +106,9 @@ export const makeRegistrationOrder = ({
       cartItem.domainType === DOMAIN_TYPE.CUSTOM
     ) {
       registrations.push({
-        cartItemId: cartItem.id,
+        action: ACTIONS.registerFioDomain,
         fioName: cartItem.domain,
+        cartItemId: cartItem.id,
         fee: fees.domain,
         type: CART_ITEM_TYPE.DOMAIN,
         isFree: false,
@@ -112,8 +124,9 @@ export const makeRegistrationOrder = ({
     ) {
       for (let i = 1; i < cartItem.period; i++) {
         registrations.push({
-          cartItemId: cartItem.id,
           fioName: cartItem.domain,
+          action: ACTIONS.renewFioDomain,
+          cartItemId: cartItem.id,
           fee: fees.domain,
           type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
           isFree: false,
