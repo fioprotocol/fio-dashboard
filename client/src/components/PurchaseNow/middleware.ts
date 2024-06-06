@@ -56,7 +56,10 @@ export const makeRegistrationOrder = ({
         ? fees.address
         : fees.domain,
       isCombo,
-      type: cartItem.type,
+      type:
+        !isCombo && cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+          ? CART_ITEM_TYPE.ADDRESS
+          : cartItem.type,
     };
 
     if (
@@ -101,6 +104,8 @@ export const makeRegistrationOrder = ({
       });
     }
 
+    registrations.push(registration);
+
     if (
       CART_ITEM_TYPES_WITH_PERIOD.includes(cartItem.type) &&
       cartItem.period > 1
@@ -116,8 +121,6 @@ export const makeRegistrationOrder = ({
         });
       }
     }
-
-    registrations.push(registration);
   }
 
   return registrations;

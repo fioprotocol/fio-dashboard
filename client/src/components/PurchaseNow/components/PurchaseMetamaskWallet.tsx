@@ -30,6 +30,7 @@ import {
 import { PurchaseValues, RegistrationType } from '../types';
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, RegistrationResult } from '../../../types';
+import { FIO_ADDRESS_DELIMITER } from '../../../utils';
 
 const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS = 10 * 1000;
 
@@ -139,7 +140,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           const hasAdditionalHandlesOnDomain = registrations.some(
             registrationItem => {
               const [itemAddress, itemDomain] = registrationItem.fioName.split(
-                '@',
+                FIO_ADDRESS_DELIMITER,
               );
               return itemDomain === domain && itemAddress !== address;
             },
