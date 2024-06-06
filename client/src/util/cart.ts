@@ -2,7 +2,7 @@ import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../constants/common';
-import { DOMAIN_TYPE } from '../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import MathOp from './math';
@@ -63,7 +63,20 @@ export const cartIsRelative = (
     0,
   );
 
-  if (!new MathOp(cartItemsLength).eq(orderItems.length)) return false;
+  const orderItemsLength = orderItems.reduce(
+    (length, item) =>
+      length +
+      (item.action === ACTIONS.registerFioDomain &&
+      !!orderItems.find(
+        it =>
+          it.action === ACTIONS.registerFioAddress && it.domain === item.domain,
+      )
+        ? 0
+        : 1),
+    0,
+  );
+
+  if (!new MathOp(cartItemsLength).eq(orderItemsLength)) return false;
 
   for (const cartItem of cartItems) {
     if (

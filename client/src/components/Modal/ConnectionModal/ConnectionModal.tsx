@@ -744,7 +744,7 @@ const ConnectionModal: React.FC<Props> = props => {
             value: domain,
             valueName: 'FIO Domain',
           });
-          if (period) {
+          if (+period > 1) {
             purchaseActions.push({
               id,
               type: CART_ITEM_TYPE.DOMAIN_RENEWAL,

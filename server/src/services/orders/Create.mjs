@@ -13,6 +13,7 @@ import {
   Payment,
   ReferrerProfile,
   User,
+  Wallet,
 } from '../../models';
 
 import { DAY_MS, PAYMENTS_STATUSES } from '../../config/constants.js';
@@ -182,6 +183,8 @@ export default class OrdersCreate extends Base {
         });
       }
 
+      const wallet = await Wallet.findOneWhere({ userId: this.context.id, publicKey });
+
       const items = await cartItemsToOrderItems({
         allRefProfileDomains,
         cartItems: cart.items,
@@ -190,6 +193,7 @@ export default class OrdersCreate extends Base {
         prices: handledPrices,
         roe: handledRoe,
         userHasFreeAddress,
+        walletType: wallet.from,
       });
 
       for (const {

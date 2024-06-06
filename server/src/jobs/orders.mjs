@@ -368,13 +368,7 @@ class OrdersJob extends CommonJob {
   }
 
   async checkPriceChanges(orderItem, currentRoe) {
-    let fee = await this.getFeeForAction(orderItem.action);
-
-    // TODO check if we really need it?
-    // if (orderItem.data && orderItem.data.hasCustomDomain) {
-    //   const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
-    //   fee = new MathOp(fee).add(domainFee).toNumber();
-    // }
+    const fee = await this.getFeeForAction(orderItem.action);
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
 
@@ -923,7 +917,7 @@ class OrdersJob extends CommonJob {
 
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
         const useDomainOwnerAuthParams =
-          domainOwner && (action === FIO_ACTIONS.registerFioAddress);
+          domainOwner && action === FIO_ACTIONS.registerFioAddress;
 
         if (useDomainOwnerAuthParams) {
           const { actor, permission } = domainOwner;

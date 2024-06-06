@@ -183,8 +183,6 @@ export const useContext = (): {
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
-      orderId &&
-        apis.orders.update(orderId, { publicKey: paymentWalletPublicKey });
       dispatchSetWallet(paymentWalletPublicKey);
     },
     [orderId, dispatchSetWallet],
@@ -204,7 +202,9 @@ export const useContext = (): {
       result.id &&
       cartIsRelative(cartItems, result.orderItems || [])
     ) {
-      if (result.publicKey) setWallet(result.publicKey);
+      if (result.publicKey) {
+        setWallet(result.publicKey);
+      }
       setOrder(result);
       setGetOrderLoading(false);
       setCreateOrderLoading(false);
@@ -214,6 +214,44 @@ export const useContext = (): {
     setOrder(null);
     setGetOrderLoading(false);
   }, [cartItems, setWallet]);
+
+  // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
+  useEffect(() => {
+    if (!order) {
+      return;
+    }
+
+    if (order?.publicKey === paymentWalletPublicKey) {
+      return;
+    }
+
+    const oldWalletType = fioWallets.find(
+      ({ publicKey }) => publicKey === order.publicKey,
+    ).from;
+
+    const newWalletType = fioWallets.find(
+      ({ publicKey }) => publicKey === paymentWalletPublicKey,
+    ).from;
+
+    if (oldWalletType === newWalletType) {
+      return;
+    }
+
+    apis.orders
+      .create({
+        cartId,
+        roe,
+        publicKey: paymentWalletPublicKey,
+        paymentProcessor: paymentProvider,
+        prices: prices?.nativeFio,
+        data: {
+          gaClientId: getGAClientId(),
+          gaSessionId: getGASessionId(),
+        },
+      })
+      .then(() => apis.orders.getActive())
+      .then(setOrder);
+  }, [paymentWalletPublicKey]);
 
   const createOrder = useCallback(
     async ({
@@ -459,7 +497,6 @@ export const useContext = (): {
       stripePaymentIntentParam,
       stripeRedirectStatusParam,
       dispatch,
-      getOrder,
     ],
     !!stripePaymentIntentParam &&
       !!stripeRedirectStatusParam &&

@@ -453,6 +453,7 @@ export const cartItemsToOrderItems = async ({
   prices,
   roe,
   userHasFreeAddress,
+  walletType,
 }) => {
   const {
     addBundles: addBundlesPrice,
@@ -487,25 +488,44 @@ export const cartItemsToOrderItems = async ({
       address: null,
       nativeFio: renewDomainPrice.toString(),
       price: convertFioPrices(renewDomainPrice, roe).usdc,
-    }
+    };
+
+    const domainOrderItem = {
+      ...orderItem,
+      address: null,
+      action: FIO_ACTIONS.registerFioDomain,
+      nativeFio: fioDomainPrice.toString(),
+      price: convertFioPrices(fioDomainPrice, roe).usdc,
+    };
 
     switch (type) {
       case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
         {
-          orderItem.action = hasCustomDomainInCart
-            ? FIO_ACTIONS.registerFioAddress
-            : FIO_ACTIONS.registerFioDomainAddress;
-          orderItem.address = address;
-          orderItem.nativeFio = (hasCustomDomainInCart ? fioHandlePrice : fioDomainHandlePrice).toString();
-          orderItem.price = convertFioPrices((hasCustomDomainInCart ? fioHandlePrice : fioDomainHandlePrice), roe).usdc;
-          orderItems.push(orderItem);
+          const supportCombo = walletType === 'EDGE';
+          const useComboAction = !hasCustomDomainInCart && supportCombo;
 
-          if (hasCustomDomainInCart) {
-            break;
+          if (!supportCombo && !hasCustomDomainInCart) {
+            orderItems.push(domainOrderItem);
           }
 
-          for (let i = 1; i < Number(period); i++) {
-            orderItems.push(renewOrderItem);
+          orderItem.action = useComboAction
+            ? FIO_ACTIONS.registerFioDomainAddress
+            : FIO_ACTIONS.registerFioAddress;
+          orderItem.address = address;
+          orderItem.nativeFio = (useComboAction
+            ? fioDomainHandlePrice
+            : fioHandlePrice
+          ).toString();
+          orderItem.price = convertFioPrices(
+            useComboAction ? fioDomainHandlePrice : fioHandlePrice,
+            roe,
+          ).usdc;
+          orderItems.push(orderItem);
+
+          if (!hasCustomDomainInCart) {
+            for (let i = 1; i < Number(period); i++) {
+              orderItems.push(renewOrderItem);
+            }
           }
         }
         break;
@@ -566,12 +586,7 @@ export const cartItemsToOrderItems = async ({
       }
       case CART_ITEM_TYPE.DOMAIN:
         {
-          orderItem.action = FIO_ACTIONS.registerFioDomain;
-          orderItem.address = null;
-          orderItem.nativeFio = fioDomainPrice.toString();
-          orderItem.price = convertFioPrices(fioDomainPrice, roe).usdc;
-
-          orderItems.push(orderItem);
+          orderItems.push(domainOrderItem);
 
           for (let i = 1; i < Number(period); i++) {
             orderItems.push(renewOrderItem);
