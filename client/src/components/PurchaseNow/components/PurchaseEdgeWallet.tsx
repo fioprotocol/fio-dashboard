@@ -39,8 +39,6 @@ type Props = {
 
 const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 
-const DEFAULT_LONG_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 5000;
-
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
@@ -62,11 +60,11 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
     };
 
-    const registrations = makeRegistrationOrder(
-      [...cartItems],
-      prices?.nativeFio,
-      true,
-    );
+    const registrations = makeRegistrationOrder({
+      cartItems,
+      fees: prices?.nativeFio,
+      isComboSupport: true,
+    });
 
     if (keys.private) {
       apis.fio.setWalletFioSdk(keys);
@@ -77,19 +75,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         let signedTx: SignedTxArgs;
         if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-          const [address, domain] = registration.fioName.split('@');
-
-          const hasAdditionalHandlesOnDomain = registrations.some(
-            registrationItem => {
-              const [itemAddress, itemDomain] = registrationItem.fioName.split(
-                '@',
-              );
-              return itemDomain === domain && itemAddress !== address;
-            },
-          );
-
           signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioDomainAddress,
+            registration.isCombo
+              ? ACTIONS.registerFioDomainAddress
+              : ACTIONS.registerFioAddress,
             {
               fioAddress: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -100,10 +89,6 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
-
-          if (hasAdditionalHandlesOnDomain) {
-            await sleep(DEFAULT_LONG_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS);
-          }
         } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>

@@ -4,29 +4,32 @@ import {
   OrderItemStatus,
 } from '../../models/index.mjs';
 
-export const checkIfDomainOnOrderRegistered = async (orderItem, options) => {
-  const { domain, orderId } = orderItem;
-  const { action, errorMessage, onFail } = options;
+export const checkIfOrderedDomainRegisteredInBlockchain = async (
+  domainOnOrder,
+  options,
+) => {
+  const { errorMessage, onFail } = options;
 
-  const domainOnOrder = await OrderItem.findOne({
+  const orderedDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
+
+  if (
+    orderedDomain &&
+    orderedDomain.orderItemStatus &&
+    (orderedDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
+      orderedDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL ||
+      orderedDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.EXPIRE)
+  ) {
+    if (onFail) {
+      await onFail(errorMessage);
+    }
+    throw new Error(errorMessage);
+  }
+};
+
+export const getDomainOnOrder = (orderItem, action) => {
+  const { domain, orderId } = orderItem;
+  return OrderItem.findOne({
     where: { action, domain, orderId },
     include: [{ model: OrderItemStatus }],
   });
-
-  if (domainOnOrder) {
-    const ordersDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
-
-    if (
-      ordersDomain &&
-      ordersDomain.orderItemStatus &&
-      (ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
-        ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL ||
-        ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.EXPIRE)
-    ) {
-      if (onFail) {
-        await onFail(errorMessage);
-      }
-      throw new Error(errorMessage);
-    }
-  }
 };

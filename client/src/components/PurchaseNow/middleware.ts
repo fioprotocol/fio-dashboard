@@ -9,22 +9,30 @@ import { DOMAIN_TYPE } from '../../constants/fio';
 import { RegistrationType } from './types';
 import { CartItem, NativePrices } from '../../types';
 
-export const makeRegistrationOrder = (
-  cartItems: CartItem[],
-  fees: NativePrices,
-  supportCombo = false,
-): RegistrationType[] => {
+export type MakeRegistrationOrder = {
+  fees: NativePrices;
+  cartItems?: CartItem[];
+  isComboSupport?: boolean;
+};
+
+export const makeRegistrationOrder = ({
+  cartItems = [],
+  fees,
+  isComboSupport = false,
+}: MakeRegistrationOrder): RegistrationType[] => {
   const registrations = [];
-  for (const cartItem of cartItems.sort(item =>
+  const sortedCartItems = [...cartItems].sort(item =>
     !!item.address &&
     item.domainType === DOMAIN_TYPE.CUSTOM &&
     !item.hasCustomDomainInCart
       ? -1
       : 1,
-  )) {
+  );
+
+  for (const cartItem of sortedCartItems) {
     const isCombo =
       cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
-      supportCombo &&
+      isComboSupport &&
       !cartItem.hasCustomDomainInCart;
 
     const registration: RegistrationType = {
@@ -41,7 +49,7 @@ export const makeRegistrationOrder = (
       )
         ? cartItem.costNativeFio
         : cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
-          supportCombo &&
+          isComboSupport &&
           !cartItem.hasCustomDomainInCart
         ? fees.combo
         : cartItem.address
@@ -79,7 +87,7 @@ export const makeRegistrationOrder = (
 
     if (
       !!cartItem.address &&
-      !supportCombo &&
+      !isComboSupport &&
       !cartItem.hasCustomDomainInCart &&
       cartItem.domainType === DOMAIN_TYPE.CUSTOM
     ) {

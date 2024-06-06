@@ -175,7 +175,6 @@ export const useContext = (): {
     orderParams: orderParamsFromLocation,
   }: { orderParams?: CreateOrderActionData } = state || {}; // todo: implement setting order params from places where we going to checkout page
   const payment = order && order.payment;
-  const orderId = order && order.id;
   const paymentProvider = payment ? payment.processor : null;
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
@@ -185,7 +184,7 @@ export const useContext = (): {
     (paymentWalletPublicKey: string) => {
       dispatchSetWallet(paymentWalletPublicKey);
     },
-    [orderId, dispatchSetWallet],
+    [dispatchSetWallet],
   );
 
   const getOrder = useCallback(async () => {
@@ -681,7 +680,6 @@ export const useContext = (): {
           ),
           name: setFioName(cartItem.address, cartItem.domain),
           ownerKey: paymentWalletPublicKey,
-          withDomain: !domainWallet,
           cartItem,
         });
       }

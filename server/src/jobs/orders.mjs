@@ -45,7 +45,10 @@ import {
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
-import { checkIfDomainOnOrderRegistered } from '../utils/jobs/orders.mjs';
+import {
+  checkIfOrderedDomainRegisteredInBlockchain,
+  getDomainOnOrder,
+} from '../utils/jobs/orders.mjs';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -507,20 +510,15 @@ class OrdersJob extends CommonJob {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  async checkIfDomainOnOrderRegistered(orderItem) {
-    await checkIfDomainOnOrderRegistered(orderItem, {
-      action: FIO_ACTIONS.registerFioDomain,
-      errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
-      onFail: err => this.handleFail(orderItem, err),
-    });
-  }
-
-  async checkIfComboOnOrderRegistered(orderItem) {
-    await checkIfDomainOnOrderRegistered(orderItem, {
-      action: FIO_ACTIONS.registerFioDomainAddress,
-      errorMessage: `RegisterFioHandle has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
-      onFail: err => this.handleFail(orderItem, err),
-    });
+  async checkIfDomainOnOrderRegistered({ orderItem, action, errorMessage }) {
+    const domainOnOrder = await getDomainOnOrder(orderItem, action);
+    if (domainOnOrder) {
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      await checkIfOrderedDomainRegisteredInBlockchain(domainOnOrder, {
+        errorMessage,
+        onFail: err => this.handleFail(orderItem, err),
+      });
+    }
   }
 
   async enableCheckBalanceNotificationCreate(currentWallet) {
@@ -631,13 +629,19 @@ class OrdersJob extends CommonJob {
     }
 
     if (action === FIO_ACTIONS.renewFioDomain) {
-      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
-      await this.checkIfDomainOnOrderRegistered(orderItem);
+      await this.checkIfDomainOnOrderRegistered({
+        orderItem,
+        action: FIO_ACTIONS.registerFioDomain,
+        errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+      });
     }
 
     if (action === FIO_ACTIONS.registerFioAddress) {
-      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
-      await this.checkIfComboOnOrderRegistered(orderItem);
+      await this.checkIfDomainOnOrderRegistered({
+        orderItem,
+        action: FIO_ACTIONS.registerFioDomainAddress,
+        errorMessage: `RegisterFioHandle has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+      });
     }
 
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
@@ -786,9 +790,13 @@ class OrdersJob extends CommonJob {
       });
 
       if (action === FIO_ACTIONS.renewFioDomain) {
-        await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
-        await this.checkIfDomainOnOrderRegistered(orderItem);
+        await this.checkIfDomainOnOrderRegistered({
+          orderItem,
+          action: FIO_ACTIONS.registerFioDomain,
+          errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+        });
       }
+
       result = await fioApi.executeAction(
         action,
         fioApi.getActionParams({

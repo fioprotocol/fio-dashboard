@@ -26,7 +26,6 @@ export type CreateOrderActionData = {
   cartId: string;
   roe: number;
   publicKey: string;
-  walletType?: string;
   paymentProcessor?: PaymentProvider;
   prices: NativePrices;
   data: {

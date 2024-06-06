@@ -41,10 +41,6 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
     const signedTxs: BeforeSubmitData = {};
 
     for (const item of submitData.fioAddressItems) {
-      if (item.withDomain) {
-        continue;
-      }
-
       const { chainId, transaction } = await prepareChainTransaction(
         fioWallet.publicKey,
         ACTIONS.registerFioAddress,

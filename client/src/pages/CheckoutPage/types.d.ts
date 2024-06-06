@@ -57,12 +57,7 @@ export type SignFioAddressItem = {
   fioWallet: FioWalletDoublet;
   name: string;
   ownerKey: string;
-  withDomain: boolean;
   cartItem: CartItem;
-};
-
-export type BeforeSubmitValues = {
-  fioAddressItems: SignFioAddressItem[];
 };
 
 export type BeforeSubmitValues = {

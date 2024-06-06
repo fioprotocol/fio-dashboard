@@ -41,14 +41,14 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         signedTxs[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
-            item.withDomain
+            !item.cartItem.hasCustomDomainInCart
               ? ACTIONS.registerFioDomainAddress
               : ACTIONS.registerFioAddress,
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
               maxFee: new MathOp(
-                item.withDomain
+                !item.cartItem.hasCustomDomainInCart
                   ? prices.nativeFio.combo
                   : prices.nativeFio.address,
               )
