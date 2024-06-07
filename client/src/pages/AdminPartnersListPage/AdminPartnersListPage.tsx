@@ -82,6 +82,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
           REG: {},
         },
         img: '',
+        isBranded: false,
         link: '',
       },
       freeFioAccountProfileId: fioAccountsProfilesList.find(

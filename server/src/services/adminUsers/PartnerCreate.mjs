@@ -43,6 +43,7 @@ export default class PartnerCreate extends Base {
               },
             },
             img: 'string',
+            isBranded: 'boolean',
             link: 'string',
             actions: [
               {

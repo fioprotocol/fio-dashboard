@@ -8,6 +8,8 @@ import { ROUTES } from '../../constants/routes';
 
 import { RefProfile } from '../../types';
 
+import fioLogoSrc from '../../assets/images/fio-logo.svg';
+
 import classes from './MainHeaderContainer.module.scss';
 
 type Props = {
@@ -27,12 +29,19 @@ export const MainHeaderContainer: React.FC<Props> = props => {
     refProfileInfo,
     closeMenu,
   } = props;
+  const logoSrc = refProfileInfo?.settings?.isBranded
+    ? refProfileInfo.settings.img
+      ? refProfileInfo.settings.img
+      : fioLogoSrc
+    : fioLogoSrc;
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
       {!isAdmin ? (
         <Link to={ROUTES.HOME}>
-          <div className={classes.logo} onClick={closeMenu} />
+          <div className={classes.logoContainer} onClick={closeMenu}>
+            <img src={logoSrc} alt="Branded Logo" />
+          </div>
         </Link>
       ) : (
         <div>

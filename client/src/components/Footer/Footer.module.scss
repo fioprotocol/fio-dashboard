@@ -7,11 +7,18 @@
   flex-shrink: 0;
 
   .logoLink {
-    display: block;
+    display: flex;
     width: fit-content;
+    align-items: center;
+    margin-top: 60px;
+    gap: 10px;
+
+    & span {
+      color: $milk;
+      font-size: 15px;
+    }
 
     .logo {
-      margin-top: 60px;
       width: 76px;
       min-height: 36px;
       background-image: url("../../assets/images/fio-logo-white-text.svg");

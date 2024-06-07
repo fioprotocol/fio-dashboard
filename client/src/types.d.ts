@@ -431,6 +431,7 @@ export type RefProfile = {
       params: { asset: string; chainId: string; contractAddress: string };
     };
     img?: string;
+    isBranded?: boolean;
     link?: string;
   };
   tpid: string;
