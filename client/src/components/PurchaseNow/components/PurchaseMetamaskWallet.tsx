@@ -149,7 +149,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
           );
 
-          const addBundlesActionParams = {
+          const fioAddressActionParams = {
             action:
               TRANSACTION_ACTION_NAMES[
                 registration.isCombo
@@ -176,7 +176,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
           handleRegistrationIndexedItems({ registration, index });
 
-          actionParamsArr.push(addBundlesActionParams);
+          actionParamsArr.push(fioAddressActionParams);
         } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>

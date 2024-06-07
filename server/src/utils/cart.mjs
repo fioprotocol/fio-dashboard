@@ -1,6 +1,11 @@
 import MathOp from 'big.js';
 
-import { CART_ITEM_TYPE, FIO_ACTIONS, ORDER_ERROR_TYPES } from '../config/constants';
+import {
+  CART_ITEM_TYPE,
+  FIO_ACTIONS,
+  ORDER_ERROR_TYPES,
+  WALLET_CREATED_FROM,
+} from '../config/constants';
 
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
@@ -253,8 +258,6 @@ export const handleFreeCartDeleteItem = ({
 }) => {
   const { domainType, isFree, type } = existingItem;
 
-  let handledCartItems = [...cartItems];
-
   const domainsArr = [
     ...dashboardDomains,
     ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
@@ -309,13 +312,13 @@ export const handleFreeCartDeleteItem = ({
     });
 
     if (allowedFreeItem) {
-      return (handledCartItems = handledCartItems.map(cartItem =>
+      return cartItems.map(cartItem =>
         cartItem.id === allowedFreeItem.id ? { ...cartItem, isFree: true } : cartItem,
-      ));
+      );
     }
   }
 
-  return handledCartItems;
+  return [...cartItems];
 };
 
 export const handleUsersFreeCartItems = ({
@@ -501,7 +504,9 @@ export const cartItemsToOrderItems = async ({
     switch (type) {
       case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
         {
-          const supportCombo = walletType === 'EDGE' || walletType === 'METAMASK';
+          const supportCombo =
+            walletType === WALLET_CREATED_FROM.EDGE ||
+            walletType === WALLET_CREATED_FROM.METAMASK;
           const useComboAction = !hasCustomDomainInCart && supportCombo;
 
           if (!supportCombo && !hasCustomDomainInCart) {

@@ -148,8 +148,6 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
         }
       }
 
-      console.error('>>>> SIGNING', results);
-
       return results;
     },
     [fioWallet.data.derivationIndex, fioWallet.publicKey, submitData],
