@@ -12,11 +12,11 @@ import {
 } from '../../types';
 import { PinDataType } from '../../redux/modal/types';
 
-export type SubmitActionParams = {
+export type SubmitActionParams<T = AnyObject> = {
   edgeAccount?: EdgeAccount;
   keys?: WalletKeys | null;
   allWalletKeysInAccount?: EdgeWalletsKeys | null;
-  data?: AnyObject;
+  data?: T;
 };
 
 type Action = typeof CONFIRM_PIN_ACTIONS;

@@ -36,6 +36,7 @@ import {
   isProcessing as isProcessingSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { CreateOrderActionData } from '../../redux/types';
 
 import apis from '../../api';
 
@@ -81,8 +82,11 @@ import {
   RedirectLinkData,
   AnyObject,
 } from '../../types';
-import { BeforeSubmitData, BeforeSubmitState } from './types';
-import { CreateOrderActionData } from '../../redux/types';
+import {
+  BeforeSubmitData,
+  BeforeSubmitState,
+  SignFioAddressItem,
+} from './types';
 
 const SIGN_TX_MAX_FEE_COEFF = 1.5;
 
@@ -171,7 +175,6 @@ export const useContext = (): {
     orderParams: orderParamsFromLocation,
   }: { orderParams?: CreateOrderActionData } = state || {}; // todo: implement setting order params from places where we going to checkout page
   const payment = order && order.payment;
-  const orderId = order && order.id;
   const paymentProvider = payment ? payment.processor : null;
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
@@ -179,11 +182,9 @@ export const useContext = (): {
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
-      orderId &&
-        apis.orders.update(orderId, { publicKey: paymentWalletPublicKey });
       dispatchSetWallet(paymentWalletPublicKey);
     },
-    [orderId, dispatchSetWallet],
+    [dispatchSetWallet],
   );
 
   const getOrder = useCallback(async () => {
@@ -200,7 +201,9 @@ export const useContext = (): {
       result.id &&
       cartIsRelative(cartItems, result.orderItems || [])
     ) {
-      if (result.publicKey) setWallet(result.publicKey);
+      if (result.publicKey) {
+        setWallet(result.publicKey);
+      }
       setOrder(result);
       setGetOrderLoading(false);
       setCreateOrderLoading(false);
@@ -210,6 +213,44 @@ export const useContext = (): {
     setOrder(null);
     setGetOrderLoading(false);
   }, [cartItems, setWallet]);
+
+  // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
+  useEffect(() => {
+    if (!order) {
+      return;
+    }
+
+    if (order?.publicKey === paymentWalletPublicKey) {
+      return;
+    }
+
+    const oldWalletType = fioWallets.find(
+      ({ publicKey }) => publicKey === order.publicKey,
+    ).from;
+
+    const newWalletType = fioWallets.find(
+      ({ publicKey }) => publicKey === paymentWalletPublicKey,
+    ).from;
+
+    if (oldWalletType === newWalletType) {
+      return;
+    }
+
+    apis.orders
+      .create({
+        cartId,
+        roe,
+        publicKey: paymentWalletPublicKey,
+        paymentProcessor: paymentProvider,
+        prices: prices?.nativeFio,
+        data: {
+          gaClientId: getGAClientId(),
+          gaSessionId: getGASessionId(),
+        },
+      })
+      .then(() => apis.orders.getActive())
+      .then(setOrder);
+  }, [paymentWalletPublicKey]);
 
   const createOrder = useCallback(
     async ({
@@ -455,7 +496,6 @@ export const useContext = (): {
       stripePaymentIntentParam,
       stripeRedirectStatusParam,
       dispatch,
-      getOrder,
     ],
     !!stripePaymentIntentParam &&
       !!stripeRedirectStatusParam &&
@@ -596,10 +636,11 @@ export const useContext = (): {
     const privateDomainList: { [domain: string]: boolean } = {};
     for (const cartItem of cartItems) {
       if (
-        userDomains.findIndex(({ name }) => name === cartItem.domain) < 0 &&
+        userDomains.findIndex(({ name }) => name === cartItem.domain) === -1 &&
         cartItem.domainType !== DOMAIN_TYPE.CUSTOM
-      )
+      ) {
         continue;
+      }
 
       privateDomainList[cartItem.domain] = false;
     }
@@ -617,7 +658,7 @@ export const useContext = (): {
       }
     }
 
-    const signTxItems = [];
+    const signTxItems: SignFioAddressItem[] = [];
     for (const cartItem of cartItems) {
       if (
         [
@@ -639,6 +680,7 @@ export const useContext = (): {
           ),
           name: setFioName(cartItem.address, cartItem.domain),
           ownerKey: paymentWalletPublicKey,
+          cartItem,
         });
       }
     }

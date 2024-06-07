@@ -3,7 +3,7 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import { Order, User } from '../../models';
-import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { ADMIN_ROLES_IDS, FIO_ADDRESS_DELIMITER } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
 const { Op } = sequelize;
@@ -84,7 +84,7 @@ export default class Search extends Base {
     }
 
     if (isFioAddress) {
-      const fioAddressParts = valueToSearch.split('@');
+      const fioAddressParts = valueToSearch.split(FIO_ADDRESS_DELIMITER);
 
       const orders = await Order.listSearchByFioAddressItems(
         fioAddressParts[1],

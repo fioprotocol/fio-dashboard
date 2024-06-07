@@ -18,10 +18,11 @@ import {
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
-import { CURRENCY_CODES } from '../../../constants/common';
+import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../../constants/common';
 
 import { BeforeSubmitData, StripePaymentOptionProps } from '../types';
 import { CartItem } from '../../../types';
+import { actionFromCartItem } from '../../../util/cart';
 
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
   const {
@@ -35,20 +36,26 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
 
   const history = useHistory();
 
-  const onFinish = (success: boolean, beforeSubmitData?: BeforeSubmitData) => {
+  const onFinish = (
+    success: boolean,
+    { data, walletType }: BeforeSubmitData,
+  ) => {
     if (success) {
       props.onFinish({
         errors: [],
         registered: cart.map(
-          ({ id, address, domain, isFree, costNativeFio }: CartItem) => ({
+          ({ id, address, domain, isFree, costNativeFio, type }: CartItem) => ({
+            action: actionFromCartItem(
+              type,
+              walletType === WALLET_CREATED_FROM.EDGE ||
+                walletType === WALLET_CREATED_FROM.METAMASK,
+            ),
             fioName: setFioName(address, domain),
             isFree,
             fee_collected: costNativeFio,
             cartItemId: id,
             transaction_id: '',
-            data: beforeSubmitData
-              ? beforeSubmitData[setFioName(address, domain)]
-              : null,
+            data: data[setFioName(address, domain)],
           }),
         ),
         partial: [],
@@ -84,6 +91,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
 
   return (
     <Elements
+      key={payment.secret}
       stripe={STRIPE_PROMISE}
       options={{
         ...STRIPE_ELEMENT_OPTIONS,

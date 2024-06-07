@@ -13,7 +13,7 @@ import {
 import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 import apis from '../../api';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import {
   checkAddressOrDomainIsExist,
   isDomainExpired,
@@ -34,7 +34,7 @@ export const fioAddressFieldValidator: FieldValidationFunctionSync<MatchFieldArg
 
   // Get regexp string from full FCH regexp
   const fioAddressRegexString = allRules.fioAddress.matchParams.regex
-    .split('@')[0]
+    .split(FIO_ADDRESS_DELIMITER)[0]
     .replace('(?:', '')
     .replace('3,64', '1,62')
     .concat('$');

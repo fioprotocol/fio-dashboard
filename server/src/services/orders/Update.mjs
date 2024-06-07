@@ -44,6 +44,7 @@ export default class OrdersUpdate extends Base {
                     {
                       list_of_objects: {
                         fioName: 'string',
+                        action: 'string',
                         isFree: 'integer',
                         fee_collected: 'integer',
                         costUsdc: 'string',
@@ -123,12 +124,13 @@ export default class OrdersUpdate extends Base {
     if (data.results) {
       const processedOrderItems = [];
       for (const regItem of data.results.registered) {
-        const { fioName, data: itemData } = regItem;
+        const { fioName, action: itemAction, data: itemData } = regItem;
 
         const orderItem = order.OrderItems.find(
-          ({ id, address, domain }) =>
+          ({ id, address, domain, action }) =>
             !processedOrderItems.includes(id) &&
-            fioApi.setFioName(address, domain) === fioName,
+            fioApi.setFioName(address, domain) === fioName &&
+            action === itemAction,
         );
 
         if (orderItem && itemData) {

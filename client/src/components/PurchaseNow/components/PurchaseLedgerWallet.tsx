@@ -18,7 +18,6 @@ import {
 import { prepareChainTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
 import { makeRegistrationOrder } from '../middleware';
-import { isDomain } from '../../../utils';
 
 import apis from '../../../api';
 
@@ -61,15 +60,17 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
         paymentProvider: PAYMENT_PROVIDER.FIO,
         providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
       };
-      const registrations = makeRegistrationOrder(
-        [...cartItems],
-        prices.nativeFio,
-      );
+
+      const registrations = makeRegistrationOrder({
+        cartItems,
+        fees: prices.nativeFio,
+      });
+
       for (const registration of registrations) {
         if (!registration.isFree) {
-          const isDomainRegistration = isDomain(registration.fioName);
           let action: string;
           let data: AnyObject = {};
+
           if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
             action = ACTIONS.addBundledTransactions;
             data = {
@@ -83,16 +84,19 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
               fio_domain: registration.fioName,
               tpid: apis.fio.tpid,
             };
-          } else {
-            action = isDomainRegistration
-              ? ACTIONS.registerFioDomain
-              : ACTIONS.registerFioAddress;
+          } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
+            action = ACTIONS.registerFioDomain;
             data = {
-              [isDomainRegistration
-                ? 'fio_domain'
-                : 'fio_address']: registration.fioName,
+              fio_domain: registration.fioName,
               owner_fio_public_key: fioWallet.publicKey,
-              tpid: isDomainRegistration ? apis.fio.domainTpid : apis.fio.tpid,
+              tpid: apis.fio.domainTpid,
+            };
+          } else if (registration.type === CART_ITEM_TYPE.ADDRESS) {
+            action = ACTIONS.registerFioAddress;
+            data = {
+              fio_address: registration.fioName,
+              owner_fio_public_key: fioWallet.publicKey,
+              tpid: apis.fio.tpid,
             };
           }
 
@@ -123,6 +127,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           });
 
           results.registered.push({
+            action: registration.action,
             fioName: registration.fioName,
             isFree: false,
             cartItemId: registration.cartItemId,

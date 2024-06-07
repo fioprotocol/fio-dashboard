@@ -12,13 +12,13 @@ export const PaymentOptionComponent: React.FC<PaymentOptionComponentProps> = pro
   const { paymentProvider = PAYMENT_PROVIDER.FIO } = props;
 
   if (paymentProvider === PAYMENT_PROVIDER.FIO)
-    return <FioPaymentOption {...props} />;
+    return <FioPaymentOption key={props.order?.id} {...props} />;
 
   if (paymentProvider === PAYMENT_PROVIDER.STRIPE)
-    return <StripePaymentOption {...props} />;
+    return <StripePaymentOption key={props.order?.id} {...props} />;
 
   if (paymentProvider === PAYMENT_PROVIDER.BITPAY)
-    return <BitpayPaymentOption {...props} />;
+    return <BitpayPaymentOption key={props.order?.id} {...props} />;
 
   return null;
 };

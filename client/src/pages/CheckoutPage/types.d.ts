@@ -9,6 +9,7 @@ import {
   Payment,
   ApiError,
   PaymentProvider,
+  CartItem,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
 
@@ -46,16 +47,21 @@ export type StripePaymentOptionProps = {
 } & DefaultProps;
 
 export type BeforeSubmitData = {
-  [fioAddress: string]: {
-    signedTx?: SignedTxArgs;
-    signingWalletPubKey?: string;
-  };
+  walletType: string;
+  data: Record<
+    string,
+    {
+      signedTx?: SignedTxArgs;
+      signingWalletPubKey?: string;
+    }
+  >;
 };
 
 export type SignFioAddressItem = {
   fioWallet: FioWalletDoublet;
   name: string;
   ownerKey: string;
+  cartItem: CartItem;
 };
 
 export type BeforeSubmitValues = {

@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
-} from '../../../components/MetamaskConfirmAction';
+} from '../../MetamaskConfirmAction';
 
 import MathOp from '../../../util/math';
 import useEffectOnce from '../../../hooks/general';
@@ -30,6 +30,7 @@ import {
 import { PurchaseValues, RegistrationType } from '../types';
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, RegistrationResult } from '../../../types';
+import { FIO_ADDRESS_DELIMITER } from '../../../utils';
 
 const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS = 10 * 1000;
 
@@ -60,10 +61,11 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
   const derivationIndex = fioWallet?.data?.derivationIndex;
 
-  const registrations = makeRegistrationOrder(
-    cartItems ? [...cartItems] : [],
-    prices?.nativeFio,
-  );
+  const registrations = makeRegistrationOrder({
+    cartItems,
+    fees: prices?.nativeFio,
+    isComboSupported: true,
+  });
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
   const [registrationsIndexed, setRegistrationsIndexed] = useState<
@@ -89,6 +91,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             );
 
             registrationResult.registered.push({
+              action: registrationItem.action,
               fioName: registrationItem.fioName,
               isFree: false,
               cartItemId: registrationItem.cartItemId,
@@ -132,7 +135,49 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
     for (const [index, registration] of registrations.entries()) {
       if (!registration.isFree) {
-        if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+        if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+          const [address, domain] = registration.fioName.split(
+            FIO_ADDRESS_DELIMITER,
+          );
+
+          const hasAdditionalHandlesOnDomain = registrations.some(
+            registrationItem => {
+              const [itemAddress, itemDomain] = registrationItem.fioName.split(
+                FIO_ADDRESS_DELIMITER,
+              );
+              return itemDomain === domain && itemAddress !== address;
+            },
+          );
+
+          const fioAddressActionParams = {
+            action:
+              TRANSACTION_ACTION_NAMES[
+                registration.isCombo
+                  ? ACTIONS.registerFioDomainAddress
+                  : ACTIONS.registerFioAddress
+              ],
+            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            data: {
+              owner_fio_public_key: fioWallet.publicKey,
+              fio_address: registration.fioName,
+              is_public: 0,
+              tpid: apis.fio.tpid,
+              max_fee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
+            },
+            derivationIndex,
+            timeoutOffset: hasAdditionalHandlesOnDomain
+              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
+              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            id: index,
+          };
+
+          handleRegistrationIndexedItems({ registration, index });
+
+          actionParamsArr.push(fioAddressActionParams);
+        } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
               registrationItem.fioName === registration.fioName &&
