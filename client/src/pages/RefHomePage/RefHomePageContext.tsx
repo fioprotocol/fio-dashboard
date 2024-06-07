@@ -37,7 +37,7 @@ import useInitializeProviderConnection, {
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
 import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
@@ -154,7 +154,8 @@ export const useContext = (): UseContextProps => {
   const existingUsersFreeAddress =
     usersFreeAddresses &&
     usersFreeAddresses.find(
-      freeAddress => freeAddress.name.split('@')[1] === refDomainObj?.name,
+      freeAddress =>
+        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === refDomainObj?.name,
     );
 
   const verifiedMessage = `${refProfileInfo?.label} ${

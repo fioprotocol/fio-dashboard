@@ -40,6 +40,7 @@ import {
   FIO_ACTIONS,
   USER_HAS_FREE_ADDRESS_MESSAGE,
   ORDER_ERROR_TYPES,
+  FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
 
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
@@ -424,7 +425,9 @@ class OrdersJob extends CommonJob {
 
     const existingUsersFreeAddress =
       userHasFreeAddress &&
-      userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
+      userHasFreeAddress.find(
+        freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
+      );
 
     if (
       userHasFreeAddress &&
@@ -1009,7 +1012,7 @@ class OrdersJob extends CommonJob {
           const existingUsersFreeAddress =
             userHasFreeAddressOnPublicKey &&
             userHasFreeAddressOnPublicKey.find(
-              freeAddress => freeAddress.name.split('@')[1] === domain,
+              freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
             );
 
           if (

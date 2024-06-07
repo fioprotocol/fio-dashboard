@@ -17,7 +17,7 @@ import {
 
 import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
-import { setFioName } from '../../../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../../../utils';
 import {
   checkIsDomainItemExistsOnCart,
   transformCustomDomains,
@@ -165,7 +165,8 @@ export const useContext = (
   const existingUsersFreeAddress =
     usersFreeAddresses &&
     usersFreeAddresses.find(
-      freeAddress => freeAddress.name.split('@')[1] === domain,
+      freeAddress =>
+        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
     );
 
   const selectedItemProps = {

@@ -3,6 +3,7 @@ import MathOp from 'big.js';
 import {
   CART_ITEM_TYPE,
   FIO_ACTIONS,
+  FIO_ADDRESS_DELIMITER,
   ORDER_ERROR_TYPES,
   WALLET_CREATED_FROM,
 } from '../config/constants';
@@ -211,7 +212,9 @@ export const handleFreeCartAddItem = ({
 
   const existingUsersFreeAddress =
     userHasFreeAddress &&
-    userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
+    userHasFreeAddress.find(
+      freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
+    );
 
   if (type === CART_ITEM_TYPE.ADDRESS) {
     const existingDashboardDomain = domainsArr.find(
@@ -290,7 +293,8 @@ export const handleFreeCartDeleteItem = ({
       const existingUsersFreeAddress =
         userHasFreeAddress &&
         userHasFreeAddress.find(
-          freeAddress => freeAddress.name.split('@')[1] === cartItemDomain,
+          freeAddress =>
+            freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === cartItemDomain,
         );
 
       return (
@@ -352,7 +356,7 @@ export const handleUsersFreeCartItems = ({
       );
 
       const existingUsersFreeAddress = userHasFreeAddress.find(
-        freeAddress => freeAddress.name.split('@')[1] === domain,
+        freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
       );
 
       if (
@@ -561,7 +565,7 @@ export const cartItemsToOrderItems = async ({
         const existingUsersFreeAddress =
           userHasFreeAddress &&
           userHasFreeAddress.find(
-            freeAddress => freeAddress.name.split('@')[1] === domain,
+            freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
           );
 
         const userableRegisterFree =

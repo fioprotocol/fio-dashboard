@@ -181,7 +181,8 @@ const handleFCHItems = async ({
         const existingUsersFreeAddress =
           usersFreeAddresses &&
           usersFreeAddresses.find(
-            freeAddress => freeAddress.name.split('@')[1] === domainName,
+            freeAddress =>
+              freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domainName,
           );
 
         return {
@@ -277,7 +278,8 @@ const handleSelectedDomain = ({
   const existingUsersFreeAddress =
     usersFreeAddresses &&
     usersFreeAddresses.find(
-      freeAddress => freeAddress.name.split('@')[1] === domain,
+      freeAddress =>
+        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
     );
 
   const isCustomDomain =
