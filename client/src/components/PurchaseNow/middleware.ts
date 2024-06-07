@@ -8,17 +8,18 @@ import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
 import { CartItem, NativePrices } from '../../types';
+import { actionFromCartItem } from '../../util/cart';
 
 export type MakeRegistrationOrder = {
   fees: NativePrices;
   cartItems?: CartItem[];
-  isComboSupport?: boolean;
+  isComboSupported?: boolean;
 };
 
 export const makeRegistrationOrder = ({
   cartItems = [],
   fees,
-  isComboSupport = false,
+  isComboSupported = false,
 }: MakeRegistrationOrder): RegistrationType[] => {
   const registrations: RegistrationType[] = [];
   const sortedCartItems = [...cartItems].sort(item =>
@@ -32,7 +33,7 @@ export const makeRegistrationOrder = ({
   for (const cartItem of sortedCartItems) {
     const isCombo =
       cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
-      isComboSupport &&
+      isComboSupported &&
       !cartItem.hasCustomDomainInCart;
 
     const registration: RegistrationType = {
@@ -44,22 +45,13 @@ export const makeRegistrationOrder = ({
           cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
         !!cartItem.address &&
         cartItem.type === CART_ITEM_TYPE.ADDRESS,
-      action:
-        cartItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL
-          ? ACTIONS.renewFioDomain
-          : cartItem.type === CART_ITEM_TYPE.ADD_BUNDLES
-          ? ACTIONS.addBundledTransactions
-          : cartItem.type === CART_ITEM_TYPE.DOMAIN
-          ? ACTIONS.registerFioDomain
-          : isCombo
-          ? ACTIONS.registerFioDomainAddress
-          : ACTIONS.registerFioAddress,
+      action: actionFromCartItem(cartItem.type, isComboSupported),
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
       )
         ? cartItem.costNativeFio
         : cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
-          isComboSupport &&
+          isComboSupported &&
           !cartItem.hasCustomDomainInCart
         ? fees.combo
         : cartItem.address
@@ -101,7 +93,7 @@ export const makeRegistrationOrder = ({
 
     if (
       !!cartItem.address &&
-      !isComboSupport &&
+      !isComboSupported &&
       !cartItem.hasCustomDomainInCart &&
       cartItem.domainType === DOMAIN_TYPE.CUSTOM
     ) {

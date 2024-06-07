@@ -14,7 +14,10 @@ import {
   TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
-import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+import {
+  CONFIRM_METAMASK_ACTION,
+  WALLET_CREATED_FROM,
+} from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -62,7 +65,10 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     (result: OnSuccessResponseResult) => {
       if (!result) return;
 
-      const signedTxs: BeforeSubmitData = {};
+      const signedTxs: BeforeSubmitData = {
+        walletType: WALLET_CREATED_FROM.METAMASK,
+        data: {},
+      };
 
       if (Array.isArray(result)) {
         for (const resultItem of result) {
@@ -73,7 +79,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
 
             delete resultItem.id;
 
-            signedTxs[indexedItem.name] = {
+            signedTxs.data[indexedItem.name] = {
               signedTx: resultItem,
               signingWalletPubKey: publicKey,
             };

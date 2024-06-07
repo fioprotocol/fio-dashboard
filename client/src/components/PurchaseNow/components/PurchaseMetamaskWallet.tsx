@@ -64,7 +64,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const registrations = makeRegistrationOrder({
     cartItems,
     fees: prices?.nativeFio,
-    isComboSupport: true,
+    isComboSupported: true,
   });
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);

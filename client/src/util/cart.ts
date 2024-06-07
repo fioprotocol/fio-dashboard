@@ -137,3 +137,17 @@ export const handlePriceForMultiYearItems = ({
 
   return multiDomainPrice;
 };
+
+export const actionFromCartItem = (
+  cartItemType: string,
+  isComboSupport: boolean,
+) =>
+  cartItemType === CART_ITEM_TYPE.DOMAIN_RENEWAL
+    ? ACTIONS.renewFioDomain
+    : cartItemType === CART_ITEM_TYPE.ADD_BUNDLES
+    ? ACTIONS.addBundledTransactions
+    : cartItemType === CART_ITEM_TYPE.DOMAIN
+    ? ACTIONS.registerFioDomain
+    : isComboSupport
+    ? ACTIONS.registerFioDomainAddress
+    : ACTIONS.registerFioAddress;

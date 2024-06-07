@@ -8,7 +8,10 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -32,14 +35,17 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     allWalletKeysInAccount,
     data,
   }: SubmitActionParams<BeforeSubmitValues>) => {
-    const signedTxs: BeforeSubmitData = {};
+    const signedTxs: BeforeSubmitData = {
+      walletType: WALLET_CREATED_FROM.EDGE,
+      data: {},
+    };
 
     for (const item of data.fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
-        signedTxs[item.name] = {
+        signedTxs.data[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
             !item.cartItem.hasCustomDomainInCart
               ? ACTIONS.registerFioDomainAddress

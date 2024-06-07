@@ -129,7 +129,7 @@ export type RegistrationErrors = {
 
 export type RegistrationRegistered = {
   fioName: string;
-  action?: string;
+  action: string;
   isFree?: boolean;
   fee_collected: number;
   costUsdc?: string;

@@ -47,10 +47,14 @@ export type StripePaymentOptionProps = {
 } & DefaultProps;
 
 export type BeforeSubmitData = {
-  [fioAddress: string]: {
-    signedTx?: SignedTxArgs;
-    signingWalletPubKey?: string;
-  };
+  walletType: string;
+  data: Record<
+    string,
+    {
+      signedTx?: SignedTxArgs;
+      signingWalletPubKey?: string;
+    }
+  >;
 };
 
 export type SignFioAddressItem = {
