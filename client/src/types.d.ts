@@ -432,6 +432,7 @@ export type RefProfile = {
     };
     img?: string;
     isBranded?: boolean;
+    hasNoProfileFlow?: boolean;
     link?: string;
   };
   tpid: string;
