@@ -341,6 +341,14 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
               label="Partner branded"
             />
           </div>
+          <div className="d-flex align-self-start mb-4">
+            <Field
+              name="settings.hasNoProfileFlow"
+              type="checkbox"
+              component={Input}
+              label="No profile (legacy reg site)"
+            />
+          </div>
 
           <div className="d-flex align-self-start mb-4">
             <Field

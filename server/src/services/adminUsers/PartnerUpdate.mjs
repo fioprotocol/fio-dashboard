@@ -44,6 +44,7 @@ export default class PartnerUpdate extends Base {
             },
             img: 'string',
             isBranded: 'boolean',
+            hasNoProfileFlow: 'boolean',
             link: 'string',
             actions: [
               {
