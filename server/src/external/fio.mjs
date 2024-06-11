@@ -270,6 +270,7 @@ class Fio {
         account: FIO_ACCOUNT_NAMES[action] || '',
         action: FIO_ACTION_NAMES[action],
         data: params,
+        authPermission: auth.permission,
       });
 
       return await fioSdk.executePreparedTrx(
