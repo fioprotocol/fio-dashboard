@@ -30,16 +30,14 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     order,
     payment,
     paymentOption,
+    paymentWallet,
     paymentProviderError,
     beforePaymentSubmit,
   } = props;
 
   const history = useHistory();
 
-  const onFinish = (
-    success: boolean,
-    { data, walletType }: BeforeSubmitData,
-  ) => {
+  const onFinish = (success: boolean, beforeSubmitData: BeforeSubmitData) => {
     if (success) {
       props.onFinish({
         errors: [],
@@ -47,15 +45,15 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
           ({ id, address, domain, isFree, costNativeFio, type }: CartItem) => ({
             action: actionFromCartItem(
               type,
-              walletType === WALLET_CREATED_FROM.EDGE ||
-                walletType === WALLET_CREATED_FROM.METAMASK,
+              paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK,
             ),
             fioName: setFioName(address, domain),
             isFree,
             fee_collected: costNativeFio,
             cartItemId: id,
             transaction_id: '',
-            data: data[setFioName(address, domain)],
+            data: beforeSubmitData?.[setFioName(address, domain)],
           }),
         ),
         partial: [],

@@ -62,7 +62,7 @@ const CheckoutPage: React.FC = () => {
       <div className={classes.container}>
         <CheckoutComponent
           walletBalances={walletBalancesAvailable}
-          walletName={paymentWallet ? paymentWallet.name : ''}
+          paymentWallet={paymentWallet}
           payment={payment}
           paymentProvider={paymentProvider}
           paymentWalletPublicKey={paymentWalletPublicKey}

@@ -265,11 +265,14 @@ class Fio {
         params.permission = auth.permission;
       }
       const fioSdk = await this.getMasterFioSDK();
+
       const preparedTrx = await fioSdk.pushTransaction({
         account: FIO_ACCOUNT_NAMES[action] || '',
         action: FIO_ACTION_NAMES[action],
         data: params,
+        authPermission: auth.permission,
       });
+
       return await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
@@ -342,7 +345,13 @@ class Fio {
         !prices.domain ||
         !prices.combo
       ) {
-        const [registrationAddressFee, registrationDomainFee, registerDomainAddress, renewDomainFee, addBundlesFee] = await Promise.all([
+        const [
+          registrationAddressFee,
+          registrationDomainFee,
+          registerDomainAddress,
+          renewDomainFee,
+          addBundlesFee,
+        ] = await Promise.all([
           this.getFee(FIO_ACTIONS.registerFioAddress),
           this.getFee(FIO_ACTIONS.registerFioDomain),
           this.getFee(FIO_ACTIONS.registerFioDomainAddress),

@@ -21,7 +21,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { costNativeFio, costFree } = totalCost(cart, roe);
 
   const getPayWithDefaultDetails = () => {
-    if (paymentAssignmentWallets.length > 1) {
+    if (paymentAssignmentWallets.length === 0) {
       return;
     }
 

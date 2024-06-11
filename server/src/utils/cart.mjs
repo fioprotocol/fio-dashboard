@@ -568,7 +568,7 @@ export const cartItemsToOrderItems = async ({
             freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
           );
 
-        const userableRegisterFree =
+        const isUserAbleRegisterFree =
           (existingDashboardDomain &&
             !existingDashboardDomain.isPremium &&
             (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
@@ -585,9 +585,9 @@ export const cartItemsToOrderItems = async ({
         orderItem.action = FIO_ACTIONS.registerFioAddress;
         orderItem.address = address;
         orderItem.nativeFio =
-          isFree && userableRegisterFree ? '0' : fioHandlePrice.toString();
+          isFree && isUserAbleRegisterFree ? '0' : fioHandlePrice.toString();
         orderItem.price =
-          isFree && userableRegisterFree
+          isFree && isUserAbleRegisterFree
             ? '0'
             : convertFioPrices(fioHandlePrice, roe).usdc;
         orderItems.push(orderItem);
