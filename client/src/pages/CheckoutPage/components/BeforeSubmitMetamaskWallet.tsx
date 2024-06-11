@@ -14,7 +14,10 @@ import {
   TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
-import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CONFIRM_METAMASK_ACTION,
+} from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -91,7 +94,8 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
         const isComboRegistration =
           !fioAddressItem.cartItem.hasCustomDomainInCart &&
-          fioAddressItem.cartItem.type === 'combo';
+          fioAddressItem.cartItem.type ===
+            CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         const fioHandleActionParams = {
           action:
             TRANSACTION_ACTION_NAMES[

@@ -8,7 +8,7 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { CART_ITEM_TYPE, CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -38,7 +38,8 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
       const isComboRegistration =
-        !item.cartItem.hasCustomDomainInCart && item.cartItem.type === 'combo';
+        !item.cartItem.hasCustomDomainInCart &&
+        item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
