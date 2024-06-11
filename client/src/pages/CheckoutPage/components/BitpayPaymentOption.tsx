@@ -27,7 +27,14 @@ const BITPAY_ORIGIN = 'bitpay';
 const BITPAY_ORIGIN_REGEX = new RegExp(BITPAY_ORIGIN, 'i');
 
 export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
-  const { cart, order, payment, paymentOption, beforePaymentSubmit } = props;
+  const {
+    cart,
+    order,
+    payment,
+    paymentOption,
+    paymentWallet,
+    beforePaymentSubmit,
+  } = props;
 
   const bitPayInvoiceId = order?.payment?.externalPaymentId;
 
@@ -36,22 +43,22 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   const [submitData, setSubmitData] = useState<BeforeSubmitData>(null);
 
   const onFinish = useCallback(
-    ({ data, walletType }: BeforeSubmitData) => {
+    (beforeSubmitData: BeforeSubmitData) => {
       props.onFinish({
         errors: [],
         registered: cart.map(
           ({ id, address, domain, isFree, costNativeFio, type }: CartItem) => ({
             action: actionFromCartItem(
               type,
-              walletType === WALLET_CREATED_FROM.EDGE ||
-                walletType === WALLET_CREATED_FROM.METAMASK,
+              paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK,
             ),
             fioName: setFioName(address, domain),
             isFree,
             fee_collected: costNativeFio,
             cartItemId: id,
             transaction_id: '',
-            data: data[setFioName(address, domain)],
+            data: beforeSubmitData?.[setFioName(address, domain)],
           }),
         ),
         partial: [],

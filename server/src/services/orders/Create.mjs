@@ -9,14 +9,13 @@ import {
   FreeAddress,
   Order,
   OrderItem,
-  OrderItemStatus,
   Payment,
   ReferrerProfile,
   User,
   Wallet,
 } from '../../models';
 
-import { DAY_MS, PAYMENTS_STATUSES } from '../../config/constants.js';
+import { DAY_MS } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
 import {
@@ -63,8 +62,8 @@ export default class OrdersCreate extends Base {
     data: { cartId, roe, publicKey, paymentProcessor, prices, refProfileId, data },
   }) {
     const userId = this.context.id;
-    // assume user should have only one active order with status NEW
-    const exOrder = await Order.findOne({
+
+    let order = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
         userId,
@@ -74,7 +73,7 @@ export default class OrdersCreate extends Base {
       },
       include: [OrderItem],
     });
-    let order;
+
     let payment = null;
     const orderItems = [];
 
@@ -89,112 +88,107 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    await Order.sequelize.transaction(async t => {
-      // Update existing new order and remove items from it
-      if (exOrder) {
-        exOrder.status = Order.STATUS.CANCELED;
+    const cart = await Cart.findById(cartId);
 
-        await exOrder.save({ transaction: t });
-        await OrderItemStatus.update(
-          { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
-          {
-            where: {
-              orderItemId: {
-                [Sequelize.Op.in]: exOrder.OrderItems.map(({ id }) => id),
-              },
-            },
-            transaction: t,
-          },
-        );
-      }
-
-      const cart = await Cart.findById(cartId);
-
-      if (!cart) {
-        throw new X({
-          code: 'NOT_FOUND',
-          fields: {
-            cart: 'NOT_FOUND',
-          },
-        });
-      }
-
-      const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
-        cartItems: cart.items,
-        roe,
-      });
-
-      order = await Order.create(
-        {
-          status: Order.STATUS.NEW,
-          total: totalCostUsdc,
-          roe,
-          publicKey,
-          customerIp: this.context.ipAddress,
-          userId,
-          refProfileId: refProfileId ? refProfileId : user.refProfileId,
-          data,
+    if (!cart) {
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {
+          cart: 'NOT_FOUND',
         },
-        { transaction: t },
-      );
-
-      order.number = Order.generateNumber(order.id);
-      await order.save({ transaction: t });
-
-      const metamaskUserPublicKey = cart.metamaskUserPublicKey;
-
-      const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
-
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
-        : userId
-        ? await FreeAddress.getItems({
-            userId,
-          })
-        : null;
-
-      const {
-        addBundles: addBundlesPrice,
-        address: addressPrice,
-        domain: domainPrice,
-        renewDomain: renewDomainPrice,
-      } = handledPrices;
-
-      const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
-
-      if (isEmptyPrices) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            prices: 'PRICES_ARE_EMPTY',
-          },
-        });
-      }
-
-      if (!handledRoe) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            roe: 'ROE_IS_EMPTY',
-          },
-        });
-      }
-
-      const wallet = await Wallet.findOneWhere({ userId: this.context.id, publicKey });
-
-      const items = await cartItemsToOrderItems({
-        allRefProfileDomains,
-        cartItems: cart.items,
-        dashboardDomains,
-        FioAccountProfile,
-        prices: handledPrices,
-        roe: handledRoe,
-        userHasFreeAddress,
-        walletType: wallet.from,
       });
+    }
+
+    const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
+      cartItems: cart.items,
+      roe,
+    });
+
+    const metamaskUserPublicKey = cart.metamaskUserPublicKey;
+
+    const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
+
+    const dashboardDomains = await Domain.getDashboardDomains();
+    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+    const userHasFreeAddress = metamaskUserPublicKey
+      ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      : userId
+      ? await FreeAddress.getItems({
+          userId,
+        })
+      : null;
+
+    const {
+      addBundles: addBundlesPrice,
+      address: addressPrice,
+      domain: domainPrice,
+      combo: comboPrice,
+      renewDomain: renewDomainPrice,
+    } = handledPrices;
+
+    const isEmptyPrices =
+      !addBundlesPrice ||
+      !addressPrice ||
+      !domainPrice ||
+      !comboPrice ||
+      !renewDomainPrice;
+
+    if (isEmptyPrices) {
+      throw new X({
+        code: 'ERROR',
+        fields: {
+          prices: 'PRICES_ARE_EMPTY',
+        },
+      });
+    }
+
+    if (!handledRoe) {
+      throw new X({
+        code: 'ERROR',
+        fields: {
+          roe: 'ROE_IS_EMPTY',
+        },
+      });
+    }
+
+    const wallet = await Wallet.findOneWhere({ userId: this.context.id, publicKey });
+
+    const items = await cartItemsToOrderItems({
+      allRefProfileDomains,
+      cartItems: cart.items,
+      dashboardDomains,
+      FioAccountProfile,
+      prices: handledPrices,
+      roe: handledRoe,
+      userHasFreeAddress,
+      walletType: wallet.from,
+    });
+
+    await Order.sequelize.transaction(async t => {
+      if (!order) {
+        order = await Order.create(
+          {
+            status: Order.STATUS.NEW,
+            total: totalCostUsdc,
+            roe,
+            publicKey,
+            customerIp: this.context.ipAddress,
+            userId,
+            refProfileId: refProfileId ? refProfileId : user.refProfileId,
+            data,
+          },
+          { transaction: t },
+        );
+
+        order.number = Order.generateNumber(order.id);
+
+        await order.save({ transaction: t });
+      } else {
+        await Order.update({ publicKey }, { where: { id: order.id }, transaction: t });
+        await OrderItem.destroy({
+          where: { orderId: order.id },
+        });
+      }
 
       for (const {
         action,
@@ -232,13 +226,9 @@ export default class OrdersCreate extends Base {
       }
     });
 
-    if (paymentProcessor)
-      payment = await Payment.createForOrder(
-        order,
-        exOrder,
-        paymentProcessor,
-        orderItems,
-      );
+    if (paymentProcessor) {
+      payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
+    }
 
     return {
       data: {

@@ -15,7 +15,7 @@ import { SignedTxArgs } from '../../api/fio';
 
 type DefaultProps = {
   walletBalances: WalletBalancesItem;
-  walletName: string;
+  paymentWallet?: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
@@ -46,16 +46,13 @@ export type StripePaymentOptionProps = {
   totalCost: number;
 } & DefaultProps;
 
-export type BeforeSubmitData = {
-  walletType: string;
-  data: Record<
-    string,
-    {
-      signedTx?: SignedTxArgs;
-      signingWalletPubKey?: string;
-    }
-  >;
-};
+export type BeforeSubmitData = Record<
+  string,
+  {
+    signedTx?: SignedTxArgs;
+    signingWalletPubKey?: string;
+  }
+>;
 
 export type SignFioAddressItem = {
   fioWallet: FioWalletDoublet;

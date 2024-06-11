@@ -8,10 +8,7 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -35,26 +32,26 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     allWalletKeysInAccount,
     data,
   }: SubmitActionParams<BeforeSubmitValues>) => {
-    const signedTxs: BeforeSubmitData = {
-      walletType: WALLET_CREATED_FROM.EDGE,
-      data: {},
-    };
+    const signedTxs: BeforeSubmitData = {};
 
     for (const item of data.fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
+      const isComboRegistration =
+        !item.cartItem.hasCustomDomainInCart && item.cartItem.type === 'combo';
+
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
-        signedTxs.data[item.name] = {
+        signedTxs[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
-            !item.cartItem.hasCustomDomainInCart
+            isComboRegistration
               ? ACTIONS.registerFioDomainAddress
               : ACTIONS.registerFioAddress,
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
               maxFee: new MathOp(
-                !item.cartItem.hasCustomDomainInCart
+                isComboRegistration
                   ? prices.nativeFio.combo
                   : prices.nativeFio.address,
               )

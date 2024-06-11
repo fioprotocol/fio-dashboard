@@ -4,10 +4,7 @@ import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
-import {
-  CONFIRM_LEDGER_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../../constants/common';
+import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 
 import { prepareChainTransaction } from '../../../util/fio';
@@ -29,7 +26,7 @@ type Props = {
   fee: number;
 };
 
-const FioNameTransferLedgerWallet: React.FC<Props> = props => {
+const BeforeSubmitLedgerWallet: React.FC<Props> = props => {
   const {
     fioWallet,
     setProcessing,
@@ -41,10 +38,7 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
   } = props;
 
   const submit = async (appFio: LedgerFioApp) => {
-    const signedTxs: BeforeSubmitData = {
-      walletType: WALLET_CREATED_FROM.LEDGER,
-      data: {},
-    };
+    const signedTxs: BeforeSubmitData = {};
 
     for (const item of submitData.fioAddressItems) {
       const { chainId, transaction } = await prepareChainTransaction(
@@ -75,7 +69,7 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
         transaction,
       });
 
-      signedTxs.data[item.name] = {
+      signedTxs[item.name] = {
         signedTx: {
           compression: 0,
           packed_context_free_data: arrayToHex(
@@ -108,4 +102,4 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
   );
 };
 
-export default FioNameTransferLedgerWallet;
+export default BeforeSubmitLedgerWallet;

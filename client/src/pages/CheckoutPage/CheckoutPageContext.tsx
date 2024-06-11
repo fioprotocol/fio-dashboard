@@ -88,7 +88,7 @@ import {
   SignFioAddressItem,
 } from './types';
 
-const SIGN_TX_MAX_FEE_COEFF = 1.5;
+const SIGN_TX_MAX_FEE_COEFFICIENT = 1.5;
 
 export const useContext = (): {
   cartItems: CartItem[];
@@ -634,6 +634,7 @@ export const useContext = (): {
     handleSubmit: (data?: BeforeSubmitData) => Promise<void>,
   ) => {
     const privateDomainList: { [domain: string]: boolean } = {};
+
     for (const cartItem of cartItems) {
       if (
         userDomains.findIndex(({ name }) => name === cartItem.domain) === -1 &&
@@ -644,6 +645,7 @@ export const useContext = (): {
 
       privateDomainList[cartItem.domain] = false;
     }
+
     for (const domain of Object.keys(privateDomainList)) {
       const params = apis.fio.setTableRowsParams(domain);
 
@@ -659,6 +661,7 @@ export const useContext = (): {
     }
 
     const signTxItems: SignFioAddressItem[] = [];
+
     for (const cartItem of cartItems) {
       if (
         [
@@ -667,6 +670,7 @@ export const useContext = (): {
         ].includes(cartItem.type) &&
         privateDomainList[cartItem.domain]
       ) {
+        // TODO what is wallet type is another (EDGE -> LEDGER)
         const domainWallet = userDomains.find(
           ({ name }) => name === cartItem.domain,
         );
@@ -689,7 +693,7 @@ export const useContext = (): {
       return setBeforeSubmitProps({
         fioWallet: paymentWallet,
         fee: new MathOp(prices?.nativeFio?.address)
-          .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
+          .mul(SIGN_TX_MAX_FEE_COEFFICIENT) // +50%
           .round(0, 2)
           .toNumber(),
         submitData: { fioAddressItems: signTxItems },

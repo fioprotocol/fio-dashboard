@@ -14,10 +14,7 @@ import {
   TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
-import {
-  CONFIRM_METAMASK_ACTION,
-  WALLET_CREATED_FROM,
-} from '../../../constants/common';
+import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -65,10 +62,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     (result: OnSuccessResponseResult) => {
       if (!result) return;
 
-      const signedTxs: BeforeSubmitData = {
-        walletType: WALLET_CREATED_FROM.METAMASK,
-        data: {},
-      };
+      const signedTxs: BeforeSubmitData = {};
 
       if (Array.isArray(result)) {
         for (const resultItem of result) {
@@ -79,7 +73,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
 
             delete resultItem.id;
 
-            signedTxs.data[indexedItem.name] = {
+            signedTxs[indexedItem.name] = {
               signedTx: resultItem,
               signingWalletPubKey: publicKey,
             };
@@ -95,10 +89,13 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     () => {
       const actionParamsArr = [];
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
+        const isComboRegistration =
+          !fioAddressItem.cartItem.hasCustomDomainInCart &&
+          fioAddressItem.cartItem.type === 'combo';
         const fioHandleActionParams = {
           action:
             TRANSACTION_ACTION_NAMES[
-              !fioAddressItem.cartItem.hasCustomDomainInCart
+              isComboRegistration
                 ? ACTIONS.registerFioDomainAddress
                 : ACTIONS.registerFioAddress
             ],
@@ -109,7 +106,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
             is_public: 0,
             tpid: apis.fio.tpid,
             max_fee: new MathOp(
-              !fioAddressItem.cartItem.hasCustomDomainInCart
+              isComboRegistration
                 ? prices.nativeFio.combo
                 : prices.nativeFio.address,
             )
