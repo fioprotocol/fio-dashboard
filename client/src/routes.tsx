@@ -272,6 +272,12 @@ const MetamaskGatedRegistration = lazy(() =>
   ),
 );
 
+const NoProfileFlowRegisterFioHandle = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRegisterFioHandle' */ './pages/NoProfileFlowRegisterFioHandle'
+  ),
+);
+
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
   useGTMGlobalTags();
@@ -626,6 +632,12 @@ const Routes = (): React.ReactElement => {
               <Route
                 path={ROUTES.METAMASK_GATED_REGISTRATION}
                 component={MetamaskGatedRegistration}
+                exact
+              />
+
+              <Route
+                path={ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE}
+                component={NoProfileFlowRegisterFioHandle}
                 exact
               />
 

@@ -112,6 +112,11 @@ const ROUTES: { [route: string]: string } = {
 
   METAMASK_LANDING_PAGE: '/metamask',
   METAMASK_GATED_REGISTRATION: '/metamask-fio-handle',
+
+  NO_PROFILE_REGISTER_FIO_HANDLE: '/address/:refProfileCode', // ?publicKey=
+  NO_PROFILE_REGISTER_FIO_DOMAIN: '/domain/:refProfileCode', // ?publicKey=
+  NO_PROFILE_ADD_BUNDLES: '/domain/renew/:refProfileCode', // ?publicKey=
+  NO_PROFILE_RENEW_DOMAIN: '/address/renew/:refProfileCode', // ?publicKey=
 };
 
 export const PUBLIC_ROUTES: string[] = [
