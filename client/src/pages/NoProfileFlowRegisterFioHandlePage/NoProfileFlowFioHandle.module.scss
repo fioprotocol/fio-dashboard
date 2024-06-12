@@ -1,0 +1,11 @@
+@import '../../assets/styles/fontMixins.scss';
+
+.title {
+  @include inter-bold;
+  font-size: 2.625em;
+}
+
+.subtitle {
+  @include inter-regular;
+  line-height: 1.5em;
+}

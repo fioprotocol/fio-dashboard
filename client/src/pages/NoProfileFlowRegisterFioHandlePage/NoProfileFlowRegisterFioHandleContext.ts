@@ -36,7 +36,7 @@ type UseContextProps = {
     hasFioVerificationError: boolean;
     infoMessage: string;
     isVerifying: boolean;
-    isFioHandleVerified: boolean;
+    isFioItemVerified: boolean;
   };
 };
 
@@ -56,9 +56,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     { name: string; publicKey: string }[]
   >(null);
   const [isVerifying, toggleIsVerifying] = useState<boolean>(false);
-  const [isFioHandleVerified, toggleIsFioHandleVerified] = useState<boolean>(
-    false,
-  );
+  const [isFioItemVerified, toggleisFioItemVerified] = useState<boolean>(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -106,7 +104,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const onInputChanged = useCallback((value: string) => {
     setInfoMessage(null);
     toggleFioVerificationError(false);
-    toggleIsFioHandleVerified(false);
+    toggleisFioItemVerified(false);
 
     return value;
   }, []);
@@ -126,7 +124,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           apis.fio.isFioAddressValid(fioHandle);
         } catch (error) {
           setInfoMessage(NON_VALID_FCH);
-          toggleIsFioHandleVerified(false);
+          toggleisFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
@@ -141,12 +139,12 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
               domainName,
             )} is not available.`,
           );
-          toggleIsFioHandleVerified(false);
+          toggleisFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
 
-        toggleIsFioHandleVerified(true);
+        toggleisFioItemVerified(true);
         toggleIsVerifying(false);
         setInfoMessage(
           `This FIO Handle - ${setFioName(
@@ -223,9 +221,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     suffixText: domainName ? `@${domainName}` : '',
     title: 'Register FIO Handle',
     convert: onFocusOut,
-    customHandleSubmit: isFioHandleVerified
-      ? verifiedSubmit
-      : nonVerifiedSubmit,
+    customHandleSubmit: isFioItemVerified ? verifiedSubmit : nonVerifiedSubmit,
     onInputChanged: onInputChanged,
   };
 
@@ -233,7 +229,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     hasFioVerificationError,
     infoMessage,
     isVerifying,
-    isFioHandleVerified,
+    isFioItemVerified,
   };
 
   useEffect(() => {

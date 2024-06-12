@@ -272,9 +272,14 @@ const MetamaskGatedRegistration = lazy(() =>
   ),
 );
 
-const NoProfileFlowRegisterFioHandle = lazy(() =>
+const NoProfileFlowRegisterFioHandlePage = lazy(() =>
   import(
-    /* webpackChunkName: 'NoProfileFlowRegisterFioHandle' */ './pages/NoProfileFlowRegisterFioHandle'
+    /* webpackChunkName: 'NoProfileFlowRegisterFioHandle' */ './pages/NoProfileFlowRegisterFioHandlePage'
+  ),
+);
+const NoProfileFlowRegisterFioDomainPage = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRegisterFioDomainPage' */ './pages/NoProfileFlowRegisterFioDomainPage'
   ),
 );
 
@@ -637,7 +642,13 @@ const Routes = (): React.ReactElement => {
 
               <Route
                 path={ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE}
-                component={NoProfileFlowRegisterFioHandle}
+                component={NoProfileFlowRegisterFioHandlePage}
+                exact
+              />
+
+              <Route
+                path={ROUTES.NO_PROFILE_REGISTER_FIO_DOMAIN}
+                component={NoProfileFlowRegisterFioDomainPage}
                 exact
               />
 

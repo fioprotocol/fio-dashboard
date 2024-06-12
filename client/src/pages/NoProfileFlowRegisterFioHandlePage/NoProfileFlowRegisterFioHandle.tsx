@@ -5,7 +5,7 @@ import AddressWidget from '../../components/AddressWidget';
 
 import { useContext } from './NoProfileFlowRegisterFioHandleContext';
 
-import { FioHandleValidatorComponent } from './components/FioHandleValidatorComponent';
+import { NoProfileFlowValidatorComponent } from '../../components/NoProfileFlowValidatorComponent';
 
 import { RefProfile } from '../../types';
 
@@ -32,7 +32,7 @@ const NoProfileFlowRegisterFioHandle: React.FC<Props> = props => {
           </span>
         }
       >
-        <FioHandleValidatorComponent {...verificationParams} />
+        <NoProfileFlowValidatorComponent {...verificationParams} />
       </AddressWidget>
     </>
   );

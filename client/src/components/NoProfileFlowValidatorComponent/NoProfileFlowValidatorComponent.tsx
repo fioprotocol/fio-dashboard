@@ -6,20 +6,20 @@ import WarningIcon from '@mui/icons-material/Warning';
 
 import { FadeLoader } from 'react-spinners';
 
-import classes from './FioHandleValidatorComponent.module.scss';
+import classes from './NoProfileFlowValidatorComponent.module.scss';
 
 type Props = {
   loaderText?: string;
   hasFioVerificationError: boolean;
   infoMessage: string;
   isVerifying: boolean;
-  isFioHandleVerified: boolean;
+  isFioItemVerified: boolean;
 };
 
-export const FioHandleValidatorComponent: React.FC<Props> = props => {
+export const NoProfileFlowValidatorComponent: React.FC<Props> = props => {
   const {
     hasFioVerificationError,
-    isFioHandleVerified,
+    isFioItemVerified,
     isVerifying,
     infoMessage,
     loaderText = 'Verifying availability',
@@ -43,11 +43,11 @@ export const FioHandleValidatorComponent: React.FC<Props> = props => {
         className={classnames(
           classes.infoBadge,
           hasFioVerificationError && classes.hasVerifiedError,
-          isFioHandleVerified && classes.isVerified,
+          isFioItemVerified && classes.isVerified,
           hasFioVerificationError && classes.hasVerificationError,
         )}
       >
-        {isFioHandleVerified && !hasFioVerificationError ? (
+        {isFioItemVerified && !hasFioVerificationError ? (
           <CheckCircleIcon />
         ) : hasFioVerificationError ? (
           <WarningIcon />
