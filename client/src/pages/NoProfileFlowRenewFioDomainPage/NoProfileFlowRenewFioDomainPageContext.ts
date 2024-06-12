@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Props as ComponentProps } from './NoProfileFlowRegisterFioDomainPage';
+import { Props as ComponentProps } from './NoProfileFlowRenewFioDomainPage';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
@@ -13,7 +13,7 @@ import { log } from '../../util/general';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { DOMAIN_TYPE } from '../../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 import { NON_VAILD_DOMAIN } from '../../constants/errors';
 
 import {
@@ -53,7 +53,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const { fio, usdc } = convertFioPrices(prices.nativeFio.domain, roe);
+  const { fio, usdc } = convertFioPrices(prices.nativeFio.renewDomain, roe);
 
   const onFocusOut = useCallback((value: string) => {
     if (!value) return;
@@ -79,7 +79,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     return value;
   }, []);
 
-  const nonVerifiedSubmit = useCallback(
+  const customHandleSubmit = useCallback(
     async ({ address: domainValue }: { address: string }) => {
       if (!domainValue) return;
 
@@ -97,38 +97,23 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
         const isRegistered = await apis.fio.availCheckTableRows(domainValue);
 
-        if (isRegistered) {
+        if (!isRegistered) {
           toggleFioVerificationError(true);
-          setInfoMessage(`This FIO Domain - ${domainValue} is not available.`);
+          setInfoMessage(`This FIO Domain - ${domainValue} is not registered.`);
           toggleisFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
 
-        toggleisFioItemVerified(true);
-        toggleIsVerifying(false);
-        setInfoMessage(`This FIO Domain - ${domainValue} is available.`);
-      } catch (error) {
-        log.error(error);
-      }
-    },
-    [],
-  );
-
-  const verifiedSubmit = useCallback(
-    async ({ address: domainValue }: { address: string }) => {
-      if (!domainValue) return;
-
-      try {
         const cartItem = {
-          id: domainValue,
+          id: `${domainValue}-${ACTIONS.renewFioDomain}-${+new Date()}`,
           domain: domainValue,
           costFio: fio,
           costUsdc: usdc,
-          costNativeFio: prices.nativeFio.domain,
-          domainType: DOMAIN_TYPE.CUSTOM,
+          costNativeFio: prices.nativeFio.renewDomain,
+          domainType: DOMAIN_TYPE.PRIVATE,
           period: 1,
-          type: CART_ITEM_TYPE.DOMAIN,
+          type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
         };
 
         dispatch(
@@ -141,6 +126,9 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           }),
         );
 
+        toggleisFioItemVerified(true);
+        toggleIsVerifying(false);
+
         history.push(ROUTES.CART);
       } catch (error) {
         log.error(error);
@@ -150,15 +138,16 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   );
 
   const addressWidgetContent = {
+    buttonText: 'RENEW',
     disabled: isVerifying,
     disabledInput: isVerifying,
     formatOnFocusOut: true,
     logoSrc: refProfile?.settings?.img,
-    placeHolderText: 'Enter a domain',
-    subtitle: `Get your own custom FIO domain for ${usdc} USDC or equivalent.`,
-    title: 'Register FIO Domain',
+    placeHolderText: 'Enter your domain',
+    subtitle: `Renew your FIO domain for ${usdc} USDC or equivalent.`,
+    title: 'Renew FIO Domain',
     convert: onFocusOut,
-    customHandleSubmit: isFioItemVerified ? verifiedSubmit : nonVerifiedSubmit,
+    customHandleSubmit,
     onInputChanged: onInputChanged,
   };
 
