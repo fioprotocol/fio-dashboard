@@ -593,7 +593,10 @@ export class Order extends Base {
       return CART_ITEM_TYPE.ADD_BUNDLES;
     } else if (!address) {
       return CART_ITEM_TYPE.DOMAIN;
-    } else if (address && hasCustomDomain) {
+    } else if (
+      action === FIO_ACTIONS.registerFioDomainAddress ||
+      (address && hasCustomDomain)
+    ) {
       return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
     } else {
       return CART_ITEM_TYPE.ADDRESS;
