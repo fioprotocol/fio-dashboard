@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
-import { FCHBanner } from '../../components/FCHBanner';
+import { RefFioHandleBanner } from '../../components/RefFioHandleBanner';
 import { DetailedInfoMainPageComponent } from '../../components/DetailedInfoMainPageComponent';
 import { GateVerificationComponent } from '../../components/GateVerificationComponent';
 
@@ -212,20 +212,7 @@ export const RefHomePage: React.FC<Props &
             />
           )}
         </AddressWidget>
-        <FCHBanner
-          containerClass={classes.fchBannerConainerClass}
-          customFioHandleBanner={
-            <div className={classes.customFioHandleBanner}>
-              bob<span className={classes.boldText}>@{domainName}</span>
-            </div>
-          }
-          fch={`bob@${domainName}`}
-          mainTextClass={classes.mainTextClass}
-          publicKeyWrapperClass={classes.publicKeyWrapperClass}
-          publicKeyClass={classes.publicKeyClass}
-          subtextClass={classes.subtextClass}
-          text="Now people can send you cryptocurrency to"
-        />
+        <RefFioHandleBanner domainName={domainName} />
         <DetailedInfoMainPageComponent domain={domainName} />
       </div>
     );
