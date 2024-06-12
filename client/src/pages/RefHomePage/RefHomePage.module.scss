@@ -50,46 +50,9 @@
   line-height: 1.5em;
 }
 
-.customFioHandleBanner {
-  background-image: url("../../assets/images/fch-rectangle.svg");
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding: 25px 40px;
-  color: $white;
-  @include inter-regular;
-  font-size: 1.5em;
-
-  .boldText {
-    @include inter-bold;
-  }
-}
-
-.fchBannerConainerClass {
-  background-color: $oil;
-}
-
-.publicKeyWrapperClass, .publicKeyClass {
-  background-color: rgba(256, 256, 256, 0.08) !important;
-}
-
-.publicKeyClass {
-  border: 2.5px dashed $white !important;
-}
-
-.mainTextClass {
-  font-family: 'Inter Bold' !important;
-  font-size: 2em !important;
-}
 
 .fioHandleClass {
   font-family: 'Inter Bold' !important;
-}
-
-.subtextClass {
-  font-family: 'Inter Bold' !important;
-  font-style: italic;
-  font-size: 2em !important;
 }
 
 .fadeOut {
