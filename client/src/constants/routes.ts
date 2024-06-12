@@ -115,8 +115,8 @@ const ROUTES: { [route: string]: string } = {
 
   NO_PROFILE_REGISTER_FIO_HANDLE: '/address/:refProfileCode', // ?publicKey=
   NO_PROFILE_REGISTER_FIO_DOMAIN: '/domain/:refProfileCode', // ?publicKey=
-  NO_PROFILE_ADD_BUNDLES: '/domain/renew/:refProfileCode', // ?publicKey=
-  NO_PROFILE_RENEW_DOMAIN: '/address/renew/:refProfileCode', // ?publicKey=
+  NO_PROFILE_ADD_BUNDLES: '/address/renew/:refProfileCode', // ?publicKey=
+  NO_PROFILE_RENEW_DOMAIN: '/domain/renew/:refProfileCode', // ?publicKey=
 };
 
 export const PUBLIC_ROUTES: string[] = [

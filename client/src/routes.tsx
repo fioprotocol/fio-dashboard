@@ -282,6 +282,11 @@ const NoProfileFlowRegisterFioDomainPage = lazy(() =>
     /* webpackChunkName: 'NoProfileFlowRegisterFioDomainPage' */ './pages/NoProfileFlowRegisterFioDomainPage'
   ),
 );
+const NoProfileFlowRenewFioDomainPage = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRenewFioDomainPage' */ './pages/NoProfileFlowRenewFioDomainPage'
+  ),
+);
 
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
@@ -649,6 +654,12 @@ const Routes = (): React.ReactElement => {
               <Route
                 path={ROUTES.NO_PROFILE_REGISTER_FIO_DOMAIN}
                 component={NoProfileFlowRegisterFioDomainPage}
+                exact
+              />
+
+              <Route
+                path={ROUTES.NO_PROFILE_RENEW_DOMAIN}
+                component={NoProfileFlowRenewFioDomainPage}
                 exact
               />
 
