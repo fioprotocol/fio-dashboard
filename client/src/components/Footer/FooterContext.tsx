@@ -9,7 +9,8 @@ type UseContext = {
 export const useContext = (): UseContext => {
   const refProfile = useSelector(refProfileInfo);
 
-  const isBranded = refProfile?.settings?.isBranded;
+  const isBranded =
+    refProfile?.settings?.isBranded || refProfile?.settings?.hasNoProfileFlow;
 
   return { isBranded };
 };

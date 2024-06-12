@@ -29,11 +29,13 @@ export const MainHeaderContainer: React.FC<Props> = props => {
     refProfileInfo,
     closeMenu,
   } = props;
-  const logoSrc = refProfileInfo?.settings?.isBranded
-    ? refProfileInfo.settings.img
+  const logoSrc =
+    refProfileInfo?.settings?.isBranded ||
+    refProfileInfo?.settings?.hasNoProfileFlow
       ? refProfileInfo.settings.img
-      : fioLogoSrc
-    : fioLogoSrc;
+        ? refProfileInfo.settings.img
+        : fioLogoSrc
+      : fioLogoSrc;
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
