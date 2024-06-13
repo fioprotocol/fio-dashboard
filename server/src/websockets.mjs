@@ -25,7 +25,7 @@ const checkAuth = async token => {
 
 const runWs = async (service, wsConnection, context, params, isPrivate = true) => {
   try {
-    if (isPrivate) {
+    if (isPrivate && !params.isNoProfileFlow) {
       const userParams = await checkAuth(params.token);
       context = { ...context, ...userParams };
     }

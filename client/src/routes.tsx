@@ -415,17 +415,10 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
-              <PrivateRoute
-                path={ROUTES.CHECKOUT}
-                component={CheckoutPage}
-                exact
-              />
-              <PrivateRoute
-                path={ROUTES.PURCHASE}
-                component={PurchasePage}
-                exact
-              />
+              <Route path={ROUTES.CART} component={CartPage} exact />
+              <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
+              <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
+
               <PrivateRoute
                 path={ROUTES.TOKENS}
                 component={WalletsPage}

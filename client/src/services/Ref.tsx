@@ -61,6 +61,7 @@ const Ref = (
   const fioWalletsAmount = fioWallets.length;
 
   const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query.ref;
+  const isNoProfileFlow = refProfileInfo?.settings?.hasNoProfileFlow;
 
   const redirectToDomainLandingPage = useCallback(
     (refType: string) => {
@@ -92,7 +93,9 @@ const Ref = (
         Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
       if (refProfileInfo?.code != null) {
         setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
-          expires: REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
+          expires: isNoProfileFlow
+            ? null
+            : REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
         });
         redirectToDomainLandingPage(refProfileInfo?.type);
       } else {
@@ -108,6 +111,7 @@ const Ref = (
     refProfileInfo?.code,
     refProfileInfo?.type,
     isAuthenticated,
+    isNoProfileFlow,
     isRefLink,
     getInfo,
     redirectToDomainLandingPage,

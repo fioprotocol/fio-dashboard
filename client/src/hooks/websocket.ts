@@ -34,7 +34,9 @@ export function useWebsocket({
   const isAuth = useSelector(isAuthenticated);
   const [ws, setWs] = useState(null);
 
-  const authCondition = AUTH_REQ_ENDPOINTS[endpoint] ? isAuth : true;
+  const authCondition = AUTH_REQ_ENDPOINTS[endpoint]
+    ? isAuth || (!isAuth && params?.isNoProfileFlow)
+    : true;
   const queryString = new URLSearchParams(params).toString();
 
   useEffect(
@@ -46,11 +48,11 @@ export function useWebsocket({
 
   const createWebSocketConnection = useCallback(() => {
     let query = `?${QUERY_PARAMS_NAMES.ENDPOINT}=${endpoint}&${queryString}`;
-    if (AUTH_REQ_ENDPOINTS[endpoint]) {
+    if (AUTH_REQ_ENDPOINTS[endpoint] && !params.isNoProfileFlow) {
       query += `&${QUERY_PARAMS_NAMES.TOKEN}=${apis.client.token}`;
     }
     setWs(new WebSocket(`${config.wsBaseUrl}ws${query}`));
-  }, [endpoint, queryString]);
+  }, [endpoint, params?.isNoProfileFlow, queryString]);
 
   const connectWebSocket = useCallback(() => {
     // websocket onopen event listener

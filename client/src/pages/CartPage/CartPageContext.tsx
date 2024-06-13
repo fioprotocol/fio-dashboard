@@ -31,6 +31,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileInfo } from '../../redux/refProfile/selectors';
 
 import { handlePriceForMultiYearItems, totalCost } from '../../util/cart';
 import MathOp from '../../util/math';
@@ -56,6 +57,7 @@ import {
 
 import { log } from '../../util/general';
 import { isDomainExpired } from '../../util/fio';
+import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -67,7 +69,7 @@ import {
   Prices,
   WalletBalancesItem,
 } from '../../types';
-import { convertFioPrices } from '../../util/prices';
+import { CreateOrderActionData } from '../../redux/types';
 
 type UseContextReturnType = {
   cartId: string;
@@ -111,10 +113,13 @@ export const useContext = (): UseContextReturnType => {
     cartHasItemsWithPrivateDomainSelector,
   );
   const loadingCart = useSelector(loadingCartSelector);
+  const refProfile = useSelector(refProfileInfo);
 
   const dispatch = useDispatch();
 
   const history = useHistory();
+
+  const isNoProfileFlow = refProfile?.settings?.hasNoProfileFlow;
 
   const walletCount = userWallets.length;
 
@@ -323,7 +328,7 @@ export const useContext = (): UseContextReturnType => {
 
   const checkout = async (paymentProvider: PaymentProvider) => {
     try {
-      await apis.orders.create({
+      const orderParams: CreateOrderActionData = {
         cartId,
         roe,
         publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
@@ -333,7 +338,13 @@ export const useContext = (): UseContextReturnType => {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
-      });
+      };
+
+      if (isNoProfileFlow) {
+        orderParams.refProfileId = refProfile.id;
+      }
+
+      await apis.orders.create(orderParams);
 
       return history.push(ROUTES.CHECKOUT);
     } catch (e) {
@@ -441,10 +452,10 @@ export const useContext = (): UseContextReturnType => {
   }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!isAuth && !isNoProfileFlow) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [history, isAuth]);
+  }, [history, isAuth, isNoProfileFlow]);
 
   return {
     cartId,

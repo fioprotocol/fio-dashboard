@@ -508,9 +508,7 @@ export const cartItemsToOrderItems = async ({
     switch (type) {
       case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
         {
-          const supportCombo =
-            walletType === WALLET_CREATED_FROM.EDGE ||
-            walletType === WALLET_CREATED_FROM.METAMASK;
+          const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
           const useComboAction = !hasCustomDomainInCart && supportCombo;
 
           if (!supportCombo && !hasCustomDomainInCart) {

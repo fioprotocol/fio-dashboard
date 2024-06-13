@@ -36,7 +36,10 @@ import {
   isProcessing as isProcessingSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { CreateOrderActionData } from '../../redux/types';
+import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  loading as refProfileLoadingSelector,
+} from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
 
@@ -87,6 +90,7 @@ import {
   BeforeSubmitState,
   SignFioAddressItem,
 } from './types';
+import { CreateOrderActionData } from '../../redux/types';
 
 const SIGN_TX_MAX_FEE_COEFFICIENT = 1.5;
 
@@ -101,6 +105,7 @@ export const useContext = (): {
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
   isProcessing: boolean;
+  isNoProfileFlow: boolean;
   title: string;
   order: Order;
   payment: Payment;
@@ -111,6 +116,7 @@ export const useContext = (): {
   beforeSubmitProps: BeforeSubmitState | null;
   fioLoading: boolean;
   orderLoading: boolean;
+  refProfileLoading: boolean;
   orderError: ApiError;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
@@ -136,6 +142,8 @@ export const useContext = (): {
     cartHasItemsWithPrivateDomainSelector,
   );
   const cartLoading = useSelector(cartLoadingSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const refProfileLoading = useSelector(refProfileLoadingSelector);
 
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
@@ -154,6 +162,7 @@ export const useContext = (): {
   const stripeRedirectStatusParam = queryParams.get(
     QUERY_PARAMS_NAMES.STRIPE_REDIRECT_STATUS,
   );
+  const publicKeyQueryParams = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
   const [
     beforeSubmitProps,
@@ -191,7 +200,15 @@ export const useContext = (): {
     let result;
 
     try {
-      result = await apis.orders.getActive();
+      const getActiveOrderParams: {
+        publicKey?: string;
+      } = {};
+
+      if (publicKeyQueryParams) {
+        getActiveOrderParams.publicKey = publicKeyQueryParams;
+      }
+
+      result = await apis.orders.getActive(getActiveOrderParams);
     } catch (e) {
       setOrderError(e);
     }
@@ -212,7 +229,7 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  }, [cartItems, setWallet]);
+  }, [cartItems, publicKeyQueryParams, setWallet]);
 
   // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
   useEffect(() => {
@@ -383,9 +400,10 @@ export const useContext = (): {
       getOrder();
     },
     [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
-    fioWallets.length > 0 &&
+    (fioWallets.length > 0 &&
       (!orderNumberParam ||
-        (orderNumberParam && !cartLoading && cartLoadingStarted)),
+        (orderNumberParam && !cartLoading && cartLoadingStarted))) ||
+      isNoProfileFlow,
   );
 
   const isFree =
@@ -520,7 +538,7 @@ export const useContext = (): {
 
   useEffect(() => {
     if (
-      noProfileLoaded ||
+      (noProfileLoaded && !isNoProfileFlow) ||
       (isAuth &&
         !cartItems.length &&
         (!orderNumberParam ||
@@ -565,6 +583,7 @@ export const useContext = (): {
     stripeRedirectStatusParam,
     dispatch,
     query,
+    isNoProfileFlow,
   ]);
 
   // Redirect back to cart when payment option is FIO and not enough FIO tokens
@@ -715,7 +734,8 @@ export const useContext = (): {
       getOrderLoading ||
       createOrderLoading ||
       !paymentProvider ||
-      !paymentWalletPublicKey,
+      !paymentWalletPublicKey ||
+      refProfileLoading,
     walletBalancesAvailable,
     paymentWallet,
     paymentWalletPublicKey,
@@ -724,6 +744,7 @@ export const useContext = (): {
     fioWalletsBalances,
     paymentAssignmentWallets,
     isProcessing,
+    isNoProfileFlow,
     title,
     order,
     payment,
@@ -734,6 +755,7 @@ export const useContext = (): {
     beforeSubmitProps,
     fioLoading,
     orderLoading: getOrderLoading || createOrderLoading,
+    refProfileLoading,
     orderError,
     beforePaymentSubmit,
     onClose,

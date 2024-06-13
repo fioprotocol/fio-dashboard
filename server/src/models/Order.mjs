@@ -230,7 +230,7 @@ export class Order extends Base {
           INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
             Payment.SPENT_TYPE.ORDER
           }
-          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
           ${status ? `AND o."status" = ${status}` : ``}

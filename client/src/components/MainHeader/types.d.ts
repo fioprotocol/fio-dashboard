@@ -28,6 +28,7 @@ export type MainHeaderProps = {
   isAdminAuthenticated: boolean;
   hideNavigation?: boolean;
   isMaintenance?: boolean;
+  isNoProfileFlow?: boolean;
 };
 
 export type NavigationProps = {

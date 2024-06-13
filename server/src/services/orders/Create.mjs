@@ -35,7 +35,7 @@ export default class OrdersCreate extends Base {
             roe: 'string',
             publicKey: 'string',
             paymentProcessor: 'string',
-            refProfileId: 'integer',
+            refProfileId: 'string',
             prices: [
               {
                 nested_object: {
@@ -78,15 +78,6 @@ export default class OrdersCreate extends Base {
     const orderItems = [];
 
     const user = await User.findActive(userId);
-
-    if (!user) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
-          id: 'NOT_FOUND',
-        },
-      });
-    }
 
     const cart = await Cart.findById(cartId);
 
@@ -161,7 +152,7 @@ export default class OrdersCreate extends Base {
       prices: handledPrices,
       roe: handledRoe,
       userHasFreeAddress,
-      walletType: wallet.from,
+      walletType: wallet && wallet.from,
     });
 
     await Order.sequelize.transaction(async t => {

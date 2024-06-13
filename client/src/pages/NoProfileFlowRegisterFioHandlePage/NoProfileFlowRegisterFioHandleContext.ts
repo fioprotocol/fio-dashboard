@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Props as ComponentProps } from './NoProfileFlowRegisterFioHandle';
 
-import { addItem as addItemToCart } from '../../redux/cart/actions';
+import { addItem as addItemToCart, setWallet } from '../../redux/cart/actions';
 
 import apis from '../../api';
 import { setFioName } from '../../utils';
@@ -186,11 +186,13 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           addItemToCart({
             id: cartId,
             item: cartItem,
-            metamaskUserPublicKey: publicKey,
+            metamaskUserPublicKey: publicKey, // todo: rename metamaskUserPublicKey to publicKey
             prices: prices?.nativeFio,
             roe,
           }),
         );
+
+        dispatch(setWallet(publicKey));
 
         history.push(ROUTES.CART);
       } catch (error) {
