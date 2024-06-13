@@ -23,6 +23,7 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
 
 import { useEffectOnce } from '../../hooks/general';
 
@@ -70,6 +71,7 @@ export const useContext = (
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
   const isContainedFlow = useSelector(isContainedFlowSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
 
   const dispatch = useDispatch();
 
@@ -85,10 +87,10 @@ export const useContext = (
   }, [dispatch, cartId]);
 
   useEffect(() => {
-    if (noProfile) {
+    if (noProfile && !isNoProfileFlow) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [noProfile, history]);
+  }, [isNoProfileFlow, noProfile, history]);
 
   useEffect(() => {
     if (status === PURCHASE_RESULTS_STATUS.SUCCESS) {

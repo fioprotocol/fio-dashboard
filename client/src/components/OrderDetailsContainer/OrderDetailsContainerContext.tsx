@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { useSelector } from 'react-redux';
 
 import useQuery from '../../hooks/useQuery';
 import { useWebsocket } from '../../hooks/websocket';
@@ -8,6 +9,8 @@ import api from '../../api';
 import { ORDER_NUMBER_PARAM_NAME } from '../../constants/order';
 import { ROUTES } from '../../constants/routes';
 import { WS_ENDPOINTS } from '../../constants/websocket';
+
+import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
 
 import { OrderDetailed, PurchaseTxStatus } from '../../types';
 
@@ -19,6 +22,8 @@ export const useContext = (): ContextProps => {
   const history = useHistory<{ orderId: string }>();
   const queryParams = useQuery();
 
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+
   const orderNumber = queryParams.get(ORDER_NUMBER_PARAM_NAME);
   const [orderItem, setOrderItem] = useState<OrderDetailed>(null);
 
@@ -29,10 +34,10 @@ export const useContext = (): ContextProps => {
   }, [orderNumber, history]);
 
   useEffect(() => {
-    if (!token) {
+    if (!token && !isNoProfileFlow) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [token, history]);
+  }, [isNoProfileFlow, token, history]);
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
@@ -48,7 +53,7 @@ export const useContext = (): ContextProps => {
 
   useWebsocket({
     endpoint: WS_ENDPOINTS.ORDER_STATUS,
-    params: { orderNumber },
+    params: { orderNumber, isNoProfileFlow },
     onMessage: onStatusUpdate,
   });
 

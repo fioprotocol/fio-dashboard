@@ -78,6 +78,7 @@ const CartAmount: React.FC<Props> = props => {
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}
           showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
+          loading={loading}
         />
       </div>
     </CartSmallContainer>

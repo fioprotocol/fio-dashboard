@@ -26,6 +26,7 @@ type DefaultProps = {
   paymentOption: PaymentOptionsProps;
   paymentProvider: PaymentProvider;
   isFree: boolean;
+  isNoProfileFlow: boolean;
   setWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;

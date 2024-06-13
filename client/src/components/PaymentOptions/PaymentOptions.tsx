@@ -56,7 +56,7 @@ const PAYMENT_OPTIONS_PROPS = {
       paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.FIO,
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.FIO,
-    hideButton: hasLowBalance,
+    hideButton: hasLowBalance && !isFree,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.FIO),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({

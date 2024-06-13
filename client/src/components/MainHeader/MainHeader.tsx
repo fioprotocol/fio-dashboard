@@ -18,6 +18,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     locationState,
     refProfileLoading,
     isMaintenance,
+    isNoProfileFlow,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
   const history = useHistory();
@@ -57,7 +58,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
       locationState &&
       locationState.from &&
       locationState.from.pathname &&
-      !isLogout
+      !isLogout &&
+      !isNoProfileFlow
     ) {
       showLogin();
     }
@@ -67,6 +69,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     isAuthenticated,
     profileRefreshed,
     isMaintenance,
+    isNoProfileFlow,
   ]);
 
   useEffect(() => {

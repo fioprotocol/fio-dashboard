@@ -132,7 +132,7 @@ router.put('/notifications', checkAuth, routes.notifications.update);
 router.get('/reg/domains/list', routes.registration.domainsList);
 router.get('/reg/domain-prefix-postfix', routes.registration.prefixPostfixList);
 router.get('/reg/prices', routes.external.prices);
-router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
+router.post('/reg/captcha/init', routes.external.initCaptcha);
 router.get('/reg/api-urls', routes.external.apiUrls);
 
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
@@ -190,9 +190,9 @@ router.get('/contacts', checkAuth, routes.contacts.list);
 router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
 
 router.get('/orders', checkAuth, routes.orders.list);
-router.get('/orders/active', checkAuth, routes.orders.getActive);
-router.post('/orders', checkAuth, routes.orders.create);
-router.post('/orders/update/:id', checkAuth, routes.orders.update);
+router.get('/orders/active', routes.orders.getActive);
+router.post('/orders', routes.orders.create);
+router.post('/orders/update/:id', routes.orders.update);
 router.get('/orders/item/:id', checkAuth, routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);

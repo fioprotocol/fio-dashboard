@@ -20,6 +20,7 @@ import { cartItems } from '../../redux/cart/selectors';
 import {
   loading as refProfileLoading,
   refProfileInfo,
+  isNoProfileFlow,
 } from '../../redux/refProfile/selectors';
 import { isContainedFlow } from '../../redux/containedFlow/selectors';
 
@@ -44,6 +45,7 @@ const selector = createStructuredSelector({
   fioAddresses,
   locationState,
   isContainedFlow,
+  isNoProfileFlow,
 });
 
 const actions = (

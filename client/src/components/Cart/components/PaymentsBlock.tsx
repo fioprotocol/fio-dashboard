@@ -25,6 +25,7 @@ type Props = {
   selectedPaymentProvider: PaymentProvider;
   showExpiredDomainWarningBadge: boolean;
   disabled?: boolean;
+  loading: boolean;
 };
 
 const PaymentsBlock: React.FC<Props> = props => {
@@ -39,6 +40,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     selectedPaymentProvider,
     disabled,
     showExpiredDomainWarningBadge,
+    loading,
     onPaymentChoose,
   } = props;
 
@@ -77,7 +79,13 @@ const PaymentsBlock: React.FC<Props> = props => {
     );
   }
 
-  if (hasLowBalance && priceIsLowerThanHalfADollar) {
+  if (
+    hasLowBalance &&
+    priceIsLowerThanHalfADollar &&
+    !isFree &&
+    !loading &&
+    cartItems.length
+  ) {
     return (
       <NotificationBadge
         message="Your cart needs to be at least $0.50 to pay with credit card, $1.00 to pay with crypto, or you need to deposit FIO Tokens."

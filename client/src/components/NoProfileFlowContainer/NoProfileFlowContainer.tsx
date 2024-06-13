@@ -1,8 +1,12 @@
 import React from 'react';
+import { Redirect } from 'react-router';
 
 import { RefFioHandleBanner } from '../RefFioHandleBanner';
 
 import { useContext } from './NoProfileFlowContainerContext';
+
+import { ROUTES } from '../../constants/routes';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import classes from './NoProfileFlowContainer.module.scss';
 
@@ -10,9 +14,22 @@ type Props = {};
 
 export const NoProfileFlowContainer: React.FC<Props> = props => {
   const { children } = props;
-  const { refProfile, publicKey } = useContext();
+  const { refProfile, publicKey, loading } = useContext();
 
   const domainName = refProfile?.settings?.domains[0]?.name || 'rulez';
+
+  if (!refProfile?.settings?.hasNoProfileFlow && !loading) {
+    return (
+      <Redirect
+        to={{
+          pathname: `${ROUTES.REF_PROFILE_HOME.replace(
+            REF_PROFILE_SLUG_NAME,
+            refProfile?.code,
+          )}`,
+        }}
+      />
+    );
+  }
 
   return (
     <div className={classes.container}>

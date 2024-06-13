@@ -141,7 +141,11 @@ export default class AddItem extends Base {
       } = handledPrices;
 
       const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !comboPrice || !renewDomainPrice;
+        !addBundlesPrice ||
+        !addressPrice ||
+        !domainPrice ||
+        !comboPrice ||
+        !renewDomainPrice;
 
       if (isEmptyPrices) {
         throw new X({

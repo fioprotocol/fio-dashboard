@@ -1,22 +1,22 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
   refProfileInfo,
   loading as loadingSelector,
 } from '../../redux/refProfile/selectors';
 
-import { getInfo } from '../../redux/refProfile/actions';
-
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import useQuery from '../../hooks/useQuery';
+import useEffectOnce from '../../hooks/general';
+import { setCookies } from '../../util/cookies';
 
 import { RefProfile } from '../../types';
 
 type UseContextProps = {
   publicKey: string | null;
   refProfile: RefProfile;
+  loading: boolean;
 };
 
 export const useContext = (): UseContextProps => {
@@ -25,23 +25,15 @@ export const useContext = (): UseContextProps => {
 
   const queryParams = useQuery();
 
-  const dispatch = useDispatch();
-
   const publicKey = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY) || null;
 
-  const getRefcodeFromUrl = () => {
-    const regex = /\/(?:address|ref|domain)(?:\/renew)?\/([^\/]+)/;
-    const match = regex.exec(window.location.pathname);
-    return match ? match[1] : null;
-  };
+  useEffectOnce(
+    () => {
+      setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, null);
+    },
+    [],
+    !!publicKey,
+  );
 
-  const refCode = getRefcodeFromUrl();
-
-  useEffect(() => {
-    if (!loading && refCode && (!refProfile || refProfile?.code !== refCode)) {
-      dispatch(getInfo(refCode));
-    }
-  }, [loading, refProfile, refCode, dispatch]);
-
-  return { refProfile, publicKey };
+  return { refProfile, publicKey, loading };
 };

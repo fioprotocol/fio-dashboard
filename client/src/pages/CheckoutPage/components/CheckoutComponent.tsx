@@ -17,7 +17,12 @@ import classes from '../CheckoutPage.module.scss';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
-  const { fioWalletsBalances, paymentAssignmentWallets } = rest;
+  const {
+    fioWalletsBalances,
+    paymentAssignmentWallets,
+    isNoProfileFlow,
+    paymentWalletPublicKey,
+  } = rest;
   const { costNativeFio, costFree } = totalCost(cart, roe);
 
   const getPayWithDefaultDetails = () => {
@@ -40,6 +45,16 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
 
   const payWith = getPayWithDefaultDetails();
 
+  const additionalTransactionDetails = [];
+
+  if (isNoProfileFlow) {
+    additionalTransactionDetails.push({
+      label: 'Register to Public Key',
+      value: paymentWalletPublicKey,
+      wrap: true,
+    });
+  }
+
   return (
     <>
       <div className={classes.details}>
@@ -54,6 +69,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           feeInFio={0}
           amountInFio={costNativeFio}
           payWith={payWith}
+          additional={additionalTransactionDetails}
         />
       </div>
       {paymentAssignmentWallets.length > 1 && (

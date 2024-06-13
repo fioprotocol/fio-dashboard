@@ -72,8 +72,21 @@ export default class OrdersUpdate extends Base {
   }
 
   async execute({ id, data }) {
+    const userId = this.context.id;
+    const publicKey = data && data.publicKey;
+
+    const where = {
+      id,
+    };
+
+    if (userId) {
+      where.userId = userId;
+    } else if (publicKey) {
+      where.publicKey = publicKey;
+    }
+
     const order = await Order.findOne({
-      where: { id, userId: this.context.id },
+      where,
       include: [
         { model: OrderItem, include: [OrderItemStatus] },
         {
@@ -93,10 +106,7 @@ export default class OrdersUpdate extends Base {
     }
 
     if (data.status && data.status === Order.STATUS.CANCELED) {
-      await Order.update(
-        { status: data.status },
-        { where: { id, userId: this.context.id } },
-      );
+      await Order.update({ status: data.status }, { where });
       await OrderItemStatus.update(
         { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
         {
@@ -119,7 +129,7 @@ export default class OrdersUpdate extends Base {
     if (data.publicKey) orderUpdateParams.publicKey = data.publicKey;
 
     if (Object.values(orderUpdateParams).length)
-      await Order.update(orderUpdateParams, { where: { id, userId: this.context.id } });
+      await Order.update(orderUpdateParams, { where });
 
     if (data.results) {
       const processedOrderItems = [];

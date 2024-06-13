@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
@@ -10,7 +10,11 @@ import { DetailedInfoMainPageComponent } from '../../components/DetailedInfoMain
 import { GateVerificationComponent } from '../../components/GateVerificationComponent';
 
 import { APP_TITLE } from '../../constants/labels';
-import { DEFAULT_DOMAIN_NAME } from '../../constants/ref';
+import {
+  DEFAULT_DOMAIN_NAME,
+  REF_PROFILE_SLUG_NAME,
+} from '../../constants/ref';
+import { ROUTES } from '../../constants/routes';
 
 import { handleHomePageContent } from '../../util/homePage';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
@@ -154,6 +158,19 @@ export const RefHomePage: React.FC<Props &
       addressWidgetContent.title = refTitle.replace(
         `@${DEFAULT_DOMAIN_NAME}`,
         `@${refDomain}`,
+      );
+    }
+
+    if (refProfileInfo?.settings?.hasNoProfileFlow) {
+      return (
+        <Redirect
+          to={{
+            pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+              REF_PROFILE_SLUG_NAME,
+              refProfileInfo?.code,
+            )}`,
+          }}
+        />
       );
     }
 

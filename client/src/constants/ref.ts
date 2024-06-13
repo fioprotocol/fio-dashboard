@@ -7,3 +7,5 @@ export const ASSETS_SETTINGS_CHOICE = [
   { id: NFT_LABEL, name: NFT_LABEL },
   { id: TOKEN_LABEL, name: TOKEN_LABEL },
 ];
+
+export const REF_PROFILE_SLUG_NAME = ':refProfileCode';
