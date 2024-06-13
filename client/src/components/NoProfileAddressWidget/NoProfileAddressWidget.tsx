@@ -1,20 +1,22 @@
 import React from 'react';
 
 import AddressWidget from '../AddressWidget';
+import { AddressWidgetProps } from '../AddressWidget/AddressWidget';
 import { NoProfileFlowValidatorComponent } from '../NoProfileFlowValidatorComponent';
 
 import classes from './NoProfileAddressWidget.module.scss';
 
 type Props = {
-  addressWidgetContent: {
-    subtitle: string;
-    title: string;
-  };
+  addressWidgetContent: AddressWidgetProps;
   verificationParams: {
     hasFioVerificationError: boolean;
     infoMessage: string;
     isVerifying: boolean;
     isFioItemVerified: boolean;
+    infoBagde?: {
+      title: string;
+      message: string;
+    };
   };
 };
 

@@ -3,6 +3,8 @@ import { Redirect } from 'react-router';
 
 import { RefFioHandleBanner } from '../RefFioHandleBanner';
 
+import { FioPublicKeyComponent } from './components/FioPublicKeyComponent';
+
 import { useContext } from './NoProfileFlowContainerContext';
 
 import { ROUTES } from '../../constants/routes';
@@ -14,7 +16,13 @@ type Props = {};
 
 export const NoProfileFlowContainer: React.FC<Props> = props => {
   const { children } = props;
-  const { refProfile, publicKey, loading } = useContext();
+  const {
+    addressWidgetContent,
+    refProfile,
+    publicKey,
+    loading,
+    verificationParams,
+  } = useContext();
 
   const domainName = refProfile?.settings?.domains[0]?.name || 'rulez';
 
@@ -33,10 +41,17 @@ export const NoProfileFlowContainer: React.FC<Props> = props => {
 
   return (
     <div className={classes.container}>
-      {React.cloneElement(children as React.ReactElement, {
-        refProfile,
-        publicKey,
-      })}
+      {!publicKey ? (
+        <FioPublicKeyComponent
+          addressWidgetContent={addressWidgetContent}
+          verificationParams={verificationParams}
+        />
+      ) : (
+        React.cloneElement(children as React.ReactElement, {
+          refProfile,
+          publicKey,
+        })
+      )}
       <RefFioHandleBanner domainName={domainName} />
     </div>
   );

@@ -26,11 +26,10 @@ import {
   cartItems as cartItemsSelector,
 } from '../../redux/cart/selectors';
 
+import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
+
 type UseContextProps = {
-  addressWidgetContent: {
-    subtitle: string;
-    title: string;
-  };
+  addressWidgetContent: AddressWidgetProps;
   domainName: string;
   verificationParams: {
     hasFioVerificationError: boolean;
@@ -56,7 +55,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     { name: string; publicKey: string }[]
   >(null);
   const [isVerifying, toggleIsVerifying] = useState<boolean>(false);
-  const [isFioItemVerified, toggleisFioItemVerified] = useState<boolean>(false);
+  const [isFioItemVerified, toggleIsFioItemVerified] = useState<boolean>(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -104,7 +103,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const onInputChanged = useCallback((value: string) => {
     setInfoMessage(null);
     toggleFioVerificationError(false);
-    toggleisFioItemVerified(false);
+    toggleIsFioItemVerified(false);
 
     return value;
   }, []);
@@ -124,7 +123,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           apis.fio.isFioAddressValid(fioHandle);
         } catch (error) {
           setInfoMessage(NON_VALID_FCH);
-          toggleisFioItemVerified(false);
+          toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
@@ -139,12 +138,12 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
               domainName,
             )} is not available.`,
           );
-          toggleisFioItemVerified(false);
+          toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
 
-        toggleisFioItemVerified(true);
+        toggleIsFioItemVerified(true);
         toggleIsVerifying(false);
         setInfoMessage(
           `This FIO Handle - ${setFioName(

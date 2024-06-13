@@ -14,3 +14,7 @@ export const isNoProfileFlow = createSelector(
   refProfileInfo,
   refProfileInfo => refProfileInfo?.settings?.hasNoProfileFlow,
 );
+export const refProfileCode = createSelector(
+  refProfileInfo,
+  refProfileInfo => refProfileInfo?.code,
+);

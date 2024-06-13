@@ -22,11 +22,10 @@ import {
 import { cartId as cartIdSelector } from '../../redux/cart/selectors';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
+import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
+
 type UseContextProps = {
-  addressWidgetContent: {
-    subtitle: string;
-    title: string;
-  };
+  addressWidgetContent: AddressWidgetProps;
   verificationParams: {
     hasFioVerificationError: boolean;
     infoMessage: string;

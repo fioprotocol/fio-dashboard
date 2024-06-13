@@ -12,7 +12,7 @@ import { AddressWidgetNotification } from '../../types';
 
 import classes from './AddressWidget.module.scss';
 
-type Props = {
+export type AddressWidgetProps = {
   disabled?: boolean;
   disabledInput?: boolean;
   disabledInputGray?: boolean;
@@ -37,6 +37,7 @@ type Props = {
   isReverseColors?: boolean;
   isTransparent?: boolean;
   isDarkWhite?: boolean;
+  lowerCased?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
@@ -54,7 +55,7 @@ type Props = {
   stepText?: string;
 };
 
-const AddressWidget: React.FC<Props> = props => {
+const AddressWidget: React.FC<AddressWidgetProps> = props => {
   const {
     actionText,
     children,
@@ -76,6 +77,7 @@ const AddressWidget: React.FC<Props> = props => {
     links,
     loading,
     logoSrc,
+    lowerCased,
     title,
     showSignInWidget,
     subtitle,
@@ -132,6 +134,7 @@ const AddressWidget: React.FC<Props> = props => {
         isTransparent={isTransparent}
         links={links}
         loading={loading}
+        lowerCased={lowerCased}
         suffixText={suffixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}

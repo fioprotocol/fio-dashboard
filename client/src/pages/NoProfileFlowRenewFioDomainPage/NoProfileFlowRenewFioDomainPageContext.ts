@@ -22,11 +22,10 @@ import {
 } from '../../redux/registrations/selectors';
 import { cartId as cartIdSelector } from '../../redux/cart/selectors';
 
+import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
+
 type UseContextProps = {
-  addressWidgetContent: {
-    subtitle: string;
-    title: string;
-  };
+  addressWidgetContent: AddressWidgetProps;
   verificationParams: {
     hasFioVerificationError: boolean;
     infoMessage: string;
@@ -48,7 +47,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   >(false);
 
   const [isVerifying, toggleIsVerifying] = useState<boolean>(false);
-  const [isFioItemVerified, toggleisFioItemVerified] = useState<boolean>(false);
+  const [isFioItemVerified, toggleIsFioItemVerified] = useState<boolean>(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -74,7 +73,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const onInputChanged = useCallback((value: string) => {
     setInfoMessage(null);
     toggleFioVerificationError(false);
-    toggleisFioItemVerified(false);
+    toggleIsFioItemVerified(false);
 
     return value;
   }, []);
@@ -90,7 +89,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           apis.fio.isFioDomainValid(domainValue);
         } catch (error) {
           setInfoMessage(NON_VAILD_DOMAIN);
-          toggleisFioItemVerified(false);
+          toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
@@ -100,7 +99,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         if (!isRegistered) {
           toggleFioVerificationError(true);
           setInfoMessage(`This FIO Domain - ${domainValue} is not registered.`);
-          toggleisFioItemVerified(false);
+          toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
           return;
         }
@@ -126,7 +125,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           }),
         );
 
-        toggleisFioItemVerified(true);
+        toggleIsFioItemVerified(true);
         toggleIsVerifying(false);
 
         history.push(ROUTES.CART);
