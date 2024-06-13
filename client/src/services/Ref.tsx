@@ -120,7 +120,10 @@ const Ref = (
   useEffect(() => {
     // load profile when have ref link
     if (isRefLink) {
-      const refProfileCode = pathname.split('/')[2] || query.ref;
+      const pathnameSegments = pathname.split('/');
+      const refProfileCode =
+        query.ref || pathnameSegments[pathnameSegments.length - 1];
+
       getInfo(refProfileCode);
     }
   }, [isRefLink, pathname, query.ref, getInfo]);
