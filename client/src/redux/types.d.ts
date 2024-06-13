@@ -31,6 +31,7 @@ export type CreateOrderActionData = {
   data: {
     gaClientId: string | null;
     gaSessionId: string | null;
+    orderUserType?: string;
   };
   refProfileId?: string;
 };

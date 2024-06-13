@@ -220,6 +220,7 @@ export class Order extends Base {
           o."status", 
           o."createdAt", 
           o."updatedAt",
+          COALESCE(o.data->>'orderUserType', null) as "orderUserType",
           p.price,
           p.currency,
           p.processor as "paymentProcessor",
@@ -558,6 +559,7 @@ export class Order extends Base {
     createdAt,
     updatedAt,
     status,
+    data,
     OrderItems: orderItems,
     Payments: payments,
     User: user,
@@ -572,6 +574,7 @@ export class Order extends Base {
       createdAt,
       updatedAt,
       status,
+      orderUserType: data && data.orderUserType,
       user: user ? { id: user.id, email: user.email } : null,
       items:
         orderItems && orderItems.length
@@ -814,6 +817,7 @@ export class Order extends Base {
     publicKey,
     createdAt,
     status,
+    data,
     Payments: payments,
     User: user,
     ReferrerProfile: refProfile,
@@ -842,6 +846,7 @@ export class Order extends Base {
       publicKey,
       createdAt,
       status,
+      orderUserType: data && data.orderUserType,
       payment: {
         paidWith,
         paymentProcessor: payment ? payment.processor : null,

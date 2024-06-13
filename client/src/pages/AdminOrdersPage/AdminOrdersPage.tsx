@@ -25,6 +25,7 @@ import {
   ORDER_DATE_FILTER_OPTIONS,
   ORDER_STATUS_FILTER_OPTIONS,
 } from '../../constants/common';
+import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
 
 import {
   AdminUser,
@@ -312,15 +313,25 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     </th>
                     <th>{order.number}</th>
                     <th>
-                      <Link
-                        to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${
-                          QUERY_PARAMS_NAMES.USER_ID
-                        }=${order.user ? order.user.id : order.userId}`}
-                      >
-                        {order?.user?.email ||
-                          order?.userEmail ||
-                          order?.userId}
-                      </Link>
+                      {!order?.user?.email &&
+                      !order?.userId &&
+                      !order?.userEmail ? (
+                        order?.orderUserType && order?.orderUserType ? (
+                          ORDER_USER_TYPES_TITLE[order.orderUserType]
+                        ) : (
+                          'No user data'
+                        )
+                      ) : (
+                        <Link
+                          to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${
+                            QUERY_PARAMS_NAMES.USER_ID
+                          }=${order.user ? order.user.id : order.userId}`}
+                        >
+                          {order?.user?.email ||
+                            order?.userEmail ||
+                            order?.userId}
+                        </Link>
+                      )}
                     </th>
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO App'}</th>

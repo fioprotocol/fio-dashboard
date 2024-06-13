@@ -50,6 +50,7 @@ export default class OrdersCreate extends Base {
               nested_object: {
                 gaClientId: 'string',
                 gaSessionId: 'string',
+                orderUserType: 'string',
               },
             },
           },

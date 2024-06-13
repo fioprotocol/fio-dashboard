@@ -21,6 +21,7 @@ import {
 import { CURRENCY_CODES } from '../../../../constants/common';
 import { ADMIN_ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
+import { ORDER_USER_TYPES_TITLE } from '../../../../constants/order';
 
 import apis from '../../../../api';
 
@@ -59,8 +60,9 @@ const AdminOrderModal: React.FC<Props> = ({
   const { isFree, historyList, orderPayment, orderItems } = useContext({
     orderItem,
   });
-
   if (!orderItem) return null;
+
+  const { orderUserType } = orderItem;
 
   const renderHistoryPrice = (
     amount: string,
@@ -136,11 +138,19 @@ const AdminOrderModal: React.FC<Props> = ({
                 <b>User</b>
               </div>
               <div>
-                <Link
-                  to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${orderItem.user.id}`}
-                >
-                  {orderItem.user.email || orderItem.user.id}
-                </Link>
+                {!orderItem.user?.email && !orderItem.user?.id ? (
+                  orderUserType ? (
+                    ORDER_USER_TYPES_TITLE[orderUserType]
+                  ) : (
+                    'No user data'
+                  )
+                ) : (
+                  <Link
+                    to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${orderItem.user?.id}`}
+                  >
+                    {orderItem.user?.email || orderItem.user?.id}
+                  </Link>
+                )}
               </div>
             </div>
             {renderOrderItemFieldData('Payment Type', paymentType)}
