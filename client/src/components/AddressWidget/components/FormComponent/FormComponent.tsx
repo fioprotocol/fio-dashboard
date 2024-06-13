@@ -29,6 +29,7 @@ type Props = {
   isReverseColors?: boolean;
   isTransparent?: boolean;
   suffixText?: string;
+  lowerCased?: boolean;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   loading?: boolean;
@@ -122,6 +123,7 @@ export const FormComponent: React.FC<Props> = props => {
     isTransparent,
     links,
     loading,
+    lowerCased = true,
     suffixText,
     convert,
     formatOnFocusOut,
@@ -178,7 +180,7 @@ export const FormComponent: React.FC<Props> = props => {
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 component={TextInput}
                 hideError="true"
-                lowerCased
+                lowerCased={lowerCased}
                 suffix={suffixText}
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
