@@ -54,6 +54,7 @@ import {
   NOT_FOUND_CART_MESSAGE,
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
+import { ORDER_USER_TYPES } from '../../constants/order';
 
 import { log } from '../../util/general';
 import { isDomainExpired } from '../../util/fio';
@@ -342,6 +343,7 @@ export const useContext = (): UseContextReturnType => {
 
       if (isNoProfileFlow) {
         orderParams.refProfileId = refProfile.id;
+        orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
       }
 
       await apis.orders.create(orderParams);

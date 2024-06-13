@@ -829,6 +829,7 @@ export type OrderDetails = {
   refProfileName?: string;
   user?: { id: string; email: string };
   updatedAt: string;
+  orderUserType?: string;
 };
 
 export type DateRange = { startDate?: number; endDate?: number };
@@ -852,6 +853,7 @@ export type UserOrderDetails = {
     paymentProcessor: string;
   };
   refProfileName: string;
+  orderUserType?: string;
 };
 
 export type OrderItemDetailed = {

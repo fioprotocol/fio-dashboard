@@ -1,1 +1,11 @@
 export const ORDER_NUMBER_PARAM_NAME = 'orderNumber';
+
+export const ORDER_USER_TYPES = {
+  NO_PROFILE_FLOW: 'NO_PROFILE_FLOW',
+  PARTNER_API_CLIENT: 'PARTNER_API_CLIENT',
+};
+
+export const ORDER_USER_TYPES_TITLE = {
+  [ORDER_USER_TYPES.NO_PROFILE_FLOW]: 'No Profile flow user',
+  [ORDER_USER_TYPES.PARTNER_API_CLIENT]: 'Partner API client',
+};
