@@ -124,9 +124,11 @@ const Ref = (
       const refProfileCode =
         query.ref || pathnameSegments[pathnameSegments.length - 1];
 
-      getInfo(refProfileCode);
+      if (!refProfileInfo) {
+        getInfo(refProfileCode);
+      }
     }
-  }, [isRefLink, pathname, query.ref, getInfo]);
+  }, [isRefLink, pathname, query.ref, refProfileInfo, getInfo]);
 
   // Set user refProfileCode to cookies
   useEffect(() => {

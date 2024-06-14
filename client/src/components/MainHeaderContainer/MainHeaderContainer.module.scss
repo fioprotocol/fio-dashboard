@@ -8,6 +8,10 @@
   padding: 5px 25px;
   min-height: 80px;
 
+  &.noBoxShadow {
+    box-shadow: none;
+  }
+
   &.isOpen {
     position: sticky;
     top: 0;

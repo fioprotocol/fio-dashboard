@@ -23,6 +23,7 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import { ContentContainer } from '../../components/ContentContainer';
 import { MainLayoutContainer } from '../../components/MainLayoutContainer';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
+import { NoProfileFlowMainHeader } from '../../components/NoProfileFlowMainHeader';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -38,6 +39,7 @@ type Props = {
   pathname: string;
   isAuthenticated: boolean;
   isActiveUser: boolean;
+  isNoProfileFlow: boolean;
   loginSuccess: boolean;
   showLogin: boolean;
   showRecovery: boolean;
@@ -66,6 +68,7 @@ const MainLayout: React.FC<Props> = props => {
     edgeContextSet,
     isAuthenticated,
     isActiveUser,
+    isNoProfileFlow,
     showLogin,
     showRecovery,
     loadProfile,
@@ -138,7 +141,7 @@ const MainLayout: React.FC<Props> = props => {
       ) : (
         <>
           {routeName && <PageTitle link={LINKS[routeName]} shouldFireOnce />}
-          <MainHeader />
+          {isNoProfileFlow ? <NoProfileFlowMainHeader /> : <MainHeader />}
           <AutoLogout />
           <Ref />
           <Roe />
