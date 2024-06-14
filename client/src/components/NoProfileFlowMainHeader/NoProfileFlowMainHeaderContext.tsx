@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
 
 import { refProfileInfo } from '../../redux/refProfile/selectors';
 
@@ -10,7 +11,7 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 type UseContextProps = {
   activeEventKey: number;
-  publicKeyQueryParam?: string;
+  publicKey?: string;
   refProfile: RefProfile;
   setActiveEventKey: (activeKey: number) => void;
 };
@@ -22,6 +23,9 @@ export const useContext = (): UseContextProps => {
   const [activeEventKey, setActiveEventKey] = useState(0);
 
   const publicKeyQueryParam = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+  const publicKeyCookie = Cookies.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
-  return { activeEventKey, publicKeyQueryParam, refProfile, setActiveEventKey };
+  const publicKey = publicKeyQueryParam || publicKeyCookie;
+
+  return { activeEventKey, publicKey, refProfile, setActiveEventKey };
 };
