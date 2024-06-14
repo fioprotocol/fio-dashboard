@@ -16,6 +16,7 @@ type Props = {
   hideSiteLink?: boolean;
   isAdmin?: boolean;
   isMenuOpen?: boolean;
+  noBoxShadow?: boolean;
   refProfileInfo?: RefProfile;
   closeMenu?: () => void;
 };
@@ -26,6 +27,7 @@ export const MainHeaderContainer: React.FC<Props> = props => {
     hideSiteLink,
     isAdmin,
     isMenuOpen,
+    noBoxShadow,
     refProfileInfo,
     closeMenu,
   } = props;
@@ -38,7 +40,13 @@ export const MainHeaderContainer: React.FC<Props> = props => {
       : fioLogoSrc;
 
   return (
-    <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
+    <div
+      className={classnames(
+        classes.header,
+        isMenuOpen && classes.isOpen,
+        noBoxShadow && classes.noBoxShadow,
+      )}
+    >
       {!isAdmin ? (
         <Link to={ROUTES.HOME}>
           <div className={classes.logoContainer} onClick={closeMenu}>
