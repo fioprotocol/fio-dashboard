@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { SiteLink } from '../MainHeader/components/SiteLink/SiteLink';
 
 import { ROUTES } from '../../constants/routes';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import { RefProfile } from '../../types';
 
@@ -18,6 +19,7 @@ type Props = {
   isMenuOpen?: boolean;
   noBoxShadow?: boolean;
   refProfileInfo?: RefProfile;
+  queryParams?: string;
   closeMenu?: () => void;
 };
 
@@ -29,11 +31,13 @@ export const MainHeaderContainer: React.FC<Props> = props => {
     isMenuOpen,
     noBoxShadow,
     refProfileInfo,
+    queryParams,
     closeMenu,
   } = props;
+  const isNoProfileFlow = refProfileInfo?.settings?.hasNoProfileFlow;
+
   const logoSrc =
-    refProfileInfo?.settings?.isBranded ||
-    refProfileInfo?.settings?.hasNoProfileFlow
+    refProfileInfo?.settings?.isBranded || isNoProfileFlow
       ? refProfileInfo.settings.img
         ? refProfileInfo.settings.img
         : fioLogoSrc
@@ -48,7 +52,17 @@ export const MainHeaderContainer: React.FC<Props> = props => {
       )}
     >
       {!isAdmin ? (
-        <Link to={ROUTES.HOME}>
+        <Link
+          to={{
+            pathname: isNoProfileFlow
+              ? `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+                  REF_PROFILE_SLUG_NAME,
+                  refProfileInfo?.code,
+                )}`
+              : ROUTES.HOME,
+            search: queryParams || null,
+          }}
+        >
           <div className={classes.logoContainer} onClick={closeMenu}>
             <img src={logoSrc} alt="Branded Logo" />
           </div>

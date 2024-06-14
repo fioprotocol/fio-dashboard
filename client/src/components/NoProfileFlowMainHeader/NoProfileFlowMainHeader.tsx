@@ -37,7 +37,7 @@ const MAIN_HEADER_ITEMS = [
 export const NoProfileFlowMainHeader: React.FC = () => {
   const {
     activeEventKey,
-    publicKeyQueryParam,
+    publicKey,
     refProfile,
     setActiveEventKey,
   } = useContext();
@@ -49,14 +49,20 @@ export const NoProfileFlowMainHeader: React.FC = () => {
     [setActiveEventKey],
   );
 
+  const queryParams = publicKey
+    ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`
+    : null;
+
   return (
-    <MainHeaderContainer hideSiteLink noBoxShadow refProfileInfo={refProfile}>
+    <MainHeaderContainer
+      hideSiteLink
+      noBoxShadow
+      refProfileInfo={refProfile}
+      queryParams={queryParams}
+    >
       <div className={classes.container}>
         <Nav>
           {MAIN_HEADER_ITEMS.map((mainHeaderItem, i) => {
-            const searchParam = publicKeyQueryParam
-              ? `?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKeyQueryParam}`
-              : '';
             const pathname = mainHeaderItem.link.replace(
               REF_PROFILE_SLUG_NAME,
               refProfile?.code,
@@ -66,7 +72,7 @@ export const NoProfileFlowMainHeader: React.FC = () => {
             return (
               <Nav.Link
                 as={Link}
-                to={{ pathname, search: searchParam }}
+                to={{ pathname, search: queryParams ? queryParams : null }}
                 onSelect={handleSelect}
                 eventKey={i}
                 className="pr-0"
