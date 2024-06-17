@@ -6,11 +6,11 @@ import classnames from 'classnames';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
 import { MainHeaderContainer } from '../MainHeaderContainer';
-import { useContext } from './NoProfileFlowMainHeaderContext';
+import { useContext, NavItemParam } from './NoProfileFlowMainHeaderContext';
+import { SideMenu } from '../MainHeader/components/SideMenu/SideMenu';
 
 import { ROUTES } from '../../constants/routes';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import classes from './NoProfeilFlowMainHeader.module.scss';
 
@@ -34,65 +34,103 @@ const MAIN_HEADER_ITEMS = [
   { title: 'Orders', link: ROUTES.ORDERS, icon: <ListAltIcon /> },
 ];
 
+const NavItemContent: React.FC<{
+  icon?: React.ReactElement;
+  title: string;
+}> = ({ icon, title }) => (
+  <div className={classes.headerItemContainer}>
+    {icon && <div className={classes.icon}>{icon}</div>}
+    {title}
+  </div>
+);
+
+const DesktopNavItem: React.FC<{
+  icon?: React.ReactElement;
+  isActive: boolean;
+  title: string;
+}> = ({ icon, isActive, title }) => (
+  <Button
+    className={classnames(classes.button, isActive && classes.isActive)}
+    size="lg"
+  >
+    <NavItemContent icon={icon} title={title} />
+  </Button>
+);
+
+const NavComponent: React.FC<NavItemParam> = ({
+  activeEventKey,
+  isDesktop,
+  refProfileCode,
+  queryParams,
+  handleEventKeySelect,
+}) => (
+  <Nav className={!isDesktop && classes.mobileNav}>
+    {MAIN_HEADER_ITEMS.map((mainHeaderItem, i) => {
+      const eventKeyPathname = mainHeaderItem.link.replace(
+        REF_PROFILE_SLUG_NAME,
+        refProfileCode,
+      );
+
+      const isActive = eventKeyPathname === activeEventKey;
+
+      return (
+        <Nav.Link
+          as={Link}
+          to={{
+            pathname: eventKeyPathname,
+            search: queryParams ? queryParams : null,
+          }}
+          onSelect={handleEventKeySelect}
+          eventKey={eventKeyPathname}
+          className={classnames(
+            isDesktop ? classes.link : classes.mobileLink,
+            isActive && classes.isActive,
+          )}
+          key={mainHeaderItem.title}
+        >
+          {isDesktop ? (
+            <DesktopNavItem
+              icon={mainHeaderItem.icon}
+              isActive={isActive}
+              title={mainHeaderItem.title}
+            />
+          ) : (
+            <NavItemContent
+              icon={mainHeaderItem.icon}
+              title={mainHeaderItem.title}
+            />
+          )}
+        </Nav.Link>
+      );
+    })}
+  </Nav>
+);
+
 export const NoProfileFlowMainHeader: React.FC = () => {
   const {
-    activeEventKey,
-    publicKey,
+    isDesktop,
+    isMenuOpen,
+    navParams,
     refProfile,
-    handleEventKeySelect,
+    queryParamsToSet,
+    toggleMenuOpen,
   } = useContext();
-
-  const queryParams = publicKey
-    ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`
-    : null;
 
   return (
     <MainHeaderContainer
       hideSiteLink
       noBoxShadow
       refProfileInfo={refProfile}
-      queryParams={queryParams}
+      queryParams={queryParamsToSet}
     >
       <div className={classes.container}>
-        <Nav>
-          {MAIN_HEADER_ITEMS.map((mainHeaderItem, i) => {
-            const eventKeyPathname = mainHeaderItem.link.replace(
-              REF_PROFILE_SLUG_NAME,
-              refProfile?.code,
-            );
-
-            const isActive = eventKeyPathname === activeEventKey;
-
-            return (
-              <Nav.Link
-                as={Link}
-                to={{
-                  pathname: eventKeyPathname,
-                  search: queryParams ? queryParams : null,
-                }}
-                onSelect={handleEventKeySelect}
-                eventKey={eventKeyPathname}
-                className={classes.link}
-                key={mainHeaderItem.title}
-              >
-                <Button
-                  className={classnames(
-                    classes.button,
-                    isActive && classes.isActive,
-                  )}
-                  size="lg"
-                >
-                  <div className={classes.headerItemContainer}>
-                    {mainHeaderItem.icon && (
-                      <div className={classes.icon}>{mainHeaderItem.icon}</div>
-                    )}
-                    {mainHeaderItem.title}
-                  </div>
-                </Button>
-              </Nav.Link>
-            );
-          })}
-        </Nav>
+        {isDesktop ? (
+          <NavComponent {...navParams} />
+        ) : (
+          <SideMenu isMenuOpen={isMenuOpen} toggleMenuOpen={toggleMenuOpen}>
+            <NavComponent {...navParams} />
+          </SideMenu>
+        )}
       </div>
     </MainHeaderContainer>
   );

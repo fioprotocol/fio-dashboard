@@ -7,13 +7,13 @@
   justify-content: flex-end;
   width: 100%;
 
-
   .link {
     padding-right: 0;
 
     &:last-child {
       margin-left: 40px;
     }
+
     .button {
       display: flex;
       align-items: center;
@@ -47,6 +47,35 @@
         align-items: center;
         justify-content: center;
         gap: 7px;
+      }
+    }
+  }
+
+  .mobileNav {
+    flex-direction: column;
+  
+    .mobileLink {
+      font-size: 14px;
+      color: $light-indigo;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(0) scale(1, 1);
+      transition: transform 0.3s ease-in-out;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.04, 1.04);
+      }
+
+      &.isActive {
+        @include proxima-nova-bold;
+      }
+
+      .headerItemContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 5px;
       }
     }
   }

@@ -6,16 +6,27 @@ import { refProfileInfo } from '../../redux/refProfile/selectors';
 import { pathname as pathnameSelector } from '../../redux/navigation/selectors';
 
 import useQuery from '../../hooks/useQuery';
+import { useCheckIfDesktop } from '../../screenType';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { RefProfile } from '../../types';
 
-type UseContextProps = {
+export type NavItemParam = {
   activeEventKey: string;
-  publicKey?: string;
-  refProfile: RefProfile;
+  isDesktop: boolean;
+  refProfileCode: string;
+  queryParams: string;
   handleEventKeySelect: (activeKey: string) => void;
+};
+
+type UseContextProps = {
+  isDesktop: boolean;
+  isMenuOpen: boolean;
+  navParams: NavItemParam;
+  refProfile: RefProfile;
+  queryParamsToSet?: string;
+  toggleMenuOpen: (isMenuOpen: boolean) => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -24,6 +35,9 @@ export const useContext = (): UseContextProps => {
   const pathname = useSelector(pathnameSelector);
 
   const [activeEventKey, setActiveEventKey] = useState<string>(pathname);
+  const [isMenuOpen, toggleMenuOpen] = useState<boolean>(false);
+
+  const isDesktop = useCheckIfDesktop();
 
   const handleEventKeySelect = useCallback((eventKey: string) => {
     setActiveEventKey(eventKey);
@@ -34,10 +48,24 @@ export const useContext = (): UseContextProps => {
 
   const publicKey = publicKeyQueryParam || publicKeyCookie;
 
-  return {
+  const queryParamsToSet = publicKey
+    ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`
+    : null;
+
+  const navParams = {
     activeEventKey,
-    publicKey,
-    refProfile,
+    isDesktop,
+    refProfileCode: refProfile?.code,
+    queryParams: queryParamsToSet,
     handleEventKeySelect,
+  };
+
+  return {
+    isDesktop,
+    isMenuOpen,
+    navParams,
+    refProfile,
+    queryParamsToSet,
+    toggleMenuOpen,
   };
 };
