@@ -12,6 +12,7 @@ export const getUserOrdersList = (data: {
   publicKey?: string;
   limit: number;
   offset: number;
+  userId?: string;
 }): CommonPromiseAction => ({
   types: [
     GET_USER_ORDERS_LIST_REQUEST,

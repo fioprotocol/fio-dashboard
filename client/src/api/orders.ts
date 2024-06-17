@@ -17,8 +17,9 @@ export default class Orders extends Base {
     publicKey?: string;
     limit: number;
     offset: number;
+    userId?: string;
   }): Promise<UserOrdersListResponse> {
-    return this.apiClient.get('orders', { data });
+    return this.apiClient.get('orders', data);
   }
   update(
     id: number,

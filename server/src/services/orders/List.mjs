@@ -10,12 +10,13 @@ export default class OrdersList extends Base {
       limit: 'string',
       offset: 'string',
       publicKey: 'string',
+      userId: 'string',
     };
   }
 
-  async execute({ limit, offset, publicKey }) {
+  async execute({ limit, offset, publicKey, userId }) {
     const ordersList = await Order.list({
-      userId: this.context.id,
+      userId,
       offset,
       limit,
       isProcessed: true,
