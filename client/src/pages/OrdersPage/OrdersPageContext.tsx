@@ -21,13 +21,17 @@ import { getUserOrdersList } from '../../redux/orders/actions';
 import { APP_TITLE, LINK_TITLES } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import {
   totalOrdersCount as totalOrdersCountSelector,
   loading as loadingSelector,
   ordersList as ordersListSelector,
 } from '../../redux/orders/selectors';
-import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
+import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  refProfileCode as refProfileCodeSelector,
+} from '../../redux/refProfile/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { OrdersPageProps } from './types';
@@ -39,6 +43,7 @@ export const useContext = (): OrdersPageProps => {
   const ordersList = useSelector(ordersListSelector);
   const loading = useSelector(loadingSelector);
   const dispatch = useDispatch();
+  const refProfileCode = useSelector(refProfileCodeSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
   const userId = useSelector(userIdSelector);
 
@@ -47,6 +52,13 @@ export const useContext = (): OrdersPageProps => {
   const queryParams = useQuery();
 
   const publicKey = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+
+  const noProfileRedirectParams = {
+    pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+      REF_PROFILE_SLUG_NAME,
+      refProfileCode,
+    )}`,
+  };
 
   const isDesktop = useCheckIfDesktop();
   const hasMoreOrders = totalOrdersCount - ordersList.length > 0;
@@ -175,6 +187,8 @@ export const useContext = (): OrdersPageProps => {
     isDesktop,
     loading,
     ordersList,
+    noProfileRedirectParams,
+    publicKey,
     getMoreOrders,
     onDownloadClick,
     onPrintClick,

@@ -2,6 +2,7 @@ import React from 'react';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import { ManagePageCtaBadge } from '../../components/ManagePageContainer/ManagePageCtaBadge';
+import { NoProfileFlowContainer } from '../../components/NoProfileFlowContainer';
 
 import { OrdersList } from './components/OrdersList/OrdersList';
 import { useContext } from './OrdersPageContext';
@@ -17,7 +18,7 @@ const OrdersPage: React.FC = () => {
 
   const { isNoProfileFlow } = renderProps;
 
-  return (
+  const orderRender = (
     <div className={classes.container}>
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
@@ -36,6 +37,12 @@ const OrdersPage: React.FC = () => {
       )}
     </div>
   );
+
+  if (isNoProfileFlow) {
+    return <NoProfileFlowContainer>{orderRender}</NoProfileFlowContainer>;
+  }
+
+  return orderRender;
 };
 
 export default OrdersPage;

@@ -20,6 +20,8 @@ export type OrdersPageProps = {
   isNoProfileFlow: boolean;
   loading: boolean;
   ordersList: UserOrderDetails[];
+  noProfileRedirectParams: { pathname: string };
+  publicKey: string;
   getMoreOrders: () => void;
 } & ActionsProps;
 

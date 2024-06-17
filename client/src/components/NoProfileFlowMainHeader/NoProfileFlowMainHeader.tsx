@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Nav } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -39,15 +39,8 @@ export const NoProfileFlowMainHeader: React.FC = () => {
     activeEventKey,
     publicKey,
     refProfile,
-    setActiveEventKey,
+    handleEventKeySelect,
   } = useContext();
-
-  const handleSelect = useCallback(
-    eventKey => {
-      setActiveEventKey(eventKey);
-    },
-    [setActiveEventKey],
-  );
 
   const queryParams = publicKey
     ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`
@@ -63,19 +56,23 @@ export const NoProfileFlowMainHeader: React.FC = () => {
       <div className={classes.container}>
         <Nav>
           {MAIN_HEADER_ITEMS.map((mainHeaderItem, i) => {
-            const pathname = mainHeaderItem.link.replace(
+            const eventKeyPathname = mainHeaderItem.link.replace(
               REF_PROFILE_SLUG_NAME,
               refProfile?.code,
             );
-            const isActive = i.toString() === activeEventKey.toString();
+
+            const isActive = eventKeyPathname === activeEventKey;
 
             return (
               <Nav.Link
                 as={Link}
-                to={{ pathname, search: queryParams ? queryParams : null }}
-                onSelect={handleSelect}
-                eventKey={i}
-                className="pr-0"
+                to={{
+                  pathname: eventKeyPathname,
+                  search: queryParams ? queryParams : null,
+                }}
+                onSelect={handleEventKeySelect}
+                eventKey={eventKeyPathname}
+                className={classes.link}
                 key={mainHeaderItem.title}
               >
                 <Button
