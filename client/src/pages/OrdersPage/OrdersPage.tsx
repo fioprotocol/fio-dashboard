@@ -15,6 +15,8 @@ const OrdersPage: React.FC = () => {
 
   const renderProps = useContext();
 
+  const { isNoProfileFlow } = renderProps;
+
   return (
     <div className={classes.container}>
       <LayoutContainer title={title}>
@@ -26,10 +28,12 @@ const OrdersPage: React.FC = () => {
           <OrdersList {...renderProps} />
         </div>
       </LayoutContainer>
-      <div className={classes.actionBadgeContainer}>
-        <ManagePageCtaBadge name={CTA_BADGE_TYPE.ADDRESS} />
-        <ManagePageCtaBadge name={CTA_BADGE_TYPE.DOMAIN} />
-      </div>
+      {!isNoProfileFlow && (
+        <div className={classes.actionBadgeContainer}>
+          <ManagePageCtaBadge name={CTA_BADGE_TYPE.ADDRESS} />
+          <ManagePageCtaBadge name={CTA_BADGE_TYPE.DOMAIN} />
+        </div>
+      )}
     </div>
   );
 };
