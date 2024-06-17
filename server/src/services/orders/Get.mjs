@@ -22,7 +22,6 @@ export default class OrdersGet extends Base {
     const order = await Order.findOne({
       where: {
         id,
-        userId: this.context.id,
       },
       include: [
         {

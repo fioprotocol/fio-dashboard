@@ -189,11 +189,11 @@ router.get('/contacts', checkAuth, routes.contacts.list);
 
 router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
 
-router.get('/orders', checkAuth, routes.orders.list);
+router.get('/orders', routes.orders.list);
 router.get('/orders/active', routes.orders.getActive);
 router.post('/orders', routes.orders.create);
 router.post('/orders/update/:id', routes.orders.update);
-router.get('/orders/item/:id', checkAuth, routes.orders.get);
+router.get('/orders/item/:id', routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
@@ -202,7 +202,7 @@ router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 router.get('/selected-chain-codes', routes.chainCodes.selectedList);
 
-router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
+router.post('/generate-pdf', routes.generatePdf.create);
 
 router.post('/verify-twitter', routes.twitter.verify);
 router.get('/verify-abstract-email', routes.external.abstractEmailVerification);

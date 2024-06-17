@@ -49,7 +49,7 @@ const sendAnalytics = async orderId => {
   const isFailed = order && order.status === Order.STATUS.FAILED;
 
   if (isSuccess || isPartial || isFailed) {
-    const user = await User.findActive(order.user.id);
+    const user = await User.findActive(order.user && order.user.id);
 
     const { payment, regItems, total, data: orderData } = order;
     const { gaClientId, gaSessionId } = orderData || {};
@@ -85,7 +85,7 @@ const sendAnalytics = async orderId => {
       data,
       sessionId: gaSessionId,
     });
-    await sendSendinblueEvent({ event: anayticsEvent, user });
+    user && (await sendSendinblueEvent({ event: anayticsEvent, user }));
   }
 };
 

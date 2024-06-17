@@ -168,14 +168,19 @@ export class Order extends Base {
     return attributes.default;
   }
 
-  static async list(
+  static async list({
     userId,
     search,
     offset,
     limit = DEFAULT_ORDERS_LIMIT,
     isProcessed = false,
-  ) {
-    const where = { userId };
+    publicKey,
+  }) {
+    const where = {};
+
+    if (userId) {
+      where.userId = userId;
+    }
 
     if (search) {
       where.number = { [Sequelize.Op.iLike]: search };
@@ -184,6 +189,9 @@ export class Order extends Base {
       where.status = {
         [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],
       };
+    }
+    if (publicKey) {
+      where.publicKey = publicKey;
     }
 
     return this.findAll({
@@ -833,7 +841,7 @@ export class Order extends Base {
       paidWith = await getPaidWith({
         paymentProcessor: payment.processor,
         publicKey,
-        userId: user.id || null,
+        userId: user && user.id ? user.id : null,
         payment,
       });
     }

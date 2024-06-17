@@ -7,13 +7,20 @@ import { Order } from '../../models';
 export default class OrdersList extends Base {
   static get validationRules() {
     return {
-      offset: 'string',
       limit: 'string',
+      offset: 'string',
+      publicKey: 'string',
     };
   }
 
-  async execute({ offset, limit }) {
-    const ordersList = await Order.list(this.context.id, null, offset, limit, true);
+  async execute({ limit, offset, publicKey }) {
+    const ordersList = await Order.list({
+      userId: this.context.id,
+      offset,
+      limit,
+      isProcessed: true,
+      publicKey,
+    });
     const totalOrdersCount = await Order.ordersCount({
       col: 'userId',
       where: {

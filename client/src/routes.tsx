@@ -612,8 +612,8 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
-              <PrivateRoute
+              <Route path={ROUTES.ORDERS} component={OrdersPage} exact />
+              <Route
                 path={ROUTES.ORDER_DETAILS}
                 component={OrderDetailsPage}
                 exact
