@@ -28,6 +28,7 @@ import {
   ordersList as ordersListSelector,
 } from '../../redux/orders/selectors';
 import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { OrdersPageProps } from './types';
 
@@ -39,6 +40,7 @@ export const useContext = (): OrdersPageProps => {
   const loading = useSelector(loadingSelector);
   const dispatch = useDispatch();
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const userId = useSelector(userIdSelector);
 
   const [offset, setOffset] = useState<number>(0);
 
@@ -51,7 +53,12 @@ export const useContext = (): OrdersPageProps => {
 
   const getMoreOrders = () => {
     dispatch(
-      getUserOrdersList({ limit: ORDERS_ITEMS_LIMIT, offset, publicKey }),
+      getUserOrdersList({
+        limit: ORDERS_ITEMS_LIMIT,
+        offset,
+        publicKey,
+        userId,
+      }),
     );
     setOffset(offset + ORDERS_ITEMS_LIMIT);
   };
@@ -64,12 +71,21 @@ export const useContext = (): OrdersPageProps => {
       `${window.location.origin}${ROUTES.ORDER_INVOICE}`,
     );
 
-  useEffectOnce(() => {
-    dispatch(
-      getUserOrdersList({ limit: ORDERS_ITEMS_LIMIT, offset, publicKey }),
-    );
-    setOffset(offset + ORDERS_ITEMS_LIMIT);
-  }, [dispatch, offset]);
+  useEffectOnce(
+    () => {
+      dispatch(
+        getUserOrdersList({
+          limit: ORDERS_ITEMS_LIMIT,
+          offset,
+          publicKey,
+          userId,
+        }),
+      );
+      setOffset(offset + ORDERS_ITEMS_LIMIT);
+    },
+    [dispatch, offset],
+    !!userId || !!publicKey,
+  );
 
   const onDownloadClick = async (data: {
     orderId: string;
