@@ -31,7 +31,10 @@ export default class Orders extends Base {
   ): Promise<OrdersUpdateResponse> {
     return this.apiClient.post(`orders/update/${id}`, { data });
   }
-  getActive(data?: { publicKey?: string }): Promise<OrdersCreateResponse> {
+  getActive(data?: {
+    publicKey?: string;
+    userId?: string;
+  }): Promise<OrdersCreateResponse> {
     return this.apiClient.get(`orders/active`, { data });
   }
   get(id: string): Promise<OrderGetResponse> {

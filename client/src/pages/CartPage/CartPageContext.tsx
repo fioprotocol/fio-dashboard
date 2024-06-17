@@ -24,7 +24,10 @@ import {
   fioWallets as fioWalletsSelector,
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import {
+  isAuthenticated,
+  userId as userIdSelector,
+} from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -115,6 +118,7 @@ export const useContext = (): UseContextReturnType => {
   );
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -339,6 +343,7 @@ export const useContext = (): UseContextReturnType => {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
+        userId,
       };
 
       if (isNoProfileFlow) {

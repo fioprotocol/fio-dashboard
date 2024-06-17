@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -30,6 +30,7 @@ import {
 import {
   isAuthenticated as isAuthenticatedSelector,
   noProfileLoaded as noProfileLoadedSelector,
+  userId as userIdSelector,
 } from '../../redux/profile/selectors';
 import {
   prices as pricesSelector,
@@ -144,6 +145,7 @@ export const useContext = (): {
   const cartLoading = useSelector(cartLoadingSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
   const refProfileLoading = useSelector(refProfileLoadingSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
@@ -189,6 +191,19 @@ export const useContext = (): {
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
 
+  const getActiveOrderParams: {
+    publicKey?: string;
+    userId?: string;
+  } = useMemo(() => ({}), []);
+
+  if (publicKeyQueryParams) {
+    getActiveOrderParams.publicKey = publicKeyQueryParams;
+  }
+
+  if (userId) {
+    getActiveOrderParams.userId = userId;
+  }
+
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
       dispatchSetWallet(paymentWalletPublicKey);
@@ -200,14 +215,6 @@ export const useContext = (): {
     let result;
 
     try {
-      const getActiveOrderParams: {
-        publicKey?: string;
-      } = {};
-
-      if (publicKeyQueryParams) {
-        getActiveOrderParams.publicKey = publicKeyQueryParams;
-      }
-
       result = await apis.orders.getActive(getActiveOrderParams);
     } catch (e) {
       setOrderError(e);
@@ -229,7 +236,7 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  }, [cartItems, publicKeyQueryParams, setWallet]);
+  }, [cartItems, getActiveOrderParams, setWallet]);
 
   // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
   useEffect(() => {
@@ -265,9 +272,18 @@ export const useContext = (): {
           gaSessionId: getGASessionId(),
         },
       })
-      .then(() => apis.orders.getActive())
+      .then(() => apis.orders.getActive(getActiveOrderParams))
       .then(setOrder);
-  }, [paymentWalletPublicKey]);
+  }, [
+    cartId,
+    fioWallets,
+    getActiveOrderParams,
+    order,
+    paymentProvider,
+    paymentWalletPublicKey,
+    prices?.nativeFio,
+    roe,
+  ]);
 
   const createOrder = useCallback(
     async ({
@@ -295,6 +311,7 @@ export const useContext = (): {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
           },
+          userId,
         };
       }
 
@@ -373,7 +390,16 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [cartId, cartItems, dispatch, history, prices?.nativeFio, roe, setWallet],
+    [
+      cartId,
+      cartItems,
+      dispatch,
+      history,
+      prices?.nativeFio,
+      roe,
+      setWallet,
+      userId,
+    ],
   );
 
   const cancelOrder = useCallback(() => {
