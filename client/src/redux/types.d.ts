@@ -34,6 +34,7 @@ export type CreateOrderActionData = {
     orderUserType?: string;
   };
   refProfileId?: string;
+  userId?: string;
 };
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };

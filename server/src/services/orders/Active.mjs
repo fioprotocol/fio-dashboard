@@ -14,15 +14,14 @@ export default class OrdersActive extends Base {
         {
           nested_object: {
             publicKey: 'string',
+            userId: 'string',
           },
         },
       ],
     };
   }
 
-  async execute({ publicKey }) {
-    const userId = this.context.id;
-
+  async execute({ publicKey, userId }) {
     const where = {
       status: Order.STATUS.NEW,
       createdAt: {

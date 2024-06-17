@@ -72,16 +72,13 @@ export default class OrdersUpdate extends Base {
   }
 
   async execute({ id, data }) {
-    const userId = this.context.id;
     const publicKey = data && data.publicKey;
 
     const where = {
       id,
     };
 
-    if (userId) {
-      where.userId = userId;
-    } else if (publicKey) {
+    if (publicKey) {
       where.publicKey = publicKey;
     }
 

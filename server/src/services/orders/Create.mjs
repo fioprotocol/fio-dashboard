@@ -36,6 +36,7 @@ export default class OrdersCreate extends Base {
             publicKey: 'string',
             paymentProcessor: 'string',
             refProfileId: 'string',
+            userId: 'string',
             prices: [
               {
                 nested_object: {
@@ -60,10 +61,17 @@ export default class OrdersCreate extends Base {
   }
 
   async execute({
-    data: { cartId, roe, publicKey, paymentProcessor, prices, refProfileId, data },
+    data: {
+      cartId,
+      roe,
+      publicKey,
+      paymentProcessor,
+      prices,
+      refProfileId,
+      data,
+      userId,
+    },
   }) {
-    const userId = this.context.id;
-
     let order = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
