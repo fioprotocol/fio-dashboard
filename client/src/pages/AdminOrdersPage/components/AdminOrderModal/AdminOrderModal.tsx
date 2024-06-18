@@ -140,6 +140,7 @@ const AdminOrderModal: React.FC<Props> = ({
               <div>
                 {!orderItem.user?.email && !orderItem.user?.id ? (
                   orderUserType ? (
+                    orderItem?.publicKey ||
                     ORDER_USER_TYPES_TITLE[orderUserType]
                   ) : (
                     'No user data'

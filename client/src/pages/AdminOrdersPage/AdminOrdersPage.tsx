@@ -44,6 +44,7 @@ import {
   DateRangeConditions,
   dateRangeConditions,
 } from '../../util/date';
+import { truncateTextInMiddle } from '../../util/general';
 
 type Props = {
   loading: boolean;
@@ -317,6 +318,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                       !order?.userId &&
                       !order?.userEmail ? (
                         order?.orderUserType && order?.orderUserType ? (
+                          truncateTextInMiddle(order?.publicKey, 12, 12) ||
                           ORDER_USER_TYPES_TITLE[order.orderUserType]
                         ) : (
                           'No user data'
