@@ -26,6 +26,7 @@ import {
 } from '../../redux/fio/selectors';
 import {
   isAuthenticated,
+  isAffiliateEnabled as isAffiliateEnabledSelector,
   userId as userIdSelector,
 } from '../../redux/profile/selectors';
 import {
@@ -58,6 +59,7 @@ import {
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
 import { ORDER_USER_TYPES } from '../../constants/order';
+import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
 import { isDomainExpired } from '../../util/fio';
@@ -78,9 +80,11 @@ import { CreateOrderActionData } from '../../redux/types';
 type UseContextReturnType = {
   cartId: string;
   cartItems: CartItem[];
+  formsOfPayment: { [key: string]: boolean };
   hasGetPricesError: boolean;
   error?: string | null;
   hasLowBalance?: boolean;
+  isAffiliateEnabled: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
   loadingCart: boolean;
@@ -119,6 +123,7 @@ export const useContext = (): UseContextReturnType => {
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
   const userId = useSelector(userIdSelector);
+  const isAffiliateEnabled = useSelector(isAffiliateEnabledSelector);
 
   const dispatch = useDispatch();
 
@@ -139,6 +144,23 @@ export const useContext = (): UseContextReturnType => {
     showExpiredDomainWarningBadge,
     toggleShowExpiredDomainWarningBadge,
   ] = useState<boolean>(false);
+  const [formsOfPayment, setFormsOfPayment] = useState<{
+    [key: string]: boolean;
+  }>(null);
+
+  const getFormOfPaymentsVars = useCallback(async () => {
+    const formOfPaymentVars = await apis.vars.getVar(
+      VARS_KEYS.FORMS_OF_PAYMENT,
+    );
+
+    const parsedFormOfPayments = JSON.parse(formOfPaymentVars.value);
+
+    setFormsOfPayment(parsedFormOfPayments);
+  }, []);
+
+  useEffectOnce(() => {
+    getFormOfPaymentsVars();
+  }, []);
 
   const isFree =
     cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree);
@@ -471,6 +493,7 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalance,
     loadingCart,
     walletCount,
+    isAffiliateEnabled,
     isFree,
     isPriceChanged,
     selectedPaymentProvider,
@@ -484,6 +507,7 @@ export const useContext = (): UseContextReturnType => {
     roe,
     error,
     showExpiredDomainWarningBadge,
+    formsOfPayment,
     onPaymentChoose,
   };
 };

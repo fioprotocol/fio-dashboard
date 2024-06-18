@@ -14,6 +14,7 @@ import MathOp from '../../../util/math';
 import { CartItem, FioWalletDoublet, PaymentProvider } from '../../../types';
 
 type Props = {
+  isAffiliateEnabled?: boolean;
   isFree?: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
   hasLowBalance?: boolean;
@@ -26,10 +27,12 @@ type Props = {
   showExpiredDomainWarningBadge: boolean;
   disabled?: boolean;
   loading: boolean;
+  formsOfPayment: { [key: string]: boolean };
 };
 
 const PaymentsBlock: React.FC<Props> = props => {
   const {
+    isAffiliateEnabled,
     isFree,
     hasLowBalance,
     cartItems,
@@ -41,6 +44,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     disabled,
     showExpiredDomainWarningBadge,
     loading,
+    formsOfPayment,
     onPaymentChoose,
   } = props;
 
@@ -58,11 +62,13 @@ const PaymentsBlock: React.FC<Props> = props => {
   };
 
   const otherPaymentsProps = {
+    isAffiliateEnabled,
     paymentOptionsList: [PAYMENT_OPTIONS.CREDIT_CARD, PAYMENT_OPTIONS.CRYPTO],
     cartItems,
     selectedPaymentProvider,
     totlaCartUsdcAmount,
     disabled,
+    formsOfPayment,
     onPaymentChoose,
   };
 
@@ -84,13 +90,41 @@ const PaymentsBlock: React.FC<Props> = props => {
     priceIsLowerThanHalfADollar &&
     !isFree &&
     !loading &&
+    cartItems.length &&
+    formsOfPayment &&
+    (formsOfPayment.stripe || formsOfPayment.bitpay)
+  ) {
+    return (
+      <NotificationBadge
+        message={`Your cart needs to be at least ${((!isAffiliateEnabled &&
+          formsOfPayment.stripe) ||
+          (isAffiliateEnabled && formsOfPayment.stripeAffiliate)) &&
+          '$0.50 to pay with credit card,'} ${formsOfPayment.bitpay &&
+          '$1.00 to pay with crypto,'} or you need to deposit FIO Tokens.`}
+        show
+        title="Minimum cart total not met"
+        type={BADGE_TYPES.ERROR}
+      />
+    );
+  }
+
+  if (
+    hasLowBalance &&
+    formsOfPayment &&
+    (!formsOfPayment.stripe ||
+      (formsOfPayment.stripe &&
+        isAffiliateEnabled &&
+        !formsOfPayment.stripeAffiliate)) &&
+    !formsOfPayment.bitpay &&
+    !isFree &&
+    !loading &&
     cartItems.length
   ) {
     return (
       <NotificationBadge
-        message="Your cart needs to be at least $0.50 to pay with credit card, $1.00 to pay with crypto, or you need to deposit FIO Tokens."
+        message="FIO Tokens low balance. You need to deposit FIO Tokens."
         show
-        title="Minimum cart total not met"
+        title="Not enough funds."
         type={BADGE_TYPES.ERROR}
       />
     );
@@ -102,7 +136,15 @@ const PaymentsBlock: React.FC<Props> = props => {
       <OtherPaymentsBlock
         defaultShowState={hasLowBalance}
         optionsDisabled={
-          cartItems.length === 0 || isFree || priceIsLowerThanHalfADollar
+          cartItems.length === 0 ||
+          isFree ||
+          priceIsLowerThanHalfADollar ||
+          (formsOfPayment &&
+            (!formsOfPayment.stripe ||
+              (formsOfPayment.stripe &&
+                isAffiliateEnabled &&
+                !formsOfPayment.stripeAffiliate)) &&
+            !formsOfPayment.bitpay)
         }
         {...otherPaymentsProps}
       />
