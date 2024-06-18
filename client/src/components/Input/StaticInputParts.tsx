@@ -16,6 +16,7 @@ type PrefixLabelProps = {
   isVisible?: boolean;
   uiType?: string;
   label: string;
+  hasRoundRadius?: boolean;
 };
 
 export const LoadingIcon: React.FC<LoadingIconProps> = ({
@@ -100,7 +101,8 @@ export const Prefix: React.FC<{
   hasError?: boolean;
   uiType?: string;
   highZIndex?: boolean;
-}> = ({ prefix, hasError, uiType, highZIndex }) => {
+  hasRoundRadius?: boolean;
+}> = ({ prefix, hasError, uiType, highZIndex, hasRoundRadius }) => {
   if (!prefix?.length) return null;
 
   return (
@@ -110,6 +112,7 @@ export const Prefix: React.FC<{
         hasError && classes.error,
         uiType && classes[uiType],
         highZIndex && classes.highZIndex,
+        hasRoundRadius && classes.hasRoundRadius,
       )}
     >
       {prefix}

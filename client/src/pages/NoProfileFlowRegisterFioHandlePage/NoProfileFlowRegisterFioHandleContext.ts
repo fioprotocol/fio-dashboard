@@ -7,7 +7,7 @@ import { Props as ComponentProps } from './NoProfileFlowRegisterFioHandle';
 import { addItem as addItemToCart, setWallet } from '../../redux/cart/actions';
 
 import apis from '../../api';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
@@ -27,6 +27,9 @@ import {
 } from '../../redux/cart/selectors';
 
 import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
+import { DomainItemType } from '../../types';
+
+import classes from './NoProfileFlowRegisterFioHandle.module.scss';
 
 type UseContextProps = {
   addressWidgetContent: AddressWidgetProps;
@@ -56,12 +59,23 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   >(null);
   const [isVerifying, toggleIsVerifying] = useState<boolean>(false);
   const [isFioItemVerified, toggleIsFioItemVerified] = useState<boolean>(false);
+  const [showCustomDomainInput, toggleShowCustomDomain] = useState(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const refDomainObj = refProfile?.settings?.domains[0];
+  const domainsList = refProfile?.settings?.domains;
+
+  const refDomainObj = domainsList && domainsList[0];
   const domainName = refDomainObj?.name;
+
+  const options =
+    domainsList?.length > 1
+      ? domainsList.map(domainItem => ({
+          id: domainItem.name,
+          name: `${FIO_ADDRESS_DELIMITER}${domainItem.name}`,
+        }))
+      : null;
 
   const cartHasFreeItem = cartItems.some(
     cartItem =>
@@ -109,15 +123,23 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   }, []);
 
   const nonVerifiedSubmit = useCallback(
-    async ({ address: addressValue }: { address: string }) => {
+    async ({
+      address: addressValue,
+      domain: domainValue,
+    }: {
+      address: string;
+      domain?: string;
+    }) => {
       if (!addressValue) return;
 
+      const domain = domainValue || domainName;
+
       try {
-        if (!domainName) return;
+        if (!domain) return;
 
         toggleIsVerifying(true);
 
-        const fioHandle = setFioName(addressValue, domainName);
+        const fioHandle = setFioName(addressValue, domain);
 
         try {
           apis.fio.isFioAddressValid(fioHandle);
@@ -135,7 +157,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           setInfoMessage(
             `This FIO Handle - ${setFioName(
               addressValue,
-              domainName,
+              domain,
             )} is not available.`,
           );
           toggleIsFioItemVerified(false);
@@ -146,10 +168,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         toggleIsFioItemVerified(true);
         toggleIsVerifying(false);
         setInfoMessage(
-          `This FIO Handle - ${setFioName(
-            addressValue,
-            domainName,
-          )} is available.`,
+          `This FIO Handle - ${setFioName(addressValue, domain)} is available.`,
         );
       } catch (error) {
         log.error(error);
@@ -159,26 +178,50 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   );
 
   const verifiedSubmit = useCallback(
-    async ({ address: addressValue }: { address: string }) => {
+    async ({
+      address: addressValue,
+      domain: domainValue,
+    }: {
+      address: string;
+      domain?: string;
+    }) => {
       if (!addressValue) return;
+
       try {
         const { name: refDomain, isPremium } = refDomainObj || {};
 
-        const { fio, usdc } = convertFioPrices(prices.nativeFio.address, roe);
+        let domain = refDomain,
+          domainType: DomainItemType = isPremium
+            ? DOMAIN_TYPE.PREMIUM
+            : DOMAIN_TYPE.ALLOW_FREE,
+          type = CART_ITEM_TYPE.ADDRESS,
+          nativeFioItemPrice = prices.nativeFio.address;
 
-        const fch = setFioName(addressValue, refDomain);
+        if (domainValue) {
+          domain = domainValue;
+          domainType = DOMAIN_TYPE.CUSTOM;
+          type = CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+          nativeFioItemPrice = prices.nativeFio.combo;
+        }
+
+        const { fio, usdc } = convertFioPrices(nativeFioItemPrice, roe);
+
+        const fch = setFioName(addressValue, domain);
         const cartItem = {
           id: fch,
           address: addressValue,
-          domain: refDomain,
+          domain,
           costFio: fio,
           costUsdc: usdc,
-          costNativeFio: prices.nativeFio.address,
-          domainType: isPremium ? DOMAIN_TYPE.PREMIUM : DOMAIN_TYPE.ALLOW_FREE,
+          costNativeFio: nativeFioItemPrice,
+          domainType,
           isFree:
-            !isPremium && !cartHasFreeItem && !existingPublicKeyFreeAddress,
+            !domainValue &&
+            !isPremium &&
+            !cartHasFreeItem &&
+            !existingPublicKeyFreeAddress,
           period: 1,
-          type: CART_ITEM_TYPE.ADDRESS,
+          type,
         };
 
         dispatch(
@@ -212,18 +255,39 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   );
 
   const addressWidgetContent = {
+    buttonText:
+      domainsList?.length > 1 && isFioItemVerified ? 'REGISTER' : 'GET IT',
     disabled: isVerifying,
     disabledInput: isVerifying,
+    isBlueButton: domainsList?.length > 1 && isFioItemVerified,
+    isValidating: isVerifying,
+    options,
     formatOnFocusOut: true,
     logoSrc: refProfile?.settings?.img,
     placeHolderText: 'Enter your handle',
+    prefix: FIO_ADDRESS_DELIMITER,
+    showCustomDomainInput,
     subtitle:
       'Create a single, secure, customizable handle for your crypto wallet.',
     suffixText: domainName ? `@${domainName}` : '',
     title: 'Register FIO Handle',
+    dropdownClassNames: classes.dropdown,
+    controlClassNames: classes.control,
+    placeholderClassNames: classes.placeholder,
+    menuClassNames: classes.menu,
+    arrowCloseClassNames: classes.arrowClose,
+    arrowOpenClassNames: classes.arrowOpen,
+    optionItemClassNames: classes.optionItem,
+    optionButtonClassNames: classes.optionButton,
+    classNameContainer: classes.widgetContainer,
+    inputClassNames: classes.input,
+    inputCustomDomainClassNames: classes.customDomainInput,
+    regInputCustomDomainClassNames: classes.customDomainRegInput,
+    defaultValue: options && options[0],
     convert: onFocusOut,
     customHandleSubmit: isFioItemVerified ? verifiedSubmit : nonVerifiedSubmit,
     onInputChanged: onInputChanged,
+    toggleShowCustomDomain,
   };
 
   const verificationParams = {

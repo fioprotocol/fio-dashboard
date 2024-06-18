@@ -179,6 +179,17 @@
     }
   }
 
+  &.isBlue {
+    border: $violet;
+    background-color: $violet;
+    color: $white;
+
+    &:hover {
+      border: $clear-blue;
+      background-color: $clear-blue;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
   }

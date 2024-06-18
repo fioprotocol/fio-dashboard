@@ -23,6 +23,17 @@ export type AddressWidgetProps = {
   classNameLogoContainer?: string;
   classNameSubtitleTitle?: string;
   classNameTitle?: string;
+  dropdownClassNames?: string;
+  controlClassNames?: string;
+  placeholderClassNames?: string;
+  menuClassNames?: string;
+  arrowCloseClassNames?: string;
+  arrowOpenClassNames?: string;
+  optionItemClassNames?: string;
+  optionButtonClassNames?: string;
+  inputCustomDomainClassNames?: string;
+  regInputCustomDomainClassNames?: string;
+  defaultValue?: { id: string; name: string };
   links?: {
     getCryptoHandle: ReactNode;
   };
@@ -36,8 +47,12 @@ export type AddressWidgetProps = {
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
   isTransparent?: boolean;
+  isValidating?: boolean;
   isDarkWhite?: boolean;
   lowerCased?: boolean;
+  options?: Array<{ id: string; name: string }>;
+  prefix?: string;
+  showCustomDomainInput?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
@@ -53,6 +68,10 @@ export type AddressWidgetProps = {
   buttonText?: string;
   stepNumber?: string;
   stepText?: string;
+  hasRoundRadius?: boolean;
+  inputClassNames?: string;
+  isBlueButton?: boolean;
+  toggleShowCustomDomain?: (isCustomDomain: boolean) => void;
 };
 
 const AddressWidget: React.FC<AddressWidgetProps> = props => {
@@ -92,6 +111,24 @@ const AddressWidget: React.FC<AddressWidgetProps> = props => {
     buttonText,
     stepNumber,
     stepText,
+    options,
+    dropdownClassNames,
+    controlClassNames,
+    placeholderClassNames,
+    menuClassNames,
+    arrowCloseClassNames,
+    arrowOpenClassNames,
+    optionItemClassNames,
+    optionButtonClassNames,
+    showCustomDomainInput,
+    defaultValue,
+    hasRoundRadius,
+    inputClassNames,
+    inputCustomDomainClassNames,
+    regInputCustomDomainClassNames,
+    isBlueButton,
+    prefix,
+    toggleShowCustomDomain,
   } = props;
 
   return (
@@ -144,6 +181,24 @@ const AddressWidget: React.FC<AddressWidgetProps> = props => {
         placeHolderText={placeHolderText}
         onInputChanged={onInputChanged}
         buttonText={buttonText}
+        isBlueButton={isBlueButton}
+        options={options}
+        showCustomDomainInput={showCustomDomainInput}
+        dropdownClassNames={dropdownClassNames}
+        controlClassNames={controlClassNames}
+        placeholderClassNames={placeholderClassNames}
+        menuClassNames={menuClassNames}
+        arrowCloseClassNames={arrowCloseClassNames}
+        arrowOpenClassNames={arrowOpenClassNames}
+        optionItemClassNames={optionItemClassNames}
+        optionButtonClassNames={optionButtonClassNames}
+        defaultValue={defaultValue}
+        hasRoundRadius={hasRoundRadius}
+        inputClassNames={inputClassNames}
+        inputCustomDomainClassNames={inputCustomDomainClassNames}
+        regInputCustomDomainClassNames={regInputCustomDomainClassNames}
+        prefix={prefix}
+        toggleShowCustomDomain={toggleShowCustomDomain}
       />
 
       {children}

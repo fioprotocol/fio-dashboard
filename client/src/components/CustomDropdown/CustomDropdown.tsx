@@ -40,6 +40,16 @@ type Props = {
   hasLightBorder?: boolean;
   hasBigBorderRadius?: boolean;
   disabled?: boolean;
+  dropdownClassNames?: string;
+  controlClassNames?: string;
+  placeholderClassNames?: string;
+  menuClassNames?: string;
+  arrowCloseClassNames?: string;
+  arrowOpenClassNames?: string;
+  optionItemClassNames?: string;
+  optionButtonClassNames?: string;
+  defaultOptionValue?: { id: string; name: string };
+  actionOnChange?: () => void;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -71,19 +81,29 @@ const CustomDropdown: React.FC<Props> = props => {
     hasLightBorder,
     hasBigBorderRadius,
     disabled,
+    dropdownClassNames,
+    controlClassNames,
+    placeholderClassNames,
+    menuClassNames,
+    arrowCloseClassNames,
+    arrowOpenClassNames,
+    optionItemClassNames,
+    optionButtonClassNames,
+    defaultOptionValue,
+    actionOnChange,
   } = props;
 
   const styledOptions = options.map(option => ({
     value: option.id,
     label: option.name,
-    className: classes.optionItem,
+    className: classnames(classes.optionItem, optionItemClassNames),
   }));
 
   if (customValue) {
     styledOptions.push({
       value: customValue.id,
       label: customValue.name,
-      className: classes.optionButton,
+      className: classnames(classes.optionButton, optionButtonClassNames),
     });
   }
 
@@ -94,12 +114,13 @@ const CustomDropdown: React.FC<Props> = props => {
       return toggleToCustom && toggleToCustom(true);
     }
     onChange(itemValue);
+    actionOnChange && actionOnChange();
   };
 
   return (
     <Dropdown
       options={styledOptions}
-      value={value}
+      value={defaultOptionValue?.name || value}
       onChange={onDropdownChange}
       placeholder={placeholder}
       disabled={disabled}
@@ -112,6 +133,7 @@ const CustomDropdown: React.FC<Props> = props => {
         fitContentWidth && classes.fitContentWidth,
         withoutMarginBottom && classes.withoutMarginBottom,
         noMinWidth && classes.noMinWidth,
+        dropdownClassNames,
       )}
       controlClassName={classnames(
         classes.control,
@@ -124,21 +146,25 @@ const CustomDropdown: React.FC<Props> = props => {
         hasError && classes.hasError,
         hasLightBorder && classes.hasLightBorder,
         hasBigBorderRadius && classes.hasBigBorderRadius,
+        controlClassNames,
       )}
       placeholderClassName={classnames(
         classes.placeholder,
         isWhitePlaceholder && classes.isWhitePlaceholder,
         isBlackPlaceholder && classes.isBlackPlaceholder,
+        placeholderClassNames,
       )}
       menuClassName={classnames(
         classes.menu,
         hasRelativePosition && classes.hasRelativePosition,
+        menuClassNames,
       )}
       arrowClosed={
         <ExpandMoreIcon
           className={classnames(
             classes.icon,
             isWhiteIcon && classes.isWhiteIcon,
+            arrowCloseClassNames,
           )}
         />
       }
@@ -147,6 +173,7 @@ const CustomDropdown: React.FC<Props> = props => {
           className={classnames(
             classes.icon,
             isWhiteIcon && classes.isWhiteIcon,
+            arrowOpenClassNames,
           )}
         />
       }

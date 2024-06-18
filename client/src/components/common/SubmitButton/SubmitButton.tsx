@@ -30,6 +30,7 @@ type Props = {
   isRed?: boolean;
   isTransparent?: boolean;
   isWhite?: boolean;
+  isBlue?: boolean;
   isWhiteBordered?: boolean;
   isWhiteViolet?: boolean;
   loading?: boolean;
@@ -58,6 +59,7 @@ export const SubmitButton: React.FC<Props> = props => {
     hasWhiteHoverBackground,
     isBlack,
     isButtonType,
+    isBlue,
     isCobalt,
     isGreen,
     isGreenTeal,
@@ -109,6 +111,7 @@ export const SubmitButton: React.FC<Props> = props => {
         isWhiteBordered && classes.isWhiteBordered,
         isWhiteViolet && classes.isWhiteViolet,
         isGrey && classes.isGrey,
+        isBlue && classes.isBlue,
         disabled && classes.disabled,
         loading && classes.loading,
         withBottomMargin && classes.bottomMargin,
