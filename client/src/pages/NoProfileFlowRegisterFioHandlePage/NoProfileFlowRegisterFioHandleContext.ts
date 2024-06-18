@@ -280,7 +280,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     optionItemClassNames: classes.optionItem,
     optionButtonClassNames: classes.optionButton,
     classNameContainer: classes.widgetContainer,
-    inputClassNames: classes.input,
     inputCustomDomainClassNames: classes.customDomainInput,
     regInputCustomDomainClassNames: classes.customDomainRegInput,
     defaultValue: options && options[0],

@@ -1,4 +1,5 @@
 @import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .title {
   @include inter-bold;
@@ -12,4 +13,12 @@
 
 .actionText {
   font-family: 'Inter Italic' !important;
+}
+
+.input {
+  min-width: 295px;
+
+  @include sm {
+    min-width: unset;
+  }
 }

@@ -25,6 +25,7 @@ export const NoProfileAddressWidget: React.FC<Props> = props => {
   return (
     <AddressWidget
       {...addressWidgetContent}
+      inputClassNames={classes.input}
       hasRoundRadius
       classNameActionText={classes.actionText}
       title={<div className={classes.title}>{addressWidgetContent?.title}</div>}
