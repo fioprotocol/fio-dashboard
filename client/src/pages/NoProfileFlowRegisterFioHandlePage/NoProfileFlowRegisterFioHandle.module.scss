@@ -2,6 +2,7 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .dropdown {
+  min-width: unset;
   @include lg {
     min-width: 180px;
   }
@@ -69,10 +70,6 @@
 
 .widgetContainer {
   overflow: visible;
-}
-
-.input {
-  min-width: 295px;
 }
 
 .customDomainInput {

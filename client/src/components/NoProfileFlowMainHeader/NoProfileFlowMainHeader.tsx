@@ -64,7 +64,7 @@ const NavComponent: React.FC<NavItemParam> = ({
   queryParams,
   handleEventKeySelect,
 }) => (
-  <Nav className={!isDesktop && classes.mobileNav}>
+  <Nav className={isDesktop ? classes.nav : classes.mobileNav}>
     {MAIN_HEADER_ITEMS.map((mainHeaderItem, i) => {
       const eventKeyPathname = mainHeaderItem.link.replace(
         REF_PROFILE_SLUG_NAME,
