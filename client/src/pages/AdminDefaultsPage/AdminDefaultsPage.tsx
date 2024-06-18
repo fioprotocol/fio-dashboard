@@ -10,6 +10,7 @@ import SearchPrefixes from './components/SearchPrefixes';
 import SearchPostfixes from './components/SearchPostfixes';
 import MaintenanceSwitch from './components/MaintenanceSwitch';
 import OutboundSwitch from './components/OutboundSwitch';
+import { FormsOfPayment } from './components/FormsOfPayment';
 
 import api from '../../api';
 
@@ -72,6 +73,7 @@ const AdminDefaultsPage: React.FC = () => {
           <>
             <MaintenanceSwitch />
             <OutboundSwitch />
+            <FormsOfPayment />
             <AvailableDomains form={form} />
             <DashboardDomains form={form} />
             <UsernamesOnCustomDomains form={form} />

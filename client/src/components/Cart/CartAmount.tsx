@@ -12,6 +12,8 @@ import classes from './Cart.module.scss';
 
 type Props = {
   cartItems: CartItem[];
+  formsOfPayment: { [key: string]: boolean };
+  isAffiliateEnabled: boolean;
   isFree: boolean;
   loading: boolean;
   paymentWalletPublicKey: string;
@@ -30,7 +32,9 @@ type Props = {
 const CartAmount: React.FC<Props> = props => {
   const {
     cartItems,
+    formsOfPayment,
     hasLowBalance,
+    isAffiliateEnabled,
     isFree,
     loading,
     paymentWalletPublicKey,
@@ -67,6 +71,7 @@ const CartAmount: React.FC<Props> = props => {
       </div>
       <div className={classes.paymentsBlock}>
         <PaymentsBlock
+          isAffiliateEnabled={isAffiliateEnabled}
           isFree={isFree}
           hasLowBalance={hasLowBalance}
           cartItems={cartItems}
@@ -79,6 +84,7 @@ const CartAmount: React.FC<Props> = props => {
           disabled={!!error || disabled}
           showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
           loading={loading}
+          formsOfPayment={formsOfPayment}
         />
       </div>
     </CartSmallContainer>
