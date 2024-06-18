@@ -55,6 +55,7 @@ export default class AddItem extends Base {
             addBundles: ['string'],
             address: ['string'],
             domain: ['string'],
+            combo: ['string'],
             renewDomain: ['string'],
           },
         },
