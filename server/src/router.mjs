@@ -147,6 +147,19 @@ router.post(
 );
 router.post('/account/add-missing-wallet', routes.account.addMissingWallet);
 
+router.post('/public-api/buy-address', routes.publicApi.buyAddress);
+router.post('/public-api/renew', routes.publicApi.renew);
+router.post('/public-api/summary', routes.publicApi.summary);
+
+router.use(
+  '/public-api',
+  createProxyMiddleware({
+    pathRewrite: {
+      [`^/api/v1/public-api`]: '',
+    },
+  }),
+);
+
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 
 router.post('/fio-api/chain/get_table_rows', async (req, res) => {

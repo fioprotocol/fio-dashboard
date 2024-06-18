@@ -458,6 +458,27 @@ class Fio {
       this.logError(e);
     }
   }
+
+  async getFioAddress(addressName) {
+    try {
+      const tableRowsParams = this.setTableRowsParams(addressName);
+
+      const { rows } = await this.getTableRows(tableRowsParams);
+
+      return rows.length ? rows[0] : null;
+    } catch (e) {
+      this.logError(e);
+    }
+  }
+
+  async isAccountCouldBeRenewed(address) {
+    const isDomain = address.indexOf("@") !== -1;
+    const [,fioDomain] = address.split('@');
+    const data = isDomain
+      ? await this.getFioDomain(fioDomain)
+      : await this.getFioAddress(address);
+    return !!data;
+  }
 }
 
 export const fioApi = new Fio();
