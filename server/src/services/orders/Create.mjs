@@ -43,6 +43,7 @@ export default class OrdersCreate extends Base {
                   addBundles: ['string'],
                   address: ['string'],
                   domain: ['string'],
+                  combo: ['string'],
                   renewDomain: ['string'],
                 },
               },
