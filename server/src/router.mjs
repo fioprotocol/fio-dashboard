@@ -154,6 +154,7 @@ router.post('/public-api/summary', routes.publicApi.summary);
 router.use(
   '/public-api',
   createProxyMiddleware({
+    target: process.env.FIO_BASE_URL,
     pathRewrite: {
       [`^/api/v1/public-api`]: '',
     },
@@ -178,7 +179,7 @@ router.post('/fio-api/chain/get_table_rows', async (req, res) => {
 router.use(
   '/fio-api/chain/:url',
   createProxyMiddleware({
-    target: process.env.FIO_BASE_URL,
+    target: process.env.API_BASE_URL,
     changeOrigin: true,
     pathRewrite: {
       [`^/api/v1/fio-api`]: '',
