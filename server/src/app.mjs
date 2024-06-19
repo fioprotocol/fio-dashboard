@@ -1,7 +1,7 @@
 import express from 'express';
 
 import middlewares from './middlewares';
-import router from './router';
+import { router, publicApiRouter } from './router';
 
 const app = express();
 
@@ -11,5 +11,6 @@ app.use(middlewares.cors);
 app.use(middlewares.multipart);
 app.use(middlewares.cookieParser);
 app.use('/api/v1', router);
+app.use('/public-api', publicApiRouter);
 
 export default app;
