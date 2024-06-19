@@ -36,6 +36,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     balance,
     fioWallet,
     proxyList,
+    proxyLoading,
   } = props;
 
   const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
@@ -260,6 +261,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               isSimple={true}
               isHigh={true}
               isWhite={true}
+              loading={proxyLoading}
             />
 
             <p className={classes.transactionTitle}>Transaction Details</p>

@@ -742,8 +742,10 @@ export default class Fio {
 
         rows = [...rows, ...rowsResponse.rows];
 
+        const updatedLimit = rowsResponse.rows?.length || limit;
+
         if (rowsResponse.more) {
-          await getAllRows({ offset: offset + limit });
+          await getAllRows({ offset: offset + updatedLimit });
         }
       };
 
