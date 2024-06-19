@@ -6,6 +6,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import 'react-dropdown/style.css';
 import classes from './CustomDropdown.module.scss';
+import Loader from '../Loader/Loader';
 
 type Option = {
   id: string;
@@ -49,6 +50,7 @@ type Props = {
   optionItemClassNames?: string;
   optionButtonClassNames?: string;
   defaultOptionValue?: { id: string; name: string };
+  loading?: boolean;
   actionOnChange?: () => void;
 };
 
@@ -90,6 +92,7 @@ const CustomDropdown: React.FC<Props> = props => {
     optionItemClassNames,
     optionButtonClassNames,
     defaultOptionValue,
+    loading,
     actionOnChange,
   } = props;
 
@@ -116,6 +119,10 @@ const CustomDropdown: React.FC<Props> = props => {
     onChange(itemValue);
     actionOnChange && actionOnChange();
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Dropdown

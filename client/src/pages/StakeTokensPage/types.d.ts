@@ -35,6 +35,7 @@ export type StakeTokensProps = {
   initialValues?: InitialValues;
   isWalletFioAddressesLoading: boolean;
   proxyList: string[];
+  proxyLoading: boolean;
   onSubmit: (values: StakeTokensValues) => void;
 };
 
