@@ -57,7 +57,7 @@ export default class BuyAddress extends Base {
     const type = fioAddress ? 'account' : 'domain';
 
     if (
-      (fioAddress && !FIOSDK.isFioAddressValid(fioAddress)) ||
+      (fioAddress && !FIOSDK.isFioAddressValid(address)) ||
       !FIOSDK.isFioDomainValid(fioDomain)
     ) {
       return generateResponse({
