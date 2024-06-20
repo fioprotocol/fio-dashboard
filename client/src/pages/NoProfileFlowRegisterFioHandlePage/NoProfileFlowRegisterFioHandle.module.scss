@@ -4,7 +4,7 @@
 .dropdown {
   min-width: unset;
   @include lg {
-    min-width: 180px;
+    min-width: 270px;
   }
 }
 .control {
@@ -21,8 +21,11 @@
   background-color: $foundation-white;
   border-radius: 100px;
   padding: 8px;
-  padding-left: 0;
   width: 100%;
+  padding-left: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 
 .menu {
@@ -37,6 +40,7 @@
   margin: 5px;
   padding: 7px 18px;
   color: $light-indigo;
+  word-break: break-all;
 
   &:before {
     content: none;
