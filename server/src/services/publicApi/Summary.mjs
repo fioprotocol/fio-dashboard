@@ -1,14 +1,15 @@
-import Base from '../Base';
-import { generateSummaryResponse, generateErrorResponse } from '../../utils/publicApi.mjs';
-import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { FIOSDK } from '@fioprotocol/fiosdk';
+
+import Base from '../Base';
+import { generateErrorResponse } from '../../utils/publicApi.mjs';
+import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 
 export default class Summary extends Base {
-  async execute({ publicKey, referralCode, externId, address, domain, type, accountPayId }) {
-    if(address === '') address = null;
-    if(domain === '') domain = null;
-    if(externId === '') externId = null;
+  async execute({ publicKey, referralCode, externId, address, domain }) {
+    if (address === '') address = null;
+    if (domain === '') domain = null;
+    if (externId === '') externId = null;
 
     if (!address && !domain && !externId) {
       return generateErrorResponse(this.res, {
@@ -18,18 +19,18 @@ export default class Summary extends Base {
       });
     }
 
-    if(!referralCode) {
+    if (!referralCode) {
       // TODO add new ENV variable or replace another value
-      referralCode = process.env.DEFAULT_REFERRAL_CODE
+      referralCode = process.env.DEFAULT_REFERRAL_CODE;
     }
 
     // TODO add where values (type)
 
-    if(domain) {
+    if (domain) {
       // TODO add where values (address, domain)
 
-      if(publicKey) {
-        if(!FIOSDK.isFioPublicKeyValid(publicKey)) {
+      if (publicKey) {
+        if (!FIOSDK.isFioPublicKeyValid(publicKey)) {
           return generateErrorResponse(this.res, {
             error: 'Invalid public key',
             errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
@@ -40,7 +41,7 @@ export default class Summary extends Base {
         // TODO add where values (publicKey)
       }
     } else {
-      if(!FIOSDK.isFioPublicKeyValid(publicKey)) {
+      if (!FIOSDK.isFioPublicKeyValid(publicKey)) {
         return generateErrorResponse(this.res, {
           error: 'Invalid public key',
           errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
@@ -51,9 +52,8 @@ export default class Summary extends Base {
       // TODO add where values (publicKey, referralCode)
     }
 
-    const result = [];
-
-    return generateSummaryResponse(result);
+    // TODO response
+    return {};
   }
 
   static get validationRules() {
