@@ -198,10 +198,23 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           nativeFioItemPrice = prices.nativeFio.address;
 
         if (domainValue) {
+          const existingDomainInList = domainsList.find(
+            domainListItem => domainListItem.name === domainValue,
+          );
+
           domain = domainValue;
-          domainType = DOMAIN_TYPE.CUSTOM;
-          type = CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
-          nativeFioItemPrice = prices.nativeFio.combo;
+
+          if (existingDomainInList) {
+            domainType = existingDomainInList.isPremium
+              ? DOMAIN_TYPE.PREMIUM
+              : DOMAIN_TYPE.ALLOW_FREE;
+            type = CART_ITEM_TYPE.ADDRESS;
+            nativeFioItemPrice = prices.nativeFio.address;
+          } else {
+            domainType = DOMAIN_TYPE.CUSTOM;
+            type = CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+            nativeFioItemPrice = prices.nativeFio.combo;
+          }
         }
 
         const { fio, usdc } = convertFioPrices(nativeFioItemPrice, roe);
@@ -242,15 +255,16 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
       }
     },
     [
-      cartHasFreeItem,
-      cartId,
-      existingPublicKeyFreeAddress,
-      history,
-      prices.nativeFio,
-      publicKey,
       refDomainObj,
+      prices.nativeFio,
       roe,
+      cartHasFreeItem,
+      existingPublicKeyFreeAddress,
       dispatch,
+      cartId,
+      publicKey,
+      history,
+      domainsList,
     ],
   );
 

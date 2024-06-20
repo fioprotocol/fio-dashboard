@@ -121,8 +121,7 @@ export const handlePriceForMultiYearItems = ({
   prices: NativePrices;
   period: number;
 }): number => {
-  const { address, domain, renewDomain } = prices;
-
+  const { address, domain, renewDomain, combo } = prices;
   const renewPeriod = new MathOp(period).sub(1).toNumber();
   const renewDomainNativeCost = new MathOp(renewDomain)
     .mul(renewPeriod)
@@ -131,8 +130,10 @@ export const handlePriceForMultiYearItems = ({
     .add(renewDomainNativeCost)
     .toNumber();
 
-  if (includeAddress) {
+  if (includeAddress && renewPeriod > 0) {
     return new MathOp(multiDomainPrice).add(address).toNumber();
+  } else if (includeAddress && renewPeriod === 0) {
+    return combo;
   }
 
   return multiDomainPrice;

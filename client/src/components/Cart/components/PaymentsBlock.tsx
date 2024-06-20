@@ -72,7 +72,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     onPaymentChoose,
   };
 
-  const priceIsLowerThanHalfADollar = new MathOp(totlaCartUsdcAmount).lt(0.5);
+  const priceIsLowerThanHalfADollar = new MathOp(totlaCartUsdcAmount).lt(0.7);
   const priceIsLowerThanOneDollar = new MathOp(totlaCartUsdcAmount).lt(1);
 
   if (showExpiredDomainWarningBadge) {
@@ -91,21 +91,40 @@ const PaymentsBlock: React.FC<Props> = props => {
     !isFree &&
     !loading &&
     cartItems.length &&
-    formsOfPayment &&
-    ((formsOfPayment.stripe && priceIsLowerThanHalfADollar) ||
-      (formsOfPayment.bitpay && priceIsLowerThanOneDollar))
+    ((priceIsLowerThanHalfADollar &&
+      (formsOfPayment?.stripe ||
+        formsOfPayment?.bitpay ||
+        formsOfPayment?.stripeAffiliate)) ||
+      (priceIsLowerThanOneDollar &&
+        (!formsOfPayment?.stripe ||
+          (isAffiliateEnabled && !formsOfPayment?.stripeAffiliate)) &&
+        formsOfPayment?.bitpay) ||
+      (!formsOfPayment?.stripe && !formsOfPayment?.bitpay))
   ) {
-    const showStripeMessagePart =
-      (!isAffiliateEnabled && formsOfPayment.stripe) ||
-      (isAffiliateEnabled && formsOfPayment.stripeAffiliate)
+    const stripeMessagePart =
+      ((!isAffiliateEnabled && formsOfPayment?.stripe) ||
+        (isAffiliateEnabled && formsOfPayment?.stripeAffiliate)) &&
+      priceIsLowerThanHalfADollar
         ? '$0.50 to pay with credit card,'
         : '';
-    const cryptoiMessagePart = formsOfPayment.bitpay
-      ? '$1.00 to pay with crypto,'
-      : '';
+    const cryptoMessagePart =
+      formsOfPayment?.bitpay &&
+      (priceIsLowerThanHalfADollar || priceIsLowerThanOneDollar)
+        ? '$1.00 to pay with crypto,'
+        : '';
+
+    const beginingOfTheMessage =
+      stripeMessagePart || cryptoMessagePart
+        ? 'Your cart needs to be at least'
+        : 'You need to deposit FIO Tokens.';
+
+    const endOfTheMessage =
+      stripeMessagePart || cryptoMessagePart
+        ? 'or you need to deposit FIO Tokens.'
+        : '';
     return (
       <NotificationBadge
-        message={`Your cart needs to be at least ${showStripeMessagePart} ${cryptoiMessagePart} or you need to deposit FIO Tokens.`}
+        message={`${beginingOfTheMessage} ${stripeMessagePart} ${cryptoMessagePart} ${endOfTheMessage}`}
         show
         title="Minimum cart total not met"
         type={BADGE_TYPES.ERROR}

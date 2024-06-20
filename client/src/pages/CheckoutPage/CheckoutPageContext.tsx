@@ -62,7 +62,11 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import { CART_ITEM_TYPE, NOT_FOUND_CODE } from '../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  NOT_FOUND_CODE,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { STRIPE_REDIRECT_STATUSES } from '../../constants/purchase';
@@ -708,25 +712,30 @@ export const useContext = (): {
     const signTxItems: SignFioAddressItem[] = [];
 
     for (const cartItem of cartItems) {
+      const includeCartItemTypes = [CART_ITEM_TYPE.ADDRESS];
+
+      const domainWallet = userDomains.find(
+        ({ name }) => name === cartItem.domain,
+      );
+
+      const paymentFioWallet = fioWallets.find(
+        ({ publicKey }) =>
+          publicKey ===
+          (domainWallet
+            ? domainWallet.walletPublicKey
+            : paymentWalletPublicKey),
+      );
+
+      if (paymentFioWallet?.from === WALLET_CREATED_FROM.LEDGER) {
+        includeCartItemTypes.push(CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN);
+      }
+
       if (
-        [
-          CART_ITEM_TYPE.ADDRESS,
-          CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
-        ].includes(cartItem.type) &&
+        includeCartItemTypes.includes(cartItem.type) &&
         privateDomainList[cartItem.domain]
       ) {
-        // TODO what is wallet type is another (EDGE -> LEDGER)
-        const domainWallet = userDomains.find(
-          ({ name }) => name === cartItem.domain,
-        );
         signTxItems.push({
-          fioWallet: fioWallets.find(
-            ({ publicKey }) =>
-              publicKey ===
-              (domainWallet
-                ? domainWallet.walletPublicKey
-                : paymentWalletPublicKey),
-          ),
+          fioWallet: paymentFioWallet,
           name: setFioName(cartItem.address, cartItem.domain),
           ownerKey: paymentWalletPublicKey,
           cartItem,
