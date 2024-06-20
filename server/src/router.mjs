@@ -114,6 +114,11 @@ router.put(
 );
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
+router.get(
+  '/admin/partners/api-token',
+  checkAdminAuth,
+  routes.adminUsers.createPartnerApiToken,
+);
 router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
 router.post('/admin/partners/:id', checkAdminAuth, routes.adminUsers.updatePartner);
 

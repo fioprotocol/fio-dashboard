@@ -3,6 +3,7 @@ import X from '../Exception';
 
 import { ReferrerProfile } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { checkApiToken, hashFromApiToken } from '../../utils/crypto.mjs';
 
 export default class PartnerUpdate extends Base {
   static get requiredPermissions() {
@@ -15,6 +16,7 @@ export default class PartnerUpdate extends Base {
       type: ['required', 'string'],
       label: ['required', 'string'],
       tpid: ['string'],
+      apiToken: ['string'],
       settings: [
         'required',
         {
@@ -95,7 +97,19 @@ export default class PartnerUpdate extends Base {
       });
     }
 
-    await partner.update(data);
+    if (data.apiToken && !checkApiToken(data.apiToken)) {
+      throw new X({
+        code: 'CREATION_FAILED',
+        fields: {
+          code: 'This api token is incorrect!',
+        },
+      });
+    }
+
+    await partner.update({
+      ...data,
+      apiToken: data.apiToken ? hashFromApiToken(data.apiToken) : partner.apiToken,
+    });
 
     return {
       data: partner.json(),
@@ -107,6 +121,6 @@ export default class PartnerUpdate extends Base {
   }
 
   static get resultSecret() {
-    return ['data.settings.img'];
+    return ['data.settings.img', 'data.apiToken'];
   }
 }
