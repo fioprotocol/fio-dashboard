@@ -97,15 +97,15 @@ export const FormsOfPayment: React.FC = () => {
               onActionButtonClick={() => {
                 updateFormOfPayments(key);
               }}
-              buttonText={`Yes, ${value ? 'OFF' : 'ON'} ${transformString(
+              buttonText={`Yes, turn ${value ? 'OFF' : 'ON'} ${transformString(
                 key,
-              )} from of payment`}
+              )}`}
               title="Are You Sure?"
               showCancel={true}
               cancelButtonText="Cancel"
-              subtitle={`You are ${value ? 'OFF' : 'ON'} ${transformString(
-                key,
-              )} from of payment`}
+              subtitle={`You are turning ${
+                value ? 'OFF' : 'ON'
+              } ${transformString(key)} form of payment`}
             />
           </div>
         );
