@@ -134,6 +134,10 @@ export default class Admin extends Base {
     });
   }
 
+  createPartnerApiToken(): Promise<string> {
+    return this.apiClient.get(`admin/partners/api-token`);
+  }
+
   createPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/partners`, data);
   }
