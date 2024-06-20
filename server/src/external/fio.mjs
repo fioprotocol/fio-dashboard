@@ -197,6 +197,16 @@ class Fio {
         };
         break;
       }
+      case FIO_ACTIONS.registerFioDomainAddress: {
+        actionParams = {
+          ...actionParams,
+          fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
+          owner_fio_public_key: options.publicKey,
+          expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+          is_public: 0,
+        };
+        break;
+      }
       case FIO_ACTIONS.transferTokens: {
         actionParams = {
           ...actionParams,
@@ -472,8 +482,8 @@ class Fio {
   }
 
   async isAccountCouldBeRenewed(address) {
-    const isDomain = address.indexOf("@") !== -1;
-    const [,fioDomain] = address.split('@');
+    const isDomain = address.indexOf(FIO_ADDRESS_DELIMITER) !== -1;
+    const [, fioDomain] = address.split(FIO_ADDRESS_DELIMITER);
     const data = isDomain
       ? await this.getFioDomain(fioDomain)
       : await this.getFioAddress(address);
