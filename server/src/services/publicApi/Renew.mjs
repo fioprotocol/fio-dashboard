@@ -1,7 +1,12 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
-import { destructAddress, formatChainDomain, generateErrorResponse } from '../../utils/publicApi.mjs';
+import {
+  destructAddress,
+  formatChainDomain,
+  generateErrorResponse,
+  generateSuccessResponse,
+} from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.mjs';
 import { fioApi } from '../../external/fio.mjs';
@@ -87,22 +92,26 @@ export default class Renew extends Base {
       });
     }
 
-    await this.createRenewOrder({
+    const { orderNumber } = await this.createRenewOrder({
       publicKey,
       refProfileId: refProfile.id,
       address: fioAddress,
       domain: fioDomain,
     });
+
+    return generateSuccessResponse(this.res, { accountId: orderNumber });
   }
 
   async createRenewOrder({ publicKey, refProfileId, address, domain }) {
     const roe = await getROE();
     const prices = await fioApi.getPrices(true);
-    const nativeFio = !!address ? prices.addBundles : prices.renewDomain;
+    const nativeFio = address ? prices.addBundles : prices.renewDomain;
     const price = fioApi.convertFioToUsdc(nativeFio, roe);
 
+    let orderNumber, orderItem, order;
+
     await Order.sequelize.transaction(async t => {
-      const order = await Order.create(
+      order = await Order.create(
         {
           status: Order.STATUS.NEW,
           total: price,
@@ -114,19 +123,18 @@ export default class Renew extends Base {
         { transaction: t },
       );
 
-      order.number = Order.generateNumber(order.id);
+      orderNumber = order.number = Order.generateNumber(order.id);
 
       await order.save({ transaction: t });
 
-      const orderItem = await OrderItem.create(
+      orderItem = await OrderItem.create(
         {
           orderId: order.id,
           address,
           domain,
-          action:
-            !!address
-              ? FIO_ACTIONS.addBundledTransactions
-              : FIO_ACTIONS.renewFioDomain,
+          action: address
+            ? FIO_ACTIONS.addBundledTransactions
+            : FIO_ACTIONS.renewFioDomain,
           // TODO check can we remove toString?
           nativeFio: nativeFio.toString(),
           price,
@@ -135,19 +143,13 @@ export default class Renew extends Base {
         },
         { transaction: t },
       );
-
-      const payment = await Payment.createForOrder(order, Payment.PROCESSOR.BITPAY, [orderItem]);
-
-      await Order.update(
-        {
-          status: Order.STATUS.PENDING,
-        },
-        {
-          where: { id: order.id },
-          transaction: t,
-        },
-      );
     });
+
+    const payment = await Payment.createForOrder(order, Payment.PROCESSOR.BITPAY, [
+      orderItem,
+    ]);
+
+    return { orderNumber, orderItem, order, payment };
   }
 
   static get validationRules() {

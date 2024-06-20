@@ -104,7 +104,7 @@ export default class PartnerCreate extends Base {
       throw new X({
         code: 'CREATION_FAILED',
         fields: {
-          code: 'This api token is incorrect!',
+          apiToken: 'This api token is incorrect!',
         },
       });
     }

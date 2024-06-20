@@ -15,6 +15,7 @@ import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
+import { hashFromApiToken } from '../../utils/crypto.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -24,7 +25,7 @@ export default class BuyAddress extends Base {
       return generateErrorResponse(this.res, {
         error: `Server error. Please try later.`,
         errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
-        statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR
+        statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR,
       });
     }
   }
@@ -49,6 +50,14 @@ export default class BuyAddress extends Base {
 
     if (!refProfile) {
       return generateErrorResponse(this.res, refNotFoundRes);
+    }
+
+    if (apiToken && refProfile.apiToken !== hashFromApiToken(apiToken)) {
+      return generateErrorResponse(this.res, {
+        error: `Invalid api token `,
+        errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
+        statusCode: HTTP_CODES.BAD_REQUEST,
+      });
     }
 
     const { type, fioAddress, fioDomain } = destructAddress(address);
@@ -149,16 +158,16 @@ export default class BuyAddress extends Base {
         apiToken &&
         (!refDomain.isPremium || refDomain.isFirstRegFree);
 
-      const orderId = await this.createFreeAddressBuyOrder({
+      const { orderNumber } = await this.createFreeAddressBuyOrder({
         publicKey,
         refProfileId: refProfile.id,
         address: fioAddress,
         domain: fioDomain,
         isFree: isFreeRegistration,
-        isDomainExist: !!domain
+        isDomainExist: !!domain,
       });
 
-      return generateSuccessResponse(this.res, { accountId: orderId });
+      return generateSuccessResponse(this.res, { accountId: orderNumber });
     }
 
     if (domain) {
@@ -168,19 +177,35 @@ export default class BuyAddress extends Base {
         statusCode: HTTP_CODES.BAD_REQUEST,
       });
     }
+
+    const { orderNumber } = await this.createFreeAddressBuyOrder({
+      publicKey,
+      refProfileId: refProfile.id,
+      address: fioAddress,
+      domain: fioDomain,
+    });
+
+    return generateSuccessResponse(this.res, { accountId: orderNumber });
   }
 
-  async createFreeAddressBuyOrder({ publicKey, refProfileId, address, domain, isFree, isDomainExist }) {
+  async createFreeAddressBuyOrder({
+    publicKey,
+    refProfileId,
+    address,
+    domain,
+    isFree,
+    isDomainExist,
+  }) {
     const roe = await getROE();
     const prices = await fioApi.getPrices(true);
-    const nativeFio = !!address
+    const nativeFio = address
       ? isDomainExist
         ? prices.address
         : prices.combo
       : prices.domain;
     const price = fioApi.convertFioToUsdc(nativeFio, roe);
 
-    let orderNumber, orderItem, order, payment;
+    let orderNumber, orderItem, order;
 
     await Order.sequelize.transaction(async t => {
       order = await Order.create(
@@ -199,7 +224,7 @@ export default class BuyAddress extends Base {
 
       await order.save({ transaction: t });
 
-      const action = !!address
+      const action = address
         ? isDomainExist
           ? FIO_ACTIONS.registerFioAddress
           : FIO_ACTIONS.registerFioDomainAddress
@@ -219,23 +244,25 @@ export default class BuyAddress extends Base {
         },
         { transaction: t },
       );
-
-      if (isFree) {
-        await Order.update(
-          {
-            status: Order.STATUS.PENDING,
-          },
-          {
-            where: { id: order.id },
-            transaction: t,
-          },
-        );
-      } else {
-        payment = await Payment.createForOrder(order, Payment.PROCESSOR.BITPAY, [orderItem]);
-      }
     });
 
-    return orderNumber;
+    const payment = await Payment.createForOrder(
+      order,
+      isFree ? Payment.PROCESSOR.FIO : Payment.PROCESSOR.BITPAY,
+      [orderItem],
+    );
+
+    if (isFree) {
+      await Payment.update(
+        {
+          status: Payment.STATUS.COMPLETED,
+          currency: Payment.PROCESSOR.FIO,
+        },
+        { where: { id: payment.id } },
+      );
+    }
+
+    return { orderNumber, orderItem, order, payment };
   }
 
   static get validationRules() {
