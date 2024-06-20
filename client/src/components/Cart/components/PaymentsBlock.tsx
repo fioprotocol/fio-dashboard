@@ -147,7 +147,8 @@ const PaymentsBlock: React.FC<Props> = props => {
             (!formsOfPayment.stripe ||
               (formsOfPayment.stripe &&
                 isAffiliateEnabled &&
-                !formsOfPayment.stripeAffiliate &&
+                !formsOfPayment.stripeAffiliate) ||
+              ((formsOfPayment.stripe || formsOfPayment.stripeAffiliate) &&
                 priceIsLowerThanHalfADollar)) &&
             (!formsOfPayment.bitpay ||
               (formsOfPayment.bitpay && priceIsLowerThanOneDollar)))
