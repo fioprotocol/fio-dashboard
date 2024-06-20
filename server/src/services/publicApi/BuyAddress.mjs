@@ -16,6 +16,7 @@ import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import { hashFromApiToken } from '../../utils/crypto.mjs';
+import { prepareOrderWithFioPaymentForExecution } from '../../utils/payment.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -253,13 +254,11 @@ export default class BuyAddress extends Base {
     );
 
     if (isFree) {
-      await Payment.update(
-        {
-          status: Payment.STATUS.COMPLETED,
-          currency: Payment.PROCESSOR.FIO,
-        },
-        { where: { id: payment.id } },
-      );
+      await prepareOrderWithFioPaymentForExecution({
+        paymentId: payment.id,
+        orderItems: [orderItem],
+        fioNativePrice: nativeFio,
+      });
     }
 
     return { orderNumber, orderItem, order, payment };

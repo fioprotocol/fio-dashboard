@@ -8,10 +8,6 @@ export default class PartnerCreateApiToken extends Base {
     return [ADMIN_ROLES_IDS.ADMIN, ADMIN_ROLES_IDS.SUPER_ADMIN];
   }
 
-  static get validationRules() {
-    return {};
-  }
-
   async execute() {
     return { data: generateApiToken() };
   }
