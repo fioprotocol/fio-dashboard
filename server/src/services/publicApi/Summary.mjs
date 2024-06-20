@@ -1,7 +1,8 @@
 import Base from '../Base';
-import { generateSummaryResponse, generateResponse } from '../../utils/publicApi.mjs';
+import { generateSummaryResponse, generateErrorResponse } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { FIOSDK } from '@fioprotocol/fiosdk';
+import { HTTP_CODES } from '../../constants/general.mjs';
 
 export default class Summary extends Base {
   async execute({ publicKey, referralCode, externId, address, domain, type, accountPayId }) {
@@ -10,9 +11,10 @@ export default class Summary extends Base {
     if(externId === '') externId = null;
 
     if (!address && !domain && !externId) {
-      return generateResponse({
+      return generateErrorResponse(this.res, {
         error: `publicKey, domain, or externId is required`,
-        errorCode: PUB_API_ERROR_CODES.SERVER_ERROR
+        errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
+        statusCode: HTTP_CODES.BAD_REQUEST,
       });
     }
 
@@ -28,14 +30,22 @@ export default class Summary extends Base {
 
       if(publicKey) {
         if(!FIOSDK.isFioPublicKeyValid(publicKey)) {
-          return generateResponse({ error: 'Invalid public key' });
+          return generateErrorResponse(this.res, {
+            error: 'Invalid public key',
+            errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
+            statusCode: HTTP_CODES.BAD_REQUEST,
+          });
         }
 
         // TODO add where values (publicKey)
       }
     } else {
       if(!FIOSDK.isFioPublicKeyValid(publicKey)) {
-        return generateResponse({ error: 'Invalid public key' });
+        return generateErrorResponse(this.res, {
+          error: 'Invalid public key',
+          errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
+          statusCode: HTTP_CODES.BAD_REQUEST,
+        });
       }
 
       // TODO add where values (publicKey, referralCode)

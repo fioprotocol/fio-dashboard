@@ -1,10 +1,9 @@
-export const generateResponse = ({ error, errorCode, accountId, charge }) => {
-  if (error !== undefined) {
-    return { error, errorCode, success: false }
-  }
-  if (!accountId) {
-    throw new Error('accountId is required');
-  }
+export const generateErrorResponse = (res, { error, errorCode, statusCode }) => {
+  res.status(statusCode);
+  return { error, errorCode, success: false }
+}
+
+export const generateSuccessResponse = (res, { accountId, charge }) => {
   if (!charge) {
     return { error:false, account_id: accountId, success: true }
   }
@@ -66,4 +65,21 @@ export const generateSummaryResponse = (data) => {
     extern_time: null,
     extern_status: null
   }));
+}
+
+export const destructAddress = (address) => {
+  let fioAddress = null;
+  let fioDomain = null;
+
+  if (address.includes('@')) {
+    const [handle, domain] = address.split('@');
+    fioAddress = handle;
+    fioDomain = domain;
+  } else {
+    fioDomain = address;
+  }
+
+  const type = fioAddress ? 'account' : 'domain';
+
+  return { type, fioAddress, fioDomain };
 }
