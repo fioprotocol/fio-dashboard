@@ -10,21 +10,15 @@ const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 export default class OrdersActive extends Base {
   static get validationRules() {
     return {
-      data: [
-        {
-          nested_object: {
-            publicKey: 'string',
-            userId: 'string',
-          },
-        },
-      ],
+      publicKey: 'string',
+      userId: 'string',
     };
   }
 
-  async execute({ publicKey, userId }) {
+  async execute({ userId, publicKey }) {
     const where = {
       status: Order.STATUS.NEW,
-      createdAt: {
+      updatedAt: {
         [Sequelize.Op.gt]: new Date(new Date().getTime() - CART_TIMEOUT),
       },
     };
