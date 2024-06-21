@@ -203,7 +203,7 @@ class Fio {
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
           owner_fio_public_key: options.publicKey,
           expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
-          is_public: 0,
+          is_public: options.isPublic || 0,
         };
         break;
       }

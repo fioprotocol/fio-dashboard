@@ -39,7 +39,7 @@ import {
   transformPremiumDomains,
   validateFioAddress,
 } from '../../util/fio';
-import MathOp from '../../util/math';
+
 import { convertFioPrices } from '../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
@@ -114,7 +114,7 @@ const handleFCHItems = async ({
   setError: (error: string) => void;
 }) => {
   const {
-    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
   } = prices;
 
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
@@ -171,9 +171,7 @@ const handleFCHItems = async ({
           domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
 
         const totalNativeFio = isCustomDomain
-          ? new MathOp(nativeFioAddressPrice)
-              .add(nativeFioDomainPrice)
-              .toNumber()
+          ? nativeFioComboPrice
           : nativeFioAddressPrice;
 
         const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
@@ -241,7 +239,7 @@ const handleSelectedDomain = ({
   usersFreeAddresses: { name: string }[];
 }) => {
   const {
-    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
   } = prices;
 
   const existingCartItem = cartItems.find(
@@ -298,7 +296,7 @@ const handleSelectedDomain = ({
     (existingCartItem &&
       existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
       !existingCartItem.hasCustomDomainInCart)
-      ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      ? nativeFioComboPrice
       : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
