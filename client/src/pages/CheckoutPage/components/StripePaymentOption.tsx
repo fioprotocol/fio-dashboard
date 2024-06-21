@@ -12,17 +12,18 @@ import {
 import { StripeForm } from './StripeForm';
 
 import { setFioName } from '../../../utils';
+import { actionFromCartItem } from '../../../util/cart';
 
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
+import { DOMAIN_TYPE } from '../../../constants/fio';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
 import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../../constants/common';
 
 import { BeforeSubmitData, StripePaymentOptionProps } from '../types';
 import { CartItem } from '../../../types';
-import { actionFromCartItem } from '../../../util/cart';
 
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
   const {
@@ -42,11 +43,20 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       props.onFinish({
         errors: [],
         registered: cart.map(
-          ({ id, address, domain, isFree, costNativeFio, type }: CartItem) => ({
+          ({
+            id,
+            address,
+            domain,
+            isFree,
+            costNativeFio,
+            type,
+            domainType,
+          }: CartItem) => ({
             action: actionFromCartItem(
               type,
-              paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
-                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK,
+              (paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK) &&
+                domainType === DOMAIN_TYPE.CUSTOM,
             ),
             fioName: setFioName(address, domain),
             isFree,

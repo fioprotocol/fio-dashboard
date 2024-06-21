@@ -13,15 +13,16 @@ import {
   CURRENCY_CODES,
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
+import { DOMAIN_TYPE } from '../../../constants/fio';
 
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../../util/analytics';
+import { actionFromCartItem } from '../../../util/cart';
 
 import { BeforeSubmitData, BitPayOptionProps } from '../types';
 import { CartItem, ClickEventTypes } from '../../../types';
-import { actionFromCartItem } from '../../../util/cart';
 
 const BITPAY_ORIGIN = 'bitpay';
 const BITPAY_ORIGIN_REGEX = new RegExp(BITPAY_ORIGIN, 'i');
@@ -47,11 +48,20 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
       props.onFinish({
         errors: [],
         registered: cart.map(
-          ({ id, address, domain, isFree, costNativeFio, type }: CartItem) => ({
+          ({
+            id,
+            address,
+            domain,
+            isFree,
+            costNativeFio,
+            type,
+            domainType,
+          }: CartItem) => ({
             action: actionFromCartItem(
               type,
-              paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
-                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK,
+              (paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK) &&
+                domainType === DOMAIN_TYPE.CUSTOM,
             ),
             fioName: setFioName(address, domain),
             isFree,
@@ -71,7 +81,14 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
         providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
       });
     },
-    [cart, payment.amount, payment.externalPaymentId, paymentOption, props],
+    [
+      cart,
+      payment.amount,
+      payment.externalPaymentId,
+      paymentOption,
+      paymentWallet?.from,
+      props,
+    ],
   );
 
   const handleSubmit = useCallback(

@@ -18,32 +18,13 @@ import classes from '../CheckoutPage.module.scss';
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
   const {
-    fioWalletsBalances,
     paymentAssignmentWallets,
     isNoProfileFlow,
     paymentWalletPublicKey,
+    payWith,
   } = rest;
+
   const { costNativeFio, costFree } = totalCost(cart, roe);
-
-  const getPayWithDefaultDetails = () => {
-    if (paymentAssignmentWallets.length === 0) {
-      return;
-    }
-
-    const [wallet] = paymentAssignmentWallets;
-    const balance = fioWalletsBalances.wallets[wallet.publicKey];
-
-    if (!balance) {
-      return;
-    }
-
-    return {
-      walletName: wallet.name,
-      walletBalances: balance.available,
-    };
-  };
-
-  const payWith = getPayWithDefaultDetails();
 
   const additionalTransactionDetails = [];
 
