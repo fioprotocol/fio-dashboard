@@ -15,6 +15,8 @@ import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
+import { normalizePriceForBitPayInTestNet } from '../../utils/payment.mjs';
+import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 export default class Renew extends Base {
   async execute(args) {
@@ -64,23 +66,24 @@ export default class Renew extends Base {
       });
     }
 
+    // TODO add auto detect publicKey by address
+
     if (!FIOSDK.isFioPublicKeyValid(publicKey)) {
-      return generateErrorResponse(this.res, {
+      const err = {
         error: 'Missing public key',
         errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
         statusCode: HTTP_CODES.BAD_REQUEST,
-      });
-    }
+      };
 
-    if (type === 'account') {
-      const domainFromChain = await fioApi.getFioDomain(fioDomain);
-      const domain = formatChainDomain(domainFromChain);
-      if (!domain || domain.account !== 'fio.oracle') {
-        return generateErrorResponse(this.res, {
-          error: 'Missing public key',
-          errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
-          statusCode: HTTP_CODES.BAD_REQUEST,
-        });
+      if (type === 'account') {
+        const domainFromChain = await fioApi.getFioDomain(fioDomain);
+        const domain = formatChainDomain(domainFromChain);
+
+        if (!domain || !domain.account || domain.account !== 'fio.oracle') {
+          return generateErrorResponse(this.res, err);
+        }
+      } else {
+        return generateErrorResponse(this.res, err);
       }
     }
 
@@ -92,29 +95,30 @@ export default class Renew extends Base {
       });
     }
 
-    const { orderNumber } = await this.createRenewOrder({
+    const { order, charge } = await this.createRenewOrder({
       publicKey,
       refProfileId: refProfile.id,
       address: fioAddress,
       domain: fioDomain,
     });
 
-    return generateSuccessResponse(this.res, { accountId: orderNumber });
+    return generateSuccessResponse(this.res, { accountId: order.id, charge });
   }
 
   async createRenewOrder({ publicKey, refProfileId, address, domain }) {
     const roe = await getROE();
     const prices = await fioApi.getPrices(true);
     const nativeFio = address ? prices.addBundles : prices.renewDomain;
-    const price = fioApi.convertFioToUsdc(nativeFio, roe);
+    const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
+    const normalizedPriceUsdc = normalizePriceForBitPayInTestNet(priceUsdc);
 
-    let orderNumber, orderItem, order;
+    let orderItem, order;
 
     await Order.sequelize.transaction(async t => {
       order = await Order.create(
         {
           status: Order.STATUS.NEW,
-          total: price,
+          total: normalizedPriceUsdc,
           roe,
           publicKey,
           refProfileId,
@@ -123,7 +127,7 @@ export default class Renew extends Base {
         { transaction: t },
       );
 
-      orderNumber = order.number = Order.generateNumber(order.id);
+      order.number = Order.generateNumber(order.id);
 
       await order.save({ transaction: t });
 
@@ -135,9 +139,8 @@ export default class Renew extends Base {
           action: address
             ? FIO_ACTIONS.addBundledTransactions
             : FIO_ACTIONS.renewFioDomain,
-          // TODO check can we remove toString?
           nativeFio: nativeFio.toString(),
-          price,
+          price: normalizedPriceUsdc,
           priceCurrency: CURRENCY_CODES.USDC,
           data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
         },
@@ -149,14 +152,16 @@ export default class Renew extends Base {
       orderItem,
     ]);
 
-    return { orderNumber, orderItem, order, payment };
+    const charge = await Bitpay.getInvoice(payment.externalPaymentId);
+
+    return { order, orderItem, payment, charge };
   }
 
   static get validationRules() {
     return {
       address: ['required', 'string'],
-      referralCode: 'string',
-      publicKey: 'string',
+      referralCode: ['required', 'string'],
+      publicKey: ['string'],
     };
   }
 

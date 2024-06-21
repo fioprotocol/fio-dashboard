@@ -5,38 +5,11 @@ export const generateErrorResponse = (res, { error, errorCode, statusCode }) => 
   return { error, errorCode, success: false };
 };
 
-export const generateSuccessResponse = (res, { accountId, charge }) => {
-  if (!charge) {
-    return { error: false, account_id: accountId, success: true };
-  }
-
-  const {
-    eventId,
-    externId,
-    externStatus,
-    externTime,
-    metadata,
-    pricing,
-    addresses,
-  } = charge;
-
-  return {
-    error: false,
-    account_id: accountId,
-    success: {
-      event_id: eventId || 0,
-      pending: true,
-      extern_id: externId,
-      extern_status: externStatus,
-      extern_time: (externTime || new Date()).toISOString(),
-      metadata: metadata || null,
-      pay_source: 'bitpay',
-      forward_url: '',
-      pricing, // Record<string, {amount: number;currency:string}>;
-      addresses, // Record<string, string>;
-    },
-  };
-};
+export const generateSuccessResponse = (res, { accountId, charge }) => ({
+  error: false,
+  account_id: accountId,
+  success: charge ? { charge } : true,
+});
 
 export const formatChainDomain = domain => {
   if (!domain) {
@@ -55,7 +28,7 @@ export const formatChainDomain = domain => {
 
 export const destructAddress = address => {
   let fioAddress = null;
-  let fioDomain = null;
+  let fioDomain;
 
   if (address.includes(FIO_ADDRESS_DELIMITER)) {
     const [handle, domain] = address.split(FIO_ADDRESS_DELIMITER);

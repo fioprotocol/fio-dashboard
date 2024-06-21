@@ -16,7 +16,11 @@ import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import { hashFromApiToken } from '../../utils/crypto.mjs';
-import { prepareOrderWithFioPaymentForExecution } from '../../utils/payment.mjs';
+import {
+  normalizePriceForBitPayInTestNet,
+  prepareOrderWithFioPaymentForExecution,
+} from '../../utils/payment.mjs';
+import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -148,18 +152,19 @@ export default class BuyAddress extends Base {
       if (registeringAccount) {
         return generateErrorResponse(this.res, {
           error: `You have already sent a request to register a free FIO Crypto Handle for that domain`,
-          errorCode: PUB_API_ERROR_CODES.ALREADY_SENT_REGISTRATION_REQ_FOR_DOMAIN,
+          errorCode: PUB_API_ERROR_CODES.ALREADY_SENT_REGISTRATION_REQ_FOR_ACCOUNT,
           statusCode: HTTP_CODES.BAD_REQUEST,
         });
       }
 
       const isFreeRegistration =
         !freeRegisteredAddressWithDomain &&
-        refDomain &&
         apiToken &&
+        domain &&
+        refDomain &&
         (!refDomain.isPremium || refDomain.isFirstRegFree);
 
-      const { orderNumber } = await this.createFreeAddressBuyOrder({
+      const { order, charge } = await this.createFreeAddressBuyOrder({
         publicKey,
         refProfileId: refProfile.id,
         address: fioAddress,
@@ -168,7 +173,7 @@ export default class BuyAddress extends Base {
         isDomainExist: !!domain,
       });
 
-      return generateSuccessResponse(this.res, { accountId: orderNumber });
+      return generateSuccessResponse(this.res, { accountId: order.id, charge });
     }
 
     if (domain) {
@@ -179,14 +184,14 @@ export default class BuyAddress extends Base {
       });
     }
 
-    const { orderNumber } = await this.createFreeAddressBuyOrder({
+    const { order, charge } = await this.createFreeAddressBuyOrder({
       publicKey,
       refProfileId: refProfile.id,
       address: fioAddress,
       domain: fioDomain,
     });
 
-    return generateSuccessResponse(this.res, { accountId: orderNumber });
+    return generateSuccessResponse(this.res, { accountId: order.id, charge });
   }
 
   async createFreeAddressBuyOrder({
@@ -204,15 +209,18 @@ export default class BuyAddress extends Base {
         ? prices.address
         : prices.combo
       : prices.domain;
-    const price = fioApi.convertFioToUsdc(nativeFio, roe);
+    const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
+    const normalizedPriceUsdc = isFree
+      ? priceUsdc
+      : normalizePriceForBitPayInTestNet(priceUsdc);
 
-    let orderNumber, orderItem, order;
+    let orderItem, order;
 
     await Order.sequelize.transaction(async t => {
       order = await Order.create(
         {
           status: Order.STATUS.NEW,
-          total: nativeFio,
+          total: normalizedPriceUsdc,
           roe,
           publicKey,
           refProfileId,
@@ -221,7 +229,7 @@ export default class BuyAddress extends Base {
         { transaction: t },
       );
 
-      orderNumber = order.number = Order.generateNumber(order.id);
+      order.number = Order.generateNumber(order.id);
 
       await order.save({ transaction: t });
 
@@ -237,9 +245,8 @@ export default class BuyAddress extends Base {
           address,
           domain,
           action,
-          // TODO check can we remove toString?
           nativeFio: nativeFio.toString(),
-          price,
+          price: normalizedPriceUsdc,
           priceCurrency: CURRENCY_CODES.USDC,
           data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
         },
@@ -253,6 +260,12 @@ export default class BuyAddress extends Base {
       [orderItem],
     );
 
+    let charge;
+
+    if (!isFree) {
+      charge = await Bitpay.getInvoice(payment.externalPaymentId);
+    }
+
     if (isFree) {
       await prepareOrderWithFioPaymentForExecution({
         paymentId: payment.id,
@@ -261,14 +274,14 @@ export default class BuyAddress extends Base {
       });
     }
 
-    return { orderNumber, orderItem, order, payment };
+    return { order, orderItem, payment, charge };
   }
 
   static get validationRules() {
     return {
       apiToken: ['string'],
       address: ['required', 'string'],
-      referralCode: 'string',
+      referralCode: ['string'],
       publicKey: ['required', 'string'],
     };
   }
