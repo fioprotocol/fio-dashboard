@@ -57,6 +57,7 @@ router.put(
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
+router.post('/users/without-registration', routes.users.createUserWithoutRegistrtion);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);

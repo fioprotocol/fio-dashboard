@@ -17,6 +17,7 @@ import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
 import UsersSendEvent from '../services/users/SendEvent';
 import UsersDelete from '../services/users/Delete';
+import CreateUserWithoutRegistrtion from '../services/users/CreateUserWithoutRegistrtion.mjs';
 
 export default {
   alternativeUserVerification: makeServiceRunner(AlternativeUserVerification),
@@ -39,4 +40,8 @@ export default {
   activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
   updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
   sendEvent: makeServiceRunner(UsersSendEvent, req => req.body),
+  createUserWithoutRegistrtion: makeServiceRunner(
+    CreateUserWithoutRegistrtion,
+    req => req.body,
+  ),
 };
