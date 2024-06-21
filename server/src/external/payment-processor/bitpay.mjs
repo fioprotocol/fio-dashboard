@@ -177,6 +177,12 @@ class BitPay extends PaymentProcessor {
     };
   }
 
+  async getInvoice(invoiceId) {
+    const bitPayClient = await this.getBitPayClient();
+
+    return await bitPayClient.GetInvoice(invoiceId);
+  }
+
   async getInvoiceWebHook(invoiceId) {
     const bitPayClient = await this.getBitPayClient();
 

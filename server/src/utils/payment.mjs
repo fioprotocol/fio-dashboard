@@ -1,4 +1,5 @@
 import { BlockchainTransaction, OrderItemStatus, Payment } from '../models/index.mjs';
+import { FIO_CHAIN_ID } from '../config/constants.js';
 
 export const prepareOrderWithFioPaymentForExecution = async ({
   paymentId,
@@ -39,4 +40,11 @@ export const prepareOrderWithFioPaymentForExecution = async ({
       },
     );
   }
+};
+
+export const normalizePriceForBitPayInTestNet = priceUsdc => {
+  if (FIO_CHAIN_ID.TESTNET === process.env.FIO_CHAIN_ID) {
+    return Math.max(1, priceUsdc);
+  }
+  return priceUsdc;
 };
