@@ -109,6 +109,10 @@ export const useContext = (): {
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
+  payWith?: {
+    walletName: string;
+    walletBalances: WalletBalancesItem;
+  };
   isProcessing: boolean;
   isNoProfileFlow: boolean;
   title: string;
@@ -650,6 +654,32 @@ export const useContext = (): {
     cartLoading,
   );
 
+  const getPayWithDefaultDetails = useCallback(
+    (publicKey: string) => {
+      if (paymentAssignmentWallets.length === 0) {
+        return;
+      }
+
+      const wallet = paymentAssignmentWallets.find(
+        paymentAssignmentWallet =>
+          paymentAssignmentWallet.publicKey === publicKey,
+      );
+      const balance = fioWalletsBalances.wallets[publicKey];
+
+      if (!balance || !wallet) {
+        return;
+      }
+
+      return {
+        walletName: wallet.name,
+        walletBalances: balance.available,
+      };
+    },
+    [fioWalletsBalances.wallets, paymentAssignmentWallets],
+  );
+
+  const payWith = getPayWithDefaultDetails(paymentWalletPublicKey);
+
   const onClose = useCallback(() => {
     if (order?.id) {
       apis.orders.update(order.id, {
@@ -778,6 +808,7 @@ export const useContext = (): {
     fioWallets,
     fioWalletsBalances,
     paymentAssignmentWallets,
+    payWith,
     isProcessing,
     isNoProfileFlow,
     title,
