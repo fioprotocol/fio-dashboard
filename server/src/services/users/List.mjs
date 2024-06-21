@@ -88,6 +88,12 @@ export default class UsersList extends Base {
         }
         break;
       }
+      case 'WITHOUT_REGISTRATION_USERS': {
+        where = {
+          userProfileType: USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+        };
+        break;
+      }
       default:
         null;
     }

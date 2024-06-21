@@ -11,18 +11,26 @@ export const handleUserProfileType = ({
 }): string => {
   let type = null;
 
-  if (userProfileType === USER_PROFILE_TYPE.PRIMARY) {
-    type = 'EDGE';
+  switch (userProfileType) {
+    case USER_PROFILE_TYPE.PRIMARY:
+      type = 'EDGE';
+      break;
+    case USER_PROFILE_TYPE.ALTERNATIVE:
+      if (
+        fioWallets &&
+        fioWallets.some(
+          fioWallet => fioWallet.from === WALLET_CREATED_FROM.METAMASK,
+        )
+      ) {
+        type = 'MetaMask';
+      }
+      break;
+    case USER_PROFILE_TYPE.WITHOUT_REGISTRATION:
+      type = 'No Reg';
+      break;
+    default:
+      break;
   }
-  if (userProfileType === USER_PROFILE_TYPE.ALTERNATIVE) {
-    if (
-      fioWallets &&
-      fioWallets.some(
-        fioWallet => fioWallet.from === WALLET_CREATED_FROM.METAMASK,
-      )
-    ) {
-      type = 'MetaMask';
-    }
-  }
+
   return type;
 };
