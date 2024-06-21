@@ -15,7 +15,6 @@ import {
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../../../redux/profile/selectors';
 
-import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../../../utils';
 import {
@@ -52,7 +51,7 @@ export const useContext = (
   >([]);
 
   const {
-    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
   } = prices;
 
   const fchId = setFioName(address, domain);
@@ -149,7 +148,7 @@ export const useContext = (
 
   const totalNativeFio =
     isCustomDomain && !existingCustomDomainFchCartItem
-      ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      ? nativeFioComboPrice
       : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
