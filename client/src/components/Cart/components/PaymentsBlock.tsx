@@ -72,7 +72,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     onPaymentChoose,
   };
 
-  const priceIsLowerThanHalfADollar = new MathOp(totlaCartUsdcAmount).lt(0.7);
+  const priceIsLowerThanHalfADollar = new MathOp(totlaCartUsdcAmount).lt(0.5);
   const priceIsLowerThanOneDollar = new MathOp(totlaCartUsdcAmount).lt(1);
 
   if (showExpiredDomainWarningBadge) {
@@ -97,8 +97,8 @@ const PaymentsBlock: React.FC<Props> = props => {
         formsOfPayment?.stripeAffiliate)) ||
       (priceIsLowerThanOneDollar &&
         (!formsOfPayment?.stripe ||
-          (isAffiliateEnabled && !formsOfPayment?.stripeAffiliate)) &&
-        formsOfPayment?.bitpay) ||
+          (isAffiliateEnabled && !formsOfPayment?.stripeAffiliate) ||
+          formsOfPayment?.bitpay)) ||
       (!formsOfPayment?.stripe && !formsOfPayment?.bitpay))
   ) {
     const stripeMessagePart =

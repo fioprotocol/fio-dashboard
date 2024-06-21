@@ -26,7 +26,6 @@ import {
 } from '../../redux/fio/selectors';
 import {
   isAuthenticated,
-  isAffiliateEnabled as isAffiliateEnabledSelector,
   userId as userIdSelector,
 } from '../../redux/profile/selectors';
 import {
@@ -52,6 +51,7 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
   NOT_FOUND_CODE,
+  REF_PROFILE_TYPE,
 } from '../../constants/common';
 import {
   NOT_FOUND_CART_BUTTON_TEXT,
@@ -123,13 +123,13 @@ export const useContext = (): UseContextReturnType => {
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
   const userId = useSelector(userIdSelector);
-  const isAffiliateEnabled = useSelector(isAffiliateEnabledSelector);
 
   const dispatch = useDispatch();
 
   const history = useHistory();
 
   const isNoProfileFlow = refProfile?.settings?.hasNoProfileFlow;
+  const isAffiliateEnabled = refProfile?.type === REF_PROFILE_TYPE.AFFILIATE;
 
   const walletCount = userWallets.length;
 
