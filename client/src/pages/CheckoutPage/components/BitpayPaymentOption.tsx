@@ -22,7 +22,7 @@ import {
 import { actionFromCartItem } from '../../../util/cart';
 
 import { BeforeSubmitData, BitPayOptionProps } from '../types';
-import { CartItem, ClickEventTypes } from '../../../types';
+import { AnyObject, CartItem, ClickEventTypes } from '../../../types';
 
 const BITPAY_ORIGIN = 'bitpay';
 const BITPAY_ORIGIN_REGEX = new RegExp(BITPAY_ORIGIN, 'i');
@@ -104,6 +104,25 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
           ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
           getCartItemsDataForAnalytics(cart),
         );
+
+        if (window.bitpay && typeof window.bitpay.showInvoice === 'function') {
+          const originalShowInvoice = window.bitpay.showInvoice;
+          window.bitpay.showInvoice = function(
+            invoiceId: string,
+            params?: AnyObject,
+          ) {
+            params = params || {};
+            originalShowInvoice.call(this, invoiceId, params);
+            const iframe = document.getElementsByName(
+              'bitpay',
+            )[0] as HTMLIFrameElement;
+            if (iframe) {
+              // We prefer to show BitPay invoice in iframe instead of separate window that blocks by safari iOS
+              // But there is no ability at this moment to pass view params into the showInvoice function
+              iframe.src = iframe.src.replace('view=modal', 'view=popup');
+            }
+          };
+        }
 
         window.bitpay.showInvoice(bitPayInvoiceId);
       }
