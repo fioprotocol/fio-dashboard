@@ -35,14 +35,23 @@
     -->
     <meta name="prerender-status-code" content="200" />
     <script type="text/javascript">
-      if (self === top) {
-        var frameDefender = document.getElementById("frameDefender");
-        if (frameDefender && frameDefender.parentNode) {
-          frameDefender.parentNode.removeChild(frameDefender);
+      (function() {
+        var allowedPaths = ['/address', '/domain', '/orders', '/cart', '/checkout', '/order-details'];
+        var currentPath = window.location.pathname;
+
+        var isAllowed = allowedPaths.some(function(path) {
+          return currentPath.startsWith(path);
+        });
+
+        if (!isAllowed && self !== top) {
+          parent.location = self.location;
+        } else {
+          var frameDefender = document.getElementById("frameDefender");
+          if (frameDefender && frameDefender.parentNode) {
+            frameDefender.parentNode.removeChild(frameDefender);
+          }
         }
-      } else {
-        parent.location = self.location;
-      }
+      })();
     </script>
     <script>
       window.dataLayer = window.dataLayer || [];
