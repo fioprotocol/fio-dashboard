@@ -60,7 +60,7 @@ const Ref = (
 
   const fioWalletsAmount = fioWallets.length;
 
-  const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query.ref;
+  const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query?.ref;
   const isNoProfileFlow = refProfileInfo?.settings?.hasNoProfileFlow;
 
   const redirectToDomainLandingPage = useCallback(
@@ -122,13 +122,13 @@ const Ref = (
     if (isRefLink) {
       const pathnameSegments = pathname.split('/');
       const refProfileCode =
-        query.ref || pathnameSegments[pathnameSegments.length - 1];
+        query?.ref || pathnameSegments[pathnameSegments.length - 1];
 
       if (!refProfileInfo) {
         getInfo(refProfileCode);
       }
     }
-  }, [isRefLink, pathname, query.ref, refProfileInfo, getInfo]);
+  }, [isRefLink, pathname, query?.ref, refProfileInfo, getInfo]);
 
   // Set user refProfileCode to cookies
   useEffect(() => {

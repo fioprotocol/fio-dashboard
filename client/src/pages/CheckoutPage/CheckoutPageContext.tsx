@@ -410,13 +410,17 @@ export const useContext = (): {
     ],
   );
 
-  const cancelOrder = useCallback(() => {
-    if (order?.id) {
-      apis.orders.update(order.id, {
-        status: PURCHASE_RESULTS_STATUS.CANCELED,
-      });
-    }
-  }, [order?.id]);
+  const cancelOrder = useCallback(
+    (event?: Event) => {
+      // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel oreder on close BitPay payment page
+      if (!event && order?.id) {
+        apis.orders.update(order.id, {
+          status: PURCHASE_RESULTS_STATUS.CANCELED,
+        });
+      }
+    },
+    [order?.id],
+  );
 
   useEffectOnce(
     () => {
@@ -435,6 +439,7 @@ export const useContext = (): {
     },
     [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
     (fioWallets.length > 0 &&
+      !!userId &&
       (!orderNumberParam ||
         (orderNumberParam && !cartLoading && cartLoadingStarted))) ||
       isNoProfileFlow,
@@ -505,6 +510,7 @@ export const useContext = (): {
     ],
     isAuth &&
       order === null &&
+      isFree &&
       !orderNumberParam &&
       !getOrderLoading &&
       !fioLoading &&
