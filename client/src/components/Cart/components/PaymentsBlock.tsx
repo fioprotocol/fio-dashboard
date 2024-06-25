@@ -97,8 +97,9 @@ const PaymentsBlock: React.FC<Props> = props => {
         formsOfPayment?.stripeAffiliate)) ||
       (priceIsLowerThanOneDollar &&
         (!formsOfPayment?.stripe ||
-          (isAffiliateEnabled && !formsOfPayment?.stripeAffiliate) ||
-          formsOfPayment?.bitpay)) ||
+          (isAffiliateEnabled &&
+            !formsOfPayment?.stripeAffiliate &&
+            formsOfPayment?.bitpay))) ||
       (!formsOfPayment?.stripe && !formsOfPayment?.bitpay))
   ) {
     const stripeMessagePart =
