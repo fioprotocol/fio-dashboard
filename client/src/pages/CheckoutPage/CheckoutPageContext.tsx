@@ -248,6 +248,10 @@ export const useContext = (): {
 
   // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
   useEffect(() => {
+    if (isNoProfileFlow) {
+      return;
+    }
+
     if (!order) {
       return;
     }
@@ -258,11 +262,11 @@ export const useContext = (): {
 
     const oldWalletType = fioWallets.find(
       ({ publicKey }) => publicKey === order.publicKey,
-    ).from;
+    )?.from;
 
     const newWalletType = fioWallets.find(
       ({ publicKey }) => publicKey === paymentWalletPublicKey,
-    ).from;
+    )?.from;
 
     if (oldWalletType === newWalletType) {
       return;

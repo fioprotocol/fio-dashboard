@@ -1,5 +1,4 @@
 import Base from '../Base';
-import X from '../Exception';
 
 import { User, Notification, ReferrerProfile, Wallet } from '../../models';
 import { WALLET_CREATED_FROM } from '../../config/constants';
@@ -21,29 +20,20 @@ export default class CreateUserWithoutRegistrtion extends Base {
   }
 
   async execute({ data: { publicKey, refCode, timeZone } }) {
-    const existingWallet = await Wallet.findOneWhere({
+    const existingWallets = await Wallet.list({
       publicKey,
-      edgeId: null,
     });
 
-    if (existingWallet && existingWallet.userId) {
-      const user = await User.info(existingWallet.userId);
+    if (existingWallets && existingWallets.length > 0) {
+      const users = [];
 
-      if (!user) {
-        throw new X({
-          code: 'AUTHENTICATION_FAILED',
-          fields: {
-            user: 'NOT FOUND',
-          },
-        });
-      }
-
-      if (timeZone) {
-        await user.update({ timeZone });
+      for (const existingWalletItem of existingWallets) {
+        const user = await User.info(existingWalletItem.userId);
+        users.push(user.json());
       }
 
       return {
-        data: user.json(),
+        data: users,
       };
     }
 
@@ -80,7 +70,7 @@ export default class CreateUserWithoutRegistrtion extends Base {
     await newWallet.save();
 
     return {
-      data: user.json(),
+      data: [user.json()],
     };
   }
 

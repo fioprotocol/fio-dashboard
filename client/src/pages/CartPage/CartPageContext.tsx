@@ -129,6 +129,7 @@ export const useContext = (): UseContextReturnType => {
   const history = useHistory();
 
   const isNoProfileFlow = refProfile?.settings?.hasNoProfileFlow;
+  const refCode = refProfile?.code;
   const isAffiliateEnabled = refProfile?.type === REF_PROFILE_TYPE.AFFILIATE;
 
   const walletCount = userWallets.length;
@@ -355,10 +356,12 @@ export const useContext = (): UseContextReturnType => {
 
   const checkout = async (paymentProvider: PaymentProvider) => {
     try {
+      const publicKey = paymentWalletPublicKey || userWallets[0]?.publicKey;
+
       const orderParams: CreateOrderActionData = {
         cartId,
         roe,
-        publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
+        publicKey,
         paymentProcessor: paymentProvider,
         prices: prices?.nativeFio,
         data: {
@@ -371,6 +374,14 @@ export const useContext = (): UseContextReturnType => {
       if (isNoProfileFlow) {
         orderParams.refProfileId = refProfile.id;
         orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
+
+        if (!userId && publicKey && refCode) {
+          const users = await apis.auth.createNoRegisterUser({
+            publicKey,
+            refCode,
+          });
+          orderParams.userId = users[0]?.id;
+        }
       }
 
       await apis.orders.create(orderParams);
