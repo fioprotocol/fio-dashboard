@@ -4,6 +4,7 @@ import Base from '../Base';
 import { FreeAddress, Order, OrderItem, Payment, ReferrerProfile } from '../../models';
 import {
   destructAddress,
+  execute,
   formatChainDomain,
   generateErrorResponse,
   generateSuccessResponse,
@@ -24,15 +25,7 @@ import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
-    try {
-      return await this.processing(args);
-    } catch (e) {
-      return generateErrorResponse(this.res, {
-        error: `Server error. Please try later.`,
-        errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
-        statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR,
-      });
-    }
+    return await execute(this.res, 'BuyAddress', args, () => this.processing(args));
   }
 
   async processing({ apiToken, address, referralCode, publicKey }) {
@@ -220,7 +213,7 @@ export default class BuyAddress extends Base {
       order = await Order.create(
         {
           status: Order.STATUS.NEW,
-          total: normalizedPriceUsdc,
+          total: isFree ? 0 : normalizedPriceUsdc,
           roe,
           publicKey,
           refProfileId,
