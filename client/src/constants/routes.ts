@@ -111,6 +111,7 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_TOKENS: '/unwrapTokens',
   WRAP_STATUS_WRAP_DOMAINS: '/wrapDomains',
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
+  WRAP_STATUS_BURNED_DOMAINS: '/burnedDomains',
 
   METAMASK_LANDING_PAGE: '/metamask',
   METAMASK_GATED_REGISTRATION: '/metamask-fio-handle',

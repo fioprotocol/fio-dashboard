@@ -3,6 +3,7 @@ import { WRAP_ITEM_STATUS } from '../../../constants/wrap';
 export const WRAP_TYPE_FILTER_OPTIONS = [
   { id: 'wrap', name: 'WRAP' },
   { id: 'unwrap', name: 'UNWRAP' },
+  { id: 'burned', name: 'BURN' },
 ];
 
 export const WRAP_ASSETS_FILTER_OPTIONS = [

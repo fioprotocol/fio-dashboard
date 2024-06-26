@@ -24,3 +24,9 @@ export const wrapDomainsList = (state: ReduxState): WrapStatusWrapItem[] =>
   state[prefix].wrapDomainsList;
 export const wrapDomainsListCount = (state: ReduxState): number =>
   state[prefix].wrapDomainsListCount;
+
+export const burnedDomainsList = (state: ReduxState): WrapStatusWrapItem[] =>
+  state[prefix].burnedDomainsList;
+export const burnedDomainsListCount = (
+  state: ReduxState,
+): WrapStatusWrapItem[] => state[prefix].burnedDomainsListCount;
