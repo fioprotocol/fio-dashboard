@@ -1,48 +1,5 @@
 import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
-import logger from '../logger.mjs';
 import { BlockchainTransaction } from '../models/index.mjs';
-
-export const executeWithLogging = async ({
-  serviceName,
-  args,
-  hidedArgsForLogging = [],
-  showedFieldsFromResult = [],
-  executor,
-}) => {
-  const loggingArgs = { ...args };
-
-  for (const hideKey of hidedArgsForLogging) {
-    delete loggingArgs[hideKey];
-  }
-
-  logger.info(`Public Api (${serviceName}) args: ${JSON.stringify(loggingArgs)}`);
-  try {
-    const result = await executor(args);
-
-    const loggingTransformer = item => {
-      const loggingItem = {};
-
-      for (const showedKey of showedFieldsFromResult) {
-        loggingItem[showedKey] = item[showedKey];
-      }
-    };
-
-    const loggingResult = Array.isArray(result)
-      ? result.map(loggingTransformer)
-      : loggingTransformer(result);
-
-    logger.info(
-      `Public Api (${serviceName}) result: ${JSON.stringify({
-        args: loggingArgs,
-        result: loggingResult,
-      })}`,
-    );
-    return result;
-  } catch (e) {
-    logger.error(`Public Api (${serviceName}) error`, e);
-    throw e;
-  }
-};
 
 const restoreKeyFromValue = (set, value) => {
   return Object.fromEntries(Object.entries(set).map(a => a.reverse()))[value];

@@ -6,7 +6,6 @@ import {
   formatChainDomain,
   generateErrorResponse,
   generateSuccessResponse,
-  executeWithLogging,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.mjs';
@@ -22,13 +21,7 @@ import Bitpay from '../../external/payment-processor/bitpay.mjs';
 export default class Renew extends Base {
   async execute(args) {
     try {
-      return await executeWithLogging({
-        res: this.res,
-        serviceName: 'Renew',
-        args,
-        showedFieldsFromResult: ['account_id', 'error'],
-        executor: () => this.processing(args),
-      });
+      return await this.processing(args);
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Server error. Please try later.`,
@@ -81,9 +74,10 @@ export default class Renew extends Base {
           CURRENCY_CODES.FIO,
         );
       } else {
-        const domainFromChain = await fioApi.getFioDomain(fioDomain);
-        const domain = formatChainDomain(domainFromChain);
-        publicKey = await fioApi.getPublicAddressByAccount(domain.account);
+        const domainFromChain = await fioApi
+          .getFioDomain(fioDomain)
+          .then(formatChainDomain);
+        publicKey = await fioApi.getPublicAddressByAccount(domainFromChain.account);
       }
     }
 
@@ -95,10 +89,15 @@ export default class Renew extends Base {
       };
 
       if (type === 'account') {
-        const domainFromChain = await fioApi.getFioDomain(fioDomain);
-        const domain = formatChainDomain(domainFromChain);
+        const domainFromChain = await fioApi
+          .getFioDomain(fioDomain)
+          .then(formatChainDomain);
 
-        if (!domain || !domain.account || domain.account !== 'fio.oracle') {
+        if (
+          !domainFromChain ||
+          !domainFromChain.account ||
+          domainFromChain.account !== 'fio.oracle'
+        ) {
           return generateErrorResponse(this.res, err);
         }
       } else {
@@ -189,6 +188,6 @@ export default class Renew extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['success'];
   }
 }

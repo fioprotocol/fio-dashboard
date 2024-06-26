@@ -11,7 +11,6 @@ import {
 } from '../../models';
 import {
   destructAddress,
-  executeWithLogging,
   findDomainInRefProfile,
   formatChainAddress,
   formatChainDomain,
@@ -32,18 +31,12 @@ import {
 } from '../../utils/payment.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
+import { isDomainExpired } from '../../utils/fio.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
     try {
-      return await executeWithLogging({
-        res: this.res,
-        serviceName: 'BuyAddress',
-        args,
-        hidedArgsForLogging: ['apiToken'],
-        showedFieldsFromResult: ['account_id', 'error'],
-        executor: () => this.processing(args),
-      });
+      return await this.processing(args);
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Server error. Please try later.`,
@@ -106,7 +99,10 @@ export default class BuyAddress extends Base {
 
     const domainFromChain = await fioApi.getFioDomain(fioDomain).then(formatChainDomain);
 
-    if (domainFromChain && domainFromChain.expiration * 1000 < Date.now()) {
+    if (
+      domainFromChain &&
+      isDomainExpired(domainFromChain.name, domainFromChain.expiration)
+    ) {
       return generateErrorResponse(this.res, {
         error: 'Domain is expired. Please renew domain expiration',
         errorCode: PUB_API_ERROR_CODES.DOMAIN_IS_EXPIRED,
@@ -296,7 +292,7 @@ export default class BuyAddress extends Base {
     });
 
     const freeRegisteredAddressWithDomain = freeAddresses.find(it => {
-      const { fioDomain: addressFioDomain } = destructAddress(it);
+      const { fioDomain: addressFioDomain } = destructAddress(it.name);
       return addressFioDomain === fioDomain;
     });
 
@@ -331,10 +327,10 @@ export default class BuyAddress extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['apiToken'];
   }
 
   static get resultSecret() {
-    return [];
+    return ['success'];
   }
 }
