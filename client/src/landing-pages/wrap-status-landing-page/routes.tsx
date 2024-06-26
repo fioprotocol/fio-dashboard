@@ -31,6 +31,12 @@ const WrapStatusPageWrapDomains = React.lazy(() =>
   ),
 );
 
+const WrapStatusPageBurnedDomains = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'WrapStatusPageBurnedDomains' */ '../../pages/WrapStatusPageBurnedDomains'
+  ),
+);
+
 const Routes = (): React.ReactElement => (
   <WrapStatusContainer>
     <ScrollToTop>
@@ -64,6 +70,11 @@ const Routes = (): React.ReactElement => (
           <Route
             path={ROUTES.WRAP_STATUS_UNWRAP_DOMAINS}
             component={WrapStatusPageUnwrapDomains}
+            exact
+          />
+          <Route
+            path={ROUTES.WRAP_STATUS_BURNED_DOMAINS}
+            component={WrapStatusPageBurnedDomains}
             exact
           />
         </Switch>
