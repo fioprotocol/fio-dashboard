@@ -6,13 +6,14 @@ import {
   formatChainDomain,
   generateErrorResponse,
   generateSuccessResponse,
+  execute,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.mjs';
 import { fioApi } from '../../external/fio.mjs';
 import { getROE } from '../../external/roe.mjs';
 import { FIO_ACTIONS } from '../../config/constants.js';
-import { CURRENCY_CODES } from '../../constants/fio.mjs';
+import { CHAIN_CODES, CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import { normalizePriceForBitPayInTestNet } from '../../utils/payment.mjs';
@@ -20,15 +21,7 @@ import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 export default class Renew extends Base {
   async execute(args) {
-    try {
-      return await this.processing(args);
-    } catch (e) {
-      return generateErrorResponse(this.res, {
-        error: `Server error. Please try later.`,
-        errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
-        statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR,
-      });
-    }
+    return await execute(this.res, 'Renew', args, () => this.processing(args));
   }
 
   async processing({ address, referralCode, publicKey }) {
@@ -66,7 +59,19 @@ export default class Renew extends Base {
       });
     }
 
-    // TODO add auto detect publicKey by address
+    if (!publicKey) {
+      if (type === 'account') {
+        publicKey = await FIOSDK.getPublicAddress(
+          fioAddress,
+          CHAIN_CODES.FIO,
+          CURRENCY_CODES.FIO,
+        );
+      } else {
+        const domainFromChain = await fioApi.getFioDomain(fioDomain);
+        const domain = formatChainDomain(domainFromChain);
+        publicKey = await fioApi.getPublicAddressByAccount(domain.account);
+      }
+    }
 
     if (!FIOSDK.isFioPublicKeyValid(publicKey)) {
       const err = {

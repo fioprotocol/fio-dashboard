@@ -457,6 +457,23 @@ class Fio {
     return params;
   }
 
+  async getPublicAddressByAccount(account) {
+    const { rows } = await this.getTableRows({
+      code: 'fio.address',
+      scope: 'fio.address',
+      table: 'accountmap',
+      lower_bound: account,
+      upper_bound: account,
+      key_type: 'name',
+      index_position: '1',
+      json: true,
+    });
+
+    if (rows && rows.length) {
+      return rows[0].clientkey;
+    }
+  }
+
   async getFioDomain(domainName) {
     try {
       const tableRowsParams = this.setTableRowsParams(domainName);
