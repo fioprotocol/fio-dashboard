@@ -1,22 +1,46 @@
 import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
-import { PUB_API_ERROR_CODES } from '../constants/pubApiErrorCodes.mjs';
-import { HTTP_CODES } from '../constants/general.mjs';
 import logger from '../logger.mjs';
 import { BlockchainTransaction } from '../models/index.mjs';
 
-export const execute = async (res, name, args, executor) => {
-  logger.info(`Public Api (${name}) args: ${JSON.stringify(args)}`);
+export const executeWithLogging = async ({
+  serviceName,
+  args,
+  hidedArgsForLogging = [],
+  showedFieldsFromResult = [],
+  executor,
+}) => {
+  const loggingArgs = { ...args };
+
+  for (const hideKey of hidedArgsForLogging) {
+    delete loggingArgs[hideKey];
+  }
+
+  logger.info(`Public Api (${serviceName}) args: ${JSON.stringify(loggingArgs)}`);
   try {
     const result = await executor(args);
-    logger.info(`Public Api (${name}) result: ${JSON.stringify(result)}`);
+
+    const loggingTransformer = item => {
+      const loggingItem = {};
+
+      for (const showedKey of showedFieldsFromResult) {
+        loggingItem[showedKey] = item[showedKey];
+      }
+    };
+
+    const loggingResult = Array.isArray(result)
+      ? result.map(loggingTransformer)
+      : loggingTransformer(result);
+
+    logger.info(
+      `Public Api (${serviceName}) result: ${JSON.stringify({
+        args: loggingArgs,
+        result: loggingResult,
+      })}`,
+    );
     return result;
   } catch (e) {
-    logger.error(`Public Api (${name}) error`, e);
-    return generateErrorResponse(res, {
-      error: `Server error. Please try later.`,
-      errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
-      statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR,
-    });
+    logger.error(`Public Api (${serviceName}) error`, e);
+    throw e;
   }
 };
 
@@ -74,18 +98,48 @@ export const generateSuccessResponse = (res, { accountId, charge }) => ({
   success: charge ? { charge } : true,
 });
 
+export const findDomainInRefProfile = (refProfile, fioDomain) => {
+  const refDomains =
+    refProfile.settings &&
+    refProfile.settings.domains &&
+    Array.isArray(refProfile.settings.domains)
+      ? refProfile.settings.domains
+      : [];
+  return refDomains.find(({ name }) => name === fioDomain);
+};
+
 export const formatChainDomain = domain => {
   if (!domain) {
     return;
   }
-  const { id, name, domainhash, account, is_public, expiration } = domain;
   return {
-    id,
-    name,
-    domainHash: domainhash,
-    account,
-    isPublic: is_public === 1,
-    expiration,
+    id: domain.id,
+    name: domain.name,
+    domainHash: domain.domainhash,
+    account: domain.account,
+    isPublic: domain.is_public === 1,
+    expiration: domain.expiration,
+  };
+};
+
+export const formatChainAddress = address => {
+  if (!address) {
+    return;
+  }
+  return {
+    id: address.id,
+    name: address.name,
+    nameHash: address.namehash,
+    domain: address.domain,
+    domainHash: address.domainhash,
+    expiration: address.expiration,
+    ownerAccount: address.owner_account,
+    bundleEligibleCountdown: address.bundleeligiblecountdown,
+    addresses: address.addresses.map(it => ({
+      tokenCode: it.token_code,
+      chainCode: it.chain_code,
+      publicAddress: it.public_address,
+    })),
   };
 };
 
