@@ -3,7 +3,6 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 import Base from '../Base';
 import {
   generateErrorResponse,
-  executeWithLogging,
   generateSummaryResponse,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
@@ -21,13 +20,7 @@ import {
 export default class Summary extends Base {
   async execute(args) {
     try {
-      return await executeWithLogging({
-        res: this.res,
-        serviceName: 'Summary',
-        args,
-        showedFieldsFromResult: ['extern_id', 'extern_status', 'trx_id', 'trx_status'],
-        executor: () => this.processing(args),
-      });
+      return await this.processing(args);
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Server error. Please try later.`,
