@@ -1,10 +1,19 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
-import { FreeAddress, Order, OrderItem, Payment, ReferrerProfile } from '../../models';
+import {
+  Domain,
+  FreeAddress,
+  Order,
+  OrderItem,
+  Payment,
+  ReferrerProfile,
+} from '../../models';
 import {
   destructAddress,
-  execute,
+  executeWithLogging,
+  findDomainInRefProfile,
+  formatChainAddress,
   formatChainDomain,
   generateErrorResponse,
   generateSuccessResponse,
@@ -22,10 +31,26 @@ import {
   prepareOrderWithFioPaymentForExecution,
 } from '../../utils/payment.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
-    return await execute(this.res, 'BuyAddress', args, () => this.processing(args));
+    try {
+      return await executeWithLogging({
+        res: this.res,
+        serviceName: 'BuyAddress',
+        args,
+        hidedArgsForLogging: ['apiToken'],
+        showedFieldsFromResult: ['account_id', 'error'],
+        executor: () => this.processing(args),
+      });
+    } catch (e) {
+      return generateErrorResponse(this.res, {
+        error: `Server error. Please try later.`,
+        errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
+        statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR,
+      });
+    }
   }
 
   async processing({ apiToken, address, referralCode, publicKey }) {
@@ -79,27 +104,28 @@ export default class BuyAddress extends Base {
       });
     }
 
-    const orders = await Order.findAll({
-      where: {
-        publicKey,
-        refProfileId: refProfile.id,
-      },
-      include: [OrderItem],
-    });
+    const domainFromChain = await fioApi.getFioDomain(fioDomain).then(formatChainDomain);
 
-    const domainFromChain = await fioApi.getFioDomain(fioDomain);
-    const domain = formatChainDomain(domainFromChain);
+    if (domainFromChain && domainFromChain.expiration * 1000 < Date.now()) {
+      return generateErrorResponse(this.res, {
+        error: 'Domain is expired. Please renew domain expiration',
+        errorCode: PUB_API_ERROR_CODES.DOMAIN_IS_EXPIRED,
+        statusCode: HTTP_CODES.BAD_REQUEST,
+      });
+    }
+
+    if (domainFromChain && !domainFromChain.isPublic) {
+      return generateErrorResponse(this.res, {
+        error: 'Domain is not public',
+        errorCode: PUB_API_ERROR_CODES.DOMAIN_IS_NOT_PUBLIC,
+        statusCode: HTTP_CODES.BAD_REQUEST,
+      });
+    }
 
     if (type === 'account') {
-      if (domain && !domain.isPublic) {
-        return generateErrorResponse(this.res, {
-          error: 'Domain is not public',
-          errorCode: PUB_API_ERROR_CODES.DOMAIN_IS_NOT_PUBLIC,
-          statusCode: HTTP_CODES.NOT_FOUND,
-        });
-      }
-
-      const addressFromChain = await fioApi.getFioAddress(address);
+      const addressFromChain = await fioApi
+        .getFioAddress(address)
+        .then(formatChainAddress);
 
       if (addressFromChain) {
         return generateErrorResponse(this.res, {
@@ -109,40 +135,13 @@ export default class BuyAddress extends Base {
         });
       }
 
-      const freeAddresses = await FreeAddress.findAll({
-        where: { publicKey },
-      });
+      const isRegistrationAddressExist = await this.isSameAccountRegistrationExist(
+        publicKey,
+        refProfile,
+        address,
+      );
 
-      let freeRegisteredAddressWithDomain;
-
-      const refDomains =
-        refProfile.settings &&
-        refProfile.settings.domains &&
-        Array.isArray(refProfile.settings.domains)
-          ? refProfile.settings.domains
-          : [];
-      const refDomain = refDomains.find(({ name }) => name === fioDomain);
-
-      if (refDomain) {
-        freeRegisteredAddressWithDomain = freeAddresses.find(it => {
-          const { fioDomain } = destructAddress(it);
-          return fioDomain === refDomain.name;
-        });
-      }
-
-      if (freeRegisteredAddressWithDomain) {
-        return generateErrorResponse(this.res, {
-          error: `You have already registered a free FIO Crypto Handle for that domain`,
-          errorCode: PUB_API_ERROR_CODES.ONE_FREE_ADDRESS_PER_DOMAIN_ERROR,
-          statusCode: HTTP_CODES.BAD_REQUEST,
-        });
-      }
-
-      const registeringAccount = orders
-        .flatMap(it => it.OrderItems)
-        .find(({ address, domain }) => address === fioAddress && domain === fioDomain);
-
-      if (registeringAccount) {
+      if (isRegistrationAddressExist) {
         return generateErrorResponse(this.res, {
           error: `You have already sent a request to register a free FIO Crypto Handle for that domain`,
           errorCode: PUB_API_ERROR_CODES.ALREADY_SENT_REGISTRATION_REQ_FOR_ACCOUNT,
@@ -150,26 +149,42 @@ export default class BuyAddress extends Base {
         });
       }
 
-      const isFreeRegistration =
-        !freeRegisteredAddressWithDomain &&
-        apiToken &&
-        domain &&
-        refDomain &&
-        (!refDomain.isPremium || refDomain.isFirstRegFree);
+      const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);
+
+      let isFreeRegistration = false;
+
+      if (apiToken && domainFromChain) {
+        const refDomain = findDomainInRefProfile(refProfile, fioDomain);
+
+        if (refDomain) {
+          isFreeRegistration =
+            (!refDomain.isPremium || refDomain.isFirstRegFree) &&
+            (await this.isFreeAddressNotExist(user.id, fioDomain));
+        } else {
+          const dashboardDomains = await Domain.getDashboardDomains();
+          const dashboardDomain = dashboardDomains.find(it => it.name === fioDomain);
+
+          isFreeRegistration =
+            dashboardDomain &&
+            !dashboardDomain.isPremium &&
+            (await this.isFreeAddressNotExist(user.id, fioDomain));
+        }
+      }
 
       const { order, charge } = await this.createFreeAddressBuyOrder({
         publicKey,
+        userId: user.id,
         refProfileId: refProfile.id,
         address: fioAddress,
         domain: fioDomain,
         isFree: isFreeRegistration,
-        isDomainExist: !!domain,
+        isDomainExist: !!domainFromChain,
       });
 
       return generateSuccessResponse(this.res, { accountId: order.id, charge });
     }
 
-    if (domain) {
+    if (domainFromChain) {
       return generateErrorResponse(this.res, {
         error: 'Domain already registered',
         errorCode: PUB_API_ERROR_CODES.DOMAIN_IS_ALREADY_REGISTERED,
@@ -177,8 +192,11 @@ export default class BuyAddress extends Base {
       });
     }
 
+    const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);
+
     const { order, charge } = await this.createFreeAddressBuyOrder({
       publicKey,
+      userId: user.id,
       refProfileId: refProfile.id,
       address: fioAddress,
       domain: fioDomain,
@@ -189,6 +207,7 @@ export default class BuyAddress extends Base {
 
   async createFreeAddressBuyOrder({
     publicKey,
+    userId,
     refProfileId,
     address,
     domain,
@@ -216,6 +235,7 @@ export default class BuyAddress extends Base {
           total: isFree ? 0 : normalizedPriceUsdc,
           roe,
           publicKey,
+          userId,
           refProfileId,
           data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
         },
@@ -268,6 +288,37 @@ export default class BuyAddress extends Base {
     }
 
     return { order, orderItem, payment, charge };
+  }
+
+  async isFreeAddressNotExist(userId, fioDomain) {
+    const freeAddresses = await FreeAddress.findAll({
+      where: { userId },
+    });
+
+    const freeRegisteredAddressWithDomain = freeAddresses.find(it => {
+      const { fioDomain: addressFioDomain } = destructAddress(it);
+      return addressFioDomain === fioDomain;
+    });
+
+    return !freeRegisteredAddressWithDomain;
+  }
+
+  async isSameAccountRegistrationExist(publicKey, refProfile, address) {
+    const { fioAddress, fioDomain } = destructAddress(address);
+
+    const orders = await Order.findAll({
+      where: {
+        publicKey,
+        refProfileId: refProfile.id,
+      },
+      include: [OrderItem],
+    });
+
+    const order = orders
+      .flatMap(it => it.OrderItems)
+      .find(({ address, domain }) => address === fioAddress && domain === fioDomain);
+
+    return !!order;
   }
 
   static get validationRules() {

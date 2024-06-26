@@ -6,7 +6,7 @@ import {
   formatChainDomain,
   generateErrorResponse,
   generateSuccessResponse,
-  execute,
+  executeWithLogging,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.mjs';
@@ -21,7 +21,21 @@ import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 export default class Renew extends Base {
   async execute(args) {
-    return await execute(this.res, 'Renew', args, () => this.processing(args));
+    try {
+      return await executeWithLogging({
+        res: this.res,
+        serviceName: 'Renew',
+        args,
+        showedFieldsFromResult: ['account_id', 'error'],
+        executor: () => this.processing(args),
+      });
+    } catch (e) {
+      return generateErrorResponse(this.res, {
+        error: `Server error. Please try later.`,
+        errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
+        statusCode: HTTP_CODES.INTERNAL_SERVER_ERROR,
+      });
+    }
   }
 
   async processing({ address, referralCode, publicKey }) {
