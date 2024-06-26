@@ -40,11 +40,16 @@ import {
   FIO_ACTIONS,
   USER_HAS_FREE_ADDRESS_MESSAGE,
   ORDER_ERROR_TYPES,
+  FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
 
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
+import {
+  checkIfOrderedDomainRegisteredInBlockchain,
+  getDomainOnOrder,
+} from '../utils/jobs/orders.mjs';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -367,12 +372,7 @@ class OrdersJob extends CommonJob {
   }
 
   async checkPriceChanges(orderItem, currentRoe) {
-    let fee = await this.getFeeForAction(orderItem.action);
-
-    if (orderItem.data && orderItem.data.hasCustomDomain) {
-      const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
-      fee = new MathOp(fee).add(domainFee).toNumber();
-    }
+    const fee = await this.getFeeForAction(orderItem.action);
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
 
@@ -425,7 +425,9 @@ class OrdersJob extends CommonJob {
 
     const existingUsersFreeAddress =
       userHasFreeAddress &&
-      userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
+      userHasFreeAddress.find(
+        freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
+      );
 
     if (
       userHasFreeAddress &&
@@ -511,32 +513,14 @@ class OrdersJob extends CommonJob {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  async checkIfDomainOnOrderRegistered(orderItem) {
-    const { domain, orderId } = orderItem;
-    const domainOnOrder = await OrderItem.findOne({
-      where: {
-        action: FIO_ACTIONS.registerFioDomain,
-        domain,
-        orderId,
-      },
-      include: [{ model: OrderItemStatus }],
-    });
-
+  async checkIfDomainOnOrderRegistered({ orderItem, action, errorMessage }) {
+    const domainOnOrder = await getDomainOnOrder(orderItem, action);
     if (domainOnOrder) {
-      const ordersDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
-
-      if (
-        ordersDomain &&
-        ordersDomain.orderItemStatus &&
-        (ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
-          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL ||
-          ordersDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.EXPIRE)
-      ) {
-        const errorMessage = `RenewDomain has been canceled because domain - ${domain} - from this order has not been registered`;
-
-        await this.handleFail(orderItem, errorMessage);
-        throw new Error(errorMessage);
-      }
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      await checkIfOrderedDomainRegisteredInBlockchain(domainOnOrder, {
+        errorMessage,
+        onFail: err => this.handleFail(orderItem, err),
+      });
     }
   }
 
@@ -648,9 +632,21 @@ class OrdersJob extends CommonJob {
     }
 
     if (action === FIO_ACTIONS.renewFioDomain) {
-      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
-      await this.checkIfDomainOnOrderRegistered(orderItem);
+      await this.checkIfDomainOnOrderRegistered({
+        orderItem,
+        action: FIO_ACTIONS.registerFioDomain,
+        errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+      });
     }
+
+    if (action === FIO_ACTIONS.registerFioAddress) {
+      await this.checkIfDomainOnOrderRegistered({
+        orderItem,
+        action: FIO_ACTIONS.registerFioDomainAddress,
+        errorMessage: `RegisterFioHandle has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+      });
+    }
+
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
     if (!result.transaction_id) {
@@ -797,9 +793,13 @@ class OrdersJob extends CommonJob {
       });
 
       if (action === FIO_ACTIONS.renewFioDomain) {
-        await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
-        await this.checkIfDomainOnOrderRegistered(orderItem);
+        await this.checkIfDomainOnOrderRegistered({
+          orderItem,
+          action: FIO_ACTIONS.registerFioDomain,
+          errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
+        });
       }
+
       result = await fioApi.executeAction(
         action,
         fioApi.getActionParams({
@@ -862,6 +862,7 @@ class OrdersJob extends CommonJob {
       addBundles: addBundlesPrice,
       address: addressPrice,
       domain: domainPrice,
+      combo: domainAddressPrice,
       renewDomain: renewDomainPrice,
     } = prices;
     // get order items ready to process
@@ -966,6 +967,9 @@ class OrdersJob extends CommonJob {
           let nativeFio = null;
 
           switch (action) {
+            case FIO_ACTIONS.registerFioDomainAddress:
+              nativeFio = domainAddressPrice;
+              break;
             case FIO_ACTIONS.registerFioAddress:
               nativeFio = addressPrice;
               break;
@@ -1008,7 +1012,7 @@ class OrdersJob extends CommonJob {
           const existingUsersFreeAddress =
             userHasFreeAddressOnPublicKey &&
             userHasFreeAddressOnPublicKey.find(
-              freeAddress => freeAddress.name.split('@')[1] === domain,
+              freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
             );
 
           if (

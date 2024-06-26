@@ -28,6 +28,7 @@ type Props = {
 
 const DeleteTokenLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -66,6 +67,7 @@ const DeleteTokenLedgerWallet: React.FC<Props> = props => {
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.DELETE_TOKEN}
       data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

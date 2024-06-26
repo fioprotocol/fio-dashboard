@@ -37,6 +37,8 @@ import {
 } from '../../../../types';
 
 import classes from '../../AdminPartnersListPage.module.scss';
+import api from '../../../../api';
+import { copyToClipboard } from '../../../../util/general';
 
 type FieldsType = FieldArrayRenderProps<
   RefProfileDomain,
@@ -128,6 +130,11 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     [form],
   );
 
+  const onGenerateApiToken = useCallback(async () => {
+    const apiToken = await api.admin.createPartnerApiToken();
+    form.change('apiToken' as keyof RefProfile, apiToken);
+  }, [form]);
+
   const onRemoveImage = useCallback(() => {
     form.change('settings.img' as keyof RefProfile, null);
     form.change('image' as keyof RefProfile, null);
@@ -153,6 +160,8 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     }
     fields.move(result.source.index, result.destination.index);
   };
+
+  const apiToken = form.getState().values?.apiToken;
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -335,6 +344,23 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
 
           <div className="d-flex align-self-start mb-4">
             <Field
+              name="settings.isBranded"
+              type="checkbox"
+              component={Input}
+              label="Partner branded"
+            />
+          </div>
+          <div className="d-flex align-self-start mb-4">
+            <Field
+              name="settings.hasNoProfileFlow"
+              type="checkbox"
+              component={Input}
+              label="No profile (legacy reg site)"
+            />
+          </div>
+
+          <div className="d-flex align-self-start mb-4">
+            <Field
               name="settings.gatedRegistration.isOn"
               type="checkbox"
               component={Input}
@@ -384,6 +410,38 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
           <div className="d-flex align-self-start mb-2">
             <span className={classes.label}>Landing Page text</span>
           </div>
+
+          <div
+            className={classnames(
+              classes.landingTextsContainer,
+              'd-flex',
+              'flex-column',
+              'align-self-start',
+              'w-100',
+              'mb-3',
+            )}
+          >
+            <span className={classes.label}>Api Token</span>
+            <Field name="apiToken">{() => null}</Field>
+            {apiToken ? (
+              <div className={classes.apiTokenWrapper}>
+                <span className={classes.apiToken}>{apiToken}</span>
+                <Button
+                  className="w-auto ml-2 mb-0"
+                  onClick={() => copyToClipboard(apiToken)}
+                >
+                  <FontAwesomeIcon icon="key" className="mr-2" />
+                  <span>Copy</span>
+                </Button>
+              </div>
+            ) : (
+              <Button className="w-auto mb-0" onClick={onGenerateApiToken}>
+                <FontAwesomeIcon icon="key" className="mr-2" />
+                <span>Generate New</span>
+              </Button>
+            )}
+          </div>
+
           <div
             className={classnames(
               classes.landingTextsContainer,

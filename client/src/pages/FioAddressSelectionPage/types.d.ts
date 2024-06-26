@@ -4,6 +4,7 @@ export type UseContextProps = {
   additionalItemsList: SelectedItemProps[];
   addressValue: string | null;
   error: string | null;
+  infoMessage: { title: string; message: string };
   loading: boolean;
   suggestedItemsList: SelectedItemProps[];
   usersItemsList: SelectedItemProps[];

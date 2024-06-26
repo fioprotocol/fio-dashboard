@@ -9,6 +9,7 @@ import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../Input/TextInput';
 import NotificationBadge from '../../../NotificationBadge';
+import Dropdown from '../../../Input/Dropdown';
 
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 import { ROUTES } from '../../../../constants/routes';
@@ -23,12 +24,16 @@ type Props = {
   disabled?: boolean;
   disabledInput?: boolean;
   disabledInputGray?: boolean;
+  options?: Array<{ id: string; name: string }>;
   links?: {
     getCryptoHandle: React.ReactNode;
   };
   isReverseColors?: boolean;
   isTransparent?: boolean;
+  isValidating?: boolean;
+  prefix?: string;
   suffixText?: string;
+  lowerCased?: boolean;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   loading?: boolean;
@@ -38,13 +43,30 @@ type Props = {
   }: {
     address: string;
   }) => Promise<void> | void;
+  showCustomDomainInput?: boolean;
   showSubmitButton?: boolean;
   placeHolderText?: string;
+  dropdownClassNames?: string;
+  controlClassNames?: string;
+  placeholderClassNames?: string;
+  menuClassNames?: string;
+  arrowCloseClassNames?: string;
+  arrowOpenClassNames?: string;
+  optionItemClassNames?: string;
+  optionButtonClassNames?: string;
+  defaultValue?: { id: string; name: string };
+  hasRoundRadius?: boolean;
+  inputClassNames?: string;
+  inputCustomDomainClassNames?: string;
+  regInputCustomDomainClassNames?: string;
+  isBlueButton?: boolean;
   onInputChanged?: (value: string) => string;
+  toggleShowCustomDomain?: (isCustomDomain: boolean) => void;
 };
 
 type ActionButtonProps = {
   buttonText?: string;
+  isBlueButton?: boolean;
   disabled?: boolean;
   isTransparent?: boolean;
   isWhiteBordered?: boolean;
@@ -54,9 +76,15 @@ type ActionButtonProps = {
   loading?: boolean;
 };
 
+const CUSTOM_DROPDOWN_VALUE = {
+  id: 'addCustomDomain',
+  name: '+ Add custom domain',
+};
+
 const ActionButton: React.FC<ActionButtonProps> = props => {
   const {
     buttonText = 'GET IT',
+    isBlueButton,
     disabled,
     isTransparent,
     isWhiteBordered,
@@ -90,6 +118,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
           isWhiteBordered={isWhiteBordered}
           isTransparent={isTransparent}
           loading={loading}
+          isBlue={isBlueButton}
         />
       </a>
     );
@@ -106,6 +135,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
         isWhiteBordered={isWhiteBordered}
         isTransparent={isTransparent}
         loading={loading}
+        isBlue={isBlueButton}
       />
     </div>
   );
@@ -118,18 +148,38 @@ export const FormComponent: React.FC<Props> = props => {
     disabled,
     disabledInput,
     disabledInputGray,
+    options,
     isReverseColors,
     isTransparent,
+    isValidating,
     links,
     loading,
+    lowerCased = true,
+    prefix,
     suffixText,
     convert,
     formatOnFocusOut,
     notification,
     customHandleSubmit,
+    showCustomDomainInput,
     showSubmitButton = true,
     placeHolderText = 'Enter a Username',
+    dropdownClassNames,
+    controlClassNames,
+    placeholderClassNames,
+    menuClassNames,
+    arrowCloseClassNames,
+    arrowOpenClassNames,
+    optionItemClassNames,
+    optionButtonClassNames,
+    defaultValue,
+    hasRoundRadius,
+    inputClassNames,
+    inputCustomDomainClassNames,
+    regInputCustomDomainClassNames,
+    isBlueButton,
     onInputChanged,
+    toggleShowCustomDomain,
   } = props;
 
   const history = useHistory();
@@ -178,16 +228,68 @@ export const FormComponent: React.FC<Props> = props => {
                 uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 component={TextInput}
                 hideError="true"
-                lowerCased
-                suffix={suffixText}
+                lowerCased={lowerCased}
+                suffix={!options && suffixText}
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
                 parse={onInputChanged}
                 disabled={disabledInput}
                 disabledInputGray={disabledInputGray}
                 loading={loading}
+                hasRoundRadius={hasRoundRadius}
+                inputClassNames={inputClassNames}
               />
             </div>
+            {options ? (
+              showCustomDomainInput ? (
+                <div className={classes.field}>
+                  <Field
+                    name="domain"
+                    type="text"
+                    placeholder="Custom domain"
+                    colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.INDIGO_WHITE}
+                    component={TextInput}
+                    lowerCased={lowerCased}
+                    formatOnBlur={formatOnFocusOut}
+                    format={convert}
+                    onClose={() => {
+                      toggleShowCustomDomain(false);
+                    }}
+                    parse={onInputChanged}
+                    hideError="true"
+                    prefix={prefix}
+                    disabled={disabledInput}
+                    loading={isValidating}
+                    hasRoundRadius={hasRoundRadius}
+                    inputClassNames={inputCustomDomainClassNames}
+                    regInputClassNames={regInputCustomDomainClassNames}
+                  />
+                </div>
+              ) : (
+                <Field
+                  name="domain"
+                  component={Dropdown}
+                  options={options}
+                  customValue={CUSTOM_DROPDOWN_VALUE}
+                  toggleToCustom={() => {
+                    toggleShowCustomDomain(true);
+                  }}
+                  placeholder="Select Domain"
+                  hideError
+                  actionOnChange={onInputChanged}
+                  dropdownClassNames={dropdownClassNames}
+                  controlClassNames={controlClassNames}
+                  placeholderClassNames={placeholderClassNames}
+                  menuClassNames={menuClassNames}
+                  arrowCloseClassNames={arrowCloseClassNames}
+                  arrowOpenClassNames={arrowOpenClassNames}
+                  optionItemClassNames={optionItemClassNames}
+                  optionButtonClassNames={optionButtonClassNames}
+                  defaultOptionValue={defaultValue}
+                />
+              )
+            ) : null}
             {showSubmitButton && (
               <ActionButton
                 disabled={disabled}
@@ -196,6 +298,7 @@ export const FormComponent: React.FC<Props> = props => {
                 buttonText={buttonText}
                 isTransparent={isTransparent}
                 loading={loading}
+                isBlueButton={isBlueButton}
               />
             )}
           </form>

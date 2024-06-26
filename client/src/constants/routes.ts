@@ -1,3 +1,5 @@
+import { REF_PROFILE_SLUG_NAME } from './ref';
+
 const ROUTES: { [route: string]: string } = {
   HOME: '/',
   TWITTER_HANDLE: '/twitter-handle',
@@ -98,7 +100,7 @@ const ROUTES: { [route: string]: string } = {
   ORDER_INVOICE: '/order-invoice',
 
   // Referrer Profile pages
-  REF_PROFILE_HOME: '/ref/:refProfileCode',
+  REF_PROFILE_HOME: `/ref/${REF_PROFILE_SLUG_NAME}`,
 
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
@@ -112,6 +114,11 @@ const ROUTES: { [route: string]: string } = {
 
   METAMASK_LANDING_PAGE: '/metamask',
   METAMASK_GATED_REGISTRATION: '/metamask-fio-handle',
+
+  NO_PROFILE_REGISTER_FIO_HANDLE: `/address/${REF_PROFILE_SLUG_NAME}`, // ?publicKey=
+  NO_PROFILE_REGISTER_FIO_DOMAIN: `/domain/${REF_PROFILE_SLUG_NAME}`, // ?publicKey=
+  NO_PROFILE_ADD_BUNDLES: `/address/renew/${REF_PROFILE_SLUG_NAME}`, // ?publicKey=
+  NO_PROFILE_RENEW_DOMAIN: `/domain/renew/${REF_PROFILE_SLUG_NAME}`, // ?publicKey=
 };
 
 export const PUBLIC_ROUTES: string[] = [

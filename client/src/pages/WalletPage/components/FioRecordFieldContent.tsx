@@ -1,7 +1,4 @@
-import React from 'react';
-
-import ConvertedAmount from '../../../components/ConvertedAmount/ConvertedAmount';
-import Amount from '../../../components/common/Amount';
+import { FC } from 'react';
 
 import { commonFormatTime } from '../../../util/general';
 import { priceToNumber } from '../../../utils';
@@ -11,6 +8,10 @@ import { FIO_RECORD_DETAILED_FIELDS } from '../constants';
 import { FIO_DATA_TRANSACTION_LINK } from '../../../constants/common';
 
 import { FioRecordViewKeysProps } from '../types';
+import { PriceComponent } from '../../../components/PriceComponent';
+import { useConvertFioToUsdc } from '../../../util/hooks';
+
+import classes from '../styles/FioRecordFieldContent.module.scss';
 
 type Props = {
   value: string | null;
@@ -19,7 +20,7 @@ type Props = {
   token: string;
 };
 
-const FioRecordFieldContent: React.FC<Props> = props => {
+const FioRecordFieldContent: FC<Props> = props => {
   const { field, value, chain, token } = props;
 
   if (value == null) return;
@@ -44,23 +45,38 @@ const FioRecordFieldContent: React.FC<Props> = props => {
     return <>{commonFormatTime(value)}</>;
 
   if (field === FIO_RECORD_DETAILED_FIELDS.amount && isFioChain(chain)) {
-    const price = priceToNumber(value);
-
-    return (
-      <span>
-        <ConvertedAmount fioAmount={price} /> (<Amount value={price} /> FIO)
-      </span>
-    );
+    return <RenderFIOPriceComponent value={value} />;
   }
 
   if (field === FIO_RECORD_DETAILED_FIELDS.amount && !isFioChain(chain)) {
     return (
-      <span>
-        {value} {token || chain}
-      </span>
+      <PriceComponent
+        className={classes.priceValue}
+        costFio={value}
+        tokenCode={token || chain}
+      />
     );
   }
   return <>{value}</>;
+};
+
+type RenderFIOPriceComponentProps = {
+  value: string;
+};
+
+const RenderFIOPriceComponent: FC<RenderFIOPriceComponentProps> = ({
+  value,
+}) => {
+  const fioAmount = priceToNumber(value);
+  const usdcPrice = useConvertFioToUsdc({ fioAmount });
+
+  return (
+    <PriceComponent
+      className={classes.priceValue}
+      costFio={fioAmount.toString(10)}
+      costUsdc={usdcPrice.toString(10)}
+    />
+  );
 };
 
 export default FioRecordFieldContent;

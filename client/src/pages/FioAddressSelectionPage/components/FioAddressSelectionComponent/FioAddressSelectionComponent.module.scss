@@ -16,6 +16,12 @@
   }
 }
 
+.infoBadge {
+  span {
+    word-break: break-word !important;
+  }
+}
+
 @include lg {
   .container {
     margin-bottom: 0;

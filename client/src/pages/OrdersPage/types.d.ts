@@ -17,8 +17,11 @@ export type ActionsProps = {
 export type OrdersPageProps = {
   hasMoreOrders: boolean;
   isDesktop: boolean;
+  isNoProfileFlow: boolean;
   loading: boolean;
   ordersList: UserOrderDetails[];
+  noProfileRedirectParams: { pathname: string };
+  publicKey: string;
   getMoreOrders: () => void;
 } & ActionsProps;
 

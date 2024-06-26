@@ -21,12 +21,12 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { FormValues } from '../types';
+import { AddTokenValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: FormValues;
+  submitData: AddTokenValues;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;

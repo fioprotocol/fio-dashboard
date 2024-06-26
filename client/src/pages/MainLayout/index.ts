@@ -16,6 +16,7 @@ import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
 import { isContainedFlow } from '../../redux/containedFlow/selectors';
 import { apiUrls } from '../../redux/registrations/selectors';
+import { isNoProfileFlow } from '../../redux/refProfile/selectors';
 
 import MainLayout from './MainLayout';
 
@@ -25,6 +26,7 @@ const reduxConnect = connect(
     pathname,
     isAuthenticated,
     isActiveUser,
+    isNoProfileFlow,
     loginSuccess,
     showLogin,
     showRecovery,

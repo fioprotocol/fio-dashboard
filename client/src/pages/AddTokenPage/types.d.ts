@@ -8,7 +8,7 @@ import {
   FioWalletDoublet,
 } from '../../types';
 
-export type SubmitDataProps = FormValues | PublicAddressDoublet[] | null;
+export type SubmitDataProps = AddTokenValues | PublicAddressDoublet[] | null;
 
 export type AddTokenDefaultProps = {
   bundleCost: number;
@@ -16,7 +16,7 @@ export type AddTokenDefaultProps = {
   fioWallets: FioWalletDoublet[];
   results: LinkActionResult;
   changeBundleCost: (bundle: number) => void;
-  onBack: (formProps: FormRenderProps<FormValues>) => void;
+  onBack: (formProps: FormRenderProps<AddTokenValues>) => void;
   onRetry: (resultsData: LinkActionResult) => void;
 };
 
@@ -25,25 +25,24 @@ export type AddTokenContextProps = {
   processing: boolean;
   submitData: SubmitDataProps;
   onCancel: () => void;
-  onSubmit: (values: FormValues) => void;
-  setProcessing: (processing: boolean) => void;
+  onSubmit: (values: AddTokenValues) => void;
   onSuccess: (result: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
-  validate: (values: FormValues) => AnyObject | Promise<AnyObject>;
+  validate: (values: AddTokenValues) => AnyObject | Promise<AnyObject>;
   validateToken: (
     token: PublicAddressDoublet,
-    values: FormValues,
+    values: AddTokenValues,
   ) => AnyObject | Promise<AnyObject>;
   publicAddresses: PublicAddressDoublet[];
 } & AddTokenDefaultProps;
 
-export type FormValues = {
+export type AddTokenValues = {
   name?: string;
   tokens: PublicAddressDoublet[];
 };
 
 export type AddTokenFormProps = {
-  formProps: FormRenderProps<FormValues>;
+  formProps: FormRenderProps<AddTokenValues>;
   validateToken: (
     values: PublicAddressDoublet,
   ) => AnyObject | Promise<AnyObject>;

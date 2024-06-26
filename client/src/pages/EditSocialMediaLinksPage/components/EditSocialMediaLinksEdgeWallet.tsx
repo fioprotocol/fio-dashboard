@@ -14,14 +14,14 @@ import {
   PublicAddressDoublet,
   WalletKeys,
 } from '../../../types';
-import { EditSocialLinkItem } from '../types';
+import { EditSocialLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: { fch: string; socialMediaLinksList: EditSocialLinkItem[] };
+  submitData: EditSocialLinkValues;
   processing: boolean;
   fee?: number | null;
 };
@@ -40,7 +40,7 @@ export const EditSocialMediaLinksEdgeWallet: React.FC<Props> = props => {
     data,
     keys,
   }: {
-    data: { fch: string; socialMediaLinksList: EditSocialLinkItem[] };
+    data: EditSocialLinkValues;
     keys: WalletKeys;
   }) => {
     const editedSocialMediaLinks = data.socialMediaLinksList.filter(

@@ -5,8 +5,11 @@ import { Link } from 'react-router-dom';
 import { SiteLink } from '../MainHeader/components/SiteLink/SiteLink';
 
 import { ROUTES } from '../../constants/routes';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import { RefProfile } from '../../types';
+
+import fioLogoSrc from '../../assets/images/fio-logo.svg';
 
 import classes from './MainHeaderContainer.module.scss';
 
@@ -14,7 +17,9 @@ type Props = {
   hideSiteLink?: boolean;
   isAdmin?: boolean;
   isMenuOpen?: boolean;
+  noBoxShadow?: boolean;
   refProfileInfo?: RefProfile;
+  queryParams?: string;
   closeMenu?: () => void;
 };
 
@@ -24,15 +29,43 @@ export const MainHeaderContainer: React.FC<Props> = props => {
     hideSiteLink,
     isAdmin,
     isMenuOpen,
+    noBoxShadow,
     refProfileInfo,
+    queryParams,
     closeMenu,
   } = props;
+  const isNoProfileFlow = refProfileInfo?.settings?.hasNoProfileFlow;
+
+  const logoSrc =
+    refProfileInfo?.settings?.isBranded || isNoProfileFlow
+      ? refProfileInfo.settings.img
+        ? refProfileInfo.settings.img
+        : fioLogoSrc
+      : fioLogoSrc;
 
   return (
-    <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
+    <div
+      className={classnames(
+        classes.header,
+        isMenuOpen && classes.isOpen,
+        noBoxShadow && classes.noBoxShadow,
+      )}
+    >
       {!isAdmin ? (
-        <Link to={ROUTES.HOME}>
-          <div className={classes.logo} onClick={closeMenu} />
+        <Link
+          to={{
+            pathname: isNoProfileFlow
+              ? `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+                  REF_PROFILE_SLUG_NAME,
+                  refProfileInfo?.code,
+                )}`
+              : ROUTES.HOME,
+            search: queryParams || null,
+          }}
+        >
+          <div className={classes.logoContainer} onClick={closeMenu}>
+            <img src={logoSrc} alt="Branded Logo" />
+          </div>
         </Link>
       ) : (
         <div>

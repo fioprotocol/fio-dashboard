@@ -60,18 +60,36 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
     };
 
-    const registrations = makeRegistrationOrder(
-      [...cartItems],
-      prices?.nativeFio,
-    );
+    const registrations = makeRegistrationOrder({
+      cartItems,
+      fees: prices?.nativeFio,
+      isComboSupported: true,
+    });
+
     if (keys.private) {
       apis.fio.setWalletFioSdk(keys);
     }
+
     for (const registration of registrations) {
       if (!registration.isFree) {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         let signedTx: SignedTxArgs;
-        if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+        if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+          signedTx = await apis.fio.walletFioSDK.genericAction(
+            registration.isCombo
+              ? ACTIONS.registerFioDomainAddress
+              : ACTIONS.registerFioAddress,
+            {
+              fioAddress: registration.fioName,
+              maxFee: new MathOp(registration.fee)
+                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+                .round(0)
+                .toNumber(),
+              technologyProviderId: apis.fio.tpid,
+              expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+            },
+          );
+        } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
               registrationItem.fioName === registration.fioName &&
@@ -161,6 +179,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         }
 
         result.registered.push({
+          action: registration.action,
           fioName: registration.fioName,
           isFree: false,
           cartItemId: registration.cartItemId,

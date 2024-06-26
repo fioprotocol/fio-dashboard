@@ -27,6 +27,7 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
     additionalItemsList,
     addressValue,
     error,
+    infoMessage,
     isDesktop,
     loading,
     suggestedItemsList,
@@ -44,6 +45,13 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
           placeholder="Enter a Username"
           queryParam={QUERY_PARAMS_NAMES.ADDRESS}
           setFieldValue={setAddressValue}
+        />
+        <InfoBadge
+          title={infoMessage?.title}
+          message={infoMessage?.message}
+          show={!!infoMessage}
+          type={BADGE_TYPES.INFO}
+          className={classes.infoBadge}
         />
         <UsersItemsList
           addressValue={addressValue}

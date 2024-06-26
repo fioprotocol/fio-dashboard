@@ -1,0 +1,88 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+
+  .nav {
+    gap: 20px;
+
+    .link {
+      padding-right: 0;
+      padding-left: 0;
+
+      &:last-child {
+        margin-left: 20px;
+      }
+
+      .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100px;
+        font-size: 0.8125em;
+        background-color: unset;
+        color: $light-indigo;
+        height: 40px;
+        @include proxima-nova-regular;
+    
+        &.isActive {
+          background-color: $light-indigo;
+          color: $white;
+        }
+    
+        &:hover {
+          background-color: $light-indigo;
+          color: $white;
+          border-color: $light-indigo;
+        }
+    
+        &:focus {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+    
+        .headerItemContainer {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+        }
+      }
+    }
+  }
+
+  .mobileNav {
+    flex-direction: column;
+  
+    .mobileLink {
+      font-size: 14px;
+      color: $light-indigo;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(0) scale(1, 1);
+      transition: transform 0.3s ease-in-out;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.04, 1.04);
+      }
+
+      &.isActive {
+        @include proxima-nova-bold;
+      }
+
+      .headerItemContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 5px;
+      }
+    }
+  }
+}

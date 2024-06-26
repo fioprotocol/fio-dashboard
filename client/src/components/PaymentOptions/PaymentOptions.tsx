@@ -25,6 +25,7 @@ type Props = {
 
 type DefaultPaymentOptionProps = {
   isFree?: boolean;
+  isAffiliateEnabled?: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
@@ -34,6 +35,7 @@ type DefaultPaymentOptionProps = {
   userWallets?: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled?: boolean;
+  formsOfPayment?: { [key: string]: boolean };
 };
 
 type PaymentOptionRenderProps = {
@@ -56,7 +58,7 @@ const PAYMENT_OPTIONS_PROPS = {
       paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.FIO,
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.FIO,
-    hideButton: hasLowBalance,
+    hideButton: hasLowBalance && !isFree,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.FIO),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({
@@ -65,11 +67,19 @@ const PAYMENT_OPTIONS_PROPS = {
     selectedPaymentProvider,
     disabled,
     totlaCartUsdcAmount,
+    formsOfPayment,
+    isAffiliateEnabled,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <CreditCardIcon className={classes.icon} />,
     disabled: cartItems?.length === 0 || disabled,
-    hideButton: new MathOp(totlaCartUsdcAmount).lt(0.5),
+    hideButton:
+      (formsOfPayment &&
+        (!formsOfPayment.stripe ||
+          (formsOfPayment.stripe &&
+            isAffiliateEnabled &&
+            !formsOfPayment.stripeAffiliate))) ||
+      new MathOp(totlaCartUsdcAmount).lt(0.5),
     provider: PAYMENT_PROVIDER.STRIPE,
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.STRIPE,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
@@ -79,6 +89,7 @@ const PAYMENT_OPTIONS_PROPS = {
     disabled,
     selectedPaymentProvider,
     totlaCartUsdcAmount,
+    formsOfPayment,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: <BitPayButtonText width={BITPAY_LOGO_WIDTH.hasLowHeight} />,
@@ -86,7 +97,9 @@ const PAYMENT_OPTIONS_PROPS = {
     hasCobaltBackground: true,
     isTextCentered: true,
     disabled: cartItems?.length === 0 || disabled,
-    hideButton: new MathOp(totlaCartUsdcAmount).lte(1),
+    hideButton:
+      (formsOfPayment && !formsOfPayment.bitpay) ||
+      new MathOp(totlaCartUsdcAmount).lte(1),
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };

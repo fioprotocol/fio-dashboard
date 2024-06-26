@@ -5,6 +5,8 @@ import { NavComponent } from './components/NavComponent';
 
 import { ROUTES } from '../../constants/routes';
 
+import { useContext } from './FooterContext';
+
 import classes from './Footer.module.scss';
 
 type Props = {
@@ -13,9 +15,12 @@ type Props = {
 };
 
 const Footer: React.FC<Props> = props => {
+  const { isBranded } = useContext();
+
   return (
     <section className={classes.footer}>
       <Link to={ROUTES.HOME} className={classes.logoLink}>
+        {isBranded && <span>Powered by </span>}
         <div className={classes.logo} />
       </Link>
       <hr className={classes.divider} />

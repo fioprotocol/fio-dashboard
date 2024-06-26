@@ -14,23 +14,21 @@ import {
   PublicAddressDoublet,
   LinkActionResult,
 } from '../../../types';
-import { EditSocialLinkItem } from '../types';
+import { EditSocialLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: EditSocialLinkItem[] | null;
-  };
+  submitData: EditSocialLinkValues;
   processing: boolean;
   fee: number;
 };
 
 export const EditSocialMediaLinksLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -79,6 +77,7 @@ export const EditSocialMediaLinksLedgerWallet: React.FC<Props> = props => {
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.EDIT_TOKEN}
       data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

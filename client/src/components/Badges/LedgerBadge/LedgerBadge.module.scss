@@ -7,17 +7,19 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 6px;
 
     .ledgerIcon {
       width: 14px;
       height: 14px;
     }
+
     .ledgerText {
+      text-wrap: nowrap;
       margin-top: 0;
       margin-bottom: 0;
       color: $white;
       font-size: 10px;
-      margin-left: 6px;
       @include sf-pro-display-regular;
     }
   }

@@ -23,6 +23,10 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import {
+  refProfileCode as refProfileCodeSelector,
+  isNoProfileFlow as isNoProfileFlowSelector,
+} from '../../redux/refProfile/selectors';
 
 import { useEffectOnce } from '../../hooks/general';
 
@@ -34,7 +38,8 @@ import {
   CONTAINED_FLOW_ACTIONS,
 } from '../../constants/containedFlow';
 import { PURCHASE_RESULTS_STATUS } from '../../constants/purchase';
-
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 import {
   ALREADY_REGISTERED_ERROR_TEXT,
   ERROR_TYPES,
@@ -70,11 +75,14 @@ export const useContext = (
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
   const isContainedFlow = useSelector(isContainedFlowSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const refProfileCode = useSelector(refProfileCodeSelector);
 
   const dispatch = useDispatch();
 
   const { orderItem } = props;
-  const { id, errItems, payment, regItems, status } = orderItem || {};
+  const { id, errItems, payment, regItems, status, publicKey } =
+    orderItem || {};
 
   let buttonText = 'Close';
 
@@ -85,10 +93,10 @@ export const useContext = (
   }, [dispatch, cartId]);
 
   useEffect(() => {
-    if (noProfile) {
+    if (noProfile && !isNoProfileFlow) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [noProfile, history]);
+  }, [isNoProfileFlow, noProfile, history]);
 
   useEffect(() => {
     if (status === PURCHASE_RESULTS_STATUS.SUCCESS) {
@@ -129,7 +137,17 @@ export const useContext = (
   }
 
   const onClose = () => {
-    dispatch(onPurchaseResultsClose());
+    if (isNoProfileFlow) {
+      history.push({
+        pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+          REF_PROFILE_SLUG_NAME,
+          refProfileCode,
+        )}`,
+        search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
+      });
+    } else {
+      dispatch(onPurchaseResultsClose());
+    }
   };
 
   const onRetry = () => {
@@ -155,6 +173,7 @@ export const useContext = (
 
   const isRetryAvailable =
     !isEmpty(errItems) &&
+    !isNoProfileFlow &&
     errItems.filter(
       ({ errorType, error }) =>
         errorType !== ERROR_TYPES.userHasFreeAddress &&

@@ -18,15 +18,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
 
   &:focus {
     box-shadow: none;
   }
 
   & > div {
-    min-width: 30px;
-    padding-left: 5px;
-    padding-right: 5px;
+    min-width: 16px;
 
     display: flex;
     align-items: center;
@@ -35,7 +34,6 @@
 
   &.hasNoSidePaddings > div {
     min-width: auto;
-    padding: 0;
   }
 
   &.topMargin {
@@ -181,6 +179,17 @@
     }
   }
 
+  &.isBlue {
+    border: $violet;
+    background-color: $violet;
+    color: $white;
+
+    &:hover {
+      border: $clear-blue;
+      background-color: $clear-blue;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
   }
@@ -205,12 +214,19 @@
 
   &.hasSmallText {
     font-size: 0.875em;
-    line-height: 0.875em;
+    line-height: 1;
+  }
+
+  &.hasSmallPaddings {
+    height: auto;
+    padding: 10px 5px;
   }
 
   .loader {
     & > span {
       color: inherit !important;
+      margin-top: -4px;
+      margin-bottom: -4px;
       width: 16px !important;
       height: 16px !important;
     }

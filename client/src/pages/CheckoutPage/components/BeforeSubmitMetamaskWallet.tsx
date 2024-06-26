@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
@@ -12,7 +14,10 @@ import {
   TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
-import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CONFIRM_METAMASK_ACTION,
+} from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -24,17 +29,19 @@ import {
   BeforeSubmitProps,
   SignFioAddressItem,
 } from '../types';
+import { prices as pricesSelector } from '../../../redux/registrations/selectors';
 
 export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => {
   const {
     submitData,
-    fee,
     fioWallet,
     processing,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
+
+  const prices = useSelector(pricesSelector);
 
   const { fioAddressItems } = submitData || {};
   const { publicKey, data: paymentWalletData } = fioWallet || {};
@@ -67,8 +74,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
               indexedItem => indexedItem.indexId === Number(resultItem.id),
             );
 
-            const signedTxItem = resultItem;
-            delete signedTxItem.id;
+            delete resultItem.id;
 
             signedTxs[indexedItem.name] = {
               signedTx: resultItem,
@@ -86,14 +92,28 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     () => {
       const actionParamsArr = [];
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
+        const isComboRegistration =
+          !fioAddressItem.cartItem.hasCustomDomainInCart &&
+          fioAddressItem.cartItem.type ===
+            CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         const fioHandleActionParams = {
-          action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
+          action:
+            TRANSACTION_ACTION_NAMES[
+              isComboRegistration
+                ? ACTIONS.registerFioDomainAddress
+                : ACTIONS.registerFioAddress
+            ],
           account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
           data: {
             owner_fio_public_key: fioAddressItem.ownerKey,
             fio_address: fioAddressItem.name,
+            is_public: 0,
             tpid: apis.fio.tpid,
-            max_fee: new MathOp(fee)
+            max_fee: new MathOp(
+              isComboRegistration
+                ? prices.nativeFio.combo
+                : prices.nativeFio.address,
+            )
               .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
               .round(0)
               .toNumber(),

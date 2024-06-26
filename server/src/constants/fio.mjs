@@ -1,3 +1,10 @@
+export const CHAIN_CODES = {
+  FIO: 'FIO',
+  BTC: 'BTC',
+  ETH: 'ETH',
+  SOCIALS: 'SOCIALS',
+};
+
 export const CURRENCY_CODES = {
   FIO: 'FIO',
   wFIO: 'wFIO',

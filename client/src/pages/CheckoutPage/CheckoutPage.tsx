@@ -26,6 +26,7 @@ const CheckoutPage: React.FC = () => {
     walletBalancesAvailable,
     beforeSubmitProps,
     fioLoading,
+    refProfileLoading,
     orderLoading,
     paymentWalletPublicKey,
     orderError,
@@ -54,15 +55,16 @@ const CheckoutPage: React.FC = () => {
       </PseudoModalContainer>
     );
 
-  if (!payment && !fioLoading && !orderLoading)
+  if (!payment && !fioLoading && !orderLoading && !refProfileLoading) {
     return <Redirect to={ROUTES.FIO_ADDRESSES_SELECTION} />;
+  }
 
   return (
     <PseudoModalContainer title={title} onClose={onClose}>
       <div className={classes.container}>
         <CheckoutComponent
           walletBalances={walletBalancesAvailable}
-          walletName={paymentWallet ? paymentWallet.name : ''}
+          paymentWallet={paymentWallet}
           payment={payment}
           paymentProvider={paymentProvider}
           paymentWalletPublicKey={paymentWalletPublicKey}

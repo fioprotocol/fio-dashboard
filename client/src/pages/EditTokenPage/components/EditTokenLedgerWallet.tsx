@@ -28,6 +28,7 @@ type Props = {
 
 const EditTokenLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -74,6 +75,7 @@ const EditTokenLedgerWallet: React.FC<Props> = props => {
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.EDIT_TOKEN}
       data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

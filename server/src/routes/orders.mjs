@@ -10,6 +10,6 @@ export default {
   list: makeServiceRunner(OrdersList, req => req.query),
   create: makeServiceRunner(OrdersCreate, req => req.body),
   update: makeServiceRunner(OrdersUpdate, req => ({ ...req.params, ...req.body })),
-  getActive: makeServiceRunner(OrdersActive),
+  getActive: makeServiceRunner(OrdersActive, req => req.query),
   get: makeServiceRunner(OrdersGet, req => req.params),
 };

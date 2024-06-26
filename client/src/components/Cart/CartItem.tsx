@@ -26,6 +26,7 @@ type Props = {
     cartItem: CartItemType;
     newPeriod: number;
   }) => void;
+  isEditable?: boolean;
   isPeriodEditable?: boolean;
 };
 
@@ -46,7 +47,13 @@ export const CartItemPrice = (props: CartItemProps) => {
 };
 
 const CartItem: React.FC<Props> = props => {
-  const { item, onDelete, onUpdatePeriod, isPeriodEditable = false } = props;
+  const {
+    item,
+    onDelete,
+    onUpdatePeriod,
+    isPeriodEditable = false,
+    isEditable,
+  } = props;
 
   const {
     address,
@@ -61,10 +68,12 @@ const CartItem: React.FC<Props> = props => {
     type,
     domainType,
   } = item;
+
   const shouldShowPeriod =
     isPeriodEditable &&
     CART_ITEM_TYPES_WITH_PERIOD.includes(type) &&
     !hasCustomDomainInCart;
+
   const onPeriodChange = useCallback(
     (value: string) => {
       onUpdatePeriod && onUpdatePeriod({ cartItem: item, newPeriod: +value });
@@ -76,8 +85,11 @@ const CartItem: React.FC<Props> = props => {
     <>
       <Badge
         show
-        type={BADGE_TYPES.WHITE}
-        className={shouldShowPeriod && classes.itemWithPeriod}
+        type={isEditable ? BADGE_TYPES.SIMPLE : BADGE_TYPES.WHITE}
+        className={classnames(
+          classes.item,
+          shouldShowPeriod && classes.itemWithPeriod,
+        )}
       >
         <div className={classes.itemContainer}>
           <div className={classes.itemNameContainer}>
@@ -126,6 +138,24 @@ const CartItem: React.FC<Props> = props => {
             />
           )}
         </div>
+        {item.isWatchedDomain && (
+          <div className={classes.itemBadgeContainer}>
+            <Badge show type={BADGE_TYPES.WARNING}>
+              <div className={classes.warnBadge}>
+                <InfoIcon className={classes.warnIcon} />
+                <p className={classes.warnText}>
+                  <span className="boldText">
+                    It looks like you are attempting to renew a domain that you
+                    do not own.
+                  </span>
+                  <br />
+                  Renewing this domain will not transfer ownership and funds can
+                  not be refunded.
+                </p>
+              </div>
+            </Badge>
+          </div>
+        )}
       </Badge>
       {showBadge && (
         <Badge show type={BADGE_TYPES.INFO}>

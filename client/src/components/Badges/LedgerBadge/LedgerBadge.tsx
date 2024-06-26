@@ -5,10 +5,14 @@ import CommonBadge from '../CommonBadge/CommonBadge';
 import classes from './LedgerBadge.module.scss';
 import ledgerIcon from '../../../assets/images/ledger-logo-svg-vector.svg';
 
-const LedgerBadge: React.FC = () => {
+type Props = {
+  color?: 'black' | 'purple';
+};
+
+const LedgerBadge: React.FC<Props> = ({ color = 'black' }) => {
   return (
     <div className={classes.container}>
-      <CommonBadge isBlack={true}>
+      <CommonBadge isBlack={color === 'black'} isPurple={color === 'purple'}>
         <div className={classes.ledgerBadge}>
           <img
             src={ledgerIcon}

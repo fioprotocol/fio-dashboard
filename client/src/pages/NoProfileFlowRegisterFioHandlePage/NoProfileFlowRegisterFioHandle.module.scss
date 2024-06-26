@@ -1,0 +1,85 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.dropdown {
+  min-width: unset;
+  @include lg {
+    min-width: 270px;
+  }
+}
+.control {
+  background: $white;
+  box-shadow: none;
+  border: 1px solid $light-indigo;
+  border-radius: 100px;
+  padding: 5px;
+  gap: 10px;
+}
+
+.placeholder {
+  color: $light-indigo;
+  background-color: $foundation-white;
+  border-radius: 100px;
+  padding: 8px;
+  width: 100%;
+  padding-left: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.menu {
+  border-radius: 20px;
+  padding-top: 0;
+  margin-top: 15px;
+}
+
+.optionItem {
+  background-color: $foundation-white;
+  border-radius: 100px;
+  margin: 5px;
+  padding: 7px 18px;
+  color: $light-indigo;
+  word-break: break-all;
+
+  &:before {
+    content: none;
+  }
+
+  &:hover {
+    background-color: $light-indigo;
+  }
+}
+
+.optionButton {
+  background-color: $light-indigo;
+  border-radius: 100px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  &:hover {
+    background-color: $iris;
+  }
+}
+
+.arrowClose, .arrowOpen {
+  margin-left: 0 !important;
+  border-radius: 50%;
+  background-color: $light-indigo;
+  color: $white !important;
+  font-size: 30px !important;
+}
+
+.widgetContainer {
+  overflow: visible;
+}
+
+.customDomainInput {
+  min-width: 270px;
+}
+
+.customDomainRegInput {
+  overflow: visible;
+}

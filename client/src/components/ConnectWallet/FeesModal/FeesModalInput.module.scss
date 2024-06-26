@@ -8,15 +8,9 @@ $tabMargin: 40px;
   display: block;
   width: 100%;
   border-radius: 7px;
-  background-color: $baltic-sea !important;
-  color: $white !important;
+  background-color: $desert-storm !important;
   margin-bottom: 30px;
   overflow: hidden;
-
-  .dark {
-    background-color: $baltic-sea !important;
-    color: $white !important;
-  }
 }
 
 .errorMessage {
@@ -178,17 +172,13 @@ $tabMargin: 40px;
     box-sizing: border-box;
     border-radius: 7px;
     background: transparent;
-    color: white;
+    color: $baltic-sea;
     outline: none;
     font-size: 14px;
     display: flex;
+    gap: 4px;
     justify-content: space-between;
     align-items: center;
-
-    .valueContainer {
-      display: flex;
-      align-items: center;
-    }
 
     input {
       outline: none;

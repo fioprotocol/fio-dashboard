@@ -29,11 +29,13 @@ export type InitialValues = {
 export type StakeTokensProps = {
   fioAddresses: FioAddressDoublet[];
   fee: FeePrice;
+  fioWallet: FioWalletDoublet;
   balance: WalletBalances;
   loading: boolean;
   initialValues?: InitialValues;
   isWalletFioAddressesLoading: boolean;
   proxyList: string[];
+  proxyLoading: boolean;
   onSubmit: (values: StakeTokensValues) => void;
 };
 

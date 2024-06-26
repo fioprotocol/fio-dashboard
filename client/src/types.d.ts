@@ -69,6 +69,7 @@ export type CartItem = {
   errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
+  isWatchedDomain?: boolean;
   type?: CartItemType;
   domainType?: DomainItemType;
 };
@@ -100,6 +101,7 @@ export type NativePrices = {
   addBundles: number;
   address: number;
   domain: number;
+  combo: number;
   renewDomain: number;
 };
 
@@ -127,6 +129,7 @@ export type RegistrationErrors = {
 
 export type RegistrationRegistered = {
   fioName: string;
+  action: string;
   isFree?: boolean;
   fee_collected: number;
   costUsdc?: string;
@@ -389,6 +392,7 @@ export type UserDetails = {
   refProfile: { code?: string } | null;
   affiliateProfile: { code?: string; tpid?: string } | null;
   orders: OrderDefault[];
+  userProfileType: string;
 };
 
 export type RefProfileDomain = {
@@ -427,9 +431,12 @@ export type RefProfile = {
       params: { asset: string; chainId: string; contractAddress: string };
     };
     img?: string;
+    isBranded?: boolean;
+    hasNoProfileFlow?: boolean;
     link?: string;
   };
   tpid: string;
+  apiToken?: string;
   freeFioAccountProfileId: string;
   paidFioAccountProfileId: string;
   createdAt?: string;
@@ -520,17 +527,6 @@ export type FioRecordDecrypted = {
 export type FioDecryptedRecordData = {
   itemData: FioRecordDecrypted;
   paymentOtbData?: FioRecordDecrypted;
-};
-
-export type ResponseFioRecord = {
-  content: string;
-  fio_request_id: number;
-  payee_fio_address: string;
-  payee_fio_public_key: string;
-  payer_fio_address: string;
-  payer_fio_public_key: string;
-  status: string;
-  time_stamp: string;
 };
 
 export type FioWalletData = {
@@ -834,6 +830,7 @@ export type OrderDetails = {
   refProfileName?: string;
   user?: { id: string; email: string };
   updatedAt: string;
+  orderUserType?: string;
 };
 
 export type DateRange = { startDate?: number; endDate?: number };
@@ -857,6 +854,7 @@ export type UserOrderDetails = {
     paymentProcessor: string;
   };
   refProfileName: string;
+  orderUserType?: string;
 };
 
 export type OrderItemDetailed = {

@@ -56,6 +56,7 @@ const StakeTokensLedgerWallet: React.FC<Props> = props => {
       chainId,
       tx: transaction,
     });
+
     const signatureLedger = formatLedgerSignature(witnessSignatureHex);
 
     const {
@@ -90,6 +91,7 @@ const StakeTokensLedgerWallet: React.FC<Props> = props => {
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.STAKE}
       data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={stake}
       onSuccess={onSuccess}

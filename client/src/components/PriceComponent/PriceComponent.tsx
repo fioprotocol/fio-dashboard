@@ -1,15 +1,20 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 import Amount from '../common/Amount';
 import Loader from '../Loader/Loader';
 
+import { FIO_CHAIN_CODE } from '../../constants/fio';
+
 type Props = {
+  className?: string;
   costFio: string;
-  costUsdc: string;
+  costUsdc?: string;
+  tokenCode?: string;
   isFree?: boolean;
   loading?: boolean;
   loaderComponent?: React.ReactElement;
-  isNew?: boolean;
 };
 
 const LoaderComponent = ({
@@ -24,55 +29,41 @@ const LoaderComponent = ({
 
 export const PriceComponent: React.FC<Props> = props => {
   const {
+    className,
     costFio,
     costUsdc,
+    tokenCode = FIO_CHAIN_CODE,
     isFree,
     loading,
     loaderComponent,
-    isNew = false,
   } = props;
 
   if (isFree) return <span className="boldText">FREE</span>;
 
-  if (isNew) {
-    return (
-      <>
+  return (
+    <span className={classnames('d-flex flex-direction-row', className)}>
+      {costUsdc && (
+        <>
+          <span className="boldText d-flex flex-direction-row">
+            $
+            {loading ? (
+              <LoaderComponent loaderComponent={loaderComponent} />
+            ) : (
+              <Amount value={costUsdc} />
+            )}
+          </span>
+          &nbsp;
+        </>
+      )}
+      <span className="d-flex flex-direction-row">
+        (
         {loading ? (
           <LoaderComponent loaderComponent={loaderComponent} />
         ) : (
           <Amount value={costFio} />
         )}{' '}
-        FIO /{' '}
-        {loading ? (
-          <LoaderComponent loaderComponent={loaderComponent} />
-        ) : (
-          <Amount value={costUsdc} />
-        )}{' '}
-        USDC
-      </>
-    );
-  } else {
-    return (
-      <div className="d-flex flex-direction-row">
-        <span className="boldText d-flex flex-direction-row">
-          $
-          {loading ? (
-            <LoaderComponent loaderComponent={loaderComponent} />
-          ) : (
-            <Amount value={costUsdc} />
-          )}
-        </span>
-        &nbsp;
-        <span className="d-flex flex-direction-row">
-          (
-          {loading ? (
-            <LoaderComponent loaderComponent={loaderComponent} />
-          ) : (
-            <Amount value={costFio} />
-          )}{' '}
-          FIO)
-        </span>
-      </div>
-    );
-  }
+        {tokenCode})
+      </span>
+    </span>
+  );
 };

@@ -19,7 +19,6 @@ import { extractLastValueFormUrl, isURL } from '../../../../util/general';
 import { FormValues } from '../../types';
 import {
   FioAddressWithPubAddresses,
-  LinkActionResult,
   SocialMediaLinkItem,
   SocialMediaLinkIdProp,
 } from '../../../../types';
@@ -32,7 +31,6 @@ type Props = {
   formProps: FormRenderProps<FormValues>;
   socialMediaLinksList: SocialMediaLinkItem[];
   changeBundleCost: (bundle: number) => void;
-  onRetry: (results: LinkActionResult) => void;
 };
 
 export const AddSocialMediaLinksForm: React.FC<Props> = props => {

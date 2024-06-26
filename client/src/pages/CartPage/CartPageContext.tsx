@@ -24,13 +24,17 @@ import {
   fioWallets as fioWalletsSelector,
   privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import {
+  isAuthenticated,
+  userId as userIdSelector,
+} from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileInfo } from '../../redux/refProfile/selectors';
 
 import { handlePriceForMultiYearItems, totalCost } from '../../util/cart';
 import MathOp from '../../util/math';
@@ -47,15 +51,19 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
   NOT_FOUND_CODE,
+  REF_PROFILE_TYPE,
 } from '../../constants/common';
 import {
   NOT_FOUND_CART_BUTTON_TEXT,
   NOT_FOUND_CART_MESSAGE,
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
+import { ORDER_USER_TYPES } from '../../constants/order';
+import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
 import { isDomainExpired } from '../../util/fio';
+import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -67,14 +75,16 @@ import {
   Prices,
   WalletBalancesItem,
 } from '../../types';
-import { convertFioPrices } from '../../util/prices';
+import { CreateOrderActionData } from '../../redux/types';
 
 type UseContextReturnType = {
   cartId: string;
   cartItems: CartItem[];
+  formsOfPayment: { [key: string]: boolean };
   hasGetPricesError: boolean;
   error?: string | null;
   hasLowBalance?: boolean;
+  isAffiliateEnabled: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
   loadingCart: boolean;
@@ -111,10 +121,16 @@ export const useContext = (): UseContextReturnType => {
     cartHasItemsWithPrivateDomainSelector,
   );
   const loadingCart = useSelector(loadingCartSelector);
+  const refProfile = useSelector(refProfileInfo);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
   const history = useHistory();
+
+  const isNoProfileFlow = refProfile?.settings?.hasNoProfileFlow;
+  const refCode = refProfile?.code;
+  const isAffiliateEnabled = refProfile?.type === REF_PROFILE_TYPE.AFFILIATE;
 
   const walletCount = userWallets.length;
 
@@ -129,6 +145,23 @@ export const useContext = (): UseContextReturnType => {
     showExpiredDomainWarningBadge,
     toggleShowExpiredDomainWarningBadge,
   ] = useState<boolean>(false);
+  const [formsOfPayment, setFormsOfPayment] = useState<{
+    [key: string]: boolean;
+  }>(null);
+
+  const getFormOfPaymentsVars = useCallback(async () => {
+    const formOfPaymentVars = await apis.vars.getVar(
+      VARS_KEYS.FORMS_OF_PAYMENT,
+    );
+
+    const parsedFormOfPayments = JSON.parse(formOfPaymentVars.value);
+
+    setFormsOfPayment(parsedFormOfPayments);
+  }, []);
+
+  useEffectOnce(() => {
+    getFormOfPaymentsVars();
+  }, []);
 
   const isFree =
     cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree);
@@ -323,17 +356,35 @@ export const useContext = (): UseContextReturnType => {
 
   const checkout = async (paymentProvider: PaymentProvider) => {
     try {
-      await apis.orders.create({
+      const publicKey = paymentWalletPublicKey || userWallets[0]?.publicKey;
+
+      const orderParams: CreateOrderActionData = {
         cartId,
         roe,
-        publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
+        publicKey,
         paymentProcessor: paymentProvider,
         prices: prices?.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
-      });
+        userId,
+      };
+
+      if (isNoProfileFlow) {
+        orderParams.refProfileId = refProfile.id;
+        orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
+
+        if (!userId && publicKey && refCode) {
+          const users = await apis.auth.createNoRegisterUser({
+            publicKey,
+            refCode,
+          });
+          orderParams.userId = users[0]?.id;
+        }
+      }
+
+      await apis.orders.create(orderParams);
 
       return history.push(ROUTES.CHECKOUT);
     } catch (e) {
@@ -441,10 +492,10 @@ export const useContext = (): UseContextReturnType => {
   }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!isAuth && !isNoProfileFlow) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [history, isAuth]);
+  }, [history, isAuth, isNoProfileFlow]);
 
   return {
     cartId,
@@ -453,6 +504,7 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalance,
     loadingCart,
     walletCount,
+    isAffiliateEnabled,
     isFree,
     isPriceChanged,
     selectedPaymentProvider,
@@ -466,6 +518,7 @@ export const useContext = (): UseContextReturnType => {
     roe,
     error,
     showExpiredDomainWarningBadge,
+    formsOfPayment,
     onPaymentChoose,
   };
 };

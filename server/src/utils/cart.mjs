@@ -1,6 +1,12 @@
 import MathOp from 'big.js';
 
-import { CART_ITEM_TYPE, FIO_ACTIONS, ORDER_ERROR_TYPES } from '../config/constants';
+import {
+  CART_ITEM_TYPE,
+  FIO_ACTIONS,
+  FIO_ADDRESS_DELIMITER,
+  ORDER_ERROR_TYPES,
+  WALLET_CREATED_FROM,
+} from '../config/constants';
 
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
@@ -17,6 +23,7 @@ export const handlePrices = async ({ prices, roe }) => {
     addBundles: addBundlesPrice,
     address: addressPrice,
     domain: domainPrice,
+    combo: comboPrice,
     renewDomain: renewDomainPrice,
   } = prices;
 
@@ -24,15 +31,17 @@ export const handlePrices = async ({ prices, roe }) => {
     addBundles: addBundlesDbPrice,
     address: addressDbPrice,
     domain: domainDbPrice,
+    combo: comboDbPrice,
     renewDomain: renewDomainDbPrice,
   } = dbPrices;
 
   return {
     handledPrices: {
-      addBundles: addBundlesPrice || addBundlesDbPrice,
-      address: addressPrice || addressDbPrice,
-      domain: domainPrice || domainDbPrice,
-      renewDomain: renewDomainPrice || renewDomainDbPrice,
+      addBundles: Number(addBundlesPrice || addBundlesDbPrice),
+      address: Number(addressPrice || addressDbPrice),
+      domain: Number(domainPrice || domainDbPrice),
+      combo: Number(comboPrice || comboDbPrice),
+      renewDomain: Number(renewDomainPrice || renewDomainDbPrice),
     },
     handledRoe: roe || dbRoe,
   };
@@ -203,7 +212,9 @@ export const handleFreeCartAddItem = ({
 
   const existingUsersFreeAddress =
     userHasFreeAddress &&
-    userHasFreeAddress.find(freeAddress => freeAddress.name.split('@')[1] === domain);
+    userHasFreeAddress.find(
+      freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
+    );
 
   if (type === CART_ITEM_TYPE.ADDRESS) {
     const existingDashboardDomain = domainsArr.find(
@@ -250,8 +261,6 @@ export const handleFreeCartDeleteItem = ({
 }) => {
   const { domainType, isFree, type } = existingItem;
 
-  let handledCartItems = [...cartItems];
-
   const domainsArr = [
     ...dashboardDomains,
     ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
@@ -284,7 +293,8 @@ export const handleFreeCartDeleteItem = ({
       const existingUsersFreeAddress =
         userHasFreeAddress &&
         userHasFreeAddress.find(
-          freeAddress => freeAddress.name.split('@')[1] === cartItemDomain,
+          freeAddress =>
+            freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === cartItemDomain,
         );
 
       return (
@@ -306,13 +316,13 @@ export const handleFreeCartDeleteItem = ({
     });
 
     if (allowedFreeItem) {
-      return (handledCartItems = handledCartItems.map(cartItem =>
+      return cartItems.map(cartItem =>
         cartItem.id === allowedFreeItem.id ? { ...cartItem, isFree: true } : cartItem,
-      ));
+      );
     }
   }
 
-  return handledCartItems;
+  return [...cartItems];
 };
 
 export const handleUsersFreeCartItems = ({
@@ -346,7 +356,7 @@ export const handleUsersFreeCartItems = ({
       );
 
       const existingUsersFreeAddress = userHasFreeAddress.find(
-        freeAddress => freeAddress.name.split('@')[1] === domain,
+        freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
       );
 
       if (
@@ -450,11 +460,13 @@ export const cartItemsToOrderItems = async ({
   prices,
   roe,
   userHasFreeAddress,
+  walletType,
 }) => {
   const {
     addBundles: addBundlesPrice,
     address: fioHandlePrice,
     domain: fioDomainPrice,
+    combo: fioDomainHandlePrice,
     renewDomain: renewDomainPrice,
   } = prices;
   const orderItems = [];
@@ -471,69 +483,63 @@ export const cartItemsToOrderItems = async ({
   for (const cartItem of cartItems) {
     const { address, domain, id, isFree, hasCustomDomainInCart, period, type } = cartItem;
 
-    if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-      let domainItem = null;
-
-      if (!hasCustomDomainInCart) {
-        domainItem = {
-          action: FIO_ACTIONS.registerFioDomain,
-          domain,
-          nativeFio: fioDomainPrice.toString(),
-          price: convertFioPrices(fioDomainPrice, roe).usdc,
-          priceCurrency: CURRENCY_CODES.USDC,
-          data: {
-            cartItemId: id,
-          },
-        };
-      }
-      const fioHandleItem = {
-        action: FIO_ACTIONS.registerFioAddress,
-        address,
-        domain,
-        nativeFio: fioHandlePrice.toString(),
-        price: convertFioPrices(fioHandlePrice, roe).usdc,
-        priceCurrency: CURRENCY_CODES.USDC,
-        data: {
-          cartItemId: id,
-        },
-      };
-
-      domainItem && orderItems.push(domainItem);
-      orderItems.push(fioHandleItem);
-      for (let i = 1; i < period; i++) {
-        orderItems.push({
-          action: FIO_ACTIONS.renewFioDomain,
-          address: null,
-          domain,
-          nativeFio: renewDomainPrice.toString(),
-          price: convertFioPrices(renewDomainPrice, roe).usdc,
-          priceCurrency: CURRENCY_CODES.USDC,
-          data: {
-            cartItemId: id,
-          },
-        });
-      }
-      continue;
-    }
-
     const orderItem = {
       domain,
-      data: {
-        cartItemId: id,
-      },
+      priceCurrency: CURRENCY_CODES.USDC,
+      data: { cartItemId: id },
+    };
+
+    const renewOrderItem = {
+      ...orderItem,
+      action: FIO_ACTIONS.renewFioDomain,
+      address: null,
+      nativeFio: renewDomainPrice.toString(),
+      price: convertFioPrices(renewDomainPrice, roe).usdc,
+    };
+
+    const domainOrderItem = {
+      ...orderItem,
+      address: null,
+      action: FIO_ACTIONS.registerFioDomain,
+      nativeFio: fioDomainPrice.toString(),
+      price: convertFioPrices(fioDomainPrice, roe).usdc,
     };
 
     switch (type) {
+      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
+        {
+          const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
+          const useComboAction = !hasCustomDomainInCart && supportCombo;
+
+          if (!supportCombo && !hasCustomDomainInCart) {
+            orderItems.push(domainOrderItem);
+          }
+
+          orderItem.action = useComboAction
+            ? FIO_ACTIONS.registerFioDomainAddress
+            : FIO_ACTIONS.registerFioAddress;
+          orderItem.address = address;
+          orderItem.nativeFio = (useComboAction
+            ? fioDomainHandlePrice
+            : fioHandlePrice
+          ).toString();
+          orderItem.price = convertFioPrices(
+            useComboAction ? fioDomainHandlePrice : fioHandlePrice,
+            roe,
+          ).usdc;
+          orderItems.push(orderItem);
+
+          if (!hasCustomDomainInCart) {
+            for (let i = 1; i < Number(period); i++) {
+              orderItems.push(renewOrderItem);
+            }
+          }
+        }
+        break;
       case CART_ITEM_TYPE.DOMAIN_RENEWAL:
         {
-          orderItem.action = FIO_ACTIONS.renewFioDomain;
-          orderItem.address = null;
-          orderItem.nativeFio = renewDomainPrice.toString();
-          orderItem.price = convertFioPrices(renewDomainPrice, roe).usdc;
-          orderItem.priceCurrency = CURRENCY_CODES.USDC;
-
-          for (let i = 0; i < period; i++) {
-            orderItems.push(orderItem);
+          for (let i = 0; i < Number(period); i++) {
+            orderItems.push(renewOrderItem);
           }
         }
         break;
@@ -542,7 +548,6 @@ export const cartItemsToOrderItems = async ({
         orderItem.address = address;
         orderItem.nativeFio = addBundlesPrice;
         orderItem.price = convertFioPrices(addBundlesPrice, roe).usdc;
-        orderItem.priceCurrency = CURRENCY_CODES.USDC;
         orderItems.push(orderItem);
         break;
       case CART_ITEM_TYPE.ADDRESS: {
@@ -558,10 +563,10 @@ export const cartItemsToOrderItems = async ({
         const existingUsersFreeAddress =
           userHasFreeAddress &&
           userHasFreeAddress.find(
-            freeAddress => freeAddress.name.split('@')[1] === domain,
+            freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
           );
 
-        const userableRegisterFree =
+        const isUserAbleRegisterFree =
           (existingDashboardDomain &&
             !existingDashboardDomain.isPremium &&
             (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
@@ -578,37 +583,20 @@ export const cartItemsToOrderItems = async ({
         orderItem.action = FIO_ACTIONS.registerFioAddress;
         orderItem.address = address;
         orderItem.nativeFio =
-          isFree && userableRegisterFree ? '0' : fioHandlePrice.toString();
+          isFree && isUserAbleRegisterFree ? '0' : fioHandlePrice.toString();
         orderItem.price =
-          isFree && userableRegisterFree
+          isFree && isUserAbleRegisterFree
             ? '0'
             : convertFioPrices(fioHandlePrice, roe).usdc;
-        orderItem.priceCurrency = CURRENCY_CODES.USDC;
         orderItems.push(orderItem);
         break;
       }
       case CART_ITEM_TYPE.DOMAIN:
         {
-          orderItem.action = FIO_ACTIONS.registerFioDomain;
-          orderItem.address = null;
-          orderItem.nativeFio = fioDomainPrice.toString();
-          orderItem.price = convertFioPrices(fioDomainPrice, roe).usdc;
-          orderItem.priceCurrency = CURRENCY_CODES.USDC;
+          orderItems.push(domainOrderItem);
 
-          orderItems.push(orderItem);
-
-          for (let i = 1; i < period; i++) {
-            orderItems.push({
-              action: FIO_ACTIONS.renewFioDomain,
-              address: null,
-              domain,
-              nativeFio: renewDomainPrice.toString(),
-              price: convertFioPrices(renewDomainPrice, roe).usdc,
-              priceCurrency: CURRENCY_CODES.USDC,
-              data: {
-                cartItemId: id,
-              },
-            });
+          for (let i = 1; i < Number(period); i++) {
+            orderItems.push(renewOrderItem);
           }
         }
         break;

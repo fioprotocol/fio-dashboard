@@ -6,7 +6,10 @@ import { useHistory } from 'react-router';
 
 import { OPENED_METAMASK_WINDOW_ERROR_CODE } from '../../components/ConnectWallet/ConnectWalletButton/ConnectWalletButton';
 
-import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
+import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  refProfileInfo as refProfileInfoSelector,
+} from '../../redux/refProfile/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -37,7 +40,7 @@ import useInitializeProviderConnection, {
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
 import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
@@ -94,6 +97,7 @@ export const useContext = (): UseContextProps => {
   const userId = useSelector(userIdSelector);
   const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
 
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [
@@ -154,7 +158,8 @@ export const useContext = (): UseContextProps => {
   const existingUsersFreeAddress =
     usersFreeAddresses &&
     usersFreeAddresses.find(
-      freeAddress => freeAddress.name.split('@')[1] === refDomainObj?.name,
+      freeAddress =>
+        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === refDomainObj?.name,
     );
 
   const verifiedMessage = `${refProfileInfo?.label} ${
@@ -363,7 +368,7 @@ export const useContext = (): UseContextProps => {
 
         if (userId) {
           history.push(DEFAULT_ROUTE);
-        } else {
+        } else if (!isNoProfileFlow) {
           dispatch(setRedirectPath({ pathname: DEFAULT_ROUTE }));
           lastAuthData || isAlternativeUser
             ? dispatch(showLoginModal(DEFAULT_ROUTE))
@@ -374,19 +379,20 @@ export const useContext = (): UseContextProps => {
       }
     },
     [
-      cartHasFreeItem,
-      cartId,
-      dispatch,
-      existingUsersFreeAddress,
-      gatedToken,
-      history,
-      isAlternativeUser,
-      lastAuthData,
-      prices.nativeFio,
       refDomainObj,
+      prices.nativeFio,
       roe,
+      cartHasFreeItem,
+      existingUsersFreeAddress,
+      user?.userProfileType,
+      dispatch,
+      cartId,
+      gatedToken,
       userId,
-      user,
+      isNoProfileFlow,
+      history,
+      lastAuthData,
+      isAlternativeUser,
     ],
   );
 

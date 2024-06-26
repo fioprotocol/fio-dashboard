@@ -11,21 +11,31 @@ import {
 import {
   ANALYTICS_EVENT_ACTIONS,
   CURRENCY_CODES,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
+import { DOMAIN_TYPE } from '../../../constants/fio';
 
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../../util/analytics';
+import { actionFromCartItem } from '../../../util/cart';
 
 import { BeforeSubmitData, BitPayOptionProps } from '../types';
-import { CartItem, ClickEventTypes } from '../../../types';
+import { AnyObject, CartItem, ClickEventTypes } from '../../../types';
 
 const BITPAY_ORIGIN = 'bitpay';
 const BITPAY_ORIGIN_REGEX = new RegExp(BITPAY_ORIGIN, 'i');
 
 export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
-  const { cart, order, payment, paymentOption, beforePaymentSubmit } = props;
+  const {
+    cart,
+    order,
+    payment,
+    paymentOption,
+    paymentWallet,
+    beforePaymentSubmit,
+  } = props;
 
   const bitPayInvoiceId = order?.payment?.externalPaymentId;
 
@@ -34,19 +44,31 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   const [submitData, setSubmitData] = useState<BeforeSubmitData>(null);
 
   const onFinish = useCallback(
-    (beforeSubmitData?: BeforeSubmitData) => {
+    (beforeSubmitData: BeforeSubmitData) => {
       props.onFinish({
         errors: [],
         registered: cart.map(
-          ({ id, address, domain, isFree, costNativeFio }: CartItem) => ({
+          ({
+            id,
+            address,
+            domain,
+            isFree,
+            costNativeFio,
+            type,
+            domainType,
+          }: CartItem) => ({
+            action: actionFromCartItem(
+              type,
+              (paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK) &&
+                domainType === DOMAIN_TYPE.CUSTOM,
+            ),
             fioName: setFioName(address, domain),
             isFree,
             fee_collected: costNativeFio,
             cartItemId: id,
             transaction_id: '',
-            data: beforeSubmitData
-              ? beforeSubmitData[setFioName(address, domain)]
-              : null,
+            data: beforeSubmitData?.[setFioName(address, domain)],
           }),
         ),
         partial: [],
@@ -59,7 +81,14 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
         providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
       });
     },
-    [cart, payment.amount, payment.externalPaymentId, paymentOption, props],
+    [
+      cart,
+      payment.amount,
+      payment.externalPaymentId,
+      paymentOption,
+      paymentWallet?.from,
+      props,
+    ],
   );
 
   const handleSubmit = useCallback(
@@ -75,6 +104,25 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
           ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
           getCartItemsDataForAnalytics(cart),
         );
+
+        if (window.bitpay && typeof window.bitpay.showInvoice === 'function') {
+          const originalShowInvoice = window.bitpay.showInvoice;
+          window.bitpay.showInvoice = function(
+            invoiceId: string,
+            params?: AnyObject,
+          ) {
+            params = params || {};
+            originalShowInvoice.call(this, invoiceId, params);
+            const iframe = document.getElementsByName(
+              'bitpay',
+            )[0] as HTMLIFrameElement;
+            if (iframe) {
+              // We prefer to show BitPay invoice in iframe instead of separate window that blocks by safari iOS
+              // But there is no ability at this moment to pass view params into the showInvoice function
+              iframe.src = iframe.src.replace('view=modal', 'view=popup');
+            }
+          };
+        }
 
         window.bitpay.showInvoice(bitPayInvoiceId);
       }

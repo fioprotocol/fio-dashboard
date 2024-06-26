@@ -16,6 +16,7 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
+import { log } from '../../util/general';
 
 import apis from '../../api';
 
@@ -45,21 +46,29 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
   ] = useState<StakeTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
   const [proxyList, setProxyList] = useState<string[]>([]);
+  const [proxyLoading, toggleProxyloading] = useState<boolean>(false);
 
   const [walletFioAddresses, isWalletFioAddressesLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
   );
 
   const getProxyList = async () => {
-    const proxies = await apis.fio.getProxies();
-    setProxyList(shuffle(proxies));
+    try {
+      toggleProxyloading(true);
+      const proxies = await apis.fio.getProxies();
+      setProxyList(shuffle(proxies));
+    } catch (error) {
+      log.error(error);
+    } finally {
+      toggleProxyloading(false);
+    }
   };
 
   useEffect(() => {
     getFee();
     setStakeTokensData(null);
     getProxyList();
-  }, []);
+  }, [getFee]);
 
   useEffect(() => {
     if (!fioWallet?.publicKey) {
@@ -89,6 +98,10 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
       other: {
         ...stakeTokensData,
         ...res,
+      },
+      payWith: {
+        walletName: fioWallet.name,
+        walletBalances: balance.available,
       },
     });
     refreshWalletDataPublicKey(fioWallet.publicKey);
@@ -158,6 +171,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
         </p>
 
         <StakeTokensForm
+          fioWallet={fioWallet}
           balance={balance}
           isWalletFioAddressesLoading={isWalletFioAddressesLoading}
           loading={loading || processing}
@@ -166,6 +180,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
           fee={feePrice}
           initialValues={initialValues}
           proxyList={proxyList}
+          proxyLoading={proxyLoading}
         />
       </PseudoModalContainer>
     </>

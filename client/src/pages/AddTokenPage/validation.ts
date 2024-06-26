@@ -6,7 +6,7 @@ import { MAX_CHAIN_LENGTH, MAX_TOKEN_LENGTH } from '../../constants/fio';
 
 import { ASTERISK_SIGN, CHAIN_CODES } from '../../constants/common';
 
-import { FormValues } from './types';
+import { AddTokenValues } from './types';
 
 import { PublicAddressDoublet } from '../../types';
 
@@ -90,7 +90,7 @@ export const validateToken = (
 };
 
 export const validate = (
-  values: FormValues,
+  values: AddTokenValues,
   publicAddresses: PublicAddressDoublet[],
 ): {
   tokens: ErrorsProps[] | string;

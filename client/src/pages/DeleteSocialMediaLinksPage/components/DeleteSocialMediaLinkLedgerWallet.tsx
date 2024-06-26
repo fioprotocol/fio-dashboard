@@ -14,23 +14,21 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
 } from '../../../types';
-import { CheckedSocialMediaLinkType } from '../types';
+import { DeleteSocialMediaLinkValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: CheckedSocialMediaLinkType[] | null;
-  };
+  submitData: DeleteSocialMediaLinkValues;
   processing: boolean;
   fee: number;
 };
 
 export const DeleteSocialMediaLinkLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -67,6 +65,7 @@ export const DeleteSocialMediaLinkLedgerWallet: React.FC<Props> = props => {
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.DELETE_TOKEN}
       data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

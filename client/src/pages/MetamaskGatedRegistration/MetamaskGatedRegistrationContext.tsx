@@ -18,7 +18,7 @@ import {
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
@@ -309,7 +309,8 @@ export const useContext = (): UseContext => {
           freeAddresses.length &&
           freeAddresses.some(
             freeAddressItem =>
-              freeAddressItem.name.split('@')[1] === METAMASK_DOMAIN_NAME,
+              freeAddressItem.name.split(FIO_ADDRESS_DELIMITER)[1] ===
+              METAMASK_DOMAIN_NAME,
           )
         ) {
           setNotification(NOTIFICATIONS.USER_HAS_FREE_ADDRESS);

@@ -24,7 +24,6 @@ const AddSocialMediaLinkPage: React.FC = () => {
     submitData,
     changeBundleCost,
     onCancel,
-    onRetry,
     onSuccess,
     onSubmit,
     setProcessing,
@@ -53,7 +52,6 @@ const AddSocialMediaLinkPage: React.FC = () => {
             fioCryptoHandleObj={fioCryptoHandleObj}
             bundleCost={bundleCost}
             changeBundleCost={changeBundleCost}
-            onRetry={onRetry}
             socialMediaLinksList={socialMediaLinksList}
           />
         )}

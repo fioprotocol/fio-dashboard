@@ -71,6 +71,9 @@ export type TextInputProps = {
   hasRegularHeight?: boolean;
   hasSmallText?: boolean;
   hasThinText?: boolean;
+  hasRoundRadius?: boolean;
+  inputClassNames?: string;
+  regInputClassNames?: string;
   debounceTimeout?: number;
   additionalOnchangeAction?: (val: string) => void;
   wFioBalance?: string;
@@ -122,6 +125,9 @@ export const TextInput: React.ForwardRefRenderFunction<
     hasItalicLabel,
     hasErrorForced,
     useErrorBlockIcon,
+    hasRoundRadius,
+    inputClassNames,
+    regInputClassNames,
     ...rest
   } = props;
   const {
@@ -208,13 +214,22 @@ export const TextInput: React.ForwardRefRenderFunction<
 
   return (
     <div
-      className={classnames(classes.regInputWrapper, {
-        [classes.withoutBottomMargin]: withoutBottomMargin,
-      })}
+      className={classnames(
+        classes.regInputWrapper,
+        {
+          [classes.withoutBottomMargin]: withoutBottomMargin,
+        },
+        regInputClassNames,
+      )}
     >
       <Label label={label} uiType={uiType} hasItalic={hasItalicLabel} />
       <div className={classes.inputGroup}>
-        <Prefix prefix={prefix} hasError={hasError} uiType={uiType} />
+        <Prefix
+          prefix={prefix}
+          hasError={hasError}
+          uiType={uiType}
+          hasRoundRadius={hasRoundRadius}
+        />
         <div
           className={classnames(
             classes.regInput,
@@ -237,6 +252,8 @@ export const TextInput: React.ForwardRefRenderFunction<
               showConnectWalletButton &&
               !isWalletConnected &&
               classes.connectWallet,
+            hasRoundRadius && classes.hasRoundRadius,
+            inputClassNames,
           )}
         >
           <PrefixLabel

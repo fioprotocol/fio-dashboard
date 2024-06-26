@@ -20,7 +20,7 @@ export type SendTokensValues = {
   to: string;
   toPubKey?: string;
   amount: string;
-  nativeAmount: string;
+  nativeAmount: number;
   memo?: string;
   fioRequestId?: number;
   feeRecordObtData: number;

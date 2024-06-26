@@ -4,6 +4,16 @@
 .form {
   margin-top: 20px;
 
+  .field {
+    width: 100%;
+    margin-bottom: -15px !important;
+  }
+
+  .submitButton {
+    align-self: start;
+    font-weight: bold !important;
+  }
+
   .checkboxContainer {
     color: $baltic-sea;
     width: 90%;

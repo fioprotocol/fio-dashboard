@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
+import { TransactionDetails } from '../../TransactionDetails/TransactionDetails';
 import { BADGE_TYPES } from '../../Badge/Badge';
-import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import CancelButton from '../CancelButton/CancelButton';
-import BundledTransactionBadge from '../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 
 import { ERROR_MESSAGES } from './constants';
 
@@ -19,7 +18,8 @@ import classes from './styles/Results.module.scss';
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
-      feeCollected: { nativeFio, fio, usdc } = {
+      payWith,
+      feeCollected: { nativeFio } = {
         nativeFio: 0,
         fio: '0',
         usdc: '0',
@@ -48,36 +48,6 @@ const Results: React.FC<ResultsContainerProps> = props => {
   const handleClose = () => {
     onTxResultsClose();
     onClose();
-  };
-
-  const paymentDetailsTitle = () => {
-    if (!nativeFio && !bundlesCollected) return null;
-
-    return <p className={classes.label}>Payment Details</p>;
-  };
-  const totalCost = () => {
-    if (!nativeFio) return null;
-    return (
-      <PriceBadge
-        costFio={fio}
-        costUsdc={usdc}
-        title="Total Cost"
-        type={BADGE_TYPES.BLACK}
-      />
-    );
-  };
-
-  const totalBundlesCost = () => {
-    if (!bundlesCollected) return null;
-    return (
-      <>
-        <BundledTransactionBadge
-          bundles={bundlesCollected}
-          remaining={0}
-          hideRemaining
-        />
-      </>
-    );
   };
 
   const errorBadge = () => {
@@ -112,26 +82,43 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {children}
         {!error && (
           <>
-            {isPaymentDetailsVisible && (
+            {isPaymentDetailsVisible && (!!nativeFio || !!bundlesCollected) && (
               <>
-                {paymentDetailsTitle()}
-                {totalCost()}
-                {totalBundlesCost()}
+                <p className={classes.label}>Transaction Details</p>
+                <TransactionDetails
+                  feeInFio={nativeFio ? nativeFio : null}
+                  bundles={
+                    bundlesCollected
+                      ? {
+                          fee: bundlesCollected,
+                        }
+                      : null
+                  }
+                  payWith={payWith}
+                />
               </>
             )}
-            <SubmitButton onClick={handleClose} text="Close" withTopMargin />
+            <SubmitButton
+              className={classes.submitButton}
+              onClick={handleClose}
+              text="Close"
+              withTopMargin
+            />
             {onCancel && (
-              <CancelButton
-                text="Cancel Request"
-                onClick={onCancel}
-                isIndigo
-                withTopMargin
-              />
+              <div className={classes.cancelButton}>
+                <CancelButton
+                  text="Cancel Request"
+                  onClick={onCancel}
+                  isIndigo
+                  withTopMargin
+                />
+              </div>
             )}
           </>
         )}
         {error && onRetry != null ? (
           <SubmitButton
+            className={classes.submitButton}
             onClick={onRetry}
             text="Try Again"
             withTopMargin={true}

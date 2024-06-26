@@ -6,9 +6,9 @@ import classnames from 'classnames';
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
-import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
@@ -136,11 +136,13 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
               disabled={loading}
               label="Memo"
             />
-            <p className={classes.transactionTitle}>Transaction information</p>
+            <p className={classes.transactionTitle}>Transaction Details</p>
             {senderFioAddress ? (
-              <BundledTransactionBadge
-                bundles={BUNDLES_TX_COUNT.RECORD_OBT_DATA}
-                remaining={senderFioAddress.remaining}
+              <TransactionDetails
+                bundles={{
+                  fee: BUNDLES_TX_COUNT.RECORD_OBT_DATA,
+                  remaining: senderFioAddress.remaining,
+                }}
               />
             ) : null}
             <LowBalanceBadge

@@ -18,12 +18,13 @@ export type PurchaseNowTypes = {
 };
 
 export type RegistrationType = {
+  action: string;
   cartItemId: string;
   fioName: string;
   isFree: boolean;
-  fee: number;
+  isCombo?: boolean;
   isCustomDomain?: boolean;
-  depended?: { domain: string };
+  fee: number;
   fee_collected?: number;
   type: CartItemType;
   iteration?: number;

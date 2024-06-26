@@ -41,6 +41,7 @@ export default class AddItem extends Base {
             domainType: ['string'],
             id: ['required', 'string'],
             isFree: ['boolean'],
+            isWatchedDomain: ['boolean'],
             hasCustomDomainInCart: ['boolean'],
             period: ['string'],
             type: ['required', 'string'],
@@ -54,6 +55,7 @@ export default class AddItem extends Base {
             addBundles: ['string'],
             address: ['string'],
             domain: ['string'],
+            combo: ['string'],
             renewDomain: ['string'],
           },
         },
@@ -135,11 +137,16 @@ export default class AddItem extends Base {
         addBundles: addBundlesPrice,
         address: addressPrice,
         domain: domainPrice,
+        combo: comboPrice,
         renewDomain: renewDomainPrice,
       } = handledPrices;
 
       const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+        !addBundlesPrice ||
+        !addressPrice ||
+        !domainPrice ||
+        !comboPrice ||
+        !renewDomainPrice;
 
       if (isEmptyPrices) {
         throw new X({

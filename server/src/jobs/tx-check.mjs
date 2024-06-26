@@ -61,12 +61,13 @@ class TxCheckJob extends CommonJob {
             case FIO_ACTIONS.addBundledTransactions:
               status = BlockchainTransaction.STATUS.SUCCESS;
               break;
+            case FIO_ACTIONS.registerFioDomainAddress:
             case FIO_ACTIONS.registerFioAddress:
             case FIO_ACTIONS.registerFioDomain: {
               const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
                 (params && params.owner_fio_public_key) || publicKey,
               );
-              const isAddress = action === FIO_ACTIONS.registerFioAddress;
+              const isAddress = action === FIO_ACTIONS.registerFioAddress || action === FIO_ACTIONS.registerFioDomainAddress;
               const fioName = isAddress
                 ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
                 : domain;

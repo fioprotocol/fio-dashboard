@@ -20,7 +20,7 @@ type Props = {
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   walletBalances: WalletBalancesItem;
-  walletName: string;
+  paymentWallet?: FioWalletDoublet;
   costFree?: string;
   isFree: boolean;
   totalCost: number;
@@ -34,7 +34,7 @@ export const PaymentWallet: React.FC<Props> = props => {
     paymentWalletPublicKey,
     fioWalletsBalances,
     walletBalances,
-    walletName,
+    paymentWallet,
     costFree,
     includePaymentMessage = false,
     setWallet,
@@ -43,8 +43,9 @@ export const PaymentWallet: React.FC<Props> = props => {
   if (
     paymentAssignmentWallets.length === 0 ||
     !fioWalletsBalances.wallets[paymentWalletPublicKey]
-  )
+  ) {
     return <Loader />;
+  }
 
   const walletsList = paymentAssignmentWallets.reduce((acc, wallet) => {
     const walletBalances = fioWalletsBalances.wallets[wallet.publicKey];
@@ -79,7 +80,7 @@ export const PaymentWallet: React.FC<Props> = props => {
       <PayWithBadge
         costFree={!!costFree}
         walletBalances={walletBalances}
-        walletName={walletName}
+        walletName={paymentWallet?.name}
       />
     );
 

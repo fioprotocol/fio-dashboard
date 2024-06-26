@@ -168,14 +168,19 @@ export class Order extends Base {
     return attributes.default;
   }
 
-  static async list(
+  static async list({
     userId,
     search,
     offset,
     limit = DEFAULT_ORDERS_LIMIT,
     isProcessed = false,
-  ) {
-    const where = { userId };
+    publicKey,
+  }) {
+    const where = {};
+
+    if (userId) {
+      where.userId = userId;
+    }
 
     if (search) {
       where.number = { [Sequelize.Op.iLike]: search };
@@ -184,6 +189,9 @@ export class Order extends Base {
       where.status = {
         [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],
       };
+    }
+    if (publicKey) {
+      where.publicKey = publicKey;
     }
 
     return this.findAll({
@@ -220,6 +228,7 @@ export class Order extends Base {
           o."status", 
           o."createdAt", 
           o."updatedAt",
+          COALESCE(o.data->>'orderUserType', null) as "orderUserType",
           p.price,
           p.currency,
           p.processor as "paymentProcessor",
@@ -230,7 +239,7 @@ export class Order extends Base {
           INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
             Payment.SPENT_TYPE.ORDER
           }
-          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
           ${status ? `AND o."status" = ${status}` : ``}
@@ -558,6 +567,7 @@ export class Order extends Base {
     createdAt,
     updatedAt,
     status,
+    data,
     OrderItems: orderItems,
     Payments: payments,
     User: user,
@@ -572,6 +582,7 @@ export class Order extends Base {
       createdAt,
       updatedAt,
       status,
+      orderUserType: data && data.orderUserType,
       user: user ? { id: user.id, email: user.email } : null,
       items:
         orderItems && orderItems.length
@@ -593,7 +604,10 @@ export class Order extends Base {
       return CART_ITEM_TYPE.ADD_BUNDLES;
     } else if (!address) {
       return CART_ITEM_TYPE.DOMAIN;
-    } else if (address && hasCustomDomain) {
+    } else if (
+      action === FIO_ACTIONS.registerFioDomainAddress ||
+      (address && hasCustomDomain)
+    ) {
       return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
     } else {
       return CART_ITEM_TYPE.ADDRESS;
@@ -811,6 +825,7 @@ export class Order extends Base {
     publicKey,
     createdAt,
     status,
+    data,
     Payments: payments,
     User: user,
     ReferrerProfile: refProfile,
@@ -826,7 +841,7 @@ export class Order extends Base {
       paidWith = await getPaidWith({
         paymentProcessor: payment.processor,
         publicKey,
-        userId: user.id || null,
+        userId: user && user.id ? user.id : null,
         payment,
       });
     }
@@ -839,6 +854,7 @@ export class Order extends Base {
       publicKey,
       createdAt,
       status,
+      orderUserType: data && data.orderUserType,
       payment: {
         paidWith,
         paymentProcessor: payment ? payment.processor : null,

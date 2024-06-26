@@ -22,7 +22,17 @@ type DropdownProps = {
     value: string;
   };
   description?: string;
+  dropdownClassNames?: string;
+  controlClassNames?: string;
+  placeholderClassNames?: string;
+  menuClassNames?: string;
+  arrowCloseClassNames?: string;
+  arrowOpenClassNames?: string;
+  optionItemClassNames?: string;
+  optionButtonClassNames?: string;
+  defaultOptionValue?: { id: string; name: string };
   toggleToCustom?: (isCustom: boolean) => void;
+  actionOnChange?: () => void;
 };
 
 const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
@@ -37,6 +47,7 @@ const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
   errorColor = '',
   hideError,
   description,
+  withoutMarginBottom = true,
   ...rest
 }: DropdownProps & FieldRenderProps<DropdownProps>) => {
   const {
@@ -69,18 +80,19 @@ const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
         value={value}
         isHigh={isHigh}
         isSimple={isSimple}
-        withoutMarginBottom={true}
       />
-      <div className={classes.regInputWrapper}>
-        <ErrorBadge
-          error={error}
-          data={data}
-          hasError={!hideError && !data?.hideError && hasError}
-          type={errorType}
-          color={errorColor}
-          submitError={submitError}
-        />
-      </div>
+      {!hideError && !data?.hideError && (
+        <div className={classes.regInputWrapper}>
+          <ErrorBadge
+            error={error}
+            data={data}
+            hasError={hasError}
+            type={errorType}
+            color={errorColor}
+            submitError={submitError}
+          />
+        </div>
+      )}
     </>
   );
 };

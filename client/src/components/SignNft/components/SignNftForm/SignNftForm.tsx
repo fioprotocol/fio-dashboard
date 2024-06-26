@@ -3,10 +3,10 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 import { Col, Container, Row } from 'react-bootstrap';
 
+import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 import CustomDropdown from '../CustomDropdown';
 import Input, { INPUT_UI_STYLES } from '../../../Input/Input';
-import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import FioName from '../../../common/FioName/FioName';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
@@ -107,7 +107,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                   </Row>
                 </>
               ) : (
-                <div className="mt-3 mb-4">
+                <div className="mt-3 mb-3">
                   <FioName name={fioAddress?.name} />
                   <Row>
                     <Col className={classes.subTitleSection}>
@@ -203,11 +203,15 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                 </Col>
               </Row>
               <Row className="mb-n3">
-                <Col className={classes.subTitleSection}>Transaction cost</Col>
+                <Col className={classes.subTitleSection}>
+                  Transaction Details
+                </Col>
               </Row>
-              <BundledTransactionBadge
-                bundles={bundleCost}
-                remaining={fioAddress != null ? fioAddress.remaining : 0}
+              <TransactionDetails
+                bundles={{
+                  fee: bundleCost,
+                  remaining: fioAddress != null ? fioAddress.remaining : 0,
+                }}
               />
               <LowBalanceBadge
                 hasLowBalance={hasLowBalance}

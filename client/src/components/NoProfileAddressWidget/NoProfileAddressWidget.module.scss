@@ -1,0 +1,24 @@
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.title {
+  @include inter-bold;
+  font-size: 2.625em;
+}
+
+.subtitle {
+  @include inter-regular;
+  line-height: 1.5em;
+}
+
+.actionText {
+  font-family: 'Inter Italic' !important;
+}
+
+.input {
+  min-width: 295px;
+
+  @include sm {
+    min-width: unset;
+  }
+}

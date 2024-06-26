@@ -10,6 +10,7 @@ import SearchPrefixes from './components/SearchPrefixes';
 import SearchPostfixes from './components/SearchPostfixes';
 import MaintenanceSwitch from './components/MaintenanceSwitch';
 import OutboundSwitch from './components/OutboundSwitch';
+import { FormsOfPayment } from './components/FormsOfPayment';
 
 import api from '../../api';
 
@@ -34,7 +35,6 @@ const AdminDefaultsPage: React.FC = () => {
   const handleSubmit = useCallback(
     async values => {
       if (values.dashboardDomains) {
-        const handleExpiredDateDomains: AdminDomain[] = [];
         const domainsPromises = values.dashboardDomains?.map(
           async (domainItem: AdminDomain) => {
             try {
@@ -45,11 +45,10 @@ const AdminDefaultsPage: React.FC = () => {
             } catch (error) {
               log.error('Handle settings domain expiration error:', error);
             }
-            handleExpiredDateDomains.push(domainItem);
+            return domainItem;
           },
         );
-        await Promise.all(domainsPromises);
-        values.dashboardDomains = handleExpiredDateDomains;
+        values.dashboardDomains = await Promise.all(domainsPromises);
       }
       await api.admin.saveDefaults(values);
       await fetchDefaults();
@@ -74,6 +73,7 @@ const AdminDefaultsPage: React.FC = () => {
           <>
             <MaintenanceSwitch />
             <OutboundSwitch />
+            <FormsOfPayment />
             <AvailableDomains form={form} />
             <DashboardDomains form={form} />
             <UsernamesOnCustomDomains form={form} />

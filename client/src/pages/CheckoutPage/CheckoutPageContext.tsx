@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -30,12 +30,17 @@ import {
 import {
   isAuthenticated as isAuthenticatedSelector,
   noProfileLoaded as noProfileLoadedSelector,
+  userId as userIdSelector,
 } from '../../redux/profile/selectors';
 import {
   prices as pricesSelector,
   isProcessing as isProcessingSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  loading as refProfileLoadingSelector,
+} from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
 
@@ -57,7 +62,11 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import { CART_ITEM_TYPE, NOT_FOUND_CODE } from '../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  NOT_FOUND_CODE,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { STRIPE_REDIRECT_STATUSES } from '../../constants/purchase';
@@ -81,10 +90,14 @@ import {
   RedirectLinkData,
   AnyObject,
 } from '../../types';
-import { BeforeSubmitData, BeforeSubmitState } from './types';
+import {
+  BeforeSubmitData,
+  BeforeSubmitState,
+  SignFioAddressItem,
+} from './types';
 import { CreateOrderActionData } from '../../redux/types';
 
-const SIGN_TX_MAX_FEE_COEFF = 1.5;
+const SIGN_TX_MAX_FEE_COEFFICIENT = 1.5;
 
 export const useContext = (): {
   cartItems: CartItem[];
@@ -96,7 +109,12 @@ export const useContext = (): {
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
+  payWith?: {
+    walletName: string;
+    walletBalances: WalletBalancesItem;
+  };
   isProcessing: boolean;
+  isNoProfileFlow: boolean;
   title: string;
   order: Order;
   payment: Payment;
@@ -107,6 +125,7 @@ export const useContext = (): {
   beforeSubmitProps: BeforeSubmitState | null;
   fioLoading: boolean;
   orderLoading: boolean;
+  refProfileLoading: boolean;
   orderError: ApiError;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
@@ -132,6 +151,9 @@ export const useContext = (): {
     cartHasItemsWithPrivateDomainSelector,
   );
   const cartLoading = useSelector(cartLoadingSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const refProfileLoading = useSelector(refProfileLoadingSelector);
+  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
@@ -150,6 +172,7 @@ export const useContext = (): {
   const stripeRedirectStatusParam = queryParams.get(
     QUERY_PARAMS_NAMES.STRIPE_REDIRECT_STATUS,
   );
+  const publicKeyQueryParams = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
   const [
     beforeSubmitProps,
@@ -171,26 +194,36 @@ export const useContext = (): {
     orderParams: orderParamsFromLocation,
   }: { orderParams?: CreateOrderActionData } = state || {}; // todo: implement setting order params from places where we going to checkout page
   const payment = order && order.payment;
-  const orderId = order && order.id;
   const paymentProvider = payment ? payment.processor : null;
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
 
+  const getActiveOrderParams: {
+    publicKey?: string;
+    userId?: string;
+  } = useMemo(() => ({}), []);
+
+  if (publicKeyQueryParams) {
+    getActiveOrderParams.publicKey = publicKeyQueryParams;
+  }
+
+  if (userId) {
+    getActiveOrderParams.userId = userId;
+  }
+
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
-      orderId &&
-        apis.orders.update(orderId, { publicKey: paymentWalletPublicKey });
       dispatchSetWallet(paymentWalletPublicKey);
     },
-    [orderId, dispatchSetWallet],
+    [dispatchSetWallet],
   );
 
   const getOrder = useCallback(async () => {
     let result;
 
     try {
-      result = await apis.orders.getActive();
+      result = await apis.orders.getActive(getActiveOrderParams);
     } catch (e) {
       setOrderError(e);
     }
@@ -200,7 +233,9 @@ export const useContext = (): {
       result.id &&
       cartIsRelative(cartItems, result.orderItems || [])
     ) {
-      if (result.publicKey) setWallet(result.publicKey);
+      if (result.publicKey) {
+        setWallet(result.publicKey);
+      }
       setOrder(result);
       setGetOrderLoading(false);
       setCreateOrderLoading(false);
@@ -209,7 +244,58 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  }, [cartItems, setWallet]);
+  }, [cartItems, getActiveOrderParams, setWallet]);
+
+  // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
+  useEffect(() => {
+    if (isNoProfileFlow) {
+      return;
+    }
+
+    if (!order) {
+      return;
+    }
+
+    if (order?.publicKey === paymentWalletPublicKey) {
+      return;
+    }
+
+    const oldWalletType = fioWallets.find(
+      ({ publicKey }) => publicKey === order.publicKey,
+    )?.from;
+
+    const newWalletType = fioWallets.find(
+      ({ publicKey }) => publicKey === paymentWalletPublicKey,
+    )?.from;
+
+    if (oldWalletType === newWalletType) {
+      return;
+    }
+
+    apis.orders
+      .create({
+        cartId,
+        roe,
+        publicKey: paymentWalletPublicKey,
+        paymentProcessor: paymentProvider,
+        prices: prices?.nativeFio,
+        data: {
+          gaClientId: getGAClientId(),
+          gaSessionId: getGASessionId(),
+        },
+      })
+      .then(() => apis.orders.getActive(getActiveOrderParams))
+      .then(setOrder);
+  }, [
+    cartId,
+    fioWallets,
+    getActiveOrderParams,
+    order,
+    paymentProvider,
+    paymentWalletPublicKey,
+    prices?.nativeFio,
+    roe,
+  ]);
 
   const createOrder = useCallback(
     async ({
@@ -237,6 +323,7 @@ export const useContext = (): {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
           },
+          userId,
         };
       }
 
@@ -315,16 +402,29 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [cartId, cartItems, dispatch, history, prices?.nativeFio, roe, setWallet],
+    [
+      cartId,
+      cartItems,
+      dispatch,
+      history,
+      prices?.nativeFio,
+      roe,
+      setWallet,
+      userId,
+    ],
   );
 
-  const cancelOrder = useCallback(() => {
-    if (order?.id) {
-      apis.orders.update(order.id, {
-        status: PURCHASE_RESULTS_STATUS.CANCELED,
-      });
-    }
-  }, [order?.id]);
+  const cancelOrder = useCallback(
+    (event?: Event) => {
+      // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel oreder on close BitPay payment page
+      if (!event && order?.id) {
+        apis.orders.update(order.id, {
+          status: PURCHASE_RESULTS_STATUS.CANCELED,
+        });
+      }
+    },
+    [order?.id],
+  );
 
   useEffectOnce(
     () => {
@@ -342,9 +442,11 @@ export const useContext = (): {
       getOrder();
     },
     [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
-    fioWallets.length > 0 &&
+    (fioWallets.length > 0 &&
+      !!userId &&
       (!orderNumberParam ||
-        (orderNumberParam && !cartLoading && cartLoadingStarted)),
+        (orderNumberParam && !cartLoading && cartLoadingStarted))) ||
+      isNoProfileFlow,
   );
 
   const isFree =
@@ -412,6 +514,7 @@ export const useContext = (): {
     ],
     isAuth &&
       order === null &&
+      isFree &&
       !orderNumberParam &&
       !getOrderLoading &&
       !fioLoading &&
@@ -455,7 +558,6 @@ export const useContext = (): {
       stripePaymentIntentParam,
       stripeRedirectStatusParam,
       dispatch,
-      getOrder,
     ],
     !!stripePaymentIntentParam &&
       !!stripeRedirectStatusParam &&
@@ -480,7 +582,7 @@ export const useContext = (): {
 
   useEffect(() => {
     if (
-      noProfileLoaded ||
+      (noProfileLoaded && !isNoProfileFlow) ||
       (isAuth &&
         !cartItems.length &&
         (!orderNumberParam ||
@@ -525,6 +627,7 @@ export const useContext = (): {
     stripeRedirectStatusParam,
     dispatch,
     query,
+    isNoProfileFlow,
   ]);
 
   // Redirect back to cart when payment option is FIO and not enough FIO tokens
@@ -561,6 +664,32 @@ export const useContext = (): {
     cartLoading,
   );
 
+  const getPayWithDefaultDetails = useCallback(
+    (publicKey: string) => {
+      if (paymentAssignmentWallets.length === 0) {
+        return;
+      }
+
+      const wallet = paymentAssignmentWallets.find(
+        paymentAssignmentWallet =>
+          paymentAssignmentWallet.publicKey === publicKey,
+      );
+      const balance = fioWalletsBalances.wallets[publicKey];
+
+      if (!balance || !wallet) {
+        return;
+      }
+
+      return {
+        walletName: wallet.name,
+        walletBalances: balance.available,
+      };
+    },
+    [fioWalletsBalances.wallets, paymentAssignmentWallets],
+  );
+
+  const payWith = getPayWithDefaultDetails(paymentWalletPublicKey);
+
   const onClose = useCallback(() => {
     if (order?.id) {
       apis.orders.update(order.id, {
@@ -594,15 +723,18 @@ export const useContext = (): {
     handleSubmit: (data?: BeforeSubmitData) => Promise<void>,
   ) => {
     const privateDomainList: { [domain: string]: boolean } = {};
+
     for (const cartItem of cartItems) {
       if (
-        userDomains.findIndex(({ name }) => name === cartItem.domain) < 0 &&
+        userDomains.findIndex(({ name }) => name === cartItem.domain) === -1 &&
         cartItem.domainType !== DOMAIN_TYPE.CUSTOM
-      )
+      ) {
         continue;
+      }
 
       privateDomainList[cartItem.domain] = false;
     }
+
     for (const domain of Object.keys(privateDomainList)) {
       const params = apis.fio.setTableRowsParams(domain);
 
@@ -617,28 +749,36 @@ export const useContext = (): {
       }
     }
 
-    const signTxItems = [];
+    const signTxItems: SignFioAddressItem[] = [];
+
     for (const cartItem of cartItems) {
+      const includeCartItemTypes = [CART_ITEM_TYPE.ADDRESS];
+
+      const domainWallet = userDomains.find(
+        ({ name }) => name === cartItem.domain,
+      );
+
+      const paymentFioWallet = fioWallets.find(
+        ({ publicKey }) =>
+          publicKey ===
+          (domainWallet
+            ? domainWallet.walletPublicKey
+            : paymentWalletPublicKey),
+      );
+
+      if (paymentFioWallet?.from === WALLET_CREATED_FROM.LEDGER) {
+        includeCartItemTypes.push(CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN);
+      }
+
       if (
-        [
-          CART_ITEM_TYPE.ADDRESS,
-          CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
-        ].includes(cartItem.type) &&
+        includeCartItemTypes.includes(cartItem.type) &&
         privateDomainList[cartItem.domain]
       ) {
-        const domainWallet = userDomains.find(
-          ({ name }) => name === cartItem.domain,
-        );
         signTxItems.push({
-          fioWallet: fioWallets.find(
-            ({ publicKey }) =>
-              publicKey ===
-              (domainWallet
-                ? domainWallet.walletPublicKey
-                : paymentWalletPublicKey),
-          ),
+          fioWallet: paymentFioWallet,
           name: setFioName(cartItem.address, cartItem.domain),
           ownerKey: paymentWalletPublicKey,
+          cartItem,
         });
       }
     }
@@ -647,7 +787,7 @@ export const useContext = (): {
       return setBeforeSubmitProps({
         fioWallet: paymentWallet,
         fee: new MathOp(prices?.nativeFio?.address)
-          .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
+          .mul(SIGN_TX_MAX_FEE_COEFFICIENT) // +50%
           .round(0, 2)
           .toNumber(),
         submitData: { fioAddressItems: signTxItems },
@@ -669,7 +809,8 @@ export const useContext = (): {
       getOrderLoading ||
       createOrderLoading ||
       !paymentProvider ||
-      !paymentWalletPublicKey,
+      !paymentWalletPublicKey ||
+      refProfileLoading,
     walletBalancesAvailable,
     paymentWallet,
     paymentWalletPublicKey,
@@ -677,7 +818,9 @@ export const useContext = (): {
     fioWallets,
     fioWalletsBalances,
     paymentAssignmentWallets,
+    payWith,
     isProcessing,
+    isNoProfileFlow,
     title,
     order,
     payment,
@@ -688,6 +831,7 @@ export const useContext = (): {
     beforeSubmitProps,
     fioLoading,
     orderLoading: getOrderLoading || createOrderLoading,
+    refProfileLoading,
     orderError,
     beforePaymentSubmit,
     onClose,

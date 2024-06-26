@@ -139,13 +139,15 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
           />
         }
         bottomElement={
-          <CancelButton
-            onClick={onResultsClose.bind(null, true)}
-            isBlack={true}
-            disabled={loading}
-            withTopMargin={true}
-            text="View Lock Status"
-          />
+          <div className={classes.cancelButton}>
+            <CancelButton
+              onClick={onResultsClose.bind(null, true)}
+              isBlack={true}
+              disabled={loading}
+              withTopMargin={true}
+              text="View Lock Status"
+            />
+          </div>
         }
       />
     );

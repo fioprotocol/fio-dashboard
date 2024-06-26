@@ -21,6 +21,7 @@ import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile
 
 import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
 import PurchaseLedgerWallet from './components/PurchaseLedgerWallet';
+import Processing from '../common/TransactionProcessing';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -162,9 +163,18 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
 
       if (success && isWaiting) execRegistration();
 
-      if (success === false) setWaiting(false);
+      if (success === false) {
+        setProcessingDispatched(false);
+        setWaiting(false);
+      }
     }
-  }, [captchaResult, isWaiting, execRegistration, onProcessingEnd]);
+  }, [
+    captchaResult,
+    isWaiting,
+    execRegistration,
+    onProcessingEnd,
+    setProcessingDispatched,
+  ]);
 
   const purchase = () => {
     fireAnalyticsEvent(
@@ -213,6 +223,9 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         loading={isWaiting || captchaResolving}
         text="Purchase Now"
       />
+      {captchaResult && isProcessing && (
+        <Processing isProcessing={isProcessing} />
+      )}
     </>
   );
 };

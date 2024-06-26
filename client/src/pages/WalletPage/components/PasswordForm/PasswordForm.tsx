@@ -27,27 +27,37 @@ const PasswordForm: React.FC<{
     >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
-          <Field name="username" type="hidden" component={Input} />
-          <Field
-            label="Enter your password and click show private key to display"
-            name="password"
-            type="password"
-            placeholder="Enter Your Password"
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            component={Input}
-            disabled={loading}
-          />
+          <div className={classes.field}>
+            <Field name="username" type="hidden" component={Input} />
+          </div>
+
+          <div className={classes.field}>
+            <Field
+              label="Enter your password and click show private key to display"
+              name="password"
+              type="password"
+              placeholder="Enter Your Password"
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              errorColor={COLOR_TYPE.WARN}
+              component={Input}
+              disabled={loading}
+            />
+          </div>
 
           <SubmitButton
+            className={classes.submitButton}
             disabled={
               formRenderProps.hasValidationErrors ||
               formRenderProps.submitting ||
               loading
             }
-            loading={loading}
-            withBottomMargin={true}
             text="Show Private Key"
+            loading={loading}
+            withoutMargin
+            hasAutoWidth
+            hasSmallPaddings
+            hasSmallText
+            hasLowHeight
           />
         </form>
       )}

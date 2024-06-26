@@ -38,6 +38,7 @@ const EndPoint = entities.EndPoint;
 const FIO_ACTION_NAMES = {
   [FIO_ACTIONS.registerFioAddress]: 'regaddress',
   [FIO_ACTIONS.registerFioDomain]: 'regdomain',
+  [FIO_ACTIONS.registerFioDomainAddress]: 'regdomadd',
   [FIO_ACTIONS.renewFioDomain]: 'renewdomain',
   [FIO_ACTIONS.setFioDomainVisibility]: 'setdomainpub',
   [FIO_ACTIONS.transferFioAddress]: 'xferaddress',
@@ -140,19 +141,6 @@ class Fio {
     }
   }
 
-  async registrationFee(forDomain = false) {
-    try {
-      const publicFioSDK = await this.getPublicFioSDK();
-
-      const { fee } = await publicFioSDK.getFee(
-        forDomain ? EndPoint.registerFioDomain : EndPoint.registerFioAddress,
-      );
-      return fee;
-    } catch (e) {
-      logger.error('Get Registration Fee Error: ', e);
-    }
-  }
-
   async getRawAbi() {
     const abisVar = await Var.getByKey(ABIS_VAR_KEY);
     if (abisVar && !Var.updateRequired(abisVar.updatedAt, ABIS_UPDATE_TIMEOUT_SEC)) {
@@ -206,6 +194,16 @@ class Fio {
           ...actionParams,
           fio_domain: options.domain,
           owner_fio_public_key: options.publicKey,
+        };
+        break;
+      }
+      case FIO_ACTIONS.registerFioDomainAddress: {
+        actionParams = {
+          ...actionParams,
+          fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
+          owner_fio_public_key: options.publicKey,
+          expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+          is_public: options.isPublic || 0,
         };
         break;
       }
@@ -277,17 +275,18 @@ class Fio {
         params.permission = auth.permission;
       }
       const fioSdk = await this.getMasterFioSDK();
-      const preparedTrx = await fioSdk.pushTransaction(
-        FIO_ACCOUNT_NAMES[action] || '',
-        FIO_ACTION_NAMES[action],
-        params,
-      );
-      const result = await fioSdk.executePreparedTrx(
+
+      const preparedTrx = await fioSdk.pushTransaction({
+        account: FIO_ACCOUNT_NAMES[action] || '',
+        action: FIO_ACTION_NAMES[action],
+        data: params,
+        authPermission: auth.permission,
+      });
+
+      return await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
       );
-
-      return result;
     } catch (err) {
       this.logError(err);
 
@@ -306,12 +305,10 @@ class Fio {
   async executeTx(action, signedTx) {
     try {
       const fioSdk = await this.getMasterFioSDK();
-      const result = await fioSdk.executePreparedTrx(
+      return await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         signedTx,
       );
-
-      return result;
     } catch (err) {
       this.logError(err);
 
@@ -355,18 +352,29 @@ class Fio {
         !prices.renewDomain ||
         !prices.addBundles ||
         !prices.address ||
-        !prices.domain
+        !prices.domain ||
+        !prices.combo
       ) {
-        const registrationAddressFeePromise = this.registrationFee();
-        const registrationDomainFeePromise = this.registrationFee(true);
-        const renewDomainFeePromise = this.getFee(FIO_ACTIONS.renewFioDomain);
-        const addBundlesFeePromise = this.getFee(FIO_ACTIONS.addBundledTransactions);
+        const [
+          registrationAddressFee,
+          registrationDomainFee,
+          registerDomainAddress,
+          renewDomainFee,
+          addBundlesFee,
+        ] = await Promise.all([
+          this.getFee(FIO_ACTIONS.registerFioAddress),
+          this.getFee(FIO_ACTIONS.registerFioDomain),
+          this.getFee(FIO_ACTIONS.registerFioDomainAddress),
+          this.getFee(FIO_ACTIONS.renewFioDomain),
+          this.getFee(FIO_ACTIONS.addBundledTransactions),
+        ]);
 
         prices = {
-          address: await registrationAddressFeePromise,
-          domain: await registrationDomainFeePromise,
-          renewDomain: await renewDomainFeePromise,
-          addBundles: await addBundlesFeePromise,
+          address: registrationAddressFee,
+          domain: registrationDomainFee,
+          combo: registerDomainAddress,
+          renewDomain: renewDomainFee,
+          addBundles: addBundlesFee,
         };
 
         await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
@@ -449,6 +457,23 @@ class Fio {
     return params;
   }
 
+  async getPublicAddressByAccount(account) {
+    const { rows } = await this.getTableRows({
+      code: 'fio.address',
+      scope: 'fio.address',
+      table: 'accountmap',
+      lower_bound: account,
+      upper_bound: account,
+      key_type: 'name',
+      index_position: '1',
+      json: true,
+    });
+
+    if (rows && rows.length) {
+      return rows[0].clientkey;
+    }
+  }
+
   async getFioDomain(domainName) {
     try {
       const tableRowsParams = this.setTableRowsParams(domainName);
@@ -459,6 +484,27 @@ class Fio {
     } catch (e) {
       this.logError(e);
     }
+  }
+
+  async getFioAddress(addressName) {
+    try {
+      const tableRowsParams = this.setTableRowsParams(addressName);
+
+      const { rows } = await this.getTableRows(tableRowsParams);
+
+      return rows.length ? rows[0] : null;
+    } catch (e) {
+      this.logError(e);
+    }
+  }
+
+  async isAccountCouldBeRenewed(address) {
+    const isDomain = address.indexOf(FIO_ADDRESS_DELIMITER) !== -1;
+    const [, fioDomain] = address.split(FIO_ADDRESS_DELIMITER);
+    const data = isDomain
+      ? await this.getFioDomain(fioDomain)
+      : await this.getFioAddress(address);
+    return !!data;
   }
 }
 

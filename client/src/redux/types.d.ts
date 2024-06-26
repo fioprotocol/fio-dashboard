@@ -31,7 +31,10 @@ export type CreateOrderActionData = {
   data: {
     gaClientId: string | null;
     gaSessionId: string | null;
+    orderUserType?: string;
   };
+  refProfileId?: string;
+  userId?: string;
 };
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };

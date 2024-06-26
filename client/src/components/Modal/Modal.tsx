@@ -27,10 +27,15 @@ type Props = {
   enableOverflow?: boolean;
   headerClass?: string;
   isSecondModal?: boolean;
+  classNames?: {
+    dialog?: string;
+    content?: string;
+  };
 };
 
 const ModalComponent: React.FC<Props> = props => {
   const {
+    classNames,
     backdrop,
     children,
     closeButton,
@@ -74,6 +79,7 @@ const ModalComponent: React.FC<Props> = props => {
         isWhite && classes.isWhite,
         withoutPaggingBottom && classes.withoutPaggingBottom,
         enableOverflow && classes.enableOverflow,
+        classNames?.content,
       )}
       dialogClassName={classnames(
         classes.dialog,
@@ -81,6 +87,7 @@ const ModalComponent: React.FC<Props> = props => {
         isFullWidth && classes.fullWidth,
         isMiddleWidth && classes.isMiddleWidth,
         hasDefaultCloseColor && classes.defaultCloseColor,
+        classNames?.dialog,
       )}
       backdropClassName={classnames(
         isSecondModal ? classes.backdropSecondModal : classes.backdrop,

@@ -3,19 +3,14 @@ import Sequelize from 'sequelize';
 import Base from '../Base';
 import { fioApi } from '../../external/fio.mjs';
 
-import {
-  Order,
-  OrderItem,
-  OrderItemStatus,
-  Payment,
-  BlockchainTransaction,
-} from '../../models';
+import { Order, OrderItem, OrderItemStatus, Payment } from '../../models';
 
 import X from '../Exception.mjs';
 
 import { PAYMENTS_STATUSES } from '../../config/constants';
 
 import logger from '../../logger.mjs';
+import { prepareOrderWithFioPaymentForExecution } from '../../utils/payment.mjs';
 
 export default class OrdersUpdate extends Base {
   static get validationRules() {
@@ -44,6 +39,7 @@ export default class OrdersUpdate extends Base {
                     {
                       list_of_objects: {
                         fioName: 'string',
+                        action: 'string',
                         isFree: 'integer',
                         fee_collected: 'integer',
                         costUsdc: 'string',
@@ -71,8 +67,18 @@ export default class OrdersUpdate extends Base {
   }
 
   async execute({ id, data }) {
+    const publicKey = data && data.publicKey;
+
+    const where = {
+      id,
+    };
+
+    if (publicKey) {
+      where.publicKey = publicKey;
+    }
+
     const order = await Order.findOne({
-      where: { id, userId: this.context.id },
+      where,
       include: [
         { model: OrderItem, include: [OrderItemStatus] },
         {
@@ -92,10 +98,7 @@ export default class OrdersUpdate extends Base {
     }
 
     if (data.status && data.status === Order.STATUS.CANCELED) {
-      await Order.update(
-        { status: data.status },
-        { where: { id, userId: this.context.id } },
-      );
+      await Order.update({ status: data.status }, { where });
       await OrderItemStatus.update(
         { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
         {
@@ -118,17 +121,18 @@ export default class OrdersUpdate extends Base {
     if (data.publicKey) orderUpdateParams.publicKey = data.publicKey;
 
     if (Object.values(orderUpdateParams).length)
-      await Order.update(orderUpdateParams, { where: { id, userId: this.context.id } });
+      await Order.update(orderUpdateParams, { where });
 
     if (data.results) {
       const processedOrderItems = [];
       for (const regItem of data.results.registered) {
-        const { fioName, data: itemData } = regItem;
+        const { fioName, action: itemAction, data: itemData } = regItem;
 
         const orderItem = order.OrderItems.find(
-          ({ id, address, domain }) =>
+          ({ id, address, domain, action }) =>
             !processedOrderItems.includes(id) &&
-            fioApi.setFioName(address, domain) === fioName,
+            fioApi.setFioName(address, domain) === fioName &&
+            action === itemAction,
         );
 
         if (orderItem && itemData) {
@@ -148,40 +152,11 @@ export default class OrdersUpdate extends Base {
           return acc;
         }, 0);
 
-        await Payment.update(
-          {
-            status: Payment.STATUS.COMPLETED,
-            price: totalFioNativePrice || null,
-            currency: Payment.PROCESSOR.FIO,
-          },
-          {
-            where: { id: order.Payments[0].id },
-          },
-        );
-
-        for (const orderItem of order.OrderItems) {
-          const bcTx = await BlockchainTransaction.create({
-            action: orderItem.action,
-            status: BlockchainTransaction.STATUS.READY,
-            data: { params: orderItem.params },
-            orderItemId: orderItem.id,
-          });
-
-          await OrderItemStatus.update(
-            {
-              paymentStatus: Payment.STATUS.COMPLETED,
-              txStatus: BlockchainTransaction.STATUS.READY,
-              blockchainTransactionId: bcTx.id,
-            },
-            {
-              where: {
-                orderItemId: orderItem.id,
-                paymentId: order.Payments[0].id,
-                txStatus: BlockchainTransaction.STATUS.NONE,
-              },
-            },
-          );
-        }
+        await prepareOrderWithFioPaymentForExecution({
+          paymentId: order.Payments[0].id,
+          orderItems: order.OrderItems,
+          fioNativePrice: totalFioNativePrice,
+        });
       } catch (e) {
         logger.error(`ORDER UPDATE ERROR ${order.id} #${order.number} - ${e.message}`);
       }
