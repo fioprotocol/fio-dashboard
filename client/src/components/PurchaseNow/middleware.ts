@@ -45,7 +45,7 @@ export const makeRegistrationOrder = ({
           cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
         !!cartItem.address &&
         cartItem.type === CART_ITEM_TYPE.ADDRESS,
-      action: actionFromCartItem(cartItem.type, isComboSupported),
+      action: actionFromCartItem(cartItem.type, isCombo),
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
       )
