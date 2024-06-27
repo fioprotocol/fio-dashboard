@@ -4,6 +4,7 @@ import Base from '../Base';
 import {
   generateErrorResponse,
   generateSummaryResponse,
+  whereLastRow,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -101,15 +102,20 @@ export default class Summary extends Base {
       paymentWhere.externalId = externId;
     }
 
+    const isItemFilterApplied = Object.keys(orderItemWhere).length > 0;
+    const isOrderFilterApplied = Object.keys(orderWhere).length > 0;
+    const isPaymentFilterApplied = Object.keys(paymentWhere).length > 0;
+
     const result = await OrderItem.findAll({
       attributes: ['address', 'domain'],
-      where: Object.keys(orderItemWhere).length > 0 ? orderItemWhere : undefined,
+      where: isItemFilterApplied ? orderItemWhere : undefined,
       order: [['id', 'desc']],
       include: [
         {
           attributes: ['id', 'publicKey'],
           model: Order,
-          where: Object.keys(orderWhere).length > 0 ? orderWhere : undefined,
+          required: isOrderFilterApplied || isPaymentFilterApplied,
+          where: isOrderFilterApplied ? orderWhere : undefined,
           include: [
             {
               attributes: [
@@ -121,19 +127,23 @@ export default class Summary extends Base {
                 'data',
                 'externalId',
                 'status',
+                'createdAt',
               ],
               model: Payment,
-              required: !!externId || !!accountPayId,
-              limit: 1,
-              order: [['createdAt', 'DESC']],
-              where: Object.keys(paymentWhere).length > 0 ? paymentWhere : undefined,
+              required: isPaymentFilterApplied,
+              where: isPaymentFilterApplied
+                ? paymentWhere
+                : whereLastRow('payments', 'Order', 'orderId'),
               include: [
                 {
                   attributes: ['paymentId', 'statusNotes', 'createdAt'],
                   model: PaymentEventLog,
                   required: false,
-                  limit: 1,
-                  order: [['createdAt', 'DESC']],
+                  where: whereLastRow(
+                    'payment-event-logs',
+                    'Order->Payments',
+                    'paymentId',
+                  ),
                 },
               ],
             },
@@ -147,8 +157,11 @@ export default class Summary extends Base {
               attributes: ['blockchainTransactionId', 'statusNotes'],
               model: BlockchainTransactionEventLog,
               required: false,
-              limit: 1,
-              order: [['createdAt', 'DESC']],
+              where: whereLastRow(
+                'blockchain-transaction-event-logs',
+                'BlockchainTransactions',
+                'blockchainTransactionId',
+              ),
             },
           ],
         },

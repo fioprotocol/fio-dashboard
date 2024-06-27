@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
 import { BlockchainTransaction } from '../models/index.mjs';
 
@@ -135,3 +137,11 @@ export const destructAddress = address => {
 
   return { type, fioAddress, fioDomain };
 };
+
+export const whereLastRow = (tableName, parentTableName, joinColumn) => ({
+  id: {
+    [Sequelize.Op.eq]: Sequelize.literal(
+      `(select max(id) from "${tableName}" where "${joinColumn}" = "${parentTableName}"."id")`,
+    ),
+  },
+});
