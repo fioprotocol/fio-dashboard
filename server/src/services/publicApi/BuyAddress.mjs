@@ -10,6 +10,7 @@ import {
   ReferrerProfile,
 } from '../../models';
 import {
+  createCallWithRetry,
   destructAddress,
   findDomainInRefProfile,
   formatChainAddress,
@@ -272,7 +273,10 @@ export default class BuyAddress extends Base {
     let charge;
 
     if (!isFree) {
-      charge = await Bitpay.getInvoice(payment.externalPaymentId);
+      charge = await createCallWithRetry(
+        6,
+        1000,
+      )(() => Bitpay.getInvoice(payment.externalPaymentId));
     }
 
     if (isFree) {
