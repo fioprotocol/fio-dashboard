@@ -2,6 +2,7 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import {
+  createCallWithRetry,
   destructAddress,
   formatChainDomain,
   generateErrorResponse,
@@ -170,7 +171,10 @@ export default class Renew extends Base {
       orderItem,
     ]);
 
-    const charge = await Bitpay.getInvoice(payment.externalPaymentId);
+    const charge = await createCallWithRetry(
+      6,
+      1000,
+    )(() => Bitpay.getInvoice(payment.externalPaymentId));
 
     return { order, orderItem, payment, charge };
   }

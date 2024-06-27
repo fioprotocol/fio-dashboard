@@ -123,6 +123,7 @@ export default class Summary extends Base {
                 'status',
               ],
               model: Payment,
+              required: !!externId || !!accountPayId,
               limit: 1,
               order: [['createdAt', 'DESC']],
               where: Object.keys(paymentWhere).length > 0 ? paymentWhere : undefined,
