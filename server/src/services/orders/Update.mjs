@@ -67,15 +67,9 @@ export default class OrdersUpdate extends Base {
   }
 
   async execute({ id, data }) {
-    const publicKey = data && data.publicKey;
-
     const where = {
       id,
     };
-
-    if (publicKey) {
-      where.publicKey = publicKey;
-    }
 
     const order = await Order.findOne({
       where,
