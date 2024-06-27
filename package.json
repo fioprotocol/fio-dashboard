@@ -17,7 +17,7 @@
     "lint": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx",
     "lint:fix": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx --fix",
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
-    "scheduler": "JOB_LIST=cart,gatedRegistrationTokens,emails,orders,txCheck,missingBcTxs,domainsExpiration node --es-module-specifier-resolution=node server/src/scheduler.mjs",
+    "scheduler": "JOB_LIST=cart,gatedRegistrationTokens,emails,orders,txCheck,missingBcTxs,wrapStatus,domainsExpiration node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "scheduler:wallet-data": "JOB_LIST=walletData node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "scheduler:wrap-status": "JOB_LIST=wrapStatus node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "migrate": "sequelize db:migrate",
