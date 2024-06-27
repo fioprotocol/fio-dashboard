@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+import Cookies from 'js-cookie';
 
 import {
   refProfileInfo,
@@ -52,7 +53,11 @@ export const useContext = (): UseContextProps => {
   const [isVerifying, toggleIsVerifying] = useState<boolean>(false);
   const [isFioItemVerified, toggleIsFioItemVerified] = useState<boolean>(false);
 
-  const publicKey = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY) || null;
+  const publicKeyQueryParams =
+    queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY) || null;
+  const publicKeyCookie = Cookies.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+
+  const publicKey = publicKeyQueryParams || publicKeyCookie;
 
   const onInputChanged = useCallback((value: string) => {
     setInfoMessage(null);
@@ -124,7 +129,12 @@ export const useContext = (): UseContextProps => {
 
   useEffectOnce(
     () => {
-      setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, null);
+      !publicKeyCookie &&
+        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, null);
+      !publicKeyQueryParams &&
+        history.push({
+          search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
+        });
     },
     [],
     !!publicKey,

@@ -283,6 +283,7 @@ export const useContext = (): {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
+        userId,
       })
       .then(() => apis.orders.getActive(getActiveOrderParams))
       .then(setOrder);
@@ -290,11 +291,13 @@ export const useContext = (): {
     cartId,
     fioWallets,
     getActiveOrderParams,
+    isNoProfileFlow,
     order,
     paymentProvider,
     paymentWalletPublicKey,
     prices?.nativeFio,
     roe,
+    userId,
   ]);
 
   const createOrder = useCallback(
@@ -514,7 +517,6 @@ export const useContext = (): {
     ],
     isAuth &&
       order === null &&
-      isFree &&
       !orderNumberParam &&
       !getOrderLoading &&
       !fioLoading &&

@@ -17,6 +17,7 @@ const CartPage: React.FC = () => {
     hasLowBalance,
     isAffiliateEnabled,
     isFree,
+    isNoProfileFlow,
     isPriceChanged,
     selectedPaymentProvider,
     disabled,
@@ -43,6 +44,7 @@ const CartPage: React.FC = () => {
   };
 
   const cartProps = {
+    isNoProfileFlow,
     isPriceChanged,
     hasGetPricesError,
     totalCartAmount,

@@ -175,6 +175,7 @@ export const truncateTextInMiddle = (
   startChar: number = DEFAULT_TEXT_TRUNCATE_LENGTH,
   endChar: number = DEFAULT_TEXT_TRUNCATE_LENGTH,
 ): string => {
+  if (!text) return;
   if (
     text.length < startChar ||
     text.length < endChar ||

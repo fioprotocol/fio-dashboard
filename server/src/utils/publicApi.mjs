@@ -1,8 +1,29 @@
+import Sequelize from 'sequelize';
+
 import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
 import { BlockchainTransaction } from '../models/index.mjs';
 
 const restoreKeyFromValue = (set, value) => {
   return Object.fromEntries(Object.entries(set).map(a => a.reverse()))[value];
+};
+
+const wait = ms => new Promise(res => setTimeout(res, ms));
+
+export const createCallWithRetry = (maxDepth, timeout) => {
+  const callWithRetry = async (fn, depth = 0) => {
+    try {
+      return await fn();
+    } catch (e) {
+      if (depth > maxDepth) {
+        throw e;
+      }
+      await wait(2 ** depth * timeout);
+
+      return callWithRetry(fn, depth + 1);
+    }
+  };
+
+  return callWithRetry;
 };
 
 export const generateSummaryResponse = (data = []) => {
@@ -116,3 +137,11 @@ export const destructAddress = address => {
 
   return { type, fioAddress, fioDomain };
 };
+
+export const whereLastRow = (tableName, parentTableName, joinColumn) => ({
+  id: {
+    [Sequelize.Op.eq]: Sequelize.literal(
+      `(select max(id) from "${tableName}" where "${joinColumn}" = "${parentTableName}"."id")`,
+    ),
+  },
+});
