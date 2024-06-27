@@ -21,8 +21,10 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { ROUTES } from '../../constants/routes';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import {
   CartItem as CartItemType,
@@ -33,6 +35,7 @@ import {
 import classes from './Cart.module.scss';
 
 type Props = {
+  isNoProfileFlow: boolean;
   loading: boolean;
   userWallets: FioWalletDoublet[];
   hasLowBalance: boolean;
@@ -46,18 +49,34 @@ type Props = {
 };
 
 const Cart: React.FC<Props> = props => {
-  const { isPriceChanged, hasGetPricesError, error, loading } = props;
+  const {
+    isNoProfileFlow,
+    isPriceChanged,
+    hasGetPricesError,
+    error,
+    loading,
+  } = props;
 
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
+  const refCode = useSelector(refProfileCode);
 
   const dispatch = useDispatch();
 
   const count = cartItems.length;
   const isCartEmpty = count === 0;
+
+  const searchLink = isNoProfileFlow
+    ? {
+        pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+          REF_PROFILE_SLUG_NAME,
+          refCode,
+        )}`,
+      }
+    : ROUTES.FIO_ADDRESSES_SELECTION;
 
   const handleDeleteItem = useCallback(
     (item: CartItemType) => {
@@ -139,7 +158,7 @@ const Cart: React.FC<Props> = props => {
             </div>
           ))}
         {loading && <Loader className="mt-4" />}
-        <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.cta}>
+        <Link to={searchLink} className={classes.cta}>
           <div className={classes.ctaIconContainer}>
             <SearchIcon className={classes.ctaIcon} />
           </div>

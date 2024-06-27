@@ -86,6 +86,7 @@ type UseContextReturnType = {
   hasLowBalance?: boolean;
   isAffiliateEnabled: boolean;
   isFree: boolean;
+  isNoProfileFlow: boolean;
   isPriceChanged: boolean;
   loadingCart: boolean;
   selectedPaymentProvider: PaymentProvider;
@@ -506,6 +507,7 @@ export const useContext = (): UseContextReturnType => {
     walletCount,
     isAffiliateEnabled,
     isFree,
+    isNoProfileFlow,
     isPriceChanged,
     selectedPaymentProvider,
     disabled: loading || isUpdatingPrices || !!selectedPaymentProvider,
