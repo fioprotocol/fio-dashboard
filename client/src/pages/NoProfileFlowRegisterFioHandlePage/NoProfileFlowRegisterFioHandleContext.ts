@@ -69,13 +69,10 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const refDomainObj = domainsList && domainsList[0];
   const domainName = refDomainObj?.name;
 
-  const options =
-    domainsList?.length > 1
-      ? domainsList.map(domainItem => ({
-          id: domainItem.name,
-          name: `${FIO_ADDRESS_DELIMITER}${domainItem.name}`,
-        }))
-      : null;
+  const options = domainsList?.map(domainItem => ({
+    id: domainItem.name,
+    name: `${FIO_ADDRESS_DELIMITER}${domainItem.name}`,
+  }));
 
   const cartHasFreeItem = cartItems.some(
     cartItem =>
