@@ -29,6 +29,7 @@ import apis from '../../api';
 import { log } from '../../util/general';
 import { isDomainExpired, validateFioAddress } from '../../util/fio';
 import { getZeroIndexPublicKey } from '../../util/snap';
+import useQuery from '../../hooks/useQuery';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { showLoginModal } from '../../redux/modal/actions';
@@ -47,6 +48,7 @@ import { convertFioPrices } from '../../util/prices';
 import { ROUTES } from '../../constants/routes';
 
 import { AnyObject, RefProfileDomain } from '../../types';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 type UseContextProps = {
   connectButtonDisabled?: boolean;
@@ -59,6 +61,7 @@ type UseContextProps = {
   isVerified: boolean;
   isWalletConnected: boolean;
   loaderText: string;
+  publicKey: string | null;
   refDomainObj: RefProfileDomain;
   showBrowserExtensionErrorModal: boolean;
   showProviderWindowError: boolean;
@@ -122,6 +125,9 @@ export const useContext = (): UseContextProps => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+  const queryParams = useQuery();
+
+  const publicKey = queryParams?.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
   const isAlternativeUser =
     window.ethereum?.isMetaMask || window.ethereum?.isOpera;
@@ -511,6 +517,7 @@ export const useContext = (): UseContextProps => {
     isVerified,
     isWalletConnected,
     loaderText,
+    publicKey,
     refDomainObj,
     showBrowserExtensionErrorModal,
     showProviderWindowError:
