@@ -20,6 +20,7 @@ import { handleHomePageContent } from '../../util/homePage';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
 import { useContext } from './RefHomePageContext';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import {
   RefProfile,
@@ -75,6 +76,7 @@ export const RefHomePage: React.FC<Props &
     isGatedFlow,
     isVerified,
     loaderText,
+    publicKey,
     refDomainObj,
     showBrowserExtensionErrorModal,
     showProviderWindowError,
@@ -169,6 +171,9 @@ export const RefHomePage: React.FC<Props &
               REF_PROFILE_SLUG_NAME,
               refProfileInfo?.code,
             )}`,
+            search: publicKey
+              ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`
+              : '',
           }}
         />
       );
