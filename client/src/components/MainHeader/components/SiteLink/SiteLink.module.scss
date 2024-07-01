@@ -14,7 +14,6 @@
   & a {
     display: flex;
     flex-direction: row;
-    justify-content: center;
     align-items: center;
     line-height: 1em;
   }
@@ -31,7 +30,6 @@
 
   .linkText {
     margin: 0;
-    flex-shrink: 0;
   }
 
   &:hover .arrow {
