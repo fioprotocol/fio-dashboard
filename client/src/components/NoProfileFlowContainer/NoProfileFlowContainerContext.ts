@@ -129,7 +129,8 @@ export const useContext = (): UseContextProps => {
 
   useEffectOnce(
     () => {
-      !publicKeyCookie &&
+      (!publicKeyCookie ||
+        (publicKey && publicKeyCookie && publicKey !== publicKeyCookie)) &&
         setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, null);
       !publicKeyQueryParams &&
         history.push({
