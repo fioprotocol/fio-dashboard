@@ -26,7 +26,12 @@
     justify-content: center;
 
     img {
-      width: 76px;
+      height: 36px;
+
+      @include sm {
+        width: 76px;
+        height: auto;
+      }
     }
   }
 
