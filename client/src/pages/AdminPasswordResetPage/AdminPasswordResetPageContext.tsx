@@ -5,7 +5,7 @@ import { useLocation } from 'react-router';
 import { loading as profileLoadingSelector } from '../../redux/profile/selectors';
 import { resetAdminPassword } from '../../redux/profile/actions';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 import useEffectOnce from '../../hooks/general';
 
 import { SubmitValues } from './types';

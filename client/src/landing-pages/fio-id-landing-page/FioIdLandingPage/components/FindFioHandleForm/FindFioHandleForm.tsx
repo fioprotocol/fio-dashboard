@@ -11,7 +11,7 @@ import TextInput, {
 import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 import NotificationBadge from '../../../../../components/NotificationBadge';
 
-import apis from '../../../../../api';
+import apis from '../../../api';
 
 import { BADGE_TYPES } from '../../../../../components/Badge/Badge';
 import { ROUTES } from '../../../../../constants/routes';

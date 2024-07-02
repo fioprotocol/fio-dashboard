@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 import { handleUserProfileType } from '../../util/user';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';

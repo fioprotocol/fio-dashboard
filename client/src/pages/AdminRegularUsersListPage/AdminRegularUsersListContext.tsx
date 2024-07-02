@@ -7,7 +7,7 @@ import { getRegularUsersList } from '../../redux/admin/actions';
 
 import { regularUsersList as regularUsersListSelector } from '../../redux/admin/selectors';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 
 import usePagination, { DEFAULT_LIMIT } from '../../hooks/usePagination';
 

@@ -23,7 +23,7 @@ import { ADMIN_ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 import { ORDER_USER_TYPES_TITLE } from '../../../../constants/order';
 
-import apis from '../../../../api';
+import apis from '../../../../admin/api';
 
 import { OrderDetails } from '../../../../types';
 

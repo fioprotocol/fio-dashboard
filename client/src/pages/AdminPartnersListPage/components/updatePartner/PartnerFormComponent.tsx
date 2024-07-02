@@ -37,7 +37,7 @@ import {
 } from '../../../../types';
 
 import classes from '../../AdminPartnersListPage.module.scss';
-import api from '../../../../api';
+import api from '../../../../admin/api';
 import { copyToClipboard } from '../../../../util/general';
 
 type FieldsType = FieldArrayRenderProps<
