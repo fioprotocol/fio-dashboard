@@ -12,7 +12,7 @@ import FioAccountProfileModal from './components/createNewFioAccountProfile/FioA
 
 import { FIO_ACCOUNT_TYPES, NOT_DELETABLE_ACCOUNTS } from '../../constants/fio';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 import { log } from '../../util/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';

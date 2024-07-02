@@ -16,7 +16,7 @@ import { DEFAULT_LIMIT } from '../../hooks/usePagination';
 import useEffectOnce from '../../hooks/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';
-import apis from '../../api';
+import apis from '../../admin/api';
 import { log } from '../../util/general';
 
 import { Props } from './types';

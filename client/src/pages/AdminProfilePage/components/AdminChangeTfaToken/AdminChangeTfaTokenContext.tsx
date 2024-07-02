@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { GeneratedSecret } from 'speakeasy';
 
 import { copyToClipboard, log } from '../../../../util/general';
-import apis from '../../../../api';
+import apis from '../../../../admin/api';
 import useEffectOnce from '../../../../hooks/general';
 import TFAHelper from '../../../../helpers/tfa';
 

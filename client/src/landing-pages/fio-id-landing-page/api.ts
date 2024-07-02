@@ -3,7 +3,9 @@ import ApiClient from '../../api/client';
 
 import ChainCode from '../../api/chain-code';
 import Fio from '../../api/fio';
+import FioReg from '../../api/fio-reg';
 import ExternalProviderNfts from '../../api/external-provider-nfts';
+import General from '../../api/general';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -21,14 +23,17 @@ window.fetch = (uri: RequestInfo | URL, opts: RequestInit = {}) => {
 export type Api = {
   chainCode: ChainCode;
   fio: Fio;
-  externalProvider: ExternalProviderNfts;
+  externalProviderNfts: ExternalProviderNfts;
+  general: General;
 };
 
 const ApiObj = {
   fio: new Fio(),
+  fioReg: new FioReg(apiClient),
   chainCode: new ChainCode(apiClient),
   client: apiClient,
-  externalProvider: new ExternalProviderNfts(apiClient),
+  externalProviderNfts: new ExternalProviderNfts(apiClient),
+  general: new General(apiClient),
 };
 
 export default ApiObj;

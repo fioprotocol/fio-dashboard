@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import MainHeader from '../MainHeader';
 import Navigation from '../Navigation';
@@ -12,6 +12,7 @@ import { ADMIN_ROUTES } from '../../../constants/routes';
 import { useCheckIfDesktop } from '../../../screenType';
 
 import useEffectOnce from '../../../hooks/general';
+import apis from '../../api';
 
 import classes from './AdminContainer.module.scss';
 
@@ -31,6 +32,12 @@ const AdminContainer: React.FC<Props> = props => {
     ADMIN_ROUTES.ADMIN_CONFIRM_EMAIL,
     ADMIN_ROUTES.ADMIN_RESET_PASSWORD,
   ].includes(pathname);
+
+  const getApiUrls = useCallback(async () => {
+    const apiUrls = await apis.fioReg.apiUrls();
+    apis.fio.setApiUrls(apiUrls);
+  }, []);
+
   useEffectOnce(
     () => {
       loadProfile();
@@ -38,6 +45,10 @@ const AdminContainer: React.FC<Props> = props => {
     [loadProfile],
     !isAdminConfirmEmailRoute,
   );
+
+  useEffectOnce(() => {
+    getApiUrls();
+  }, []);
 
   return (
     <div className={classes.root}>
