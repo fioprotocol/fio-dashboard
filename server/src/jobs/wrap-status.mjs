@@ -419,6 +419,7 @@ class WrapStatusJob extends CommonJob {
     const logPrefix = `Get FIO Oravotes, Unwrap --> `;
     try {
       const getFioOraclesVotes = async (startPosition, limit) => {
+        // todo: use get api url here
         const res = await superagent
           .post(`${process.env.FIO_BASE_URL}chain/get_table_rows`)
           .send({
