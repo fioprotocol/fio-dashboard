@@ -96,6 +96,19 @@ export default class AddItem extends Base {
         : null;
       const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
+      let refProfileHasGatedRegistration;
+
+      if (refCookie) {
+        const refProfile = await ReferrerProfile.findOne({
+          where: { code: refCookie },
+        });
+        refProfileHasGatedRegistration =
+          refProfile &&
+          refProfile.settings &&
+          refProfile.settings.gatedRegistration &&
+          refProfile.settings.gatedRegistration.isOn;
+      }
+
       const gatedRefProfile = await ReferrerProfile.findOne({
         where: Sequelize.literal(
           `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
@@ -111,7 +124,9 @@ export default class AddItem extends Base {
 
       if (
         ((gatedRefProfile &&
-          (isRefCookieEqualGatedRefprofile || !domainExistsInDashboardDomains)) ||
+          (isRefCookieEqualGatedRefprofile ||
+            (refCookie && refProfileHasGatedRegistration) ||
+            (!refCookie && !domainExistsInDashboardDomains))) ||
           freeDomainOwner) &&
         type === CART_ITEM_TYPE.ADDRESS
       ) {
