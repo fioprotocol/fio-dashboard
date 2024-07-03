@@ -26,6 +26,7 @@ export default class UpdateItemPeriod extends Base {
             address: ['string'],
             domain: ['string'],
             renewDomain: ['string'],
+            combo: ['string'],
           },
         },
       ],
@@ -62,7 +63,11 @@ export default class UpdateItemPeriod extends Base {
       } = handledPrices;
 
       const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !comboPrice || !renewDomainPrice;
+        !addBundlesPrice ||
+        !addressPrice ||
+        !domainPrice ||
+        !comboPrice ||
+        !renewDomainPrice;
 
       if (isEmptyPrices) {
         throw new X({
@@ -101,12 +106,12 @@ export default class UpdateItemPeriod extends Base {
               costFio: fio,
               costUsdc: usdc,
             }
-            : cartItem.hasCustomDomainInCart && cartItem.domain === existingCartItem.domain
-            ? {
+          : cartItem.hasCustomDomainInCart && cartItem.domain === existingCartItem.domain
+          ? {
               ...cartItem,
               period,
             }
-            : cartItem,
+          : cartItem,
       );
 
       await cart.update({ items: cartItems });
