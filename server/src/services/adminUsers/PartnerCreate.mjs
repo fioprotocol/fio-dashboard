@@ -110,15 +110,6 @@ export default class PartnerCreate extends Base {
       });
     }
 
-    if (!data.apiToken && data.apiAccess) {
-      throw new X({
-        code: 'CREATION_FAILED',
-        fields: {
-          apiToken: 'Api token required for api access!',
-        },
-      });
-    }
-
     const createdPartner = new ReferrerProfile({
       ...data,
       code: data.code.toLowerCase(),
