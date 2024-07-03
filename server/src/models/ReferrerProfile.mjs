@@ -60,6 +60,10 @@ export class ReferrerProfile extends Base {
           type: DT.STRING,
           allowNull: true,
         },
+        apiAccess: {
+          type: DT.BOOLEAN,
+          defaultValue: false,
+        },
         freeFioAccountProfileId: {
           type: DT.BIGINT,
           allowNull: true,
@@ -107,6 +111,7 @@ export class ReferrerProfile extends Base {
         'title',
         'subTitle',
         'tpid',
+        'apiAccess',
         'apiToken',
         'settings',
         'createdAt',
