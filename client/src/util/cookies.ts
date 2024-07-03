@@ -11,6 +11,6 @@ export const setCookies = (
   Cookies.set(cookieName, cookieValue, {
     ...params,
     secure: document.location.protocol === 'https:',
-    sameSite: 'Strict',
+    sameSite: 'none',
   });
 };
