@@ -122,6 +122,13 @@ export default class AddItem extends Base {
         gatedRefProfiles.length &&
         !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCookie);
 
+      logger.info('gatedRefProfiles', gatedRefProfiles);
+      logger.info('gatedRefProfiles.length', gatedRefProfiles.length);
+      logger.info('isRefCookieEqualGatedRefprofile', isRefCookieEqualGatedRefprofile);
+      logger.info('domainExistsInDashboardDomains', domainExistsInDashboardDomains);
+      logger.info('domainExistsInRefProfile', domainExistsInRefProfile);
+      logger.info('refCookie', refCookie);
+
       if (
         ((gatedRefProfiles.length &&
           (isRefCookieEqualGatedRefprofile ||
