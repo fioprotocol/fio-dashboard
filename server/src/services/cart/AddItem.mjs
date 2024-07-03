@@ -23,7 +23,7 @@ import {
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
-const REF_COOKIE_NAME = process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME || 'ref';
+const REF_COOKIE_NAME = process.env.REFERRAL_PROFILE_COOKIE_NAME || 'ref';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -95,8 +95,8 @@ export default class AddItem extends Base {
           })
         : null;
       logger.info(
-        'REACT_APP_REFERRAL_PROFILE_COOKIE_NAME',
-        process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME,
+        'REFERRAL_PROFILE_COOKIE_NAME',
+        process.env.REFERRAL_PROFILE_COOKIE_NAME,
       );
       const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
