@@ -17,6 +17,7 @@ export default class PartnerUpdate extends Base {
       label: ['required', 'string'],
       tpid: ['string'],
       apiToken: ['string'],
+      apiAccess: ['boolean'],
       settings: [
         'required',
         {
@@ -102,6 +103,15 @@ export default class PartnerUpdate extends Base {
         code: 'CREATION_FAILED',
         fields: {
           code: 'This api token is incorrect!',
+        },
+      });
+    }
+
+    if (!data.apiToken && data.apiAccess) {
+      throw new X({
+        code: 'CREATION_FAILED',
+        fields: {
+          apiToken: 'Api token required for api access!',
         },
       });
     }

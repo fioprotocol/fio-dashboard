@@ -11,7 +11,6 @@ import SearchPostfixes from './components/SearchPostfixes';
 import MaintenanceSwitch from './components/MaintenanceSwitch';
 import OutboundSwitch from './components/OutboundSwitch';
 import { FormsOfPayment } from './components/FormsOfPayment';
-import { PublicApiSwitch } from './components/PublicApiSwitch';
 
 import api from '../../admin/api';
 
@@ -73,7 +72,6 @@ const AdminDefaultsPage: React.FC = () => {
         {({ handleSubmit, submitting, form }) => (
           <>
             <MaintenanceSwitch />
-            <PublicApiSwitch />
             <OutboundSwitch />
             <FormsOfPayment />
             <AvailableDomains form={form} />

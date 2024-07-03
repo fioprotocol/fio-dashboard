@@ -1,11 +1,7 @@
 import Sequelize from 'sequelize';
 
-import {
-  FIO_ADDRESS_DELIMITER,
-  PAYMENTS_STATUSES,
-  VARS_KEYS,
-} from '../config/constants.js';
-import { BlockchainTransaction, Var } from '../models/index.mjs';
+import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
+import { BlockchainTransaction } from '../models/index.mjs';
 
 const restoreKeyFromValue = (set, value) => {
   return Object.fromEntries(Object.entries(set).map(a => a.reverse()))[value];
@@ -155,8 +151,3 @@ export const whereNotOf = (key, variants) => ({
     [Sequelize.Op.notIn]: variants,
   },
 });
-
-export const isPublicApiAvailable = async () => {
-  const varsData = await Var.getByKey(VARS_KEYS.IS_PUBLIC_API_AVAILABLE);
-  return varsData.dataValues.value !== 'false';
-};

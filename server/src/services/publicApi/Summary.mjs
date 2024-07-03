@@ -4,7 +4,6 @@ import Base from '../Base';
 import {
   generateErrorResponse,
   generateSummaryResponse,
-  isPublicApiAvailable,
   whereLastRow,
   whereNotOf,
 } from '../../utils/publicApi.mjs';
@@ -42,16 +41,6 @@ export default class Summary extends Base {
     type,
     accountPayId,
   }) {
-    const isApiAvailable = await isPublicApiAvailable();
-
-    if (!isApiAvailable) {
-      return generateErrorResponse(this.res, {
-        error: `Public api currently not available`,
-        errorCode: PUB_API_ERROR_CODES.SERVER_UNAVAILABLE,
-        statusCode: HTTP_CODES.SERVICE_UNAVAILABLE,
-      });
-    }
-
     if (!address && !domain && !externId) {
       return generateErrorResponse(this.res, {
         error: `Invalid parameters address, domain, or externId is required`,
