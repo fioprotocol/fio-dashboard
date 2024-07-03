@@ -94,7 +94,10 @@ export default class AddItem extends Base {
             userId,
           })
         : null;
-
+      logger.info(
+        'REACT_APP_REFERRAL_PROFILE_COOKIE_NAME',
+        process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME,
+      );
       const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
       const refProfile = await ReferrerProfile.findOne({
