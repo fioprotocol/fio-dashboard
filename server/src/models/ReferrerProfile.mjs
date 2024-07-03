@@ -107,6 +107,7 @@ export class ReferrerProfile extends Base {
         'title',
         'subTitle',
         'tpid',
+        'apiToken',
         'settings',
         'createdAt',
       ],

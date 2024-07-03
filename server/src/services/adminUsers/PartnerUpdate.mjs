@@ -3,7 +3,7 @@ import X from '../Exception';
 
 import { ReferrerProfile } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
-import { checkApiToken, hashFromApiToken } from '../../utils/crypto.mjs';
+import { checkApiToken } from '../../utils/crypto.mjs';
 
 export default class PartnerUpdate extends Base {
   static get requiredPermissions() {
@@ -108,7 +108,7 @@ export default class PartnerUpdate extends Base {
 
     await partner.update({
       ...data,
-      apiToken: data.apiToken ? hashFromApiToken(data.apiToken) : partner.apiToken,
+      apiToken: data.apiToken ? data.apiToken : partner.apiToken,
     });
 
     return {

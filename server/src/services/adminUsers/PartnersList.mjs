@@ -42,6 +42,6 @@ export default class PartnersList extends Base {
   }
 
   static get resultSecret() {
-    return ['data.partners[*].settings.img', 'data.partners[*].apiToken'];
+    return ['data.partners[*].settings.img'];
   }
 }
