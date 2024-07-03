@@ -94,22 +94,14 @@ export default class AddItem extends Base {
             userId,
           })
         : null;
+
       const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
-      let refProfileHasGatedRegistration;
+      const refProfile = await ReferrerProfile.findOne({
+        where: { code: refCookie },
+      });
 
-      if (refCookie) {
-        const refProfile = await ReferrerProfile.findOne({
-          where: { code: refCookie },
-        });
-        refProfileHasGatedRegistration =
-          refProfile &&
-          refProfile.settings &&
-          refProfile.settings.gatedRegistration &&
-          refProfile.settings.gatedRegistration.isOn;
-      }
-
-      const gatedRefProfile = await ReferrerProfile.findOne({
+      const gatedRefProfiles = await ReferrerProfile.findAll({
         where: Sequelize.literal(
           `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
         ),
@@ -119,14 +111,21 @@ export default class AddItem extends Base {
         dashboardDomain => dashboardDomain.name === domain,
       );
 
+      const domainExistsInRefProfile =
+        refProfile &&
+        refProfile.settings &&
+        refProfile.settings.domains &&
+        !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
+
       const isRefCookieEqualGatedRefprofile =
-        refCookie && gatedRefProfile && refCookie === gatedRefProfile.code;
+        refCookie &&
+        gatedRefProfiles.length &&
+        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCookie);
 
       if (
-        ((gatedRefProfile &&
+        ((gatedRefProfiles.length &&
           (isRefCookieEqualGatedRefprofile ||
-            (refCookie && refProfileHasGatedRegistration) ||
-            (!refCookie && !domainExistsInDashboardDomains))) ||
+            (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
           freeDomainOwner) &&
         type === CART_ITEM_TYPE.ADDRESS
       ) {
