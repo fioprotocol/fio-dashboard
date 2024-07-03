@@ -17,6 +17,7 @@ import {
   formatChainDomain,
   generateErrorResponse,
   generateSuccessResponse,
+  isPublicApiAvailable,
 } from '../../utils/publicApi';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
 import { fioApi } from '../../external/fio';
@@ -47,6 +48,16 @@ export default class BuyAddress extends Base {
   }
 
   async processing({ apiToken, address, referralCode, publicKey }) {
+    const isApiAvailable = await isPublicApiAvailable();
+
+    if (!isApiAvailable) {
+      return generateErrorResponse(this.res, {
+        error: `Public api currently not available`,
+        errorCode: PUB_API_ERROR_CODES.SERVER_UNAVAILABLE,
+        statusCode: HTTP_CODES.SERVICE_UNAVAILABLE,
+      });
+    }
+
     const refNotFoundRes = {
       error: 'Referral code not found',
       errorCode: PUB_API_ERROR_CODES.REF_NOT_FOUND,
@@ -70,7 +81,7 @@ export default class BuyAddress extends Base {
 
     if (apiToken && refProfile.apiToken !== apiToken) {
       return generateErrorResponse(this.res, {
-        error: `Invalid api token `,
+        error: `Invalid api token`,
         errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
         statusCode: HTTP_CODES.BAD_REQUEST,
       });
