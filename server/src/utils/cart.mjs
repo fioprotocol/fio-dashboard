@@ -60,14 +60,18 @@ export function convertFioPrices(nativeFio, roe) {
 }
 
 export const handlePriceForMultiYearItems = ({ includeAddress, prices, period }) => {
-  const { address, domain, renewDomain } = prices;
+  const { domain, renewDomain, combo } = prices;
 
   const renewPeriod = new MathOp(period).sub(1).toNumber();
   const renewDomainNativeCost = new MathOp(renewDomain).mul(renewPeriod).toNumber();
   const multiDomainPrice = new MathOp(domain).add(renewDomainNativeCost).toNumber();
 
   if (includeAddress) {
-    return new MathOp(multiDomainPrice).add(address).toNumber();
+    if (renewPeriod > 0) {
+      return new MathOp(combo).add(renewDomainNativeCost).toNumber();
+    } else {
+      return combo;
+    }
   }
 
   return multiDomainPrice;
