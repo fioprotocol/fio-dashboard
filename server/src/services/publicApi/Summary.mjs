@@ -121,6 +121,7 @@ export default class Summary extends Base {
         {
           attributes: ['id', 'publicKey'],
           model: Order,
+          required: true,
           where: isOrderFilterApplied ? orderWhere : undefined,
           include: [
             {
@@ -136,6 +137,7 @@ export default class Summary extends Base {
                 'createdAt',
               ],
               model: Payment,
+              required: true,
               where: paymentWhere,
               include: [
                 {

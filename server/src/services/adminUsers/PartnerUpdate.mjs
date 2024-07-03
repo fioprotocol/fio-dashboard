@@ -107,15 +107,6 @@ export default class PartnerUpdate extends Base {
       });
     }
 
-    if (!data.apiToken && data.apiAccess) {
-      throw new X({
-        code: 'CREATION_FAILED',
-        fields: {
-          apiToken: 'Api token required for api access!',
-        },
-      });
-    }
-
     await partner.update({
       ...data,
       apiToken: data.apiToken ? data.apiToken : partner.apiToken,
