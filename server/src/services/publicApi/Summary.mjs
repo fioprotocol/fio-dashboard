@@ -5,6 +5,7 @@ import {
   generateErrorResponse,
   generateSummaryResponse,
   whereLastRow,
+  whereNotOf,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -72,6 +73,10 @@ export default class Summary extends Base {
 
     const orderWhere = {};
 
+    if (publicKey) {
+      orderWhere.publicKey = publicKey;
+    }
+
     if (referralCode) {
       const refProfile = await ReferrerProfile.findOne({
         attributes: ['id'],
@@ -92,7 +97,10 @@ export default class Summary extends Base {
       orderWhere.refProfileId = refProfile.id;
     }
 
-    const paymentWhere = {};
+    const paymentWhere = {
+      ...whereLastRow('payments', 'Order', 'orderId'),
+      ...whereNotOf('processor', [Payment.PROCESSOR.SYSTEM]),
+    };
 
     if (accountPayId) {
       paymentWhere.id = accountPayId;
@@ -104,7 +112,6 @@ export default class Summary extends Base {
 
     const isItemFilterApplied = Object.keys(orderItemWhere).length > 0;
     const isOrderFilterApplied = Object.keys(orderWhere).length > 0;
-    const isPaymentFilterApplied = Object.keys(paymentWhere).length > 0;
 
     const result = await OrderItem.findAll({
       attributes: ['address', 'domain'],
@@ -114,7 +121,6 @@ export default class Summary extends Base {
         {
           attributes: ['id', 'publicKey'],
           model: Order,
-          required: isOrderFilterApplied || isPaymentFilterApplied,
           where: isOrderFilterApplied ? orderWhere : undefined,
           include: [
             {
@@ -130,10 +136,7 @@ export default class Summary extends Base {
                 'createdAt',
               ],
               model: Payment,
-              required: isPaymentFilterApplied,
-              where: isPaymentFilterApplied
-                ? paymentWhere
-                : whereLastRow('payments', 'Order', 'orderId'),
+              where: paymentWhere,
               include: [
                 {
                   attributes: ['paymentId', 'statusNotes', 'createdAt'],
