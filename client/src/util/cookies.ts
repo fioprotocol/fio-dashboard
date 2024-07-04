@@ -14,16 +14,18 @@ export const setCookies = (
 ): void => {
   if (!cookieValue) return Cookies.remove(cookieName, params);
 
+  const paramsToSet = { ...params };
+
   if (document.location.protocol === 'https:') {
-    params.secure = true;
+    paramsToSet.secure = true;
 
     const hostParts = document.location.hostname.split('.');
     if (hostParts.length > 2) {
-      params.domain = `.${hostParts.slice(-2).join('.')}`;
+      paramsToSet.domain = `.${hostParts.slice(-2).join('.')}`;
     } else {
-      params.domain = document.location.hostname;
+      paramsToSet.domain = document.location.hostname;
     }
   }
 
-  Cookies.set(cookieName, cookieValue, params);
+  Cookies.set(cookieName, cookieValue, paramsToSet);
 };

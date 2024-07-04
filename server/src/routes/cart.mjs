@@ -11,14 +11,8 @@ import RecalculateOnPriceUpdate from '../services/cart/RecalculateOnPriceUpdate.
 import UpdateItemPeriod from '../services/cart/UpdateItemPeriod.mjs';
 import UpdateUserId from '../services/cart/UpdateUserId.mjs';
 
-import logger from '../logger.mjs';
-
 export default {
-  addItem: makeServiceRunner(AddItem, req => {
-    logger.info(req.rawHeaders);
-    logger.info('REQ COOKIES', req.cookies);
-    return { ...req.body, cookies: req.cookies };
-  }),
+  addItem: makeServiceRunner(AddItem, req => ({ ...req.body, cookies: req.cookies })),
   clearCart: makeServiceRunner(ClearCart, req => req.body),
   createCartFromOrder: makeServiceRunner(CreateCartFromOrder, req => req.body),
   deleteItem: makeServiceRunner(DeleteItem, req => req.body),

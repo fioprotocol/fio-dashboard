@@ -94,10 +94,7 @@ export default class AddItem extends Base {
             userId,
           })
         : null;
-      logger.info(
-        'REFERRAL_PROFILE_COOKIE_NAME',
-        process.env.REFERRAL_PROFILE_COOKIE_NAME,
-      );
+
       const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
       const refProfile = await ReferrerProfile.findOne({
@@ -124,13 +121,6 @@ export default class AddItem extends Base {
         refCookie &&
         gatedRefProfiles.length &&
         !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCookie);
-
-      logger.info('gatedRefProfiles', gatedRefProfiles);
-      logger.info('gatedRefProfiles.length', gatedRefProfiles.length);
-      logger.info('isRefCookieEqualGatedRefprofile', isRefCookieEqualGatedRefprofile);
-      logger.info('domainExistsInDashboardDomains', domainExistsInDashboardDomains);
-      logger.info('domainExistsInRefProfile', domainExistsInRefProfile);
-      logger.info('refCookie', refCookie);
 
       if (
         ((gatedRefProfiles.length &&
