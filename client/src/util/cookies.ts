@@ -1,16 +1,27 @@
 import Cookies from 'js-cookie';
 
+import config from '../config';
+
 export const setCookies = (
   cookieName: string,
   cookieValue: string,
-  params: { expires?: number; path?: string } = {
+  params: {
+    expires?: number;
+    path?: string;
+    secure?: boolean;
+    domain?: string;
+  } = {
     path: '/',
   },
 ): void => {
   if (!cookieValue) return Cookies.remove(cookieName, params);
-  Cookies.set(cookieName, cookieValue, {
-    ...params,
-    secure: document.location.protocol === 'https:',
-    sameSite: 'none',
-  });
+
+  if (document.location.protocol === 'https:') {
+    params.secure = true;
+    params.domain = config.apiBaseUrl
+      ?.replace(/^.*:\/\//i, '')
+      .replace('/', '');
+  }
+
+  Cookies.set(cookieName, cookieValue, params);
 };
