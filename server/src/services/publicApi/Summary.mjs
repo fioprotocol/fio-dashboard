@@ -98,7 +98,6 @@ export default class Summary extends Base {
     }
 
     const paymentWhere = {
-      ...whereLastRow('payments', 'Order', 'orderId'),
       ...whereNotOf('processor', [Payment.PROCESSOR.SYSTEM]),
     };
 
