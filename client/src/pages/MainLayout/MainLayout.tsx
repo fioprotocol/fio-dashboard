@@ -108,10 +108,10 @@ const MainLayout: React.FC<Props> = props => {
 
   useEffectOnce(
     () => {
-      isAuthenticated && isNoProfileFlow && logout();
+      logout();
     },
     [isAuthenticated, isNoProfileFlow],
-    isAuthenticated,
+    isAuthenticated && isNoProfileFlow,
   );
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
