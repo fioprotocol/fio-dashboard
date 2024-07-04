@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import isEqual from 'lodash/isEqual';
+
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
@@ -13,7 +15,7 @@ import {
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   allDomains as allDomainsSelector,
-  loading as domainsLoaingSelector,
+  loading as domainsLoadingSelector,
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
@@ -73,7 +75,7 @@ const INFO_MESSAGES = {
   },
 };
 
-type HanldedFioHandleType = {
+type HandledFioHandleType = {
   id: string;
   address: string;
   domain: string;
@@ -323,7 +325,7 @@ export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const cartId = useSelector(cartIdSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
-  const domainsLoaing = useSelector(domainsLoaingSelector);
+  const domainsLoading = useSelector(domainsLoadingSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const prices = useSelector(pricesSelector);
@@ -394,13 +396,13 @@ export const useContext = (): UseContextProps => {
     .sort((a, b) => a.rank - b.rank)
     .map((premiumDomain, i) => ({ ...premiumDomain, rank: i }));
 
-  const availablePublilcDomains = transformCustomDomains(availableDomains).sort(
+  const availablePublicDomains = transformCustomDomains(availableDomains).sort(
     (a, b) => a.rank - b.rank,
   );
 
   const customDomains = [
     ...publicUsernamesOnCustomDomains,
-    ...availablePublilcDomains,
+    ...availablePublicDomains,
   ];
 
   const userDomainsJSON = JSON.stringify(sortedUserDomains);
@@ -416,12 +418,20 @@ export const useContext = (): UseContextProps => {
     dispatch(loadProfile());
   }, [dispatch]);
 
+  const setUsersItemsListIfChanged = useCallback(
+    (updatedState: SelectedItemProps[]) =>
+      setUsersItemsList(prevState =>
+        isEqual(prevState, updatedState) ? prevState : updatedState,
+      ),
+    [setUsersItemsList],
+  );
+
   const validateAddress = useCallback(
     async (address: string) => {
       if (!address) {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
-        setUsersItemsList([]);
+        setUsersItemsListIfChanged([]);
         setError(null);
         setInfo(null);
         return;
@@ -558,7 +568,7 @@ export const useContext = (): UseContextProps => {
       const validatedPremiumFCH = await validatedPremiumFCHPromise;
       const validatedCustomFCH = await validatedCustomFCHPromise;
 
-      const avaliableUserFCH = validatedUserFCH.length
+      const availableUserFCH = validatedUserFCH.length
         ? validatedUserFCH.filter(userFCH => !userFCH.isExist)
         : [];
       const availableNonPremiumFCH = validatedNonPremiumFCH.length
@@ -572,7 +582,7 @@ export const useContext = (): UseContextProps => {
         : [];
 
       const findExistingFioHandleInBlockChain = (
-        fioHandlesArray: HanldedFioHandleType[],
+        fioHandlesArray: HandledFioHandleType[],
       ) => {
         if (!fioHandlesArray) return false;
 
@@ -593,7 +603,7 @@ export const useContext = (): UseContextProps => {
         setInfo(INFO_MESSAGES.FIO_HANDLE_ALREADY_EXISTS);
 
       if (
-        !avaliableUserFCH &&
+        !availableUserFCH &&
         !availableNonPremiumFCH &&
         !availablePremiumFCH &&
         !availableCustomFCH
@@ -601,13 +611,13 @@ export const useContext = (): UseContextProps => {
         setError(FIO_ADDRESS_ALREADY_EXISTS);
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
-        setUsersItemsList([]);
+        setUsersItemsListIfChanged([]);
         toggleLoading(false);
         setPreviousAddressValue(address);
         return;
       }
 
-      setUsersItemsList(avaliableUserFCH.slice(0, USER_DOMAINS_LIMIT));
+      setUsersItemsListIfChanged(availableUserFCH.slice(0, USER_DOMAINS_LIMIT));
 
       if (
         !availableNonPremiumFCH.length &&
@@ -621,24 +631,24 @@ export const useContext = (): UseContextProps => {
         return;
       }
 
-      const swapedCustomFCH = availableCustomFCH.find(
-        availabelCustom => availabelCustom.swapAddressAndDomainPlaces,
+      const swappedCustomFCH = availableCustomFCH.find(
+        availableCustom => availableCustom.swapAddressAndDomainPlaces,
       );
 
       let availableCustomFCHWithSwapped = [
         ...availableCustomFCH.filter(
-          availabelCustom => availabelCustom.domain !== fioHandlePart,
+          availableCustom => availableCustom.domain !== fioHandlePart,
         ),
       ];
 
-      if (swapedCustomFCH) {
+      if (swappedCustomFCH) {
         if (
           availableCustomFCHWithSwapped[0]?.id === address &&
           fioHandleHasDomainPart
         ) {
-          availableCustomFCHWithSwapped.splice(1, 0, swapedCustomFCH);
+          availableCustomFCHWithSwapped.splice(1, 0, swappedCustomFCH);
         } else {
-          availableCustomFCHWithSwapped = [swapedCustomFCH].concat(
+          availableCustomFCHWithSwapped = [swappedCustomFCH].concat(
             availableCustomFCHWithSwapped,
           );
         }
@@ -731,6 +741,7 @@ export const useContext = (): UseContextProps => {
       toggleLoading(false);
     },
     [
+      setUsersItemsListIfChanged,
       cartHasFreeItem,
       cartItemsJSON,
       customDomainsJSON,
@@ -779,9 +790,9 @@ export const useContext = (): UseContextProps => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (domainsLoaing || !hasRawAbiLoaded) return;
+    if (domainsLoading || !hasRawAbiLoaded) return;
     validateAddress(addressValue);
-  }, [addressValue, domainsLoaing, hasRawAbiLoaded, validateAddress]);
+  }, [addressValue, domainsLoading, hasRawAbiLoaded, validateAddress]);
 
   useEffect(() => {
     for (const fioWallet of fioWallets) {
@@ -838,7 +849,7 @@ export const useContext = (): UseContextProps => {
       ),
     );
 
-    setUsersItemsList(
+    setUsersItemsListIfChanged(
       parsedUsersItemsList.map(usersItem =>
         parsedCartItems.find(cartItem => cartItem.id === usersItem.id)
           ? { ...usersItem, isSelected: true }
@@ -846,6 +857,7 @@ export const useContext = (): UseContextProps => {
       ),
     );
   }, [
+    setUsersItemsListIfChanged,
     loading,
     additionalItemsListJSON,
     cartItemsJSON,
@@ -868,7 +880,7 @@ export const useContext = (): UseContextProps => {
     addressValue,
     error,
     infoMessage,
-    loading: loading || domainsLoaing || isRawAbiLoading,
+    loading: loading || domainsLoading || isRawAbiLoading,
     suggestedItemsList,
     usersItemsList,
     setAddressValue,
