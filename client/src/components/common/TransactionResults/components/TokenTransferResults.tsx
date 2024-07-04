@@ -72,7 +72,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
 
       <ResultDetails
         show={!!from}
-        label="Sending FIO Public Key"
+        label="Sending FIO Public Address"
         value={from}
       />
 
@@ -84,7 +84,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
 
       <ResultDetails
         show={!!to}
-        label={titleFrom || 'Send to FIO Public Key'}
+        label={titleFrom || 'Send to FIO Public Address'}
         value={to}
       />
 

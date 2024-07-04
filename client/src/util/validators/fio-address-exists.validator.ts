@@ -8,7 +8,7 @@ interface FieldArgs {
 }
 
 const defaultMessage =
-  'Invalid FIO Handle or FIO Public Key or FIO Handle domain has expired';
+  'Invalid FIO Handle or FIO Public Address or FIO Handle domain has expired';
 
 export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,

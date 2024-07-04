@@ -6,13 +6,11 @@ import { refProfileInfo } from '../../redux/refProfile/selectors';
 import { pathname as pathnameSelector } from '../../redux/navigation/selectors';
 
 import useQuery from '../../hooks/useQuery';
-import { useWindowSize } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { RefProfile } from '../../types';
-
-const DESKTOP_WIDTH_SIZE = 1100;
 
 export type NavItemParam = {
   activeEventKey: string;
@@ -39,8 +37,7 @@ export const useContext = (): UseContextProps => {
   const [activeEventKey, setActiveEventKey] = useState<string>(pathname);
   const [isMenuOpen, toggleMenuOpen] = useState<boolean>(false);
 
-  const { width } = useWindowSize();
-  const isDesktop = width > DESKTOP_WIDTH_SIZE;
+  const isDesktop = useCheckIfDesktop();
 
   const handleEventKeySelect = useCallback((eventKey: string) => {
     setActiveEventKey(eventKey);

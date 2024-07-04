@@ -54,6 +54,14 @@ export default class Renew extends Base {
       return generateErrorResponse(this.res, refNotFoundRes);
     }
 
+    if (!refProfile.apiAccess) {
+      return generateErrorResponse(this.res, {
+        error: `Access by api deactivated`,
+        errorCode: PUB_API_ERROR_CODES.REF_API_ACCESS_DEACTIVATED,
+        statusCode: HTTP_CODES.FORBIDDEN,
+      });
+    }
+
     const { type, fioAddress, fioDomain } = destructAddress(address);
 
     if (

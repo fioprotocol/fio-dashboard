@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import apis from '../../../../../api';
+import apis from '../../../api';
 
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
 import { loadImage, log } from '../../../../../util/general';

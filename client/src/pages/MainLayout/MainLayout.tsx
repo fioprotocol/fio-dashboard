@@ -58,6 +58,7 @@ type Props = {
   isMaintenance?: boolean;
   isLoading?: boolean;
   getCart: (cartId: string) => void;
+  logout: () => void;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -79,6 +80,7 @@ const MainLayout: React.FC<Props> = props => {
     isMaintenance,
     isLoading,
     getCart,
+    logout,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -103,6 +105,14 @@ const MainLayout: React.FC<Props> = props => {
       getCart(cartId);
     }
   }, [cartId]);
+
+  useEffectOnce(
+    () => {
+      logout();
+    },
+    [isAuthenticated, isNoProfileFlow],
+    isAuthenticated && isNoProfileFlow,
+  );
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>

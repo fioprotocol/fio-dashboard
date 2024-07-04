@@ -4,7 +4,7 @@
 .loggedNavContainer, .regularNavContainer {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  margin-left: auto;
   justify-content: space-between;
 }
 
@@ -269,10 +269,6 @@
 }
 
 @include lg {
-  .regularNavContainer, .loggedNavContainer {
-    margin-left: 5rem;
-  }
-
   .navItem {
     .settings {
       background-color: $baltic-sea;

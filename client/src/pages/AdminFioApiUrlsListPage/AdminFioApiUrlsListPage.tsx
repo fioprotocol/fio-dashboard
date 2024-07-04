@@ -8,7 +8,7 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 import Loader from '../../components/Loader/Loader';
 import FioApiUrlModal from './components/createNewFioApiUrl/FioApiUrlModal';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 import { log } from '../../util/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';

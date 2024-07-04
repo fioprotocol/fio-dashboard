@@ -173,7 +173,7 @@ export const logout = ({
 }: {
   history?: History;
   redirect?: string;
-}): CommonPromiseAction => ({
+} = {}): CommonPromiseAction => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: (api: Api) => api.auth.logout(),
   redirect,

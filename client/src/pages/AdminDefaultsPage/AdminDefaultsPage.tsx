@@ -12,7 +12,7 @@ import MaintenanceSwitch from './components/MaintenanceSwitch';
 import OutboundSwitch from './components/OutboundSwitch';
 import { FormsOfPayment } from './components/FormsOfPayment';
 
-import api from '../../api';
+import api from '../../admin/api';
 
 import { log } from '../../util/general';
 

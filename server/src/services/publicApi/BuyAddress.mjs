@@ -25,7 +25,6 @@ import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
-import { hashFromApiToken } from '../../utils/crypto.mjs';
 import {
   normalizePriceForBitPayInTestNet,
   prepareOrderWithFioPaymentForExecution,
@@ -69,9 +68,17 @@ export default class BuyAddress extends Base {
       return generateErrorResponse(this.res, refNotFoundRes);
     }
 
-    if (apiToken && refProfile.apiToken !== hashFromApiToken(apiToken)) {
+    if (!refProfile.apiAccess) {
       return generateErrorResponse(this.res, {
-        error: `Invalid api token `,
+        error: `Access by api deactivated`,
+        errorCode: PUB_API_ERROR_CODES.REF_API_ACCESS_DEACTIVATED,
+        statusCode: HTTP_CODES.FORBIDDEN,
+      });
+    }
+
+    if (apiToken && refProfile.apiToken !== apiToken) {
+      return generateErrorResponse(this.res, {
+        error: `Invalid api token`,
         errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
         statusCode: HTTP_CODES.BAD_REQUEST,
       });

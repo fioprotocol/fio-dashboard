@@ -3,7 +3,7 @@ import X from '../Exception';
 
 import { ReferrerProfile } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
-import { checkApiToken, hashFromApiToken } from '../../utils/crypto.mjs';
+import { checkApiToken } from '../../utils/crypto.mjs';
 
 export default class PartnerCreate extends Base {
   static get requiredPermissions() {
@@ -17,6 +17,7 @@ export default class PartnerCreate extends Base {
       code: ['required', 'string', 'trim', 'to_lc'],
       tpid: ['string'],
       apiToken: ['string'],
+      apiAccess: ['boolean'],
       settings: [
         'required',
         {
@@ -112,7 +113,6 @@ export default class PartnerCreate extends Base {
     const createdPartner = new ReferrerProfile({
       ...data,
       code: data.code.toLowerCase(),
-      apiToken: data.apiToken ? hashFromApiToken(data.apiToken) : undefined,
     });
     await createdPartner.save();
 

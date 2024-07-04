@@ -37,7 +37,7 @@ import {
 } from '../../../../types';
 
 import classes from '../../AdminPartnersListPage.module.scss';
-import api from '../../../../api';
+import api from '../../../../admin/api';
 import { copyToClipboard } from '../../../../util/general';
 
 type FieldsType = FieldArrayRenderProps<
@@ -367,7 +367,8 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
               label="Gated Registration"
             />
           </div>
-          {values.settings?.gatedRegistration?.isOn ? (
+
+          {values.settings?.gatedRegistration?.isOn && (
             <>
               <Field
                 type="dropdown"
@@ -405,41 +406,52 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
                 disabled={submitting || loading}
               />
             </>
-          ) : null}
+          )}
+
+          <div className="d-flex align-self-start mb-4">
+            <Field
+              name="apiAccess"
+              type="checkbox"
+              component={Input}
+              label="Api Access"
+            />
+          </div>
+
+          {values.apiAccess && (
+            <div
+              className={classnames(
+                classes.landingTextsContainer,
+                'd-flex',
+                'flex-column',
+                'align-self-start',
+                'w-100',
+                'mb-3',
+              )}
+            >
+              <span className={classes.label}>Api Token</span>
+              <Field name="apiToken">{() => null}</Field>
+              {apiToken ? (
+                <div className={classes.apiTokenWrapper}>
+                  <span className={classes.apiToken}>{apiToken}</span>
+                  <Button
+                    className="w-auto ml-2 mb-0"
+                    onClick={() => copyToClipboard(apiToken)}
+                  >
+                    <FontAwesomeIcon icon="key" className="mr-2" />
+                    <span>Copy</span>
+                  </Button>
+                </div>
+              ) : (
+                <Button className="w-auto mb-0" onClick={onGenerateApiToken}>
+                  <FontAwesomeIcon icon="key" className="mr-2" />
+                  <span>Generate New</span>
+                </Button>
+              )}
+            </div>
+          )}
 
           <div className="d-flex align-self-start mb-2">
             <span className={classes.label}>Landing Page text</span>
-          </div>
-
-          <div
-            className={classnames(
-              classes.landingTextsContainer,
-              'd-flex',
-              'flex-column',
-              'align-self-start',
-              'w-100',
-              'mb-3',
-            )}
-          >
-            <span className={classes.label}>Api Token</span>
-            <Field name="apiToken">{() => null}</Field>
-            {apiToken ? (
-              <div className={classes.apiTokenWrapper}>
-                <span className={classes.apiToken}>{apiToken}</span>
-                <Button
-                  className="w-auto ml-2 mb-0"
-                  onClick={() => copyToClipboard(apiToken)}
-                >
-                  <FontAwesomeIcon icon="key" className="mr-2" />
-                  <span>Copy</span>
-                </Button>
-              </div>
-            ) : (
-              <Button className="w-auto mb-0" onClick={onGenerateApiToken}>
-                <FontAwesomeIcon icon="key" className="mr-2" />
-                <span>Generate New</span>
-              </Button>
-            )}
           </div>
 
           <div

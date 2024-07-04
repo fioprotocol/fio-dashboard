@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { useCheckIfDesktop } from '../../../screenType';
 import { log, transformBaseUrl } from '../../../util/general';
-import apis from '../../../api';
+import apis from '../api';
 import useEffectOnce from '../../../hooks/general';
 
 type UseContext = {
@@ -44,6 +44,11 @@ export const useContext = (): UseContext => {
     window.history.pushState({}, null, '/');
   }, []);
 
+  const getApiUrls = useCallback(async () => {
+    const apiUrls = await apis.fioReg.apiUrls();
+    apis.fio.setApiUrls(apiUrls);
+  }, []);
+
   useEffectOnce(() => {
     const handlePathChange = async () => {
       toggleIsValidating(true);
@@ -70,6 +75,10 @@ export const useContext = (): UseContext => {
   useEffectOnce(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffectOnce(() => {
+    getApiUrls();
+  }, [getApiUrls]);
 
   return { fioBaseUrl, fch, isDesktop, isValidating, resetPath, setFch };
 };

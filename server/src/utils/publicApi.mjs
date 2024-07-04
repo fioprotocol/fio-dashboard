@@ -1,4 +1,6 @@
 import Sequelize from 'sequelize';
+import isEqual from 'lodash/isEqual';
+import uniqWith from 'lodash/uniqWith';
 
 import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
 import { BlockchainTransaction } from '../models/index.mjs';
@@ -27,7 +29,7 @@ export const createCallWithRetry = (maxDepth, timeout) => {
 };
 
 export const generateSummaryResponse = (data = []) => {
-  return data.map(item => {
+  const result = data.map(item => {
     const {
       address,
       domain,
@@ -63,6 +65,8 @@ export const generateSummaryResponse = (data = []) => {
       extern_status: restoreKeyFromValue(PAYMENTS_STATUSES, payment.status),
     };
   });
+
+  return uniqWith(result, isEqual);
 };
 
 export const generateErrorResponse = (res, { error, errorCode, statusCode }) => {
@@ -143,5 +147,11 @@ export const whereLastRow = (tableName, parentTableName, joinColumn) => ({
     [Sequelize.Op.eq]: Sequelize.literal(
       `(select max(id) from "${tableName}" where "${joinColumn}" = "${parentTableName}"."id")`,
     ),
+  },
+});
+
+export const whereNotOf = (key, variants) => ({
+  [key]: {
+    [Sequelize.Op.notIn]: variants,
   },
 });

@@ -121,7 +121,7 @@ export type TrxData = {
 };
 
 export default class Fio {
-  baseurls: string[] = [process.env.REACT_APP_FIO_BASE_URL || ''];
+  baseurls: string[] = [];
   publicFioSDK: FIOSDK_LIB | null = null;
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {

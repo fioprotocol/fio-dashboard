@@ -5,7 +5,7 @@ import { compose } from '../../utils';
 
 import { getCart } from '../../redux/cart/actions';
 import { edgeContextInit } from '../../redux/edge/actions';
-import { loadProfile } from '../../redux/profile/actions';
+import { loadProfile, logout } from '../../redux/profile/actions';
 import { getApiUrls } from '../../redux/registrations/actions';
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { pathname } from '../../redux/navigation/selectors';
@@ -40,6 +40,7 @@ const reduxConnect = connect(
     showRecoveryModal,
     loadProfile,
     getApiUrls,
+    logout,
   },
 );
 

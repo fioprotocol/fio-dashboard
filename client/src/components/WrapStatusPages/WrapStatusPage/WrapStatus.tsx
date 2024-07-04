@@ -15,7 +15,7 @@ import CustomDropdown from '../../CustomDropdown';
 
 import usePagination from '../../../hooks/usePagination';
 import { formatDateToLocale } from '../../../helpers/stringFormatters';
-import apis from '../../../api';
+import apis from '../../../landing-pages/wrap-status-landing-page/api';
 
 import { log } from '../../../util/general';
 

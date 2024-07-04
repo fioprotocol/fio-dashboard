@@ -437,6 +437,7 @@ export type RefProfile = {
   };
   tpid: string;
   apiToken?: string;
+  apiAccess?: boolean;
   freeFioAccountProfileId: string;
   paidFioAccountProfileId: string;
   createdAt?: string;
