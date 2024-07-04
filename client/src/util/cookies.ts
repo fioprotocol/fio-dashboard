@@ -1,7 +1,5 @@
 import Cookies from 'js-cookie';
 
-import config from '../config';
-
 export const setCookies = (
   cookieName: string,
   cookieValue: string,
@@ -18,9 +16,13 @@ export const setCookies = (
 
   if (document.location.protocol === 'https:') {
     params.secure = true;
-    params.domain = config.apiBaseUrl
-      ?.replace(/^.*:\/\//i, '')
-      .replace('/', '');
+
+    const hostParts = document.location.hostname.split('.');
+    if (hostParts.length > 2) {
+      params.domain = `.${hostParts.slice(-2).join('.')}`;
+    } else {
+      params.domain = document.location.hostname;
+    }
   }
 
   Cookies.set(cookieName, cookieValue, params);
