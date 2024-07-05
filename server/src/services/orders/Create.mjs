@@ -24,6 +24,8 @@ import {
   handlePrices,
 } from '../../utils/cart.mjs';
 
+import config from '../../config/index.mjs';
+
 export default class OrdersCreate extends Base {
   static get validationRules() {
     return {
@@ -58,6 +60,7 @@ export default class OrdersCreate extends Base {
           },
         },
       ],
+      cookies: ['any_object'],
     };
   }
 
@@ -72,6 +75,7 @@ export default class OrdersCreate extends Base {
       data,
       userId,
     },
+    cookies,
   }) {
     let order = await Order.findOne({
       where: {
@@ -86,6 +90,8 @@ export default class OrdersCreate extends Base {
 
     let payment = null;
     const orderItems = [];
+
+    const refCookie = cookies && cookies[config.refCookieName];
 
     const user = await User.findActive(userId);
 
@@ -110,7 +116,9 @@ export default class OrdersCreate extends Base {
     const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
     const dashboardDomains = await Domain.getDashboardDomains();
-    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+      refCode: refCookie,
+    });
     const userHasFreeAddress = metamaskUserPublicKey
       ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
       : userId
@@ -163,6 +171,7 @@ export default class OrdersCreate extends Base {
       roe: handledRoe,
       userHasFreeAddress,
       walletType: wallet && wallet.from,
+      refCode: refCookie,
     });
 
     await Order.sequelize.transaction(async t => {

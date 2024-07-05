@@ -14,6 +14,8 @@ import {
   handlePrices,
 } from '../../utils/cart.mjs';
 
+import config from '../../config/index.mjs';
+
 export default class DeleteItem extends Base {
   static get validationRules() {
     return {
@@ -31,10 +33,11 @@ export default class DeleteItem extends Base {
       ],
       roe: ['string'],
       userId: ['string'],
+      cookies: ['any_object'],
     };
   }
 
-  async execute({ id, itemId, prices, roe, userId }) {
+  async execute({ id, itemId, prices, roe, userId, cookies }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -42,8 +45,12 @@ export default class DeleteItem extends Base {
         return { data: { items: [] } };
       }
 
+      const refCookie = cookies && cookies[config.refCookieName];
+
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+        refCode: refCookie,
+      });
 
       const metamaskUserPublicKey = cart.metamaskUserPublicKey;
 
@@ -98,6 +105,7 @@ export default class DeleteItem extends Base {
         dashboardDomains,
         existingItem,
         userHasFreeAddress,
+        refCode: refCookie,
       });
 
       const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
