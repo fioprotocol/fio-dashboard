@@ -654,7 +654,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
         show={isRemoveApiTokenApproveModalVisible}
         onClose={() => setIsRemoveApiTokenApproveModalVisible(false)}
         onActionButtonClick={onRemoveApiToken}
-        title="Are realy want delete api token?"
+        title="Do you really want to delete API token?"
         showCancel={true}
         buttonText="Yes"
         cancelButtonText="Cancel"
@@ -663,7 +663,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
         show={isRegenerateApiTokenApproveModalVisible}
         onClose={() => setIsRegenerateApiTokenApproveModalVisible(false)}
         onActionButtonClick={onRegenerateApiToken}
-        title="Are realy want regenerate api token?"
+        title="Do you really want to generate new API token?"
         showCancel={true}
         buttonText="Yes"
         cancelButtonText="Cancel"

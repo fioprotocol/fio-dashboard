@@ -107,10 +107,7 @@ export default class PartnerUpdate extends Base {
       });
     }
 
-    await partner.update({
-      ...data,
-      apiToken: data.apiToken ? data.apiToken : partner.apiToken,
-    });
+    await partner.update(data);
 
     return {
       data: partner.json(),
