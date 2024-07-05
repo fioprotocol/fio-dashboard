@@ -10,16 +10,19 @@ import logger from '../../logger.mjs';
 
 import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
 
+import config from '../../config/index.mjs';
+
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
       userId: ['string'],
       metamaskUserPublicKey: ['string'],
+      cookies: ['any_object'],
     };
   }
 
-  async execute({ id, userId, metamaskUserPublicKey }) {
+  async execute({ id, userId, metamaskUserPublicKey, cookies }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -29,8 +32,12 @@ export default class HandleUsersFreeCartItems extends Base {
         };
       }
 
+      const refCookie = cookies && cookies[config.refCookieName];
+
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+        refCode: refCookie,
+      });
       const userHasFreeAddress = metamaskUserPublicKey
         ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
         : userId
@@ -44,6 +51,7 @@ export default class HandleUsersFreeCartItems extends Base {
         cartItems: cart.items,
         dashboardDomains,
         userHasFreeAddress,
+        refCode: refCookie,
       });
 
       await cart.update({

@@ -202,6 +202,7 @@ export const handleFreeCartAddItem = ({
   freeDomainOwner,
   item,
   userHasFreeAddress,
+  refCode,
 }) => {
   const { domain, type } = item;
 
@@ -222,7 +223,9 @@ export const handleFreeCartAddItem = ({
 
   if (type === CART_ITEM_TYPE.ADDRESS) {
     const existingDashboardDomain = domainsArr.find(
-      dashboardDomain => dashboardDomain.name === domain,
+      dashboardDomain =>
+        dashboardDomain.name === domain &&
+        (!refCode || (refCode && refCode === dashboardDomain.code)),
     );
     const existingIsFirstRegFree = isFirstRegFreeDomains.find(
       isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
@@ -262,6 +265,7 @@ export const handleFreeCartDeleteItem = ({
   dashboardDomains,
   existingItem,
   userHasFreeAddress,
+  refCode,
 }) => {
   const { domainType, isFree, type } = existingItem;
 
@@ -288,7 +292,9 @@ export const handleFreeCartDeleteItem = ({
       } = cartItem;
 
       const existingDashboardDomain = domainsArr.find(
-        domainItem => domainItem.name === cartItemDomain,
+        domainItem =>
+          domainItem.name === cartItemDomain &&
+          (!refCode || (refCode && refCode === domainItem.code)),
       );
       const existingIsFirstRegFree = isFirstRegFreeDomains.find(
         isFirstRegFreeDomain => isFirstRegFreeDomain.name === cartItemDomain,
@@ -334,6 +340,7 @@ export const handleUsersFreeCartItems = ({
   cartItems,
   dashboardDomains,
   userHasFreeAddress,
+  refCode,
 }) => {
   let updatedCartItems = cartItems;
 
@@ -353,7 +360,9 @@ export const handleUsersFreeCartItems = ({
       if (type !== CART_ITEM_TYPE.ADDRESS) return cartItem;
 
       const existingDashboardDomain = domainsArr.find(
-        domainItem => domainItem.name === domain,
+        domainItem =>
+          domainItem.name === domain &&
+          (!refCode || (refCode && refCode === domainItem.code)),
       );
       const existingIsFirstRegFree = isFirstRegFreeDomains.find(
         isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
@@ -462,6 +471,7 @@ export const cartItemsToOrderItems = async ({
   dashboardDomains,
   FioAccountProfile,
   prices,
+  refCode,
   roe,
   userHasFreeAddress,
   walletType,
@@ -558,7 +568,9 @@ export const cartItemsToOrderItems = async ({
         const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
 
         const existingDashboardDomain = domainsArr.find(
-          domainItem => domainItem.name === domain,
+          domainItem =>
+            domainItem.name === domain &&
+            (!refCode || (refCode && refCode === domainItem.code)),
         );
         const existingIsFirstRegFree = isFirstRegFreeDomains.find(
           isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,

@@ -131,17 +131,21 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static async getRefDomainsList() {
-    const refDomainsList = await this.findAll({
-      where: {
-        type: this.TYPE.REF,
-        settings: {
-          domains: {
-            [Op.not]: null,
-          },
+  static async getRefDomainsList({ refCode } = {}) {
+    const where = {
+      type: this.TYPE.REF,
+      settings: {
+        domains: {
+          [Op.not]: null,
         },
       },
-    })
+    };
+
+    if (refCode) {
+      where.code = refCode;
+    }
+
+    const refDomainsList = await this.findAll({ where })
       .map(refProfile =>
         refProfile.settings.domains.map(domain => ({
           ...domain,
