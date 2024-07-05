@@ -103,6 +103,7 @@ export const useContext = (
     allRefProfileDomains,
     dashboardDomains,
     usernamesOnCustomDomains,
+    refProfileDomains,
   } = allDomains;
 
   const nonPremiumDomains = dashboardDomains
@@ -120,6 +121,12 @@ export const useContext = (
   const allPremiumRefProfileDomains = allRefProfileDomains
     ? transformPremiumDomains(allRefProfileDomains)
     : [];
+  const nonPremiumCurrentRefProfileDomains = refProfileDomains
+    ? transformNonPremiumDomains(refProfileDomains)
+    : [];
+  const premiumCurrentRefProfileDomains = refProfileDomains
+    ? transformPremiumDomains(refProfileDomains)
+    : [];
   const userDomains = allDomains.userDomains || [];
 
   const domainType = !isEmpty(allDomains)
@@ -133,6 +140,7 @@ export const useContext = (
             ![
               ...(dashboardDomains || []),
               ...(allRefProfileDomains || []),
+              ...(refProfileDomains || []),
             ].some(
               dashboardPubilcDomains =>
                 dashboardPubilcDomains.name === chainPublicDomains.name,
@@ -140,6 +148,8 @@ export const useContext = (
         ),
         ...allNonPremiumRefProfileDomains,
         ...allPremiumRefProfileDomains,
+        ...nonPremiumCurrentRefProfileDomains,
+        ...premiumCurrentRefProfileDomains,
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
@@ -153,7 +163,15 @@ export const useContext = (
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
-  const isFirstRegFreeDomains = allRefProfileDomains?.filter(
+  const firstRegFreeArr = [];
+  if (allRefProfileDomains) {
+    firstRegFreeArr.push(...allRefProfileDomains);
+  }
+  if (refProfileDomains) {
+    firstRegFreeArr.push(...refProfileDomains);
+  }
+
+  const isFirstRegFreeDomains = firstRegFreeArr.filter(
     refProfile => refProfile.isFirstRegFree,
   );
 

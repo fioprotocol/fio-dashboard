@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FormState } from 'final-form';
 import { Field, FormRenderProps } from 'react-final-form';
 import { FieldArray, FieldArrayRenderProps } from 'react-final-form-arrays';
@@ -39,6 +39,7 @@ import {
 import classes from '../../AdminPartnersListPage.module.scss';
 import api from '../../../../admin/api';
 import { copyToClipboard } from '../../../../util/general';
+import DangerModal from '../../../../components/Modal/DangerModal';
 
 type FieldsType = FieldArrayRenderProps<
   RefProfileDomain,
@@ -62,6 +63,15 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     fioAccountsProfilesList,
     loading,
   } = props;
+
+  const [
+    isRemoveApiTokenApproveModalVisible,
+    setIsRemoveApiTokenApproveModalVisible,
+  ] = useState(false);
+  const [
+    isRegenerateApiTokenApproveModalVisible,
+    setIsRegenerateApiTokenApproveModalVisible,
+  ] = useState(false);
 
   const fioAccountsProfilesOptions = fioAccountsProfilesList.map(
     fioAccountsProfile => ({
@@ -135,6 +145,16 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     form.change('apiToken' as keyof RefProfile, apiToken);
   }, [form]);
 
+  const onRegenerateApiToken = useCallback(async () => {
+    setIsRegenerateApiTokenApproveModalVisible(false);
+    onGenerateApiToken?.();
+  }, [onGenerateApiToken]);
+
+  const onRemoveApiToken = useCallback(async () => {
+    setIsRemoveApiTokenApproveModalVisible(false);
+    form.change('apiToken' as keyof RefProfile, null);
+  }, [form]);
+
   const onRemoveImage = useCallback(() => {
     form.change('settings.img' as keyof RefProfile, null);
     form.change('image' as keyof RefProfile, null);
@@ -164,260 +184,318 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
   const apiToken = form.getState().values?.apiToken;
 
   return (
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    <form onSubmit={handleSubmit}>
-      <Field
-        type="dropdown"
-        name="type"
-        component={Input}
-        options={REF_PROFILE_TYPES_OPTIONS}
-        uiType={INPUT_UI_STYLES.BLACK_WHITE}
-        errorColor={COLOR_TYPE.WARN}
-        label="Type *"
-        placeholder="Type"
-        loading={validating}
-        disabled={submitting || loading}
-      />
-      <Field
-        type="text"
-        name="label"
-        component={Input}
-        uiType={INPUT_UI_STYLES.BLACK_WHITE}
-        errorColor={COLOR_TYPE.WARN}
-        label="Name *"
-        placeholder="Name"
-        loading={validating}
-        disabled={submitting || loading}
-      />
-      <Field
-        type="text"
-        name="code"
-        component={Input}
-        uiType={INPUT_UI_STYLES.BLACK_WHITE}
-        errorColor={COLOR_TYPE.WARN}
-        label="Referral Code *"
-        placeholder="Referral Code"
-        loading={validating}
-        disabled={!!values?.id || submitting || loading}
-      />
-      {values?.type === REF_PROFILE_TYPE.REF && (
-        <>
-          <div className="d-flex flex-column align-self-start mb-4">
-            <span className={classes.label}>Wallet logo</span>
-            <div
-              className={classnames(
-                classes.imageContainer,
-                'd-flex',
-                'flex-row',
-              )}
-            >
-              <Field
-                type="file"
-                name="image"
-                accept="image/*"
-                component={Input}
-                customChange={onChange}
-                label="Wallet logo"
-                placeholder="Choose a file or drop it here..."
-                showPreview={false}
-                loading={validating}
-                disabled={submitting || loading}
-              />
-              <div className={classes.previewImageWrapper}>
-                {values?.settings?.img && (
-                  <img
-                    className={classes.previewImage}
-                    src={values?.settings?.img}
-                    alt={values.label}
-                  />
+    <>
+      <form onSubmit={handleSubmit}>
+        <Field
+          type="dropdown"
+          name="type"
+          component={Input}
+          options={REF_PROFILE_TYPES_OPTIONS}
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+          errorColor={COLOR_TYPE.WARN}
+          label="Type *"
+          placeholder="Type"
+          loading={validating}
+          disabled={submitting || loading}
+        />
+        <Field
+          type="text"
+          name="label"
+          component={Input}
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+          errorColor={COLOR_TYPE.WARN}
+          label="Name *"
+          placeholder="Name"
+          loading={validating}
+          disabled={submitting || loading}
+        />
+        <Field
+          type="text"
+          name="code"
+          component={Input}
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+          errorColor={COLOR_TYPE.WARN}
+          label="Referral Code *"
+          placeholder="Referral Code"
+          loading={validating}
+          disabled={!!values?.id || submitting || loading}
+        />
+        {values?.type === REF_PROFILE_TYPE.REF && (
+          <>
+            <div className="d-flex flex-column align-self-start mb-4">
+              <span className={classes.label}>Wallet logo</span>
+              <div
+                className={classnames(
+                  classes.imageContainer,
+                  'd-flex',
+                  'flex-row',
                 )}
-                {values?.settings?.img && (
-                  <Button onClick={onRemoveImage} className={classes.removeImg}>
-                    <FontAwesomeIcon
-                      icon="times-circle"
-                      onClick={onRemoveImage}
+              >
+                <Field
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  component={Input}
+                  customChange={onChange}
+                  label="Wallet logo"
+                  placeholder="Choose a file or drop it here..."
+                  showPreview={false}
+                  loading={validating}
+                  disabled={submitting || loading}
+                />
+                <div className={classes.previewImageWrapper}>
+                  {values?.settings?.img && (
+                    <img
+                      className={classes.previewImage}
+                      src={values?.settings?.img}
+                      alt={values.label}
                     />
+                  )}
+                  {values?.settings?.img && (
+                    <Button
+                      onClick={onRemoveImage}
+                      className={classes.removeImg}
+                    >
+                      <FontAwesomeIcon
+                        icon="times-circle"
+                        onClick={onRemoveImage}
+                      />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <Field
+              type="dropdown"
+              name="freeFioAccountProfileId"
+              component={Input}
+              options={fioAccountsProfilesOptions}
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              errorColor={COLOR_TYPE.WARN}
+              label="FIO Account Profile for Free Registrations *"
+              placeholder="Select..."
+              loading={validating}
+              disabled={submitting || loading}
+            />
+            <Field
+              type="dropdown"
+              name="paidFioAccountProfileId"
+              component={Input}
+              options={fioAccountsProfilesOptions}
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              errorColor={COLOR_TYPE.WARN}
+              label="FIO Account Profile for Paid Registrations *"
+              placeholder="Select..."
+              loading={validating}
+              disabled={submitting || loading}
+            />
+          </>
+        )}
+        <Field
+          type="text"
+          name="tpid"
+          component={Input}
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+          errorColor={COLOR_TYPE.WARN}
+          label="TPID"
+          placeholder="TPID"
+          loading={validating}
+          disabled={submitting || loading}
+        />
+        {values?.type === REF_PROFILE_TYPE.REF && (
+          <>
+            <Field
+              type="text"
+              name="settings.link"
+              component={Input}
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              errorColor={COLOR_TYPE.WARN}
+              label="Redirect URL"
+              placeholder="Redirect URL"
+              loading={validating}
+              disabled={submitting || loading}
+            />
+            <div className="d-flex flex-column align-self-start mb-4 w-100">
+              <div className="d-flex justify-content-between">
+                <span className={classes.label}>Domains</span>
+                <Button className="w-auto mb-4" onClick={onAddDomain}>
+                  <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add
+                </Button>
+              </div>
+              <div className="d-flex flex-column">
+                <FieldArray
+                  name="settings.domains"
+                  render={({ fields }) => (
+                    <DragDropContext onDragEnd={makeOnDragEndFunction(fields)}>
+                      <Droppable droppableId="settings.domains">
+                        {provided => (
+                          <div ref={provided.innerRef}>
+                            {fields.map((field, index) => (
+                              <Draggable
+                                index={index}
+                                key={field}
+                                draggableId={field}
+                              >
+                                {provided => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className="d-flex align-items-center border border-light px-2 py-3 rounded"
+                                  >
+                                    <PartnerFormDomainRow
+                                      key={field}
+                                      index={index}
+                                      field={field}
+                                      isRemoveAvailable={
+                                        values?.settings?.domains?.length > 1
+                                      }
+                                      onRemove={fields.remove}
+                                    />
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="d-flex align-self-start mb-4">
+              <Field
+                name="settings.isBranded"
+                type="checkbox"
+                component={Input}
+                label="Partner branded"
+              />
+            </div>
+            <div className="d-flex align-self-start mb-4">
+              <Field
+                name="settings.hasNoProfileFlow"
+                type="checkbox"
+                component={Input}
+                label="No profile (legacy reg site)"
+              />
+            </div>
+
+            <div className="d-flex align-self-start mb-4">
+              <Field
+                name="settings.gatedRegistration.isOn"
+                type="checkbox"
+                component={Input}
+                label="Gated Registration"
+              />
+            </div>
+
+            {values.settings?.gatedRegistration?.isOn && (
+              <>
+                <Field
+                  type="dropdown"
+                  name="settings.gatedRegistration.params.chainId"
+                  component={Input}
+                  options={MORALIS_CHAIN_LIST_ARR}
+                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                  errorColor={COLOR_TYPE.WARN}
+                  label="Chain"
+                  placeholder="Select..."
+                  loading={validating}
+                  disabled={submitting || loading}
+                />
+                <Field
+                  type="dropdown"
+                  name="settings.gatedRegistration.params.asset"
+                  component={Input}
+                  options={ASSETS_SETTINGS_CHOICE}
+                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                  errorColor={COLOR_TYPE.WARN}
+                  label="Asset"
+                  placeholder="Select..."
+                  loading={validating}
+                  disabled={submitting || loading}
+                />
+                <Field
+                  type="text"
+                  name="settings.gatedRegistration.params.contractAddress"
+                  component={Input}
+                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                  errorColor={COLOR_TYPE.WARN}
+                  label="Contract Address"
+                  placeholder="Set Contract Address"
+                  loading={validating}
+                  disabled={submitting || loading}
+                />
+              </>
+            )}
+
+            <div className="d-flex align-self-start mb-4">
+              <Field
+                name="apiAccess"
+                type="checkbox"
+                component={Input}
+                label="Api Access"
+              />
+            </div>
+
+            {values.apiAccess && (
+              <div
+                className={classnames(
+                  classes.landingTextsContainer,
+                  'd-flex',
+                  'flex-column',
+                  'align-self-start',
+                  'w-100',
+                  'mb-3',
+                )}
+              >
+                <span className={classes.label}>Api Token</span>
+                <Field name="apiToken">{() => null}</Field>
+                {apiToken ? (
+                  <div className={classes.apiTokenWrapper}>
+                    <span className={classes.apiToken}>{apiToken}</span>
+                    <Button
+                      size="sm"
+                      className="autosize ml-2 mb-0"
+                      onClick={() => copyToClipboard(apiToken)}
+                    >
+                      <FontAwesomeIcon icon="copy" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="autosize ml-2 mb-0"
+                      onClick={() =>
+                        setIsRegenerateApiTokenApproveModalVisible(true)
+                      }
+                    >
+                      <FontAwesomeIcon icon="sync" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      className="autosize ml-2 mb-0"
+                      onClick={() =>
+                        setIsRemoveApiTokenApproveModalVisible(true)
+                      }
+                    >
+                      <FontAwesomeIcon icon="trash" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button className="w-auto mb-0" onClick={onGenerateApiToken}>
+                    <FontAwesomeIcon icon="key" className="mr-2" />
+                    <span>Generate New</span>
                   </Button>
                 )}
               </div>
+            )}
+
+            <div className="d-flex align-self-start mb-2">
+              <span className={classes.label}>Landing Page text</span>
             </div>
-          </div>
-          <Field
-            type="dropdown"
-            name="freeFioAccountProfileId"
-            component={Input}
-            options={fioAccountsProfilesOptions}
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            label="FIO Account Profile for Free Registrations *"
-            placeholder="Select..."
-            loading={validating}
-            disabled={submitting || loading}
-          />
-          <Field
-            type="dropdown"
-            name="paidFioAccountProfileId"
-            component={Input}
-            options={fioAccountsProfilesOptions}
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            label="FIO Account Profile for Paid Registrations *"
-            placeholder="Select..."
-            loading={validating}
-            disabled={submitting || loading}
-          />
-        </>
-      )}
-      <Field
-        type="text"
-        name="tpid"
-        component={Input}
-        uiType={INPUT_UI_STYLES.BLACK_WHITE}
-        errorColor={COLOR_TYPE.WARN}
-        label="TPID"
-        placeholder="TPID"
-        loading={validating}
-        disabled={submitting || loading}
-      />
-      {values?.type === REF_PROFILE_TYPE.REF && (
-        <>
-          <Field
-            type="text"
-            name="settings.link"
-            component={Input}
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            label="Redirect URL"
-            placeholder="Redirect URL"
-            loading={validating}
-            disabled={submitting || loading}
-          />
-          <div className="d-flex flex-column align-self-start mb-4 w-100">
-            <div className="d-flex justify-content-between">
-              <span className={classes.label}>Domains</span>
-              <Button className="w-auto mb-4" onClick={onAddDomain}>
-                <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add
-              </Button>
-            </div>
-            <div className="d-flex flex-column">
-              <FieldArray
-                name="settings.domains"
-                render={({ fields }) => (
-                  <DragDropContext onDragEnd={makeOnDragEndFunction(fields)}>
-                    <Droppable droppableId="settings.domains">
-                      {provided => (
-                        <div ref={provided.innerRef}>
-                          {fields.map((field, index) => (
-                            <Draggable
-                              index={index}
-                              key={field}
-                              draggableId={field}
-                            >
-                              {provided => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  className="d-flex align-items-center border border-light px-2 py-3 rounded"
-                                >
-                                  <PartnerFormDomainRow
-                                    key={field}
-                                    index={index}
-                                    field={field}
-                                    isRemoveAvailable={
-                                      values?.settings?.domains?.length > 1
-                                    }
-                                    onRemove={fields.remove}
-                                  />
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                )}
-              />
-            </div>
-          </div>
 
-          <div className="d-flex align-self-start mb-4">
-            <Field
-              name="settings.isBranded"
-              type="checkbox"
-              component={Input}
-              label="Partner branded"
-            />
-          </div>
-          <div className="d-flex align-self-start mb-4">
-            <Field
-              name="settings.hasNoProfileFlow"
-              type="checkbox"
-              component={Input}
-              label="No profile (legacy reg site)"
-            />
-          </div>
-
-          <div className="d-flex align-self-start mb-4">
-            <Field
-              name="settings.gatedRegistration.isOn"
-              type="checkbox"
-              component={Input}
-              label="Gated Registration"
-            />
-          </div>
-
-          {values.settings?.gatedRegistration?.isOn && (
-            <>
-              <Field
-                type="dropdown"
-                name="settings.gatedRegistration.params.chainId"
-                component={Input}
-                options={MORALIS_CHAIN_LIST_ARR}
-                uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-                label="Chain"
-                placeholder="Select..."
-                loading={validating}
-                disabled={submitting || loading}
-              />
-              <Field
-                type="dropdown"
-                name="settings.gatedRegistration.params.asset"
-                component={Input}
-                options={ASSETS_SETTINGS_CHOICE}
-                uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-                label="Asset"
-                placeholder="Select..."
-                loading={validating}
-                disabled={submitting || loading}
-              />
-              <Field
-                type="text"
-                name="settings.gatedRegistration.params.contractAddress"
-                component={Input}
-                uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-                label="Contract Address"
-                placeholder="Set Contract Address"
-                loading={validating}
-                disabled={submitting || loading}
-              />
-            </>
-          )}
-
-          <div className="d-flex align-self-start mb-4">
-            <Field
-              name="apiAccess"
-              type="checkbox"
-              component={Input}
-              label="Api Access"
-            />
-          </div>
-
-          {values.apiAccess && (
             <div
               className={classnames(
                 classes.landingTextsContainer,
@@ -428,181 +506,168 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
                 'mb-3',
               )}
             >
-              <span className={classes.label}>Api Token</span>
-              <Field name="apiToken">{() => null}</Field>
-              {apiToken ? (
-                <div className={classes.apiTokenWrapper}>
-                  <span className={classes.apiToken}>{apiToken}</span>
-                  <Button
-                    className="w-auto ml-2 mb-0"
-                    onClick={() => copyToClipboard(apiToken)}
-                  >
-                    <FontAwesomeIcon icon="key" className="mr-2" />
-                    <span>Copy</span>
-                  </Button>
-                </div>
-              ) : (
-                <Button className="w-auto mb-0" onClick={onGenerateApiToken}>
-                  <FontAwesomeIcon icon="key" className="mr-2" />
-                  <span>Generate New</span>
-                </Button>
-              )}
+              <span className={classes.label}>Regular</span>
+              <Field
+                type="text"
+                name="title"
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Title"
+                placeholder="Title"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="text"
+                name="subTitle"
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Sub Title"
+                placeholder="Sub Title"
+                loading={validating}
+                disabled={submitting || loading}
+              />
             </div>
-          )}
 
-          <div className="d-flex align-self-start mb-2">
-            <span className={classes.label}>Landing Page text</span>
-          </div>
+            <div
+              className={classnames(
+                classes.landingTextsContainer,
+                'd-flex',
+                'flex-column',
+                'align-self-start',
+                'w-100',
+                'mb-3',
+              )}
+            >
+              <span className={classes.label}>Sign NFT</span>
+              <Field
+                type="text"
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].title`}
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Title"
+                placeholder="Title"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="text"
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].subtitle`}
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Sub Title"
+                placeholder="Sub Title"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="text"
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].actionText`}
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Action Text"
+                placeholder="Action Text"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].hideActionText`}
+                type="checkbox"
+                component={Input}
+                label="Hide Action Text"
+                disabled={submitting || loading}
+              />
+            </div>
 
-          <div
-            className={classnames(
-              classes.landingTextsContainer,
-              'd-flex',
-              'flex-column',
-              'align-self-start',
-              'w-100',
-              'mb-3',
-            )}
-          >
-            <span className={classes.label}>Regular</span>
-            <Field
-              type="text"
-              name="title"
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Title"
-              placeholder="Title"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              type="text"
-              name="subTitle"
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Sub Title"
-              placeholder="Sub Title"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-          </div>
-
-          <div
-            className={classnames(
-              classes.landingTextsContainer,
-              'd-flex',
-              'flex-column',
-              'align-self-start',
-              'w-100',
-              'mb-3',
-            )}
-          >
-            <span className={classes.label}>Sign NFT</span>
-            <Field
-              type="text"
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].title`}
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Title"
-              placeholder="Title"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              type="text"
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].subtitle`}
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Sub Title"
-              placeholder="Sub Title"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              type="text"
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].actionText`}
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Action Text"
-              placeholder="Action Text"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].hideActionText`}
-              type="checkbox"
-              component={Input}
-              label="Hide Action Text"
-              disabled={submitting || loading}
-            />
-          </div>
-
-          <div
-            className={classnames(
-              classes.landingTextsContainer,
-              'd-flex',
-              'flex-column',
-              'align-self-start',
-              'w-100',
-              'mb-3',
-            )}
-          >
-            <span className={classes.label}>Registration</span>
-            <Field
-              type="text"
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].title`}
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Title"
-              placeholder="Title"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              type="text"
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].subtitle`}
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Sub Title"
-              placeholder="Sub Title"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              type="text"
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].actionText`}
-              component={Input}
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              label="Action Text"
-              placeholder="Action Text"
-              loading={validating}
-              disabled={submitting || loading}
-            />
-            <Field
-              name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].hideActionText`}
-              type="checkbox"
-              component={Input}
-              label="Hide Action Text"
-              disabled={submitting || loading}
-            />
-          </div>
-        </>
-      )}
-      <SubmitButton
-        text={loading ? 'Saving' : 'Save'}
-        disabled={
-          loading || hasValidationErrors || validating || submitting || pristine
-        }
-        loading={loading || submitting}
+            <div
+              className={classnames(
+                classes.landingTextsContainer,
+                'd-flex',
+                'flex-column',
+                'align-self-start',
+                'w-100',
+                'mb-3',
+              )}
+            >
+              <span className={classes.label}>Registration</span>
+              <Field
+                type="text"
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].title`}
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Title"
+                placeholder="Title"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="text"
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].subtitle`}
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Sub Title"
+                placeholder="Sub Title"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                type="text"
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].actionText`}
+                component={Input}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                label="Action Text"
+                placeholder="Action Text"
+                loading={validating}
+                disabled={submitting || loading}
+              />
+              <Field
+                name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].hideActionText`}
+                type="checkbox"
+                component={Input}
+                label="Hide Action Text"
+                disabled={submitting || loading}
+              />
+            </div>
+          </>
+        )}
+        <SubmitButton
+          text={loading ? 'Saving' : 'Save'}
+          disabled={
+            loading ||
+            hasValidationErrors ||
+            validating ||
+            submitting ||
+            pristine
+          }
+          loading={loading || submitting}
+        />
+      </form>
+      <DangerModal
+        show={isRemoveApiTokenApproveModalVisible}
+        onClose={() => setIsRemoveApiTokenApproveModalVisible(false)}
+        onActionButtonClick={onRemoveApiToken}
+        title="Do you really want to delete API token?"
+        showCancel={true}
+        buttonText="Yes"
+        cancelButtonText="Cancel"
       />
-    </form>
+      <DangerModal
+        show={isRegenerateApiTokenApproveModalVisible}
+        onClose={() => setIsRegenerateApiTokenApproveModalVisible(false)}
+        onActionButtonClick={onRegenerateApiToken}
+        title="Do you really want to generate new API token?"
+        showCancel={true}
+        buttonText="Yes"
+        cancelButtonText="Cancel"
+      />
+    </>
   );
 };

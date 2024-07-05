@@ -44,5 +44,6 @@ export default {
     apiKey: process.env.NFT_PROVIDER_API_KEY,
     defaultChainName: process.env.NFT_DEFAULT_CHAIN_NAME,
   },
+  refCookieName: process.env.REFERRAL_PROFILE_COOKIE_NAME,
   ...dbConfig,
 };

@@ -163,7 +163,7 @@ export const useContext = (): UseContextProps => {
   };
 
   useEffectOnce(() => {
-    dispatch(getDomains);
+    dispatch(getDomains());
   }, []);
 
   useEffect(() => {

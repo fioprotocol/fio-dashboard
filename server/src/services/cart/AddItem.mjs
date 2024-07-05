@@ -23,7 +23,7 @@ import {
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
-const REF_COOKIE_NAME = process.env.REFERRAL_PROFILE_COOKIE_NAME || 'ref';
+import config from '../../config/index.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -81,11 +81,14 @@ export default class AddItem extends Base {
       const { domain, type } = item;
 
       const userId = this.context.id || reqUserId || null;
+      const refCookie = cookies && cookies[config.refCookieName];
 
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+        refCode: refCookie,
+      });
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
       const userHasFreeAddress = metamaskUserPublicKey
         ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
@@ -94,8 +97,6 @@ export default class AddItem extends Base {
             userId,
           })
         : null;
-
-      const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
       const refProfile = await ReferrerProfile.findOne({
         where: { code: refCookie },
@@ -187,6 +188,7 @@ export default class AddItem extends Base {
         freeDomainOwner,
         item,
         userHasFreeAddress,
+        refCode: refProfile && refProfile.code,
       });
 
       if (!existingCart) {
