@@ -111,7 +111,7 @@ const MainLayout: React.FC<Props> = props => {
       logout();
     },
     [isAuthenticated, isNoProfileFlow],
-    isAuthenticated && isNoProfileFlow,
+    isAuthenticated && !!isNoProfileFlow,
   );
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
