@@ -132,9 +132,8 @@ const Ref = (
 
   // Set user refProfileCode to cookies
   useEffect(() => {
-    if (isAuthenticated && !isRefLink && !refProfileInfo?.code) {
+    if (isAuthenticated && !isRefLink && !!user?.refProfile?.code) {
       const refProfileCode = user?.refProfile?.code || '';
-
       getInfo(refProfileCode);
       setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileCode, {
         expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
