@@ -13,7 +13,6 @@ const CartPage: React.FC = () => {
     formsOfPayment,
     hasGetPricesError,
     loadingCart,
-    error,
     hasLowBalance,
     isAffiliateEnabled,
     isFree,
@@ -40,7 +39,6 @@ const CartPage: React.FC = () => {
     loading: loadingCart,
     roe,
     userWallets,
-    error,
   };
 
   const cartProps = {

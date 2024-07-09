@@ -45,17 +45,10 @@ type Props = {
   walletBalancesAvailable: WalletBalancesItem;
   isPriceChanged: boolean;
   hasGetPricesError?: boolean;
-  error: string | null;
 };
 
 const Cart: React.FC<Props> = props => {
-  const {
-    isNoProfileFlow,
-    isPriceChanged,
-    hasGetPricesError,
-    error,
-    loading,
-  } = props;
+  const { isNoProfileFlow, isPriceChanged, hasGetPricesError, loading } = props;
 
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
@@ -125,18 +118,16 @@ const Cart: React.FC<Props> = props => {
     <>
       <div className={classes.badgeContainer}>
         <Badge
-          show={isPriceChanged || hasGetPricesError || !!error}
+          show={isPriceChanged || hasGetPricesError}
           type={BADGE_TYPES.ERROR}
         >
           <div className={classnames(classes.infoBadge, classes.priceBadge)}>
             <InfoIcon className={classes.infoIcon} />
 
             <p className={classes.infoText}>
-              <span className="boldText">
-                {error ? 'Unable to purchase' : 'Pricing update'}
-              </span>
+              <span className="boldText">Pricing update</span>
               {` - `}
-              {error || errorMessage}
+              {errorMessage}
             </p>
           </div>
         </Badge>

@@ -29,6 +29,7 @@ import { SignedTxArgs } from '../../../api/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  ownerFioWallet?: FioWalletDoublet;
   onSuccess: (results: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -42,6 +43,7 @@ const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
+    ownerFioWallet = fioWallet,
     setProcessing,
     onSuccess,
     onCancel,
@@ -173,6 +175,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
               technologyProviderId: apis.fio.tpid,
+              ownerPublicKey: ownerFioWallet.publicKey,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );

@@ -24,7 +24,7 @@ export const cartHasItemsWithPrivateDomain = createSelector(
   cartItems,
   fioDomains,
   domains,
-  (cartItems, fioDomains, publicDomains) => {
+  (cartItems, fioDomains) => {
     const privateDomains: string[] = fioDomains.reduce((acc, fioDomain) => {
       if (!fioDomain.isPublic) acc.push(fioDomain.name);
 
@@ -38,33 +38,6 @@ export const cartHasItemsWithPrivateDomain = createSelector(
           (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM))
       )
         return true;
-    }
-
-    return false;
-  },
-);
-
-export const isCartPrivateDomainsError = createSelector(
-  cartItems,
-  fioDomains,
-  (cartItems, fioDomains) => {
-    const cartAddressItemsDomains = cartItems
-      .filter(cartItem => !!cartItem.address)
-      .map(({ domain }) => domain)
-      .reduce((acc: { [domain: string]: string }, domain) => {
-        acc[domain] = domain;
-
-        return acc;
-      }, {});
-
-    let pubKey = '';
-    for (const domain of Object.values(cartAddressItemsDomains)) {
-      const fioDomain = fioDomains.find(
-        ({ name, isPublic }) => name === domain && !isPublic,
-      );
-
-      if (fioDomain && !pubKey) pubKey = fioDomain.walletPublicKey;
-      if (fioDomain && pubKey !== fioDomain.walletPublicKey) return true;
     }
 
     return false;
