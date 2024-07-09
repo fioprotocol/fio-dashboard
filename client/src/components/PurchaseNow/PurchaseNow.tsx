@@ -34,7 +34,6 @@ import Processing from '../common/TransactionProcessing';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
-  CART_ITEM_TYPE,
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
@@ -50,7 +49,10 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { sleep } from '../../utils';
-import { cartHasOnlyFreeItems } from '../../util/cart';
+import {
+  cartHasOnlyFreeItems,
+  groupCartItemsByPaymentWallet,
+} from '../../util/cart';
 import api from '../../api';
 import {
   GEETESET_SCRIPT_LOADING_ERROR,
@@ -63,7 +65,7 @@ import { log } from '../../util/general';
 import '../../helpers/gt-sdk';
 
 import { PurchaseValues, PurchaseNowTypes } from './types';
-import { CartItem, FioWalletDoublet, RegistrationResult } from '../../types';
+import { FioWalletDoublet, RegistrationResult } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -293,58 +295,20 @@ const useMultipleWalletAction = (
 
     const { cartItems } = submitData;
 
-    setResult(initialRegistrationResult);
-
-    if (cartItems.length === 0) {
-      setGroupedPurchaseValues([]);
-      return;
-    }
-
-    const result: GroupedPurchaseValues[] = [];
-
-    const addToGroup = (
-      signInFioWallet: FioWalletDoublet,
-      cartItem: CartItem,
-    ) => {
-      let group = result.find(
-        it => it.signInFioWallet.publicKey === signInFioWallet.publicKey,
-      );
-
-      if (!group) {
-        group = {
-          signInFioWallet,
-          submitData: { ...submitData, cartItems: [] },
-        };
-        result.push(group);
-      }
-
-      group.submitData.cartItems.push(cartItem);
-    };
-
-    for (const cartItem of cartItems) {
-      if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
-        addToGroup(fioWallet, cartItem);
-        continue;
-      }
-
-      const addressDomain = userDomains.find(
-        domain => domain.name === cartItem.domain,
-      );
-
-      if (addressDomain.isPublic) {
-        addToGroup(fioWallet, cartItem);
-        continue;
-      }
-
-      const domainOwnerWallet = fioWallets.find(
-        wallet => wallet.publicKey === addressDomain.walletPublicKey,
-      );
-
-      addToGroup(domainOwnerWallet, cartItem);
-    }
+    const groupedCartItems = groupCartItemsByPaymentWallet(
+      fioWallet,
+      cartItems,
+      fioWallets,
+      userDomains,
+    );
 
     setResult(initialRegistrationResult);
-    setGroupedPurchaseValues(result);
+    setGroupedPurchaseValues(
+      groupedCartItems.map(({ signInFioWallet, cartItems }) => ({
+        signInFioWallet,
+        submitData: { ...submitData, cartItems },
+      })),
+    );
   }, [fioWallet, submitData, fioWallets, userDomains]);
 
   useEffect(() => {

@@ -12,6 +12,13 @@ import {
   CartItem,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
+import { GroupedCartItemsByPaymentWallet } from '../../util/cart';
+
+export type PayWith = GroupedCartItemsByPaymentWallet & {
+  notEnoughFio: boolean;
+  totalCostNativeFio: number;
+  available: WalletBalancesItem;
+};
 
 type DefaultProps = {
   walletBalances: WalletBalancesItem;
@@ -19,10 +26,7 @@ type DefaultProps = {
   fioWallets: FioWalletDoublet[];
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
-  payWith?: {
-    walletName: string;
-    walletBalances: WalletBalancesItem;
-  };
+  payWith: PayWith[];
   fioWalletsBalances: WalletsBalances;
   order: Order;
   payment: Payment;

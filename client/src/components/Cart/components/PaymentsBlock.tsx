@@ -21,7 +21,7 @@ type Props = {
   paymentWalletPublicKey?: string;
   cartItems?: CartItem[];
   totalCartNativeAmount: number;
-  totlaCartUsdcAmount: string;
+  totalCartUsdcAmount: string;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   showExpiredDomainWarningBadge: boolean;
@@ -38,7 +38,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     cartItems,
     paymentWalletPublicKey,
     totalCartNativeAmount,
-    totlaCartUsdcAmount,
+    totalCartUsdcAmount,
     userWallets,
     selectedPaymentProvider,
     disabled,
@@ -66,14 +66,14 @@ const PaymentsBlock: React.FC<Props> = props => {
     paymentOptionsList: [PAYMENT_OPTIONS.CREDIT_CARD, PAYMENT_OPTIONS.CRYPTO],
     cartItems,
     selectedPaymentProvider,
-    totlaCartUsdcAmount,
+    totalCartUsdcAmount,
     disabled,
     formsOfPayment,
     onPaymentChoose,
   };
 
-  const priceIsLowerThanHalfADollar = new MathOp(totlaCartUsdcAmount).lt(0.5);
-  const priceIsLowerThanOneDollar = new MathOp(totlaCartUsdcAmount).lt(1);
+  const priceIsLowerThanHalfADollar = new MathOp(totalCartUsdcAmount).lt(0.5);
+  const priceIsLowerThanOneDollar = new MathOp(totalCartUsdcAmount).lt(1);
 
   if (showExpiredDomainWarningBadge) {
     return (
