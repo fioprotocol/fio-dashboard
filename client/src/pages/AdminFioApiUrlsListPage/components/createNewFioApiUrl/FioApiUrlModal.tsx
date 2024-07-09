@@ -19,11 +19,12 @@ const FioApiUrlModal: React.FC<Props> = props => {
   return (
     <Modal
       show={show}
-      closeButton={true}
-      isSimple={true}
-      isWide={true}
-      hasDefaultCloseColor={true}
+      closeButton
+      isSimple
+      isWide
+      hasDefaultCloseColor
       onClose={onClose}
+      enableOverflow
     >
       <div className="d-flex flex-column w-100">
         <h3 className="text-left mb-3">

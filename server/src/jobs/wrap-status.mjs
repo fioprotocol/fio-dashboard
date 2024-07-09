@@ -5,11 +5,13 @@ import Web3 from 'web3';
 import superagent from 'superagent';
 
 import MathOp from '../services/math.mjs';
+import { fioApi } from '../external/fio.mjs';
 
 import '../db';
 
 import CommonJob from './job.mjs';
 import {
+  FioApiUrl,
   WrapStatusBlockNumbers,
   WrapStatusEthOraclesConfirmationsLogs,
   WrapStatusEthUnwrapLogs,
@@ -30,6 +32,7 @@ import {
 } from '../models/index.mjs';
 import { WRAP_STATUS_NETWORKS_IDS } from '../config/constants.js';
 import config from '../config/index.mjs';
+import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
 const WRAPPED_DOMAIN_ABI = JSON.parse(
   fs.readFileSync('server/static-files/abi_fio_domain_nft.json', 'utf8'),
@@ -44,6 +47,14 @@ class WrapStatusJob extends CommonJob {
   handleErrorMessage(message) {
     // eslint-disable-next-line no-console
     console.log(message);
+  }
+
+  async getHistoryUrls() {
+    const fioHistoryUrls = await FioApiUrl.findAll({
+      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_URL },
+    });
+
+    return fioHistoryUrls.map(fioHistoryItem => fioHistoryItem.url);
   }
 
   // example of getting all POLYGON smart contract events
@@ -433,21 +444,19 @@ class WrapStatusJob extends CommonJob {
     const logPrefix = `Get FIO Oravotes, Unwrap --> `;
     try {
       const getFioOraclesVotes = async (startPosition, limit) => {
-        // todo: use get api url here
-        const res = await superagent
-          .post(`${process.env.FIO_BASE_URL}chain/get_table_rows`)
-          .send({
+        const res = await fioApi.getTableRows({
+          params: {
             code: 'fio.oracle',
             scope: 'fio.oracle',
             table: 'oravotes',
             lower_bound: startPosition + '',
             limit,
             json: true,
-          });
+          },
+          apiUrlType: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
+        });
 
-        if (res.statusCode === 200) {
-          return res.body.rows;
-        }
+        return res && res.rows ? res.rows : null;
       };
 
       const getUncompletedOracleVotes = async (Model, includeModel) => {
@@ -548,11 +557,23 @@ class WrapStatusJob extends CommonJob {
       let lastProcessedAccountActionSequence;
 
       const getFioActionsLogs = async ({ pos, offset }) => {
-        // get logs starting from the end of the FIO chain (pos = -1)
-        const res = await superagent
-          .post(`${config.wrap.fioHistoryUrl}history/get_actions`)
-          .send({ account_name: accountName, pos, offset });
-        return res.body;
+        const urls = this.fioHistoryUrls;
+        let response = null;
+        for (const url of urls) {
+          try {
+            const res = await superagent.post(`${url}history/get_actions`).send({
+              account_name: accountName,
+              pos,
+              offset,
+            });
+            response = res.body;
+            break;
+          } catch (error) {
+            this.postMessage(`Failed to fetch from ${url}: ${error.message}`);
+          }
+        }
+
+        return response;
       };
 
       const getUnprocessedActionsOnFioChain = async () => {
@@ -704,6 +725,8 @@ class WrapStatusJob extends CommonJob {
     this.postMessage(
       `Starting... If there are a lot of unprocessed data, it may take some time to get it.`,
     );
+
+    this.fioHistoryUrls = await this.getHistoryUrls();
 
     await this.executeActions([
       this.getPolygonLogs.bind(this, { isWrap: true }),

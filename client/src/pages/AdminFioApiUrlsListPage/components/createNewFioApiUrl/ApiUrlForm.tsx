@@ -6,6 +6,8 @@ import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
+import { FIO_API_URLS_TYPES } from '../../../../constants/fio';
+
 import { FormValuesProps } from '../../types';
 import { FioApiUrl } from '../../../../types';
 
@@ -27,6 +29,7 @@ const ApiUrlForm: React.FC<Props> = props => {
       hasValidationErrors,
       submitting,
       pristine,
+      values,
     } = formRenderProps;
 
     return (
@@ -43,6 +46,21 @@ const ApiUrlForm: React.FC<Props> = props => {
             disabled={submitting || loading}
           />
           <Field name="rank" component={Input} type="hidden" />
+          <Field
+            type="dropdown"
+            name="type"
+            component={Input}
+            options={Object.keys(FIO_API_URLS_TYPES).map(
+              fioApiUrlsTypeItem => ({
+                id: fioApiUrlsTypeItem,
+                name: fioApiUrlsTypeItem,
+              }),
+            )}
+            errorColor={COLOR_TYPE.WARN}
+            uiType={INPUT_UI_STYLES.BLACK_VIOLET}
+            placeholder="Set API URL Type"
+            disabled={submitting || loading}
+          />
           <SubmitButton
             text={
               loading
@@ -58,6 +76,7 @@ const ApiUrlForm: React.FC<Props> = props => {
               hasValidationErrors ||
               validating ||
               submitting ||
+              !values?.type ||
               pristine
             }
             loading={loading || submitting}

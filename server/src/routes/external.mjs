@@ -22,7 +22,7 @@ export default {
     req => req.query,
   ),
   validatePubAddress: makeServiceRunner(ValidatePubAddress, req => req.query),
-  apiUrls: makeServiceRunner(ApiUrls),
+  apiUrls: makeServiceRunner(ApiUrls, req => req.query),
   externalProviderNfts: makeServiceRunner(GetExternalProviderNfts, req => req.query),
   externalProviderNftsMetadata: makeServiceRunner(
     GetExternalProviderNftsMetadata,

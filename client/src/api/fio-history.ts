@@ -1,10 +1,14 @@
 import { FioHistoryNodeAction } from '../types';
 
 export default class FioHistory {
-  historyNodeUrls: string[] = [process.env.REACT_APP_HISTORY_NODE_URL || ''];
+  historyNodeUrls: string[] = [];
   historyNodeActions = {
     getActions: 'get_actions',
   };
+  setHistoryNodeUrls(historyUrls: string[]) {
+    this.historyNodeUrls = historyUrls;
+  }
+
   async requestHistory(
     nodeIndex: number,
     params: {

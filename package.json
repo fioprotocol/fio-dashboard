@@ -25,7 +25,7 @@
     "test": "npm run lint && npm run test:create.db && npm run test:api",
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs",
     "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
-    "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
+    "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_API_BASE_URL=http://localhost:3004/ PORT=3004 REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
     "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build:no-snap",
     "landing-page-fio-id:as:start": "export REACT_APP_LANDING_PAGE=fio-id REACT_APP_API_BASE_URL=http://localhost:3003/ PORT=3003 && npm run client:start",
     "landing-page-fio-id:as:build": "export REACT_APP_LANDING_PAGE=fio-id && npm run client:build:no-snap",
