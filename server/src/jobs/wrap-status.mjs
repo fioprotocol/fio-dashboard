@@ -4,6 +4,8 @@ import Sequelize from 'sequelize';
 import Web3 from 'web3';
 import superagent from 'superagent';
 
+import MathOp from '../services/math.mjs';
+
 import '../db';
 
 import CommonJob from './job.mjs';
@@ -12,18 +14,22 @@ import {
   WrapStatusEthOraclesConfirmationsLogs,
   WrapStatusEthUnwrapLogs,
   WrapStatusEthWrapLogs,
+  WrapStatusFioHistoryOffsetParams,
   WrapStatusFioUnwrapNftsLogs,
   WrapStatusFioUnwrapNftsOravotes,
   WrapStatusFioUnwrapTokensLogs,
   WrapStatusFioUnwrapTokensOravotes,
   WrapStatusFioWrapNftsLogs,
   WrapStatusFioWrapTokensLogs,
+  WrapStatusFioBurnedDomainsLogs,
   WrapStatusNetworks,
   WrapStatusPolygonOraclesConfirmationsLogs,
   WrapStatusPolygonUnwrapLogs,
   WrapStatusPolygonWrapLogs,
+  WrapStatusPolygonBurnedDomainsLogs,
 } from '../models/index.mjs';
 import { WRAP_STATUS_NETWORKS_IDS } from '../config/constants.js';
+import config from '../config/index.mjs';
 
 const WRAPPED_DOMAIN_ABI = JSON.parse(
   fs.readFileSync('server/static-files/abi_fio_domain_nft.json', 'utf8'),
@@ -42,14 +48,12 @@ class WrapStatusJob extends CommonJob {
 
   // example of getting all POLYGON smart contract events
   async test() {
-    const web3 = new Web3(
-      `${process.env.POLYGON_INFURA_BASE_URL}${process.env.INFURA_API_KEY}`,
-    );
+    const web3 = new Web3(`${config.wrap.infuraBaseUrl}${process.env.INFURA_API_KEY}`);
     const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
 
     const fioNftContractOnPolygonChain = new web3.eth.Contract(
       WRAPPED_DOMAIN_ABI,
-      process.env.FIO_NFT_POLYGON_CONTRACT,
+      config.wrap.fioNftPolygonContract,
     );
 
     const getPolygonActionsLogs = async (from, to) => {
@@ -107,18 +111,16 @@ class WrapStatusJob extends CommonJob {
     console.log(data);
   }
 
-  async getPolygonLogs(isWrap = false) {
-    const logPrefix = `Get POLYGON Logs, isWrap: ${isWrap} --> `;
+  async getPolygonLogs({ isWrap = false, isBurn = false }) {
+    const logPrefix = `Get POLYGON Logs, isWrap: ${isWrap}, isBurn: ${isBurn} --> `;
 
     try {
-      const web3 = new Web3(
-        `${process.env.POLYGON_INFURA_BASE_URL}${process.env.INFURA_API_KEY}`,
-      );
+      const web3 = new Web3(`${config.wrap.infuraBaseUrl}${process.env.INFURA_API_KEY}`);
       const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
 
       const fioNftContractOnPolygonChain = new web3.eth.Contract(
         WRAPPED_DOMAIN_ABI,
-        process.env.FIO_NFT_POLYGON_CONTRACT,
+        config.wrap.fioNftPolygonContract,
       );
 
       const networkData = await WrapStatusNetworks.findOneWhere({
@@ -132,6 +134,8 @@ class WrapStatusJob extends CommonJob {
             ? 'consensus_activity'
             : isWrap
             ? 'wrapped'
+            : isBurn
+            ? 'domainburned'
             : 'unwrapped',
           {
             fromBlock: from,
@@ -151,6 +155,7 @@ class WrapStatusJob extends CommonJob {
         const lastProcessedBlockNumber = await WrapStatusBlockNumbers.getBlockNumber(
           networkData.id,
           isWrap,
+          isBurn,
         );
 
         const lastInChainBlockNumber = await web3.eth.getBlockNumber();
@@ -200,7 +205,7 @@ class WrapStatusJob extends CommonJob {
 
           data.transferActions = [...data.transferActions, ...eventsWithTimestamps];
 
-          if (isWrap) {
+          if (isWrap || isBurn) {
             const oracleEventsWithTimestamps = [];
 
             const oracleEvents = await getPolygonActionsLogs(
@@ -230,7 +235,9 @@ class WrapStatusJob extends CommonJob {
         this.postMessage(
           logPrefix +
             `result length: transfers: ${data.transferActions.length} ${
-              isWrap ? `oracles confirmations: ${data.oraclesConfirmationActions}` : ''
+              isWrap || isBurn
+                ? `oracles confirmations: ${data.oraclesConfirmationActions}`
+                : ''
             }`,
         );
         return data;
@@ -241,7 +248,11 @@ class WrapStatusJob extends CommonJob {
       if (data.transferActions.length > 0) {
         if (isWrap) {
           await WrapStatusPolygonWrapLogs.addLogs(data.transferActions);
-        } else await WrapStatusPolygonUnwrapLogs.addLogs(data.transferActions);
+        } else if (isBurn) {
+          await WrapStatusPolygonBurnedDomainsLogs.addLogs(data.transferActions);
+        } else {
+          await WrapStatusPolygonUnwrapLogs.addLogs(data.transferActions);
+        }
       }
 
       if (data.oraclesConfirmationActions.length > 0) {
@@ -254,6 +265,7 @@ class WrapStatusJob extends CommonJob {
         maxCheckedBlockNumber,
         networkData.id,
         isWrap,
+        isBurn,
       );
 
       this.postMessage(logPrefix + 'successfully finished');
@@ -266,14 +278,12 @@ class WrapStatusJob extends CommonJob {
   async getEthLogs(isWrap = false) {
     const logPrefix = `Get ETH Logs, isWrap: ${isWrap} --> `;
     try {
-      const web3 = new Web3(
-        `${process.env.ETH_INFURA_BASE_URL}${process.env.INFURA_API_KEY}`,
-      );
+      const web3 = new Web3(`${config.wrap.ethBaseUrl}${process.env.INFURA_API_KEY}`);
       const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_ETH);
 
       const fioTokenContractOnEthChain = new web3.eth.Contract(
         WRAPPED_TOKEN_ABI,
-        process.env.FIO_TOKEN_ETH_CONTRACT,
+        config.wrap.fioTokenEthContract,
       );
 
       const networkData = await WrapStatusNetworks.findOneWhere({
@@ -379,7 +389,11 @@ class WrapStatusJob extends CommonJob {
         this.postMessage(
           logPrefix +
             `result length: transfers: ${data.transferActions.length} ${
-              isWrap ? `oracles confirmations: ${data.oraclesConfirmationActions}` : ''
+              isWrap
+                ? `oracles confirmations: ${JSON.stringify(
+                    data.oraclesConfirmationActions,
+                  )}`
+                : ''
             }`,
         );
         return data;
@@ -524,70 +538,105 @@ class WrapStatusJob extends CommonJob {
     }
   }
 
-  async getFioLogs() {
-    const logPrefix = `Get FIO Logs --> `;
+  async getFioLogs({ accountName }) {
+    const logPrefix = `Get FIO Logs for account name ${accountName} --> `;
     try {
-      const networkData = await WrapStatusNetworks.findOneWhere({
-        id: WRAP_STATUS_NETWORKS_IDS.FIO,
-      });
-      const lastProcessedBlockNumber = await WrapStatusBlockNumbers.getBlockNumber(
-        networkData.id,
-        true, // not make any diff (in db by default true), because service will get both wrap/unwrap logs
+      const accountActionSequence = await WrapStatusFioHistoryOffsetParams.getAccountActionSequence(
+        { accountName },
       );
-      let maxBlockNumber;
 
-      const getFioActionsLogs = async offset => {
+      let lastProcessedAccountActionSequence;
+
+      const getFioActionsLogs = async ({ pos, offset }) => {
         // get logs starting from the end of the FIO chain (pos = -1)
-        const data = await superagent
-          .post(`${process.env.FIO_HISTORY_URL}history/get_actions`)
-          .send({ account_name: 'fio.oracle', pos: -1, offset });
-
-        if (data.statusCode === 200) {
-          const dataLength = Object.keys(data.body.actions).length;
-          const result = [];
-          for (let i = 0; i < dataLength; i++) {
-            result.push(data.body.actions[i]);
-          }
-          return result;
-        }
+        const res = await superagent
+          .post(`${config.wrap.fioHistoryUrl}history/get_actions`)
+          .send({ account_name: accountName, pos, offset });
+        return res.body;
       };
 
       const getUnprocessedActionsOnFioChain = async () => {
-        const offsetRange = parseInt(process.env.FIO_HISTORY_OFFSET);
-        let offset = offsetRange;
+        const offsetRange = parseInt(config.wrap.fioHistoryOffset);
 
         this.postMessage(
           logPrefix +
-            `searching for blocks after blockNumber: ${lastProcessedBlockNumber}`,
+            `searching for blocks after Account Action Sequence: ${accountActionSequence}`,
         );
 
-        let lowestBlockNumber;
-        let actionsList = await getFioActionsLogs(offset);
-        while (
-          actionsList.length > 0 &&
-          actionsList[0].block_num > lastProcessedBlockNumber &&
-          (!lowestBlockNumber || lowestBlockNumber !== actionsList[0].block_num)
-        ) {
-          offset += offsetRange;
-          lowestBlockNumber = actionsList[0].block_num;
-          actionsList = await getFioActionsLogs(offset);
+        const unprocessedActionsList = [];
+
+        const getFioActionsLogsAll = async ({ pos, actionsList }) => {
+          const actionsLogsResult = await getFioActionsLogs({
+            pos,
+            offset: offsetRange,
+          });
+
+          const actionsLogsLength =
+            actionsLogsResult &&
+            actionsLogsResult.actions &&
+            actionsLogsResult.actions.length
+              ? actionsLogsResult.actions.length
+              : 0;
+
+          const actionTraceHasNonIrreversibleBlockIndex =
+            actionsLogsResult && actionsLogsResult.actions
+              ? actionsLogsResult.actions.findIndex(actionItem =>
+                  new MathOp(actionItem.block_num).gt(
+                    actionsLogsResult.last_irreversible_block,
+                  ),
+                )
+              : null;
+
+          if (
+            actionsLogsResult &&
+            actionsLogsResult.last_irreversible_block &&
+            actionsLogsResult.actions &&
+            actionsLogsLength > 0 &&
+            actionTraceHasNonIrreversibleBlockIndex < 0
+          ) {
+            actionsList.push(...actionsLogsResult.actions);
+            lastProcessedAccountActionSequence =
+              actionsList[actionsList.length - 1].account_action_seq;
+            await getFioActionsLogsAll({ pos: pos + actionsLogsLength, actionsList });
+          }
+
+          if (actionTraceHasNonIrreversibleBlockIndex >= 0) {
+            actionsList.push(
+              ...actionsLogsResult.actions.slice(
+                0,
+                actionTraceHasNonIrreversibleBlockIndex,
+              ),
+            );
+
+            lastProcessedAccountActionSequence =
+              actionTraceHasNonIrreversibleBlockIndex > 0
+                ? actionsLogsResult.actions[actionTraceHasNonIrreversibleBlockIndex - 1]
+                    .account_action_seq
+                : lastProcessedAccountActionSequence;
+          }
+        };
+
+        try {
+          await getFioActionsLogsAll({
+            pos:
+              accountActionSequence > 0
+                ? new MathOp(accountActionSequence).add(1).toNumber()
+                : accountActionSequence,
+            actionsList: unprocessedActionsList,
+          });
+        } catch (error) {
+          this.postMessage(`${logPrefix} Error: ${error}`);
         }
 
-        if (
-          actionsList.length > 0 &&
-          actionsList[actionsList.length - 1].block_num > lastProcessedBlockNumber
-        )
-          maxBlockNumber = actionsList[actionsList.length - 1].block_num;
-
-        return actionsList.filter(
+        return unprocessedActionsList.filter(
           elem =>
-            elem.block_num > lastProcessedBlockNumber &&
-            ((elem.action_trace.act.name === 'wraptokens' &&
+            (elem.action_trace.act.name === 'wraptokens' &&
               elem.action_trace.act.data.chain_code === 'ETH') ||
-              (elem.action_trace.act.name === 'wrapdomain' &&
-                elem.action_trace.act.data.chain_code === 'MATIC') ||
-              elem.action_trace.act.name === 'unwraptokens' ||
-              elem.action_trace.act.name === 'unwrapdomain'),
+            (elem.action_trace.act.name === 'wrapdomain' &&
+              elem.action_trace.act.data.chain_code === 'MATIC') ||
+            elem.action_trace.act.name === 'unwraptokens' ||
+            elem.action_trace.act.name === 'unwrapdomain' ||
+            elem.action_trace.act.name === 'burndomain',
         );
       };
 
@@ -597,6 +646,7 @@ class WrapStatusJob extends CommonJob {
       const wrapTokensLogs = [];
       const unwrapDomainLogs = [];
       const unwrapTokensLogs = [];
+      const burnedDomainsLogs = [];
 
       logs.forEach(logItem => {
         if (logItem.action_trace.act.name === 'wraptokens') wrapTokensLogs.push(logItem);
@@ -605,6 +655,8 @@ class WrapStatusJob extends CommonJob {
           unwrapTokensLogs.push(logItem);
         if (logItem.action_trace.act.name === 'unwrapdomain')
           unwrapDomainLogs.push(logItem);
+        if (logItem.action_trace.act.name === 'burndomain')
+          burnedDomainsLogs.push(logItem);
       });
 
       this.postMessage(
@@ -615,6 +667,9 @@ class WrapStatusJob extends CommonJob {
       );
       this.postMessage(logPrefix + `wrapTokens result length: ${wrapTokensLogs.length}`);
       this.postMessage(logPrefix + `wrapDomains result length: ${wrapDomainLogs.length}`);
+      this.postMessage(
+        logPrefix + `burnedDomains result length: ${burnedDomainsLogs.length}`,
+      );
 
       if (unwrapDomainLogs.length > 0) {
         await WrapStatusFioUnwrapNftsLogs.addLogs(unwrapDomainLogs);
@@ -627,9 +682,17 @@ class WrapStatusJob extends CommonJob {
       }
       if (wrapTokensLogs.length > 0)
         await WrapStatusFioWrapTokensLogs.addLogs(wrapTokensLogs);
-
-      if (maxBlockNumber && maxBlockNumber > lastProcessedBlockNumber)
-        await WrapStatusBlockNumbers.setBlockNumber(maxBlockNumber, networkData.id, true);
+      if (burnedDomainsLogs.length > 0)
+        await WrapStatusFioBurnedDomainsLogs.addLogs(burnedDomainsLogs);
+      if (
+        lastProcessedAccountActionSequence &&
+        lastProcessedAccountActionSequence > accountActionSequence
+      ) {
+        await WrapStatusFioHistoryOffsetParams.setActionSequence({
+          accountName,
+          accountActionSequenceValue: lastProcessedAccountActionSequence,
+        });
+      }
 
       this.postMessage(logPrefix + 'successfully finished');
     } catch (e) {
@@ -643,12 +706,14 @@ class WrapStatusJob extends CommonJob {
     );
 
     await this.executeActions([
-      this.getPolygonLogs.bind(this, true),
-      this.getPolygonLogs.bind(this, false),
+      this.getPolygonLogs.bind(this, { isWrap: true }),
+      this.getPolygonLogs.bind(this, { isWrap: false }),
+      this.getPolygonLogs.bind(this, { isBurn: true }),
       this.getEthLogs.bind(this, true),
       this.getEthLogs.bind(this, false),
       this.getUnwrapOravotesLogs.bind(this),
-      this.getFioLogs.bind(this),
+      this.getFioLogs.bind(this, { accountName: 'fio.oracle' }),
+      this.getFioLogs.bind(this, { accountName: 'fio.address' }),
       // this.test,
     ]);
 

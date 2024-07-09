@@ -22,6 +22,7 @@ export class WrapStatusBlockNumbers extends Base {
           allowNull: false,
         },
         isWrap: { type: DT.BOOLEAN, defaultValue: false },
+        isBurn: { type: DT.BOOLEAN, defaultValue: false },
       },
       {
         sequelize,
@@ -39,7 +40,7 @@ export class WrapStatusBlockNumbers extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'blockNumber', 'networkId', 'isWrap'],
+      default: ['id', 'blockNumber', 'networkId', 'isWrap', 'isBurn'],
     };
 
     if (type in attributes) {
@@ -49,15 +50,15 @@ export class WrapStatusBlockNumbers extends Base {
     return attributes.default;
   }
 
-  static async getBlockNumber(networkId, isWrap = false) {
-    const data = await this.findOne({ where: { networkId, isWrap } });
+  static async getBlockNumber(networkId, isWrap = false, isBurn = false) {
+    const data = await this.findOne({ where: { networkId, isWrap, isBurn } });
     return parseInt(data.blockNumber);
   }
 
-  static async setBlockNumber(value, networkId, isWrap = false) {
+  static async setBlockNumber(value, networkId, isWrap = false, isBurn = false) {
     return WrapStatusBlockNumbers.update(
       { blockNumber: value },
-      { where: { networkId, isWrap } },
+      { where: { networkId, isWrap, isBurn } },
     );
   }
 }
