@@ -40,6 +40,7 @@ const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  ownerFioWallet?: FioWalletDoublet;
   processing: boolean;
   submitData: PurchaseValues;
   onSuccess: (result: RegistrationResult) => void;
@@ -50,6 +51,7 @@ type Props = {
 export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const {
     fioWallet,
+    ownerFioWallet = fioWallet,
     processing,
     submitData,
     onCancel,
@@ -158,7 +160,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               ],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
-              owner_fio_public_key: fioWallet.publicKey,
+              owner_fio_public_key: ownerFioWallet.publicKey,
               fio_address: registration.fioName,
               is_public: 0,
               tpid: apis.fio.tpid,
@@ -220,7 +222,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
               fio_domain: registration.fioName,
-              owner_fio_public_key: fioWallet.publicKey,
+              owner_fio_public_key: ownerFioWallet.publicKey,
               tpid: apis.fio.tpid,
               max_fee: new MathOp(registration.fee)
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
@@ -271,7 +273,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
-              owner_fio_public_key: fioWallet.publicKey,
+              owner_fio_public_key: ownerFioWallet.publicKey,
               fio_address: registration.fioName,
               tpid: apis.fio.tpid,
               max_fee: new MathOp(registration.fee)
@@ -295,6 +297,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   }, [
     derivationIndex,
     fioWallet.publicKey,
+    ownerFioWallet.publicKey,
     handleRegistrationIndexedItems,
     registrations,
   ]);

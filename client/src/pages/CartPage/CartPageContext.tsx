@@ -16,7 +16,6 @@ import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
-  isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
@@ -82,7 +81,6 @@ type UseContextReturnType = {
   cartItems: CartItem[];
   formsOfPayment: { [key: string]: boolean };
   hasGetPricesError: boolean;
-  error?: string | null;
   hasLowBalance?: boolean;
   isAffiliateEnabled: boolean;
   isFree: boolean;
@@ -115,9 +113,6 @@ export const useContext = (): UseContextReturnType => {
   const roe = useSelector(roeSelector);
   const userWallets = useSelector(fioWalletsSelector);
   const privateDomainsMap = useSelector(privateDomainsSelector);
-  const isCartPrivateDomainsError = useSelector(
-    isCartPrivateDomainsErrorSelector,
-  );
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
   );
@@ -175,10 +170,6 @@ export const useContext = (): UseContextReturnType => {
   const totalCartAmount = apis.fio
     .sufToAmount(totalCartNativeAmount)
     .toFixed(2);
-
-  const error = isCartPrivateDomainsError
-    ? 'Some FIO Handles in your cart are on private FIO Domains controlled by different FIO Wallets and therefore cannot be purchased in a single transaction. Please purchase them one at a time.'
-    : null;
 
   // Check if FIO Wallet has enough balance when cart has items with private domains
   let hasLowBalanceForPrivateDomains = false;
@@ -518,7 +509,6 @@ export const useContext = (): UseContextReturnType => {
     paymentWalletPublicKey,
     prices,
     roe,
-    error,
     showExpiredDomainWarningBadge,
     formsOfPayment,
     onPaymentChoose,
