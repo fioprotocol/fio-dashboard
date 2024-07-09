@@ -462,8 +462,8 @@ const WrapStatus: React.FC<PageProps> = props => {
 
         <div>
           <h3>
-            {isWrap ? 'Wrap ' : 'Unwrap '}
-            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
+            {isWrap ? 'Wrap ' : isBurned ? 'Burned ' : 'Unwrap '}
+            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domains'}
           </h3>
         </div>
 
@@ -471,8 +471,8 @@ const WrapStatus: React.FC<PageProps> = props => {
           <thead>
             <tr>
               <th scope="col">Transaction</th>
-              <th scope="col">From</th>
-              <th scope="col">To</th>
+              {!isBurned && <th scope="col">From</th>}
+              {!isBurned && <th scope="col">To</th>}
               <th scope="col">{!isTokens ? 'Domain' : 'Amount'}</th>
               <th scope="col">Date</th>
               <th scope="col">Status</th>
@@ -488,8 +488,8 @@ const WrapStatus: React.FC<PageProps> = props => {
                     >
                       {wrapItem.transactionId}
                     </th>
-                    <th>{wrapItem.from}</th>
-                    <th>{wrapItem.to}</th>
+                    {wrapItem.from && <th>{wrapItem.from}</th>}
+                    {wrapItem.to && <th>{wrapItem.to}</th>}
                     <th>
                       {wrapItem.domain
                         ? wrapItem.domain
@@ -527,6 +527,7 @@ const WrapStatus: React.FC<PageProps> = props => {
         onClose={closeDetailsModal}
         isWrap={isWrap}
         isTokens={isTokens}
+        isBurned={isBurned}
       />
     </>
   );

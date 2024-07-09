@@ -3,6 +3,7 @@ import ApiClient from '../../api/client';
 
 import Fio from '../../api/fio';
 import WrapStatus from '../../api/wrap-status';
+import FioReg from '../../api/fio-reg';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -19,11 +20,13 @@ window.fetch = (uri: RequestInfo | URL, opts: RequestInit = {}) => {
 
 export type Api = {
   fio: Fio;
+  fioReg: FioReg;
   wrapStatus: WrapStatus;
 };
 
 const ApiObj = {
   fio: new Fio(),
+  fioReg: new FioReg(apiClient),
   client: apiClient,
   wrapStatus: new WrapStatus(apiClient),
 };
