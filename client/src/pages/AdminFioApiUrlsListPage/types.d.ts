@@ -3,6 +3,7 @@ import { FioApiUrl } from '../../types';
 export type FormValuesProps = {
   id?: string;
   rank: number;
+  type: string;
   url: string;
 };
 

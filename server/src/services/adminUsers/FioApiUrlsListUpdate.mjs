@@ -18,6 +18,7 @@ export default class FioApiUrlsListUpdate extends Base {
             id: ['required', 'string'],
             createdAt: ['required', 'string'],
             rank: ['required', 'string'],
+            type: ['required', 'string'],
             url: ['required', 'string'],
           },
         },
@@ -28,7 +29,7 @@ export default class FioApiUrlsListUpdate extends Base {
   async execute({ data }) {
     const updateRankPromises = data.map(
       async fioApiUrl =>
-        await FioApiUrl.update({ rank: fioApiUrl.rank }, { where: { id: fioApiUrl.id } }), // TODO: Update to bulkCreate on sequelize update
+        await FioApiUrl.update({ rank: fioApiUrl.rank }, { where: { id: fioApiUrl.id } }),
     );
 
     try {

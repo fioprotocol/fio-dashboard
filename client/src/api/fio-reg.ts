@@ -1,3 +1,4 @@
+import { FIO_API_URLS_TYPES } from '../constants/fio';
 import Base from './base';
 
 import {
@@ -16,6 +17,13 @@ export default class FioReg extends Base {
     return this.apiClient.post('reg/captcha/init', {});
   }
   apiUrls(): Promise<FioRegApiUrlsResponse> {
-    return this.apiClient.get('reg/api-urls');
+    return this.apiClient.get('reg/api-urls', {
+      fioUrlType: FIO_API_URLS_TYPES.DASHBOARD_API,
+    });
+  }
+  historyUrls(): Promise<FioRegApiUrlsResponse> {
+    return this.apiClient.get('reg/api-urls', {
+      fioUrlType: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+    });
   }
 }

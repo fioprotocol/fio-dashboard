@@ -732,6 +732,7 @@ export type AdminSearchResult = {
 export type FioApiUrl = {
   id: string;
   rank: number;
+  type: string;
   url: string;
   createdAt: string;
 };

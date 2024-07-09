@@ -14,6 +14,8 @@ import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';
 import { reorder } from '../../util/general';
 
+import { FIO_API_URLS_TYPES } from '../../constants/fio';
+
 import { FormValuesProps, FormValuesEditProps, PageProps } from './types';
 import { FioApiUrl } from '../../types';
 
@@ -120,6 +122,81 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
     [fioApiUrlsList, updateFioApiUrlList],
   );
 
+  const dashaboardApiUrlsList = fioApiUrlsList.filter(
+    fioApiUrlItem => fioApiUrlItem.type === FIO_API_URLS_TYPES.DASHBOARD_API,
+  );
+  const dashboardHistoryUrlsList = fioApiUrlsList.filter(
+    fioApiUrlItem =>
+      fioApiUrlItem.type === FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+  );
+  const wrapStatusPageApiUrls = fioApiUrlsList.filter(
+    fioApiUrlItem =>
+      fioApiUrlItem.type === FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
+  );
+  const wrapStatusPageHistoryApiUrls = fioApiUrlsList.filter(
+    fioApiUrlItem =>
+      fioApiUrlItem.type === FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_URL,
+  );
+
+  const DragDropComponent = ({ apiUrlsList }: { apiUrlsList: FioApiUrl[] }) => (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="droppable">
+        {(provided, snapshot) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            {loading || isUpdating ? (
+              <Loader />
+            ) : apiUrlsList?.length ? (
+              apiUrlsList.map((fioApiUrl, i) => (
+                <Draggable
+                  key={fioApiUrl.id}
+                  draggableId={fioApiUrl.id}
+                  index={i}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={classes.dragItemContainer}
+                    >
+                      <div
+                        key={fioApiUrl.id}
+                        onClick={() => openApiUrl(fioApiUrl)}
+                        className={classes.userItem}
+                      >
+                        <DragHandleIcon />
+                        <div>{i + 1}</div>
+                        <div>{fioApiUrl.url}</div>
+                        <div>
+                          {fioApiUrl.createdAt
+                            ? formatDateToLocale(fioApiUrl.createdAt)
+                            : null}
+                        </div>
+                        <div>
+                          <Button
+                            onClick={event => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              deleteApiUrl(fioApiUrl);
+                            }}
+                            variant="danger"
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))
+            ) : null}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
+  );
+
   return (
     <>
       <div className={classes.tableContainer}>
@@ -135,65 +212,18 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
               </div>
             ))}
           </div>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
-              {(provided, snapshot) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {loading || isUpdating ? (
-                    <Loader />
-                  ) : fioApiUrlsList?.length ? (
-                    fioApiUrlsList.map((fioApiUrl, i) => (
-                      <Draggable
-                        key={fioApiUrl.id}
-                        draggableId={fioApiUrl.id}
-                        index={i}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={classes.dragItemContainer}
-                          >
-                            <div
-                              key={fioApiUrl.id}
-                              onClick={() => openApiUrl(fioApiUrl)}
-                              className={classes.userItem}
-                            >
-                              <DragHandleIcon />
-                              <div>{i + 1}</div>
-                              <div>{fioApiUrl.url}</div>
-                              <div>
-                                {fioApiUrl.createdAt
-                                  ? formatDateToLocale(fioApiUrl.createdAt)
-                                  : null}
-                              </div>
-                              <div>
-                                <Button
-                                  onClick={event => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    deleteApiUrl(fioApiUrl);
-                                  }}
-                                  variant="danger"
-                                >
-                                  Delete
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))
-                  ) : null}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
         </div>
 
-        {paginationComponent}
+        <p className={classes.apiTitles}>DASHBOARD API URLS:</p>
+        <DragDropComponent apiUrlsList={dashaboardApiUrlsList} />
+        <p className={classes.apiTitles}>DASHBOARD HISTORY URLS:</p>
+        <DragDropComponent apiUrlsList={dashboardHistoryUrlsList} />
+        <p className={classes.apiTitles}>WRAP STATUS PAGE API URLS:</p>
+        <DragDropComponent apiUrlsList={wrapStatusPageApiUrls} />
+        <p className={classes.apiTitles}>WRAP STATUS PAGE HISTORY URLS:</p>
+        <DragDropComponent apiUrlsList={wrapStatusPageHistoryApiUrls} />
+
+        <div className={classes.paginationContainer}>{paginationComponent}</div>
 
         {loading && <Loader />}
       </div>

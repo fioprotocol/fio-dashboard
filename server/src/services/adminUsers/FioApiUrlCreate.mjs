@@ -12,14 +12,16 @@ export default class FioApiUrlCreate extends Base {
   static get validationRules() {
     return {
       rank: ['required', 'string'],
+      type: ['required', 'string'],
       url: ['required', 'string', 'trim'],
     };
   }
 
-  async execute({ rank, url }) {
+  async execute({ rank, type, url }) {
     const exist = await FioApiUrl.findOne({
       where: {
         url,
+        type,
       },
     });
 
@@ -34,6 +36,7 @@ export default class FioApiUrlCreate extends Base {
 
     const created = new FioApiUrl({
       rank,
+      type,
       url,
     });
     await created.save();

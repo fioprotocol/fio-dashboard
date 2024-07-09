@@ -213,6 +213,9 @@ export const checkTransactions = async (
 
   let lastActionSeqNumber = 0;
   const actor = apis.fio.publicFioSDK.transactions.getActor(publicKey);
+  const fioHistoryUrls = await apis.fioReg.historyUrls();
+
+  apis.fioHistory.setHistoryNodeUrls(fioHistoryUrls);
 
   try {
     const lastActionObject: {
