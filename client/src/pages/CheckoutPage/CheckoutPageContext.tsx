@@ -45,7 +45,11 @@ import {
 import apis from '../../api';
 
 import MathOp from '../../util/math';
-import { totalCost, cartIsRelative } from '../../util/cart';
+import {
+  totalCost,
+  cartIsRelative,
+  groupCartItemsByPaymentWallet,
+} from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
@@ -93,6 +97,7 @@ import {
 import {
   BeforeSubmitData,
   BeforeSubmitState,
+  PayWith,
   SignFioAddressItem,
 } from './types';
 import { CreateOrderActionData } from '../../redux/types';
@@ -109,10 +114,7 @@ export const useContext = (): {
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
-  payWith?: {
-    walletName: string;
-    walletBalances: WalletBalancesItem;
-  };
+  payWith: PayWith[];
   isProcessing: boolean;
   isNoProfileFlow: boolean;
   title: string;
@@ -666,31 +668,28 @@ export const useContext = (): {
     cartLoading,
   );
 
-  const getPayWithDefaultDetails = useCallback(
-    (publicKey: string) => {
-      if (paymentAssignmentWallets.length === 0) {
-        return;
-      }
-
-      const wallet = paymentAssignmentWallets.find(
-        paymentAssignmentWallet =>
-          paymentAssignmentWallet.publicKey === publicKey,
-      );
-      const balance = fioWalletsBalances.wallets[publicKey];
-
-      if (!balance || !wallet) {
-        return;
-      }
-
-      return {
-        walletName: wallet.name,
-        walletBalances: balance.available,
-      };
-    },
-    [fioWalletsBalances.wallets, paymentAssignmentWallets],
+  const groupedCartItemsByPaymentWallet = groupCartItemsByPaymentWallet(
+    paymentWallet,
+    cartItems,
+    fioWallets,
+    userDomains,
   );
 
-  const payWith = getPayWithDefaultDetails(paymentWalletPublicKey);
+  const payWith: PayWith[] = paymentWalletPublicKey
+    ? groupedCartItemsByPaymentWallet.map(it => {
+        const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
+        const available =
+          fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
+        const notEnoughFio = available.nativeFio < totalCostNativeFio;
+
+        return {
+          ...it,
+          available,
+          notEnoughFio,
+          totalCostNativeFio,
+        };
+      })
+    : [];
 
   const onClose = useCallback(() => {
     if (order?.id) {
