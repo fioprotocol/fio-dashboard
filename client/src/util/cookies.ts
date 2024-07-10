@@ -12,8 +12,6 @@ export const setCookies = (
     path: '/',
   },
 ): void => {
-  if (!cookieValue) return Cookies.remove(cookieName, params);
-
   const paramsToSet = { ...params };
 
   if (document.location.protocol === 'https:') {
@@ -27,5 +25,9 @@ export const setCookies = (
     }
   }
 
-  Cookies.set(cookieName, cookieValue, paramsToSet);
+  if (!cookieValue) {
+    Cookies.remove(cookieName, paramsToSet);
+  } else {
+    Cookies.set(cookieName, cookieValue, paramsToSet);
+  }
 };

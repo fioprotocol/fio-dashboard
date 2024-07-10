@@ -160,6 +160,7 @@ const Ref = (
     user?.refProfile?.code,
     getInfo,
     clear,
+    cookieRefProfileCode,
   ]);
 
   useEffect(() => {
