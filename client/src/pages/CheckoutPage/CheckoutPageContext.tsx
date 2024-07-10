@@ -241,12 +241,6 @@ export const useContext = (): {
     [dispatchSetAssignmentWallet],
   );
 
-  useEffect(() => {
-    if (!assignmentWalletPublicKey && paymentWalletPublicKey) {
-      setAssignmentWallet(paymentWalletPublicKey);
-    }
-  }, [paymentWalletPublicKey, assignmentWalletPublicKey, setAssignmentWallet]);
-
   const getOrder = useCallback(async () => {
     let result;
 
@@ -523,6 +517,25 @@ export const useContext = (): {
       return wallet.available > totalCostNativeFio;
     })
     .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name));
+
+  useEffect(() => {
+    if (!paymentAssignmentWallets || paymentAssignmentWallets.length === 0) {
+      return;
+    }
+    const [defaultWallet] = paymentAssignmentWallets;
+    if (!paymentAssignmentWallets) {
+      setWallet(defaultWallet.publicKey);
+    }
+    if (!assignmentWalletPublicKey) {
+      setAssignmentWallet(defaultWallet.publicKey);
+    }
+  }, [
+    paymentWalletPublicKey,
+    assignmentWalletPublicKey,
+    paymentAssignmentWallets,
+    setWallet,
+    setAssignmentWallet,
+  ]);
 
   // Create order for free address
   useEffectOnce(

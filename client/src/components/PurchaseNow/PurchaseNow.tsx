@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import WalletAction from '../WalletAction/WalletAction';
@@ -71,7 +65,7 @@ const MIN_WAIT_TIME = 3000;
 
 type CaptchaResult = { success: boolean; verifyParams: {} };
 
-export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
+export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const { onFinish, disabled = false } = props;
 
   const cartItems = useSelector(cartItemsSelector);
@@ -302,33 +296,14 @@ const useMultipleWalletAction = (
       userDomains,
     );
 
-    setResult(initialRegistrationResult);
-    setGroupedPurchaseValues(
-      groupedCartItems.map(({ signInFioWallet, cartItems }) => ({
+    const groupedPurchaseValues = groupedCartItems.map(
+      ({ signInFioWallet, cartItems }) => ({
         signInFioWallet,
         submitData: { ...submitData, cartItems },
-      })),
+      }),
     );
-  }, [fioWallet, submitData, fioWallets, userDomains]);
 
-  useEffect(() => {
-    if (groupedPurchaseValues.length === 0 && result.registered.length > 0) {
-      onCollectedSuccessRef.current?.(result);
-    }
-  }, [groupedPurchaseValues, result]);
-
-  const onSuccess = (data: RegistrationResult) => {
-    setGroupedPurchaseValues(groupedPurchaseValues.slice(1));
-    setResult(result => ({
-      ...result,
-      registered: [...result.registered, ...data.registered],
-    }));
-  };
-
-  const sortedGroupedPurchaseValues = useMemo(() => {
-    const groupedPurchaseValuesToSort = [...groupedPurchaseValues];
-
-    groupedPurchaseValuesToSort.sort((g1, g2) => {
+    groupedPurchaseValues.sort((g1, g2) => {
       const g1Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
         g1.signInFioWallet.from,
       );
@@ -338,10 +313,27 @@ const useMultipleWalletAction = (
       return g1Priority - g2Priority;
     });
 
-    return groupedPurchaseValuesToSort;
-  }, [groupedPurchaseValues]);
+    setResult(initialRegistrationResult);
+    setGroupedPurchaseValues(groupedPurchaseValues);
+  }, [fioWallet, submitData, fioWallets, userDomains]);
 
-  const [signInValuesGroup] = sortedGroupedPurchaseValues;
+  useEffect(() => {
+    if (groupedPurchaseValues.length === 0 && result.registered.length > 0) {
+      onCollectedSuccessRef.current?.(result);
+    }
+  }, [groupedPurchaseValues, result]);
+
+  const onSuccess = (data: RegistrationResult) => {
+    setGroupedPurchaseValues(groupedPurchaseValues =>
+      groupedPurchaseValues.slice(1),
+    );
+    setResult(result => ({
+      ...result,
+      registered: [...result.registered, ...data.registered],
+    }));
+  };
+
+  const [signInValuesGroup] = groupedPurchaseValues;
 
   return { onSuccess, signInValuesGroup };
 };

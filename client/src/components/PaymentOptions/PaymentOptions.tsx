@@ -45,7 +45,6 @@ type PaymentOptionRenderProps = {
 const PAYMENT_OPTIONS_PROPS = {
   [PAYMENT_OPTIONS.FIO]: ({
     hasLowBalance,
-    paymentWalletPublicKey,
     cartItems,
     isFree,
     selectedPaymentProvider,
@@ -54,8 +53,7 @@ const PAYMENT_OPTIONS_PROPS = {
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <AccountBalanceWalletIcon className={classes.icon} />,
-    disabled:
-      paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
+    disabled: cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.FIO,
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.FIO,
     hideButton: hasLowBalance && !isFree,
