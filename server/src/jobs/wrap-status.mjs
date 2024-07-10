@@ -736,7 +736,7 @@ class WrapStatusJob extends CommonJob {
       this.getEthLogs.bind(this, false),
       this.getUnwrapOravotesLogs.bind(this),
       this.getFioLogs.bind(this, { accountName: 'fio.oracle' }),
-      this.getFioLogs.bind(this, { accountName: 'fio.address' }),
+      // this.getFioLogs.bind(this, { accountName: 'fio.address' }), todo: commented will be added to next release
       // this.test,
     ]);
 
