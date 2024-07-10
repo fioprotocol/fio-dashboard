@@ -203,7 +203,7 @@ export const groupCartItemsByPaymentWallet = (
       domain => domain.name === cartItem.domain,
     );
 
-    if (addressDomain.isPublic) {
+    if (!!addressDomain || addressDomain.isPublic) {
       addToGroup(fioWallet, cartItem);
       continue;
     }

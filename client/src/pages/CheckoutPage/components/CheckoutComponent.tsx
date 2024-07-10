@@ -55,6 +55,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
             const showMessage =
               walletGroup &&
               walletGroup.notEnoughFio &&
+              payment?.processor === PAYMENT_OPTIONS.FIO &&
               item.type === CART_ITEM_TYPE.ADDRESS;
 
             if (showMessage) {
