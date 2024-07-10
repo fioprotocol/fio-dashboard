@@ -32,6 +32,7 @@ import {
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { isDomainExpired } from '../../utils/fio.mjs';
+import { handleRefProfileApiTokenAndLegacyHash } from '../../utils/referrer-profile.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -67,6 +68,9 @@ export default class BuyAddress extends Base {
     if (!refProfile) {
       return generateErrorResponse(this.res, refNotFoundRes);
     }
+
+    !refProfile.apiToken &&
+      (await handleRefProfileApiTokenAndLegacyHash({ apiToken, refProfile }));
 
     if (!refProfile.apiAccess) {
       return generateErrorResponse(this.res, {
