@@ -172,6 +172,10 @@ export const groupCartItemsByPaymentWallet = (
   fioWallets: FioWalletDoublet[],
   userDomains: FioDomainDoublet[],
 ): GroupedCartItemsByPaymentWallet[] => {
+  if (!fioWallet) {
+    return [];
+  }
+
   const result: GroupedCartItemsByPaymentWallet[] = [];
 
   const addToGroup = (

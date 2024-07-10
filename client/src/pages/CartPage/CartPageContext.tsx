@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import {
-  setWallet,
-  recalculateOnPriceUpdate,
-  clearCart,
-} from '../../redux/cart/actions';
+import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -171,12 +167,6 @@ export const useContext = (): UseContextReturnType => {
         totalCartNativeAmount &&
         new MathOp(wallet.available).lte(totalCartNativeAmount),
     );
-
-  const highestBalanceWalletPubKey = userWallets.length
-    ? userWallets.sort(
-        (a, b) => b.available - a.available || a.name.localeCompare(b.name),
-      )[0].publicKey
-    : '';
 
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
@@ -437,17 +427,8 @@ export const useContext = (): UseContextReturnType => {
           dispatch(refreshBalance(fioWallet.publicKey));
         }
       }
-      if (userWallets.length === 1) {
-        dispatch(setWallet(userWallets[0].publicKey));
-      }
     }
-  }, [userWallets, dispatch, refreshBalance, setWallet]);
-
-  // Set wallet with the highest balance enough for FIO purchase
-  useEffect(() => {
-    if (highestBalanceWalletPubKey)
-      dispatch(setWallet(highestBalanceWalletPubKey));
-  }, [dispatch, highestBalanceWalletPubKey]);
+  }, [userWallets, dispatch, refreshBalance]);
 
   useEffect(() => {
     if (!isAuth && !isNoProfileFlow) {
