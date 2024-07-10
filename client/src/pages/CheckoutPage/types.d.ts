@@ -23,9 +23,11 @@ export type PayWith = GroupedCartItemsByPaymentWallet & {
 type DefaultProps = {
   walletBalances: WalletBalancesItem;
   paymentWallet?: FioWalletDoublet;
+  assignmentWallet?: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
+  assignmentWalletPublicKey: string;
   payWith: PayWith[];
   fioWalletsBalances: WalletsBalances;
   order: Order;
@@ -36,6 +38,7 @@ type DefaultProps = {
   isFree: boolean;
   isNoProfileFlow: boolean;
   setWallet: (publicKey: string) => void;
+  setAssignmentWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
   cart: CartItemType[];

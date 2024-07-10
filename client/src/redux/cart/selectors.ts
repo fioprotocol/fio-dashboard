@@ -20,6 +20,9 @@ export const cartItems = (state: ReduxState): CartItem[] =>
 export const paymentWalletPublicKey = (state: ReduxState): string =>
   state[prefix].paymentWalletPublicKey || '';
 
+export const assignmentWalletPublicKey = (state: ReduxState): string =>
+  state[prefix].assignmentWalletPublicKey || '';
+
 export const cartHasItemsWithPrivateDomain = createSelector(
   cartItems,
   fioDomains,

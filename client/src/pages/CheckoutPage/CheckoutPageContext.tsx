@@ -8,6 +8,7 @@ import {
   clearCart,
   getUsersCart,
   setWallet as setWalletAction,
+  setAssignmentWallet as setAssignmentWalletAction,
 } from '../../redux/cart/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
@@ -25,6 +26,7 @@ import {
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
+  assignmentWalletPublicKey as assignmentWalletPublicKeySelector,
   loading as cartLoadingSelector,
 } from '../../redux/cart/selectors';
 import {
@@ -109,7 +111,9 @@ export const useContext = (): {
   isLoading?: boolean;
   walletBalancesAvailable: WalletBalancesItem;
   paymentWallet: FioWalletDoublet;
+  assignmentWallet: FioWalletDoublet;
   paymentWalletPublicKey: string;
+  assignmentWalletPublicKey: string;
   roe: number | null;
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
@@ -133,6 +137,7 @@ export const useContext = (): {
   onClose: () => void;
   onFinish: (results: RegistrationResult) => Promise<void>;
   setWallet: (walletPublicKey: string) => void;
+  setAssignmentWallet: (walletPublicKey: string) => void;
   setProcessing: (isProcessing: boolean) => void;
 } => {
   const cartId = useSelector(cartIdSelector);
@@ -143,6 +148,9 @@ export const useContext = (): {
   const privateDomains = useSelector(privateDomainsSelector);
   const cartItems = useSelector(cartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
+  const assignmentWalletPublicKey = useSelector(
+    assignmentWalletPublicKeySelector,
+  );
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
   const isAuth = useSelector(isAuthenticatedSelector);
   const prices = useSelector(pricesSelector);
@@ -163,6 +171,11 @@ export const useContext = (): {
   const dispatchSetWallet = useCallback(
     (paymentWalletPublicKey: string) =>
       dispatch(setWalletAction(paymentWalletPublicKey)),
+    [dispatch],
+  );
+  const dispatchSetAssignmentWallet = useCallback(
+    (assignmentWalletPublicKey: string) =>
+      dispatch(setAssignmentWalletAction(assignmentWalletPublicKey)),
     [dispatch],
   );
 
@@ -220,6 +233,19 @@ export const useContext = (): {
     },
     [dispatchSetWallet],
   );
+
+  const setAssignmentWallet = useCallback(
+    (assignmentWalletPublicKey: string) => {
+      dispatchSetAssignmentWallet(assignmentWalletPublicKey);
+    },
+    [dispatchSetAssignmentWallet],
+  );
+
+  useEffect(() => {
+    if (!assignmentWalletPublicKey && paymentWalletPublicKey) {
+      setAssignmentWallet(paymentWalletPublicKey);
+    }
+  }, [paymentWalletPublicKey, assignmentWalletPublicKey, setAssignmentWallet]);
 
   const getOrder = useCallback(async () => {
     let result;
@@ -460,15 +486,14 @@ export const useContext = (): {
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,
   );
+  const assignmentWallet = fioWallets.find(
+    ({ publicKey }) => publicKey === assignmentWalletPublicKey,
+  );
   const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
 
   const { costNativeFio: totalCostNativeFio } = totalCost(cartItems, roe);
-
-  const walletHasNoEnoughBalance = totalCostNativeFio
-    ? new MathOp(walletBalancesAvailable.nativeFio).lt(totalCostNativeFio || 0)
-    : false;
 
   const title =
     isFree || !paymentProvider
@@ -634,26 +659,6 @@ export const useContext = (): {
     isNoProfileFlow,
   ]);
 
-  // Redirect back to cart when payment option is FIO and not enough FIO tokens
-  useEffect(() => {
-    if (
-      !fioLoading &&
-      !isFree &&
-      paymentWalletPublicKey &&
-      walletHasNoEnoughBalance &&
-      paymentOption === PAYMENT_OPTIONS.FIO
-    ) {
-      history.push(ROUTES.CART);
-    }
-  }, [
-    history,
-    isFree,
-    fioLoading,
-    paymentWalletPublicKey,
-    paymentOption,
-    walletHasNoEnoughBalance,
-  ]);
-
   useEffect(() => {
     return () => {
       setOrder(null);
@@ -708,7 +713,6 @@ export const useContext = (): {
     });
 
     dispatch(setProcessing(false));
-
     history.push(
       {
         pathname: ROUTES.PURCHASE,
@@ -778,7 +782,7 @@ export const useContext = (): {
         signTxItems.push({
           fioWallet: paymentFioWallet,
           name: setFioName(cartItem.address, cartItem.domain),
-          ownerKey: paymentWalletPublicKey,
+          ownerKey: assignmentWalletPublicKey ?? paymentWalletPublicKey,
           cartItem,
         });
       }
@@ -814,7 +818,9 @@ export const useContext = (): {
       refProfileLoading,
     walletBalancesAvailable,
     paymentWallet,
+    assignmentWallet,
     paymentWalletPublicKey,
+    assignmentWalletPublicKey,
     roe,
     fioWallets,
     fioWalletsBalances,
@@ -838,6 +844,7 @@ export const useContext = (): {
     onClose,
     onFinish,
     setWallet,
+    setAssignmentWallet,
     setProcessing: dispatchSetProcessing,
   };
 };

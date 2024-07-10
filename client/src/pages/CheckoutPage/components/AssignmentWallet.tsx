@@ -1,51 +1,39 @@
 import React from 'react';
 
 import CustomDropdown from '../../../components/CustomDropdown';
-import PayWithBadge from '../../../components/Badges/PayWithBadge/PayWithBadge';
 import { PayWalletInfo } from '../../../components/Badges/PayWithBadge/PayWalletInfo';
 import Loader from '../../../components/Loader/Loader';
 
 import MathOp from '../../../util/math';
 
-import {
-  FioWalletDoublet,
-  WalletsBalances,
-  WalletBalancesItem,
-} from '../../../types';
+import { FioWalletDoublet, WalletsBalances } from '../../../types';
 
 import classes from '../CheckoutPage.module.scss';
 
 type Props = {
-  paymentAssignmentWallets: FioWalletDoublet[];
-  paymentWalletPublicKey: string;
+  assignmentWalletPublicKey: string;
+  fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
-  walletBalances: WalletBalancesItem;
-  paymentWallet?: FioWalletDoublet;
-  costFree?: string;
-  isFree: boolean;
-  totalCost: number;
-  setWallet: (publicKey: string) => void;
+  assignmentWallet?: FioWalletDoublet;
+  setAssignmentWallet: (publicKey: string) => void;
 };
 
-export const PaymentWallet: React.FC<Props> = props => {
+export const AssignmentWallet: React.FC<Props> = props => {
   const {
-    paymentAssignmentWallets,
-    paymentWalletPublicKey,
+    assignmentWalletPublicKey,
+    fioWallets,
     fioWalletsBalances,
-    walletBalances,
-    paymentWallet,
-    costFree,
-    setWallet,
+    setAssignmentWallet,
   } = props;
 
   if (
-    paymentAssignmentWallets.length === 0 ||
-    !fioWalletsBalances.wallets[paymentWalletPublicKey]
+    fioWallets.length === 0 ||
+    !fioWalletsBalances.wallets[assignmentWalletPublicKey]
   ) {
     return <Loader />;
   }
 
-  const walletsList = paymentAssignmentWallets.reduce((acc, wallet) => {
+  const walletsList = fioWallets.reduce((acc, wallet) => {
     const walletBalances = fioWalletsBalances.wallets[wallet.publicKey];
     if (!walletBalances) return acc;
     const { fio, usdc } = walletBalances.available;
@@ -70,34 +58,25 @@ export const PaymentWallet: React.FC<Props> = props => {
   }, []);
 
   // Waiting to default value set
-  if (!walletsList.find(({ id }) => id === paymentWalletPublicKey))
+  if (!walletsList.find(({ id }) => id === assignmentWalletPublicKey))
     return <Loader />;
-
-  if (walletsList.length === 1)
-    return (
-      <PayWithBadge
-        costFree={!!costFree}
-        walletBalances={walletBalances}
-        walletName={paymentWallet?.name}
-      />
-    );
 
   return (
     <>
       <div className={classes.details}>
-        <h6 className={classes.subtitle}>FIO wallet Payment</h6>
+        <h6 className={classes.subtitle}>FIO wallet Assignment</h6>
         <p className={classes.text}>
-          Please choose which FIO wallet you would like to use for payment
+          Please choose which FIO wallet you would like to use for assignment
         </p>
       </div>
 
       <CustomDropdown
-        onChange={setWallet}
+        onChange={setAssignmentWallet}
         options={walletsList}
         isWhite={true}
         isSimple={true}
         hasAutoHeight={true}
-        value={paymentWalletPublicKey}
+        value={assignmentWalletPublicKey}
         hasBigBorderRadius={true}
         isBlackPlaceholder={true}
         withoutMarginBottom={true}

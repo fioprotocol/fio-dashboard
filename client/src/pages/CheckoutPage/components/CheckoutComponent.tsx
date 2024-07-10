@@ -18,6 +18,7 @@ import { CheckoutComponentProps } from '../types';
 
 import classes from '../CheckoutPage.module.scss';
 import { CART_ITEM_TYPE } from '../../../constants/common';
+import { AssignmentWallet } from './AssignmentWallet';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
@@ -93,11 +94,13 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       </div>
       {paymentAssignmentWallets.length > 1 && (
         <div className={classes.details}>
-          <PaymentWallet
-            {...rest}
-            totalCost={costNativeFio}
-            includePaymentMessage={rest.paymentOption === PAYMENT_OPTIONS.FIO}
-          />
+          <AssignmentWallet {...rest} />
+          {rest.paymentOption === PAYMENT_OPTIONS.FIO && (
+            <>
+              <div className={classes.delimiter} />
+              <PaymentWallet {...rest} totalCost={costNativeFio} />
+            </>
+          )}
         </div>
       )}
       <PaymentOptionComponent
