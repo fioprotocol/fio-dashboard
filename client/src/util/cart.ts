@@ -161,27 +161,33 @@ export const actionFromCartItem = (
     ? ACTIONS.registerFioDomainAddress
     : ACTIONS.registerFioAddress;
 
-export type GroupedCartItemsByPaymentWallet = {
-  signInFioWallet: FioWalletDoublet;
-  cartItems: CartItem[];
+export type GroupedCartItem = {
+  type?: string;
+  domain?: string;
 };
 
-export const groupCartItemsByPaymentWallet = (
-  fioWallet: FioWalletDoublet,
-  cartItems: CartItem[],
+export type GroupedCartItemsByPaymentWallet<T extends GroupedCartItem> = {
+  signInFioWallet: FioWalletDoublet;
+  cartItems: T[];
+};
+
+export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
+  defaultWalletPublicKey: string,
+  cartItems: T[],
   fioWallets: FioWalletDoublet[],
   userDomains: FioDomainDoublet[],
-): GroupedCartItemsByPaymentWallet[] => {
-  if (!fioWallet) {
+): GroupedCartItemsByPaymentWallet<T>[] => {
+  if (!defaultWalletPublicKey) {
     return [];
   }
 
-  const result: GroupedCartItemsByPaymentWallet[] = [];
+  const defaultOwnerWallet = fioWallets.find(
+    wallet => wallet.publicKey === defaultWalletPublicKey,
+  );
 
-  const addToGroup = (
-    signInFioWallet: FioWalletDoublet,
-    cartItem: CartItem,
-  ) => {
+  const result: GroupedCartItemsByPaymentWallet<T>[] = [];
+
+  const addToGroup = (signInFioWallet: FioWalletDoublet, cartItem: T) => {
     let group = result.find(
       it => it.signInFioWallet.publicKey === signInFioWallet.publicKey,
     );
@@ -199,7 +205,7 @@ export const groupCartItemsByPaymentWallet = (
 
   for (const cartItem of cartItems) {
     if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
-      addToGroup(fioWallet, cartItem);
+      addToGroup(defaultOwnerWallet, cartItem);
       continue;
     }
 
@@ -208,7 +214,7 @@ export const groupCartItemsByPaymentWallet = (
     );
 
     if (!addressDomain || addressDomain.isPublic) {
-      addToGroup(fioWallet, cartItem);
+      addToGroup(defaultOwnerWallet, cartItem);
       continue;
     }
 

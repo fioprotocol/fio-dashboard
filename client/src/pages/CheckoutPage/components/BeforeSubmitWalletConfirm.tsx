@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import WalletAction from '../../../components/WalletAction/WalletAction';
 import BeforeSubmitEdgeWallet from './BeforeSubmitEdgeWallet';
@@ -113,6 +113,16 @@ const useMultipleWalletAction = (
       group.submitData.fioAddressItems.push(fioAddressItem);
     });
 
+    result.sort((g1, g2) => {
+      const g1Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
+        g1.signInFioWallet.from,
+      );
+      const g2Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
+        g2.signInFioWallet.from,
+      );
+      return g1Priority - g2Priority;
+    });
+
     setResult({});
     setGroupedBeforeSubmitValues(result);
   }, [fioWallet, submitData]);
@@ -131,23 +141,7 @@ const useMultipleWalletAction = (
     setResult(result => ({ ...result, ...data }));
   };
 
-  const sortedGroupedBeforeSubmitValues = useMemo(() => {
-    const groupedBeforeSubmitValuesToSort = [...groupedBeforeSubmitValues];
-
-    groupedBeforeSubmitValuesToSort.sort((g1, g2) => {
-      const g1Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
-        g1.signInFioWallet.from,
-      );
-      const g2Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
-        g2.signInFioWallet.from,
-      );
-      return g1Priority - g2Priority;
-    });
-
-    return groupedBeforeSubmitValuesToSort;
-  }, [groupedBeforeSubmitValues]);
-
-  const [signInValuesGroup] = sortedGroupedBeforeSubmitValues;
+  const [signInValuesGroup] = groupedBeforeSubmitValues;
 
   return { onSuccess, signInValuesGroup };
 };
