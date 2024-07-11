@@ -27,7 +27,7 @@ export class Cart extends Base {
           onUpdate: 'cascade',
           allowNull: true,
         },
-        metamaskUserPublicKey: {
+        publicKey: {
           type: DT.STRING,
           allowNull: true,
         },
@@ -49,7 +49,7 @@ export class Cart extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'items', 'metamaskUserPublicKey', 'userId'],
+      default: ['id', 'items', 'publicKey', 'userId'],
     };
 
     if (type in attributes) {
@@ -59,7 +59,7 @@ export class Cart extends Base {
     return attributes.default;
   }
 
-  static format({ id, items, metamaskUserPublicKey }) {
-    return { id, items, metamaskUserPublicKey };
+  static format({ id, items, publicKey }) {
+    return { id, items, publicKey };
   }
 }

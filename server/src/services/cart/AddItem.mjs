@@ -48,7 +48,7 @@ export default class AddItem extends Base {
           },
         },
       ],
-      metamaskUserPublicKey: ['string'],
+      publicKey: ['string'],
       prices: [
         {
           nested_object: {
@@ -67,16 +67,7 @@ export default class AddItem extends Base {
     };
   }
 
-  async execute({
-    id,
-    item,
-    metamaskUserPublicKey,
-    prices,
-    roe,
-    token,
-    userId: reqUserId,
-    cookies,
-  }) {
+  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, cookies }) {
     try {
       const { domain, type } = item;
 
@@ -90,8 +81,8 @@ export default class AddItem extends Base {
         refCode: refCookie,
       });
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      const userHasFreeAddress = publicKey
+        ? await FreeAddress.getItems({ publicKey: publicKey })
         : userId
         ? await FreeAddress.getItems({
             userId,
@@ -195,7 +186,7 @@ export default class AddItem extends Base {
         const cart = await Cart.create({
           items: [handledFreeCartItem],
           userId,
-          metamaskUserPublicKey,
+          publicKey,
         });
 
         return { data: Cart.format(cart.get({ plain: true })) };
@@ -224,7 +215,7 @@ export default class AddItem extends Base {
       await existingCart.update({
         items: handledCartItemsWithExistingFioHandleCustomDomain,
         userId,
-        metamaskUserPublicKey,
+        publicKey,
       });
 
       return {

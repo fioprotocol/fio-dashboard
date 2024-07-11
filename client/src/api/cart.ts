@@ -12,7 +12,7 @@ export default class Cart extends Base {
   addItem(data: {
     id?: string;
     item: CartItem;
-    metamaskUserPublicKey?: string;
+    publicKey?: string;
     prices?: NativePrices;
     roe?: number;
     userId?: string;
@@ -37,7 +37,7 @@ export default class Cart extends Base {
   handleUsersFreeCartItems(data: {
     id: string;
     userId?: string;
-    metamaskUserPublicKey?: string;
+    publicKey?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }
