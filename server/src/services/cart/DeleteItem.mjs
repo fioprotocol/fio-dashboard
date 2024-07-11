@@ -52,10 +52,10 @@ export default class DeleteItem extends Base {
         refCode: refCookie,
       });
 
-      const metamaskUserPublicKey = cart.metamaskUserPublicKey;
+      const publicKey = cart.publicKey;
 
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      const userHasFreeAddress = publicKey
+        ? await FreeAddress.getItems({ publicKey })
         : userId
         ? await FreeAddress.getItems({
             userId,

@@ -11,7 +11,7 @@ export const ADD_ITEM_FAILURE = `${prefix}/ADD_ITEM_FAILURE`;
 export const addItem = (data: {
   id?: string;
   item: CartItem;
-  metamaskUserPublicKey?: string;
+  publicKey?: string;
   prices?: NativePrices;
   roe?: number;
   token?: string;
@@ -68,7 +68,7 @@ export const HANDLE_USERS_FREE_CART_ITEMS_FAILURE = `${prefix}/HANDLE_USERS_FREE
 export const handleUsersFreeCartItems = (data: {
   id: string;
   userId?: string;
-  metamaskUserPublicKey?: string;
+  publicKey?: string;
 }): CommonPromiseAction => ({
   types: [
     HANDLE_USERS_FREE_CART_ITEMS_REQUEST,

@@ -111,7 +111,7 @@ export default class OrdersCreate extends Base {
       roe,
     });
 
-    const metamaskUserPublicKey = cart.metamaskUserPublicKey;
+    const cartPublicKey = cart.publicKey;
 
     const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
@@ -119,8 +119,8 @@ export default class OrdersCreate extends Base {
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
       refCode: refCookie,
     });
-    const userHasFreeAddress = metamaskUserPublicKey
-      ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+    const userHasFreeAddress = cartPublicKey
+      ? await FreeAddress.getItems({ publicKey: cartPublicKey })
       : userId
       ? await FreeAddress.getItems({
           userId,
@@ -212,10 +212,10 @@ export default class OrdersCreate extends Base {
       } of items) {
         let orderItemData = itemData;
 
-        if (metamaskUserPublicKey) {
+        if (cartPublicKey) {
           orderItemData = itemData
-            ? { ...itemData, metamaskUserPublicKey }
-            : { metamaskUserPublicKey };
+            ? { ...itemData, publicKey: cartPublicKey }
+            : { publicKey: cartPublicKey };
         }
 
         const orderItem = await OrderItem.create(

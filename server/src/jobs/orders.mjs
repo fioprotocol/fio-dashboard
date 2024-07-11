@@ -415,12 +415,12 @@ class OrdersJob extends CommonJob {
     fallbackFreeFioPermision,
     processOrderItem,
     existingDashboardDomain,
-    metamaskUserPublicKey,
+    publicKey,
   }) {
     const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    const userHasFreeAddress = metamaskUserPublicKey
-      ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+    const userHasFreeAddress = publicKey
+      ? await FreeAddress.getItems({ publicKey })
       : await FreeAddress.getItems({ userId });
 
     const existingUsersFreeAddress =
@@ -452,10 +452,10 @@ class OrdersJob extends CommonJob {
         );
         await OrderItem.setPending(result, id, blockchainTransactionId);
 
-        if (metamaskUserPublicKey) {
+        if (publicKey) {
           const freeAddressRecord = new FreeAddress({
             name: fioName,
-            publicKey: metamaskUserPublicKey,
+            publicKey,
           });
 
           await freeAddressRecord.save();
@@ -955,7 +955,7 @@ class OrdersJob extends CommonJob {
             fallbackFreeFioActor,
             fallbackFreeFioPermision,
             existingDashboardDomain,
-            metamaskUserPublicKey: data && data.metamaskUserPublicKey,
+            publicKey: data && data.publicKey,
             processOrderItem,
           });
         }
@@ -1001,12 +1001,12 @@ class OrdersJob extends CommonJob {
 
         if (
           data &&
-          data.metamaskUserPublicKey &&
+          data.publicKey &&
           domainOwner &&
           [METAMASK_DOMAIN_NAME].includes(domain)
         ) {
           const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
-            publicKey: data && data.metamaskUserPublicKey,
+            publicKey: data && data.publicKey,
           });
 
           const existingUsersFreeAddress =
@@ -1045,13 +1045,13 @@ class OrdersJob extends CommonJob {
 
             if (
               data &&
-              data.metamaskUserPublicKey &&
+              data.publicKey &&
               domainOwner &&
               [METAMASK_DOMAIN_NAME].includes(domain)
             ) {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
-                publicKey: data.metamaskUserPublicKey,
+                publicKey: data.publicKey,
               });
               await freeAddressRecord.save();
             }

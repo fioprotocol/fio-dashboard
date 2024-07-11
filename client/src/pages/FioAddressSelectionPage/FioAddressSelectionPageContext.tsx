@@ -766,7 +766,7 @@ export const useContext = (): UseContextProps => {
         addItemToCart({
           id: cartId,
           item: selectedItem,
-          metamaskUserPublicKey,
+          publicKey: metamaskUserPublicKey,
           prices: prices?.nativeFio,
           roe,
           userId,
