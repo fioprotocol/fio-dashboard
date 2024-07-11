@@ -248,7 +248,7 @@ export const useContext = (): {
   }, [paymentWalletPublicKey, assignmentWalletPublicKey, setAssignmentWallet]);
 
   const getOrder = useCallback(async () => {
-    let result;
+    let result: Order;
 
     try {
       result = await apis.orders.getActive(getActiveOrderParams);
@@ -274,7 +274,6 @@ export const useContext = (): {
     setGetOrderLoading(false);
   }, [cartItems, getActiveOrderParams, setWallet]);
 
-  // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
   useEffect(() => {
     if (isNoProfileFlow) {
       return;
@@ -284,19 +283,7 @@ export const useContext = (): {
       return;
     }
 
-    if (order?.publicKey === paymentWalletPublicKey) {
-      return;
-    }
-
-    const oldWalletType = fioWallets.find(
-      ({ publicKey }) => publicKey === order.publicKey,
-    )?.from;
-
-    const newWalletType = fioWallets.find(
-      ({ publicKey }) => publicKey === paymentWalletPublicKey,
-    )?.from;
-
-    if (oldWalletType === newWalletType) {
+    if (order?.publicKey === assignmentWalletPublicKey) {
       return;
     }
 
@@ -304,7 +291,7 @@ export const useContext = (): {
       .create({
         cartId,
         roe,
-        publicKey: paymentWalletPublicKey,
+        publicKey: assignmentWalletPublicKey,
         paymentProcessor: paymentProvider,
         prices: prices?.nativeFio,
         data: {
@@ -322,7 +309,7 @@ export const useContext = (): {
     isNoProfileFlow,
     order,
     paymentProvider,
-    paymentWalletPublicKey,
+    assignmentWalletPublicKey,
     prices?.nativeFio,
     roe,
     userId,
@@ -674,7 +661,7 @@ export const useContext = (): {
   );
 
   const groupedCartItemsByPaymentWallet = groupCartItemsByPaymentWallet(
-    paymentWallet,
+    paymentWallet?.publicKey,
     cartItems,
     fioWallets,
     userDomains,

@@ -14,7 +14,7 @@ import {
 import { SignedTxArgs } from '../../api/fio';
 import { GroupedCartItemsByPaymentWallet } from '../../util/cart';
 
-export type PayWith = GroupedCartItemsByPaymentWallet & {
+export type PayWith = GroupedCartItemsByPaymentWallet<CartItem> & {
   notEnoughFio: boolean;
   totalCostNativeFio: number;
   available: WalletBalancesItem;

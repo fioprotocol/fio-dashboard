@@ -17,16 +17,18 @@ export type OrderDetailsProps = {
   orderItem: OrderDetailed;
 };
 
-export type TotalCost = {
-  fioNativeTotalPrice?: string;
-  freeTotalPrice?: string;
-  usdcTotalPrice?: string;
-};
-
 export type InfoBadgeData = {
   paymentProvider: PaymentProvider;
   purchaseStatus: number;
   paymentStatus: PaymentStatus;
+};
+
+export type PaymentInfo = {
+  publicKey: string;
+  orderNumber: string;
+  paidWith?: string;
+  totalFioNativeCostPrice?: number;
+  isFree?: boolean;
 };
 
 export type ContextProps = {
@@ -42,11 +44,7 @@ export type ContextProps = {
   isRetryAvailable: boolean;
   hideTopCloseButton?: boolean;
   title: ReactNode;
-  paymentInfo: {
-    orderNumber: string;
-    paidWith?: string;
-    totalCostPrice: OrderDetailedTotalCost;
-  };
+  paymentInfo: PaymentInfo[];
   orderItemsToRender: OrderItemDetailed[];
   partialErrorItems: OrderItemDetailed[];
   partialErrorTotalCost: OrderDetailedTotalCost;
