@@ -10,16 +10,19 @@ import {
   ERROR_TYPES,
 } from '../../constants/errors';
 import { ROUTES } from '../../constants/routes';
+import { PAYMENT_PROVIDER } from '../../constants/purchase';
 
-import { PaymentProvider, PaymentStatus } from '../../types';
-
-import { ContextProps, OrderDetailsProps, PaymentInfo } from './types';
 import {
   fioDomains as fioDomainsSelector,
   fioWallets as fioWalletsSelector,
 } from '../../redux/fio/selectors';
+import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
+
 import { groupCartItemsByPaymentWallet } from '../../util/cart';
-import { PAYMENT_PROVIDER } from '../../constants/purchase';
+
+import { PaymentProvider, PaymentStatus } from '../../types';
+
+import { ContextProps, OrderDetailsProps, PaymentInfo } from './types';
 
 const DEFAULT_BUTTON_TEXT_VALUE = 'Close';
 
@@ -27,6 +30,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   const history = useHistory<{ orderId: string }>();
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomains = useSelector(fioDomainsSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
 
   const defaultOnClick = () => history.goBack();
 
@@ -88,7 +92,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   );
 
   const paymentInfo: PaymentInfo[] =
-    paymentProcessor === PAYMENT_PROVIDER.FIO
+    paymentProcessor === PAYMENT_PROVIDER.FIO && !isNoProfileFlow
       ? groupedCartItemsByPaymentWallet.map(it => ({
           publicKey: it.signInFioWallet.publicKey,
           paidWith: it.signInFioWallet.name,

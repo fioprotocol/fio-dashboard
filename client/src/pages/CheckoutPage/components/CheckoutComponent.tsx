@@ -92,16 +92,18 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           ))
         )}
       </div>
-      <div className={classes.details}>
-        <AssignmentWallet {...rest} />
-        {paymentAssignmentWallets.length > 1 &&
-          rest.paymentOption === PAYMENT_OPTIONS.FIO && (
-            <>
-              <div className={classes.delimiter} />
-              <PaymentWallet {...rest} totalCost={costNativeFio} />
-            </>
-          )}
-      </div>
+      {!isNoProfileFlow && (
+        <div className={classes.details}>
+          <AssignmentWallet {...rest} />
+          {paymentAssignmentWallets.length > 1 &&
+            rest.paymentOption === PAYMENT_OPTIONS.FIO && (
+              <>
+                <div className={classes.delimiter} />
+                <PaymentWallet {...rest} totalCost={costNativeFio} />
+              </>
+            )}
+        </div>
+      )}
       <PaymentOptionComponent
         {...rest}
         cart={cart}
