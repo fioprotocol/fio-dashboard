@@ -311,12 +311,12 @@ export const useContext = (): {
 
   const createOrder = useCallback(
     async ({
-      paymentWalletPublicKey,
+      assignmentWalletPublicKey,
       fioWallets,
       orderParamsFromLocation,
       isFree,
     }: {
-      paymentWalletPublicKey: string;
+      assignmentWalletPublicKey: string;
       fioWallets: FioWalletDoublet[];
       orderParamsFromLocation: CreateOrderActionData;
       isFree: boolean;
@@ -328,7 +328,7 @@ export const useContext = (): {
         orderParams = {
           cartId,
           roe,
-          publicKey: paymentWalletPublicKey,
+          publicKey: assignmentWalletPublicKey,
           paymentProcessor: PAYMENT_PROVIDER.FIO,
           prices: prices?.nativeFio,
           data: {
@@ -343,7 +343,7 @@ export const useContext = (): {
         orderParams = { ...orderParamsFromLocation };
         if (!orderParams.publicKey)
           orderParams.publicKey =
-            paymentWalletPublicKey || fioWallets[0].publicKey;
+            assignmentWalletPublicKey || fioWallets[0].publicKey;
       }
 
       let cartHasExpiredDomain = false;
@@ -529,14 +529,14 @@ export const useContext = (): {
     () => {
       setOrder(undefined);
       createOrder({
-        paymentWalletPublicKey,
+        assignmentWalletPublicKey,
         fioWallets,
         orderParamsFromLocation,
         isFree,
       });
     },
     [
-      paymentWalletPublicKey,
+      assignmentWalletPublicKey,
       fioWallets,
       orderParamsFromLocation,
       cartItems,
@@ -547,7 +547,7 @@ export const useContext = (): {
       !orderNumberParam &&
       !getOrderLoading &&
       !fioLoading &&
-      !!paymentWalletPublicKey &&
+      !!assignmentWalletPublicKey &&
       !!fioWallets.length,
   );
 
@@ -708,7 +708,7 @@ export const useContext = (): {
   const onFinish = async (results: RegistrationResult) => {
     await apis.orders.update(order.id, {
       status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
-      publicKey: paymentWalletPublicKey,
+      publicKey: assignmentWalletPublicKey,
       results,
     });
 
@@ -815,6 +815,7 @@ export const useContext = (): {
       createOrderLoading ||
       !paymentProvider ||
       !paymentWalletPublicKey ||
+      !assignmentWalletPublicKey ||
       refProfileLoading,
     walletBalancesAvailable,
     paymentWallet,
