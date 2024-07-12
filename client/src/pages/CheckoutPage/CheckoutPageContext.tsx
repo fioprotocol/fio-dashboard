@@ -508,9 +508,12 @@ export const useContext = (): {
 
   useEffect(() => {
     if (
-      !paymentWalletPublicKey &&
       paymentWallets &&
-      paymentWallets.length > 0
+      paymentWallets.length > 0 &&
+      (!paymentWalletPublicKey ||
+        !paymentWallets
+          .map(it => it.publicKey)
+          .includes(paymentWalletPublicKey))
     ) {
       const [defaultWallet] = paymentWallets;
       setWallet(defaultWallet.publicKey);
@@ -678,19 +681,23 @@ export const useContext = (): {
   );
 
   const payWith: PayWith[] = paymentWalletPublicKey
-    ? groupedCartItemsByPaymentWallet.map(it => {
-        const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
-        const available =
-          fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
-        const notEnoughFio = available.nativeFio < totalCostNativeFio;
+    ? groupedCartItemsByPaymentWallet
+        .filter(
+          it => !!fioWalletsBalances.wallets[it.signInFioWallet.publicKey],
+        )
+        .map(it => {
+          const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
+          const available =
+            fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
+          const notEnoughFio = available.nativeFio < totalCostNativeFio;
 
-        return {
-          ...it,
-          available,
-          notEnoughFio,
-          totalCostNativeFio,
-        };
-      })
+          return {
+            ...it,
+            available,
+            notEnoughFio,
+            totalCostNativeFio,
+          };
+        })
     : [];
 
   const onClose = useCallback(() => {
