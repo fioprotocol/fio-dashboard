@@ -171,24 +171,30 @@ export type GroupedCartItemsByPaymentWallet<T extends GroupedCartItem> = {
   cartItems: T[];
 };
 
+export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
+  groups: GroupedCartItemsByPaymentWallet<T>[];
+  hasPublicCartItems: boolean;
+};
+
 export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   defaultWalletPublicKey: string,
   cartItems: T[],
   fioWallets: FioWalletDoublet[],
   userDomains: FioDomainDoublet[],
-): GroupedCartItemsByPaymentWallet<T>[] => {
+): GroupCartItemsByPaymentWalletResult<T> => {
   if (!defaultWalletPublicKey) {
-    return [];
+    return { groups: [], hasPublicCartItems: false };
   }
 
   const defaultOwnerWallet = fioWallets.find(
     wallet => wallet.publicKey === defaultWalletPublicKey,
   );
 
-  const result: GroupedCartItemsByPaymentWallet<T>[] = [];
+  let hasPublicCartItems = false;
+  const groups: GroupedCartItemsByPaymentWallet<T>[] = [];
 
   const addToGroup = (signInFioWallet: FioWalletDoublet, cartItem: T) => {
-    let group = result.find(
+    let group = groups.find(
       it => it.signInFioWallet.publicKey === signInFioWallet.publicKey,
     );
 
@@ -197,7 +203,7 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
         signInFioWallet,
         cartItems: [],
       };
-      result.push(group);
+      groups.push(group);
     }
 
     group.cartItems.push(cartItem);
@@ -205,6 +211,7 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
 
   for (const cartItem of cartItems) {
     if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
+      hasPublicCartItems = true;
       addToGroup(defaultOwnerWallet, cartItem);
       continue;
     }
@@ -214,6 +221,7 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
     );
 
     if (!addressDomain || addressDomain.isPublic) {
+      hasPublicCartItems = true;
       addToGroup(defaultOwnerWallet, cartItem);
       continue;
     }
@@ -225,5 +233,5 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
     addToGroup(domainOwnerWallet, cartItem);
   }
 
-  return result;
+  return { groups, hasPublicCartItems };
 };
