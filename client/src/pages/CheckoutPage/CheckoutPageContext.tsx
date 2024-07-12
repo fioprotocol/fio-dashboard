@@ -19,11 +19,9 @@ import {
   fioDomains as fioDomainsSelector,
   loading as fioLoadingSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
-  privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
 import {
   cartId as cartIdSelector,
-  cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   assignmentWalletPublicKey as assignmentWalletPublicKeySelector,
@@ -145,7 +143,6 @@ export const useContext = (): {
   const fioWallets = useSelector(fioWalletsSelector);
   const fioLoading = useSelector(fioLoadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
-  const privateDomains = useSelector(privateDomainsSelector);
   const cartItems = useSelector(cartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const assignmentWalletPublicKey = useSelector(
@@ -157,9 +154,6 @@ export const useContext = (): {
   const userDomains = useSelector(fioDomainsSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const roe = useSelector(roeSelector);
-  const cartHasItemsWithPrivateDomain = useSelector(
-    cartHasItemsWithPrivateDomainSelector,
-  );
   const cartLoading = useSelector(cartLoadingSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
   const refProfileLoading = useSelector(refProfileLoadingSelector);
@@ -481,25 +475,9 @@ export const useContext = (): {
       ? 'Make Purchase'
       : PAYMENT_PROVIDER_PAYMENT_TITLE[paymentProvider];
 
-  const ownerPubKeysPrivateDomains: string[] = [];
-  if (cartHasItemsWithPrivateDomain) {
-    cartItems.forEach(({ address, domain }) => {
-      if (privateDomains[domain] && !!address) {
-        ownerPubKeysPrivateDomains.push(privateDomains[domain].walletPublicKey);
-      }
-    });
-  }
-
   const paymentAssignmentWallets = fioWallets
     .filter(wallet => {
       if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
-      if (
-        cartHasItemsWithPrivateDomain &&
-        paymentOption === PAYMENT_OPTIONS.FIO &&
-        ownerPubKeysPrivateDomains.length // cart has at least one item with private domain but not custom domain
-      ) {
-        return ownerPubKeysPrivateDomains.indexOf(wallet.publicKey) > -1;
-      }
 
       return wallet.available > totalCostNativeFio;
     })
