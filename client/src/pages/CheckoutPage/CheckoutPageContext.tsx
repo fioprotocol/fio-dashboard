@@ -119,6 +119,7 @@ export const useContext = (): {
   payWith: PayWith[];
   isProcessing: boolean;
   isNoProfileFlow: boolean;
+  hasPublicCartItems: boolean;
   title: string;
   order: Order;
   payment: Payment;
@@ -250,7 +251,7 @@ export const useContext = (): {
       cartIsRelative(cartItems, result.orderItems || [])
     ) {
       if (result.publicKey) {
-        setWallet(result.publicKey);
+        setAssignmentWallet(result.publicKey);
       }
       setOrder(result);
       setGetOrderLoading(false);
@@ -260,7 +261,7 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  }, [cartItems, getActiveOrderParams, setWallet]);
+  }, [cartItems, getActiveOrderParams, setAssignmentWallet]);
 
   useEffect(() => {
     if (isNoProfileFlow) {
@@ -398,7 +399,7 @@ export const useContext = (): {
       }
 
       if (result && result.id) {
-        if (result.publicKey) setWallet(result.publicKey);
+        if (result.publicKey) setAssignmentWallet(result.publicKey);
         setOrderError(null);
         setOrder(result);
         setCreateOrderLoading(false);
@@ -415,7 +416,7 @@ export const useContext = (): {
       history,
       prices?.nativeFio,
       roe,
-      setWallet,
+      setAssignmentWallet,
       userId,
     ],
   );
@@ -441,9 +442,6 @@ export const useContext = (): {
             dispatch(refreshFioNames(fioWallet.publicKey));
           }
         }
-        if (!paymentWalletPublicKey && fioWallets.length) {
-          setWallet(fioWallets[0].publicKey);
-        }
       }
       getOrder();
     },
@@ -468,36 +466,64 @@ export const useContext = (): {
     paymentWalletPublicKey,
   );
 
-  const { costNativeFio: totalCostNativeFio } = totalCost(cartItems, roe);
-
   const title =
     isFree || !paymentProvider
       ? 'Make Purchase'
       : PAYMENT_PROVIDER_PAYMENT_TITLE[paymentProvider];
 
-  const paymentAssignmentWallets = fioWallets
-    .filter(wallet => {
-      if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
+  const {
+    groups: groupedCartItemsByPaymentWallet,
+    hasPublicCartItems,
+  } = groupCartItemsByPaymentWallet(
+    paymentWallet?.publicKey,
+    cartItems,
+    fioWallets,
+    userDomains,
+  );
 
-      return wallet.available > totalCostNativeFio;
-    })
-    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name));
+  const publicCartItemsPaymentWallet = hasPublicCartItems
+    ? groupedCartItemsByPaymentWallet.find(
+        it => it.signInFioWallet.publicKey === paymentWallet.publicKey,
+      )
+    : undefined;
+
+  const { costNativeFio: publicCartItemsCost } = totalCost(
+    publicCartItemsPaymentWallet?.cartItems ?? [],
+    roe,
+  );
+
+  const paymentWallets = useMemo(
+    () =>
+      fioWallets
+        .filter(wallet => {
+          if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
+
+          return wallet.available > publicCartItemsCost;
+        })
+        .sort(
+          (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+        ),
+    [fioWallets, isFree, paymentOption, publicCartItemsCost],
+  );
 
   useEffect(() => {
-    if (!paymentAssignmentWallets || paymentAssignmentWallets.length === 0) {
-      return;
-    }
-    const [defaultWallet] = paymentAssignmentWallets;
-    if (!paymentAssignmentWallets) {
+    if (
+      !paymentWalletPublicKey &&
+      paymentWallets &&
+      paymentWallets.length > 0
+    ) {
+      const [defaultWallet] = paymentWallets;
       setWallet(defaultWallet.publicKey);
     }
-    if (!assignmentWalletPublicKey) {
+    if (!assignmentWalletPublicKey && fioWallets && fioWallets.length > 0) {
+      const [defaultWallet] = fioWallets;
       setAssignmentWallet(defaultWallet.publicKey);
     }
   }, [
     paymentWalletPublicKey,
     assignmentWalletPublicKey,
-    paymentAssignmentWallets,
+    paymentWallets,
+    fioWallets,
     setWallet,
     setAssignmentWallet,
   ]);
@@ -651,13 +677,6 @@ export const useContext = (): {
     cartLoading,
   );
 
-  const groupedCartItemsByPaymentWallet = groupCartItemsByPaymentWallet(
-    paymentWallet?.publicKey,
-    cartItems,
-    fioWallets,
-    userDomains,
-  );
-
   const payWith: PayWith[] = paymentWalletPublicKey
     ? groupedCartItemsByPaymentWallet.map(it => {
         const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
@@ -803,10 +822,11 @@ export const useContext = (): {
     roe,
     fioWallets,
     fioWalletsBalances,
-    paymentAssignmentWallets,
+    paymentAssignmentWallets: paymentWallets,
     payWith,
     isProcessing,
     isNoProfileFlow,
+    hasPublicCartItems,
     title,
     order,
     payment,

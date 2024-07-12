@@ -25,6 +25,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const {
     paymentAssignmentWallets,
     isNoProfileFlow,
+    hasPublicCartItems,
     paymentWalletPublicKey,
     payWith,
   } = rest;
@@ -95,7 +96,8 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       {!isNoProfileFlow && (
         <div className={classes.details}>
           <AssignmentWallet {...rest} />
-          {paymentAssignmentWallets.length > 1 &&
+          {hasPublicCartItems &&
+            paymentAssignmentWallets.length > 1 &&
             rest.paymentOption === PAYMENT_OPTIONS.FIO && (
               <>
                 <div className={classes.delimiter} />

@@ -37,6 +37,7 @@ type DefaultProps = {
   paymentProvider: PaymentProvider;
   isFree: boolean;
   isNoProfileFlow: boolean;
+  hasPublicCartItems: boolean;
   setWallet: (publicKey: string) => void;
   setAssignmentWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;

@@ -289,7 +289,7 @@ const useMultipleWalletAction = (
 
     const { cartItems } = submitData;
 
-    const groupedCartItems = groupCartItemsByPaymentWallet(
+    const { groups: groupedCartItems } = groupCartItemsByPaymentWallet(
       fioWallet?.publicKey,
       cartItems,
       fioWallets,

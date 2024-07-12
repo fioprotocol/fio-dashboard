@@ -84,7 +84,9 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   const orderItemsToRender = regItems?.length ? regItems : errItems;
   const totalCostPrice = regItems?.length ? regTotalCost : errTotalCost;
 
-  const groupedCartItemsByPaymentWallet = groupCartItemsByPaymentWallet(
+  const {
+    groups: groupedCartItemsByPaymentWallet,
+  } = groupCartItemsByPaymentWallet(
     publicKey,
     orderItemsToRender,
     fioWallets,
