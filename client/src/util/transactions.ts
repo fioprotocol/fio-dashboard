@@ -150,7 +150,7 @@ const processTransaction = (
       }
       if (otherParams.isFeeProcessed) {
         if (!otherParams?.feeActors?.includes(data?.to)) {
-          otherParams.feeActors.push(data?.to);
+          otherParams?.feeActors?.push(data?.to);
 
           if (data?.to === actor) {
             nativeAmount = new MathOp(existingTrx.nativeAmount)
