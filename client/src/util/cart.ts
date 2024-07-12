@@ -182,13 +182,13 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   fioWallets: FioWalletDoublet[],
   userDomains: FioDomainDoublet[],
 ): GroupCartItemsByPaymentWalletResult<T> => {
-  if (!defaultWalletPublicKey) {
-    return { groups: [], hasPublicCartItems: false };
-  }
-
   const defaultOwnerWallet = fioWallets.find(
     wallet => wallet.publicKey === defaultWalletPublicKey,
   );
+
+  if (!defaultOwnerWallet) {
+    return { groups: [], hasPublicCartItems: false };
+  }
 
   let hasPublicCartItems = false;
   const groups: GroupedCartItemsByPaymentWallet<T>[] = [];

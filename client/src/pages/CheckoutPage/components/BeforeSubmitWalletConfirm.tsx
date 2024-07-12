@@ -17,7 +17,7 @@ import {
   BeforeSubmitValues,
   SignFioAddressItem,
 } from '../types';
-import { FioWalletDoublet } from '../../../types';
+import { AnyType, FioWalletDoublet } from '../../../types';
 
 const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
   const {
@@ -30,11 +30,16 @@ const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
     setProcessing,
   } = props;
 
-  const { signInValuesGroup, onSuccess } = useMultipleWalletAction(
+  const { signInValuesGroup, onSuccess } = useMultipleWalletAction({
     fioWallet,
     submitData,
-    onProcessingEnd,
-  );
+    onCollectedSuccess: onProcessingEnd,
+  });
+
+  const handlePartOfSubmitDataSuccess = (data: AnyType) => {
+    setProcessing(false);
+    onSuccess(data);
+  };
 
   return (
     <>
@@ -42,7 +47,7 @@ const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
         fioWallet={signInValuesGroup?.signInFioWallet}
         fee={fee}
         onCancel={onCancel}
-        onSuccess={onSuccess}
+        onSuccess={handlePartOfSubmitDataSuccess}
         submitData={signInValuesGroup?.submitData}
         processing={processing}
         setProcessing={setProcessing}
@@ -67,11 +72,17 @@ const WALLET_TYPE_SIGN_IN_ORDER = [
   WALLET_CREATED_FROM.WITHOUT_REGISTRATION,
 ];
 
-const useMultipleWalletAction = (
-  fioWallet: FioWalletDoublet,
-  submitData?: BeforeSubmitValues,
-  onCollectedSuccess?: (results: BeforeSubmitData) => void,
-) => {
+type MultipleWalletActionHookProps = {
+  fioWallet: FioWalletDoublet;
+  submitData?: BeforeSubmitValues;
+  onCollectedSuccess?: (results: BeforeSubmitData) => void;
+};
+
+const useMultipleWalletAction = ({
+  fioWallet,
+  submitData,
+  onCollectedSuccess,
+}: MultipleWalletActionHookProps) => {
   const onCollectedSuccessRef = useRef(onCollectedSuccess);
   onCollectedSuccessRef.current = onCollectedSuccess;
 

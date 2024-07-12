@@ -19,7 +19,7 @@ import {
   fireActionAnalyticsEventError,
 } from '../../util/analytics';
 
-import { PinConfirmation, FioActions } from '../../types';
+import { PinConfirmation, FioActions, AnyType } from '../../types';
 import { Props } from './types';
 
 const EdgeConfirmActionContainer: React.FC<Props> = props => {
@@ -66,6 +66,8 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         data: additionalData,
       } = pinConfirmationResult;
 
+      let result: AnyType;
+
       if (confirmationAction !== action) return;
       if (
         !confirmationError &&
@@ -75,7 +77,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         setProcessing(true);
         if (edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);
         try {
-          const result = await submitAction({
+          result = await submitAction({
             edgeAccount,
             keys: fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : null,
             allWalletKeysInAccount: fioWalletEdgeId ? null : keys,
@@ -84,8 +86,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
           if (!edgeAccountLogoutBefore)
             await waitForEdgeAccountStop(edgeAccount);
-
-          onSuccess(result);
 
           fireActionAnalyticsEvent(action, additionalData);
 
@@ -127,6 +127,13 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       if (!confirmationError) resetPinConfirm();
       if (edgeAccount != null) {
         await waitForEdgeAccountStop(edgeAccount);
+      }
+
+      init.current = false;
+      setInitLaunch(false);
+
+      if (result) {
+        onSuccess(result);
       }
     },
     [

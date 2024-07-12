@@ -59,7 +59,7 @@ import { log } from '../../util/general';
 import '../../helpers/gt-sdk';
 
 import { PurchaseValues, PurchaseNowTypes } from './types';
-import { FioWalletDoublet, RegistrationResult } from '../../types';
+import { AnyType, FioWalletDoublet, RegistrationResult } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -210,11 +210,16 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     setProcessingDispatched(false);
   };
 
-  const { signInValuesGroup, onSuccess } = useMultipleWalletAction(
-    currentWallet,
+  const { signInValuesGroup, onSuccess } = useMultipleWalletAction({
+    fioWallet: currentWallet,
     submitData,
-    onProcessingEnd,
-  );
+    onCollectedSuccess: onProcessingEnd,
+  });
+
+  const handlePartOfSubmitDataSuccess = (data: AnyType) => {
+    setProcessing(false);
+    onSuccess(data);
+  };
 
   return (
     <>
@@ -222,7 +227,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
         fioWallet={signInValuesGroup?.signInFioWallet}
         ownerFioWallet={currentWallet}
         onCancel={onCancel}
-        onSuccess={onSuccess}
+        onSuccess={handlePartOfSubmitDataSuccess}
         submitData={signInValuesGroup?.submitData}
         processing={isProcessing}
         setProcessing={setProcessingDispatched}
@@ -264,11 +269,17 @@ const WALLET_TYPE_SIGN_IN_ORDER = [
   WALLET_CREATED_FROM.WITHOUT_REGISTRATION,
 ];
 
-const useMultipleWalletAction = (
-  fioWallet: FioWalletDoublet,
-  submitData?: PurchaseValues,
-  onCollectedSuccess?: (results: RegistrationResult) => void,
-) => {
+type MultipleWalletActionHookProps = {
+  fioWallet: FioWalletDoublet;
+  submitData?: PurchaseValues;
+  onCollectedSuccess?: (results: RegistrationResult) => void;
+};
+
+const useMultipleWalletAction = ({
+  fioWallet,
+  submitData,
+  onCollectedSuccess,
+}: MultipleWalletActionHookProps) => {
   const onCollectedSuccessRef = useRef(onCollectedSuccess);
   onCollectedSuccessRef.current = onCollectedSuccess;
 
