@@ -11,6 +11,7 @@ import { showGenericErrorModal } from '../../redux/modal/actions';
 import {
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
+  assignmentWalletPublicKey as assignmentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
@@ -36,7 +37,6 @@ import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
-import { emptyWallet } from '../../redux/fio/reducer';
 
 import {
   fireAnalyticsEvent,
@@ -69,7 +69,6 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const { onFinish, disabled = false } = props;
 
   const cartItems = useSelector(cartItemsSelector);
-  const fioWallets = useSelector(fioWalletsSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const prices = useSelector(pricesSelector);
@@ -81,6 +80,9 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const [captchaResolving, toggleCaptchaResolving] = useState<boolean>(false);
   const [captchaResult, setCaptchaResult] = useState<CaptchaResult | null>(
     null,
+  );
+  const assignmentWalletPublicKey = useSelector(
+    assignmentWalletPublicKeySelector,
   );
 
   const dispatch = useDispatch();
@@ -106,12 +108,6 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     },
     [t0],
   );
-
-  const currentWallet = (paymentWalletPublicKey &&
-    fioWallets &&
-    fioWallets.find(item => item.publicKey === paymentWalletPublicKey)) || {
-    ...emptyWallet,
-  };
 
   const checkCaptcha = useCallback(async () => {
     try {
@@ -211,7 +207,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   };
 
   const { signInValuesGroup, onSuccess } = useMultipleWalletAction({
-    fioWallet: currentWallet,
+    fioWallet: paymentWalletPublicKey,
     submitData,
     onCollectedSuccess: onProcessingEnd,
   });
@@ -225,7 +221,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     <>
       <WalletAction
         fioWallet={signInValuesGroup?.signInFioWallet}
-        ownerFioWallet={currentWallet}
+        ownerFioPublicKey={assignmentWalletPublicKey}
         onCancel={onCancel}
         onSuccess={handlePartOfSubmitDataSuccess}
         submitData={signInValuesGroup?.submitData}
@@ -270,7 +266,7 @@ const WALLET_TYPE_SIGN_IN_ORDER = [
 ];
 
 type MultipleWalletActionHookProps = {
-  fioWallet: FioWalletDoublet;
+  fioWallet: string;
   submitData?: PurchaseValues;
   onCollectedSuccess?: (results: RegistrationResult) => void;
 };
@@ -301,7 +297,7 @@ const useMultipleWalletAction = ({
     const { cartItems } = submitData;
 
     const { groups: groupedCartItems } = groupCartItemsByPaymentWallet(
-      fioWallet?.publicKey,
+      fioWallet,
       cartItems,
       fioWallets,
       userDomains,

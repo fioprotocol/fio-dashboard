@@ -7,7 +7,7 @@ import { AnyObject } from '../../types';
 
 type WalletTypeActionProps = {
   allowDisconnectAll?: boolean;
-  ownerFioWallet?: FioWalletDoublet;
+  ownerFioPublicKey?: string;
   fioWallet: FioWalletDoublet;
   onSuccess: (data: AnyObject) => void;
   onCancel: () => void;

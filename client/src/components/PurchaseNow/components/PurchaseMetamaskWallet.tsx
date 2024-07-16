@@ -40,7 +40,7 @@ const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  ownerFioWallet?: FioWalletDoublet;
+  ownerFioPublicKey?: string;
   processing: boolean;
   submitData: PurchaseValues;
   onSuccess: (result: RegistrationResult) => void;
@@ -51,7 +51,7 @@ type Props = {
 export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const {
     fioWallet,
-    ownerFioWallet = fioWallet,
+    ownerFioPublicKey = fioWallet?.publicKey,
     processing,
     submitData,
     onCancel,
@@ -160,7 +160,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               ],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
-              owner_fio_public_key: ownerFioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
               is_public: 0,
               tpid: apis.fio.tpid,
@@ -222,7 +222,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
               fio_domain: registration.fioName,
-              owner_fio_public_key: ownerFioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               tpid: apis.fio.tpid,
               max_fee: new MathOp(registration.fee)
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
@@ -273,7 +273,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
-              owner_fio_public_key: ownerFioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
               tpid: apis.fio.tpid,
               max_fee: new MathOp(registration.fee)
@@ -296,8 +296,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
     setActionParams(actionParamsArr);
   }, [
     derivationIndex,
-    fioWallet.publicKey,
-    ownerFioWallet.publicKey,
+    ownerFioPublicKey,
     handleRegistrationIndexedItems,
     registrations,
   ]);

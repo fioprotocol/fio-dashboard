@@ -30,7 +30,7 @@ import { PurchaseValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  ownerFioWallet?: FioWalletDoublet;
+  ownerFioPublicKey?: string;
   onSuccess: (results: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -42,7 +42,7 @@ type Props = {
 const PurchaseLedgerWallet: React.FC<Props> = props => {
   const {
     fioWallet,
-    ownerFioWallet = fioWallet,
+    ownerFioPublicKey = fioWallet?.publicKey,
     onSuccess,
     onCancel,
     setProcessing,
@@ -90,14 +90,14 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
             action = ACTIONS.registerFioDomain;
             data = {
               fio_domain: registration.fioName,
-              owner_fio_public_key: ownerFioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               tpid: apis.fio.domainTpid,
             };
           } else if (registration.type === CART_ITEM_TYPE.ADDRESS) {
             action = ACTIONS.registerFioAddress;
             data = {
               fio_address: registration.fioName,
-              owner_fio_public_key: ownerFioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               tpid: apis.fio.tpid,
             };
           }
@@ -155,7 +155,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
     [
       fioWallet.data.derivationIndex,
       fioWallet.publicKey,
-      ownerFioWallet.publicKey,
+      ownerFioPublicKey,
       submitData,
     ],
   );
