@@ -201,20 +201,20 @@ const LedgerConnect: React.FC<Props> = props => {
   useEffect(() => {
     if (fioApp != null) {
       setAwaitingLedger(true);
+      setConnecting(true);
       afterConnect(fioApp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fioApp]);
+  }, [fioApp, fioWallet?.publicKey]);
 
   // Handle transport created
-  useEffectOnce(
-    () => {
+  useEffect(() => {
+    if (transport != null && connecting) {
       setAwaitingFioApp(true);
       connectFioApp();
-    },
-    [connectFioApp],
-    transport != null && connecting,
-  );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connecting, transport]);
 
   useEffect(() => {
     return () => {
