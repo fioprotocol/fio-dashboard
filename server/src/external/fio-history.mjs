@@ -14,7 +14,7 @@ export default class FioHistory {
   async requestHistory(params) {
     for (const url of this.historyNodeUrls) {
       try {
-        const result = await fetch(`${url}/history/get_actions`, {
+        const result = await fetch(`${url}history/get_actions`, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -35,7 +35,7 @@ export default class FioHistory {
   async getTransaction(transactionId) {
     for (const url of this.historyNodeUrls) {
       try {
-        const result = await fetch(`${url}/history/get_transaction`, {
+        const result = await fetch(`${url}history/get_transaction`, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
