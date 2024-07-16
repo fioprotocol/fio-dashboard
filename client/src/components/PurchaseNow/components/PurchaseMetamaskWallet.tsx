@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 
 import {
   MetamaskConfirmAction,
@@ -6,7 +6,6 @@ import {
 } from '../../MetamaskConfirmAction';
 
 import MathOp from '../../../util/math';
-import useEffectOnce from '../../../hooks/general';
 import { makeRegistrationOrder } from '../middleware';
 import apis from '../../../api';
 
@@ -301,15 +300,18 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
     registrations,
   ]);
 
-  useEffectOnce(
-    () => {
-      if (submitData) {
-        handleActionParams();
-      }
-    },
-    [],
-    !!submitData,
-  );
+  const onCancelAction = useCallback(() => {
+    if (onCancel) {
+      onCancel();
+    }
+    setActionParams(null);
+  }, [onCancel]);
+
+  useEffect(() => {
+    if (submitData && !actionParams) {
+      handleActionParams();
+    }
+  }, [actionParams, handleActionParams, submitData]);
 
   if (!submitData && !actionParams) return null;
 
@@ -320,7 +322,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}
-      onCancel={onCancel}
+      onCancel={onCancelAction}
       onSuccess={handlePurchaseResults}
       returnOnlySignedTxn
     />

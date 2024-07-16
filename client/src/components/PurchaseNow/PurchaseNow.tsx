@@ -291,6 +291,8 @@ const useMultipleWalletAction = ({
 
   useEffect(() => {
     if (!submitData) {
+      setResult(initialRegistrationResult);
+      setGroupedPurchaseValues([]);
       return;
     }
 
