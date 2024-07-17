@@ -11,7 +11,6 @@ import { showGenericErrorModal } from '../../redux/modal/actions';
 import {
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
-  assignmentWalletPublicKey as assignmentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
@@ -80,9 +79,6 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const [captchaResolving, toggleCaptchaResolving] = useState<boolean>(false);
   const [captchaResult, setCaptchaResult] = useState<CaptchaResult | null>(
     null,
-  );
-  const assignmentWalletPublicKey = useSelector(
-    assignmentWalletPublicKeySelector,
   );
 
   const dispatch = useDispatch();
@@ -221,7 +217,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     <>
       <WalletAction
         fioWallet={signInValuesGroup?.signInFioWallet}
-        ownerFioPublicKey={assignmentWalletPublicKey}
+        ownerFioPublicKey={paymentWalletPublicKey}
         onCancel={onCancel}
         onSuccess={handlePartOfSubmitDataSuccess}
         submitData={signInValuesGroup?.submitData}
