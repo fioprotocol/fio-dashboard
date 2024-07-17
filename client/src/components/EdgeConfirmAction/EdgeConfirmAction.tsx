@@ -129,9 +129,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         await waitForEdgeAccountStop(edgeAccount);
       }
 
-      init.current = false;
-      setInitLaunch(false);
-
       if (result) {
         onSuccess(result);
       }
@@ -156,8 +153,9 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
   // Show pin modal
   useEffect(() => {
-    if (data != null && !confirmPinKeys) showPinModal(action, data);
-  }, [data, action, confirmPinKeys, showPinModal]);
+    if (data != null && !confirmPinKeys && !initLaunch)
+      showPinModal(action, data);
+  }, [data, action, confirmPinKeys, showPinModal, initLaunch]);
 
   // Handle confirmPinKeys is set
   useEffect(() => {

@@ -27,7 +27,11 @@ import {
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
 
-import { RegistrationType, GroupedPurchaseValues } from '../types';
+import {
+  RegistrationType,
+  GroupedPurchaseValues,
+  PurchaseValues,
+} from '../types';
 import { ActionParams } from '../../../types/fio';
 import { RegistrationResult } from '../../../types';
 import { FIO_ADDRESS_DELIMITER } from '../../../utils';
@@ -39,6 +43,7 @@ const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS;
 
 type Props = {
+  analyticsData: PurchaseValues;
   ownerFioPublicKey: string;
   processing: boolean;
   groupedPurchaseValues: GroupedPurchaseValues[];
@@ -49,6 +54,7 @@ type Props = {
 
 export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const {
+    analyticsData,
     ownerFioPublicKey,
     groupedPurchaseValues,
     processing,
@@ -65,27 +71,10 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const cartItems = metamaskItems
     ?.map(metamaskItem => metamaskItem.submitData.cartItems)
     .flat();
-  const pricesArr = metamaskItems.map(
-    metamaskItem => metamaskItem.submitData.prices,
-  );
-  const refProfileInfoArr = metamaskItems.map(
-    metamaskItem => metamaskItem.submitData.refProfileInfo,
-  );
-
-  const prices = pricesArr && pricesArr[0];
-  const refProfileInfo = refProfileInfoArr && refProfileInfoArr[0];
-
-  const analyticsData = {
-    cartItems,
-    prices,
-    refProfileInfo,
-  };
 
   const registrations = makeRegistrationOrder({
-    cartItems: metamaskItems
-      ?.map(metamaskItem => metamaskItem.submitData.cartItems)
-      .flat(),
-    fees: prices?.nativeFio,
+    cartItems,
+    fees: analyticsData?.prices?.nativeFio,
     isComboSupported: true,
   });
 
@@ -340,7 +329,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
-      analyticsData={analyticsData}
+      analyticsData={{ ...analyticsData, cartItems }}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

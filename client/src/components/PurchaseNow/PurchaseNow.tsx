@@ -224,6 +224,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   return (
     <>
       <WalletAction
+        analyticsData={submitData}
         fioWallet={signInValuesGroup?.signInFioWallet}
         ownerFioPublicKey={paymentWalletPublicKey}
         onCancel={onCancel}
