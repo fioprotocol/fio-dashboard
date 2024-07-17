@@ -217,7 +217,9 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   });
 
   const handlePartOfSubmitDataSuccess = (data: AnyType) => {
-    setProcessing(false);
+    if (groupedPurchaseValues.length > 1) {
+      setProcessing(false);
+    }
     onSuccess(data);
   };
 
