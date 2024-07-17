@@ -57,8 +57,12 @@ import { log } from '../../util/general';
 // Loads captcha files, DO NOT REMOVE
 import '../../helpers/gt-sdk';
 
-import { PurchaseValues, PurchaseNowTypes } from './types';
-import { AnyType, FioWalletDoublet, RegistrationResult } from '../../types';
+import {
+  PurchaseValues,
+  PurchaseNowTypes,
+  GroupedPurchaseValues,
+} from './types';
+import { AnyType, RegistrationResult } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -202,7 +206,11 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     setProcessingDispatched(false);
   };
 
-  const { signInValuesGroup, onSuccess } = useMultipleWalletAction({
+  const {
+    signInValuesGroup,
+    onSuccess,
+    groupedPurchaseValues,
+  } = useMultipleWalletAction({
     fioWallet: paymentWalletPublicKey,
     submitData,
     onCollectedSuccess: onProcessingEnd,
@@ -221,6 +229,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
         onCancel={onCancel}
         onSuccess={handlePartOfSubmitDataSuccess}
         submitData={signInValuesGroup?.submitData}
+        groupedPurchaseValues={groupedPurchaseValues}
         processing={isProcessing}
         setProcessing={setProcessingDispatched}
         action={CONFIRM_PIN_ACTIONS.PURCHASE}
@@ -239,11 +248,6 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
       )}
     </>
   );
-};
-
-type GroupedPurchaseValues = {
-  signInFioWallet: FioWalletDoublet;
-  submitData: PurchaseValues;
 };
 
 const initialRegistrationResult: RegistrationResult = {
@@ -304,7 +308,13 @@ const useMultipleWalletAction = ({
     const groupedPurchaseValues = groupedCartItems.map(
       ({ signInFioWallet, cartItems }) => ({
         signInFioWallet,
-        submitData: { ...submitData, cartItems },
+        submitData: {
+          ...submitData,
+          cartItems: cartItems.map(cartItem => ({
+            ...cartItem,
+            signInFioWallet,
+          })),
+        },
       }),
     );
 
@@ -329,8 +339,19 @@ const useMultipleWalletAction = ({
   }, [groupedPurchaseValues, result]);
 
   const onSuccess = (data: RegistrationResult) => {
+    const registeredCartItems = data.registered.map(item => item.cartItemId);
     setGroupedPurchaseValues(groupedPurchaseValues =>
-      groupedPurchaseValues.slice(1),
+      groupedPurchaseValues
+        .map(group => ({
+          ...group,
+          submitData: {
+            ...group.submitData,
+            cartItems: group.submitData.cartItems.filter(
+              cartItem => !registeredCartItems.includes(cartItem.id),
+            ),
+          },
+        }))
+        .filter(group => group.submitData.cartItems.length > 0),
     );
     setResult(result => ({
       ...result,
@@ -340,5 +361,5 @@ const useMultipleWalletAction = ({
 
   const [signInValuesGroup] = groupedPurchaseValues;
 
-  return { onSuccess, signInValuesGroup };
+  return { onSuccess, signInValuesGroup, groupedPurchaseValues };
 };

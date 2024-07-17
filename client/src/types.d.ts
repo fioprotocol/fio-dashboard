@@ -72,6 +72,7 @@ export type CartItem = {
   isWatchedDomain?: boolean;
   type?: CartItemType;
   domainType?: DomainItemType;
+  signInFioWallet?: FioWalletDoublet;
 };
 
 export type Notification = {

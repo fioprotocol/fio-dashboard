@@ -24,11 +24,12 @@ import {
   CART_ITEM_TYPE,
   CONFIRM_METAMASK_ACTION,
   DEFAULT_BUNDLE_SET_VALUE,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
 
-import { PurchaseValues, RegistrationType } from '../types';
+import { RegistrationType, GroupedPurchaseValues } from '../types';
 import { ActionParams } from '../../../types/fio';
-import { FioWalletDoublet, RegistrationResult } from '../../../types';
+import { RegistrationResult } from '../../../types';
 import { FIO_ADDRESS_DELIMITER } from '../../../utils';
 
 const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS = 10 * 1000;
@@ -38,10 +39,9 @@ const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS;
 
 type Props = {
-  fioWallet: FioWalletDoublet;
-  ownerFioPublicKey?: string;
+  ownerFioPublicKey: string;
   processing: boolean;
-  submitData: PurchaseValues;
+  groupedPurchaseValues: GroupedPurchaseValues[];
   onSuccess: (result: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -49,21 +49,42 @@ type Props = {
 
 export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const {
-    fioWallet,
-    ownerFioPublicKey = fioWallet?.publicKey,
+    ownerFioPublicKey,
+    groupedPurchaseValues,
     processing,
-    submitData,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
 
-  const { cartItems, prices } = submitData || {};
+  const metamaskItems = groupedPurchaseValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
+  );
 
-  const derivationIndex = fioWallet?.data?.derivationIndex;
+  const cartItems = metamaskItems
+    ?.map(metamaskItem => metamaskItem.submitData.cartItems)
+    .flat();
+  const pricesArr = metamaskItems.map(
+    metamaskItem => metamaskItem.submitData.prices,
+  );
+  const refProfileInfoArr = metamaskItems.map(
+    metamaskItem => metamaskItem.submitData.refProfileInfo,
+  );
+
+  const prices = pricesArr && pricesArr[0];
+  const refProfileInfo = refProfileInfoArr && refProfileInfoArr[0];
+
+  const analyticsData = {
+    cartItems,
+    prices,
+    refProfileInfo,
+  };
 
   const registrations = makeRegistrationOrder({
-    cartItems,
+    cartItems: metamaskItems
+      ?.map(metamaskItem => metamaskItem.submitData.cartItems)
+      .flat(),
     fees: prices?.nativeFio,
     isComboSupported: true,
   });
@@ -100,7 +121,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               fee_collected: registrationItem.fee,
               data: {
                 signedTx: resultItem,
-                signingWalletPubKey: fioWallet.publicKey,
+                signingWalletPubKey:
+                  registrationItem.signInFioWallet?.publicKey,
               },
             });
           }
@@ -115,7 +137,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
         }),
       });
     },
-    [fioWallet.publicKey, onSuccess, registrationsIndexed],
+    [onSuccess, registrationsIndexed],
   );
 
   const handleRegistrationIndexedItems = useCallback(
@@ -168,7 +190,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasAdditionalHandlesOnDomain
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -198,7 +221,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasTheSameItem
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -228,7 +252,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasTheSameItem
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -257,7 +282,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasTheSameItem
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -280,7 +306,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
             id: index,
           };
@@ -293,12 +320,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
     }
 
     setActionParams(actionParamsArr);
-  }, [
-    derivationIndex,
-    ownerFioPublicKey,
-    handleRegistrationIndexedItems,
-    registrations,
-  ]);
+  }, [ownerFioPublicKey, handleRegistrationIndexedItems, registrations]);
 
   const onCancelAction = useCallback(() => {
     if (onCancel) {
@@ -308,17 +330,17 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   }, [onCancel]);
 
   useEffect(() => {
-    if (submitData && !actionParams) {
+    if (metamaskItems?.length > 0 && !actionParams) {
       handleActionParams();
     }
-  }, [actionParams, handleActionParams, submitData]);
+  }, [actionParams, handleActionParams, metamaskItems?.length]);
 
-  if (!submitData && !actionParams) return null;
+  if (!metamaskItems?.length && !actionParams) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
-      analyticsData={submitData}
+      analyticsData={analyticsData}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

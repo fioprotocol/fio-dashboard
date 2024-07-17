@@ -4,10 +4,12 @@ import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import { FioWalletDoublet } from '../../types';
 import { AnyObject } from '../../types';
+import { GroupedPurchaseValues } from '../PurchaseNow/types';
 
 type WalletTypeActionProps = {
   allowDisconnectAll?: boolean;
   ownerFioPublicKey?: string;
+  groupedPurchaseValues?: GroupedPurchaseValues[];
   fioWallet: FioWalletDoublet;
   onSuccess: (data: AnyObject) => void;
   onCancel: () => void;
