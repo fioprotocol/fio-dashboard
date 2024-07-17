@@ -16,7 +16,7 @@ import {
 import classes from '../CheckoutPage.module.scss';
 
 type Props = {
-  fioWallets: FioWalletDoublet[];
+  paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   walletBalances: WalletBalancesItem;
@@ -28,7 +28,7 @@ type Props = {
 
 export const PaymentWallet: React.FC<Props> = props => {
   const {
-    fioWallets,
+    paymentAssignmentWallets,
     paymentWalletPublicKey,
     fioWalletsBalances,
     walletBalances,
@@ -39,13 +39,13 @@ export const PaymentWallet: React.FC<Props> = props => {
   } = props;
 
   if (
-    fioWallets.length === 0 ||
+    paymentAssignmentWallets.length === 0 ||
     !fioWalletsBalances.wallets[paymentWalletPublicKey]
   ) {
     return <Loader />;
   }
 
-  const walletsList = fioWallets.reduce((acc, wallet) => {
+  const walletsList = paymentAssignmentWallets.reduce((acc, wallet) => {
     const walletBalances = fioWalletsBalances.wallets[wallet.publicKey];
     if (!walletBalances) return acc;
     const { fio, usdc } = walletBalances.available;
@@ -86,7 +86,7 @@ export const PaymentWallet: React.FC<Props> = props => {
     <>
       <div className={classes.details}>
         <h6 className={classes.subtitle}>
-          FIO wallet {includePaymentMessage ? 'Payment & ' : ''}Assignmentt
+          FIO wallet {includePaymentMessage ? 'Payment & ' : ''}Assignment
         </h6>
         <p className={classes.text}>
           Please choose which FIO wallet you would like to use for{' '}

@@ -4,6 +4,7 @@ import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import { FioWalletDoublet } from '../../types';
 import { AnyObject } from '../../types';
+import Processing from '../common/TransactionProcessing';
 import { GroupedPurchaseValues, PurchaseValues } from '../PurchaseNow/types';
 
 type WalletTypeActionProps = {
@@ -41,7 +42,8 @@ const WalletAction: React.FC<Props> = props => {
     ...rest
   } = props;
 
-  if (!fioWallet || !fioWallet.publicKey) return null;
+  if (!fioWallet || !fioWallet.publicKey)
+    return <Processing isProcessing={rest.processing} />;
 
   if (fioWallet.from === WALLET_CREATED_FROM.EDGE)
     return <FioActionWallet fioWallet={fioWallet} {...rest} />;

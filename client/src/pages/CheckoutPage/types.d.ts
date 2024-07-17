@@ -24,6 +24,7 @@ type DefaultProps = {
   walletBalances: WalletBalancesItem;
   paymentWallet?: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
+  paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   payWith: PayWith[];
   fioWalletsBalances: WalletsBalances;
