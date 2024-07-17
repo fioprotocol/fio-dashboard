@@ -4,10 +4,11 @@ import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import { FioWalletDoublet } from '../../types';
 import { AnyObject } from '../../types';
-import { GroupedPurchaseValues } from '../PurchaseNow/types';
+import { GroupedPurchaseValues, PurchaseValues } from '../PurchaseNow/types';
 
 type WalletTypeActionProps = {
   allowDisconnectAll?: boolean;
+  analyticsData?: PurchaseValues;
   ownerFioPublicKey?: string;
   groupedPurchaseValues?: GroupedPurchaseValues[];
   fioWallet: FioWalletDoublet;
