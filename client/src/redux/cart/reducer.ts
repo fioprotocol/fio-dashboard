@@ -98,14 +98,4 @@ export default combineReducers({
         return state;
     }
   },
-  assignmentWalletPublicKey(state: string = '', action = {}) {
-    switch (action.type) {
-      case actions.SET_WALLET_FOR_ASSIGNMENT:
-        return action.data;
-      case LOGOUT_SUCCESS:
-        return '';
-      default:
-        return state;
-    }
-  },
 });

@@ -16,36 +16,36 @@ import {
 import classes from '../CheckoutPage.module.scss';
 
 type Props = {
-  paymentAssignmentWallets: FioWalletDoublet[];
+  fioWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   walletBalances: WalletBalancesItem;
   paymentWallet?: FioWalletDoublet;
   costFree?: string;
-  isFree: boolean;
-  totalCost: number;
+  includePaymentMessage: boolean;
   setWallet: (publicKey: string) => void;
 };
 
 export const PaymentWallet: React.FC<Props> = props => {
   const {
-    paymentAssignmentWallets,
+    fioWallets,
     paymentWalletPublicKey,
     fioWalletsBalances,
     walletBalances,
     paymentWallet,
     costFree,
+    includePaymentMessage,
     setWallet,
   } = props;
 
   if (
-    paymentAssignmentWallets.length === 0 ||
+    fioWallets.length === 0 ||
     !fioWalletsBalances.wallets[paymentWalletPublicKey]
   ) {
     return <Loader />;
   }
 
-  const walletsList = paymentAssignmentWallets.reduce((acc, wallet) => {
+  const walletsList = fioWallets.reduce((acc, wallet) => {
     const walletBalances = fioWalletsBalances.wallets[wallet.publicKey];
     if (!walletBalances) return acc;
     const { fio, usdc } = walletBalances.available;
@@ -73,7 +73,7 @@ export const PaymentWallet: React.FC<Props> = props => {
   if (!walletsList.find(({ id }) => id === paymentWalletPublicKey))
     return <Loader />;
 
-  if (walletsList.length === 1)
+  if (walletsList.length === 1 && includePaymentMessage)
     return (
       <PayWithBadge
         costFree={!!costFree}
@@ -85,9 +85,13 @@ export const PaymentWallet: React.FC<Props> = props => {
   return (
     <>
       <div className={classes.details}>
-        <h6 className={classes.subtitle}>FIO wallet Payment</h6>
+        <h6 className={classes.subtitle}>
+          FIO wallet {includePaymentMessage ? 'Payment & ' : ''}Assignmentt
+        </h6>
         <p className={classes.text}>
-          Please choose which FIO wallet you would like to use for payment
+          Please choose which FIO wallet you would like to use for{' '}
+          {includePaymentMessage ? 'payment and ' : ''}
+          assignment
         </p>
       </div>
 

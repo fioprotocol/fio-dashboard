@@ -154,17 +154,11 @@ export const getCart = (cartId: string): CommonPromiseAction => ({
   promise: (api: Api) => api.cart.getCart(cartId),
 });
 
-export const SET_WALLET_FOR_ASSIGNMENT = `${prefix}/SET_WALLET_FOR_ASSIGNMENT`;
 export const SET_WALLET_FOR_PAYMENT = `${prefix}/SET_WALLET_FOR_PAYMENT`;
 export const UNSET_WALLET_FOR_PAYMENT = `${prefix}/UNSET_WALLET_FOR_PAYMENT`;
 
 export const setWallet = (walletPublicKey: string): CommonAction => ({
   type: SET_WALLET_FOR_PAYMENT,
-  data: walletPublicKey,
-});
-
-export const setAssignmentWallet = (walletPublicKey: string): CommonAction => ({
-  type: SET_WALLET_FOR_ASSIGNMENT,
   data: walletPublicKey,
 });
 
