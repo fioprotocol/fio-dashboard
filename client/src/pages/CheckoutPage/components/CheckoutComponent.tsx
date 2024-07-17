@@ -18,16 +18,15 @@ import { CheckoutComponentProps } from '../types';
 
 import classes from '../CheckoutPage.module.scss';
 import { CART_ITEM_TYPE } from '../../../constants/common';
-import { AssignmentWallet } from './AssignmentWallet';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;
   const {
-    paymentAssignmentWallets,
+    fioWallets,
     isNoProfileFlow,
-    hasPublicCartItems,
     paymentWalletPublicKey,
     payWith,
+    hasPublicCartItems,
   } = rest;
 
   const { costNativeFio, costFree } = totalCost(cart, roe);
@@ -93,17 +92,14 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           ))
         )}
       </div>
-      {!isNoProfileFlow && (
+      {!isNoProfileFlow && fioWallets.length > 1 && (
         <div className={classes.details}>
-          <AssignmentWallet {...rest} />
-          {hasPublicCartItems &&
-            paymentAssignmentWallets.length > 1 &&
-            rest.paymentOption === PAYMENT_OPTIONS.FIO && (
-              <>
-                <div className={classes.delimiter} />
-                <PaymentWallet {...rest} totalCost={costNativeFio} />
-              </>
-            )}
+          <PaymentWallet
+            {...rest}
+            includePaymentMessage={
+              rest.paymentOption === PAYMENT_OPTIONS.FIO && hasPublicCartItems
+            }
+          />
         </div>
       )}
       <PaymentOptionComponent
