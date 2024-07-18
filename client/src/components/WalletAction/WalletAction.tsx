@@ -16,7 +16,7 @@ type WalletTypeActionProps = {
   onSuccess: (data: AnyObject) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: AnyObject | null;
+  submitData?: AnyObject | null;
   processing: boolean;
   action: string;
   fee?: number;
@@ -28,31 +28,31 @@ type WalletTypeActionProps = {
 };
 
 type Props = WalletTypeActionProps & {
-  FioActionWallet: React.FC<AnyObject>;
-  LedgerActionWallet: React.FC<AnyObject>;
+  FioActionWallet?: React.FC<AnyObject>;
+  LedgerActionWallet?: React.FC<AnyObject>;
   MetamaskActionWallet?: React.FC<AnyObject>;
 };
 
 const WalletAction: React.FC<Props> = props => {
   const {
-    fioWallet,
     FioActionWallet,
     LedgerActionWallet,
     MetamaskActionWallet,
     ...rest
   } = props;
 
-  if (!fioWallet || !fioWallet.publicKey)
-    return <Processing isProcessing={rest.processing} />;
+  const createdFrom = rest.fioWallet?.from;
 
-  if (fioWallet.from === WALLET_CREATED_FROM.EDGE)
-    return <FioActionWallet fioWallet={fioWallet} {...rest} />;
+  if (!createdFrom) return <Processing isProcessing={rest.processing} />;
 
-  if (fioWallet.from === WALLET_CREATED_FROM.LEDGER)
-    return <LedgerActionWallet fioWallet={fioWallet} {...rest} />;
+  if (createdFrom === WALLET_CREATED_FROM.EDGE && FioActionWallet)
+    return <FioActionWallet {...rest} />;
 
-  if (fioWallet.from === WALLET_CREATED_FROM.METAMASK && MetamaskActionWallet)
-    return <MetamaskActionWallet fioWallet={fioWallet} {...rest} />;
+  if (createdFrom === WALLET_CREATED_FROM.LEDGER && LedgerActionWallet)
+    return <LedgerActionWallet {...rest} />;
+
+  if (createdFrom === WALLET_CREATED_FROM.METAMASK && MetamaskActionWallet)
+    return <MetamaskActionWallet {...rest} />;
 
   return null;
 };
