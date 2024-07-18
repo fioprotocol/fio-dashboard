@@ -343,6 +343,10 @@ const useMultipleWalletAction = ({
 
   const onSuccess = (data: RegistrationResult) => {
     const registeredCartItems = data.registered.map(item => item.cartItemId);
+    setResult(result => ({
+      ...result,
+      registered: [...result.registered, ...data.registered],
+    }));
     setGroupedPurchaseValues(groupedPurchaseValues =>
       groupedPurchaseValues
         .map(group => ({
@@ -356,10 +360,6 @@ const useMultipleWalletAction = ({
         }))
         .filter(group => group.submitData.cartItems.length > 0),
     );
-    setResult(result => ({
-      ...result,
-      registered: [...result.registered, ...data.registered],
-    }));
   };
 
   const [signInValuesGroup] = groupedPurchaseValues;
