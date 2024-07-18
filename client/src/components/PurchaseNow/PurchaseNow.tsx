@@ -228,11 +228,10 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
       <WalletAction
         analyticsData={submitData}
         fioWallet={signInValuesGroup?.signInFioWallet}
+        groupedPurchaseValues={groupedPurchaseValues}
         ownerFioPublicKey={paymentWalletPublicKey}
         onCancel={onCancel}
         onSuccess={handlePartOfSubmitDataSuccess}
-        submitData={signInValuesGroup?.submitData}
-        groupedPurchaseValues={groupedPurchaseValues}
         processing={isProcessing}
         setProcessing={setProcessingDispatched}
         action={CONFIRM_PIN_ACTIONS.PURCHASE}

@@ -8,6 +8,7 @@ import {
   CART_ITEM_TYPE,
   CONFIRM_LEDGER_ACTIONS,
   DEFAULT_BUNDLE_SET_VALUE,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 import {
@@ -21,39 +22,44 @@ import { makeRegistrationOrder } from '../middleware';
 
 import apis from '../../../api';
 
-import {
-  AnyObject,
-  FioWalletDoublet,
-  RegistrationResult,
-} from '../../../types';
-import { PurchaseValues } from '../types';
+import { AnyObject, RegistrationResult } from '../../../types';
+import { GroupedPurchaseValues, PurchaseValues } from '../types';
 
 type Props = {
-  fioWallet: FioWalletDoublet;
+  analyticsData: PurchaseValues;
   ownerFioPublicKey?: string;
+  groupedPurchaseValues: GroupedPurchaseValues[];
   onSuccess: (results: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: PurchaseValues | null;
   processing: boolean;
-  fee: number;
+  fee?: number;
 };
 
 const PurchaseLedgerWallet: React.FC<Props> = props => {
   const {
-    fioWallet,
-    ownerFioPublicKey = fioWallet?.publicKey,
+    analyticsData,
+    ownerFioPublicKey,
+    groupedPurchaseValues,
     onSuccess,
     onCancel,
     setProcessing,
-    submitData,
     processing,
     fee,
   } = props;
 
+  const ledgerItemsGroups = groupedPurchaseValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.LEDGER,
+  );
+
+  const cartItems = ledgerItemsGroups
+    ?.map(ledgerItem => ledgerItem.submitData.cartItems)
+    .flat();
+
   const submit = useCallback(
     async (appFio: LedgerFioApp) => {
-      const { cartItems, prices } = submitData;
+      const { prices } = analyticsData;
 
       const results: RegistrationResult = {
         errors: [],
@@ -103,7 +109,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           }
 
           const { chainId, transaction } = await prepareChainTransaction(
-            fioWallet.publicKey,
+            registration.signInFioWallet.publicKey,
             action,
             {
               ...data,
@@ -114,7 +120,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           const {
             witness: { witnessSignatureHex },
           } = await appFio.signTransaction({
-            path: getPath(fioWallet.data.derivationIndex),
+            path: getPath(registration.signInFioWallet.data.derivationIndex),
             chainId,
             tx: transaction,
           });
@@ -144,7 +150,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
                 packed_trx: arrayToHex(serializedTransaction),
                 signatures: [signatureLedger],
               },
-              signingWalletPubKey: fioWallet.publicKey,
+              signingWalletPubKey: registration.signInFioWallet.publicKey,
             },
           });
         }
@@ -152,22 +158,18 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
 
       return results;
     },
-    [
-      fioWallet.data.derivationIndex,
-      fioWallet.publicKey,
-      ownerFioPublicKey,
-      submitData,
-    ],
+    [ownerFioPublicKey, analyticsData, cartItems],
   );
 
-  if (!submitData) return null;
+  if (!analyticsData) return null;
 
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.PURCHASE}
-      data={submitData}
+      data={{ ...analyticsData, cartItems }}
       fee={fee}
-      fioWallet={fioWallet}
+      ownerFioPublicKey={ownerFioPublicKey}
+      fioWalletsForCheck={ledgerItemsGroups.map(it => it.signInFioWallet)}
       onConnect={submit}
       onSuccess={onSuccess}
       onCancel={onCancel}
