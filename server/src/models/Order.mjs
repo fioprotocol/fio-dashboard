@@ -27,6 +27,7 @@ import {
   FIO_ACTIONS,
   ORDER_ERROR_TYPES,
 } from '../config/constants.js';
+import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
 import logger from '../logger.mjs';
 
@@ -208,7 +209,7 @@ export class Order extends Base {
   }
 
   static listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
-    const { dateRange = {}, freeStatus, status } = filters;
+    const { dateRange = {}, freeStatus, status, orderUserType } = filters;
 
     const createdAtGte = dateRange.startDate
       ? new Date(dateRange.startDate).toISOString()
@@ -252,6 +253,13 @@ export class Order extends Base {
           }
           ${createdAtGte ? `AND o."createdAt" >= '${createdAtGte}'` : ``}
           ${createdAtLt ? `AND o."createdAt" < '${createdAtLt}'` : ``}
+          ${
+            orderUserType === ORDER_USER_TYPES.DASHBOARD
+              ? `AND (o.data->>'orderUserType' IS NULL OR o.data->>'orderUserType' = '')`
+              : orderUserType
+              ? `AND o.data->>'orderUserType' = '${orderUserType}'`
+              : ``
+          }
         ORDER BY o."createdAt" DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}
