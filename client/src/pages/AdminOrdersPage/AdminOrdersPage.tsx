@@ -24,6 +24,7 @@ import {
   ORDER_AMOUNT_FILTER_OPTIONS,
   ORDER_DATE_FILTER_OPTIONS,
   ORDER_STATUS_FILTER_OPTIONS,
+  ORDER_USER_TYPE_FILTER_OPTIONS,
 } from '../../constants/common';
 import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
 
@@ -81,6 +82,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
     dateRange: null,
     status: null,
     freeStatus: '',
+    orderUserType: null,
   });
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState<boolean>(
     false,
@@ -114,6 +116,13 @@ const AdminOrdersPage: React.FC<Props> = props => {
     setFilters(filters => ({
       ...filters,
       freeStatus: newValue,
+    }));
+  }, []);
+
+  const handleChangeOrderUserTypeFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      orderUserType: newValue,
     }));
   }, []);
 
@@ -236,6 +245,19 @@ const AdminOrdersPage: React.FC<Props> = props => {
               />
             </div>
             <div className="d-flex align-items-center mr-2">
+              Filter Order User Type:&nbsp;
+              <CustomDropdown
+                value={filters.orderUserType}
+                options={ORDER_USER_TYPE_FILTER_OPTIONS}
+                onChange={handleChangeOrderUserTypeFilter}
+                isDark
+                withoutMarginBottom
+                fitContentWidth
+                isSmall
+                placeholder="All"
+              />
+            </div>
+            <div className="d-flex align-items-center mr-2">
               Filter Status:&nbsp;
               <CustomDropdown
                 value={filters.status ? filters.status.toString() : ''}
@@ -290,6 +312,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
               <th scope="col">#</th>
               <th scope="col">Date</th>
               <th scope="col">Order</th>
+              <th scope="col">Type</th>
               <th scope="col">User</th>
               <th scope="col">Amount</th>
               <th scope="col">Ref Profile</th>
@@ -313,6 +336,11 @@ const AdminOrdersPage: React.FC<Props> = props => {
                         : null}
                     </th>
                     <th>{order.number}</th>
+                    <th>
+                      {order.orderUserType
+                        ? ORDER_USER_TYPES_TITLE[order.orderUserType]
+                        : ORDER_USER_TYPES_TITLE.DASHBOARD}
+                    </th>
                     <th>
                       {!order?.user?.email &&
                       !order?.userId &&

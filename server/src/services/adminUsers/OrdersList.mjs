@@ -24,6 +24,7 @@ export default class OrdersList extends Base {
             ],
             status: 'integer',
             freeStatus: 'integer',
+            orderUserType: 'string',
           },
         },
       ],

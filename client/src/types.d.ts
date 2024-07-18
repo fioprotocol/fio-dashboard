@@ -842,6 +842,7 @@ export type OrderListFilters = {
   status: number;
   freeStatus: string;
   dateRange: DateRange | null;
+  orderUserType: string | null;
 };
 
 export type UserOrderDetails = {

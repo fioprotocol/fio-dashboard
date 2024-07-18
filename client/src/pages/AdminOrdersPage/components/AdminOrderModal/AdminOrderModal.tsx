@@ -167,6 +167,12 @@ const AdminOrderModal: React.FC<Props> = ({
               'Ref Profile',
               orderItem.refProfileName || 'FIO App',
             )}
+            {renderOrderItemFieldData(
+              'Order Type',
+              orderItem.orderUserType
+                ? ORDER_USER_TYPES_TITLE[orderItem.orderUserType]
+                : ORDER_USER_TYPES_TITLE.DASHBOARD,
+            )}
 
             <br />
             {renderOrderItemFieldData('Items', '', false)}
