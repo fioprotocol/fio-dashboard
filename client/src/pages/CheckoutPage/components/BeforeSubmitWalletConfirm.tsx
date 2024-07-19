@@ -50,7 +50,6 @@ const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
   return (
     <>
       <WalletAction
-        analyticsData={submitData}
         fioWallet={signInValuesGroup?.signInFioWallet}
         fee={fee}
         onCancel={onCancel}
