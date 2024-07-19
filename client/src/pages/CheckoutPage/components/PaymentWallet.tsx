@@ -22,9 +22,7 @@ type Props = {
   walletBalances: WalletBalancesItem;
   paymentWallet?: FioWalletDoublet;
   costFree?: string;
-  isFree: boolean;
-  totalCost: number;
-  includePaymentMessage?: boolean;
+  includePaymentMessage: boolean;
   setWallet: (publicKey: string) => void;
 };
 
@@ -36,7 +34,7 @@ export const PaymentWallet: React.FC<Props> = props => {
     walletBalances,
     paymentWallet,
     costFree,
-    includePaymentMessage = false,
+    includePaymentMessage,
     setWallet,
   } = props;
 

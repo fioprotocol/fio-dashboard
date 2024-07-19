@@ -62,6 +62,7 @@ export const makeRegistrationOrder = ({
         !isCombo && cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
           ? CART_ITEM_TYPE.ADDRESS
           : cartItem.type,
+      signInFioWallet: cartItem.signInFioWallet,
     };
 
     if (
@@ -85,6 +86,7 @@ export const makeRegistrationOrder = ({
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             isFree: false,
             iteration: i,
+            signInFioWallet: cartItem.signInFioWallet,
           });
         }
       }
@@ -105,6 +107,7 @@ export const makeRegistrationOrder = ({
         type: CART_ITEM_TYPE.DOMAIN,
         isFree: false,
         isCustomDomain: true,
+        signInFioWallet: cartItem.signInFioWallet,
       });
     }
 
@@ -123,6 +126,7 @@ export const makeRegistrationOrder = ({
           type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
           isFree: false,
           iteration: i,
+          signInFioWallet: cartItem.signInFioWallet,
         });
       }
     }

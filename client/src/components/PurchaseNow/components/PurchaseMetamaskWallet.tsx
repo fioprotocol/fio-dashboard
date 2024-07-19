@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 
 import {
   MetamaskConfirmAction,
@@ -6,7 +6,6 @@ import {
 } from '../../MetamaskConfirmAction';
 
 import MathOp from '../../../util/math';
-import useEffectOnce from '../../../hooks/general';
 import { makeRegistrationOrder } from '../middleware';
 import apis from '../../../api';
 
@@ -25,11 +24,16 @@ import {
   CART_ITEM_TYPE,
   CONFIRM_METAMASK_ACTION,
   DEFAULT_BUNDLE_SET_VALUE,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
 
-import { PurchaseValues, RegistrationType } from '../types';
+import {
+  RegistrationType,
+  GroupedPurchaseValues,
+  PurchaseValues,
+} from '../types';
 import { ActionParams } from '../../../types/fio';
-import { FioWalletDoublet, RegistrationResult } from '../../../types';
+import { RegistrationResult } from '../../../types';
 import { FIO_ADDRESS_DELIMITER } from '../../../utils';
 
 const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS = 10 * 1000;
@@ -39,9 +43,10 @@ const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS;
 
 type Props = {
-  fioWallet: FioWalletDoublet;
+  analyticsData: PurchaseValues;
+  ownerFioPublicKey: string;
   processing: boolean;
-  submitData: PurchaseValues;
+  groupedPurchaseValues: GroupedPurchaseValues[];
   onSuccess: (result: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
@@ -49,21 +54,27 @@ type Props = {
 
 export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   const {
-    fioWallet,
+    analyticsData,
+    ownerFioPublicKey,
+    groupedPurchaseValues,
     processing,
-    submitData,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
 
-  const { cartItems, prices } = submitData || {};
+  const metamaskItems = groupedPurchaseValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
+  );
 
-  const derivationIndex = fioWallet?.data?.derivationIndex;
+  const cartItems = metamaskItems
+    ?.map(metamaskItem => metamaskItem.submitData.cartItems)
+    .flat();
 
   const registrations = makeRegistrationOrder({
     cartItems,
-    fees: prices?.nativeFio,
+    fees: analyticsData?.prices?.nativeFio,
     isComboSupported: true,
   });
 
@@ -99,7 +110,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               fee_collected: registrationItem.fee,
               data: {
                 signedTx: resultItem,
-                signingWalletPubKey: fioWallet.publicKey,
+                signingWalletPubKey:
+                  registrationItem.signInFioWallet?.publicKey,
               },
             });
           }
@@ -114,7 +126,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
         }),
       });
     },
-    [fioWallet.publicKey, onSuccess, registrationsIndexed],
+    [onSuccess, registrationsIndexed],
   );
 
   const handleRegistrationIndexedItems = useCallback(
@@ -158,7 +170,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               ],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
-              owner_fio_public_key: fioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
               is_public: 0,
               tpid: apis.fio.tpid,
@@ -167,7 +179,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasAdditionalHandlesOnDomain
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -197,7 +210,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasTheSameItem
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -220,14 +234,15 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
               fio_domain: registration.fioName,
-              owner_fio_public_key: fioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               tpid: apis.fio.tpid,
               max_fee: new MathOp(registration.fee)
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasTheSameItem
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -256,7 +271,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: hasTheSameItem
               ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
               : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
@@ -271,7 +287,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
             account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
             data: {
-              owner_fio_public_key: fioWallet.publicKey,
+              owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
               tpid: apis.fio.tpid,
               max_fee: new MathOp(registration.fee)
@@ -279,7 +295,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
             },
-            derivationIndex,
+            derivationIndex:
+              registration.signInFioWallet?.data?.derivationIndex,
             timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
             id: index,
           };
@@ -292,33 +309,31 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
     }
 
     setActionParams(actionParamsArr);
-  }, [
-    derivationIndex,
-    fioWallet.publicKey,
-    handleRegistrationIndexedItems,
-    registrations,
-  ]);
+  }, [ownerFioPublicKey, handleRegistrationIndexedItems, registrations]);
 
-  useEffectOnce(
-    () => {
-      if (submitData) {
-        handleActionParams();
-      }
-    },
-    [],
-    !!submitData,
-  );
+  const onCancelAction = useCallback(() => {
+    if (onCancel) {
+      onCancel();
+    }
+    setActionParams(null);
+  }, [onCancel]);
 
-  if (!submitData && !actionParams) return null;
+  useEffect(() => {
+    if (metamaskItems?.length > 0 && !actionParams) {
+      handleActionParams();
+    }
+  }, [actionParams, handleActionParams, metamaskItems?.length]);
+
+  if (!metamaskItems?.length && !actionParams) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
-      analyticsData={submitData}
+      analyticsData={{ ...analyticsData, cartItems }}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}
-      onCancel={onCancel}
+      onCancel={onCancelAction}
       onSuccess={handlePurchaseResults}
       returnOnlySignedTxn
     />

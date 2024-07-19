@@ -72,6 +72,7 @@ export type CartItem = {
   isWatchedDomain?: boolean;
   type?: CartItemType;
   domainType?: DomainItemType;
+  signInFioWallet?: FioWalletDoublet;
 };
 
 export type Notification = {
@@ -732,6 +733,7 @@ export type AdminSearchResult = {
 export type FioApiUrl = {
   id: string;
   rank: number;
+  type: string;
   url: string;
   createdAt: string;
 };
@@ -840,6 +842,7 @@ export type OrderListFilters = {
   status: number;
   freeStatus: string;
   dateRange: DateRange | null;
+  orderUserType: string | null;
 };
 
 export type UserOrderDetails = {

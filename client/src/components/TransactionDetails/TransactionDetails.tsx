@@ -18,7 +18,7 @@ import { VALUE_POSITIONS, ValuePosition } from './constants';
 
 import classes from './TransactionDetails.module.scss';
 
-type AdditionalDetails = {
+export type AdditionalDetails = {
   label: string;
   value: string;
   link?: string;

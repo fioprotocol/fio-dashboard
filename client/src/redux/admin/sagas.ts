@@ -19,6 +19,7 @@ import {
   PAYMENT_PROVIDER_LABEL,
   PURCHASE_RESULTS_STATUS_LABELS,
 } from '../../constants/purchase';
+import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
 
 import apis from '../../api';
 
@@ -65,6 +66,7 @@ export function* exportOrdersDataSuccess(): Generator {
         1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
       headers: [
         'Order ID',
+        'Type',
         'Date',
         'Partner Profile',
         'User',
@@ -75,6 +77,9 @@ export function* exportOrdersDataSuccess(): Generator {
     }).generateCsv(
       action.data.orders.map((order: OrderDetails) => ({
         number: order.number,
+        type: order.orderUserType
+          ? ORDER_USER_TYPES_TITLE[order.orderUserType]
+          : ORDER_USER_TYPES_TITLE.DASHBOARD,
         item: order.createdAt ? formatDateToLocale(order.createdAt) : '',
         refProfileName: order.refProfileName || 'FIO App',
         userEmail: order.userEmail || order.userId,

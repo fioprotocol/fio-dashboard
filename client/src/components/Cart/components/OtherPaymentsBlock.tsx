@@ -15,7 +15,7 @@ type Props = {
   paymentOptionsList: PaymentOptionsProps[];
   cartItems?: CartItem[];
   selectedPaymentProvider: PaymentProvider;
-  totlaCartUsdcAmount: string;
+  totalCartUsdcAmount: string;
   formsOfPayment: { [key: string]: boolean };
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
@@ -28,7 +28,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
     disabled,
     cartItems,
     selectedPaymentProvider,
-    totlaCartUsdcAmount,
+    totalCartUsdcAmount,
     formsOfPayment,
     isAffiliateEnabled,
     onPaymentChoose,
@@ -54,7 +54,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
         cartItems={cartItems}
         selectedPaymentProvider={selectedPaymentProvider}
         disabled={disabled}
-        totlaCartUsdcAmount={totlaCartUsdcAmount}
+        totalCartUsdcAmount={totalCartUsdcAmount}
         formsOfPayment={formsOfPayment}
         isAffiliateEnabled={isAffiliateEnabled}
       />

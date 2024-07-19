@@ -36,7 +36,7 @@ export const LedgerCheckPublicAddress: FC<Props> = ({
     return null;
   }
 
-  const handleShowLedgerAddress = (appFio: LedgerFioApp) => {
+  const handleShowLedgerAddress = async (appFio: LedgerFioApp) => {
     void getPubKeyFromLedger(appFio, fioWallet.data.derivationIndex, true);
   };
 

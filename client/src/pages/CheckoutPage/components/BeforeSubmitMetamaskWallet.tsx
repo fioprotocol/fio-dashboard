@@ -17,6 +17,7 @@ import {
 import {
   CART_ITEM_TYPE,
   CONFIRM_METAMASK_ACTION,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -33,8 +34,7 @@ import { prices as pricesSelector } from '../../../redux/registrations/selectors
 
 export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    submitData,
-    fioWallet,
+    groupedBeforeSubmitValues,
     processing,
     onCancel,
     onSuccess,
@@ -43,8 +43,14 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
 
   const prices = useSelector(pricesSelector);
 
-  const { fioAddressItems } = submitData || {};
-  const { publicKey, data: paymentWalletData } = fioWallet || {};
+  const metamaskItems = groupedBeforeSubmitValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
+  );
+
+  const fioAddressItems = metamaskItems
+    ?.map(metamaskItem => metamaskItem.submitData.fioAddressItems)
+    .flat();
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
   const [indexedItems, setIndexedItems] = useState<
@@ -78,14 +84,14 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
 
             signedTxs[indexedItem.name] = {
               signedTx: resultItem,
-              signingWalletPubKey: publicKey,
+              signingWalletPubKey: indexedItem.fioWallet?.publicKey,
             };
           }
         }
         onSuccess(signedTxs);
       }
     },
-    [indexedItems, onSuccess, publicKey],
+    [indexedItems, onSuccess],
   );
 
   useEffectOnce(
@@ -118,7 +124,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
               .round(0)
               .toNumber(),
           },
-          derivationIndex: paymentWalletData?.derivationIndex,
+          derivationIndex: fioAddressItem?.fioWallet?.data?.derivationIndex,
           timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
           id: index,
         };
@@ -131,15 +137,15 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
       setActionParams(actionParamsArr);
     },
     [],
-    !!submitData,
+    !!metamaskItems.length,
   );
 
-  if (!submitData) return null;
+  if (!metamaskItems.length) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.REGISTER_ADDRESS_PRIVATE_DOMAIN}
-      analyticsData={submitData}
+      analyticsData={{ fioAddressItems }}
       actionParams={actionParams}
       processing={processing}
       returnOnlySignedTxn

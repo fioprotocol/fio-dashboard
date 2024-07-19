@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import WalletAction from '../WalletAction/WalletAction';
@@ -16,7 +16,10 @@ import {
   prices as pricesSelector,
   isProcessing as isProcessingSelector,
 } from '../../redux/registrations/selectors';
-import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import {
+  fioDomains as fioDomainsSelector,
+  fioWallets as fioWalletsSelector,
+} from '../../redux/fio/selectors';
 import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
 
 import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
@@ -26,20 +29,23 @@ import Processing from '../common/TransactionProcessing';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import {
   PAYMENT_OPTIONS,
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
-import { emptyWallet } from '../../redux/fio/reducer';
 
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { sleep } from '../../utils';
-import { cartHasOnlyFreeItems } from '../../util/cart';
+import {
+  cartHasOnlyFreeItems,
+  groupCartItemsByPaymentWallet,
+} from '../../util/cart';
 import api from '../../api';
 import {
   GEETESET_SCRIPT_LOADING_ERROR,
@@ -51,18 +57,21 @@ import { log } from '../../util/general';
 // Loads captcha files, DO NOT REMOVE
 import '../../helpers/gt-sdk';
 
-import { PurchaseValues, PurchaseNowTypes } from './types';
-import { RegistrationResult } from '../../types';
+import {
+  PurchaseValues,
+  PurchaseNowTypes,
+  GroupedPurchaseValues,
+} from './types';
+import { AnyType, RegistrationResult } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
 
 type CaptchaResult = { success: boolean; verifyParams: {} };
 
-export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
+export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const { onFinish, disabled = false } = props;
 
   const cartItems = useSelector(cartItemsSelector);
-  const fioWallets = useSelector(fioWalletsSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const prices = useSelector(pricesSelector);
@@ -99,12 +108,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     },
     [t0],
   );
-
-  const currentWallet = (paymentWalletPublicKey &&
-    fioWallets &&
-    fioWallets.find(item => item.publicKey === paymentWalletPublicKey)) || {
-    ...emptyWallet,
-  };
 
   const checkCaptcha = useCallback(async () => {
     try {
@@ -203,13 +206,32 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     setProcessingDispatched(false);
   };
 
+  const {
+    signInValuesGroup,
+    onSuccess,
+    groupedPurchaseValues,
+  } = useMultipleWalletAction({
+    fioWallet: paymentWalletPublicKey,
+    submitData,
+    onCollectedSuccess: onProcessingEnd,
+  });
+
+  const handlePartOfSubmitDataSuccess = (data: AnyType) => {
+    if (groupedPurchaseValues.length > 1) {
+      setProcessing(false);
+    }
+    onSuccess(data);
+  };
+
   return (
     <>
       <WalletAction
-        fioWallet={currentWallet}
+        analyticsData={submitData}
+        fioWallet={signInValuesGroup?.signInFioWallet}
+        groupedPurchaseValues={groupedPurchaseValues}
+        ownerFioPublicKey={paymentWalletPublicKey}
         onCancel={onCancel}
-        onSuccess={onProcessingEnd}
-        submitData={submitData}
+        onSuccess={handlePartOfSubmitDataSuccess}
         processing={isProcessing}
         setProcessing={setProcessingDispatched}
         action={CONFIRM_PIN_ACTIONS.PURCHASE}
@@ -228,4 +250,118 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
       )}
     </>
   );
+};
+
+const initialRegistrationResult: RegistrationResult = {
+  errors: [],
+  registered: [],
+  partial: [],
+  paymentProvider: PAYMENT_PROVIDER.FIO,
+  providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
+};
+
+const WALLET_TYPE_SIGN_IN_ORDER = [
+  WALLET_CREATED_FROM.EDGE,
+  WALLET_CREATED_FROM.METAMASK,
+  WALLET_CREATED_FROM.LEDGER,
+  WALLET_CREATED_FROM.WITHOUT_REGISTRATION,
+];
+
+type MultipleWalletActionHookProps = {
+  fioWallet: string;
+  submitData?: PurchaseValues;
+  onCollectedSuccess?: (results: RegistrationResult) => void;
+};
+
+const useMultipleWalletAction = ({
+  fioWallet,
+  submitData,
+  onCollectedSuccess,
+}: MultipleWalletActionHookProps) => {
+  const onCollectedSuccessRef = useRef(onCollectedSuccess);
+  onCollectedSuccessRef.current = onCollectedSuccess;
+
+  const fioWallets = useSelector(fioWalletsSelector);
+  const userDomains = useSelector(fioDomainsSelector);
+
+  const [result, setResult] = useState<RegistrationResult>(
+    initialRegistrationResult,
+  );
+  const [groupedPurchaseValues, setGroupedPurchaseValues] = useState<
+    GroupedPurchaseValues[]
+  >([]);
+
+  useEffect(() => {
+    if (!submitData) {
+      setResult(initialRegistrationResult);
+      setGroupedPurchaseValues([]);
+      return;
+    }
+
+    const { cartItems } = submitData;
+
+    const { groups: groupedCartItems } = groupCartItemsByPaymentWallet(
+      fioWallet,
+      cartItems,
+      fioWallets,
+      userDomains,
+    );
+
+    const groupedPurchaseValues = groupedCartItems.map(
+      ({ signInFioWallet, cartItems }) => ({
+        signInFioWallet,
+        submitData: {
+          ...submitData,
+          cartItems: cartItems.map(cartItem => ({
+            ...cartItem,
+            signInFioWallet,
+          })),
+        },
+      }),
+    );
+
+    groupedPurchaseValues.sort((g1, g2) => {
+      const g1Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
+        g1.signInFioWallet.from,
+      );
+      const g2Priority = WALLET_TYPE_SIGN_IN_ORDER.indexOf(
+        g2.signInFioWallet.from,
+      );
+      return g1Priority - g2Priority;
+    });
+
+    setResult(initialRegistrationResult);
+    setGroupedPurchaseValues(groupedPurchaseValues);
+  }, [fioWallet, submitData, fioWallets, userDomains]);
+
+  useEffect(() => {
+    if (groupedPurchaseValues.length === 0 && result.registered.length > 0) {
+      onCollectedSuccessRef.current?.(result);
+    }
+  }, [groupedPurchaseValues, result]);
+
+  const onSuccess = (data: RegistrationResult) => {
+    const registeredCartItems = data.registered.map(item => item.cartItemId);
+    setResult(result => ({
+      ...result,
+      registered: [...result.registered, ...data.registered],
+    }));
+    setGroupedPurchaseValues(groupedPurchaseValues =>
+      groupedPurchaseValues
+        .map(group => ({
+          ...group,
+          submitData: {
+            ...group.submitData,
+            cartItems: group.submitData.cartItems.filter(
+              cartItem => !registeredCartItems.includes(cartItem.id),
+            ),
+          },
+        }))
+        .filter(group => group.submitData.cartItems.length > 0),
+    );
+  };
+
+  const [signInValuesGroup] = groupedPurchaseValues;
+
+  return { onSuccess, signInValuesGroup, groupedPurchaseValues };
 };

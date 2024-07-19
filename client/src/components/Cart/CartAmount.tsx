@@ -24,7 +24,6 @@ type Props = {
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
-  error: string | null;
   showExpiredDomainWarningBadge: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
@@ -44,7 +43,6 @@ const CartAmount: React.FC<Props> = props => {
     userWallets,
     selectedPaymentProvider,
     disabled,
-    error,
     showExpiredDomainWarningBadge,
     onPaymentChoose,
   } = props;
@@ -78,10 +76,10 @@ const CartAmount: React.FC<Props> = props => {
           paymentWalletPublicKey={paymentWalletPublicKey}
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
-          totlaCartUsdcAmount={totalCartUsdcAmount}
+          totalCartUsdcAmount={totalCartUsdcAmount}
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
-          disabled={!!error || disabled}
+          disabled={disabled}
           showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
           loading={loading}
           formsOfPayment={formsOfPayment}

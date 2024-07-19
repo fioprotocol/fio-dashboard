@@ -17,12 +17,12 @@ export default class HandleUsersFreeCartItems extends Base {
     return {
       id: ['required', 'string'],
       userId: ['string'],
-      metamaskUserPublicKey: ['string'],
+      publicKey: ['string'],
       cookies: ['any_object'],
     };
   }
 
-  async execute({ id, userId, metamaskUserPublicKey, cookies }) {
+  async execute({ id, userId, publicKey, cookies }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -38,8 +38,8 @@ export default class HandleUsersFreeCartItems extends Base {
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
         refCode: refCookie,
       });
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      const userHasFreeAddress = publicKey
+        ? await FreeAddress.getItems({ publicKey })
         : userId
         ? await FreeAddress.getItems({
             userId,
@@ -57,7 +57,7 @@ export default class HandleUsersFreeCartItems extends Base {
       await cart.update({
         items: handledFreeCartItems,
         userId,
-        metamaskUserPublicKey,
+        publicKey,
       });
 
       return {

@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import {
-  setWallet,
-  recalculateOnPriceUpdate,
-  clearCart,
-} from '../../redux/cart/actions';
+import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -16,14 +12,9 @@ import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
-  isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
-  cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
-import {
-  fioWallets as fioWalletsSelector,
-  privateDomains as privateDomainsSelector,
-} from '../../redux/fio/selectors';
+import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   isAuthenticated,
   userId as userIdSelector,
@@ -82,7 +73,6 @@ type UseContextReturnType = {
   cartItems: CartItem[];
   formsOfPayment: { [key: string]: boolean };
   hasGetPricesError: boolean;
-  error?: string | null;
   hasLowBalance?: boolean;
   isAffiliateEnabled: boolean;
   isFree: boolean;
@@ -114,13 +104,6 @@ export const useContext = (): UseContextReturnType => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userWallets = useSelector(fioWalletsSelector);
-  const privateDomainsMap = useSelector(privateDomainsSelector);
-  const isCartPrivateDomainsError = useSelector(
-    isCartPrivateDomainsErrorSelector,
-  );
-  const cartHasItemsWithPrivateDomain = useSelector(
-    cartHasItemsWithPrivateDomainSelector,
-  );
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
   const userId = useSelector(userIdSelector);
@@ -176,46 +159,14 @@ export const useContext = (): UseContextReturnType => {
     .sufToAmount(totalCartNativeAmount)
     .toFixed(2);
 
-  const error = isCartPrivateDomainsError
-    ? 'Some FIO Handles in your cart are on private FIO Domains controlled by different FIO Wallets and therefore cannot be purchased in a single transaction. Please purchase them one at a time.'
-    : null;
-
-  // Check if FIO Wallet has enough balance when cart has items with private domains
-  let hasLowBalanceForPrivateDomains = false;
-  let pubKeyForPrivateDomain = '';
-  if (cartHasItemsWithPrivateDomain) {
-    for (const cartItem of cartItems.filter(({ address }) => address)) {
-      if (privateDomainsMap[cartItem.domain]) {
-        hasLowBalanceForPrivateDomains = privateDomainsMap[cartItem.domain]
-          .wallet
-          ? new MathOp(privateDomainsMap[cartItem.domain].wallet.available).lte(
-              totalCartNativeAmount,
-            )
-          : false;
-
-        if (hasLowBalanceForPrivateDomains) break;
-
-        pubKeyForPrivateDomain =
-          privateDomainsMap[cartItem.domain].walletPublicKey;
-      }
-    }
-  }
-
   const hasLowBalance =
-    hasLowBalanceForPrivateDomains ||
-    (userWallets &&
-      userWallets.every(
-        wallet =>
-          wallet.available != null &&
-          totalCartNativeAmount &&
-          new MathOp(wallet.available).lte(totalCartNativeAmount),
-      ));
-
-  const highestBalanceWalletPubKey = userWallets.length
-    ? userWallets.sort(
-        (a, b) => b.available - a.available || a.name.localeCompare(b.name),
-      )[0].publicKey
-    : '';
+    userWallets &&
+    userWallets.every(
+      wallet =>
+        wallet.available != null &&
+        totalCartNativeAmount &&
+        new MathOp(wallet.available).lte(totalCartNativeAmount),
+    );
 
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
@@ -476,21 +427,8 @@ export const useContext = (): UseContextReturnType => {
           dispatch(refreshBalance(fioWallet.publicKey));
         }
       }
-      if (userWallets.length === 1) {
-        dispatch(setWallet(userWallets[0].publicKey));
-      }
     }
-  }, [userWallets, dispatch, refreshBalance, setWallet]);
-
-  // Set wallet with the highest balance enough for FIO purchase
-  useEffect(() => {
-    if (pubKeyForPrivateDomain) {
-      dispatch(setWallet(pubKeyForPrivateDomain));
-      return;
-    }
-    if (highestBalanceWalletPubKey)
-      dispatch(setWallet(highestBalanceWalletPubKey));
-  }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
+  }, [userWallets, dispatch, refreshBalance]);
 
   useEffect(() => {
     if (!isAuth && !isNoProfileFlow) {
@@ -518,7 +456,6 @@ export const useContext = (): UseContextReturnType => {
     paymentWalletPublicKey,
     prices,
     roe,
-    error,
     showExpiredDomainWarningBadge,
     formsOfPayment,
     onPaymentChoose,

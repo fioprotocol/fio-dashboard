@@ -217,6 +217,7 @@ router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
 router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
+router.get('/wrap-status/domains/burn', routes.history.burnedDomains);
 
 router.post('/cart-add-item', routes.cart.addItem);
 router.delete('/cart-clear-cart', routes.cart.clearCart);

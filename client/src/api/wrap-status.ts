@@ -24,4 +24,9 @@ export default class WrapStatus extends Base {
   unwrapDomainsList(params: WrapParams): Promise<WrapStatusListItemsResponse> {
     return this.apiClient.get('wrap-status/domains/unwrap', params);
   }
+  getBurnedDomainsList(
+    params: WrapParams,
+  ): Promise<WrapStatusListItemsResponse> {
+    return this.apiClient.get('wrap-status/domains/burn', params);
+  }
 }

@@ -63,6 +63,8 @@ const Ref = (
   const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query?.ref;
   const isNoProfileFlow = refProfileInfo?.settings?.hasNoProfileFlow;
 
+  const cookieRefProfileCode = Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
+
   const redirectToDomainLandingPage = useCallback(
     (refType: string) => {
       if (refType === REF_PROFILE_TYPE.AFFILIATE && isRefLink) {
@@ -89,8 +91,6 @@ const Ref = (
     // handle cookies for non auth user
     if (!isAuthenticated) {
       // Set refProfileCode to cookies from ref link
-      const cookieRefProfileCode =
-        Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
       if (refProfileInfo?.code != null) {
         setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
           expires: isNoProfileFlow
@@ -108,6 +108,7 @@ const Ref = (
       redirectToDomainLandingPage(refProfileInfo?.type);
     }
   }, [
+    cookieRefProfileCode,
     refProfileInfo?.code,
     refProfileInfo?.type,
     isAuthenticated,
@@ -132,9 +133,13 @@ const Ref = (
 
   // Set user refProfileCode to cookies
   useEffect(() => {
-    if (isAuthenticated && !isRefLink && !refProfileInfo?.code) {
+    if (
+      isAuthenticated &&
+      !isRefLink &&
+      !!user?.refProfile?.code &&
+      cookieRefProfileCode !== user?.refProfile?.code
+    ) {
       const refProfileCode = user?.refProfile?.code || '';
-
       getInfo(refProfileCode);
       setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileCode, {
         expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
@@ -155,6 +160,7 @@ const Ref = (
     user?.refProfile?.code,
     getInfo,
     clear,
+    cookieRefProfileCode,
   ]);
 
   useEffect(() => {

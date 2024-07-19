@@ -26,6 +26,7 @@ type Props = {
     cartItem: CartItemType;
     newPeriod: number;
   }) => void;
+  error?: string;
   isEditable?: boolean;
   isPeriodEditable?: boolean;
 };
@@ -51,6 +52,7 @@ const CartItem: React.FC<Props> = props => {
     item,
     onDelete,
     onUpdatePeriod,
+    error,
     isPeriodEditable = false,
     isEditable,
   } = props;
@@ -151,6 +153,18 @@ const CartItem: React.FC<Props> = props => {
                   <br />
                   Renewing this domain will not transfer ownership and funds can
                   not be refunded.
+                </p>
+              </div>
+            </Badge>
+          </div>
+        )}
+        {error && (
+          <div className={classes.itemBadgeContainer}>
+            <Badge show type={BADGE_TYPES.WARNING}>
+              <div className={classes.warnBadge}>
+                <InfoIcon className={classes.warnIcon} />
+                <p className={classes.warnText}>
+                  <span className="boldText">{error}</span>
                 </p>
               </div>
             </Badge>

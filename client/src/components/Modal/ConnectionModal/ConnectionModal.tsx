@@ -13,7 +13,6 @@ import apis from '../../../api';
 import {
   AnyType,
   CartItemType,
-  FioWalletDoublet,
   NFTTokenDoublet,
   SocialMediaLinkIdProp,
 } from '../../../types';
@@ -46,8 +45,9 @@ import { TrxResponse } from '../../../api/fio';
 type Props = {
   action: string;
   data: AnyType;
-  result: AnyType;
-  fioWallet?: FioWalletDoublet;
+  result?: AnyType;
+  fioWalletPublicKey?: string;
+  ownerFioPublicKey?: string;
   fee: number;
   oracleFee: number;
   show: boolean;
@@ -63,7 +63,8 @@ const ConnectionModal: React.FC<Props> = props => {
     action,
     data,
     result,
-    fioWallet,
+    fioWalletPublicKey,
+    ownerFioPublicKey,
     fee,
     oracleFee,
     show,
@@ -275,9 +276,9 @@ const ConnectionModal: React.FC<Props> = props => {
               {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -306,9 +307,9 @@ const ConnectionModal: React.FC<Props> = props => {
               {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -347,9 +348,9 @@ const ConnectionModal: React.FC<Props> = props => {
                 ),
               )}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -376,9 +377,9 @@ const ConnectionModal: React.FC<Props> = props => {
                 </Fragment>
               ))}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -405,9 +406,9 @@ const ConnectionModal: React.FC<Props> = props => {
               </Fragment>
             ))}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -432,9 +433,9 @@ const ConnectionModal: React.FC<Props> = props => {
               </Fragment>
             ))}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -465,9 +466,9 @@ const ConnectionModal: React.FC<Props> = props => {
                 </Fragment>
               ))}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -496,9 +497,9 @@ const ConnectionModal: React.FC<Props> = props => {
                 </Fragment>
               ))}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -527,9 +528,9 @@ const ConnectionModal: React.FC<Props> = props => {
               {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -558,9 +559,9 @@ const ConnectionModal: React.FC<Props> = props => {
           <TransactionInfoBadge title="NFT Token ID">
             {tokenId}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -636,9 +637,9 @@ const ConnectionModal: React.FC<Props> = props => {
               {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -686,84 +687,94 @@ const ConnectionModal: React.FC<Props> = props => {
         type: CartItemType;
         fee: number;
         id: string;
+        signInPublicKey: string;
       };
 
       const purchaseActions: PurchaseAction[] = [];
 
-      cartItems.forEach(({ id, type, domain, address, period }) => {
-        if (type === CART_ITEM_TYPE.DOMAIN) {
-          purchaseActions.push({
-            id,
-            type,
-            fee: prices.nativeFio.domain,
-            name: 'Register FIO Domain',
-            value: domain,
-            valueName: 'FIO Domain',
-          });
-        }
-
-        if (type === CART_ITEM_TYPE.ADDRESS) {
-          purchaseActions.push({
-            id,
-            type,
-            fee: prices.nativeFio.address,
-            name: 'Register FIO Crypto Handle',
-            value: `${address}@${domain}`,
-            valueName: 'FIO Handle',
-          });
-        }
-
-        if (type === CART_ITEM_TYPE.ADD_BUNDLES) {
-          purchaseActions.push({
-            id,
-            type,
-            fee: prices.nativeFio.addBundles,
-            name: 'Add Bundles',
-            value: `${address}@${domain}`,
-            valueName: 'FIO Handle',
-          });
-        }
-
-        if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-          purchaseActions.push({
-            id,
-            type,
-            fee: prices.nativeFio.renewDomain * +period,
-            name: 'Renew FIO Domain',
-            value: domain,
-            valueName: 'FIO Domain',
-          });
-        }
-
-        if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-          purchaseActions.push({
-            id: id + domain,
-            type: CART_ITEM_TYPE.DOMAIN,
-            fee: prices.nativeFio.domain,
-            name: 'Register FIO Domain',
-            value: domain,
-            valueName: 'FIO Domain',
-          });
-          if (+period > 1) {
+      cartItems.forEach(
+        ({ id, type, domain, address, period, signInFioWallet }) => {
+          if (type === CART_ITEM_TYPE.DOMAIN) {
             purchaseActions.push({
               id,
-              type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-              fee: prices.nativeFio.renewDomain * (+period - 1),
+              type,
+              fee: prices.nativeFio.domain,
+              name: 'Register FIO Domain',
+              value: domain,
+              valueName: 'FIO Domain',
+              signInPublicKey: signInFioWallet?.publicKey,
+            });
+          }
+
+          if (type === CART_ITEM_TYPE.ADDRESS) {
+            purchaseActions.push({
+              id,
+              type,
+              fee: prices.nativeFio.address,
+              name: 'Register FIO Crypto Handle',
+              value: `${address}@${domain}`,
+              valueName: 'FIO Handle',
+              signInPublicKey: signInFioWallet?.publicKey,
+            });
+          }
+
+          if (type === CART_ITEM_TYPE.ADD_BUNDLES) {
+            purchaseActions.push({
+              id,
+              type,
+              fee: prices.nativeFio.addBundles,
+              name: 'Add Bundles',
+              value: `${address}@${domain}`,
+              valueName: 'FIO Handle',
+              signInPublicKey: signInFioWallet?.publicKey,
+            });
+          }
+
+          if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
+            purchaseActions.push({
+              id,
+              type,
+              fee: prices.nativeFio.renewDomain * +period,
               name: 'Renew FIO Domain',
               value: domain,
               valueName: 'FIO Domain',
+              signInPublicKey: signInFioWallet?.publicKey,
             });
           }
-          purchaseActions.push({
-            id: `${address}@${domain}`,
-            type: CART_ITEM_TYPE.ADDRESS,
-            fee: prices.nativeFio.address,
-            name: 'Register FIO Crypto Handle',
-            value: `${address}@${domain}`,
-            valueName: 'FIO Handle',
-          });
-        }
-      });
+
+          if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
+            purchaseActions.push({
+              id: id + domain,
+              type: CART_ITEM_TYPE.DOMAIN,
+              fee: prices.nativeFio.domain,
+              name: 'Register FIO Domain',
+              value: domain,
+              valueName: 'FIO Domain',
+              signInPublicKey: signInFioWallet?.publicKey,
+            });
+            if (+period > 1) {
+              purchaseActions.push({
+                id,
+                type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+                fee: prices.nativeFio.renewDomain * (+period - 1),
+                name: 'Renew FIO Domain',
+                value: domain,
+                valueName: 'FIO Domain',
+                signInPublicKey: signInFioWallet?.publicKey,
+              });
+            }
+            purchaseActions.push({
+              id: `${address}@${domain}`,
+              type: CART_ITEM_TYPE.ADDRESS,
+              fee: prices.nativeFio.address,
+              name: 'Register FIO Crypto Handle',
+              value: `${address}@${domain}`,
+              valueName: 'FIO Handle',
+              signInPublicKey: signInFioWallet?.publicKey,
+            });
+          }
+        },
+      );
 
       return (
         <>
@@ -781,7 +792,7 @@ const ConnectionModal: React.FC<Props> = props => {
                   <br />
                 </>
               )}
-              {fioWallet &&
+              {ownerFioPublicKey &&
                 [
                   CART_ITEM_TYPE.ADDRESS,
                   CART_ITEM_TYPE.DOMAIN,
@@ -789,7 +800,7 @@ const ConnectionModal: React.FC<Props> = props => {
                 ].includes(it.type) && (
                   <>
                     <span>
-                      <b>Owner Pubkey</b>: {fioWallet.publicKey}
+                      <b>Owner Pubkey</b>: {ownerFioPublicKey}
                     </span>
                     <br />
                   </>
@@ -798,9 +809,9 @@ const ConnectionModal: React.FC<Props> = props => {
                 <b>Max Fee</b>: {apis.fio.sufToAmount(it.fee)} FIO
               </span>
               <br />
-              {fioWallet && (
+              {it.signInPublicKey && (
                 <span>
-                  <b>Sign With</b>: {fioWallet.publicKey}
+                  <b>Sign With</b>: {it.signInPublicKey}
                 </span>
               )}
             </TransactionInfoBadge>
@@ -832,9 +843,9 @@ const ConnectionModal: React.FC<Props> = props => {
           <TransactionInfoBadge title="Payer FIO Handle">
             {payerFioAddress}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Payer Public Address">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
           <TransactionInfoBadge title="Payee Public Address">
@@ -850,9 +861,9 @@ const ConnectionModal: React.FC<Props> = props => {
           <TransactionInfoBadge title="Token Code">
             {tokenCode}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>
@@ -867,9 +878,9 @@ const ConnectionModal: React.FC<Props> = props => {
           <TransactionInfoBadge title="Request ID">
             {fioRecord.id}
           </TransactionInfoBadge>
-          {fioWallet && (
+          {fioWalletPublicKey && (
             <TransactionInfoBadge title="Sign With">
-              {fioWallet.publicKey}
+              {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
         </>

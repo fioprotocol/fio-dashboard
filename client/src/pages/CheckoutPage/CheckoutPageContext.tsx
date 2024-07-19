@@ -18,11 +18,9 @@ import {
   fioDomains as fioDomainsSelector,
   loading as fioLoadingSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
-  privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
 import {
   cartId as cartIdSelector,
-  cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   loading as cartLoadingSelector,
@@ -45,7 +43,11 @@ import {
 import apis from '../../api';
 
 import MathOp from '../../util/math';
-import { totalCost, cartIsRelative } from '../../util/cart';
+import {
+  totalCost,
+  cartIsRelative,
+  groupCartItemsByPaymentWallet,
+} from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
@@ -93,6 +95,7 @@ import {
 import {
   BeforeSubmitData,
   BeforeSubmitState,
+  PayWith,
   SignFioAddressItem,
 } from './types';
 import { CreateOrderActionData } from '../../redux/types';
@@ -109,12 +112,10 @@ export const useContext = (): {
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
-  payWith?: {
-    walletName: string;
-    walletBalances: WalletBalancesItem;
-  };
+  payWith: PayWith[];
   isProcessing: boolean;
   isNoProfileFlow: boolean;
+  hasPublicCartItems: boolean;
   title: string;
   order: Order;
   payment: Payment;
@@ -138,7 +139,6 @@ export const useContext = (): {
   const fioWallets = useSelector(fioWalletsSelector);
   const fioLoading = useSelector(fioLoadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
-  const privateDomains = useSelector(privateDomainsSelector);
   const cartItems = useSelector(cartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
@@ -147,9 +147,6 @@ export const useContext = (): {
   const userDomains = useSelector(fioDomainsSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const roe = useSelector(roeSelector);
-  const cartHasItemsWithPrivateDomain = useSelector(
-    cartHasItemsWithPrivateDomainSelector,
-  );
   const cartLoading = useSelector(cartLoadingSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
   const refProfileLoading = useSelector(refProfileLoadingSelector);
@@ -220,7 +217,7 @@ export const useContext = (): {
   );
 
   const getOrder = useCallback(async () => {
-    let result;
+    let result: Order;
 
     try {
       result = await apis.orders.getActive(getActiveOrderParams);
@@ -246,7 +243,6 @@ export const useContext = (): {
     setGetOrderLoading(false);
   }, [cartItems, getActiveOrderParams, setWallet]);
 
-  // Update order if wallet type changed example: EDGE -> Ledger (if all wallets support registerFioDomainAddress can be removed)
   useEffect(() => {
     if (isNoProfileFlow) {
       return;
@@ -257,18 +253,6 @@ export const useContext = (): {
     }
 
     if (order?.publicKey === paymentWalletPublicKey) {
-      return;
-    }
-
-    const oldWalletType = fioWallets.find(
-      ({ publicKey }) => publicKey === order.publicKey,
-    )?.from;
-
-    const newWalletType = fioWallets.find(
-      ({ publicKey }) => publicKey === paymentWalletPublicKey,
-    )?.from;
-
-    if (oldWalletType === newWalletType) {
       return;
     }
 
@@ -438,9 +422,6 @@ export const useContext = (): {
             dispatch(refreshFioNames(fioWallet.publicKey));
           }
         }
-        if (!paymentWalletPublicKey && fioWallets.length) {
-          setWallet(fioWallets[0].publicKey);
-        }
       }
       getOrder();
     },
@@ -462,40 +443,59 @@ export const useContext = (): {
     paymentWalletPublicKey,
   );
 
-  const { costNativeFio: totalCostNativeFio } = totalCost(cartItems, roe);
-
-  const walletHasNoEnoughBalance = totalCostNativeFio
-    ? new MathOp(walletBalancesAvailable.nativeFio).lt(totalCostNativeFio || 0)
-    : false;
-
   const title =
     isFree || !paymentProvider
       ? 'Make Purchase'
       : PAYMENT_PROVIDER_PAYMENT_TITLE[paymentProvider];
 
-  const ownerPubKeysPrivateDomains: string[] = [];
-  if (cartHasItemsWithPrivateDomain) {
-    cartItems.forEach(({ address, domain }) => {
-      if (privateDomains[domain] && !!address) {
-        ownerPubKeysPrivateDomains.push(privateDomains[domain].walletPublicKey);
-      }
-    });
-  }
+  const {
+    groups: groupedCartItemsByPaymentWallet,
+    hasPublicCartItems,
+  } = groupCartItemsByPaymentWallet(
+    paymentWallet?.publicKey,
+    cartItems,
+    fioWallets,
+    userDomains,
+  );
 
-  const paymentAssignmentWallets = fioWallets
-    .filter(wallet => {
-      if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
-      if (
-        cartHasItemsWithPrivateDomain &&
-        paymentOption === PAYMENT_OPTIONS.FIO &&
-        ownerPubKeysPrivateDomains.length // cart has at least one item with private domain but not custom domain
-      ) {
-        return ownerPubKeysPrivateDomains.indexOf(wallet.publicKey) > -1;
-      }
+  const publicCartItemsPaymentWallet = hasPublicCartItems
+    ? groupedCartItemsByPaymentWallet.find(
+        it => it.signInFioWallet.publicKey === paymentWallet.publicKey,
+      )
+    : undefined;
 
-      return wallet.available > totalCostNativeFio;
-    })
-    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name));
+  const { costNativeFio: publicCartItemsCost } = totalCost(
+    publicCartItemsPaymentWallet?.cartItems ?? [],
+    roe,
+  );
+
+  const paymentWallets = useMemo(
+    () =>
+      fioWallets
+        .filter(wallet => {
+          if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
+
+          return wallet.available > publicCartItemsCost;
+        })
+        .sort(
+          (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+        ),
+    [fioWallets, isFree, paymentOption, publicCartItemsCost],
+  );
+
+  useEffect(() => {
+    if (
+      paymentWallets &&
+      paymentWallets.length > 0 &&
+      (!paymentWalletPublicKey ||
+        !paymentWallets
+          .map(it => it.publicKey)
+          .includes(paymentWalletPublicKey))
+    ) {
+      const [defaultWallet] = paymentWallets;
+      setWallet(defaultWallet.publicKey);
+    }
+  }, [paymentWalletPublicKey, paymentWallets, fioWallets, setWallet]);
 
   // Create order for free address
   useEffectOnce(
@@ -632,26 +632,6 @@ export const useContext = (): {
     isNoProfileFlow,
   ]);
 
-  // Redirect back to cart when payment option is FIO and not enough FIO tokens
-  useEffect(() => {
-    if (
-      !fioLoading &&
-      !isFree &&
-      paymentWalletPublicKey &&
-      walletHasNoEnoughBalance &&
-      paymentOption === PAYMENT_OPTIONS.FIO
-    ) {
-      history.push(ROUTES.CART);
-    }
-  }, [
-    history,
-    isFree,
-    fioLoading,
-    paymentWalletPublicKey,
-    paymentOption,
-    walletHasNoEnoughBalance,
-  ]);
-
   useEffect(() => {
     return () => {
       setOrder(null);
@@ -666,31 +646,25 @@ export const useContext = (): {
     cartLoading,
   );
 
-  const getPayWithDefaultDetails = useCallback(
-    (publicKey: string) => {
-      if (paymentAssignmentWallets.length === 0) {
-        return;
-      }
+  const payWith: PayWith[] = paymentWalletPublicKey
+    ? groupedCartItemsByPaymentWallet
+        .filter(
+          it => !!fioWalletsBalances.wallets[it.signInFioWallet.publicKey],
+        )
+        .map(it => {
+          const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
+          const available =
+            fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
+          const notEnoughFio = available.nativeFio < totalCostNativeFio;
 
-      const wallet = paymentAssignmentWallets.find(
-        paymentAssignmentWallet =>
-          paymentAssignmentWallet.publicKey === publicKey,
-      );
-      const balance = fioWalletsBalances.wallets[publicKey];
-
-      if (!balance || !wallet) {
-        return;
-      }
-
-      return {
-        walletName: wallet.name,
-        walletBalances: balance.available,
-      };
-    },
-    [fioWalletsBalances.wallets, paymentAssignmentWallets],
-  );
-
-  const payWith = getPayWithDefaultDetails(paymentWalletPublicKey);
+          return {
+            ...it,
+            available,
+            notEnoughFio,
+            totalCostNativeFio,
+          };
+        })
+    : [];
 
   const onClose = useCallback(() => {
     if (order?.id) {
@@ -709,7 +683,6 @@ export const useContext = (): {
     });
 
     dispatch(setProcessing(false));
-
     history.push(
       {
         pathname: ROUTES.PURCHASE,
@@ -819,10 +792,11 @@ export const useContext = (): {
     roe,
     fioWallets,
     fioWalletsBalances,
-    paymentAssignmentWallets,
+    paymentAssignmentWallets: paymentWallets,
     payWith,
     isProcessing,
     isNoProfileFlow,
+    hasPublicCartItems,
     title,
     order,
     payment,

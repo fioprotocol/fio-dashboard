@@ -17,20 +17,22 @@ import { AnyObject, AnyType, FioWalletDoublet } from '../../types';
 
 const FIO_APP_INIT_TIMEOUT = 2000;
 
-type Props = {
+export type Props = {
   action?: string;
-  result: AnyType;
-  data: AnyType;
+  result?: AnyType;
+  data?: AnyType;
   isTransaction?: boolean;
   fee?: number;
   oracleFee?: number;
   fioWallet?: FioWalletDoublet;
+  fioWalletsForCheck?: FioWalletDoublet[];
+  ownerFioPublicKey?: string;
   hideConnectionModal?: boolean;
 
-  onConnect: (appFio: LedgerFioApp) => Promise<LedgerFioApp>;
-  onSuccess: (data: AnyObject) => void;
-  onCancel: () => void;
-  setProcessing: (processing: boolean) => void;
+  onConnect?: (appFio: LedgerFioApp) => Promise<AnyObject>;
+  onSuccess?: (data: AnyObject) => void;
+  onCancel?: () => void;
+  setProcessing?: (processing: boolean) => void;
   showGenericErrorModal: (
     message?: string,
     title?: string,
@@ -47,6 +49,8 @@ const LedgerConnect: React.FC<Props> = props => {
     oracleFee,
     isTransaction,
     fioWallet,
+    fioWalletsForCheck = [],
+    ownerFioPublicKey,
     hideConnectionModal,
     onConnect = () => null,
     onSuccess = () => null,
@@ -145,25 +149,34 @@ const LedgerConnect: React.FC<Props> = props => {
     clearInterval(connectFioAppIntervalRef.current);
     connectFioAppIntervalRef.current = null;
 
-    if (fioWallet != null && fioWallet.publicKey) {
-      try {
+    const checkingWallets: FioWalletDoublet[] = [...fioWalletsForCheck];
+
+    if (
+      fioWallet &&
+      !checkingWallets.find(it => it.publicKey !== fioWallet.publicKey)
+    ) {
+      checkingWallets.push(fioWallet);
+    }
+
+    try {
+      for (const wallet of checkingWallets) {
         const publicKeyWIF = await getPubKeyFromLedger(
           newFioApp,
-          fioWallet.data.derivationIndex,
+          wallet.data.derivationIndex,
         );
-        if (publicKeyWIF !== fioWallet.publicKey) {
+        if (publicKeyWIF !== wallet.publicKey) {
           showGenericErrorModal('Your device does not have selected wallet');
           onCancel();
           return;
         }
-      } catch (err) {
-        handleLedgerError({
-          error: err,
-          action,
-          onCancel,
-          showGenericErrorModal,
-        });
       }
+    } catch (err) {
+      handleLedgerError({
+        error: err,
+        action,
+        onCancel,
+        showGenericErrorModal,
+      });
     }
 
     setAwaitingFioApp(false);
@@ -201,20 +214,20 @@ const LedgerConnect: React.FC<Props> = props => {
   useEffect(() => {
     if (fioApp != null) {
       setAwaitingLedger(true);
+      setConnecting(true);
       afterConnect(fioApp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fioApp]);
+  }, [fioApp, fioWallet?.publicKey]);
 
   // Handle transport created
-  useEffectOnce(
-    () => {
+  useEffect(() => {
+    if (transport != null && connecting) {
       setAwaitingFioApp(true);
       connectFioApp();
-    },
-    [connectFioApp],
-    transport != null && connecting,
-  );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connecting, transport]);
 
   useEffect(() => {
     return () => {
@@ -240,7 +253,8 @@ const LedgerConnect: React.FC<Props> = props => {
       action={action}
       data={data}
       result={result}
-      fioWallet={fioWallet}
+      fioWalletPublicKey={fioWallet?.publicKey}
+      ownerFioPublicKey={ownerFioPublicKey}
       fee={fee}
       oracleFee={oracleFee}
       show={connecting && !hideConnectionModal}

@@ -8,7 +8,14 @@ import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
-import { CartItem, CartItemType, NativePrices, OrderItem } from '../types';
+import {
+  CartItem,
+  CartItemType,
+  FioDomainDoublet,
+  FioWalletDoublet,
+  NativePrices,
+  OrderItem,
+} from '../types';
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   cart.length &&
@@ -20,15 +27,14 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
         item.domainType === DOMAIN_TYPE.PRIVATE),
   );
 
-export const totalCost = (
-  cartItems: CartItem[],
-  roe: number,
-): {
+export type TotalCost = {
   costNativeFio?: number;
   costFree?: string;
   costFio?: string;
   costUsdc?: string;
-} => {
+};
+
+export const totalCost = (cartItems: CartItem[], roe: number): TotalCost => {
   if (cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree))
     return { costFree: 'FREE' };
 
@@ -154,3 +160,78 @@ export const actionFromCartItem = (
     : isComboSupport
     ? ACTIONS.registerFioDomainAddress
     : ACTIONS.registerFioAddress;
+
+export type GroupedCartItem = {
+  type?: string;
+  domain?: string;
+};
+
+export type GroupedCartItemsByPaymentWallet<T extends GroupedCartItem> = {
+  signInFioWallet: FioWalletDoublet;
+  cartItems: T[];
+};
+
+export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
+  groups: GroupedCartItemsByPaymentWallet<T>[];
+  hasPublicCartItems: boolean;
+};
+
+export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
+  defaultWalletPublicKey: string,
+  cartItems: T[],
+  fioWallets: FioWalletDoublet[],
+  userDomains: FioDomainDoublet[],
+): GroupCartItemsByPaymentWalletResult<T> => {
+  const defaultOwnerWallet = fioWallets.find(
+    wallet => wallet.publicKey === defaultWalletPublicKey,
+  );
+
+  if (!defaultOwnerWallet) {
+    return { groups: [], hasPublicCartItems: false };
+  }
+
+  let hasPublicCartItems = false;
+  const groups: GroupedCartItemsByPaymentWallet<T>[] = [];
+
+  const addToGroup = (signInFioWallet: FioWalletDoublet, cartItem: T) => {
+    let group = groups.find(
+      it => it.signInFioWallet.publicKey === signInFioWallet.publicKey,
+    );
+
+    if (!group) {
+      group = {
+        signInFioWallet,
+        cartItems: [],
+      };
+      groups.push(group);
+    }
+
+    group.cartItems.push(cartItem);
+  };
+
+  for (const cartItem of cartItems) {
+    if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
+      hasPublicCartItems = true;
+      addToGroup(defaultOwnerWallet, cartItem);
+      continue;
+    }
+
+    const addressDomain = userDomains.find(
+      domain => domain.name === cartItem.domain,
+    );
+
+    if (!addressDomain || addressDomain.isPublic) {
+      hasPublicCartItems = true;
+      addToGroup(defaultOwnerWallet, cartItem);
+      continue;
+    }
+
+    const domainOwnerWallet = fioWallets.find(
+      wallet => wallet.publicKey === addressDomain.walletPublicKey,
+    );
+
+    addToGroup(domainOwnerWallet, cartItem);
+  }
+
+  return { groups, hasPublicCartItems };
+};

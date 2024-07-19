@@ -38,6 +38,7 @@ import { WrapStatusBlockNumbers } from './models/WrapStatusBlockNumbers.mjs';
 import { WrapStatusEthOraclesConfirmationsLogs } from './models/WrapStatusEthOraclesConfirmationsLogs.mjs';
 import { WrapStatusEthUnwrapLogs } from './models/WrapStatusEthUnwrapLogs.mjs';
 import { WrapStatusEthWrapLogs } from './models/WrapStatusEthWrapLogs.mjs';
+import { WrapStatusFioHistoryOffsetParams } from './models/WrapStatusFioHistoryOffsetParams.mjs';
 import { WrapStatusFioUnwrapNftsLogs } from './models/WrapStatusFioUnwrapNftsLogs.mjs';
 import { WrapStatusFioUnwrapNftsOravotes } from './models/WrapStatusFioUnwrapNftsOravotes.mjs';
 import { WrapStatusFioUnwrapTokensLogs } from './models/WrapStatusFioUnwrapTokensLogs.mjs';
@@ -48,6 +49,8 @@ import { WrapStatusNetworks } from './models/WrapStatusNetworks.mjs';
 import { WrapStatusPolygonOraclesConfirmationsLogs } from './models/WrapStatusPolygonOraclesConfirmationsLogs.mjs';
 import { WrapStatusPolygonUnwrapLogs } from './models/WrapStatusPolygonUnwrapLogs.mjs';
 import { WrapStatusPolygonWrapLogs } from './models/WrapStatusPolygonWrapLogs.mjs';
+import { WrapStatusFioBurnedDomainsLogs } from './models/WrapStatusFioBurnedDomainsLogs.mjs';
+import { WrapStatusPolygonBurnedDomainsLogs } from './models/WrapStatusPolygonBurnedDomainsLogs.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -87,16 +90,19 @@ WrapStatusBlockNumbers.init(sequelize);
 WrapStatusEthOraclesConfirmationsLogs.init(sequelize);
 WrapStatusEthUnwrapLogs.init(sequelize);
 WrapStatusEthWrapLogs.init(sequelize);
+WrapStatusFioHistoryOffsetParams.init(sequelize);
 WrapStatusFioUnwrapNftsLogs.init(sequelize);
 WrapStatusFioUnwrapNftsOravotes.init(sequelize);
 WrapStatusFioUnwrapTokensLogs.init(sequelize);
 WrapStatusFioUnwrapTokensOravotes.init(sequelize);
 WrapStatusFioWrapNftsLogs.init(sequelize);
 WrapStatusFioWrapTokensLogs.init(sequelize);
+WrapStatusFioBurnedDomainsLogs.init(sequelize);
 WrapStatusNetworks.init(sequelize);
 WrapStatusPolygonOraclesConfirmationsLogs.init(sequelize);
 WrapStatusPolygonUnwrapLogs.init(sequelize);
 WrapStatusPolygonWrapLogs.init(sequelize);
+WrapStatusPolygonBurnedDomainsLogs.init(sequelize);
 
 const { models } = sequelize;
 

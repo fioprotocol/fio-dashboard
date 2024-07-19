@@ -11,6 +11,7 @@ export default combineReducers({
       case actions.GET_UNWRAP_TOKENS_LIST_REQUEST:
       case actions.GET_UNWRAP_DOMAINS_LIST_REQUEST:
       case actions.GET_WRAP_DOMAINS_LIST_REQUEST:
+      case actions.GET_BURNED_DOMAINS_LIST_REQUEST:
         return true;
       case actions.GET_WRAP_TOKENS_LIST_SUCCESS:
       case actions.GET_WRAP_TOKENS_LIST_FAILURE:
@@ -20,6 +21,8 @@ export default combineReducers({
       case actions.GET_UNWRAP_DOMAINS_LIST_FAILURE:
       case actions.GET_WRAP_DOMAINS_LIST_SUCCESS:
       case actions.GET_WRAP_DOMAINS_LIST_FAILURE:
+      case actions.GET_BURNED_DOMAINS_LIST_SUCCESS:
+      case actions.GET_BURNED_DOMAINS_LIST_FAILURE:
         return false;
       default:
         return state;
@@ -50,6 +53,16 @@ export default combineReducers({
       case actions.GET_UNWRAP_TOKENS_LIST_SUCCESS:
         return action.data.list;
       case actions.GET_UNWRAP_TOKENS_LIST_FAILURE:
+        return state;
+      default:
+        return state;
+    }
+  },
+  burnedDomainsList(state: WrapStatusWrapItem[] = [], action) {
+    switch (action.type) {
+      case actions.GET_BURNED_DOMAINS_LIST_SUCCESS:
+        return action.data.list;
+      case actions.GET_BURNED_DOMAINS_LIST_FAILURE:
         return state;
       default:
         return state;
@@ -100,6 +113,16 @@ export default combineReducers({
       case actions.GET_WRAP_DOMAINS_LIST_SUCCESS:
         return action.data.maxCount;
       case actions.GET_WRAP_DOMAINS_LIST_FAILURE:
+        return state;
+      default:
+        return state;
+    }
+  },
+  burnedDomainsListCount(state: number = 0, action) {
+    switch (action.type) {
+      case actions.GET_BURNED_DOMAINS_LIST_SUCCESS:
+        return action.data.maxCount;
+      case actions.GET_BURNED_DOMAINS_LIST_FAILURE:
         return state;
       default:
         return state;

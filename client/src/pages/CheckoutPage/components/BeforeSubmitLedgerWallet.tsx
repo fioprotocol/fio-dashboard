@@ -4,7 +4,10 @@ import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
-import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
+import {
+  CONFIRM_LEDGER_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 
 import { prepareChainTransaction } from '../../../util/fio';
@@ -12,37 +15,33 @@ import { formatLedgerSignature, getPath } from '../../../util/ledger';
 
 import apis from '../../../api';
 
-import { FioWalletDoublet } from '../../../types';
-import { BeforeSubmitData, BeforeSubmitValues } from '../types';
-import { TrxResponsePaidBundles } from '../../../api/fio';
+import { BeforeSubmitData, BeforeSubmitProps } from '../types';
 
-type Props = {
-  fioWallet: FioWalletDoublet;
-  onSuccess: (data: TrxResponsePaidBundles) => void;
-  onCancel: () => void;
-  setProcessing: (processing: boolean) => void;
-  submitData: BeforeSubmitValues | null;
-  processing: boolean;
-  fee: number;
-};
-
-const BeforeSubmitLedgerWallet: React.FC<Props> = props => {
+const BeforeSubmitLedgerWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    fioWallet,
-    setProcessing,
-    onSuccess,
-    onCancel,
-    submitData,
     fee,
+    groupedBeforeSubmitValues,
     processing,
+    onCancel,
+    onSuccess,
+    setProcessing,
   } = props;
+
+  const ledgerItemsGroups = groupedBeforeSubmitValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.LEDGER,
+  );
+
+  const fioAddressItems = ledgerItemsGroups
+    ?.map(ledgerItem => ledgerItem.submitData.fioAddressItems)
+    .flat();
 
   const submit = async (appFio: LedgerFioApp) => {
     const signedTxs: BeforeSubmitData = {};
 
-    for (const item of submitData.fioAddressItems) {
+    for (const item of fioAddressItems) {
       const { chainId, transaction } = await prepareChainTransaction(
-        fioWallet.publicKey,
+        item.fioWallet?.publicKey,
         ACTIONS.registerFioAddress,
         {
           fio_address: item.name,
@@ -55,7 +54,7 @@ const BeforeSubmitLedgerWallet: React.FC<Props> = props => {
       const {
         witness: { witnessSignatureHex },
       } = await appFio.signTransaction({
-        path: getPath(fioWallet.data.derivationIndex),
+        path: getPath(item.fioWallet?.data?.derivationIndex),
         chainId,
         tx: transaction,
       });
@@ -85,14 +84,16 @@ const BeforeSubmitLedgerWallet: React.FC<Props> = props => {
     return signedTxs;
   };
 
-  if (!submitData) return null;
+  if (!ledgerItemsGroups.length) return null;
 
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN}
-      data={submitData}
+      data={{ fioAddressItems }}
       fee={fee}
-      fioWallet={fioWallet}
+      fioWalletsForCheck={ledgerItemsGroups.map(
+        ledgerItem => ledgerItem.signInFioWallet,
+      )}
       onConnect={submit}
       onSuccess={onSuccess}
       onCancel={onCancel}

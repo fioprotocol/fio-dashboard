@@ -8,7 +8,11 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import { CART_ITEM_TYPE, CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -24,17 +28,31 @@ import {
 import { prices as pricesSelector } from '../../../redux/registrations/selectors';
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
-  const { setProcessing, onSuccess, onCancel, submitData, processing } = props;
+  const {
+    groupedBeforeSubmitValues,
+    processing,
+    onCancel,
+    onSuccess,
+    setProcessing,
+  } = props;
 
   const prices = useSelector(pricesSelector);
 
+  const edgeItems = groupedBeforeSubmitValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.EDGE,
+  );
+
+  const fioAddressItems = edgeItems
+    ?.map(edgeItem => edgeItem.submitData.fioAddressItems)
+    .flat();
+
   const send = async ({
     allWalletKeysInAccount,
-    data,
   }: SubmitActionParams<BeforeSubmitValues>) => {
     const signedTxs: BeforeSubmitData = {};
 
-    for (const item of data.fioAddressItems) {
+    for (const item of fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
 
       const isComboRegistration =
@@ -78,6 +96,8 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     return signedTxs;
   };
 
+  if (!edgeItems.length) return null;
+
   return (
     <EdgeConfirmAction
       action={CONFIRM_PIN_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN}
@@ -85,7 +105,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={submitData}
+      data={{ fioAddressItems }}
       submitAction={send}
       edgeAccountLogoutBefore={true}
     />

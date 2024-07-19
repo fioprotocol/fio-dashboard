@@ -12,6 +12,14 @@ import {
   CartItem,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
+import { GroupedCartItemsByPaymentWallet } from '../../util/cart';
+import { GroupedBeforeSubmitValues } from './components/BeforeSubmitWalletConfirm';
+
+export type PayWith = GroupedCartItemsByPaymentWallet<CartItem> & {
+  notEnoughFio: boolean;
+  totalCostNativeFio: number;
+  available: WalletBalancesItem;
+};
 
 type DefaultProps = {
   walletBalances: WalletBalancesItem;
@@ -19,10 +27,7 @@ type DefaultProps = {
   fioWallets: FioWalletDoublet[];
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
-  payWith?: {
-    walletName: string;
-    walletBalances: WalletBalancesItem;
-  };
+  payWith: PayWith[];
   fioWalletsBalances: WalletsBalances;
   order: Order;
   payment: Payment;
@@ -31,6 +36,7 @@ type DefaultProps = {
   paymentProvider: PaymentProvider;
   isFree: boolean;
   isNoProfileFlow: boolean;
+  hasPublicCartItems: boolean;
   setWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
@@ -76,6 +82,7 @@ export type BeforeSubmitState = {
   onCancel: () => void;
   submitData: BeforeSubmitValues | null;
   fee?: number | null;
+  groupedBeforeSubmitValues?: GroupedBeforeSubmitValues[];
 };
 
 export type BeforeSubmitProps = {

@@ -10,6 +10,7 @@ import {
   CART_ITEM_TYPE,
   CONFIRM_PIN_ACTIONS,
   DEFAULT_BUNDLE_SET_VALUE,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
 import {
   PAYMENT_PROVIDER,
@@ -22,17 +23,18 @@ import {
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
 } from '../../../constants/fio';
 
-import { FioWalletDoublet, RegistrationResult } from '../../../types';
+import { RegistrationResult } from '../../../types';
 import { SubmitActionParams } from '../../EdgeConfirmAction/types';
-import { PurchaseValues } from '../types';
+import { GroupedPurchaseValues, PurchaseValues } from '../types';
 import { SignedTxArgs } from '../../../api/fio';
 
 type Props = {
-  fioWallet: FioWalletDoublet;
+  analyticsData: PurchaseValues;
+  ownerFioPublicKey?: string;
+  groupedPurchaseValues: GroupedPurchaseValues[];
   onSuccess: (results: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: PurchaseValues | null;
   processing: boolean;
   fee?: number | null;
 };
@@ -41,15 +43,28 @@ const DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS = 1000;
 
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
-    fioWallet,
+    analyticsData,
+    ownerFioPublicKey,
+    groupedPurchaseValues,
     setProcessing,
     onSuccess,
     onCancel,
-    submitData,
     processing,
   } = props;
 
-  const submit = async ({ keys, data }: SubmitActionParams) => {
+  const edgeItems = groupedPurchaseValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.EDGE,
+  );
+
+  const cartItems = edgeItems
+    ?.map(edgeItem => edgeItem.submitData.cartItems)
+    .flat();
+
+  const submit = async ({
+    allWalletKeysInAccount,
+    data,
+  }: SubmitActionParams) => {
     const { cartItems, prices } = data;
 
     const result: RegistrationResult = {
@@ -66,11 +81,14 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       isComboSupported: true,
     });
 
-    if (keys.private) {
-      apis.fio.setWalletFioSdk(keys);
-    }
-
     for (const registration of registrations) {
+      const walletEdgeId = registration.signInFioWallet?.edgeId;
+      const existingFioWalletInEdgeAccount =
+        walletEdgeId && allWalletKeysInAccount[walletEdgeId];
+
+      existingFioWalletInEdgeAccount?.private &&
+        apis.fio.setWalletFioSdk(existingFioWalletInEdgeAccount);
+
       if (!registration.isFree) {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         let signedTx: SignedTxArgs;
@@ -136,7 +154,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .toNumber(),
               technologyProviderId: apis.fio.domainTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
-              ownerPublicKey: keys.public,
+              ownerPublicKey: ownerFioPublicKey,
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
@@ -173,6 +191,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
               technologyProviderId: apis.fio.tpid,
+              ownerPublicKey: ownerFioPublicKey,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
@@ -187,14 +206,13 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
           fee_collected: registration.fee,
           data: {
             signedTx,
-            signingWalletPubKey: keys.public,
+            signingWalletPubKey: existingFioWalletInEdgeAccount.public,
           },
         });
       }
     }
-    if (keys.private) {
-      apis.fio.clearWalletFioSdk();
-    }
+
+    apis.fio.clearWalletFioSdk();
 
     return result;
   };
@@ -206,9 +224,8 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={submitData}
+      data={{ ...analyticsData, cartItems }}
       submitAction={submit}
-      fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore
     />
   );

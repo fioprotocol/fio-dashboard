@@ -1,6 +1,7 @@
 import { WrapStatusWrapItem } from '../../types';
 
 export type PageProps = {
+  isBurned?: boolean;
   isWrap: boolean;
   isTokens: boolean;
   loading: boolean;

@@ -3,8 +3,11 @@ import {
   OrderItem,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
+  FioApiUrl,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
+
+import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
 import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
@@ -53,8 +56,12 @@ class MissedTransactions extends CommonJob {
 
       const actor = await fioApi.getActor(publicKey);
 
+      const fioHistoryUrls = await FioApiUrl.getApiUrls({
+        type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+      });
+
       try {
-        const res = await new FioHistory().requestHistory({
+        const res = await new FioHistory({ fioHistoryUrls }).requestHistory({
           account_name: actor,
           offset: -100,
           pos: -1,

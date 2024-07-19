@@ -18,6 +18,8 @@ import {
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../config/constants.js';
 
+import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
+
 import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
@@ -60,7 +62,9 @@ const FIO_ACCOUNT_NAMES = {
 class Fio {
   async getPublicFioSDK() {
     if (!this.publicFioSDK) {
-      const apiUrls = await FioApiUrl.getApiUrls();
+      const apiUrls = await FioApiUrl.getApiUrls({
+        type: FIO_API_URLS_TYPES.DASHBOARD_API,
+      });
       this.publicFioSDK = new FIOSDK('', '', apiUrls, fetch);
     }
     return this.publicFioSDK;
@@ -71,7 +75,9 @@ class Fio {
       const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
         process.env.MASTER_FIOSDK_KEY,
       );
-      const apiUrls = await FioApiUrl.getApiUrls();
+      const apiUrls = await FioApiUrl.getApiUrls({
+        type: FIO_API_URLS_TYPES.DASHBOARD_API,
+      });
       this.masterFioSDK = new FIOSDK(
         process.env.MASTER_FIOSDK_KEY,
         masterPubKey,
@@ -86,7 +92,9 @@ class Fio {
   }
 
   async getWalletSdkInstance(publicKey) {
-    const apiUrls = await FioApiUrl.getApiUrls();
+    const apiUrls = await FioApiUrl.getApiUrls({
+      type: FIO_API_URLS_TYPES.DASHBOARD_API,
+    });
     return new FIOSDK('', publicKey, apiUrls, fetch);
   }
 
@@ -402,8 +410,10 @@ class Fio {
     return publicFioSDK.transactions.getActor(publicKey);
   }
 
-  async getTableRows(params) {
-    const apiUrls = await FioApiUrl.getApiUrls();
+  async getTableRows({ params, apiUrlType }) {
+    const apiUrls = await FioApiUrl.getApiUrls({
+      type: apiUrlType,
+    });
 
     const getTableRowsRequest = async ({ params, url }) => {
       const response = await superagent.post(url).send(params);
@@ -459,14 +469,17 @@ class Fio {
 
   async getPublicAddressByAccount(account) {
     const { rows } = await this.getTableRows({
-      code: 'fio.address',
-      scope: 'fio.address',
-      table: 'accountmap',
-      lower_bound: account,
-      upper_bound: account,
-      key_type: 'name',
-      index_position: '1',
-      json: true,
+      params: {
+        code: 'fio.address',
+        scope: 'fio.address',
+        table: 'accountmap',
+        lower_bound: account,
+        upper_bound: account,
+        key_type: 'name',
+        index_position: '1',
+        json: true,
+      },
+      apiUrlType: FIO_API_URLS_TYPES.DASHBOARD_API,
     });
 
     if (rows && rows.length) {
@@ -478,7 +491,10 @@ class Fio {
     try {
       const tableRowsParams = this.setTableRowsParams(domainName);
 
-      const { rows } = await this.getTableRows(tableRowsParams);
+      const { rows } = await this.getTableRows({
+        params: tableRowsParams,
+        apiUrlType: FIO_API_URLS_TYPES.DASHBOARD_API,
+      });
 
       return rows.length ? rows[0] : null;
     } catch (e) {
@@ -490,7 +506,10 @@ class Fio {
     try {
       const tableRowsParams = this.setTableRowsParams(addressName);
 
-      const { rows } = await this.getTableRows(tableRowsParams);
+      const { rows } = await this.getTableRows({
+        params: tableRowsParams,
+        apiUrlType: FIO_API_URLS_TYPES.DASHBOARD_API,
+      });
 
       return rows.length ? rows[0] : null;
     } catch (e) {

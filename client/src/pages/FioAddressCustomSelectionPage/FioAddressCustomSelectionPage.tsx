@@ -19,6 +19,7 @@ import { SelectedItemComponent } from './components/SelectedItemComponent';
 import { useContext } from './FioAddressCustomSelectionPageContext';
 
 import { DEFAULT_DEBOUNCE_TIMEOUT } from '../../constants/timeout';
+import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
@@ -96,7 +97,8 @@ const FioAddressCustomSelectionPage: React.FC = () => {
               !!errors.domain &&
               (touched.domain || visited.domain || initialValues.domain) &&
               !validating &&
-              dirtyFields.domain;
+              ((!shouldPrependUserDomains && dirtyFields.domain) ||
+                shouldPrependUserDomains);
 
             if (hasDomainError) {
               error = errors.domain;
@@ -123,7 +125,9 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                     loading={validating}
                     disabled={domainsLoading}
                     debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
-                    hasErrorForced={hasAddressError}
+                    hasErrorForced={
+                      hasAddressError || error === FIO_ADDRESS_ALREADY_EXISTS
+                    }
                   />
                   <OnChange name={ADDRESS_FIELD_NAME}>{onFieldChange}</OnChange>
                   {shouldPrependUserDomains ? (
@@ -185,6 +189,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                   message={error}
                   show={!!error}
                   type={BADGE_TYPES.ERROR}
+                  className={classes.infoBadge}
                 />
               </>
             );

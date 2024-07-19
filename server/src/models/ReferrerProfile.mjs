@@ -46,17 +46,11 @@ export class ReferrerProfile extends Base {
         //   isBranded: boolean,
         //   hasNoProfileFlow: boolean
         // },
-        simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
-        simpleRegIpWhitelist: {
-          type: DT.TEXT,
-          allowNull: false,
-          defaultValue: '',
-        },
-        apiWebhook: {
+        apiToken: {
           type: DT.STRING,
           allowNull: true,
         },
-        apiToken: {
+        apiHash: {
           type: DT.STRING,
           allowNull: true,
         },
