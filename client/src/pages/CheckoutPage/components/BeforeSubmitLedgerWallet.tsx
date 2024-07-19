@@ -19,7 +19,6 @@ import { BeforeSubmitData, BeforeSubmitProps } from '../types';
 
 const BeforeSubmitLedgerWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    analyticsData,
     fee,
     groupedBeforeSubmitValues,
     processing,
@@ -32,16 +31,6 @@ const BeforeSubmitLedgerWallet: React.FC<BeforeSubmitProps> = props => {
     groupedValue =>
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.LEDGER,
   );
-
-  const groupWalletIds = ledgerItemsGroups.map(
-    ledgerItemsGroupItem => ledgerItemsGroupItem.signInFioWallet.id,
-  );
-
-  const filteredAnalyticsData = {
-    fioAddressItems: analyticsData.fioAddressItems.filter(item =>
-      groupWalletIds.includes(item.fioWallet.id),
-    ),
-  };
 
   const fioAddressItems = ledgerItemsGroups
     ?.map(ledgerItem => ledgerItem.submitData.fioAddressItems)
@@ -100,10 +89,10 @@ const BeforeSubmitLedgerWallet: React.FC<BeforeSubmitProps> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN}
-      data={filteredAnalyticsData}
+      data={{ fioAddressItems }}
       fee={fee}
-      fioWalletsForCheck={fioAddressItems.map(
-        fioAddressItem => fioAddressItem.fioWallet,
+      fioWalletsForCheck={ledgerItemsGroups.map(
+        ledgerItem => ledgerItem.signInFioWallet,
       )}
       onConnect={submit}
       onSuccess={onSuccess}

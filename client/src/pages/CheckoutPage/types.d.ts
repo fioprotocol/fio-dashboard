@@ -78,7 +78,6 @@ export type BeforeSubmitValues = {
 
 export type BeforeSubmitState = {
   fioWallet: FioWalletDoublet;
-  analyticsData?: BeforeSubmitValues | null;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
   submitData: BeforeSubmitValues | null;

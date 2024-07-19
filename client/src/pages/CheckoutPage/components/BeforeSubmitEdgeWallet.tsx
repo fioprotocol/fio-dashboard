@@ -29,7 +29,6 @@ import { prices as pricesSelector } from '../../../redux/registrations/selectors
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    analyticsData,
     groupedBeforeSubmitValues,
     processing,
     onCancel,
@@ -43,14 +42,6 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     groupedValue =>
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.EDGE,
   );
-
-  const groupWalletIds = edgeItems.map(edgeItem => edgeItem.signInFioWallet.id);
-
-  const filteredAnalyticsData = {
-    fioAddressItems: analyticsData.fioAddressItems.filter(item =>
-      groupWalletIds.includes(item.fioWallet.id),
-    ),
-  };
 
   const fioAddressItems = edgeItems
     ?.map(edgeItem => edgeItem.submitData.fioAddressItems)
@@ -114,7 +105,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={filteredAnalyticsData}
+      data={{ fioAddressItems }}
       submitAction={send}
       edgeAccountLogoutBefore={true}
     />

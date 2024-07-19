@@ -34,7 +34,6 @@ import { prices as pricesSelector } from '../../../redux/registrations/selectors
 
 export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    analyticsData,
     groupedBeforeSubmitValues,
     processing,
     onCancel,
@@ -48,16 +47,6 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
     groupedValue =>
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
   );
-
-  const groupWalletIds = metamaskItems.map(
-    metamaskItem => metamaskItem.signInFioWallet.id,
-  );
-
-  const filteredAnalyticsData = {
-    fioAddressItems: analyticsData.fioAddressItems.filter(item =>
-      groupWalletIds.includes(item.fioWallet.id),
-    ),
-  };
 
   const fioAddressItems = metamaskItems
     ?.map(metamaskItem => metamaskItem.submitData.fioAddressItems)
@@ -156,7 +145,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.REGISTER_ADDRESS_PRIVATE_DOMAIN}
-      analyticsData={filteredAnalyticsData}
+      analyticsData={{ fioAddressItems }}
       actionParams={actionParams}
       processing={processing}
       returnOnlySignedTxn
