@@ -127,9 +127,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         await waitForEdgeAccountStop(edgeAccount);
       }
 
-      if (result) {
-        onSuccess(result);
-      }
+      onSuccess(result);
     },
     [
       action,
