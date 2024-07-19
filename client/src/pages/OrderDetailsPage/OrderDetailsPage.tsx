@@ -70,7 +70,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
         )}
         <OrderItemsList items={orderItemsToRender} isEditable />
         {paymentInfo.map(it => (
-          <PaymentDetails key={it.publicKey} {...it} />
+          <PaymentDetails key={it.publicKey + 1} {...it} />
         ))}
 
         <PartialErroredOrderItemsList

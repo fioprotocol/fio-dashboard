@@ -30,25 +30,32 @@ const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
     setProcessing,
   } = props;
 
-  const { signInValuesGroup, onSuccess } = useMultipleWalletAction({
+  const {
+    groupedBeforeSubmitValues,
+    signInValuesGroup,
+    onSuccess,
+  } = useMultipleWalletAction({
     fioWallet,
     submitData,
     onCollectedSuccess: onProcessingEnd,
   });
 
   const handlePartOfSubmitDataSuccess = (data: AnyType) => {
-    setProcessing(false);
+    if (groupedBeforeSubmitValues.length > 1) {
+      setProcessing(false);
+    }
     onSuccess(data);
   };
 
   return (
     <>
       <WalletAction
+        analyticsData={submitData}
         fioWallet={signInValuesGroup?.signInFioWallet}
         fee={fee}
         onCancel={onCancel}
         onSuccess={handlePartOfSubmitDataSuccess}
-        submitData={signInValuesGroup?.submitData}
+        groupedBeforeSubmitValues={groupedBeforeSubmitValues}
         processing={processing}
         setProcessing={setProcessing}
         action={CONFIRM_PIN_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN}
@@ -60,7 +67,7 @@ const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
   );
 };
 
-type GroupedBeforeSubmitValues = {
+export type GroupedBeforeSubmitValues = {
   signInFioWallet: FioWalletDoublet;
   submitData: BeforeSubmitValues;
 };
@@ -93,14 +100,15 @@ const useMultipleWalletAction = ({
 
   useEffect(() => {
     if (!submitData) {
+      setResult({});
+      setGroupedBeforeSubmitValues([]);
       return;
     }
 
     const { fioAddressItems } = submitData;
 
-    setResult({});
-
     if (fioAddressItems.length === 0) {
+      setResult({});
       setGroupedBeforeSubmitValues([]);
       return;
     }
@@ -148,13 +156,28 @@ const useMultipleWalletAction = ({
   }, [groupedBeforeSubmitValues, result]);
 
   const onSuccess = (data: BeforeSubmitData) => {
-    setGroupedBeforeSubmitValues(groupedBeforeSubmitValues.slice(1));
+    const registeredFioAddressItems = Object.keys(data);
+
     setResult(result => ({ ...result, ...data }));
+    setGroupedBeforeSubmitValues(groupedBeforeSubmitValues =>
+      groupedBeforeSubmitValues
+        .map(group => ({
+          ...group,
+          submitData: {
+            ...group.submitData,
+            fioAddressItems: group.submitData.fioAddressItems.filter(
+              fioAddressItem =>
+                !registeredFioAddressItems.includes(fioAddressItem.name),
+            ),
+          },
+        }))
+        .filter(group => group.submitData.fioAddressItems.length > 0),
+    );
   };
 
   const [signInValuesGroup] = groupedBeforeSubmitValues;
 
-  return { onSuccess, signInValuesGroup };
+  return { onSuccess, groupedBeforeSubmitValues, signInValuesGroup };
 };
 
 export default BeforeSubmitWalletConfirm;
