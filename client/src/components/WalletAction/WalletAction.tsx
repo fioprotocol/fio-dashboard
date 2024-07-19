@@ -6,13 +6,16 @@ import { FioWalletDoublet } from '../../types';
 import { AnyObject } from '../../types';
 import Processing from '../common/TransactionProcessing';
 import { GroupedPurchaseValues, PurchaseValues } from '../PurchaseNow/types';
+import { BeforeSubmitValues } from '../../pages/CheckoutPage/types';
+import { GroupedBeforeSubmitValues } from '../../pages/CheckoutPage/components/BeforeSubmitWalletConfirm';
 
 type WalletTypeActionProps = {
   allowDisconnectAll?: boolean;
-  analyticsData?: PurchaseValues;
+  analyticsData?: PurchaseValues | BeforeSubmitValues;
   ownerFioPublicKey?: string;
   groupedPurchaseValues?: GroupedPurchaseValues[];
-  fioWallet: FioWalletDoublet;
+  groupedBeforeSubmitValues?: GroupedBeforeSubmitValues[];
+  fioWallet?: FioWalletDoublet;
   onSuccess: (data: AnyObject) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;

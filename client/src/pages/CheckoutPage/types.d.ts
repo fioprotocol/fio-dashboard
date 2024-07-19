@@ -13,6 +13,7 @@ import {
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
 import { GroupedCartItemsByPaymentWallet } from '../../util/cart';
+import { GroupedBeforeSubmitValues } from './components/BeforeSubmitWalletConfirm';
 
 export type PayWith = GroupedCartItemsByPaymentWallet<CartItem> & {
   notEnoughFio: boolean;
@@ -77,10 +78,12 @@ export type BeforeSubmitValues = {
 
 export type BeforeSubmitState = {
   fioWallet: FioWalletDoublet;
+  analyticsData?: BeforeSubmitValues | null;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
   submitData: BeforeSubmitValues | null;
   fee?: number | null;
+  groupedBeforeSubmitValues?: GroupedBeforeSubmitValues[];
 };
 
 export type BeforeSubmitProps = {

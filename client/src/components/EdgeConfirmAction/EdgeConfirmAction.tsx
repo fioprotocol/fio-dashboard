@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
 import Processing from '../../components/common/TransactionProcessing';
 
@@ -32,7 +32,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
   const {
     fioWalletEdgeId,
     hideProcessing,
-    pinModalIsOpen,
     pinConfirmation,
     action,
     data,
@@ -52,7 +51,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     fioActionExecuted,
   } = props;
 
-  const init = useRef(false);
   const [initLaunch, setInitLaunch] = useState<boolean>(false);
 
   // Submit an action
@@ -182,21 +180,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       submit(pinConfirmation);
     }
   }, [pinConfirmation, action, processing, submit, initLaunch]);
-
-  // Handle pin modal closed
-  useEffect(() => {
-    if (
-      (!pinConfirmation || !pinConfirmation.action) &&
-      !pinModalIsOpen &&
-      !processing
-    ) {
-      if (init.current) {
-        onCancel();
-        return;
-      }
-      init.current = true;
-    }
-  }, [pinConfirmation, pinModalIsOpen, onCancel, processing]);
 
   return (
     <Processing
