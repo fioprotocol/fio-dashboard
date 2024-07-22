@@ -99,8 +99,8 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         value={
           <PriceComponent
             className={classes.priceValue}
-            costFio={fioAmount.toString(10)}
-            costUsdc={usdcPrice.toString(10)}
+            costFio={fioAmount?.toString(10)}
+            costUsdc={usdcPrice?.toString(10)}
             tokenCode={tokenCode}
           />
         }
