@@ -30,22 +30,27 @@ const DeleteWalletForm: React.FC<{
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           {isPrimaryUserProfileType && (
             <>
-              <Field name="username" type="hidden" component={Input} />
+              <div className={classes.field}>
+                <Field name="username" type="hidden" component={Input} />
+              </div>
 
-              <Field
-                label="Permanently delete this wallet"
-                name="password"
-                type="password"
-                placeholder="Enter Your Password"
-                uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-                component={Input}
-                disabled={loading}
-              />
+              <div className={classes.field}>
+                <Field
+                  label="Permanently delete this wallet"
+                  name="password"
+                  type="password"
+                  placeholder="Enter Your Password"
+                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                  errorColor={COLOR_TYPE.WARN}
+                  component={Input}
+                  disabled={loading}
+                />
+              </div>
             </>
           )}
 
           <SubmitButton
+            className={classes.submitButton}
             disabled={
               isPrimaryUserProfileType &&
               (formRenderProps.hasValidationErrors ||
@@ -53,7 +58,11 @@ const DeleteWalletForm: React.FC<{
                 loading)
             }
             loading={loading}
-            withBottomMargin={true}
+            hasSmallPaddings
+            hasSmallText
+            hasLowHeight
+            hasAutoWidth
+            withoutMargin
             text="Delete Wallet"
           />
         </form>

@@ -7,7 +7,8 @@ interface FieldArgs {
   sameWalletMessage?: string;
 }
 
-const defaultMessage = 'FIO Handle is not valid / not exist / domain expired';
+const defaultMessage =
+  'Invalid FIO Handle or FIO Public Address or FIO Handle domain has expired';
 
 export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,

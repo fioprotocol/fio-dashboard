@@ -9,15 +9,25 @@ import {
   Payment,
   ApiError,
   PaymentProvider,
+  CartItem,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
+import { GroupedCartItemsByPaymentWallet } from '../../util/cart';
+import { GroupedBeforeSubmitValues } from './components/BeforeSubmitWalletConfirm';
+
+export type PayWith = GroupedCartItemsByPaymentWallet<CartItem> & {
+  notEnoughFio: boolean;
+  totalCostNativeFio: number;
+  available: WalletBalancesItem;
+};
 
 type DefaultProps = {
   walletBalances: WalletBalancesItem;
-  walletName: string;
+  paymentWallet?: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
+  payWith: PayWith[];
   fioWalletsBalances: WalletsBalances;
   order: Order;
   payment: Payment;
@@ -25,6 +35,8 @@ type DefaultProps = {
   paymentOption: PaymentOptionsProps;
   paymentProvider: PaymentProvider;
   isFree: boolean;
+  isNoProfileFlow: boolean;
+  hasPublicCartItems: boolean;
   setWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
@@ -45,27 +57,32 @@ export type StripePaymentOptionProps = {
   totalCost: number;
 } & DefaultProps;
 
-export type BeforeSubmitData = {
-  [fioAddress: string]: {
+export type BeforeSubmitData = Record<
+  string,
+  {
     signedTx?: SignedTxArgs;
     signingWalletPubKey?: string;
-  };
-};
+  }
+>;
 
 export type SignFioAddressItem = {
   fioWallet: FioWalletDoublet;
   name: string;
   ownerKey: string;
+  cartItem: CartItem;
+};
+
+export type BeforeSubmitValues = {
+  fioAddressItems: SignFioAddressItem[];
 };
 
 export type BeforeSubmitState = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
-  submitData: {
-    fioAddressItems: SignFioAddressItem[];
-  } | null;
+  submitData: BeforeSubmitValues | null;
   fee?: number | null;
+  groupedBeforeSubmitValues?: GroupedBeforeSubmitValues[];
 };
 
 export type BeforeSubmitProps = {

@@ -9,13 +9,13 @@ import {
   FreeAddress,
   Order,
   OrderItem,
-  OrderItemStatus,
   Payment,
   ReferrerProfile,
   User,
+  Wallet,
 } from '../../models';
 
-import { DAY_MS, PAYMENTS_STATUSES } from '../../config/constants.js';
+import { DAY_MS } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
 import {
@@ -23,6 +23,8 @@ import {
   cartItemsToOrderItems,
   handlePrices,
 } from '../../utils/cart.mjs';
+
+import config from '../../config/index.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -35,13 +37,15 @@ export default class OrdersCreate extends Base {
             roe: 'string',
             publicKey: 'string',
             paymentProcessor: 'string',
-            refProfileId: 'integer',
+            refProfileId: 'string',
+            userId: 'string',
             prices: [
               {
                 nested_object: {
                   addBundles: ['string'],
                   address: ['string'],
                   domain: ['string'],
+                  combo: ['string'],
                   renewDomain: ['string'],
                 },
               },
@@ -50,20 +54,30 @@ export default class OrdersCreate extends Base {
               nested_object: {
                 gaClientId: 'string',
                 gaSessionId: 'string',
+                orderUserType: 'string',
               },
             },
           },
         },
       ],
+      cookies: ['any_object'],
     };
   }
 
   async execute({
-    data: { cartId, roe, publicKey, paymentProcessor, prices, refProfileId, data },
+    data: {
+      cartId,
+      roe,
+      publicKey,
+      paymentProcessor,
+      prices,
+      refProfileId,
+      data,
+      userId,
+    },
+    cookies,
   }) {
-    const userId = this.context.id;
-    // assume user should have only one active order with status NEW
-    const exOrder = await Order.findOne({
+    let order = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
         userId,
@@ -73,124 +87,118 @@ export default class OrdersCreate extends Base {
       },
       include: [OrderItem],
     });
-    let order;
+
     let payment = null;
     const orderItems = [];
 
+    const refCookie = cookies && cookies[config.refCookieName];
+
     const user = await User.findActive(userId);
 
-    if (!user) {
+    const cart = await Cart.findById(cartId);
+
+    if (!cart) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
-          id: 'NOT_FOUND',
+          cart: 'NOT_FOUND',
         },
       });
     }
 
-    await Order.sequelize.transaction(async t => {
-      // Update existing new order and remove items from it
-      if (exOrder) {
-        exOrder.status = Order.STATUS.CANCELED;
+    const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
+      cartItems: cart.items,
+      roe,
+    });
 
-        await exOrder.save({ transaction: t });
-        await OrderItemStatus.update(
-          { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
-          {
-            where: {
-              orderItemId: {
-                [Sequelize.Op.in]: exOrder.OrderItems.map(({ id }) => id),
-              },
-            },
-            transaction: t,
-          },
-        );
-      }
+    const cartPublicKey = cart.publicKey;
 
-      const cart = await Cart.findById(cartId);
+    const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
-      if (!cart) {
-        throw new X({
-          code: 'NOT_FOUND',
-          fields: {
-            cart: 'NOT_FOUND',
-          },
-        });
-      }
-
-      const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
-        cartItems: cart.items,
-        roe,
-      });
-
-      order = await Order.create(
-        {
-          status: Order.STATUS.NEW,
-          total: totalCostUsdc,
-          roe,
-          publicKey,
-          customerIp: this.context.ipAddress,
+    const dashboardDomains = await Domain.getDashboardDomains();
+    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+      refCode: refCookie,
+    });
+    const userHasFreeAddress = cartPublicKey
+      ? await FreeAddress.getItems({ publicKey: cartPublicKey })
+      : userId
+      ? await FreeAddress.getItems({
           userId,
-          refProfileId: refProfileId ? refProfileId : user.refProfileId,
-          data,
+        })
+      : null;
+
+    const {
+      addBundles: addBundlesPrice,
+      address: addressPrice,
+      domain: domainPrice,
+      combo: comboPrice,
+      renewDomain: renewDomainPrice,
+    } = handledPrices;
+
+    const isEmptyPrices =
+      !addBundlesPrice ||
+      !addressPrice ||
+      !domainPrice ||
+      !comboPrice ||
+      !renewDomainPrice;
+
+    if (isEmptyPrices) {
+      throw new X({
+        code: 'ERROR',
+        fields: {
+          prices: 'PRICES_ARE_EMPTY',
         },
-        { transaction: t },
-      );
-
-      order.number = Order.generateNumber(order.id);
-      await order.save({ transaction: t });
-
-      const metamaskUserPublicKey = cart.metamaskUserPublicKey;
-
-      const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
-
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
-        : userId
-        ? await FreeAddress.getItems({
-            userId,
-          })
-        : null;
-
-      const {
-        addBundles: addBundlesPrice,
-        address: addressPrice,
-        domain: domainPrice,
-        renewDomain: renewDomainPrice,
-      } = handledPrices;
-
-      const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
-
-      if (isEmptyPrices) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            prices: 'PRICES_ARE_EMPTY',
-          },
-        });
-      }
-
-      if (!handledRoe) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            roe: 'ROE_IS_EMPTY',
-          },
-        });
-      }
-
-      const items = await cartItemsToOrderItems({
-        allRefProfileDomains,
-        cartItems: cart.items,
-        dashboardDomains,
-        FioAccountProfile,
-        prices: handledPrices,
-        roe: handledRoe,
-        userHasFreeAddress,
       });
+    }
+
+    if (!handledRoe) {
+      throw new X({
+        code: 'ERROR',
+        fields: {
+          roe: 'ROE_IS_EMPTY',
+        },
+      });
+    }
+
+    const wallet = await Wallet.findOneWhere({ userId: this.context.id, publicKey });
+
+    const items = await cartItemsToOrderItems({
+      allRefProfileDomains,
+      cartItems: cart.items,
+      dashboardDomains,
+      FioAccountProfile,
+      prices: handledPrices,
+      roe: handledRoe,
+      userHasFreeAddress,
+      walletType: wallet && wallet.from,
+      refCode: refCookie,
+    });
+
+    await Order.sequelize.transaction(async t => {
+      if (!order) {
+        order = await Order.create(
+          {
+            status: Order.STATUS.NEW,
+            total: totalCostUsdc,
+            roe,
+            publicKey,
+            customerIp: this.context.ipAddress,
+            userId,
+            refProfileId: refProfileId ? refProfileId : user.refProfileId,
+            data,
+          },
+          { transaction: t },
+        );
+
+        order.number = Order.generateNumber(order.id);
+
+        await order.save({ transaction: t });
+      } else {
+        await Order.update({ publicKey }, { where: { id: order.id }, transaction: t });
+        await OrderItem.destroy({
+          where: { orderId: order.id },
+        });
+      }
 
       for (const {
         action,
@@ -204,10 +212,10 @@ export default class OrdersCreate extends Base {
       } of items) {
         let orderItemData = itemData;
 
-        if (metamaskUserPublicKey) {
+        if (cartPublicKey) {
           orderItemData = itemData
-            ? { ...itemData, metamaskUserPublicKey }
-            : { metamaskUserPublicKey };
+            ? { ...itemData, publicKey: cartPublicKey }
+            : { publicKey: cartPublicKey };
         }
 
         const orderItem = await OrderItem.create(
@@ -228,13 +236,9 @@ export default class OrdersCreate extends Base {
       }
     });
 
-    if (paymentProcessor)
-      payment = await Payment.createForOrder(
-        order,
-        exOrder,
-        paymentProcessor,
-        orderItems,
-      );
+    if (paymentProcessor) {
+      payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
+    }
 
     return {
       data: {

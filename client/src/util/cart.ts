@@ -1,54 +1,21 @@
-import isEmpty from 'lodash/isEmpty';
-
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../constants/common';
-import { DOMAIN_TYPE } from '../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
-import { CartItem, CartItemType, NativePrices, OrderItem } from '../types';
-import { DomainsArrItemType } from '../pages/FioAddressSelectionPage/types';
-
-export const cartHasFreeItemsOnDomains = ({
-  cartItems,
-  domains,
-}: {
-  cartItems: CartItem[];
-  domains: DomainsArrItemType;
-}) => {
-  return (
-    cartItems &&
-    cartItems.some(cartItem => {
-      const { domain, isFree, domainType } = cartItem;
-      const existingDomain = domains.find(
-        domainItem => domainItem.name === domain,
-      );
-
-      return (
-        existingDomain &&
-        existingDomain.domainType !== DOMAIN_TYPE.PREMIUM &&
-        isFree &&
-        domainType === DOMAIN_TYPE.ALLOW_FREE
-      );
-    })
-  );
-};
-
-export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
-  return (
-    !isEmpty(cartItems) &&
-    cartItems.some(
-      item =>
-        item.domainType === DOMAIN_TYPE.ALLOW_FREE &&
-        item.isFree &&
-        !!item.address,
-    )
-  );
-};
+import {
+  CartItem,
+  CartItemType,
+  FioDomainDoublet,
+  FioWalletDoublet,
+  NativePrices,
+  OrderItem,
+} from '../types';
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   cart.length &&
@@ -60,15 +27,14 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
         item.domainType === DOMAIN_TYPE.PRIVATE),
   );
 
-export const totalCost = (
-  cartItems: CartItem[],
-  roe: number,
-): {
+export type TotalCost = {
   costNativeFio?: number;
   costFree?: string;
   costFio?: string;
   costUsdc?: string;
-} => {
+};
+
+export const totalCost = (cartItems: CartItem[], roe: number): TotalCost => {
   if (cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree))
     return { costFree: 'FREE' };
 
@@ -94,19 +60,29 @@ export const cartIsRelative = (
 ): boolean => {
   const cartItemsLength = cartItems.reduce(
     (length, item) =>
-      CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
-        ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
-          ? length + Number(item.period) + 1
-          : length + Number(item.period)
-        : !!item.address &&
-          item.domainType === DOMAIN_TYPE.CUSTOM &&
-          !item.hasCustomDomainInCart
-        ? length + 2
-        : length + 1,
+      length +
+      1 +
+      (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) &&
+      !item.hasCustomDomainInCart
+        ? Number(item.period) - 1
+        : 0),
     0,
   );
 
-  if (!new MathOp(cartItemsLength).eq(orderItems.length)) return false;
+  const orderItemsLength = orderItems.reduce(
+    (length, item) =>
+      length +
+      (item.action === ACTIONS.registerFioDomain &&
+      !!orderItems.find(
+        it =>
+          it.action === ACTIONS.registerFioAddress && it.domain === item.domain,
+      )
+        ? 0
+        : 1),
+    0,
+  );
+
+  if (!new MathOp(cartItemsLength).eq(orderItemsLength)) return false;
 
   for (const cartItem of cartItems) {
     if (
@@ -115,8 +91,9 @@ export const cartIsRelative = (
           setFioName(address, domain) ===
           setFioName(cartItem.address, cartItem.domain),
       )
-    )
+    ) {
       return false;
+    }
   }
   return true;
 };
@@ -150,8 +127,7 @@ export const handlePriceForMultiYearItems = ({
   prices: NativePrices;
   period: number;
 }): number => {
-  const { address, domain, renewDomain } = prices;
-
+  const { domain, renewDomain, combo } = prices;
   const renewPeriod = new MathOp(period).sub(1).toNumber();
   const renewDomainNativeCost = new MathOp(renewDomain)
     .mul(renewPeriod)
@@ -161,8 +137,101 @@ export const handlePriceForMultiYearItems = ({
     .toNumber();
 
   if (includeAddress) {
-    return new MathOp(multiDomainPrice).add(address).toNumber();
+    if (renewPeriod > 0) {
+      return new MathOp(combo).add(renewDomainNativeCost).toNumber();
+    } else {
+      return combo;
+    }
   }
 
   return multiDomainPrice;
+};
+
+export const actionFromCartItem = (
+  cartItemType: string,
+  isComboSupport: boolean,
+) =>
+  cartItemType === CART_ITEM_TYPE.DOMAIN_RENEWAL
+    ? ACTIONS.renewFioDomain
+    : cartItemType === CART_ITEM_TYPE.ADD_BUNDLES
+    ? ACTIONS.addBundledTransactions
+    : cartItemType === CART_ITEM_TYPE.DOMAIN
+    ? ACTIONS.registerFioDomain
+    : isComboSupport
+    ? ACTIONS.registerFioDomainAddress
+    : ACTIONS.registerFioAddress;
+
+export type GroupedCartItem = {
+  type?: string;
+  domain?: string;
+};
+
+export type GroupedCartItemsByPaymentWallet<T extends GroupedCartItem> = {
+  signInFioWallet: FioWalletDoublet;
+  cartItems: T[];
+};
+
+export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
+  groups: GroupedCartItemsByPaymentWallet<T>[];
+  hasPublicCartItems: boolean;
+};
+
+export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
+  defaultWalletPublicKey: string,
+  cartItems: T[],
+  fioWallets: FioWalletDoublet[],
+  userDomains: FioDomainDoublet[],
+): GroupCartItemsByPaymentWalletResult<T> => {
+  const defaultOwnerWallet = fioWallets.find(
+    wallet => wallet.publicKey === defaultWalletPublicKey,
+  );
+
+  if (!defaultOwnerWallet) {
+    return { groups: [], hasPublicCartItems: false };
+  }
+
+  let hasPublicCartItems = false;
+  const groups: GroupedCartItemsByPaymentWallet<T>[] = [];
+
+  const addToGroup = (signInFioWallet: FioWalletDoublet, cartItem: T) => {
+    let group = groups.find(
+      it => it.signInFioWallet.publicKey === signInFioWallet.publicKey,
+    );
+
+    if (!group) {
+      group = {
+        signInFioWallet,
+        cartItems: [],
+      };
+      groups.push(group);
+    }
+
+    group.cartItems.push(cartItem);
+  };
+
+  for (const cartItem of cartItems) {
+    if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
+      hasPublicCartItems = true;
+      addToGroup(defaultOwnerWallet, cartItem);
+      continue;
+    }
+
+    const addressDomain = userDomains.find(
+      domain => domain.name === cartItem.domain,
+    );
+
+    if (!addressDomain || addressDomain.isPublic) {
+      hasPublicCartItems = true;
+      addToGroup(defaultOwnerWallet, cartItem);
+      continue;
+    }
+
+    const domainOwnerWallet = fioWallets.find(
+      wallet => wallet.publicKey === addressDomain.walletPublicKey,
+    );
+
+    addToGroup(domainOwnerWallet, cartItem);
+  }
+
+  return { groups, hasPublicCartItems };
 };

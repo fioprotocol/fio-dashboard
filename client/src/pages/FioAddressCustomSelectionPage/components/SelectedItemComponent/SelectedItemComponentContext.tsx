@@ -15,9 +15,8 @@ import {
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../../../redux/profile/selectors';
 
-import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
-import { setFioName } from '../../../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../../../utils';
 import {
   checkIsDomainItemExistsOnCart,
   transformCustomDomains,
@@ -52,7 +51,7 @@ export const useContext = (
   >([]);
 
   const {
-    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
   } = prices;
 
   const fchId = setFioName(address, domain);
@@ -104,6 +103,7 @@ export const useContext = (
     allRefProfileDomains,
     dashboardDomains,
     usernamesOnCustomDomains,
+    refProfileDomains,
   } = allDomains;
 
   const nonPremiumDomains = dashboardDomains
@@ -121,6 +121,12 @@ export const useContext = (
   const allPremiumRefProfileDomains = allRefProfileDomains
     ? transformPremiumDomains(allRefProfileDomains)
     : [];
+  const nonPremiumCurrentRefProfileDomains = refProfileDomains
+    ? transformNonPremiumDomains(refProfileDomains)
+    : [];
+  const premiumCurrentRefProfileDomains = refProfileDomains
+    ? transformPremiumDomains(refProfileDomains)
+    : [];
   const userDomains = allDomains.userDomains || [];
 
   const domainType = !isEmpty(allDomains)
@@ -134,6 +140,7 @@ export const useContext = (
             ![
               ...(dashboardDomains || []),
               ...(allRefProfileDomains || []),
+              ...(refProfileDomains || []),
             ].some(
               dashboardPubilcDomains =>
                 dashboardPubilcDomains.name === chainPublicDomains.name,
@@ -141,6 +148,8 @@ export const useContext = (
         ),
         ...allNonPremiumRefProfileDomains,
         ...allPremiumRefProfileDomains,
+        ...nonPremiumCurrentRefProfileDomains,
+        ...premiumCurrentRefProfileDomains,
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
@@ -149,12 +158,20 @@ export const useContext = (
 
   const totalNativeFio =
     isCustomDomain && !existingCustomDomainFchCartItem
-      ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      ? nativeFioComboPrice
       : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
-  const isFirstRegFreeDomains = allRefProfileDomains?.filter(
+  const firstRegFreeArr = [];
+  if (allRefProfileDomains) {
+    firstRegFreeArr.push(...allRefProfileDomains);
+  }
+  if (refProfileDomains) {
+    firstRegFreeArr.push(...refProfileDomains);
+  }
+
+  const isFirstRegFreeDomains = firstRegFreeArr.filter(
     refProfile => refProfile.isFirstRegFree,
   );
 
@@ -165,7 +182,8 @@ export const useContext = (
   const existingUsersFreeAddress =
     usersFreeAddresses &&
     usersFreeAddresses.find(
-      freeAddress => freeAddress.name.split('@')[1] === domain,
+      freeAddress =>
+        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
     );
 
   const selectedItemProps = {

@@ -16,6 +16,7 @@ import metamask from './metamask.mjs';
 import notifications from './notifications';
 import orders from './orders';
 import payments from './payments';
+import publicApi from './publicApi';
 import refProfiles from './refProfiles';
 import registration from './registration.mjs';
 import twitter from './twitter.mjs';
@@ -41,6 +42,7 @@ export default {
   notifications,
   orders,
   payments,
+  publicApi,
   refProfiles,
   registration,
   twitter,

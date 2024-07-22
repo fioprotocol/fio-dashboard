@@ -1,7 +1,7 @@
 import { Component, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 import { log } from '../../util/general';
 import usePagination from '../../hooks/usePagination';
 

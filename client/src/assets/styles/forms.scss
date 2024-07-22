@@ -18,6 +18,11 @@ form {
     @include proxima-nova-bold;
   }
 
+  button.autosize {
+    width: auto;
+    height: auto;
+  }
+
   & button, a, p, h1, h2, h3, h4, h5 {
     margin-bottom: 30px;
   }

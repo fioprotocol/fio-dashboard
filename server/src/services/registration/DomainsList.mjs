@@ -3,7 +3,7 @@ import { Domain, ReferrerProfile, Username } from '../../models';
 
 import { isDomainExpired } from '../../utils/fio.mjs';
 
-const REF_COOKIE_NAME = process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME || 'ref';
+const REF_COOKIE_NAME = process.env.REFERRAL_PROFILE_COOKIE_NAME || 'ref';
 
 export default class DomainsList extends Base {
   static get validationRules() {

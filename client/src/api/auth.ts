@@ -206,4 +206,16 @@ export default class Auth extends Base {
   deleteUser(): Promise<GenericStatusResponse> {
     return this.apiClient.delete('users/me');
   }
+
+  createNoRegisterUser({
+    publicKey,
+    refCode,
+  }: {
+    publicKey: string;
+    refCode: string;
+  }): Promise<AuthProfileResponse[]> {
+    return this.apiClient.post('users/without-registration', {
+      data: { publicKey, refCode },
+    });
+  }
 }

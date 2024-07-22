@@ -1,0 +1,19 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.name {
+  @include proxima-nova-bold;
+  word-break: break-all;
+  font-weight: bold;
+}
+
+.value {
+  flex-shrink: 0;
+  text-wrap: nowrap;
+
+  &.right {
+    display: flex;
+    justify-content: end;
+  }
+}

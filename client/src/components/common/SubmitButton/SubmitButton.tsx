@@ -19,6 +19,7 @@ type Props = {
   hasLowHeight?: boolean;
   hasNoSidePaddings?: boolean;
   hasSmallText?: boolean;
+  hasSmallPaddings?: boolean;
   hasWhiteHoverBackground?: boolean;
   isBlack?: boolean;
   isButtonType?: boolean;
@@ -29,6 +30,7 @@ type Props = {
   isRed?: boolean;
   isTransparent?: boolean;
   isWhite?: boolean;
+  isBlue?: boolean;
   isWhiteBordered?: boolean;
   isWhiteViolet?: boolean;
   loading?: boolean;
@@ -53,9 +55,11 @@ export const SubmitButton: React.FC<Props> = props => {
     hasLowHeight,
     hasNoSidePaddings,
     hasSmallText,
+    hasSmallPaddings,
     hasWhiteHoverBackground,
     isBlack,
     isButtonType,
+    isBlue,
     isCobalt,
     isGreen,
     isGreenTeal,
@@ -94,6 +98,7 @@ export const SubmitButton: React.FC<Props> = props => {
         hasLowHeight && classes.hasLowHeight,
         hasNoSidePaddings && classes.hasNoSidePaddings,
         hasSmallText && classes.hasSmallText,
+        hasSmallPaddings && classes.hasSmallPaddings,
         hasWhiteHoverBackground && classes.hasWhiteHoverBackground,
         isBlack && classes.isBlack,
         isCobalt && classes.isCobalt,
@@ -106,6 +111,7 @@ export const SubmitButton: React.FC<Props> = props => {
         isWhiteBordered && classes.isWhiteBordered,
         isWhiteViolet && classes.isWhiteViolet,
         isGrey && classes.isGrey,
+        isBlue && classes.isBlue,
         disabled && classes.disabled,
         loading && classes.loading,
         withBottomMargin && classes.bottomMargin,

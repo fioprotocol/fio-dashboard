@@ -16,6 +16,8 @@ import PageTitle from '../../../components/PageTitle/PageTitle';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
+import { LedgerCheckPublicAddress } from '../../../components/LedgerCheckPublicAddress/LedgerCheckPublicAddress';
+import { PublicAddressBadge } from './PublicAddressBadge';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard, log } from '../../../util/general';
@@ -189,6 +191,7 @@ const WalletSettings: React.FC<Props> = props => {
           <div className={classes.privateKeyLabel}>
             This is your private key
           </div>
+
           <Badge type={BADGE_TYPES.WHITE} show={true}>
             <div className={classes.publicAddressContainer}>
               <div className={classes.publicKey}>{key}</div>
@@ -215,9 +218,10 @@ const WalletSettings: React.FC<Props> = props => {
       <>
         <h6 className={classes.settingTitle}>Show Private Key</h6>
         <InfoBadge
+          className={classes.infoBadge}
           show={true}
           type={BADGE_TYPES.INFO}
-          title="Warning"
+          title="Warning!"
           message="Never disclose this private key. Anyone with your private keys can steal any assets in your wallet."
         />
         <PasswordForm loading={loading.showPrivateKey} onSubmit={onConfirm} />
@@ -239,6 +243,27 @@ const WalletSettings: React.FC<Props> = props => {
     );
   };
 
+  const renderPublicKey = () => {
+    if (key != null) return null;
+
+    return (
+      <>
+        <h6 className={classes.settingTitle}>FIO Public Address</h6>
+        <PublicAddressBadge
+          publicKey={fioWallet.publicKey}
+          classNames={{
+            badgeContainer: classes.infoBadge,
+            value: classes.infoBadgeValue,
+          }}
+        />
+        <LedgerCheckPublicAddress
+          className={classes.ledgerShowAddress}
+          fioWallet={fioWallet}
+        />
+      </>
+    );
+  };
+
   const renderCancel = () => {
     if (key != null)
       return (
@@ -252,17 +277,10 @@ const WalletSettings: React.FC<Props> = props => {
     if (key != null) return null;
     return (
       <>
-        <h6 className={classes.settingTitle}>
-          Delete Wallet
-          {isLedgerWallet && (
-            <span>
-              <LedgerBadge />
-            </span>
-          )}
-        </h6>
+        <h6 className={classes.settingTitle}>Delete Wallet</h6>
         {fioWalletsAmount === 1 && !isLedgerWallet ? (
           <InfoBadge
-            className="mb-4"
+            className={classes.infoBadge}
             show={true}
             type={BADGE_TYPES.INFO}
             title="Info"
@@ -271,29 +289,16 @@ const WalletSettings: React.FC<Props> = props => {
         ) : (
           <>
             <InfoBadge
+              className={classes.infoBadge}
               show={true}
               type={isLedgerWallet ? BADGE_TYPES.INFO : BADGE_TYPES.WARNING}
-              title={isLedgerWallet ? 'Private Key' : 'Warning'}
+              title={isLedgerWallet ? 'Private Key' : 'Warning!'}
               message={
-                <>
-                  {isLedgerWallet ? (
-                    <span>
-                      Your private key for this wallet is stored on your ledger
-                      device. Once Deleted, it can be added back at any time.
-                    </span>
-                  ) : isMetamaskWallet ? (
-                    <span>
-                      Your private key for this wallet is stored on your
-                      MetaMask wallet. Once Deleted, it can be added back at any
-                      time.
-                    </span>
-                  ) : (
-                    <span className={classes.badgeBoldText}>
-                      Record your private key as this wallet will be permanently
-                      lost.
-                    </span>
-                  )}
-                </>
+                isLedgerWallet
+                  ? 'Your private key for this wallet is stored on your ledger device. Once Deleted, it can be added back at any time.'
+                  : isMetamaskWallet
+                  ? 'Your private key for this wallet is stored on your MetaMask wallet. Once Deleted, it can be added back at any time.'
+                  : 'Record your private key as this wallet will be permanently lost.'
               }
             />
             <DeleteWalletForm
@@ -319,8 +324,12 @@ const WalletSettings: React.FC<Props> = props => {
         hasDefaultCloseColor={true}
       >
         <div className={classes.container}>
-          <h3 className={classes.title}>Wallet Settings</h3>
+          <h3 className={classes.title}>
+            <b>Wallet Settings </b>
+            <span>{isLedgerWallet && <LedgerBadge />}</span>
+          </h3>
           {renderNameForm()}
+          {renderPublicKey()}
           {!isLedgerWallet && !isMetamaskWallet && renderPasswordForm()}
           {renderKey()}
           {renderCancel()}

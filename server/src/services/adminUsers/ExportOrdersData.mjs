@@ -26,6 +26,7 @@ export default class ExportOrdersData extends Base {
             ],
             status: 'integer',
             freeStatus: 'integer',
+            orderUserType: 'string',
           },
         },
       ],

@@ -232,7 +232,7 @@ export function* profileSuccess(): Generator {
         handleUsersFreeCartItems({
           id: cartId,
           userId: user.id,
-          metamaskUserPublicKey,
+          publicKey: metamaskUserPublicKey,
         }),
       );
     }

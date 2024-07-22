@@ -1,4 +1,4 @@
-import apis from '../../../../api';
+import apis from '../../../../admin/api';
 
 import MathOp from '../../../../util/math';
 import { setFioName } from '../../../../utils';

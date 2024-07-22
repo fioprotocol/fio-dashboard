@@ -1,7 +1,13 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { FioWalletDoublet } from '../../types';
+import { FioRecord, FioWalletDoublet } from '../../types';
+
+export type FioRequestDecryptValues = {
+  itemData: FioRecord;
+  paymentOtbData: FioRecord | null;
+  fioRecordType: string;
+};
 
 type MatchProps = {
   publicKey: string;

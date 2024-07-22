@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
 import Processing from '../../components/common/TransactionProcessing';
 
@@ -19,7 +19,7 @@ import {
   fireActionAnalyticsEventError,
 } from '../../util/analytics';
 
-import { PinConfirmation, FioActions } from '../../types';
+import { PinConfirmation, FioActions, AnyType } from '../../types';
 import { Props } from './types';
 
 const EdgeConfirmActionContainer: React.FC<Props> = props => {
@@ -32,7 +32,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
   const {
     fioWalletEdgeId,
     hideProcessing,
-    pinModalIsOpen,
     pinConfirmation,
     action,
     data,
@@ -52,7 +51,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     fioActionExecuted,
   } = props;
 
-  const init = useRef(false);
   const [initLaunch, setInitLaunch] = useState<boolean>(false);
 
   // Submit an action
@@ -66,6 +64,8 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         data: additionalData,
       } = pinConfirmationResult;
 
+      let result: AnyType;
+
       if (confirmationAction !== action) return;
       if (
         !confirmationError &&
@@ -75,7 +75,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         setProcessing(true);
         if (edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);
         try {
-          const result = await submitAction({
+          result = await submitAction({
             edgeAccount,
             keys: fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : null,
             allWalletKeysInAccount: fioWalletEdgeId ? null : keys,
@@ -84,8 +84,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
           if (!edgeAccountLogoutBefore)
             await waitForEdgeAccountStop(edgeAccount);
-
-          onSuccess(result);
 
           fireActionAnalyticsEvent(action, additionalData);
 
@@ -128,6 +126,8 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       if (edgeAccount != null) {
         await waitForEdgeAccountStop(edgeAccount);
       }
+
+      onSuccess(result);
     },
     [
       action,
@@ -149,8 +149,9 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
   // Show pin modal
   useEffect(() => {
-    if (data != null && !confirmPinKeys) showPinModal(action, data);
-  }, [data, action, confirmPinKeys, showPinModal]);
+    if (data != null && !confirmPinKeys && !initLaunch)
+      showPinModal(action, data);
+  }, [data, action, confirmPinKeys, showPinModal, initLaunch]);
 
   // Handle confirmPinKeys is set
   useEffect(() => {
@@ -177,21 +178,6 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       submit(pinConfirmation);
     }
   }, [pinConfirmation, action, processing, submit, initLaunch]);
-
-  // Handle pin modal closed
-  useEffect(() => {
-    if (
-      (!pinConfirmation || !pinConfirmation.action) &&
-      !pinModalIsOpen &&
-      !processing
-    ) {
-      if (init.current) {
-        onCancel();
-        return;
-      }
-      init.current = true;
-    }
-  }, [pinConfirmation, pinModalIsOpen, onCancel, processing]);
 
   return (
     <Processing

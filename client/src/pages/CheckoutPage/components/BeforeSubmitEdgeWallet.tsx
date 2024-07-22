@@ -1,12 +1,18 @@
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../../constants/common';
 import {
   ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -14,35 +20,64 @@ import {
 } from '../../../constants/fio';
 
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import { BeforeSubmitData, BeforeSubmitProps } from '../types';
+import {
+  BeforeSubmitData,
+  BeforeSubmitValues,
+  BeforeSubmitProps,
+} from '../types';
+import { prices as pricesSelector } from '../../../redux/registrations/selectors';
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    setProcessing,
-    onSuccess,
-    onCancel,
-    submitData,
-    fee,
+    groupedBeforeSubmitValues,
     processing,
+    onCancel,
+    onSuccess,
+    setProcessing,
   } = props;
 
-  const send = async ({ allWalletKeysInAccount, data }: SubmitActionParams) => {
+  const prices = useSelector(pricesSelector);
+
+  const edgeItems = groupedBeforeSubmitValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.EDGE,
+  );
+
+  const fioAddressItems = edgeItems
+    ?.map(edgeItem => edgeItem.submitData.fioAddressItems)
+    .flat();
+
+  const send = async ({
+    allWalletKeysInAccount,
+  }: SubmitActionParams<BeforeSubmitValues>) => {
     const signedTxs: BeforeSubmitData = {};
-    for (const item of data.fioAddressItems) {
+
+    for (const item of fioAddressItems) {
       apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
+
+      const isComboRegistration =
+        !item.cartItem.hasCustomDomainInCart &&
+        item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         signedTxs[item.name] = {
           signedTx: await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioAddress,
+            isComboRegistration
+              ? ACTIONS.registerFioDomainAddress
+              : ACTIONS.registerFioAddress,
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
-              maxFee: new MathOp(fee)
+              maxFee: new MathOp(
+                isComboRegistration
+                  ? prices.nativeFio.combo
+                  : prices.nativeFio.address,
+              )
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           ),
@@ -61,6 +96,8 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     return signedTxs;
   };
 
+  if (!edgeItems.length) return null;
+
   return (
     <EdgeConfirmAction
       action={CONFIRM_PIN_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN}
@@ -68,7 +105,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={submitData}
+      data={{ fioAddressItems }}
       submitAction={send}
       edgeAccountLogoutBefore={true}
     />

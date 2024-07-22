@@ -24,10 +24,11 @@ type Props = {
   onClose: () => void;
   isWrap: boolean;
   isTokens: boolean;
+  isBurned: boolean;
 };
 
 const DetailsModal: React.FC<Props> = props => {
-  const { itemData, onClose, isWrap, isTokens } = props;
+  const { itemData, onClose, isWrap, isTokens, isBurned } = props;
 
   const {
     actionType,
@@ -53,6 +54,7 @@ const DetailsModal: React.FC<Props> = props => {
   const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${to} ${transactionId}`;
   const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${amount} ${to} ${transactionId}`;
   const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${domain} ${to} ${transactionId}`;
+  const burnDomainFailedCommand = `npm run oracle burn domain ${domain} ${transactionId}`;
 
   const wrapCommand = isWrap
     ? isTokens
@@ -60,6 +62,8 @@ const DetailsModal: React.FC<Props> = props => {
       : wrapDomainFailedCommand
     : isTokens
     ? unwrapTokenFailedCommand
+    : isBurned
+    ? burnDomainFailedCommand
     : unwrapDomainFailedCommand;
 
   return (
@@ -74,7 +78,7 @@ const DetailsModal: React.FC<Props> = props => {
       <div className="d-flex flex-column w-100">
         <h3 className="d-flex mt-2 mb-3 justify-content-between">
           <div>
-            {isWrap ? 'Wrap ' : 'Unwrap '}
+            {isWrap ? 'Wrap ' : isBurned ? 'Burn ' : 'Unwrap '}
             {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
           </div>
           {itemData ? (
@@ -92,11 +96,11 @@ const DetailsModal: React.FC<Props> = props => {
               <div className={classNames(classes.trxId, 'mr-3')}>
                 <a
                   href={
-                    (!isWrap
-                      ? isTokens
-                        ? process.env.REACT_APP_ETH_HISTORY_URL
-                        : process.env.REACT_APP_POLYGON_HISTORY_URL
-                      : process.env.REACT_APP_FIO_BLOCKS_TX_URL) +
+                    (isWrap || isBurned
+                      ? process.env.REACT_APP_FIO_BLOCKS_TX_URL
+                      : isTokens
+                      ? process.env.REACT_APP_ETH_HISTORY_URL
+                      : process.env.REACT_APP_POLYGON_HISTORY_URL) +
                     itemData.transactionId
                   }
                   target="_blank"
@@ -153,18 +157,22 @@ const DetailsModal: React.FC<Props> = props => {
                 <div>{domain}</div>
               </div>
             )}
-            <div className="d-flex justify-content-between my-2">
-              <div className="mr-3">
-                <b>From {isWrap ? 'Account' : 'Address'}:</b>
+            {!isBurned && (
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>From {isWrap ? 'Account' : 'Address'}:</b>
+                </div>
+                <div>{from}</div>
               </div>
-              <div>{from}</div>
-            </div>
-            <div className="d-flex justify-content-between my-2">
-              <div className="mr-3">
-                <b>To {isWrap ? 'Address' : 'Handle'}:</b>
+            )}
+            {!isBurned && (
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>To {isWrap ? 'Address' : 'Handle'}:</b>
+                </div>
+                <div>{to}</div>
               </div>
-              <div>{to}</div>
-            </div>
+            )}
 
             {tpid && (
               <div>

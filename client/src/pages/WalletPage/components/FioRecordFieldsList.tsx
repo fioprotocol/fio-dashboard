@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import FioRecordFieldContent from './FioRecordFieldContent';
+import { ResultDetails } from '../../../components/ResultDetails/ResultDetails';
 
 import {
   FIO_RECORD_DETAILED_FIELDS,
@@ -61,15 +61,17 @@ const FioRecordFieldsList: React.FC<Props> = props => {
             fioRecordType === FIO_RECORD_TYPES.SENT &&
             field === FIO_RECORD_DETAILED_FIELDS.from &&
             fioRecordDetailedType === FIO_RECORD_DETAILED_TYPE.REQUEST
-          )
-            return 'requestor';
+          ) {
+            return 'Requestor';
+          }
 
           if (
             fioRecordType === FIO_RECORD_TYPES.DATA &&
             field === FIO_RECORD_DETAILED_FIELDS.from &&
             fioRecordDetailedType === FIO_RECORD_DETAILED_TYPE.PAYMENT
-          )
-            return 'payer';
+          ) {
+            return 'Payer';
+          }
 
           if (field === FIO_RECORD_DETAILED_FIELDS.obtId) return 'ID';
           if (field === FIO_RECORD_DETAILED_FIELDS.chainCode) return 'Chain';
@@ -93,19 +95,17 @@ const FioRecordFieldsList: React.FC<Props> = props => {
             className={classnames(classes.container, isShort && classes.short)}
             key={field}
           >
-            <Badge show={true} type={BADGE_TYPES.WHITE}>
-              <div className={classes.badgeContainer}>
-                <p className={classes.title}>{renderField()}</p>
-                <p className={classes.content}>
-                  <FioRecordFieldContent
-                    value={value()}
-                    field={field}
-                    chain={fioDecryptedContent?.chainCode}
-                    token={fioDecryptedContent?.tokenCode}
-                  />
-                </p>
-              </div>
-            </Badge>
+            <ResultDetails
+              label={renderField()}
+              value={
+                <FioRecordFieldContent
+                  value={value()}
+                  field={field}
+                  chain={fioDecryptedContent?.chainCode}
+                  token={fioDecryptedContent?.tokenCode}
+                />
+              }
+            />
           </div>
         );
       })}

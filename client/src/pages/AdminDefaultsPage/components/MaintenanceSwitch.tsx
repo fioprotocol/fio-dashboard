@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 
 import DangerModal from '../../../components/Modal/DangerModal';
 
-import apis from '../../../api';
+import apis from '../../../admin/api';
 import { VarsResponse } from '../../../api/responses';
 import useEffectOnce from '../../../hooks/general';
 

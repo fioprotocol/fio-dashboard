@@ -10,16 +10,19 @@ import logger from '../../logger.mjs';
 
 import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
 
+import config from '../../config/index.mjs';
+
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
       userId: ['string'],
-      metamaskUserPublicKey: ['string'],
+      publicKey: ['string'],
+      cookies: ['any_object'],
     };
   }
 
-  async execute({ id, userId, metamaskUserPublicKey }) {
+  async execute({ id, userId, publicKey, cookies }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -29,10 +32,14 @@ export default class HandleUsersFreeCartItems extends Base {
         };
       }
 
+      const refCookie = cookies && cookies[config.refCookieName];
+
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+        refCode: refCookie,
+      });
+      const userHasFreeAddress = publicKey
+        ? await FreeAddress.getItems({ publicKey })
         : userId
         ? await FreeAddress.getItems({
             userId,
@@ -44,12 +51,13 @@ export default class HandleUsersFreeCartItems extends Base {
         cartItems: cart.items,
         dashboardDomains,
         userHasFreeAddress,
+        refCode: refCookie,
       });
 
       await cart.update({
         items: handledFreeCartItems,
         userId,
-        metamaskUserPublicKey,
+        publicKey,
       });
 
       return {

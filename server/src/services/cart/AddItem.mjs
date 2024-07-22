@@ -23,7 +23,7 @@ import {
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
-const REF_COOKIE_NAME = process.env.REACT_APP_REFERRAL_PROFILE_COOKIE_NAME || 'ref';
+import config from '../../config/index.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -41,19 +41,21 @@ export default class AddItem extends Base {
             domainType: ['string'],
             id: ['required', 'string'],
             isFree: ['boolean'],
+            isWatchedDomain: ['boolean'],
             hasCustomDomainInCart: ['boolean'],
             period: ['string'],
             type: ['required', 'string'],
           },
         },
       ],
-      metamaskUserPublicKey: ['string'],
+      publicKey: ['string'],
       prices: [
         {
           nested_object: {
             addBundles: ['string'],
             address: ['string'],
             domain: ['string'],
+            combo: ['string'],
             renewDomain: ['string'],
           },
         },
@@ -65,36 +67,33 @@ export default class AddItem extends Base {
     };
   }
 
-  async execute({
-    id,
-    item,
-    metamaskUserPublicKey,
-    prices,
-    roe,
-    token,
-    userId: reqUserId,
-    cookies,
-  }) {
+  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, cookies }) {
     try {
       const { domain, type } = item;
 
       const userId = this.context.id || reqUserId || null;
+      const refCookie = cookies && cookies[config.refCookieName];
 
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
+      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
+        refCode: refCookie,
+      });
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-      const userHasFreeAddress = metamaskUserPublicKey
-        ? await FreeAddress.getItems({ publicKey: metamaskUserPublicKey })
+      const userHasFreeAddress = publicKey
+        ? await FreeAddress.getItems({ publicKey: publicKey })
         : userId
         ? await FreeAddress.getItems({
             userId,
           })
         : null;
-      const refCookie = cookies && cookies[REF_COOKIE_NAME];
 
-      const gatedRefProfile = await ReferrerProfile.findOne({
+      const refProfile = await ReferrerProfile.findOne({
+        where: { code: refCookie },
+      });
+
+      const gatedRefProfiles = await ReferrerProfile.findAll({
         where: Sequelize.literal(
           `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
         ),
@@ -104,12 +103,21 @@ export default class AddItem extends Base {
         dashboardDomain => dashboardDomain.name === domain,
       );
 
+      const domainExistsInRefProfile =
+        refProfile &&
+        refProfile.settings &&
+        refProfile.settings.domains &&
+        !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
+
       const isRefCookieEqualGatedRefprofile =
-        refCookie && gatedRefProfile && refCookie === gatedRefProfile.code;
+        refCookie &&
+        gatedRefProfiles.length &&
+        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCookie);
 
       if (
-        ((gatedRefProfile &&
-          (isRefCookieEqualGatedRefprofile || !domainExistsInDashboardDomains)) ||
+        ((gatedRefProfiles.length &&
+          (isRefCookieEqualGatedRefprofile ||
+            (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
           freeDomainOwner) &&
         type === CART_ITEM_TYPE.ADDRESS
       ) {
@@ -135,11 +143,16 @@ export default class AddItem extends Base {
         addBundles: addBundlesPrice,
         address: addressPrice,
         domain: domainPrice,
+        combo: comboPrice,
         renewDomain: renewDomainPrice,
       } = handledPrices;
 
       const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+        !addBundlesPrice ||
+        !addressPrice ||
+        !domainPrice ||
+        !comboPrice ||
+        !renewDomainPrice;
 
       if (isEmptyPrices) {
         throw new X({
@@ -166,13 +179,14 @@ export default class AddItem extends Base {
         freeDomainOwner,
         item,
         userHasFreeAddress,
+        refCode: refProfile && refProfile.code,
       });
 
       if (!existingCart) {
         const cart = await Cart.create({
           items: [handledFreeCartItem],
           userId,
-          metamaskUserPublicKey,
+          publicKey,
         });
 
         return { data: Cart.format(cart.get({ plain: true })) };
@@ -201,7 +215,7 @@ export default class AddItem extends Base {
       await existingCart.update({
         items: handledCartItemsWithExistingFioHandleCustomDomain,
         userId,
-        metamaskUserPublicKey,
+        publicKey,
       });
 
       return {

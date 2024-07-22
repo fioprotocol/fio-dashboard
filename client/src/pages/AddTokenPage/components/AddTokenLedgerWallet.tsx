@@ -14,20 +14,21 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
 } from '../../../types';
-import { FormValues } from '../types';
+import { AddTokenValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: FormValues | null;
+  submitData: AddTokenValues | null;
   processing: boolean;
   fee: number;
 };
 
 const AddTokenLedgerWallet: React.FC<Props> = props => {
   const {
+    fee,
     fioWallet,
     setProcessing,
     onSuccess,
@@ -61,6 +62,7 @@ const AddTokenLedgerWallet: React.FC<Props> = props => {
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.ADD_TOKEN}
       data={submitData}
+      fee={fee}
       fioWallet={fioWallet}
       onConnect={submit}
       onSuccess={onSuccess}

@@ -7,6 +7,7 @@ import { OrderDetailedPdf } from '../../components/OrderDetailedPdf/OrderDetaile
 import apis from '../../api';
 
 import { useEffectOnce } from '../../hooks/general';
+import useQuery from '../../hooks/useQuery';
 
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
 import { log } from '../../util/general';
@@ -19,12 +20,19 @@ import { getUserOrdersList } from '../../redux/orders/actions';
 
 import { APP_TITLE, LINK_TITLES } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import {
   totalOrdersCount as totalOrdersCountSelector,
   loading as loadingSelector,
   ordersList as ordersListSelector,
 } from '../../redux/orders/selectors';
+import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  refProfileCode as refProfileCodeSelector,
+} from '../../redux/refProfile/selectors';
+import { userId as userIdSelector } from '../../redux/profile/selectors';
 
 import { OrdersPageProps } from './types';
 
@@ -35,14 +43,35 @@ export const useContext = (): OrdersPageProps => {
   const ordersList = useSelector(ordersListSelector);
   const loading = useSelector(loadingSelector);
   const dispatch = useDispatch();
+  const refProfileCode = useSelector(refProfileCodeSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const userId = useSelector(userIdSelector);
 
   const [offset, setOffset] = useState<number>(0);
+
+  const queryParams = useQuery();
+
+  const publicKey = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+
+  const noProfileRedirectParams = {
+    pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+      REF_PROFILE_SLUG_NAME,
+      refProfileCode,
+    )}`,
+  };
 
   const isDesktop = useCheckIfDesktop();
   const hasMoreOrders = totalOrdersCount - ordersList.length > 0;
 
   const getMoreOrders = () => {
-    dispatch(getUserOrdersList(ORDERS_ITEMS_LIMIT, offset));
+    dispatch(
+      getUserOrdersList({
+        limit: ORDERS_ITEMS_LIMIT,
+        offset,
+        publicKey,
+        userId,
+      }),
+    );
     setOffset(offset + ORDERS_ITEMS_LIMIT);
   };
 
@@ -54,10 +83,21 @@ export const useContext = (): OrdersPageProps => {
       `${window.location.origin}${ROUTES.ORDER_INVOICE}`,
     );
 
-  useEffectOnce(() => {
-    dispatch(getUserOrdersList(ORDERS_ITEMS_LIMIT, offset));
-    setOffset(offset + ORDERS_ITEMS_LIMIT);
-  }, [dispatch, offset]);
+  useEffectOnce(
+    () => {
+      dispatch(
+        getUserOrdersList({
+          limit: ORDERS_ITEMS_LIMIT,
+          offset,
+          publicKey,
+          userId,
+        }),
+      );
+      setOffset(offset + ORDERS_ITEMS_LIMIT);
+    },
+    [dispatch, offset],
+    !!userId || !!publicKey,
+  );
 
   const onDownloadClick = async (data: {
     orderId: string;
@@ -143,9 +183,12 @@ export const useContext = (): OrdersPageProps => {
 
   return {
     hasMoreOrders,
+    isNoProfileFlow,
     isDesktop,
     loading,
     ordersList,
+    noProfileRedirectParams,
+    publicKey,
     getMoreOrders,
     onDownloadClick,
     onPrintClick,

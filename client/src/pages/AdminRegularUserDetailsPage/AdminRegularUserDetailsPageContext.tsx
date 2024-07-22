@@ -4,7 +4,8 @@ import { useHistory } from 'react-router';
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 
-import apis from '../../api';
+import apis from '../../admin/api';
+import { handleUserProfileType } from '../../util/user';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
@@ -37,7 +38,11 @@ export const useContext = (): Props => {
     const userDetailsData = await apis.admin.userDetails(userId);
 
     if (userDetailsData) {
-      setUserDetails(userDetailsData);
+      const userProfileType = handleUserProfileType({
+        userProfileType: userDetailsData.userProfileType,
+        fioWallets: userDetailsData.fioWallets,
+      });
+      setUserDetails({ ...userDetailsData, userProfileType });
     }
 
     setLoading(false);

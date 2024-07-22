@@ -21,16 +21,13 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { CheckedSocialMediaLinkType } from '../types';
+import { DeleteSocialMediaLinkValues } from '../types';
 
 type Props = {
   allowDisconnectAll: boolean;
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: CheckedSocialMediaLinkType[];
-  } | null;
+  submitData: DeleteSocialMediaLinkValues | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;

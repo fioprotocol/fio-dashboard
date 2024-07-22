@@ -168,26 +168,49 @@ export class Payment extends Base {
     }
   }
 
-  static async createForOrder(order, exOrder, paymentProcessorKey, orderItems) {
+  static async createForOrder(order, paymentProcessorKey, orderItems) {
     const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
-    let orderPayment = {};
-    let extPaymentParams = {};
 
-    if (exOrder) {
-      await this.cancelPayment(exOrder);
-    }
+    let orderPayment = await Payment.findOne({
+      where: {
+        status: Payment.STATUS.NEW,
+        spentType: Payment.SPENT_TYPE.ORDER,
+        orderId: order.id,
+      },
+    });
+
+    let extPaymentParams = {};
 
     try {
       await Payment.sequelize.transaction(async t => {
-        orderPayment = await Payment.create(
-          {
-            status: Payment.STATUS.NEW,
-            processor: paymentProcessorKey,
-            externalId: '',
-            orderId: order.id,
-          },
-          { transaction: t },
-        );
+        if (!orderPayment) {
+          orderPayment = await Payment.create(
+            {
+              status: Payment.STATUS.NEW,
+              processor: paymentProcessorKey,
+              externalId: '',
+              orderId: order.id,
+            },
+            { transaction: t },
+          );
+
+          if (paymentProcessor) {
+            const user = await User.findById(order.userId);
+
+            extPaymentParams = await paymentProcessor.create({
+              amount: order.total,
+              orderNumber: order.number,
+              buyer: user && user.email,
+            });
+
+            orderPayment.externalId = extPaymentParams.externalPaymentId;
+            orderPayment.amount = extPaymentParams.amount;
+            orderPayment.currency = extPaymentParams.currency;
+            orderPayment.data = { ...orderPayment.data, secret: extPaymentParams.secret };
+
+            await orderPayment.save({ transaction: t });
+          }
+        }
 
         for (const orderItem of orderItems) {
           await OrderItemStatus.create(
@@ -200,21 +223,6 @@ export class Payment extends Base {
             },
             { transaction: t },
           );
-        }
-
-        if (paymentProcessor) {
-          const user = await User.findById(order.userId);
-
-          extPaymentParams = await paymentProcessor.create({
-            amount: order.total,
-            orderNumber: order.number,
-            buyer: user && user.email,
-          });
-          orderPayment.externalId = extPaymentParams.externalPaymentId;
-          orderPayment.amount = extPaymentParams.amount;
-          orderPayment.currency = extPaymentParams.currency;
-          orderPayment.data = { ...orderPayment.data, secret: extPaymentParams.secret };
-          await orderPayment.save({ transaction: t });
         }
       });
     } catch (e) {

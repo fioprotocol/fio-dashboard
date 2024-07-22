@@ -10,11 +10,13 @@ const CartPage: React.FC = () => {
   const {
     cartId,
     cartItems,
+    formsOfPayment,
     hasGetPricesError,
     loadingCart,
-    error,
     hasLowBalance,
+    isAffiliateEnabled,
     isFree,
+    isNoProfileFlow,
     isPriceChanged,
     selectedPaymentProvider,
     disabled,
@@ -37,10 +39,10 @@ const CartPage: React.FC = () => {
     loading: loadingCart,
     roe,
     userWallets,
-    error,
   };
 
   const cartProps = {
+    isNoProfileFlow,
     isPriceChanged,
     hasGetPricesError,
     totalCartAmount,
@@ -50,6 +52,7 @@ const CartPage: React.FC = () => {
   };
 
   const cartAmountProps = {
+    isAffiliateEnabled,
     isFree,
     selectedPaymentProvider,
     disabled,
@@ -58,6 +61,7 @@ const CartPage: React.FC = () => {
     totalCartAmount,
     totalCartUsdcAmount,
     totalCartNativeAmount,
+    formsOfPayment,
     onPaymentChoose,
   };
 

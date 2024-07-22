@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { log } from '../../../../util/general';
-import apis from '../../../../api';
+import apis from '../../../../admin/api';
 
 import { FormValuesProps } from './types';
 

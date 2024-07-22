@@ -43,20 +43,20 @@ export class ReferrerProfile extends Base {
         //   gatedRegistration: {'isOn': boolean, params: {'asset': 'NFT || TOKEN', chainId: '1' (1 - Ethereum), contractAddress: ''}}
         //   img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3A/wD/A...',
         //   link: 'https://www.ref.profile/',
+        //   isBranded: boolean,
+        //   hasNoProfileFlow: boolean
         // },
-        simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
-        simpleRegIpWhitelist: {
-          type: DT.TEXT,
-          allowNull: false,
-          defaultValue: '',
-        },
-        apiWebhook: {
-          type: DT.STRING,
-          allowNull: true,
-        },
         apiToken: {
           type: DT.STRING,
           allowNull: true,
+        },
+        apiHash: {
+          type: DT.STRING,
+          allowNull: true,
+        },
+        apiAccess: {
+          type: DT.BOOLEAN,
+          defaultValue: false,
         },
         freeFioAccountProfileId: {
           type: DT.BIGINT,
@@ -105,6 +105,8 @@ export class ReferrerProfile extends Base {
         'title',
         'subTitle',
         'tpid',
+        'apiAccess',
+        'apiToken',
         'settings',
         'createdAt',
       ],
@@ -123,17 +125,21 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static async getRefDomainsList() {
-    const refDomainsList = await this.findAll({
-      where: {
-        type: this.TYPE.REF,
-        settings: {
-          domains: {
-            [Op.not]: null,
-          },
+  static async getRefDomainsList({ refCode } = {}) {
+    const where = {
+      type: this.TYPE.REF,
+      settings: {
+        domains: {
+          [Op.not]: null,
         },
       },
-    })
+    };
+
+    if (refCode) {
+      where.code = refCode;
+    }
+
+    const refDomainsList = await this.findAll({ where })
       .map(refProfile =>
         refProfile.settings.domains.map(domain => ({
           ...domain,

@@ -62,6 +62,9 @@ export const StripeForm: React.FC<{
   );
   const [submitData, setSubmitData] = useState<BeforeSubmitData | null>(null);
   const confirmRef = useRef<boolean>(false);
+  const [isPaymentElementComplete, setIsPaymentElementComplete] = useState<
+    boolean
+  >(false);
 
   const paymentId = payment && payment.id;
   const cancelPayment = useCallback(() => {
@@ -142,6 +145,11 @@ export const StripeForm: React.FC<{
       setPaymentMethod(event.value.type);
       setSubmitData(null);
     }
+
+    // Check if the payment element is complete only for card payments
+    if (paymentMethod === PAYMENT_METHODS.CARD) {
+      setIsPaymentElementComplete(event.complete);
+    }
   };
 
   useEffect(
@@ -152,6 +160,11 @@ export const StripeForm: React.FC<{
     },
     [cancelPayment],
   );
+
+  useEffect(() => {
+    // Reset payment element completeness when payment method changes
+    setIsPaymentElementComplete(paymentMethod !== PAYMENT_METHODS.CARD);
+  }, [paymentMethod]);
 
   if (!stripe || !elements) return <Loader />;
 
@@ -170,7 +183,12 @@ export const StripeForm: React.FC<{
       <SubmitButton
         text={loading ? 'Processing...' : submitData ? 'Continue' : 'Pay'}
         withTopMargin={true}
-        disabled={!stripe || !elements || loading}
+        disabled={
+          !stripe ||
+          !elements ||
+          loading ||
+          (!isPaymentElementComplete && paymentMethod === PAYMENT_METHODS.CARD)
+        }
         loading={loading}
       />
     </form>

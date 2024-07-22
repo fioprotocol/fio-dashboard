@@ -18,6 +18,7 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
@@ -76,6 +77,7 @@ const AddressDomainCart: React.FC<Props> = props => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
+  const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
 
   const isCartEmpty = count === 0;
   const cartHasFreeAddress = !!cartItems.every(({ isFree }) => isFree);
@@ -97,7 +99,7 @@ const AddressDomainCart: React.FC<Props> = props => {
       route = ROUTES.CHECKOUT;
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !isNoProfileFlow) {
       const isAlternativeUser =
         window.ethereum?.isMetaMask || window.ethereum?.isOpera;
 

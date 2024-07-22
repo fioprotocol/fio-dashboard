@@ -165,17 +165,20 @@ export const getRegularUsersList = ({
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
   filters,
+  includeMoreDetailedInfo,
 }: {
   limit: number;
   offset: number;
-  filters?: { failedSyncedWithEdge?: string };
+  filters?: { userOption?: string };
+  includeMoreDetailedInfo?: boolean;
 }): CommonPromiseAction => ({
   types: [
     GET_REGULAR_USERS_REQUEST,
     GET_REGULAR_USERS_SUCCESS,
     GET_REGULAR_USERS_FAILURE,
   ],
-  promise: (api: Api) => api.admin.usersList({ limit, offset, filters }),
+  promise: (api: Api) =>
+    api.admin.usersList({ limit, offset, filters, includeMoreDetailedInfo }),
 });
 
 export const GET_FIO_API_URLS_REQUEST = `${prefix}/GET_FIO_API_URLS_REQUEST`;

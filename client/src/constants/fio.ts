@@ -45,6 +45,7 @@ export const ACTIONS = {
   recordObtData: 'recordObtData',
   registerFioAddress: 'registerFioAddress',
   registerFioDomain: 'registerFioDomain',
+  registerFioDomainAddress: 'registerFioDomainAddress',
   registerOwnerFioDomain: 'registerOwnerFioDomain',
   renewFioDomain: 'renewFioDomain',
   transferFioAddress: 'transferFioAddress',
@@ -67,6 +68,7 @@ export const TRANSACTION_ACTION_NAMES = {
   [ACTIONS.requestFunds]: 'newfundsreq',
   [ACTIONS.registerFioAddress]: 'regaddress',
   [ACTIONS.registerFioDomain]: 'regdomain',
+  [ACTIONS.registerFioDomainAddress]: 'regdomadd',
   [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
   [ACTIONS.recordObtData]: 'recordobt',
   [ACTIONS.rejectFundsRequest]: 'rejectfndreq',
@@ -152,6 +154,7 @@ export const FIO_ACCOUNT_NAMES = {
   [ACTIONS.addNft]: 'fio.address',
   [ACTIONS.registerFioAddress]: 'fio.address',
   [ACTIONS.registerFioDomain]: 'fio.address',
+  [ACTIONS.registerFioDomainAddress]: 'fio.address',
   [ACTIONS.addPublicAddresses]: 'fio.address',
   [ACTIONS.removeAllPublicAddresses]: 'fio.address',
   [ACTIONS.removePublicAddresses]: 'fio.address',
@@ -175,6 +178,7 @@ export const FIO_ACTION_NAMES = {
   [ACTIONS.addNft]: 'addnft',
   [ACTIONS.registerFioAddress]: 'regaddress',
   [ACTIONS.registerFioDomain]: 'regdomain',
+  [ACTIONS.registerFioDomainAddress]: 'regdomadd',
   [ACTIONS.addPublicAddresses]: 'addaddress',
   [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
   [ACTIONS.removePublicAddresses]: 'remaddress',
@@ -326,4 +330,11 @@ export const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 export const FIO_CONTENT_TYPES = {
   RECORD_OBT_DATA: 'record_obt_data_content',
   NEW_FUNDS: 'new_funds_content',
+};
+
+export const FIO_API_URLS_TYPES = {
+  DASHBOARD_API: 'DASHBOARD_API',
+  DASHBOARD_HISTORY_URL: 'DASHBOARD_HISTORY_URL',
+  WRAP_STATUS_PAGE_API: 'WRAP_STATUS_PAGE_API',
+  WRAP_STATUS_PAGE_HISTORY_URL: 'WRAP_STATUS_PAGE_HISTORY_URL',
 };

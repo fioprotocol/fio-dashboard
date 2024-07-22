@@ -3,6 +3,7 @@ import X from '../Exception';
 
 import { ReferrerProfile } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { checkApiToken } from '../../utils/crypto.mjs';
 
 export default class PartnerCreate extends Base {
   static get requiredPermissions() {
@@ -15,6 +16,8 @@ export default class PartnerCreate extends Base {
       label: ['required', 'string'],
       code: ['required', 'string', 'trim', 'to_lc'],
       tpid: ['string'],
+      apiToken: ['string'],
+      apiAccess: ['boolean'],
       settings: [
         'required',
         {
@@ -43,6 +46,8 @@ export default class PartnerCreate extends Base {
               },
             },
             img: 'string',
+            isBranded: 'boolean',
+            hasNoProfileFlow: 'boolean',
             link: 'string',
             actions: [
               {
@@ -96,9 +101,19 @@ export default class PartnerCreate extends Base {
       });
     }
 
-    data.code = data.code.toLowerCase();
+    if (data.apiToken && !checkApiToken(data.apiToken)) {
+      throw new X({
+        code: 'CREATION_FAILED',
+        fields: {
+          apiToken: 'This api token is incorrect!',
+        },
+      });
+    }
 
-    const createdPartner = new ReferrerProfile(data);
+    const createdPartner = new ReferrerProfile({
+      ...data,
+      code: data.code.toLowerCase(),
+    });
     await createdPartner.save();
 
     return {

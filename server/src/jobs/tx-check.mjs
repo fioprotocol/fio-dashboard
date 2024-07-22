@@ -5,6 +5,7 @@ import {
   BlockchainTransactionEventLog,
   LockedFch,
   OrderItem,
+  FioApiUrl,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
@@ -14,6 +15,7 @@ import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
 
 import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS, ERROR_CODES } from '../config/constants.js';
+import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
 
@@ -33,6 +35,10 @@ class TxCheckJob extends CommonJob {
 
       return acc;
     }, {});
+
+    const fioHistoryUrls = await FioApiUrl.getApiUrls({
+      type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+    });
 
     const processTxItems = items => async () => {
       if (this.isCancelled) return false;
@@ -61,12 +67,15 @@ class TxCheckJob extends CommonJob {
             case FIO_ACTIONS.addBundledTransactions:
               status = BlockchainTransaction.STATUS.SUCCESS;
               break;
+            case FIO_ACTIONS.registerFioDomainAddress:
             case FIO_ACTIONS.registerFioAddress:
             case FIO_ACTIONS.registerFioDomain: {
               const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
                 (params && params.owner_fio_public_key) || publicKey,
               );
-              const isAddress = action === FIO_ACTIONS.registerFioAddress;
+              const isAddress =
+                action === FIO_ACTIONS.registerFioAddress ||
+                action === FIO_ACTIONS.registerFioDomainAddress;
               const fioName = isAddress
                 ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
                 : domain;
@@ -85,7 +94,9 @@ class TxCheckJob extends CommonJob {
 
               if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
                 try {
-                  const resJson = await new FioHistory().getTransaction(txId);
+                  const resJson = await new FioHistory({
+                    fioHistoryUrls,
+                  }).getTransaction(txId);
                   const res = JSON.parse(resJson);
                   const txRegexpString = `Transaction ${txId} not found`;
                   const txRegexp = new RegExp(txRegexpString, 'i');

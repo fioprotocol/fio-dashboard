@@ -64,7 +64,6 @@ export default class WsStatus extends WsBase {
       const order = await Order.findOne({
         where: {
           id: orderId,
-          userId: this.context.id,
         },
         include: [
           {

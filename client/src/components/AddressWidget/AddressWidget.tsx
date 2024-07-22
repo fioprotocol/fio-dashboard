@@ -12,7 +12,7 @@ import { AddressWidgetNotification } from '../../types';
 
 import classes from './AddressWidget.module.scss';
 
-type Props = {
+export type AddressWidgetProps = {
   disabled?: boolean;
   disabledInput?: boolean;
   disabledInputGray?: boolean;
@@ -23,6 +23,17 @@ type Props = {
   classNameLogoContainer?: string;
   classNameSubtitleTitle?: string;
   classNameTitle?: string;
+  dropdownClassNames?: string;
+  controlClassNames?: string;
+  placeholderClassNames?: string;
+  menuClassNames?: string;
+  arrowCloseClassNames?: string;
+  arrowOpenClassNames?: string;
+  optionItemClassNames?: string;
+  optionButtonClassNames?: string;
+  inputCustomDomainClassNames?: string;
+  regInputCustomDomainClassNames?: string;
+  defaultValue?: { id: string; name: string };
   links?: {
     getCryptoHandle: ReactNode;
   };
@@ -36,7 +47,12 @@ type Props = {
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
   isTransparent?: boolean;
+  isValidating?: boolean;
   isDarkWhite?: boolean;
+  lowerCased?: boolean;
+  options?: Array<{ id: string; name: string }>;
+  prefix?: string;
+  showCustomDomainInput?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
@@ -52,9 +68,13 @@ type Props = {
   buttonText?: string;
   stepNumber?: string;
   stepText?: string;
+  hasRoundRadius?: boolean;
+  inputClassNames?: string;
+  isBlueButton?: boolean;
+  toggleShowCustomDomain?: (isCustomDomain: boolean) => void;
 };
 
-const AddressWidget: React.FC<Props> = props => {
+const AddressWidget: React.FC<AddressWidgetProps> = props => {
   const {
     actionText,
     children,
@@ -76,6 +96,7 @@ const AddressWidget: React.FC<Props> = props => {
     links,
     loading,
     logoSrc,
+    lowerCased,
     title,
     showSignInWidget,
     subtitle,
@@ -90,6 +111,24 @@ const AddressWidget: React.FC<Props> = props => {
     buttonText,
     stepNumber,
     stepText,
+    options,
+    dropdownClassNames,
+    controlClassNames,
+    placeholderClassNames,
+    menuClassNames,
+    arrowCloseClassNames,
+    arrowOpenClassNames,
+    optionItemClassNames,
+    optionButtonClassNames,
+    showCustomDomainInput,
+    defaultValue,
+    hasRoundRadius,
+    inputClassNames,
+    inputCustomDomainClassNames,
+    regInputCustomDomainClassNames,
+    isBlueButton,
+    prefix,
+    toggleShowCustomDomain,
   } = props;
 
   return (
@@ -132,6 +171,7 @@ const AddressWidget: React.FC<Props> = props => {
         isTransparent={isTransparent}
         links={links}
         loading={loading}
+        lowerCased={lowerCased}
         suffixText={suffixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}
@@ -141,6 +181,24 @@ const AddressWidget: React.FC<Props> = props => {
         placeHolderText={placeHolderText}
         onInputChanged={onInputChanged}
         buttonText={buttonText}
+        isBlueButton={isBlueButton}
+        options={options}
+        showCustomDomainInput={showCustomDomainInput}
+        dropdownClassNames={dropdownClassNames}
+        controlClassNames={controlClassNames}
+        placeholderClassNames={placeholderClassNames}
+        menuClassNames={menuClassNames}
+        arrowCloseClassNames={arrowCloseClassNames}
+        arrowOpenClassNames={arrowOpenClassNames}
+        optionItemClassNames={optionItemClassNames}
+        optionButtonClassNames={optionButtonClassNames}
+        defaultValue={defaultValue}
+        hasRoundRadius={hasRoundRadius}
+        inputClassNames={inputClassNames}
+        inputCustomDomainClassNames={inputCustomDomainClassNames}
+        regInputCustomDomainClassNames={regInputCustomDomainClassNames}
+        prefix={prefix}
+        toggleShowCustomDomain={toggleShowCustomDomain}
       />
 
       {children}

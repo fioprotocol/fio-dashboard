@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
@@ -12,7 +14,11 @@ import {
   TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
-import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CONFIRM_METAMASK_ACTION,
+  WALLET_CREATED_FROM,
+} from '../../../constants/common';
 
 import apis from '../../../api';
 
@@ -24,20 +30,27 @@ import {
   BeforeSubmitProps,
   SignFioAddressItem,
 } from '../types';
+import { prices as pricesSelector } from '../../../redux/registrations/selectors';
 
 export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => {
   const {
-    submitData,
-    fee,
-    fioWallet,
+    groupedBeforeSubmitValues,
     processing,
     onCancel,
     onSuccess,
     setProcessing,
   } = props;
 
-  const { fioAddressItems } = submitData || {};
-  const { publicKey, data: paymentWalletData } = fioWallet || {};
+  const prices = useSelector(pricesSelector);
+
+  const metamaskItems = groupedBeforeSubmitValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
+  );
+
+  const fioAddressItems = metamaskItems
+    ?.map(metamaskItem => metamaskItem.submitData.fioAddressItems)
+    .flat();
 
   const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
   const [indexedItems, setIndexedItems] = useState<
@@ -67,38 +80,51 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
               indexedItem => indexedItem.indexId === Number(resultItem.id),
             );
 
-            const signedTxItem = resultItem;
-            delete signedTxItem.id;
+            delete resultItem.id;
 
             signedTxs[indexedItem.name] = {
               signedTx: resultItem,
-              signingWalletPubKey: publicKey,
+              signingWalletPubKey: indexedItem.fioWallet?.publicKey,
             };
           }
         }
         onSuccess(signedTxs);
       }
     },
-    [indexedItems, onSuccess, publicKey],
+    [indexedItems, onSuccess],
   );
 
   useEffectOnce(
     () => {
       const actionParamsArr = [];
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
+        const isComboRegistration =
+          !fioAddressItem.cartItem.hasCustomDomainInCart &&
+          fioAddressItem.cartItem.type ===
+            CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         const fioHandleActionParams = {
-          action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
+          action:
+            TRANSACTION_ACTION_NAMES[
+              isComboRegistration
+                ? ACTIONS.registerFioDomainAddress
+                : ACTIONS.registerFioAddress
+            ],
           account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
           data: {
             owner_fio_public_key: fioAddressItem.ownerKey,
             fio_address: fioAddressItem.name,
+            is_public: 0,
             tpid: apis.fio.tpid,
-            max_fee: new MathOp(fee)
+            max_fee: new MathOp(
+              isComboRegistration
+                ? prices.nativeFio.combo
+                : prices.nativeFio.address,
+            )
               .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
               .round(0)
               .toNumber(),
           },
-          derivationIndex: paymentWalletData?.derivationIndex,
+          derivationIndex: fioAddressItem?.fioWallet?.data?.derivationIndex,
           timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
           id: index,
         };
@@ -111,15 +137,15 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
       setActionParams(actionParamsArr);
     },
     [],
-    !!submitData,
+    !!metamaskItems.length,
   );
 
-  if (!submitData) return null;
+  if (!metamaskItems.length) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.REGISTER_ADDRESS_PRIVATE_DOMAIN}
-      analyticsData={submitData}
+      analyticsData={{ fioAddressItems }}
       actionParams={actionParams}
       processing={processing}
       returnOnlySignedTxn

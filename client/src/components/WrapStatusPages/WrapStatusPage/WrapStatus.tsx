@@ -15,7 +15,7 @@ import CustomDropdown from '../../CustomDropdown';
 
 import usePagination from '../../../hooks/usePagination';
 import { formatDateToLocale } from '../../../helpers/stringFormatters';
-import apis from '../../../api';
+import apis from '../../../landing-pages/wrap-status-landing-page/api';
 
 import { log } from '../../../util/general';
 
@@ -40,15 +40,19 @@ const WRAP_FILTERS_NAME = {
   UNWRAP: 'unwrap',
   TOKENS: 'tokens',
   DOMAINS: 'domains',
+  BURNED: 'burned',
 };
 
 const WrapStatus: React.FC<PageProps> = props => {
-  const { loading, isWrap, isTokens, data, getData } = props;
+  const { loading, isBurned, isWrap, isTokens, data, getData } = props;
 
   const history = useHistory();
 
   const [isWrapSelected, setIsWrapSelected] = useState<boolean>(isWrap);
   const [isTokensSelected, setIsTokensSelected] = useState<boolean>(isTokens);
+  const [isBurnedDomainsSelected, setIsBurnedDomainsSelected] = useState<
+    boolean
+  >(isBurned);
 
   const [modalData, setModalData] = useState<WrapStatusWrapItem | null>(null);
   const [filters, setFilters] = useState<{
@@ -59,7 +63,11 @@ const WrapStatus: React.FC<PageProps> = props => {
   }>({
     createdAt: null,
     dateRange: null,
-    type: isWrapSelected ? WRAP_FILTERS_NAME.WRAP : WRAP_FILTERS_NAME.UNWRAP,
+    type: isWrapSelected
+      ? WRAP_FILTERS_NAME.WRAP
+      : isBurnedDomainsSelected
+      ? WRAP_FILTERS_NAME.BURNED
+      : WRAP_FILTERS_NAME.UNWRAP,
     asset: isTokensSelected
       ? WRAP_FILTERS_NAME.TOKENS
       : WRAP_FILTERS_NAME.DOMAINS,
@@ -204,6 +212,12 @@ const WrapStatus: React.FC<PageProps> = props => {
       }
     }
 
+    if (type === WRAP_FILTERS_NAME.BURNED) {
+      wrapData = await apis.wrapStatus.getBurnedDomainsList({
+        filters: dateFilters,
+      });
+    }
+
     const preparedWrapDataListToCsv: {
       number: number;
       transactionId: string;
@@ -293,14 +307,17 @@ const WrapStatus: React.FC<PageProps> = props => {
   }, [filters]);
 
   const handleOpenLink = () => {
-    if (isWrapSelected && isTokensSelected)
+    if (isWrapSelected && isTokensSelected && !isBurnedDomainsSelected)
       history.push(ROUTES.WRAP_STATUS_WRAP_TOKENS);
-    if (isWrapSelected && !isTokensSelected)
+    if (isWrapSelected && !isTokensSelected && !isBurnedDomainsSelected)
       history.push(ROUTES.WRAP_STATUS_WRAP_DOMAINS);
-    if (!isWrapSelected && !isTokensSelected)
+    if (!isWrapSelected && !isTokensSelected && !isBurnedDomainsSelected)
       history.push(ROUTES.WRAP_STATUS_UNWRAP_DOMAINS);
-    if (!isWrapSelected && isTokensSelected)
+    if (!isWrapSelected && isTokensSelected && !isBurnedDomainsSelected)
       history.push(ROUTES.WRAP_STATUS_UNWRAP_TOKENS);
+    if (!isWrapSelected && !isTokensSelected && isBurnedDomainsSelected) {
+      history.push(ROUTES.WRAP_STATUS_BURNED_DOMAINS);
+    }
   };
 
   return (
@@ -312,11 +329,19 @@ const WrapStatus: React.FC<PageProps> = props => {
               'custom-select custom-select-lg mr-3',
               classes.navSelect,
             )}
-            defaultValue={isWrapSelected ? 0 : 1}
-            onChange={e => setIsWrapSelected(!parseInt(e.target.value))}
+            defaultValue={isWrapSelected ? 0 : isBurnedDomainsSelected ? 2 : 1}
+            onChange={e => {
+              if (e.target?.value === '2') {
+                setIsBurnedDomainsSelected(true);
+              } else {
+                setIsWrapSelected(!parseInt(e.target.value));
+                setIsBurnedDomainsSelected(false);
+              }
+            }}
           >
             <option value={0}>Wrap</option>
             <option value={1}>Unwrap</option>
+            <option value={2}>Burned</option>
           </select>
 
           <select
@@ -327,7 +352,7 @@ const WrapStatus: React.FC<PageProps> = props => {
             defaultValue={isTokensSelected ? 0 : 1}
             onChange={e => setIsTokensSelected(!parseInt(e.target.value))}
           >
-            <option value={0}>Tokens</option>
+            {!isBurned && <option value={0}>Tokens</option>}
             <option value={1}>Domains</option>
           </select>
 
@@ -335,7 +360,9 @@ const WrapStatus: React.FC<PageProps> = props => {
             type="button"
             className="btn btn-outline-primary"
             disabled={
-              isWrap === isWrapSelected && isTokens === isTokensSelected
+              isWrap === isWrapSelected &&
+              isTokens === isTokensSelected &&
+              isBurned === isBurnedDomainsSelected
             }
             onClick={handleOpenLink}
           >
@@ -372,7 +399,13 @@ const WrapStatus: React.FC<PageProps> = props => {
                 withoutMarginBottom
                 fitContentWidth
                 isSmall
-                placeholder={isWrapSelected ? 'WRAP' : 'UNWRAP'}
+                placeholder={
+                  isWrapSelected
+                    ? 'WRAP'
+                    : isBurnedDomainsSelected
+                    ? 'BURNED'
+                    : 'UNWRAP'
+                }
               />
             </div>
             <div className="d-flex align-items-center mr-2">
@@ -429,8 +462,8 @@ const WrapStatus: React.FC<PageProps> = props => {
 
         <div>
           <h3>
-            {isWrap ? 'Wrap ' : 'Unwrap '}
-            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
+            {isWrap ? 'Wrap ' : isBurned ? 'Burned ' : 'Unwrap '}
+            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domains'}
           </h3>
         </div>
 
@@ -438,8 +471,8 @@ const WrapStatus: React.FC<PageProps> = props => {
           <thead>
             <tr>
               <th scope="col">Transaction</th>
-              <th scope="col">From</th>
-              <th scope="col">To</th>
+              {!isBurned && <th scope="col">From</th>}
+              {!isBurned && <th scope="col">To</th>}
               <th scope="col">{!isTokens ? 'Domain' : 'Amount'}</th>
               <th scope="col">Date</th>
               <th scope="col">Status</th>
@@ -455,8 +488,8 @@ const WrapStatus: React.FC<PageProps> = props => {
                     >
                       {wrapItem.transactionId}
                     </th>
-                    <th>{wrapItem.from}</th>
-                    <th>{wrapItem.to}</th>
+                    {wrapItem.from && <th>{wrapItem.from}</th>}
+                    {wrapItem.to && <th>{wrapItem.to}</th>}
                     <th>
                       {wrapItem.domain
                         ? wrapItem.domain
@@ -494,6 +527,7 @@ const WrapStatus: React.FC<PageProps> = props => {
         onClose={closeDetailsModal}
         isWrap={isWrap}
         isTokens={isTokens}
+        isBurned={isBurned}
       />
     </>
   );

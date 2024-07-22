@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormRenderProps } from 'react-final-form';
 
-import { FormValues } from '../../../pages/AddTokenPage/types';
+import { AddTokenValues } from '../../../pages/AddTokenPage/types';
 
 import {
   FeePrice,
@@ -9,6 +9,7 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
   AnyType,
+  WalletBalancesItem,
 } from '../../../types';
 
 export type ResultsData = {
@@ -23,6 +24,10 @@ export type ResultsData = {
   failed?: PublicAddressDoublet[];
   obtError?: string;
   fioRequestId?: number;
+  payWith?: {
+    walletBalances: WalletBalancesItem;
+    walletName?: string;
+  };
 };
 
 export type ResultsProps = {
@@ -37,7 +42,6 @@ export type ResultsProps = {
   pageName?: string;
   errorType?: string;
   results: ResultsData;
-  roe?: number;
   onClose: () => void;
   onRetry?: () => void;
   onCancel?: () => void;
@@ -55,6 +59,6 @@ export type LinkTokenResultsProps = {
   results: LinkActionResult;
   bundleCost: number;
   changeBundleCost: (bundleCost: number) => void;
-  onBack: (formProps?: FormRenderProps<FormValues>) => void;
+  onBack: (formProps?: FormRenderProps<AddTokenValues>) => void;
   onRetry: (results: LinkActionResult) => void;
 };

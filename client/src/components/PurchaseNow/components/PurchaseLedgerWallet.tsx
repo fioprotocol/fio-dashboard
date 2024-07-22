@@ -8,6 +8,7 @@ import {
   CART_ITEM_TYPE,
   CONFIRM_LEDGER_ACTIONS,
   DEFAULT_BUNDLE_SET_VALUE,
+  WALLET_CREATED_FROM,
 } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
 import {
@@ -18,40 +19,47 @@ import {
 import { prepareChainTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
 import { makeRegistrationOrder } from '../middleware';
-import { isDomain } from '../../../utils';
 
 import apis from '../../../api';
 
-import {
-  AnyObject,
-  FioWalletDoublet,
-  RegistrationResult,
-} from '../../../types';
-import { PurchaseValues } from '../types';
+import { AnyObject, RegistrationResult } from '../../../types';
+import { GroupedPurchaseValues, PurchaseValues } from '../types';
 
 type Props = {
-  fioWallet: FioWalletDoublet;
+  analyticsData: PurchaseValues;
+  ownerFioPublicKey?: string;
+  groupedPurchaseValues: GroupedPurchaseValues[];
   onSuccess: (results: RegistrationResult) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: PurchaseValues | null;
   processing: boolean;
-  fee: number;
+  fee?: number;
 };
 
 const PurchaseLedgerWallet: React.FC<Props> = props => {
   const {
-    fioWallet,
-    setProcessing,
+    analyticsData,
+    ownerFioPublicKey,
+    groupedPurchaseValues,
     onSuccess,
     onCancel,
-    submitData,
+    setProcessing,
     processing,
+    fee,
   } = props;
+
+  const ledgerItemsGroups = groupedPurchaseValues.filter(
+    groupedValue =>
+      groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.LEDGER,
+  );
+
+  const cartItems = ledgerItemsGroups
+    ?.map(ledgerItem => ledgerItem.submitData.cartItems)
+    .flat();
 
   const submit = useCallback(
     async (appFio: LedgerFioApp) => {
-      const { cartItems, prices } = submitData;
+      const { prices } = analyticsData;
 
       const results: RegistrationResult = {
         errors: [],
@@ -60,15 +68,17 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
         paymentProvider: PAYMENT_PROVIDER.FIO,
         providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
       };
-      const registrations = makeRegistrationOrder(
-        [...cartItems],
-        prices.nativeFio,
-      );
+
+      const registrations = makeRegistrationOrder({
+        cartItems,
+        fees: prices.nativeFio,
+      });
+
       for (const registration of registrations) {
         if (!registration.isFree) {
-          const isDomainRegistration = isDomain(registration.fioName);
           let action: string;
           let data: AnyObject = {};
+
           if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
             action = ACTIONS.addBundledTransactions;
             data = {
@@ -82,21 +92,24 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
               fio_domain: registration.fioName,
               tpid: apis.fio.tpid,
             };
-          } else {
-            action = isDomainRegistration
-              ? ACTIONS.registerFioDomain
-              : ACTIONS.registerFioAddress;
+          } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
+            action = ACTIONS.registerFioDomain;
             data = {
-              [isDomainRegistration
-                ? 'fio_domain'
-                : 'fio_address']: registration.fioName,
-              owner_fio_public_key: fioWallet.publicKey,
-              tpid: isDomainRegistration ? apis.fio.domainTpid : apis.fio.tpid,
+              fio_domain: registration.fioName,
+              owner_fio_public_key: ownerFioPublicKey,
+              tpid: apis.fio.domainTpid,
+            };
+          } else if (registration.type === CART_ITEM_TYPE.ADDRESS) {
+            action = ACTIONS.registerFioAddress;
+            data = {
+              fio_address: registration.fioName,
+              owner_fio_public_key: ownerFioPublicKey,
+              tpid: apis.fio.tpid,
             };
           }
 
           const { chainId, transaction } = await prepareChainTransaction(
-            fioWallet.publicKey,
+            registration.signInFioWallet.publicKey,
             action,
             {
               ...data,
@@ -107,7 +120,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           const {
             witness: { witnessSignatureHex },
           } = await appFio.signTransaction({
-            path: getPath(fioWallet.data.derivationIndex),
+            path: getPath(registration.signInFioWallet.data.derivationIndex),
             chainId,
             tx: transaction,
           });
@@ -122,6 +135,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
           });
 
           results.registered.push({
+            action: registration.action,
             fioName: registration.fioName,
             isFree: false,
             cartItemId: registration.cartItemId,
@@ -136,7 +150,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
                 packed_trx: arrayToHex(serializedTransaction),
                 signatures: [signatureLedger],
               },
-              signingWalletPubKey: fioWallet.publicKey,
+              signingWalletPubKey: registration.signInFioWallet.publicKey,
             },
           });
         }
@@ -144,16 +158,18 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
 
       return results;
     },
-    [fioWallet.data.derivationIndex, fioWallet.publicKey, submitData],
+    [ownerFioPublicKey, analyticsData, cartItems],
   );
 
-  if (!submitData) return null;
+  if (!analyticsData) return null;
 
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.PURCHASE}
-      data={submitData}
-      fioWallet={fioWallet}
+      data={{ ...analyticsData, cartItems }}
+      fee={fee}
+      ownerFioPublicKey={ownerFioPublicKey}
+      fioWalletsForCheck={ledgerItemsGroups.map(it => it.signInFioWallet)}
       onConnect={submit}
       onSuccess={onSuccess}
       onCancel={onCancel}

@@ -17,17 +17,22 @@ import { AnyObject, AnyType, FioWalletDoublet } from '../../types';
 
 const FIO_APP_INIT_TIMEOUT = 2000;
 
-type Props = {
+export type Props = {
   action?: string;
-  data: AnyType | null;
+  result?: AnyType;
+  data?: AnyType;
   isTransaction?: boolean;
+  fee?: number;
+  oracleFee?: number;
   fioWallet?: FioWalletDoublet;
+  fioWalletsForCheck?: FioWalletDoublet[];
+  ownerFioPublicKey?: string;
   hideConnectionModal?: boolean;
 
-  onConnect: (appFio: LedgerFioApp) => Promise<LedgerFioApp>;
-  onSuccess: (data: AnyObject) => void;
-  onCancel: () => void;
-  setProcessing: (processing: boolean) => void;
+  onConnect?: (appFio: LedgerFioApp) => Promise<AnyObject>;
+  onSuccess?: (data: AnyObject) => void;
+  onCancel?: () => void;
+  setProcessing?: (processing: boolean) => void;
   showGenericErrorModal: (
     message?: string,
     title?: string,
@@ -38,16 +43,22 @@ type Props = {
 const LedgerConnect: React.FC<Props> = props => {
   const {
     action,
+    result,
     data,
+    fee,
+    oracleFee,
     isTransaction,
     fioWallet,
+    fioWalletsForCheck = [],
+    ownerFioPublicKey,
     hideConnectionModal,
-    onConnect,
-    onSuccess,
-    onCancel,
-    showGenericErrorModal,
-    setProcessing,
+    onConnect = () => null,
+    onSuccess = () => null,
+    onCancel = () => null,
+    showGenericErrorModal = () => null,
+    setProcessing = () => null,
   } = props;
+
   const connectFioAppIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -138,25 +149,34 @@ const LedgerConnect: React.FC<Props> = props => {
     clearInterval(connectFioAppIntervalRef.current);
     connectFioAppIntervalRef.current = null;
 
-    if (fioWallet != null && fioWallet.publicKey) {
-      try {
+    const checkingWallets: FioWalletDoublet[] = [...fioWalletsForCheck];
+
+    if (
+      fioWallet &&
+      !checkingWallets.find(it => it.publicKey !== fioWallet.publicKey)
+    ) {
+      checkingWallets.push(fioWallet);
+    }
+
+    try {
+      for (const wallet of checkingWallets) {
         const publicKeyWIF = await getPubKeyFromLedger(
           newFioApp,
-          fioWallet.data.derivationIndex,
+          wallet.data.derivationIndex,
         );
-        if (publicKeyWIF !== fioWallet.publicKey) {
+        if (publicKeyWIF !== wallet.publicKey) {
           showGenericErrorModal('Your device does not have selected wallet');
           onCancel();
           return;
         }
-      } catch (err) {
-        handleLedgerError({
-          error: err,
-          action,
-          onCancel,
-          showGenericErrorModal,
-        });
       }
+    } catch (err) {
+      handleLedgerError({
+        error: err,
+        action,
+        onCancel,
+        showGenericErrorModal,
+      });
     }
 
     setAwaitingFioApp(false);
@@ -194,20 +214,20 @@ const LedgerConnect: React.FC<Props> = props => {
   useEffect(() => {
     if (fioApp != null) {
       setAwaitingLedger(true);
+      setConnecting(true);
       afterConnect(fioApp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fioApp]);
+  }, [fioApp, fioWallet?.publicKey]);
 
   // Handle transport created
-  useEffectOnce(
-    () => {
+  useEffect(() => {
+    if (transport != null && connecting) {
       setAwaitingFioApp(true);
       connectFioApp();
-    },
-    [connectFioApp],
-    transport != null && connecting,
-  );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connecting, transport]);
 
   useEffect(() => {
     return () => {
@@ -221,19 +241,28 @@ const LedgerConnect: React.FC<Props> = props => {
   }, [connect]);
 
   let message = 'Please connect your Ledger device and confirm';
-  if (awaitingLedger) message = 'Please confirm action in your Ledger device';
+  if (awaitingLedger)
+    message =
+      'Please connect your Ledger device, confirm these transaction details, and complete your transaction from your ledger device';
   if (awaitingFioApp) message = 'Connecting...';
   if (awaitingUnlock)
     message = 'Please unlock your device and then press continue';
 
   return (
     <ConnectionModal
+      action={action}
+      data={data}
+      result={result}
+      fioWalletPublicKey={fioWallet?.publicKey}
+      ownerFioPublicKey={ownerFioPublicKey}
+      fee={fee}
+      oracleFee={oracleFee}
       show={connecting && !hideConnectionModal}
       onClose={closeConnection}
       onContinue={onContinue}
-      awaitingLedger={awaitingLedger || awaitingFioApp}
       message={message}
       isTransaction={isTransaction}
+      isAwaiting={awaitingLedger || awaitingFioApp}
     />
   );
 };

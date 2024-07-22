@@ -92,6 +92,10 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         feeCollected && roe ? convertFioPrices(feeCollected, roe) : feePrice,
       name,
       changedStatus: statusToChange,
+      payWith: {
+        walletName: fioWallet.name,
+        walletBalances: walletBalancesAvailable,
+      },
     });
     setProcessing(false);
   };

@@ -10,106 +10,41 @@
   @include proxima-nova-bold;
 }
 
-.container {
+.label {
+  font-size: 0.875em;
+  margin-top: 1.375rem;
+  margin-bottom: -10px;
+  @include proxima-nova-semibold;
+}
+
+.badges {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 12px;
+  @include proxima-nova-semibold;
 
-  .label {
-    font-size: 0.875em;
-    margin-top: 1.375rem;
-    margin-bottom: -10px;
-    @include proxima-nova-semibold;
-  }
-
-  .badgeContainer {
-    color: $baltic-sea;
-    font-size: 1.072em;
-    @include proxima-nova-bold;
-    display: grid;
-    grid-template-columns: 90px auto;
-
-    .title, .item {
-      margin-bottom: 0;
-    }
-
-    .title {
-      white-space: nowrap;
-    }
-    .item {
-      word-break: break-all;
-      padding-left: 15px;
-
-      &.isIndigo {
-        color: $light-indigo;
-      }
-    }
-
-    &.longTitle {
-      grid-template-columns: 130px auto;
-      .title {
-        white-space: normal;
-      }
-    }
-  }
-
-  .badges {
-    display: flex;
-    flex-direction: row;
-    @include proxima-nova-semibold;
-
-    .halfWidth {
-      flex: 1;
-    }
-
-    .nameBadge {
-      min-width: 200px;
-      .badgeItemNext {
-        max-width: 350px;
-        word-break: break-all;
-      }
-    }
-
-    .statusBadge {
-      margin-left: 20px;
-      .badgeItem {
-        white-space: nowrap;
-      }
-    }
-
-    .badgeContainer {
-      display: flex;
-      flex-direction: row;
-      color: $baltic-sea;
-      font-size: 1.072em;
-      line-height: 26px;
-    }
-    .badgeItem, .badgeItemNext {
-      margin-bottom: 0
-    }
-    .badgeItemNext {
-      margin-left: 1.25rem;
-      &.breakWord {
-        word-break: break-all;
-      }
-    }
+  .halfWidth {
+    flex: 1;
   }
 }
 
+.submitButton {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cancelButton {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @include sm {
-  .container {
-    .badgeContainer {
-      grid-template-columns: auto;
-
-      .title {
-        margin-bottom: 10px;
-      }
-    }
-
-    .badges {
-      flex-direction: column;
-      .statusBadge {
-        margin-left: 0;
-      }
-    }
+  .badges {
+    flex-direction: column;
   }
+}
+
+.priceValue {
+  font-style: normal !important;
 }

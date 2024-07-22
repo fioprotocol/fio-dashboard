@@ -5,6 +5,7 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
   FREE_STATUS,
 } from './purchase';
+import { ORDER_USER_TYPES, ORDER_USER_TYPES_TITLE } from './order';
 
 export const USER_STATUSES = {
   ACTIVE: 'ACTIVE',
@@ -159,6 +160,7 @@ export const WALLET_CREATED_FROM = {
   EDGE: 'EDGE',
   LEDGER: 'LEDGER',
   METAMASK: 'METAMASK',
+  WITHOUT_REGISTRATION: 'WITHOUT_REGISTRATION',
 };
 
 export const NFT_CHAIN_CODE_LIST = [
@@ -719,6 +721,25 @@ export const ORDER_AMOUNT_FILTER_OPTIONS = [
   {
     id: FREE_STATUS.IS_PAID.toString(),
     name: '> 0',
+  },
+];
+
+export const ORDER_USER_TYPE_FILTER_OPTIONS = [
+  {
+    id: '',
+    name: 'All',
+  },
+  {
+    id: ORDER_USER_TYPES.DASHBOARD,
+    name: ORDER_USER_TYPES_TITLE.DASHBOARD,
+  },
+  {
+    id: ORDER_USER_TYPES.NO_PROFILE_FLOW,
+    name: ORDER_USER_TYPES_TITLE.NO_PROFILE_FLOW,
+  },
+  {
+    id: ORDER_USER_TYPES.PARTNER_API_CLIENT,
+    name: ORDER_USER_TYPES_TITLE.PARTNER_API_CLIENT,
   },
 ];
 

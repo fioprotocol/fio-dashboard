@@ -4,14 +4,22 @@ import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import { FioWalletDoublet } from '../../types';
 import { AnyObject } from '../../types';
+import Processing from '../common/TransactionProcessing';
+import { GroupedPurchaseValues, PurchaseValues } from '../PurchaseNow/types';
+import { BeforeSubmitValues } from '../../pages/CheckoutPage/types';
+import { GroupedBeforeSubmitValues } from '../../pages/CheckoutPage/components/BeforeSubmitWalletConfirm';
 
 type WalletTypeActionProps = {
   allowDisconnectAll?: boolean;
-  fioWallet: FioWalletDoublet;
+  analyticsData?: PurchaseValues | BeforeSubmitValues;
+  ownerFioPublicKey?: string;
+  groupedPurchaseValues?: GroupedPurchaseValues[];
+  groupedBeforeSubmitValues?: GroupedBeforeSubmitValues[];
+  fioWallet?: FioWalletDoublet;
   onSuccess: (data: AnyObject) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: AnyObject | null;
+  submitData?: AnyObject | null;
   processing: boolean;
   action: string;
   fee?: number;
@@ -23,30 +31,31 @@ type WalletTypeActionProps = {
 };
 
 type Props = WalletTypeActionProps & {
-  FioActionWallet: React.FC<AnyObject>;
-  LedgerActionWallet: React.FC<AnyObject>;
+  FioActionWallet?: React.FC<AnyObject>;
+  LedgerActionWallet?: React.FC<AnyObject>;
   MetamaskActionWallet?: React.FC<AnyObject>;
 };
 
 const WalletAction: React.FC<Props> = props => {
   const {
-    fioWallet,
     FioActionWallet,
     LedgerActionWallet,
     MetamaskActionWallet,
     ...rest
   } = props;
 
-  if (!fioWallet || !fioWallet.publicKey) return null;
+  const createdFrom = rest.fioWallet?.from;
 
-  if (fioWallet.from === WALLET_CREATED_FROM.EDGE)
-    return <FioActionWallet fioWallet={fioWallet} {...rest} />;
+  if (!createdFrom) return <Processing isProcessing={rest.processing} />;
 
-  if (fioWallet.from === WALLET_CREATED_FROM.LEDGER)
-    return <LedgerActionWallet fioWallet={fioWallet} {...rest} />;
+  if (createdFrom === WALLET_CREATED_FROM.EDGE && FioActionWallet)
+    return <FioActionWallet {...rest} />;
 
-  if (fioWallet.from === WALLET_CREATED_FROM.METAMASK && MetamaskActionWallet)
-    return <MetamaskActionWallet fioWallet={fioWallet} {...rest} />;
+  if (createdFrom === WALLET_CREATED_FROM.LEDGER && LedgerActionWallet)
+    return <LedgerActionWallet {...rest} />;
+
+  if (createdFrom === WALLET_CREATED_FROM.METAMASK && MetamaskActionWallet)
+    return <MetamaskActionWallet {...rest} />;
 
   return null;
 };

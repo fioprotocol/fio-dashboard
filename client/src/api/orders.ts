@@ -13,8 +13,13 @@ export default class Orders extends Base {
   create(data: CreateOrderActionData): Promise<OrdersCreateResponse> {
     return this.apiClient.post('orders', { data });
   }
-  getList(limit: number, offset: number): Promise<UserOrdersListResponse> {
-    return this.apiClient.get('orders', { limit, offset });
+  getList(data: {
+    publicKey?: string;
+    limit: number;
+    offset: number;
+    userId?: string;
+  }): Promise<UserOrdersListResponse> {
+    return this.apiClient.get('orders', data);
   }
   update(
     id: number,
@@ -26,8 +31,11 @@ export default class Orders extends Base {
   ): Promise<OrdersUpdateResponse> {
     return this.apiClient.post(`orders/update/${id}`, { data });
   }
-  getActive(): Promise<OrdersCreateResponse> {
-    return this.apiClient.get(`orders/active`);
+  getActive(data?: {
+    publicKey?: string;
+    userId?: string;
+  }): Promise<OrdersCreateResponse> {
+    return this.apiClient.get(`orders/active`, data);
   }
   get(id: string): Promise<OrderGetResponse> {
     return this.apiClient.get(`orders/item/${id}`);

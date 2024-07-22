@@ -20,6 +20,20 @@
   @include sf-pro-display-medium;
 }
 
+.apiTokenWrapper {
+  align-items: center;
+  display: flex;
+}
+
+.apiToken {
+  display: flex;
+  font-size: 1em;
+  word-break: break-all;
+  flex: 1;
+  color: $baltic-sea;
+  @include sf-pro-display-medium;
+}
+
 .button {
   line-height: 1;
 }

@@ -2,6 +2,7 @@ import React from 'react';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import { ManagePageCtaBadge } from '../../components/ManagePageContainer/ManagePageCtaBadge';
+import { NoProfileFlowContainer } from '../../components/NoProfileFlowContainer';
 
 import { OrdersList } from './components/OrdersList/OrdersList';
 import { useContext } from './OrdersPageContext';
@@ -15,7 +16,9 @@ const OrdersPage: React.FC = () => {
 
   const renderProps = useContext();
 
-  return (
+  const { isNoProfileFlow } = renderProps;
+
+  const orderRender = (
     <div className={classes.container}>
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
@@ -26,12 +29,20 @@ const OrdersPage: React.FC = () => {
           <OrdersList {...renderProps} />
         </div>
       </LayoutContainer>
-      <div className={classes.actionBadgeContainer}>
-        <ManagePageCtaBadge name={CTA_BADGE_TYPE.ADDRESS} />
-        <ManagePageCtaBadge name={CTA_BADGE_TYPE.DOMAIN} />
-      </div>
+      {!isNoProfileFlow && (
+        <div className={classes.actionBadgeContainer}>
+          <ManagePageCtaBadge name={CTA_BADGE_TYPE.ADDRESS} />
+          <ManagePageCtaBadge name={CTA_BADGE_TYPE.DOMAIN} />
+        </div>
+      )}
     </div>
   );
+
+  if (isNoProfileFlow) {
+    return <NoProfileFlowContainer>{orderRender}</NoProfileFlowContainer>;
+  }
+
+  return orderRender;
 };
 
 export default OrdersPage;

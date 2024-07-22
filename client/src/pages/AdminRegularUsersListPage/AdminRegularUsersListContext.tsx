@@ -7,11 +7,12 @@ import { getRegularUsersList } from '../../redux/admin/actions';
 
 import { regularUsersList as regularUsersListSelector } from '../../redux/admin/selectors';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 
 import usePagination, { DEFAULT_LIMIT } from '../../hooks/usePagination';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
+import { handleUserProfileType } from '../../util/user';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ADMIN_ROUTES } from '../../constants/routes';
@@ -20,12 +21,12 @@ import { User } from '../../types';
 import { log } from '../../util/general';
 
 type UseContextProps = {
-  filters: { failedSyncedWithEdge: string };
+  filters: { userOption: string };
   loading: boolean;
   paginationComponent: Component;
   regularUsersList: User[];
   range: number[];
-  handleChangeFailedSyncFilter: (newValue: string) => void;
+  handleChangeOptionsFilter: (newValue: string) => void;
   onClick: (regularUserId: string) => void;
   onExportCsv: () => Promise<void>;
 };
@@ -38,8 +39,10 @@ export const useContext = (): UseContextProps => {
   const history = useHistory();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<{ failedSyncedWithEdge: string }>({
-    failedSyncedWithEdge: '',
+  const [filters, setFilters] = useState<{
+    userOption: string;
+  }>({
+    userOption: '',
   });
 
   const getRegularUsers = useCallback(
@@ -49,6 +52,7 @@ export const useContext = (): UseContextProps => {
           limit,
           offset,
           filters,
+          includeMoreDetailedInfo: true,
         }),
       ),
     [dispatch, filters],
@@ -70,10 +74,10 @@ export const useContext = (): UseContextProps => {
     [history],
   );
 
-  const handleChangeFailedSyncFilter = useCallback((newValue: string) => {
+  const handleChangeOptionsFilter = useCallback((newValue: string) => {
     setFilters(filters => ({
       ...filters,
-      failedSyncedWithEdge: newValue,
+      userOption: newValue,
     }));
   }, []);
 
@@ -94,6 +98,7 @@ export const useContext = (): UseContextProps => {
       refProfile: string;
       affiliate: string;
       timeZone: string;
+      type: string;
     }[] = [];
 
     usersList.users?.forEach((user, i) => {
@@ -101,11 +106,15 @@ export const useContext = (): UseContextProps => {
         id,
         email,
         createdAt,
+        fioWallets,
         status,
         refProfile,
         affiliateProfile,
         timeZone,
+        userProfileType,
       } = user;
+
+      const type = handleUserProfileType({ userProfileType, fioWallets });
 
       preparedUsersListToCsv.push({
         number: i + 1,
@@ -115,6 +124,7 @@ export const useContext = (): UseContextProps => {
         refProfile: refProfile?.code || 'No Ref profile',
         affiliate: affiliateProfile?.code || 'No Affiliate',
         timeZone,
+        type,
       });
     });
     const currentDate = new Date();
@@ -134,6 +144,7 @@ export const useContext = (): UseContextProps => {
           'Ref Profile',
           'Affiliate',
           'TimeZone',
+          'Type',
         ],
       }).generateCsv(preparedUsersListToCsv);
     } catch (err) {
@@ -149,7 +160,7 @@ export const useContext = (): UseContextProps => {
     paginationComponent,
     regularUsersList,
     range,
-    handleChangeFailedSyncFilter,
+    handleChangeOptionsFilter,
     onClick,
     onExportCsv,
   };

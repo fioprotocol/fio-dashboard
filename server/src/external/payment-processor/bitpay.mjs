@@ -164,6 +164,7 @@ class BitPay extends PaymentProcessor {
     invoiceData.orderId = orderNumber;
     invoiceData.buyer = { email: buyer };
     invoiceData.redirectURL = `${redirectHost}order-details?orderNumber=${orderNumber}`;
+    invoiceData.closeURL = `${redirectHost}checkout`;
     invoiceData.notificationURL = `${notificationHost}api/v1/payments/webhook/`;
 
     const paymentIntent = await bitPayClient.CreateInvoice(invoiceData);
@@ -175,6 +176,12 @@ class BitPay extends PaymentProcessor {
       currency,
       forceInitialWebhook: true,
     };
+  }
+
+  async getInvoice(invoiceId) {
+    const bitPayClient = await this.getBitPayClient();
+
+    return await bitPayClient.GetInvoice(invoiceId);
   }
 
   async getInvoiceWebHook(invoiceId) {

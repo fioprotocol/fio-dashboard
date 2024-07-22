@@ -86,6 +86,7 @@ type UseContextProps = {
   closeDomainWatchlistModal: () => void;
   domainWatchlistItemCreate: (domain: string) => void;
   handleRenewDomain: (name: string) => void;
+  handleRenewWatchedDomain: (name: string) => void;
   onBagdeClose: () => void;
   onDangerModalAction: (id: string) => void;
   onDangerModalClose: () => void;
@@ -174,9 +175,9 @@ export const useContext = (): UseContextProps => {
 
   const { fio, usdc } = convertFioPrices(nativeFioDomainPrice, roe);
 
-  const handleRenewDomain = useCallback(
-    (domain: string) => {
-      const newCartItem = {
+  const renewDomain = useCallback(
+    (domain: string, isWatchedDomain = false) => {
+      const newCartItem: CartItem = {
         domain,
         type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
         id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
@@ -184,6 +185,7 @@ export const useContext = (): UseContextProps => {
         costNativeFio: renewDomainFeePrice?.nativeFio,
         costFio: renewDomainFeePrice.fio,
         costUsdc: renewDomainFeePrice.usdc,
+        isWatchedDomain,
       };
       dispatch(
         addItemToCart({
@@ -217,6 +219,14 @@ export const useContext = (): UseContextProps => {
       userId,
     ],
   );
+
+  const handleRenewDomain = (domain: string) => renewDomain(domain);
+
+  const handleRenewWatchedDomain = (domain: string) => {
+    const isOwned = !!fioDomains.find(it => it.name === domain);
+
+    renewDomain(domain, !isOwned);
+  };
 
   const onDomainWatchlistItemModalOpen = useCallback(
     (fioNameItem: FioNameItemProps) => {
@@ -334,8 +344,7 @@ export const useContext = (): UseContextProps => {
             };
 
             if (account !== FIO_ORACLE_ACCOUNT_NAME) {
-              const publicKey = await apis.fio.getAccountPubKey(account);
-              walletPublicKey = publicKey;
+              walletPublicKey = await apis.fio.getAccountPubKey(account);
             }
 
             if (!walletPublicKey) {
@@ -497,6 +506,7 @@ export const useContext = (): UseContextProps => {
     closeDomainWatchlistModal,
     domainWatchlistItemCreate,
     handleRenewDomain,
+    handleRenewWatchedDomain,
     onBagdeClose,
     onDangerModalAction,
     onDangerModalClose,

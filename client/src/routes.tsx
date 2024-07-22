@@ -272,6 +272,26 @@ const MetamaskGatedRegistration = lazy(() =>
   ),
 );
 
+const NoProfileFlowRegisterFioHandlePage = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRegisterFioHandle' */ './pages/NoProfileFlowRegisterFioHandlePage'
+  ),
+);
+const NoProfileFlowRegisterFioDomainPage = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRegisterFioDomainPage' */ './pages/NoProfileFlowRegisterFioDomainPage'
+  ),
+);
+const NoProfileFlowRenewFioDomainPage = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRenewFioDomainPage' */ './pages/NoProfileFlowRenewFioDomainPage'
+  ),
+);
+const NoProfileFlowRenewFioHandlePage = lazy(() =>
+  import(
+    /* webpackChunkName: 'NoProfileFlowRenewFioHandlePage' */ './pages/NoProfileFlowRenewFioHandlePage'
+  ),
+);
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
   useGTMGlobalTags();
@@ -395,17 +415,10 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
-              <PrivateRoute
-                path={ROUTES.CHECKOUT}
-                component={CheckoutPage}
-                exact
-              />
-              <PrivateRoute
-                path={ROUTES.PURCHASE}
-                component={PurchasePage}
-                exact
-              />
+              <Route path={ROUTES.CART} component={CartPage} exact />
+              <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
+              <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
+
               <PrivateRoute
                 path={ROUTES.TOKENS}
                 component={WalletsPage}
@@ -599,8 +612,8 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
-              <PrivateRoute
+              <Route path={ROUTES.ORDERS} component={OrdersPage} exact />
+              <Route
                 path={ROUTES.ORDER_DETAILS}
                 component={OrderDetailsPage}
                 exact
@@ -626,6 +639,27 @@ const Routes = (): React.ReactElement => {
               <Route
                 path={ROUTES.METAMASK_GATED_REGISTRATION}
                 component={MetamaskGatedRegistration}
+                exact
+              />
+
+              <Route
+                path={ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE}
+                component={NoProfileFlowRegisterFioHandlePage}
+                exact
+              />
+              <Route
+                path={ROUTES.NO_PROFILE_REGISTER_FIO_DOMAIN}
+                component={NoProfileFlowRegisterFioDomainPage}
+                exact
+              />
+              <Route
+                path={ROUTES.NO_PROFILE_RENEW_DOMAIN}
+                component={NoProfileFlowRenewFioDomainPage}
+                exact
+              />
+              <Route
+                path={ROUTES.NO_PROFILE_ADD_BUNDLES}
+                component={NoProfileFlowRenewFioHandlePage}
                 exact
               />
 

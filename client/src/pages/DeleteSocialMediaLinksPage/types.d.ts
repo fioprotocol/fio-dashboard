@@ -7,3 +7,8 @@ export type CheckedSocialMediaLinkType = {
   iconSrc: string;
   name: string;
 } & PublicAddressDoublet;
+
+export type DeleteSocialMediaLinkValues = {
+  fch: string;
+  socialMediaLinksList: CheckedSocialMediaLinkType[];
+};

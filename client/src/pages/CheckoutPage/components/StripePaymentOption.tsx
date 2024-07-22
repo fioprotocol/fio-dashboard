@@ -12,13 +12,15 @@ import {
 import { StripeForm } from './StripeForm';
 
 import { setFioName } from '../../../utils';
+import { actionFromCartItem } from '../../../util/cart';
 
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
+import { DOMAIN_TYPE } from '../../../constants/fio';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
-import { CURRENCY_CODES } from '../../../constants/common';
+import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../../constants/common';
 
 import { BeforeSubmitData, StripePaymentOptionProps } from '../types';
 import { CartItem } from '../../../types';
@@ -29,26 +31,39 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     order,
     payment,
     paymentOption,
+    paymentWallet,
     paymentProviderError,
     beforePaymentSubmit,
   } = props;
 
   const history = useHistory();
 
-  const onFinish = (success: boolean, beforeSubmitData?: BeforeSubmitData) => {
+  const onFinish = (success: boolean, beforeSubmitData: BeforeSubmitData) => {
     if (success) {
       props.onFinish({
         errors: [],
         registered: cart.map(
-          ({ id, address, domain, isFree, costNativeFio }: CartItem) => ({
+          ({
+            id,
+            address,
+            domain,
+            isFree,
+            costNativeFio,
+            type,
+            domainType,
+          }: CartItem) => ({
+            action: actionFromCartItem(
+              type,
+              (paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                paymentWallet?.from === WALLET_CREATED_FROM.METAMASK) &&
+                domainType === DOMAIN_TYPE.CUSTOM,
+            ),
             fioName: setFioName(address, domain),
             isFree,
             fee_collected: costNativeFio,
             cartItemId: id,
             transaction_id: '',
-            data: beforeSubmitData
-              ? beforeSubmitData[setFioName(address, domain)]
-              : null,
+            data: beforeSubmitData?.[setFioName(address, domain)],
           }),
         ),
         partial: [],
@@ -84,6 +99,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
 
   return (
     <Elements
+      key={payment.secret}
       stripe={STRIPE_PROMISE}
       options={{
         ...STRIPE_ELEMENT_OPTIONS,

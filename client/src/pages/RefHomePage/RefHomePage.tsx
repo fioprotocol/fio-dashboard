@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
 
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
-import { FCHBanner } from '../../components/FCHBanner';
+import { RefFioHandleBanner } from '../../components/RefFioHandleBanner';
 import { DetailedInfoMainPageComponent } from '../../components/DetailedInfoMainPageComponent';
 import { GateVerificationComponent } from '../../components/GateVerificationComponent';
 
 import { APP_TITLE } from '../../constants/labels';
-import { DEFAULT_DOMAIN_NAME } from '../../constants/ref';
+import {
+  DEFAULT_DOMAIN_NAME,
+  REF_PROFILE_SLUG_NAME,
+} from '../../constants/ref';
+import { ROUTES } from '../../constants/routes';
 
 import { handleHomePageContent } from '../../util/homePage';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
 import { useContext } from './RefHomePageContext';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import {
   RefProfile,
@@ -71,6 +76,7 @@ export const RefHomePage: React.FC<Props &
     isGatedFlow,
     isVerified,
     loaderText,
+    publicKey,
     refDomainObj,
     showBrowserExtensionErrorModal,
     showProviderWindowError,
@@ -157,6 +163,22 @@ export const RefHomePage: React.FC<Props &
       );
     }
 
+    if (refProfileInfo?.settings?.hasNoProfileFlow) {
+      return (
+        <Redirect
+          to={{
+            pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+              REF_PROFILE_SLUG_NAME,
+              refProfileInfo?.code,
+            )}`,
+            search: publicKey
+              ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`
+              : '',
+          }}
+        />
+      );
+    }
+
     return (
       <div className={classes.container}>
         <Helmet>
@@ -212,20 +234,7 @@ export const RefHomePage: React.FC<Props &
             />
           )}
         </AddressWidget>
-        <FCHBanner
-          containerClass={classes.fchBannerConainerClass}
-          customFioHandleBanner={
-            <div className={classes.customFioHandleBanner}>
-              bob<span className={classes.boldText}>@{domainName}</span>
-            </div>
-          }
-          fch={`bob@${domainName}`}
-          mainTextClass={classes.mainTextClass}
-          publicKeyWrapperClass={classes.publicKeyWrapperClass}
-          publicKeyClass={classes.publicKeyClass}
-          subtextClass={classes.subtextClass}
-          text="Now people can send you cryptocurrency to"
-        />
+        <RefFioHandleBanner domainName={domainName} />
         <DetailedInfoMainPageComponent domain={domainName} />
       </div>
     );

@@ -44,6 +44,9 @@ export const NON_VALID_FCH =
 export const NON_VAILD_DOMAIN =
   'Domain only allows letters, numbers and dash in the middle';
 
+export const NON_VALID_FIO_PUBLIC_KEY =
+  'You have entered an invalid public key. Please check your entry.';
+
 export const INTERNAL_SERVER_ERROR_CODE = 500;
 export const NOT_FOUND = 404;
 

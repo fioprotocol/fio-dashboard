@@ -43,10 +43,11 @@
   }
 
   .subtitle {
-    margin: 15px 0;
+    margin: 15px auto;
     font-size: 1.5rem;
     line-height: 1.5rem;
     color: $baltic-sea;
+    max-width: 1000px;
     @include proxima-nova-semibold;
   }
 

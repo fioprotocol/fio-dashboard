@@ -2,13 +2,12 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import FioName from '../common/FioName/FioName';
-import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import PseudoModalContainer from '../PseudoModalContainer';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import PageTitle from '../PageTitle/PageTitle';
+import { TransactionDetails } from '../TransactionDetails/TransactionDetails';
 
 import LinkTokenListResults from '../common/TransactionResults/components/LinkTokenListResults/';
-
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 
 import { LOW_BALANCE_TEXT, CONTAINER_TYPES } from './constants';
@@ -85,8 +84,13 @@ const ActionContainer: React.FC<Props> = props => {
       <div className={classes.actionContainer}>
         <FioName name={name} />
         {children}
-        <h5 className={classes.subtitle}>Bundled Transaction Details</h5>
-        <BundledTransactionBadge bundles={bundleCost} remaining={remaining} />
+        <h5 className={classes.subtitle}>Transaction Details</h5>
+        <TransactionDetails
+          bundles={{
+            fee: bundleCost,
+            remaining,
+          }}
+        />
         <LowBalanceBadge
           onActionClick={onLowBalanceActionClick}
           hasLowBalance={hasLowBalance}

@@ -125,8 +125,8 @@ const processTransaction = (
   if (trxName === HISTORY_TX_NAMES.TRANSFER && data.quantity != null) {
     const [amount] = data.quantity.split(' ');
     const fioAmount = apis.fio.amountToSUF(parseFloat(amount));
-    otherParams.feeActors = [data.to];
-    if (data.to === actor) {
+    otherParams.feeActors = [data?.to];
+    if (data?.to === actor) {
       nativeAmount = `${fioAmount}`;
     } else {
       nativeAmount = `-${fioAmount}`;
@@ -144,15 +144,15 @@ const processTransaction = (
       otherParams = { ...existingTrx.otherParams };
       if (
         +existingTrx.nativeAmount > 0 &&
-        otherParams.feeActors.includes(data.to)
+        otherParams?.feeActors?.includes(data?.to)
       ) {
         return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
-        if (!otherParams.feeActors.includes(data.to)) {
-          otherParams.feeActors.push(data.to);
+        if (!otherParams?.feeActors?.includes(data?.to)) {
+          otherParams?.feeActors?.push(data?.to);
 
-          if (data.to === actor) {
+          if (data?.to === actor) {
             nativeAmount = new MathOp(existingTrx.nativeAmount)
               .add(fioAmount)
               .toString();
@@ -168,7 +168,7 @@ const processTransaction = (
           return { blockNum: action.block_num, editedExisting };
         }
       }
-      if (otherParams.isTransferProcessed) {
+      if (otherParams?.isTransferProcessed) {
         nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
       } else {
         log.error(
@@ -213,6 +213,9 @@ export const checkTransactions = async (
 
   let lastActionSeqNumber = 0;
   const actor = apis.fio.publicFioSDK.transactions.getActor(publicKey);
+  const fioHistoryUrls = await apis.fioReg.historyUrls();
+
+  apis.fioHistory.setHistoryNodeUrls(fioHistoryUrls);
 
   try {
     const lastActionObject: {

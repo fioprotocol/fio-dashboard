@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import classnames from 'classnames';
 
 import Badge from '../../../../components/Badge/Badge';
@@ -14,7 +14,11 @@ import { OrderItemDetailed } from '../../../../types';
 
 import classes from './OrderItem.module.scss';
 
-export const OrderItem: React.FC<OrderItemDetailed> = props => {
+type Props = OrderItemDetailed & {
+  isEditable?: boolean;
+};
+
+export const OrderItem: FC<Props> = props => {
   const {
     address,
     hasCustomDomain,
@@ -26,6 +30,7 @@ export const OrderItem: React.FC<OrderItemDetailed> = props => {
     fee_collected,
     costUsdc,
     transaction_ids,
+    isEditable,
   } = props;
 
   const item = {
@@ -48,14 +53,14 @@ export const OrderItem: React.FC<OrderItemDetailed> = props => {
 
   return (
     <>
-      <CartItem item={item} />
+      <CartItem item={item} isEditable={isEditable} />
       {transaction_ids?.length > 0 &&
         transaction_ids
           .filter(transaction_id => !!transaction_id)
           .map(transaction_id => (
             <Badge
               key={transaction_id}
-              type={BADGE_TYPES.WHITE}
+              type={BADGE_TYPES.SIMPLE}
               show={!!transaction_id}
               className="mt-3"
             >

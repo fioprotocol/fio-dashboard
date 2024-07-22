@@ -5,7 +5,7 @@ import { GeneratedSecret } from 'speakeasy';
 import AdminEmailConfirmForm from './components/AdminEmailConfirmForm';
 import Loader from '../../components/Loader/Loader';
 
-import apis from '../../api';
+import apis from '../../admin/api';
 import useEffectOnce from '../../hooks/general';
 import TFAHelper from '../../helpers/tfa';
 

@@ -23,6 +23,7 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import { ContentContainer } from '../../components/ContentContainer';
 import { MainLayoutContainer } from '../../components/MainLayoutContainer';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
+import { NoProfileFlowMainHeader } from '../../components/NoProfileFlowMainHeader';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -38,6 +39,7 @@ type Props = {
   pathname: string;
   isAuthenticated: boolean;
   isActiveUser: boolean;
+  isNoProfileFlow: boolean;
   loginSuccess: boolean;
   showLogin: boolean;
   showRecovery: boolean;
@@ -56,6 +58,7 @@ type Props = {
   isMaintenance?: boolean;
   isLoading?: boolean;
   getCart: (cartId: string) => void;
+  logout: () => void;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -66,6 +69,7 @@ const MainLayout: React.FC<Props> = props => {
     edgeContextSet,
     isAuthenticated,
     isActiveUser,
+    isNoProfileFlow,
     showLogin,
     showRecovery,
     loadProfile,
@@ -76,6 +80,7 @@ const MainLayout: React.FC<Props> = props => {
     isMaintenance,
     isLoading,
     getCart,
+    logout,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -100,6 +105,14 @@ const MainLayout: React.FC<Props> = props => {
       getCart(cartId);
     }
   }, [cartId]);
+
+  useEffectOnce(
+    () => {
+      logout();
+    },
+    [isAuthenticated, isNoProfileFlow],
+    isAuthenticated && !!isNoProfileFlow,
+  );
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
@@ -138,7 +151,7 @@ const MainLayout: React.FC<Props> = props => {
       ) : (
         <>
           {routeName && <PageTitle link={LINKS[routeName]} shouldFireOnce />}
-          <MainHeader />
+          {isNoProfileFlow ? <NoProfileFlowMainHeader /> : <MainHeader />}
           <AutoLogout />
           <Ref />
           <Roe />

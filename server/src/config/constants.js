@@ -1,6 +1,8 @@
 const WALLET_CREATED_FROM = {
   EDGE: 'EDGE',
   LEDGER: 'LEDGER',
+  METAMASK: 'METAMASK',
+  WITHOUT_REGISTRATION: 'WITHOUT_REGISTRATION',
 };
 
 const DOMAIN_EXP_PERIOD = {
@@ -39,6 +41,7 @@ const FIO_ACTIONS = {
   recordObtData: 'recordObtData',
   registerFioAddress: 'registerFioAddress',
   registerFioDomain: 'registerFioDomain',
+  registerFioDomainAddress: 'registerFioDomainAddress',
   renewFioDomain: 'renewFioDomain',
   transferFioAddress: 'transferFioAddress',
   transferFioDomain: 'transferFioDomain',
@@ -53,6 +56,7 @@ const FIO_ACTIONS_TO_END_POINT_KEYS = {
   [FIO_ACTIONS.requestFunds]: 'newFundsRequest',
   [FIO_ACTIONS.registerFioAddress]: 'registerFioAddress',
   [FIO_ACTIONS.registerFioDomain]: 'registerFioDomain',
+  [FIO_ACTIONS.registerFioDomainAddress]: 'registerFioDomainAddress',
   [FIO_ACTIONS.renewFioDomain]: 'renewFioDomain',
   [FIO_ACTIONS.addPublicAddresses]: 'addPubAddress',
   [FIO_ACTIONS.removeAllPublicAddresses]: 'removeAllPubAddresses',
@@ -141,6 +145,7 @@ const USER_STATUS = {
 const USER_PROFILE_TYPE = {
   PRIMARY: 'PRIMARY',
   ALTERNATIVE: 'ALTERNATIVE',
+  WITHOUT_REGISTRATION: 'WITHOUT_REGISTRATION',
 };
 
 const ADMIN_STATUS_IDS = {
@@ -219,6 +224,7 @@ const ORDER_ERROR_TYPES = {
 const VARS_KEYS = {
   IS_MAINTENANCE: 'IS_MAINTENANCE',
   IS_OUTBOUND_EMAIL_STOP: 'IS_OUTBOUND_EMAIL_STOP',
+  FORMS_OF_PAYMENT: 'FORMS_OF_PAYMENT',
 };
 
 const PASSWORDS = {

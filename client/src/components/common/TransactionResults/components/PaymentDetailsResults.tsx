@@ -1,14 +1,14 @@
 import React from 'react';
-import classnames from 'classnames';
 
-import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import Results from '../index';
 
-import classes from '../styles/Results.module.scss';
 import { PaymentDetailsResultValues } from '../../../../pages/TokensRequestPaymentPage/types';
-import { priceToNumber } from '../../../../utils';
-import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
-import Amount from '../../Amount';
+import { ResultDetails } from '../../../ResultDetails/ResultDetails';
+import { PriceComponent } from '../../../PriceComponent';
+
+import { useConvertFioToUsdc } from '../../../../util/hooks';
+
+import classes from '../styles/Results.module.scss';
 
 type TokenTransferResultsProps = {
   title: string;
@@ -29,59 +29,43 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
     },
   } = props;
 
-  const renderAmount = () => {
-    const price = priceToNumber(amount);
-    return (
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Amount</p>
-          <p className={classes.item}>
-            <span>
-              <ConvertedAmount fioAmount={price} /> (<Amount value={price} />
-              {' ' + tokenCode})
-            </span>
-          </p>
-        </div>
-      </Badge>
-    );
-  };
+  const fioAmount = Number(amount);
+  const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
     <Results {...props}>
       <p className={classes.label}>Transfer Information</p>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>To</p>
-          <p className={classes.item}>{payeeFioAddress}</p>
-        </div>
-      </Badge>
-      {renderAmount()}
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Chain</p>
-          <p className={classes.item}>{chainCode}</p>
-        </div>
-      </Badge>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>ID</p>
-          <p className={classnames(classes.item, classes.isIndigo)}>
-            <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transactionId}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {transactionId}
-            </a>
-          </p>
-        </div>
-      </Badge>
-      <Badge show={!!memo} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Memo</p>
-          <p className={classes.item}>{memo}</p>
-        </div>
-      </Badge>
+
+      <ResultDetails label="To" value={payeeFioAddress} />
+
+      <ResultDetails
+        label="Amount"
+        value={
+          <PriceComponent
+            className={classes.priceValue}
+            costFio={fioAmount.toString(10)}
+            costUsdc={usdcPrice.toString(10)}
+            tokenCode={tokenCode}
+          />
+        }
+      />
+
+      <ResultDetails label="Chain" value={chainCode} />
+
+      <ResultDetails
+        label="ID"
+        value={
+          <a
+            href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transactionId}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {transactionId}
+          </a>
+        }
+      />
+
+      <ResultDetails show={!!memo} label="Memo" value={memo} />
     </Results>
   );
 };

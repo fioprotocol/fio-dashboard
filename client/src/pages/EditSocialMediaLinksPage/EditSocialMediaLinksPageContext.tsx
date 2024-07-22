@@ -23,10 +23,9 @@ import {
   LinkActionResult,
   FioAddressWithPubAddresses,
   FioWalletDoublet,
-  PublicAddressDoublet,
 } from '../../types';
 
-import { EditSocialLinkItem } from './types';
+import { EditSocialLinkItem, EditSocialLinkValues } from './types';
 
 type UseContextProps = {
   bundleCost: number;
@@ -37,10 +36,7 @@ type UseContextProps = {
   isDisabled: boolean;
   processing: boolean;
   results: LinkActionResult;
-  submitData: {
-    fch: string;
-    socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
-  } | null;
+  submitData: EditSocialLinkValues | null;
   socialMediaLinksList: EditSocialLinkItem[];
   changeBundleCost: (bundle: number) => void;
   handleEditTokenItem: (editedId: string, editedUsername: string) => void;
@@ -62,10 +58,9 @@ export const useContext = (): UseContextProps => {
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [results, setResultsData] = useState<LinkActionResult>(null);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<{
-    fch: string;
-    socialMediaLinksList: EditSocialLinkItem[] | PublicAddressDoublet[];
-  } | null>(null);
+  const [submitData, setSubmitData] = useState<EditSocialLinkValues | null>(
+    null,
+  );
 
   const currentFioAddress = useSelector(state =>
     currentFioAddressSelector(state, fch),

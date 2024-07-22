@@ -6,3 +6,8 @@ export type EditSocialLinkItem = {
   newUsername: string;
   username: string;
 } & SocialMediaLinkItem;
+
+export type EditSocialLinkValues = {
+  fch: string;
+  socialMediaLinksList: EditSocialLinkItem[];
+};

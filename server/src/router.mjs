@@ -57,6 +57,7 @@ router.put(
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
+router.post('/users/without-registration', routes.users.createUserWithoutRegistrtion);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);
@@ -114,6 +115,11 @@ router.put(
 );
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
+router.get(
+  '/admin/partners/api-token',
+  checkAdminAuth,
+  routes.adminUsers.createPartnerApiToken,
+);
 router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
 router.post('/admin/partners/:id', checkAdminAuth, routes.adminUsers.updatePartner);
 
@@ -132,7 +138,7 @@ router.put('/notifications', checkAuth, routes.notifications.update);
 router.get('/reg/domains/list', routes.registration.domainsList);
 router.get('/reg/domain-prefix-postfix', routes.registration.prefixPostfixList);
 router.get('/reg/prices', routes.external.prices);
-router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
+router.post('/reg/captcha/init', routes.external.initCaptcha);
 router.get('/reg/api-urls', routes.external.apiUrls);
 
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
@@ -165,7 +171,7 @@ router.post('/fio-api/chain/get_table_rows', async (req, res) => {
 router.use(
   '/fio-api/chain/:url',
   createProxyMiddleware({
-    target: process.env.FIO_BASE_URL,
+    target: process.env.API_BASE_URL,
     changeOrigin: true,
     pathRewrite: {
       [`^/api/v1/fio-api`]: '',
@@ -189,11 +195,11 @@ router.get('/contacts', checkAuth, routes.contacts.list);
 
 router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
 
-router.get('/orders', checkAuth, routes.orders.list);
-router.get('/orders/active', checkAuth, routes.orders.getActive);
-router.post('/orders', checkAuth, routes.orders.create);
-router.post('/orders/update/:id', checkAuth, routes.orders.update);
-router.get('/orders/item/:id', checkAuth, routes.orders.get);
+router.get('/orders', routes.orders.list);
+router.get('/orders/active', routes.orders.getActive);
+router.post('/orders', routes.orders.create);
+router.post('/orders/update/:id', routes.orders.update);
+router.get('/orders/item/:id', routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
@@ -202,7 +208,7 @@ router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 router.get('/selected-chain-codes', routes.chainCodes.selectedList);
 
-router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
+router.post('/generate-pdf', routes.generatePdf.create);
 
 router.post('/verify-twitter', routes.twitter.verify);
 router.get('/verify-abstract-email', routes.external.abstractEmailVerification);
@@ -211,6 +217,7 @@ router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
 router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
+router.get('/wrap-status/domains/burn', routes.history.burnedDomains);
 
 router.post('/cart-add-item', routes.cart.addItem);
 router.delete('/cart-clear-cart', routes.cart.clearCart);
@@ -237,7 +244,7 @@ router.get(
   routes.users.alternativeUserVerification,
 );
 
-router.get('/free-addresses', checkAuth, routes.freeAddresses.getFreeAddresses);
+router.get('/free-addresses', routes.freeAddresses.getFreeAddresses);
 
 router.get('/gas-oracle', routes.external.getGasOracle);
 router.get(
@@ -283,4 +290,10 @@ router.get('/abi_fio_token', (req, res) =>
   res.send({ data: WRAPPED_TOKEN_ABI, status: WRAPPED_TOKEN_ABI ? 1 : 0 }),
 );
 
-export default router;
+const publicApiRouter = express.Router();
+
+publicApiRouter.post('/buy-address', routes.publicApi.buyAddress);
+publicApiRouter.post('/renew', routes.publicApi.renew);
+publicApiRouter.post('/summary', routes.publicApi.summary);
+
+export { router, publicApiRouter };

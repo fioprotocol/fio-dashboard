@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -11,6 +11,7 @@ import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import { ROUTES } from '../../constants/routes';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import { handleHomePageContent } from '../../util/homePage';
 
@@ -51,6 +52,19 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
       history.push(ROUTES.DASHBOARD);
     }
   }, [isAuthenticated, isContainedFlow, history, redirectLink]);
+
+  if (refProfileInfo?.settings?.hasNoProfileFlow) {
+    return (
+      <Redirect
+        to={{
+          pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+            REF_PROFILE_SLUG_NAME,
+            refProfileInfo?.code,
+          )}`,
+        }}
+      />
+    );
+  }
 
   if (isContainedFlow)
     return <AddressWidget isDarkWhite {...addressWidgetContent} />;

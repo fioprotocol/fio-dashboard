@@ -458,6 +458,10 @@
         padding-right: 0;
       }
     }
+
+    &.hasRoundRadius {
+      border-radius: 100px;
+    }
   }
 }
 
@@ -471,6 +475,7 @@
   align-items: center;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
+  min-width: 33px;
 
   &.highZIndex {
     z-index: 4;
@@ -484,6 +489,11 @@
     height: 38px;
     top: 1px;
     left: 1px;
+  }
+
+  &.hasRoundRadius {
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
   }
 }
 

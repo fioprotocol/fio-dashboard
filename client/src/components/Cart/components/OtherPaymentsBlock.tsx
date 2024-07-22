@@ -8,13 +8,15 @@ import { PaymentOptionsProps, CartItem, PaymentProvider } from '../../../types';
 import classes from '../styles/OtherPaymentsBlock.module.scss';
 
 type Props = {
+  isAffiliateEnabled: boolean;
   defaultShowState: boolean;
   optionsDisabled: boolean;
   disabled?: boolean;
   paymentOptionsList: PaymentOptionsProps[];
   cartItems?: CartItem[];
   selectedPaymentProvider: PaymentProvider;
-  totlaCartUsdcAmount: string;
+  totalCartUsdcAmount: string;
+  formsOfPayment: { [key: string]: boolean };
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
@@ -26,7 +28,9 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
     disabled,
     cartItems,
     selectedPaymentProvider,
-    totlaCartUsdcAmount,
+    totalCartUsdcAmount,
+    formsOfPayment,
+    isAffiliateEnabled,
     onPaymentChoose,
   } = props;
 
@@ -50,7 +54,9 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
         cartItems={cartItems}
         selectedPaymentProvider={selectedPaymentProvider}
         disabled={disabled}
-        totlaCartUsdcAmount={totlaCartUsdcAmount}
+        totalCartUsdcAmount={totalCartUsdcAmount}
+        formsOfPayment={formsOfPayment}
+        isAffiliateEnabled={isAffiliateEnabled}
       />
     );
 

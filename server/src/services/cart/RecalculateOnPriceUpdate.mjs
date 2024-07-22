@@ -55,11 +55,16 @@ export default class RecalculateOnPriceUpdate extends Base {
         addBundles: addBundlesPrice,
         address: addressPrice,
         domain: domainPrice,
+        combo: comboPrice,
         renewDomain: renewDomainPrice,
       } = handledPrices;
 
       const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+        !addBundlesPrice ||
+        !addressPrice ||
+        !domainPrice ||
+        !comboPrice ||
+        !renewDomainPrice;
 
       if (isEmptyPrices) {
         throw new X({

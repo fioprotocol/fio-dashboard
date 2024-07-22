@@ -6,11 +6,9 @@ import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
-import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
@@ -38,7 +36,6 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
   const providerData = useInitializeProviderConnection();
 
   const [unitedFee, setUnitedFee] = useState<FeePrice>(DEFAULT_FEE_PRICES);
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
 
   useEffect(() => {
     setUnitedFee(
@@ -50,10 +47,6 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
       ),
     );
   }, [fee, oracleFee, roe]);
-
-  useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
-  }, [balance]);
 
   const handleSubmit = async (values: WrapDomainValues) =>
     props.onSubmit(values);
@@ -101,23 +94,14 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
               label="Public Address"
             />
 
-            <p className={classes.transactionTitle}>Transaction Fees</p>
-            <PriceBadge
-              title="Fees"
-              type={BADGE_TYPES.BLACK}
-              costFio={unitedFee.fio}
-              costUsdc={unitedFee.usdc}
+            <p className={classes.transactionTitle}>Transaction Details</p>
+            <TransactionDetails
+              feeInFio={unitedFee.nativeFio}
+              payWith={{
+                walletName: fioWallet.name,
+                walletBalances: balance?.available,
+              }}
             />
-
-            <div className={classes.additionalSubInfo}>
-              <span>Available FIO balance:</span>
-              <b>
-                {new MathOp(
-                  apis.fio.sufToAmount(walletAvailableAmount),
-                ).toString()}{' '}
-                FIO
-              </b>
-            </div>
 
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}

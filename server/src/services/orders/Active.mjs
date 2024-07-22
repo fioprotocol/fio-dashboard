@@ -8,15 +8,31 @@ import X from '../Exception.mjs';
 const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 
 export default class OrdersActive extends Base {
-  async execute() {
-    const order = await Order.findOne({
-      where: {
-        status: Order.STATUS.NEW,
-        userId: this.context.id,
-        createdAt: {
-          [Sequelize.Op.gt]: new Date(new Date().getTime() - CART_TIMEOUT),
-        },
+  static get validationRules() {
+    return {
+      publicKey: 'string',
+      userId: 'string',
+    };
+  }
+
+  async execute({ userId, publicKey }) {
+    const where = {
+      status: Order.STATUS.NEW,
+      updatedAt: {
+        [Sequelize.Op.gt]: new Date(new Date().getTime() - CART_TIMEOUT),
       },
+    };
+
+    if (userId) {
+      where.userId = userId;
+    }
+
+    if (publicKey) {
+      where.publicKey = publicKey;
+    }
+
+    const order = await Order.findOne({
+      where,
       include: [Payment, OrderItem],
       order: [['createdAt', 'DESC']],
     });

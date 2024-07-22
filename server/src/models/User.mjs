@@ -173,8 +173,8 @@ export class User extends Base {
     });
   }
 
-  static findUser(id) {
-    return this.findById(id, {
+  static async findUser(id) {
+    const user = await this.findById(id, {
       include: [
         { model: FreeAddress, as: 'freeAddresses' },
         { model: Wallet, as: 'fioWallets' },
@@ -184,23 +184,34 @@ export class User extends Base {
           as: 'affiliateProfile',
           attributes: ['code', 'tpid'],
         },
-        { model: Order, as: 'orders' },
       ],
     });
+
+    // Need to get orders separately because of sequelize bad performance if user has a lot of orders
+    const orders = await Order.findAll({ where: { userId: user.id } });
+
+    const userObj = user.json();
+
+    if (orders) {
+      userObj.orders = orders;
+    }
+
+    return userObj;
   }
 
   static info(id) {
     return this.findById(id);
   }
 
-  static usersCount() {
-    return this.count();
+  static usersCount({ where, include }) {
+    return this.count({ distinct: true, where, include, col: 'id' });
   }
 
-  static list({ limit = 25, offset, include }) {
+  static list({ limit = 25, offset, include, where }) {
     const params = {
       order: [['createdAt', 'DESC']],
       offset,
+      where,
     };
 
     if (limit && Number(limit) > 0) params.limit = limit;

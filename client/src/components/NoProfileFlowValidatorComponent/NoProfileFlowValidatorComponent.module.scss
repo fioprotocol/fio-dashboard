@@ -1,0 +1,107 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 763px;
+  margin: 30px auto 0;
+  position: relative;
+  gap: 30px;
+
+  @include lg {
+    margin: 0 auto;
+  }
+
+  .warningBadge {
+    background-color: $web-orange;
+    border-radius: 7px;
+    padding: 20px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    .titleContainer {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+
+      .icon {
+        font-size: 24px;
+      }
+
+      .title {
+        margin: 0;
+        @include inter-bold;
+      }
+    }
+
+    .message {
+      font-size: 0.875em;
+      margin: 0;
+      @include inter-regular;
+
+      .boldMessage {
+        @include inter-bold;
+      }
+    }
+  }
+
+  .loader {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    line-height: 2.75rem;
+    @include inter-regular;
+    color: $black;
+    z-index: 2;
+
+    .loaderText {
+      margin-bottom: 0;
+      font-size: 0.875em;
+    }
+  }
+
+  .infoBadge {
+    width: auto;
+    background-color: $violet;
+    border-radius: 999em;
+    padding: 10px 30px 10px 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  
+    &.isVerified,
+    &.hasVerificationError {
+      display: flex;
+      flex-direction: row;
+      height: auto;
+    }
+  
+    &.isVerified {
+      background-color: $green-shell;
+    }
+  
+    &.hasVerificationError {
+      background-color: $warn-red;
+    }
+  
+    &.hasFioVerificactionError {
+      margin-bottom: 30px;
+    }
+  
+    .infoMessage {
+      margin: 0;
+      font-size: 0.8125em;
+    }
+  }
+}
