@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Base from '../Base';
+import X from '../Exception';
 
 import { Order } from '../../models';
 
@@ -15,6 +16,16 @@ export default class OrdersList extends Base {
   }
 
   async execute({ limit, offset, publicKey, userId }) {
+    if (!userId && !publicKey) {
+      throw new X({
+        code: 'GET_ORDERS_LIST_ERROR',
+        fields: {
+          userId: 'MISSING_USER_ID',
+          publicKey: 'MISSING_PUBLIC_KEY',
+        },
+      });
+    }
+
     const ordersList = await Order.list({
       userId,
       offset,
@@ -22,14 +33,22 @@ export default class OrdersList extends Base {
       isProcessed: true,
       publicKey,
     });
-    const totalOrdersCount = await Order.ordersCount({
-      col: 'userId',
-      where: {
-        status: {
-          [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],
-        },
-        userId: this.context.id,
+    const ordersCountWhere = {
+      status: {
+        [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],
       },
+    };
+
+    if (userId) {
+      ordersCountWhere.userId = userId;
+    }
+    if (publicKey) {
+      ordersCountWhere.publicKey = publicKey;
+    }
+
+    const totalOrdersCount = await Order.ordersCount({
+      col: userId ? 'userId' : 'publicKey',
+      where: ordersCountWhere,
     });
 
     const orders = [];

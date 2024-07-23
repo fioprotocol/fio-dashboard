@@ -160,7 +160,7 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    const wallet = await Wallet.findOneWhere({ userId: this.context.id, publicKey });
+    const wallet = await Wallet.findOneWhere({ userId, publicKey });
 
     const items = await cartItemsToOrderItems({
       allRefProfileDomains,
