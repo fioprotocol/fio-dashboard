@@ -17,6 +17,7 @@ import { CHAIN_CODES, CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import { normalizePriceForBitPayInTestNet } from '../../utils/payment.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 export default class Renew extends Base {
@@ -122,17 +123,20 @@ export default class Renew extends Base {
       });
     }
 
+    const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);
+
     const { order, charge } = await this.createRenewOrder({
       publicKey,
       refProfileId: refProfile.id,
       address: fioAddress,
       domain: fioDomain,
+      userId: user.id,
     });
 
     return generateSuccessResponse(this.res, { accountId: order.id, charge });
   }
 
-  async createRenewOrder({ publicKey, refProfileId, address, domain }) {
+  async createRenewOrder({ publicKey, refProfileId, address, domain, userId }) {
     const roe = await getROE();
     const prices = await fioApi.getPrices(true);
     const nativeFio = address ? prices.addBundles : prices.renewDomain;
@@ -150,6 +154,7 @@ export default class Renew extends Base {
           publicKey,
           refProfileId,
           data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+          userId,
         },
         { transaction: t },
       );
