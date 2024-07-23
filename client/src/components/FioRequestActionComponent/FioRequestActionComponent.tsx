@@ -54,6 +54,7 @@ export const FioRequestActionComponent: React.FC = () => {
             isWhiteBordered
             hasSmallText
             hasLowHeight
+            hasNoSidePaddings
           />
         </Link>
       )}

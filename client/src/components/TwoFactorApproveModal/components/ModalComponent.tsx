@@ -36,8 +36,8 @@ const ModalComponent: React.FC<Props> = props => {
       onClose={() => {
         onClick({ type: ACTION_TYPE.DENY_ALL });
       }}
-      closeButton={true}
-      isInfo={true}
+      closeButton
+      isIndigo
       backdrop={false}
     >
       <div className={classes.approveContainer}>
