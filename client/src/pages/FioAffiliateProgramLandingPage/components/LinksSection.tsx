@@ -44,7 +44,7 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
       )}
       <p className={classes.info}>
         Please see the FAQs {faqInfoPosition} for more information regarding
-        earning andpayout.
+        earning and payout.
       </p>
       <div className={classes.buttonContainer}>
         {isAuthenticated && !isAffiliateEnabled && (

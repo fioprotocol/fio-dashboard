@@ -147,6 +147,16 @@ const WalletSettings: React.FC<Props> = props => {
   };
 
   const onDeleteConfirmModal = async (values: DeleteWalletFormValues) => {
+    setLoading({ ...loading, deleteWallet: true });
+    try {
+      const account = await apis.edge.login(values.username, values.password);
+      if (!account) throw new Error();
+    } catch (e) {
+      return { password: 'Invalid Password' };
+    } finally {
+      setLoading({ ...loading, deleteWallet: false });
+    }
+
     if (isPrimaryUserProfileType) {
       setCurrentDeleteValues(values);
     }

@@ -40,7 +40,7 @@ export const PasswordForm: React.FC<Props> = props => {
     submitError = error.message;
   }
 
-  const submitErrorResetHadnle = useCallback(() => {
+  const submitErrorResetHandle = useCallback(() => {
     onReset();
   }, [onReset]);
 
@@ -79,7 +79,7 @@ export const PasswordForm: React.FC<Props> = props => {
               loading={loading}
             />
             <CancelButton onClick={onClose} isThin withBottomMargin />
-            <OnChange name="password">{submitErrorResetHadnle}</OnChange>
+            <OnChange name="password">{submitErrorResetHandle}</OnChange>
           </form>
         );
       }}

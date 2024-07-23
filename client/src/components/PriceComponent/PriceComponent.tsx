@@ -41,19 +41,21 @@ export const PriceComponent: React.FC<Props> = props => {
   if (isFree) return <span className="boldText">FREE</span>;
 
   return (
-    <span className={classnames('d-flex flex-direction-row', className)}>
+    <span
+      className={classnames(
+        'd-flex flex-direction-row align-items-baseline',
+        className,
+      )}
+    >
       {costUsdc && (
-        <>
-          <span className="boldText d-flex flex-direction-row">
-            $
-            {loading ? (
-              <LoaderComponent loaderComponent={loaderComponent} />
-            ) : (
-              <Amount value={costUsdc} />
-            )}
-          </span>
-          &nbsp;
-        </>
+        <span className="boldText d-flex flex-direction-row mr-1">
+          $
+          {loading ? (
+            <LoaderComponent loaderComponent={loaderComponent} />
+          ) : (
+            <Amount value={costUsdc} />
+          )}
+        </span>
       )}
       <span className="d-flex flex-direction-row">
         (

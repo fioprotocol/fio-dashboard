@@ -17,7 +17,7 @@ type Props = {
   className?: string;
   noDash?: boolean;
   message: string | React.ReactNode;
-  onClose?: () => void | void;
+  onClose?: () => void;
   show: boolean;
   title?: string | React.ReactNode;
   type: string;
@@ -88,6 +88,7 @@ const NotificationBadge: React.FC<Props> = props => {
           type === BADGE_TYPES.WARNING ||
           type === BADGE_TYPES.ALERT ||
           type === BADGE_TYPES.RED) && <WarningIcon />}
+
         <div className={classes.contentContainer}>
           {title && <h5 className={classes.title}>{title}</h5>}
           <p className={classnames(classes.message, messageClassnames)}>
