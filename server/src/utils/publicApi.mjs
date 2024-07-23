@@ -131,10 +131,10 @@ export const destructAddress = address => {
 
   if (address.includes(FIO_ADDRESS_DELIMITER)) {
     const [handle, domain] = address.split(FIO_ADDRESS_DELIMITER);
-    fioAddress = handle;
-    fioDomain = domain;
+    fioAddress = handle ? handle.toLowerCase() : handle;
+    fioDomain = domain ? domain.toLowerCase() : domain;
   } else {
-    fioDomain = address;
+    fioDomain = address ? address.toLowerCase() : address;
   }
 
   const type = fioAddress ? 'account' : 'domain';

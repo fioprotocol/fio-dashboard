@@ -82,9 +82,14 @@ class TxCheckJob extends CommonJob {
 
               let found;
               if (isAddress) {
-                found = fio_addresses.find(({ fio_address }) => fio_address === fioName);
+                found = fio_addresses.find(
+                  ({ fio_address }) =>
+                    fio_address.toLowerCase() === fioName.toLowerCase(),
+                );
               } else {
-                found = fio_domains.find(({ fio_domain }) => fio_domain === fioName);
+                found = fio_domains.find(
+                  ({ fio_domain }) => fio_domain.toLowerCase() === fioName.toLowerCase(),
+                );
               }
 
               if (found) status = BlockchainTransaction.STATUS.SUCCESS;
