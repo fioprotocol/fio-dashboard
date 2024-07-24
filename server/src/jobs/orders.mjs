@@ -805,7 +805,8 @@ class OrdersJob extends CommonJob {
         fioApi.getActionParams({
           ...orderItem,
           tpid:
-            action === FIO_ACTIONS.registerFioDomain
+            action === FIO_ACTIONS.registerFioDomain ||
+            action === FIO_ACTIONS.registerFioDomainAddress
               ? orderItem.domainTpid
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
