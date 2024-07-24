@@ -103,7 +103,9 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
-              technologyProviderId: apis.fio.tpid,
+              technologyProviderId: registration.isCombo
+                ? apis.fio.domainTpid
+                : apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
@@ -224,7 +226,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={{ ...analyticsData, cartItems }}
+      data={analyticsData ? { ...analyticsData, cartItems } : null}
       submitAction={submit}
       edgeAccountLogoutBefore
     />

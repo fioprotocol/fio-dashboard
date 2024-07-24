@@ -81,19 +81,13 @@ export const useContext = (props: {
   ]);
 
   const [fio101Items, setFio101Items] = useState<Fio101SliderContentProps[]>(
-    prepareSlides,
+    [],
   );
 
   useEffect(() => {
-    setFio101Items(prepareSlides);
-  }, [
-    prepareSlides,
-    firstFromListFioAddressName,
-    hasDomains,
-    hasFCH,
-    hasOneFCH,
-    noMappedPubAddresses,
-  ]);
+    const newSlides = prepareSlides();
+    setFio101Items(newSlides);
+  }, [prepareSlides]);
 
   return {
     fio101Items,
