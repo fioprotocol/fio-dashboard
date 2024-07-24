@@ -53,10 +53,10 @@ export const makeRegistrationOrder = ({
         : cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
           isComboSupported &&
           !cartItem.hasCustomDomainInCart
-        ? fees.combo
+        ? fees?.combo
         : cartItem.address
-        ? fees.address
-        : fees.domain,
+        ? fees?.address
+        : fees?.domain,
       isCombo,
       type:
         !isCombo && cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
@@ -82,7 +82,7 @@ export const makeRegistrationOrder = ({
             action: ACTIONS.renewFioDomain,
             fioName: cartItem.domain,
             cartItemId: cartItem.id,
-            fee: fees.domain,
+            fee: fees?.domain,
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             isFree: false,
             iteration: i,
@@ -103,7 +103,7 @@ export const makeRegistrationOrder = ({
         action: ACTIONS.registerFioDomain,
         fioName: cartItem.domain,
         cartItemId: cartItem.id,
-        fee: fees.domain,
+        fee: fees?.domain,
         type: CART_ITEM_TYPE.DOMAIN,
         isFree: false,
         isCustomDomain: true,
@@ -122,7 +122,7 @@ export const makeRegistrationOrder = ({
           fioName: cartItem.domain,
           action: ACTIONS.renewFioDomain,
           cartItemId: cartItem.id,
-          fee: fees.domain,
+          fee: fees?.domain,
           type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
           isFree: false,
           iteration: i,

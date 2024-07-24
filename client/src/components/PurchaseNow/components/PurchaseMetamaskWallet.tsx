@@ -312,10 +312,11 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   }, [ownerFioPublicKey, handleRegistrationIndexedItems, registrations]);
 
   const onCancelAction = useCallback(() => {
+    setActionParams(null);
+
     if (onCancel) {
       onCancel();
     }
-    setActionParams(null);
   }, [onCancel]);
 
   useEffect(() => {

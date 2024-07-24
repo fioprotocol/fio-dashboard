@@ -61,6 +61,10 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
   };
 
   const handleClose = () => {
+    if (pinConfirmData?.data?.onCancel) {
+      pinConfirmData.data.onCancel();
+    }
+
     if (confirmingPin) return;
     resetPinConfirm();
     onClose();

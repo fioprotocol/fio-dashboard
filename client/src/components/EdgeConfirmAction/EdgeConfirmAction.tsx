@@ -149,9 +149,11 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
   // Show pin modal
   useEffect(() => {
-    if (data != null && !confirmPinKeys && !initLaunch)
-      showPinModal(action, data);
-  }, [data, action, confirmPinKeys, showPinModal, initLaunch]);
+    if (data != null && !confirmPinKeys && !initLaunch) {
+      const pinData = data ? { ...data, onCancel } : null;
+      showPinModal(action, pinData);
+    }
+  }, [data, action, confirmPinKeys, showPinModal, onCancel, initLaunch]);
 
   // Handle confirmPinKeys is set
   useEffect(() => {
