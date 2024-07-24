@@ -74,21 +74,22 @@ export const generateErrorResponse = (res, { error, errorCode, statusCode }) => 
   return { error, errorCode, success: false };
 };
 
-export const generateSuccessResponse = (res, { accountId, charge }) => ({
+export const generateSuccessResponse = (res, { accountId, charge, ...other }) => ({
   error: false,
   account_id: accountId,
   success: charge ? { charge } : true,
+  ...other,
 });
 
-export const findDomainInRefProfile = (refProfile, fioDomain) => {
-  const refDomains =
-    refProfile.settings &&
-    refProfile.settings.domains &&
-    Array.isArray(refProfile.settings.domains)
-      ? refProfile.settings.domains
-      : [];
-  return refDomains.find(({ name }) => name === fioDomain);
-};
+export const resolveRefProfileDomains = refProfile =>
+  refProfile.settings &&
+  refProfile.settings.domains &&
+  Array.isArray(refProfile.settings.domains)
+    ? refProfile.settings.domains
+    : [];
+
+export const findDomainInRefProfile = (refProfile, fioDomain) =>
+  resolveRefProfileDomains(refProfile).find(({ name }) => name === fioDomain);
 
 export const formatChainDomain = domain => {
   if (!domain) {
