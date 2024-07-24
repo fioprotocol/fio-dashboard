@@ -64,15 +64,17 @@ export const useContext = (): OrdersPageProps => {
   const hasMoreOrders = totalOrdersCount - ordersList.length > 0;
 
   const getMoreOrders = () => {
-    dispatch(
-      getUserOrdersList({
-        limit: ORDERS_ITEMS_LIMIT,
-        offset,
-        publicKey,
-        userId,
-      }),
-    );
-    setOffset(offset + ORDERS_ITEMS_LIMIT);
+    if (userId || publicKey) {
+      dispatch(
+        getUserOrdersList({
+          limit: ORDERS_ITEMS_LIMIT,
+          offset,
+          publicKey,
+          userId,
+        }),
+      );
+      setOffset(offset + ORDERS_ITEMS_LIMIT);
+    }
   };
 
   const getOrder = async (orderId: string) => await apis.orders.get(orderId);
@@ -85,15 +87,17 @@ export const useContext = (): OrdersPageProps => {
 
   useEffectOnce(
     () => {
-      dispatch(
-        getUserOrdersList({
-          limit: ORDERS_ITEMS_LIMIT,
-          offset,
-          publicKey,
-          userId,
-        }),
-      );
-      setOffset(offset + ORDERS_ITEMS_LIMIT);
+      if (userId || publicKey) {
+        dispatch(
+          getUserOrdersList({
+            limit: ORDERS_ITEMS_LIMIT,
+            offset,
+            publicKey,
+            userId,
+          }),
+        );
+        setOffset(offset + ORDERS_ITEMS_LIMIT);
+      }
     },
     [dispatch, offset],
     !!userId || !!publicKey,

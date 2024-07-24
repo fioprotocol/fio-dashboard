@@ -295,5 +295,7 @@ const publicApiRouter = express.Router();
 publicApiRouter.post('/buy-address', routes.publicApi.buyAddress);
 publicApiRouter.post('/renew', routes.publicApi.renew);
 publicApiRouter.post('/summary', routes.publicApi.summary);
+publicApiRouter.get('/is-domain-public/:domain', routes.publicApi.isDomainPublic);
+publicApiRouter.get('/get-domains/:referralCode', routes.publicApi.getDomains);
 
 export { router, publicApiRouter };
