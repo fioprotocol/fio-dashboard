@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { isMobile } from 'react-device-detect';
 
 import { MetamaskSnap } from '../../../../services/MetamaskSnap';
@@ -10,6 +10,8 @@ import { alternateLogin } from '../../../../redux/profile/actions';
 import { WALLET_TYPES } from '../../../../constants/wallets';
 import { log } from '../../../../util/general';
 import useEffectOnce from '../../../../hooks/general';
+
+import { refProfileCode } from '../../../../redux/refProfile/selectors';
 
 const DEFAULT_METAMASK_ERROR =
   'Sign in with MetaMask has failed. Please try again.';
@@ -47,6 +49,8 @@ export const useContext = (props?: Props): UseContextProps => {
   const [alternativeLoginError, setAlternativeLoginError] = useState<
     string | null
   >(null);
+
+  const referrerCode = useSelector(refProfileCode);
 
   const dispatch = useDispatch();
 
@@ -92,6 +96,7 @@ export const useContext = (props?: Props): UseContextProps => {
           nonce,
           publicKey,
           signature,
+          referrerCode,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
       );
@@ -99,7 +104,7 @@ export const useContext = (props?: Props): UseContextProps => {
       log.error('Metamask Login error', error);
       setAlternativeLoginError(DEFAULT_METAMASK_ERROR);
     }
-  }, [derivationIndex, dispatch, publicKey]);
+  }, [derivationIndex, dispatch, publicKey, referrerCode]);
 
   useEffect(() => {
     if (publicKey && !alternativeLoginError) {
