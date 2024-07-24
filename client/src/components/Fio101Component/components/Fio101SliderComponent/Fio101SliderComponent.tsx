@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, memo } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import PlayCircleFilled from '@mui/icons-material/PlayCircleFilled';
@@ -16,8 +16,7 @@ type Props = {
   useMobileView?: boolean;
   videoId?: string;
 };
-
-export const Fio101SliderComponent: React.FC<Props> = props => {
+export const Fio101SliderComponent: React.FC<Props> = memo(props => {
   const {
     buttonText,
     imageSrc,
@@ -54,17 +53,19 @@ export const Fio101SliderComponent: React.FC<Props> = props => {
               >
                 <PlayCircleFilled className={classes.icon} />
               </div>
-              <iframe
-                className={classnames(
-                  classes.videoFrame,
-                  showVideo && classes.showVideo,
-                )}
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                frameBorder="0"
-              ></iframe>
+              {showVideo && (
+                <iframe
+                  className={classnames(
+                    classes.videoFrame,
+                    showVideo && classes.showVideo,
+                  )}
+                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  frameBorder="0"
+                ></iframe>
+              )}
             </div>
           ) : (
             <img src={imageSrc} alt={title} className={classes.img} />
@@ -84,4 +85,7 @@ export const Fio101SliderComponent: React.FC<Props> = props => {
       </>
     </div>
   );
-};
+});
+
+// Add displayName to the component
+Fio101SliderComponent.displayName = 'Fio101SliderComponent';
