@@ -226,7 +226,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={{ ...analyticsData, cartItems }}
+      data={analyticsData ? { ...analyticsData, cartItems } : null}
       submitAction={submit}
       edgeAccountLogoutBefore
     />
