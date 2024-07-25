@@ -295,8 +295,8 @@ router.post('/set-cookie', (req, res) => {
 
   const paramsToSet = { ...options };
 
-  if (req.protocol === 'https:') {
-    const hostname = req.hostname;
+  if (req.protocol === 'https') {
+    const hostname = req.headers.host;
 
     const hostParts = hostname.split('.');
     if (hostParts.length > 2) {
