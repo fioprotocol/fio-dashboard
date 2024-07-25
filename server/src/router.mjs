@@ -290,6 +290,34 @@ router.get('/abi_fio_token', (req, res) =>
   res.send({ data: WRAPPED_TOKEN_ABI, status: WRAPPED_TOKEN_ABI ? 1 : 0 }),
 );
 
+router.post('/set-cookie', (req, res) => {
+  const { cookieName, cookieValue, options } = req.body;
+
+  const paramsToSet = { ...options };
+
+  if (req.protocol === 'https:') {
+    const hostname = req.hostname;
+
+    const hostParts = hostname.split('.');
+    if (hostParts.length > 2) {
+      paramsToSet.domain = `.${hostParts.slice(-2).join('.')}`;
+    } else {
+      paramsToSet.domain = hostname;
+    }
+  }
+
+  if (options && options.expires) {
+    paramsToSet.expires = new Date(options.expires);
+  }
+
+  if (!cookieValue) {
+    res.clearCookie(cookieName, paramsToSet);
+  } else {
+    res.cookie(cookieName, cookieValue, paramsToSet);
+  }
+  res.send({ status: 'success' });
+});
+
 const publicApiRouter = express.Router();
 
 publicApiRouter.post('/buy-address', routes.publicApi.buyAddress);

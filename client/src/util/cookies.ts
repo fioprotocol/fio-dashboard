@@ -1,7 +1,5 @@
 import Cookies from 'js-cookie';
 
-import { REFERRAL_PROFILE_COOKIE_NAME } from '../constants/cookies';
-
 export const setCookies = (
   cookieName: string,
   cookieValue: string,
@@ -16,10 +14,7 @@ export const setCookies = (
 ): void => {
   const paramsToSet = { ...params };
 
-  if (
-    document.location.protocol === 'https:' &&
-    cookieName !== REFERRAL_PROFILE_COOKIE_NAME
-  ) {
+  if (document.location.protocol === 'https:') {
     paramsToSet.secure = true;
 
     const hostParts = document.location.hostname.split('.');
@@ -35,4 +30,10 @@ export const setCookies = (
   } else {
     Cookies.set(cookieName, cookieValue, paramsToSet);
   }
+};
+
+export const setExpirationTime = (days: number) => {
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  return date.toISOString();
 };
