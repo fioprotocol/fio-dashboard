@@ -17,11 +17,13 @@ export const setCookies = (
   if (document.location.protocol === 'https:') {
     paramsToSet.secure = true;
 
-    const hostParts = document.location.hostname.split('.');
+    // We need to get domain hostname from env because of reg site migration that has other origin - fioprotocol.io
+    const url = new URL(process.env.REACT_APP_API_BASE_URL);
+    const hostParts = url.hostname.split('.');
     if (hostParts.length > 2) {
       paramsToSet.domain = `.${hostParts.slice(-2).join('.')}`;
     } else {
-      paramsToSet.domain = document.location.hostname;
+      paramsToSet.domain = url.hostname;
     }
   }
 
