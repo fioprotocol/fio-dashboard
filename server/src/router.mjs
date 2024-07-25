@@ -292,11 +292,15 @@ router.get('/abi_fio_token', (req, res) =>
 
 router.post('/set-cookie', (req, res) => {
   const { cookieName, cookieValue, options } = req.body;
+  const paramsToSet = { ...options, path: '/' };
 
-  const paramsToSet = { ...options };
+  if (req.get('X-Forwarded-Proto') === 'https') {
+    const origin = req.headers.origin;
+    const hostname = new URL(origin).hostname;
 
-  if (req.protocol === 'https') {
-    const hostname = req.headers.host;
+    paramsToSet.secure = true;
+    paramsToSet.httpOnly = true;
+    paramsToSet.sameSite = 'none';
 
     const hostParts = hostname.split('.');
     if (hostParts.length > 2) {
