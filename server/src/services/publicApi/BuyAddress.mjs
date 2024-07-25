@@ -33,12 +33,14 @@ import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { isDomainExpired } from '../../utils/fio.mjs';
 import { handleRefProfileApiTokenAndLegacyHash } from '../../utils/referrer-profile.mjs';
+import logger from '../../logger.mjs';
 
 export default class BuyAddress extends Base {
   async execute(args) {
     try {
       return await this.processing(args);
     } catch (e) {
+      logger.error(e);
       return generateErrorResponse(this.res, {
         error: `Server error. Please try later.`,
         errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
@@ -70,6 +72,8 @@ export default class BuyAddress extends Base {
     }
 
     !refProfile.apiToken &&
+      refProfile.apiHash &&
+      apiToken &&
       (await handleRefProfileApiTokenAndLegacyHash({ apiToken, refProfile }));
 
     if (!refProfile.apiAccess) {
