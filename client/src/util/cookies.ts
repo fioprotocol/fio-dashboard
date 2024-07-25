@@ -1,5 +1,7 @@
 import Cookies from 'js-cookie';
 
+import { REFERRAL_PROFILE_COOKIE_NAME } from '../constants/cookies';
+
 export const setCookies = (
   cookieName: string,
   cookieValue: string,
@@ -14,16 +16,17 @@ export const setCookies = (
 ): void => {
   const paramsToSet = { ...params };
 
-  if (document.location.protocol === 'https:') {
+  if (
+    document.location.protocol === 'https:' &&
+    cookieName !== REFERRAL_PROFILE_COOKIE_NAME
+  ) {
     paramsToSet.secure = true;
 
-    // We need to get domain hostname from env because of reg site migration that has other origin - fioprotocol.io
-    const url = new URL(process.env.REACT_APP_API_BASE_URL);
-    const hostParts = url.hostname.split('.');
+    const hostParts = document.location.hostname.split('.');
     if (hostParts.length > 2) {
       paramsToSet.domain = `.${hostParts.slice(-2).join('.')}`;
     } else {
-      paramsToSet.domain = url.hostname;
+      paramsToSet.domain = document.location.hostname;
     }
   }
 
