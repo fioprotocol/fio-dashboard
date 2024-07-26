@@ -25,6 +25,7 @@ import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
 } from '../../redux/cart/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
 import { DomainItemType } from '../../types';
@@ -48,6 +49,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const cartItems = useSelector(cartItemsSelector);
   const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
 
   const [infoMessage, setInfoMessage] = useState<string>(null);
@@ -240,6 +242,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
+            refCode,
             roe,
           }),
         );
@@ -254,6 +257,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     [
       refDomainObj,
       prices.nativeFio,
+      refCode,
       roe,
       cartHasFreeItem,
       existingPublicKeyFreeAddress,

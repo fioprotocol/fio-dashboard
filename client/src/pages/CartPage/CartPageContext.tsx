@@ -320,6 +320,7 @@ export const useContext = (): UseContextReturnType => {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
+        refCode,
         userId,
       };
 

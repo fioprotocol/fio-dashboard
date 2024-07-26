@@ -16,6 +16,7 @@ export default class Cart extends Base {
     prices?: NativePrices;
     roe?: number;
     userId?: string;
+    refCode?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.post('cart-add-item', data);
   }
@@ -28,6 +29,7 @@ export default class Cart extends Base {
     prices: NativePrices;
     roe: number;
     userId?: string;
+    refCode?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-delete-item', data);
   }
@@ -38,6 +40,7 @@ export default class Cart extends Base {
     id: string;
     userId?: string;
     publicKey?: string;
+    refCode?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }

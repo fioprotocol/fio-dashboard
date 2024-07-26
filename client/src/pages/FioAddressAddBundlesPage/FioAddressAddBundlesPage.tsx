@@ -25,6 +25,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
@@ -45,6 +46,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
 
@@ -103,6 +105,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
         prices: prices?.nativeFio,
         roe,
         userId,
+        refCode,
       }),
     );
     fireAnalyticsEvent(
@@ -125,6 +128,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
     feeLoadingFinished,
     history,
     prices?.nativeFio,
+    refCode,
     roe,
     userId,
   ]);

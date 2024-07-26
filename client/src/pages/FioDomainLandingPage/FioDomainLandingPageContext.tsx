@@ -13,6 +13,8 @@ import {
   roe as roeSelector,
   registrationDomains as registrationDomainsSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
+
 import { convertFioPrices } from '../../util/prices';
 
 import { FormValues } from '../../components/FioDomainWidget/types';
@@ -22,8 +24,14 @@ export const useContext = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  const domains = useSelector(registrationDomainsSelector);
+  const refCode = useSelector(refProfileCode);
+  const roe = useSelector(roeSelector);
+  const prices = useSelector(pricesSelector);
+  const domainPrice = convertFioPrices(prices?.nativeFio.domain, roe).usdc;
+
   useEffectOnce(() => {
-    dispatch(getDomains());
+    dispatch(getDomains({ refCode }));
   }, []);
 
   const onSubmit = (values: FormValues) => {
@@ -35,11 +43,6 @@ export const useContext = () => {
 
     history.push(domainSelectionRoute);
   };
-
-  const roe = useSelector(roeSelector);
-  const prices = useSelector(pricesSelector);
-  const domains = useSelector(registrationDomainsSelector);
-  const domainPrice = convertFioPrices(prices?.nativeFio.domain, roe).usdc;
 
   return {
     onSubmit,

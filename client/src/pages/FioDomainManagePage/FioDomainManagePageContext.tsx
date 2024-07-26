@@ -20,6 +20,7 @@ import {
 } from '../../redux/registrations/selectors';
 import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
 
@@ -113,6 +114,7 @@ export const useContext = (): UseContextProps => {
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
@@ -192,6 +194,7 @@ export const useContext = (): UseContextProps => {
           id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
@@ -215,6 +218,7 @@ export const useContext = (): UseContextProps => {
       renewDomainFeePrice.fio,
       renewDomainFeePrice?.nativeFio,
       renewDomainFeePrice.usdc,
+      refCode,
       roe,
       userId,
     ],
@@ -289,6 +293,7 @@ export const useContext = (): UseContextProps => {
           id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
@@ -303,6 +308,7 @@ export const useContext = (): UseContextProps => {
       history,
       nativeFioDomainPrice,
       prices?.nativeFio,
+      refCode,
       roe,
       usdc,
       userId,

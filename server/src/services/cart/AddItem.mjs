@@ -23,8 +23,6 @@ import {
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
-import config from '../../config/index.mjs';
-
 export default class AddItem extends Base {
   static get validationRules() {
     return {
@@ -63,22 +61,21 @@ export default class AddItem extends Base {
       roe: ['string'],
       token: ['string'],
       userId: ['string'],
-      cookies: ['any_object'],
+      refCode: ['string'],
     };
   }
 
-  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, cookies }) {
+  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, refCode }) {
     try {
       const { domain, type } = item;
 
       const userId = this.context.id || reqUserId || null;
-      const refCookie = cookies && cookies[config.refCookieName];
 
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode: refCookie,
+        refCode,
       });
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
       const userHasFreeAddress = publicKey
@@ -90,7 +87,7 @@ export default class AddItem extends Base {
         : null;
 
       const refProfile = await ReferrerProfile.findOne({
-        where: { code: refCookie },
+        where: { code: refCode },
       });
 
       const gatedRefProfiles = await ReferrerProfile.findAll({
@@ -109,14 +106,14 @@ export default class AddItem extends Base {
         refProfile.settings.domains &&
         !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
 
-      const isRefCookieEqualGatedRefprofile =
-        refCookie &&
+      const isRefCodeEqualGatedRefprofile =
+        refCode &&
         gatedRefProfiles.length &&
-        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCookie);
+        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
 
       if (
         ((gatedRefProfiles.length &&
-          (isRefCookieEqualGatedRefprofile ||
+          (isRefCodeEqualGatedRefprofile ||
             (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
           freeDomainOwner) &&
         type === CART_ITEM_TYPE.ADDRESS

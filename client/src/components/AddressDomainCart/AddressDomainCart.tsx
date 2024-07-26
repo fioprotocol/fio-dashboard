@@ -18,7 +18,10 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
-import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
+import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  refProfileCode,
+} from '../../redux/refProfile/selectors';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
@@ -53,6 +56,7 @@ type Props = {
     itemId: string;
     item: CartItem;
     prices: NativePrices;
+    refCode?: string;
     roe: number;
     userId?: string;
   }) => void;
@@ -75,6 +79,7 @@ const AddressDomainCart: React.FC<Props> = props => {
   const count = cartItems.length;
 
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
@@ -117,6 +122,7 @@ const AddressDomainCart: React.FC<Props> = props => {
       itemId: item.id,
       item,
       prices: prices?.nativeFio,
+      refCode,
       roe,
       userId,
     });

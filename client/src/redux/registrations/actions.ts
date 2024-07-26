@@ -16,9 +16,13 @@ export const DOMAINS_REQUEST = `${prefix}/DOMAINS_REQUEST`;
 export const DOMAINS_SUCCESS = `${prefix}/DOMAINS_SUCCESS`;
 export const DOMAINS_FAILURE = `${prefix}/DOMAINS_FAILURE`;
 
-export const getDomains = (): CommonPromiseAction => ({
+export const getDomains = ({
+  refCode,
+}: {
+  refCode?: string;
+}): CommonPromiseAction => ({
   types: [DOMAINS_REQUEST, DOMAINS_SUCCESS, DOMAINS_FAILURE],
-  promise: (api: Api) => api.registration.domainsList(),
+  promise: (api: Api) => api.registration.domainsList({ refCode }),
 });
 
 export const SET_PROCESSING = `${prefix}/SET_PROCESSING`;
