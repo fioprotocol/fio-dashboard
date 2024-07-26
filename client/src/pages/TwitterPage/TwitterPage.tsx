@@ -57,6 +57,7 @@ import classes from './TwitterPage.module.scss';
 
 import neverExpiresIcon from '../../assets/images/landing-page/never-expires-twitter.svg';
 import sendReceiveIcon from '../../assets/images/landing-page/send-receive-twitter.svg';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 type Props = {
   cartItems: CartItem[];
@@ -113,6 +114,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
 
@@ -363,6 +365,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           id: cartId,
           item: cartItem,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           token,
           userId,

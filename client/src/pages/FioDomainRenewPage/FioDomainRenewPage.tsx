@@ -24,6 +24,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
@@ -44,6 +45,7 @@ const FioDomainRenewPage: React.FC = () => {
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
 
@@ -97,6 +99,7 @@ const FioDomainRenewPage: React.FC = () => {
         id: cartId,
         item: newCartItem,
         prices: prices?.nativeFio,
+        refCode,
         roe,
         userId,
       }),
@@ -121,6 +124,7 @@ const FioDomainRenewPage: React.FC = () => {
     prices?.nativeFio,
     renewDomainFeePrice,
     renewFioDomain,
+    refCode,
     roe,
     userId,
   ]);

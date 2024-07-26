@@ -46,6 +46,7 @@ import {
   roe as roeSelector,
   prices as pricesSelector,
 } from '../registrations/selectors';
+import { refProfileCode } from '../refProfile/selectors';
 import {
   user as userSelector,
   isNewUser as isNewUserSelectors,
@@ -214,6 +215,7 @@ export function* profileSuccess(): Generator {
     const user: User = yield select(userSelector);
     const cartId: string | null = yield select(cartIdSelector);
     const cartItems: CartItem[] = yield select(cartItemsSelector);
+    const refCode: string = yield select(refProfileCode);
     const roe: number = yield select(roeSelector);
     const prices: Prices = yield select(pricesSelector);
 
@@ -232,6 +234,7 @@ export function* profileSuccess(): Generator {
         handleUsersFreeCartItems({
           id: cartId,
           userId: user.id,
+          refCode,
           publicKey: metamaskUserPublicKey,
         }),
       );
@@ -248,6 +251,7 @@ export function* profileSuccess(): Generator {
             id: cartId,
             itemId: cartItemOnMetamaskDomain.id,
             item: cartItemOnMetamaskDomain,
+            refCode,
             roe,
             prices: prices?.nativeFio,
           }),

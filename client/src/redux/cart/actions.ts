@@ -16,6 +16,7 @@ export const addItem = (data: {
   roe?: number;
   token?: string;
   userId?: string;
+  refCode?: string;
 }): CommonPromiseAction => ({
   types: [ADD_ITEM_REQUEST, ADD_ITEM_SUCCESS, ADD_ITEM_FAILURE],
   promise: (api: Api) => api.cart.addItem(data),
@@ -33,6 +34,7 @@ export const deleteItem = (data: {
   prices: NativePrices;
   roe: number;
   userId?: string;
+  refCode?: string;
 }): CommonPromiseAction => ({
   types: [DELETE_ITEM_REQUEST, DELETE_ITEM_SUCCESS, DELETE_ITEM_FAILURE],
   promise: (api: Api) => api.cart.deleteItem(data),
@@ -69,6 +71,7 @@ export const handleUsersFreeCartItems = (data: {
   id: string;
   userId?: string;
   publicKey?: string;
+  refCode?: string;
 }): CommonPromiseAction => ({
   types: [
     HANDLE_USERS_FREE_CART_ITEMS_REQUEST,

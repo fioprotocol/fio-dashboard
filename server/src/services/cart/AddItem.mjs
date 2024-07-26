@@ -1,16 +1,14 @@
 import Sequelize from 'sequelize';
 
-import Base from '../Base';
-import X from '../Exception';
+import Base from '../Base.mjs';
+import X from '../Exception.mjs';
 
-import {
-  Cart,
-  Domain,
-  FioAccountProfile,
-  FreeAddress,
-  GatedRegistrtionTokens,
-  ReferrerProfile,
-} from '../../models';
+import { Cart } from '../../models/Cart.mjs';
+import { Domain } from '../../models/Domain.mjs';
+import { FreeAddress } from '../../models/FreeAddress.mjs';
+import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
+import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
+import { GatedRegistrtionTokens } from '../../models/GatedRegistrationTokens.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -22,8 +20,6 @@ import {
 } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE } from '../../config/constants';
-
-import config from '../../config/index.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -63,23 +59,24 @@ export default class AddItem extends Base {
       roe: ['string'],
       token: ['string'],
       userId: ['string'],
-      cookies: ['any_object'],
+      refCode: ['string'],
     };
   }
 
-  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, cookies }) {
+  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, refCode }) {
     try {
       const { domain, type } = item;
 
       const userId = this.context.id || reqUserId || null;
-      const refCookie = cookies && cookies[config.refCookieName];
 
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode: refCookie,
-      });
+      const allRefProfileDomains = refCode
+        ? await ReferrerProfile.getRefDomainsList({
+            refCode,
+          })
+        : [];
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
       const userHasFreeAddress = publicKey
         ? await FreeAddress.getItems({ publicKey: publicKey })
@@ -90,7 +87,7 @@ export default class AddItem extends Base {
         : null;
 
       const refProfile = await ReferrerProfile.findOne({
-        where: { code: refCookie },
+        where: { code: refCode },
       });
 
       const gatedRefProfiles = await ReferrerProfile.findAll({
@@ -109,14 +106,14 @@ export default class AddItem extends Base {
         refProfile.settings.domains &&
         !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
 
-      const isRefCookieEqualGatedRefprofile =
-        refCookie &&
+      const isRefCodeEqualGatedRefprofile =
+        refCode &&
         gatedRefProfiles.length &&
-        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCookie);
+        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
 
       if (
         ((gatedRefProfiles.length &&
-          (isRefCookieEqualGatedRefprofile ||
+          (isRefCodeEqualGatedRefprofile ||
             (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
           freeDomainOwner) &&
         type === CART_ITEM_TYPE.ADDRESS
@@ -172,11 +169,10 @@ export default class AddItem extends Base {
         });
       }
 
-      const handledFreeCartItem = handleFreeCartAddItem({
+      const handledFreeCartItem = await handleFreeCartAddItem({
         allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains,
-        freeDomainOwner,
         item,
         userHasFreeAddress,
         refCode: refProfile && refProfile.code,

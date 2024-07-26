@@ -129,6 +129,8 @@ export const useContext = (): UseContextProps => {
 
   const publicKey = queryParams?.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
+  const refCode = refProfileInfo?.code;
+
   const isAlternativeUser =
     window.ethereum?.isMetaMask || window.ethereum?.isOpera;
 
@@ -364,6 +366,7 @@ export const useContext = (): UseContextProps => {
             item: cartItem,
             publicKey: metamaskUserPublicKey,
             prices: prices?.nativeFio,
+            refCode,
             roe,
             token: gatedToken,
             userId,
@@ -387,6 +390,7 @@ export const useContext = (): UseContextProps => {
     [
       refDomainObj,
       prices.nativeFio,
+      refCode,
       roe,
       cartHasFreeItem,
       existingUsersFreeAddress,
