@@ -8,8 +8,7 @@ import { useHistory } from 'react-router';
 import apis from '../api';
 
 import { compose } from '../utils';
-import { setExpirationTime } from '../util/cookies';
-import { log } from '../util/general';
+import { setCookies } from '../util/cookies';
 
 import { isAuthenticated, user } from '../redux/profile/selectors';
 import { refProfileInfo } from '../redux/refProfile/selectors';
@@ -29,7 +28,6 @@ import { REF_PROFILE_TYPE } from '../constants/common';
 import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
 
 import { FioWalletDoublet, RefProfile, User } from '../types';
-import { RefCookiesParams } from '../types/general';
 
 type Props = {
   isAuthenticated: boolean;
@@ -76,14 +74,6 @@ const Ref = (
     [history, isRefLink],
   );
 
-  const setServerCookies = useCallback(async (params: RefCookiesParams) => {
-    try {
-      await apis.general.setServerCookies(params);
-    } catch (error) {
-      log.error(error);
-    }
-  }, []);
-
   useEffect(() => {
     if (
       isAuthenticated &&
@@ -102,14 +92,10 @@ const Ref = (
     if (!isAuthenticated) {
       // Set refProfileCode to cookies from ref link
       if (refProfileInfo?.code != null) {
-        setServerCookies({
-          cookieName: REFERRAL_PROFILE_COOKIE_NAME,
-          cookieValue: refProfileInfo.code,
-          options: {
-            expires: isNoProfileFlow
-              ? null
-              : setExpirationTime(REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID),
-          },
+        setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
+          expires: isNoProfileFlow
+            ? null
+            : REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
         });
         redirectToDomainLandingPage(refProfileInfo?.type);
       } else {
@@ -130,7 +116,6 @@ const Ref = (
     isRefLink,
     getInfo,
     redirectToDomainLandingPage,
-    setServerCookies,
   ]);
 
   useEffect(() => {
@@ -156,14 +141,8 @@ const Ref = (
     ) {
       const refProfileCode = user?.refProfile?.code || '';
       getInfo(refProfileCode);
-      setServerCookies({
-        cookieName: REFERRAL_PROFILE_COOKIE_NAME,
-        cookieValue: refProfileCode,
-        options: {
-          expires: setExpirationTime(
-            USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
-          ),
-        },
+      setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileCode, {
+        expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
       });
     } else if (
       isAuthenticated &&
@@ -171,10 +150,7 @@ const Ref = (
       !!refProfileInfo?.code &&
       !user?.refProfile?.code
     ) {
-      setServerCookies({
-        cookieName: REFERRAL_PROFILE_COOKIE_NAME,
-        cookieValue: null,
-      });
+      setCookies(REFERRAL_PROFILE_COOKIE_NAME, null);
       clear();
     }
   }, [
@@ -185,7 +161,6 @@ const Ref = (
     getInfo,
     clear,
     cookieRefProfileCode,
-    setServerCookies,
   ]);
 
   useEffect(() => {
