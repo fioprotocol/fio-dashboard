@@ -5,7 +5,7 @@ import PrefixPostfixList from '../services/registration/PrefixPostfixList.mjs';
 
 export default {
   domainsList: makeServiceRunner(DomainsList, req => ({
-    cookies: req.cookies,
+    cookies: { ...req.cookies },
   })),
   prefixPostfixList: makeServiceRunner(PrefixPostfixList),
 };
