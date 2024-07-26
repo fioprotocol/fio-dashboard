@@ -294,9 +294,11 @@ router.post('/set-cookie', (req, res) => {
   const { cookieName, cookieValue, options } = req.body;
   const paramsToSet = { ...options, path: '/' };
 
-  if (req.get('X-Forwarded-Proto') === 'https') {
-    const origin = req.headers.origin;
-    const hostname = new URL(origin).hostname;
+  const origin = req.get('Origin');
+  const originProtocol = new URL(origin).protocol;
+
+  if (originProtocol === 'https:') {
+    const hostname = req.headers.host;
 
     paramsToSet.secure = true;
     paramsToSet.httpOnly = true;
