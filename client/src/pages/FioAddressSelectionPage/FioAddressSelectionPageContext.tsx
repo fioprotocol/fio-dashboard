@@ -26,6 +26,7 @@ import {
   user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -329,6 +330,7 @@ export const useContext = (): UseContextProps => {
   const isAuthenticated = useSelector(isAuthenticatedSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
   const userId = useSelector(userIdSelector);
@@ -768,12 +770,21 @@ export const useContext = (): UseContextProps => {
           item: selectedItem,
           publicKey: metamaskUserPublicKey,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
       );
     },
-    [cartId, dispatch, prices?.nativeFio, roe, user?.userProfileType, userId],
+    [
+      cartId,
+      dispatch,
+      prices?.nativeFio,
+      refCode,
+      roe,
+      user?.userProfileType,
+      userId,
+    ],
   );
 
   const getFioRawAbis = useCallback(async () => {
@@ -786,8 +797,8 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   useEffect(() => {
-    dispatch(getDomains());
-  }, [dispatch]);
+    dispatch(getDomains({ refCode }));
+  }, [refCode, dispatch]);
 
   useEffect(() => {
     if (domainsLoading || !hasRawAbiLoaded) return;

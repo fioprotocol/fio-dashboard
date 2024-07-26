@@ -10,19 +10,17 @@ import logger from '../../logger.mjs';
 
 import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
 
-import config from '../../config/index.mjs';
-
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
       userId: ['string'],
       publicKey: ['string'],
-      cookies: ['any_object'],
+      refCode: ['string'],
     };
   }
 
-  async execute({ id, userId, publicKey, cookies }) {
+  async execute({ id, userId, publicKey, refCode }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -32,11 +30,9 @@ export default class HandleUsersFreeCartItems extends Base {
         };
       }
 
-      const refCookie = cookies && cookies[config.refCookieName];
-
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode: refCookie,
+        refCode,
       });
       const userHasFreeAddress = publicKey
         ? await FreeAddress.getItems({ publicKey })
@@ -51,7 +47,7 @@ export default class HandleUsersFreeCartItems extends Base {
         cartItems: cart.items,
         dashboardDomains,
         userHasFreeAddress,
-        refCode: refCookie,
+        refCode,
       });
 
       await cart.update({

@@ -20,6 +20,8 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { cartId as cartIdSelector } from '../../redux/cart/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
+
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
@@ -39,6 +41,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
   const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
 
   const [infoMessage, setInfoMessage] = useState<string>(null);
@@ -125,6 +128,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
+            refCode,
             roe,
           }),
         );
@@ -138,7 +142,17 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         log.error(error);
       }
     },
-    [fio, usdc, prices.nativeFio, dispatch, cartId, publicKey, roe, history],
+    [
+      fio,
+      usdc,
+      prices.nativeFio,
+      dispatch,
+      cartId,
+      publicKey,
+      refCode,
+      roe,
+      history,
+    ],
   );
 
   const addressWidgetContent = {

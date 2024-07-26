@@ -37,6 +37,7 @@ import {
 } from '../../redux/registrations/selectors';
 import {
   isNoProfileFlow as isNoProfileFlowSelector,
+  refProfileCode,
   loading as refProfileLoadingSelector,
 } from '../../redux/refProfile/selectors';
 
@@ -149,6 +150,7 @@ export const useContext = (): {
   const roe = useSelector(roeSelector);
   const cartLoading = useSelector(cartLoadingSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const refCode = useSelector(refProfileCode);
   const refProfileLoading = useSelector(refProfileLoadingSelector);
   const userId = useSelector(userIdSelector);
 
@@ -310,6 +312,7 @@ export const useContext = (): {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
           },
+          refCode,
           userId,
         };
       }
@@ -395,6 +398,7 @@ export const useContext = (): {
       dispatch,
       history,
       prices?.nativeFio,
+      refCode,
       roe,
       setWallet,
       userId,

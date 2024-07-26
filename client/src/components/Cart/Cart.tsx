@@ -79,12 +79,13 @@ const Cart: React.FC<Props> = props => {
           itemId: item.id,
           item,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
       );
     },
-    [cartId, dispatch, prices?.nativeFio, roe, userId],
+    [cartId, dispatch, prices?.nativeFio, refCode, roe, userId],
   );
 
   const handleUpdateItemPeriod = useCallback(

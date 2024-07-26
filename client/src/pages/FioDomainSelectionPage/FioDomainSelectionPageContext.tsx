@@ -15,6 +15,7 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -122,6 +123,7 @@ const validateDomainItems = async ({
 export const useContext = () => {
   const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
   const userId = useSelector(userIdSelector);
@@ -177,12 +179,13 @@ export const useContext = () => {
           id: cartId,
           item: selectedItem,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
       );
     },
-    [cartId, dispatch, prices?.nativeFio, roe, userId],
+    [cartId, dispatch, prices?.nativeFio, refCode, roe, userId],
   );
 
   const onPeriodChange = (period: string, id: string) => {
