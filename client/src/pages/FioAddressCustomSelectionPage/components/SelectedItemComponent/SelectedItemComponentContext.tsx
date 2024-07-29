@@ -142,8 +142,8 @@ export const useContext = (
               ...(allRefProfileDomains || []),
               ...(refProfileDomains || []),
             ].some(
-              dashboardPubilcDomains =>
-                dashboardPubilcDomains.name === chainPublicDomains.name,
+              dashboardPublicDomains =>
+                dashboardPublicDomains.name === chainPublicDomains.name,
             ),
         ),
         ...allNonPremiumRefProfileDomains,
@@ -198,7 +198,7 @@ export const useContext = (
       (domainType === DOMAIN_TYPE.ALLOW_FREE &&
         (!hasFreeAddress ||
           (hasFreeAddress &&
-            existingIsFirstRegFree &&
+            !!existingIsFirstRegFree &&
             !existingUsersFreeAddress)) &&
         !cartHasFreeItem),
     nativeFioAddressPrice,

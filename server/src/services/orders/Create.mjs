@@ -112,9 +112,11 @@ export default class OrdersCreate extends Base {
     const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
     const dashboardDomains = await Domain.getDashboardDomains();
-    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-      refCode,
-    });
+    const allRefProfileDomains = refCode
+      ? await ReferrerProfile.getRefDomainsList({
+          refCode,
+        })
+      : [];
     const userHasFreeAddress = cartPublicKey
       ? await FreeAddress.getItems({ publicKey: cartPublicKey })
       : userId

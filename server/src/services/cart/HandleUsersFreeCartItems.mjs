@@ -31,9 +31,11 @@ export default class HandleUsersFreeCartItems extends Base {
       }
 
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode,
-      });
+      const allRefProfileDomains = refCode
+        ? await ReferrerProfile.getRefDomainsList({
+            refCode,
+          })
+        : [];
       const userHasFreeAddress = publicKey
         ? await FreeAddress.getItems({ publicKey })
         : userId

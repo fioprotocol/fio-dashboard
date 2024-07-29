@@ -1,5 +1,5 @@
-import Base from '../Base';
-import X from '../Exception';
+import Base from '../Base.mjs';
+import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
 import { Domain } from '../../models/Domain.mjs';
@@ -44,9 +44,11 @@ export default class DeleteItem extends Base {
       }
 
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode,
-      });
+      const allRefProfileDomains = refCode
+        ? await ReferrerProfile.getRefDomainsList({
+            refCode,
+          })
+        : [];
 
       const publicKey = cart.publicKey;
 

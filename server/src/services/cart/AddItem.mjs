@@ -1,16 +1,14 @@
 import Sequelize from 'sequelize';
 
-import Base from '../Base';
-import X from '../Exception';
+import Base from '../Base.mjs';
+import X from '../Exception.mjs';
 
-import {
-  Cart,
-  Domain,
-  FioAccountProfile,
-  FreeAddress,
-  GatedRegistrtionTokens,
-  ReferrerProfile,
-} from '../../models';
+import { Cart } from '../../models/Cart.mjs';
+import { Domain } from '../../models/Domain.mjs';
+import { FreeAddress } from '../../models/FreeAddress.mjs';
+import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
+import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
+import { GatedRegistrtionTokens } from '../../models/GatedRegistrationTokens.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -74,9 +72,11 @@ export default class AddItem extends Base {
       const existingCart = await Cart.findById(id);
 
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode,
-      });
+      const allRefProfileDomains = refCode
+        ? await ReferrerProfile.getRefDomainsList({
+            refCode,
+          })
+        : [];
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
       const userHasFreeAddress = publicKey
         ? await FreeAddress.getItems({ publicKey: publicKey })
@@ -173,8 +173,8 @@ export default class AddItem extends Base {
         allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains,
-        freeDomainOwner,
         item,
+        freeDomainOwner,
         userHasFreeAddress,
         refCode: refProfile && refProfile.code,
       });

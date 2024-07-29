@@ -67,7 +67,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
               ...values,
               userDomains: allDomains.userDomains,
               gatedDomains: allDomains.allRefProfileDomains?.filter(
-                refPorfileDomain => refPorfileDomain.hasGatedRegistration,
+                refProfileDomain => refProfileDomain.hasGatedRegistration,
               ),
             })
           }
