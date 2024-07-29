@@ -169,11 +169,12 @@ export default class AddItem extends Base {
         });
       }
 
-      const handledFreeCartItem = await handleFreeCartAddItem({
+      const handledFreeCartItem = handleFreeCartAddItem({
         allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains,
         item,
+        freeDomainOwner,
         userHasFreeAddress,
         refCode: refProfile && refProfile.code,
       });

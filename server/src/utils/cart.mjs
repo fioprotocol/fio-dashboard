@@ -12,7 +12,6 @@ import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
 import { CURRENCY_CODES } from '../constants/fio.mjs';
 import { getROE } from '../external/roe.mjs';
-import { FioAccountProfile } from '../models/FioAccountProfile.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
@@ -198,11 +197,12 @@ export const cartHasFreeItemsOnDomains = ({ cartItems, domains }) => {
   );
 };
 
-export const handleFreeCartAddItem = async ({
+export const handleFreeCartAddItem = ({
   allRefProfileDomains,
   cartItems,
   dashboardDomains,
   item,
+  freeDomainOwner,
   userHasFreeAddress,
   refCode,
 }) => {
@@ -211,8 +211,6 @@ export const handleFreeCartAddItem = async ({
   if (type !== CART_ITEM_TYPE.ADDRESS) {
     return item;
   }
-
-  const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
 
   const domainsArr = [
     ...dashboardDomains,
