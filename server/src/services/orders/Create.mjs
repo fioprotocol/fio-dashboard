@@ -117,13 +117,13 @@ export default class OrdersCreate extends Base {
           refCode,
         })
       : [];
-    const userHasFreeAddress = cartPublicKey
-      ? await FreeAddress.getItems({ publicKey: cartPublicKey })
-      : userId
-      ? await FreeAddress.getItems({
-          userId,
-        })
-      : null;
+    const userHasFreeAddress =
+      !publicKey && !userId
+        ? []
+        : await FreeAddress.getItems({
+            publicKey: cartPublicKey,
+            userId,
+          });
 
     const {
       addBundles: addBundlesPrice,

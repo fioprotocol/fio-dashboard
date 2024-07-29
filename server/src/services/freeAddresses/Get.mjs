@@ -16,12 +16,10 @@ export default class GetFreeAddress extends Base {
     if (name) {
       where.name = name;
     }
-    if (publicKey) {
-      where.publicKey = publicKey;
-    }
-    if (userId) {
-      where.userId = userId;
-    }
+
+    where.publicKey = publicKey;
+    where.userId = userId;
+
     const freeAddressList = await FreeAddress.getItems(where);
 
     return {
