@@ -78,13 +78,9 @@ export default class AddItem extends Base {
           })
         : [];
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-      const userHasFreeAddress = publicKey
-        ? await FreeAddress.getItems({ publicKey: publicKey })
-        : userId
-        ? await FreeAddress.getItems({
-            userId,
-          })
-        : null;
+
+      const userHasFreeAddress =
+        !publicKey && !userId ? [] : await FreeAddress.getItems({ publicKey, userId });
 
       const refProfile = await ReferrerProfile.findOne({
         where: { code: refCode },

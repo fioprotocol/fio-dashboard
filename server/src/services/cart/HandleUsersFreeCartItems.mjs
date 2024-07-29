@@ -36,13 +36,14 @@ export default class HandleUsersFreeCartItems extends Base {
             refCode,
           })
         : [];
-      const userHasFreeAddress = publicKey
-        ? await FreeAddress.getItems({ publicKey })
-        : userId
-        ? await FreeAddress.getItems({
-            userId,
-          })
-        : null;
+
+      const userHasFreeAddress =
+        !publicKey && !userId
+          ? []
+          : await FreeAddress.getItems({
+              publicKey,
+              userId,
+            });
 
       const handledFreeCartItems = handleUsersFreeCartItems({
         allRefProfileDomains,

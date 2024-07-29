@@ -52,13 +52,13 @@ export default class DeleteItem extends Base {
 
       const publicKey = cart.publicKey;
 
-      const userHasFreeAddress = publicKey
-        ? await FreeAddress.getItems({ publicKey })
-        : userId
-        ? await FreeAddress.getItems({
-            userId,
-          })
-        : null;
+      const userHasFreeAddress =
+        !publicKey && !userId
+          ? []
+          : await FreeAddress.getItems({
+              publicKey,
+              userId,
+            });
 
       const { handledPrices, handledRoe } = await handlePrices({
         prices,
