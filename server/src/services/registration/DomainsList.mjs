@@ -46,9 +46,9 @@ export default class DomainsList extends Base {
       refProfileDomain.isExpired = isExpired;
     }
 
-    const allRefProfileDomainsHandledGatedDomains = dashboardDomains.filter(
+    const allRefProfileDomainsHandledGatedDomains = allRefProfileDomains.filter(
       refProfileDomain => {
-        const dashboardDomainList = allRefProfileDomains.map(
+        const dashboardDomainList = dashboardDomains.map(
           dashboardDomain => dashboardDomain.name,
         );
 
@@ -69,7 +69,9 @@ export default class DomainsList extends Base {
     const dashboardDomainsHandledGatedDomains = dashboardDomains.filter(
       dashboardDomain => {
         const dashboardDomainExistsInRefProfile = allRefProfileDomains.find(
-          allRefProfileDomain => allRefProfileDomain.name === dashboardDomain.name,
+          allRefProfileDomain =>
+            allRefProfileDomain.name === dashboardDomain.name &&
+            allRefProfileDomain.hasGatedRegistration,
         );
 
         const isRefCodeEqualRefprofile =
@@ -77,11 +79,7 @@ export default class DomainsList extends Base {
           dashboardDomainExistsInRefProfile &&
           refCode === dashboardDomainExistsInRefProfile.code;
 
-        return !(
-          dashboardDomainExistsInRefProfile &&
-          dashboardDomainExistsInRefProfile.hasGatedRegistration &&
-          isRefCodeEqualRefprofile
-        );
+        return !(dashboardDomainExistsInRefProfile && isRefCodeEqualRefprofile);
       },
     );
 
