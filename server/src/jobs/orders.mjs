@@ -42,6 +42,7 @@ import {
   ORDER_ERROR_TYPES,
   FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
+import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 
@@ -915,6 +916,7 @@ class OrdersJob extends CommonJob {
         paidActor,
         paidPermission,
         userId,
+        orderUserType,
       } = orderItem;
 
       const hasSignedTx = data && !!data.signedTx;
@@ -945,7 +947,7 @@ class OrdersJob extends CommonJob {
           ...dashboardDomains,
           ...allRefProfileDomains,
         ].find(dashboardDomain =>
-          code
+          code && orderUserType !== ORDER_USER_TYPES.PARTNER_API_CLIENT
             ? dashboardDomain.code === code && dashboardDomain.name === domain
             : dashboardDomain.name === domain,
         );

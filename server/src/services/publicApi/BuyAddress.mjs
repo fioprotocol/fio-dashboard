@@ -155,7 +155,7 @@ export default class BuyAddress extends Base {
 
       if (isRegistrationAddressExist) {
         return generateErrorResponse(this.res, {
-          error: `You have already sent a request to register a free FIO Crypto Handle for that domain`,
+          error: `You have already sent a request to register a FIO Handle for that domain`,
           errorCode: PUB_API_ERROR_CODES.ALREADY_SENT_REGISTRATION_REQ_FOR_ACCOUNT,
           statusCode: HTTP_CODES.BAD_REQUEST,
         });
