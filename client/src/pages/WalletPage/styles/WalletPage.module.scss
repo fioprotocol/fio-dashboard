@@ -33,6 +33,7 @@
     max-width: none;
     width: auto;
     margin: 20px 20px 0;
+    gap: 30px;
   }
 
   .editIcon {
@@ -145,24 +146,13 @@
   }
 }
 
-@include md {
+@include rwd(768) {
   .container {
     padding: 30px 20px;
 
     .actionBadges {
-      margin: 0 20px;
-      width: auto;
-
-      > div {
-        a {
-          button {
-            min-width: auto !important;
-          }
-        }
-      }
-    }
-    .actionButton {
-      width: 40vw;
+      flex-direction: row;
+      margin-bottom: 0;
     }
   }
 
@@ -182,7 +172,8 @@
     .actionBadges {
       width: 100%;
       max-width: 365px;
-      margin: 0 20px 0 10px;
+      margin: 0 20px 30px 10px;
+      flex-direction: column;
     }
   }
 }
@@ -193,6 +184,6 @@
   }
 
   .actionBadges {
-    margin: 0 20px 0 30px;
+    margin: 0 20px 30px 30px;
   }
 }
