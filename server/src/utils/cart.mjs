@@ -385,7 +385,8 @@ export const handleUsersFreeCartItems = ({
           (!existingDashboardDomain &&
             existingIsFirstRegFree &&
             !existingIsFirstRegFree.isPremium &&
-            existingUsersFreeAddress))
+            existingUsersFreeAddress) ||
+          (!existingDashboardDomain && !existingIsFirstRegFree))
       ) {
         return { ...cartItem, isFree: false };
       }
@@ -409,7 +410,8 @@ export const handleUsersFreeCartItems = ({
         ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
           (!existingDashboardDomain &&
             existingIsFirstRegFree &&
-            !existingIsFirstRegFree.isPremium)) &&
+            !existingIsFirstRegFree.isPremium) ||
+          (!existingDashboardDomain && !existingIsFirstRegFree)) &&
         domainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
@@ -437,7 +439,8 @@ export const handleUsersFreeCartItems = ({
         ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
           (!existingDashboardDomain &&
             existingIsFirstRegFree &&
-            !existingIsFirstRegFree.isPremium)) &&
+            !existingIsFirstRegFree.isPremium) ||
+          (!existingDashboardDomain && !existingIsFirstRegFree)) &&
         cartItemDomainType === DOMAIN_TYPE.ALLOW_FREE &&
         cartItemType === CART_ITEM_TYPE.ADDRESS
       );
