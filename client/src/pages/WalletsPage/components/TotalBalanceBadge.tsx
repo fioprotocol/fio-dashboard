@@ -52,7 +52,7 @@ const LockedItemsList = ({ data }: { data?: UnlockPeriod[] }) => {
 
   return (
     <div className={classnames(classes.itemsList)}>
-      {data.map((o, i) => (
+      {data.map(o => (
         <div
           key={o.date?.getTime()}
           className={classnames(classes.itemContainer, 'row')}
@@ -132,7 +132,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
         {staked?.nativeFio ? (
           <Balance fio={staked.fio} usdc={staked.usdc} title="Staked" />
         ) : null}
-
+        <div className="flex-grow-1" />
         {publicKey ? (
           <div className={classes.actionButtons}>
             <Link

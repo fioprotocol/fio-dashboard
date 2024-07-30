@@ -27,6 +27,7 @@ import { useContext } from './WalletsPageContext';
 import { Props } from './types';
 
 import classes from './styles/WalletsPage.module.scss';
+import NeedTokensBadge from './components/NeedTokensBadge';
 
 type TitleComponentProps = {
   isAlternativeAccountType: boolean;
@@ -156,16 +157,11 @@ const WalletsPage: React.FC<Props> = () => {
             />
           </div>
         )}
-        <TotalBalanceBadge
-          {...fioWalletsBalances.total}
-          isNew
-          isMobile
-          itTotalWallets
-        />
         <WelcomeComponent {...welcomeComponentProps} />
       </LayoutContainer>
-      <div className={classes.totalBalanceContainer}>
+      <div className={classes.actionBadges}>
         <TotalBalanceBadge {...fioWalletsBalances.total} isNew itTotalWallets />
+        <NeedTokensBadge />
       </div>
     </div>
   );

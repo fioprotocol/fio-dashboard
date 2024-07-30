@@ -77,23 +77,23 @@
   }
 }
 
-.totalBalanceContainer {
+.actionBadges {
   margin: 0 20px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-@include md {
+@include rwd(768) {
   .container {
     padding: 30px 20px;
+  }
 
-    .totalBalanceContainer {
-      > div {
-        a {
-          button {
-            min-width: auto !important;
-          }
-        }
-      }
-    }
+  .actionBadges {
+    margin: 0 20px 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
   }
 }
 
@@ -108,9 +108,11 @@
       margin-top: 60px;
     }
   }
-  .totalBalanceContainer {
+  .actionBadges {
     width: 100%;
     max-width: 365px;
+    display: flex;
+    flex-direction: column;
   }
 }
 
