@@ -100,33 +100,25 @@ export const useContext = (
   };
 
   const {
-    allRefProfileDomains,
     dashboardDomains,
     usernamesOnCustomDomains,
     refProfileDomains,
   } = allDomains;
 
-  const nonPremiumDomains = dashboardDomains
-    ? transformNonPremiumDomains(dashboardDomains)
+  const publicDomains = refProfileDomains?.length
+    ? refProfileDomains
+    : dashboardDomains;
+
+  const nonPremiumDomains = publicDomains
+    ? transformNonPremiumDomains(publicDomains)
     : [];
-  const premiumDomains = dashboardDomains
-    ? transformPremiumDomains(dashboardDomains)
+  const premiumDomains = publicDomains
+    ? transformPremiumDomains(publicDomains)
     : [];
   const customDomains = usernamesOnCustomDomains
     ? transformCustomDomains(usernamesOnCustomDomains)
     : [];
-  const allNonPremiumRefProfileDomains = allRefProfileDomains
-    ? transformNonPremiumDomains(allRefProfileDomains)
-    : [];
-  const allPremiumRefProfileDomains = allRefProfileDomains
-    ? transformPremiumDomains(allRefProfileDomains)
-    : [];
-  const nonPremiumCurrentRefProfileDomains = refProfileDomains
-    ? transformNonPremiumDomains(refProfileDomains)
-    : [];
-  const premiumCurrentRefProfileDomains = refProfileDomains
-    ? transformPremiumDomains(refProfileDomains)
-    : [];
+
   const userDomains = allDomains.userDomains || [];
 
   const domainType = !isEmpty(allDomains)
@@ -137,19 +129,11 @@ export const useContext = (
         ...userDomains,
         ...chainPublicDomains.filter(
           chainPublicDomains =>
-            ![
-              ...(dashboardDomains || []),
-              ...(allRefProfileDomains || []),
-              ...(refProfileDomains || []),
-            ].some(
+            ![...(publicDomains || [])].some(
               dashboardPublicDomains =>
                 dashboardPublicDomains.name === chainPublicDomains.name,
             ),
         ),
-        ...allNonPremiumRefProfileDomains,
-        ...allPremiumRefProfileDomains,
-        ...nonPremiumCurrentRefProfileDomains,
-        ...premiumCurrentRefProfileDomains,
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
@@ -164,11 +148,9 @@ export const useContext = (
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
   const firstRegFreeArr = [];
-  if (allRefProfileDomains) {
-    firstRegFreeArr.push(...allRefProfileDomains);
-  }
-  if (refProfileDomains) {
-    firstRegFreeArr.push(...refProfileDomains);
+
+  if (publicDomains) {
+    firstRegFreeArr.push(...publicDomains);
   }
 
   const isFirstRegFreeDomains = firstRegFreeArr.filter(
