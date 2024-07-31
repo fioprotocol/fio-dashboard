@@ -14,6 +14,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
@@ -136,6 +137,7 @@ export const useContext = (): UseContext => {
   const cartItems = useSelector(cartItemsSelector);
   const user = useSelector(userSelector);
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
 
   const [notification, setNotification] = useState<AddressWidgetNotification>(
@@ -260,6 +262,7 @@ export const useContext = (): UseContext => {
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
+            refCode,
             roe,
             token: gatedToken,
             userId: user.id,
@@ -274,7 +277,16 @@ export const useContext = (): UseContext => {
         toggleLoading(false);
       }
     },
-    [cartId, dispatch, history, prices.nativeFio, publicKey, roe, user?.id],
+    [
+      cartId,
+      dispatch,
+      history,
+      prices.nativeFio,
+      publicKey,
+      refCode,
+      roe,
+      user?.id,
+    ],
   );
 
   const getFreeUserMetamaskAddresses = useCallback(

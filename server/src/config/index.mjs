@@ -44,7 +44,6 @@ export default {
     apiKey: process.env.NFT_PROVIDER_API_KEY,
     defaultChainName: process.env.NFT_DEFAULT_CHAIN_NAME,
   },
-  refCookieName: process.env.REFERRAL_PROFILE_COOKIE_NAME,
   wrap: {
     ethBaseUrl: process.env.WRAP_STATUS_PAGE_ETH_INFURA_BASE_URL,
     infuraBaseUrl: process.env.WRAP_STATUS_PAGE_POLYGON_INFURA_BASE_URL,

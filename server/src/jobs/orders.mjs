@@ -42,6 +42,7 @@ import {
   ORDER_ERROR_TYPES,
   FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
+import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 
@@ -63,6 +64,7 @@ const TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE = process.env
   : TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION;
 
 const USER_HAS_FREE_ERROR = `Register free address error: ${USER_HAS_FREE_ADDRESS_MESSAGE}`;
+const CANNOT_IDENTIFY_USER = `Register free address error: Cannot identify user. User id and public key are missing`;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -419,9 +421,17 @@ class OrdersJob extends CommonJob {
   }) {
     const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    const userHasFreeAddress = publicKey
-      ? await FreeAddress.getItems({ publicKey })
-      : await FreeAddress.getItems({ userId });
+    if (!userId && !publicKey) {
+      logger.error(CANNOT_IDENTIFY_USER);
+
+      await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+        errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+      });
+
+      return this.updateOrderStatus(orderId);
+    }
+
+    const userHasFreeAddress = await FreeAddress.getItems({ publicKey, userId });
 
     const existingUsersFreeAddress =
       userHasFreeAddress &&
@@ -452,20 +462,13 @@ class OrdersJob extends CommonJob {
         );
         await OrderItem.setPending(result, id, blockchainTransactionId);
 
-        if (publicKey) {
-          const freeAddressRecord = new FreeAddress({
-            name: fioName,
-            publicKey,
-          });
+        const freeAddressRecord = await new FreeAddress({
+          name: fioName,
+          publicKey,
+          userId: orderItem.userId,
+        });
 
-          await freeAddressRecord.save();
-        } else {
-          const freeAddressRecord = new FreeAddress({
-            name: fioName,
-            userId: orderItem.userId,
-          });
-          await freeAddressRecord.save();
-        }
+        await freeAddressRecord.save();
 
         return this.updateOrderStatus(orderId);
       }
@@ -899,6 +902,7 @@ class OrdersJob extends CommonJob {
       const {
         action,
         id,
+        code,
         orderId,
         address,
         domain,
@@ -911,7 +915,10 @@ class OrdersJob extends CommonJob {
         freePermission,
         paidActor,
         paidPermission,
+        userId,
+        orderUserType,
       } = orderItem;
+
       const hasSignedTx = data && !!data.signedTx;
 
       this.postMessage(`Processing item id - ${id}`);
@@ -939,7 +946,11 @@ class OrdersJob extends CommonJob {
         const existingDashboardDomain = [
           ...dashboardDomains,
           ...allRefProfileDomains,
-        ].find(dashboardDomain => dashboardDomain.name === domain);
+        ].find(dashboardDomain =>
+          code && orderUserType !== ORDER_USER_TYPES.PARTNER_API_CLIENT
+            ? dashboardDomain.code === code && dashboardDomain.name === domain
+            : dashboardDomain.name === domain,
+        );
 
         // Handle free addresses
         if (
@@ -1007,6 +1018,7 @@ class OrdersJob extends CommonJob {
           [METAMASK_DOMAIN_NAME].includes(domain)
         ) {
           const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
+            userId,
             publicKey: data && data.publicKey,
           });
 
@@ -1053,6 +1065,7 @@ class OrdersJob extends CommonJob {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
                 publicKey: data.publicKey,
+                userId,
               });
               await freeAddressRecord.save();
             }

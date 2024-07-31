@@ -148,8 +148,8 @@ export class User extends Base {
     return fiojs.Ecc.verify(signature, challenge, publicKey);
   }
 
-  static findActive(id) {
-    return this.findById(id, {
+  static async findActive(id) {
+    const user = await this.findById(id, {
       where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
       include: [
         { model: FreeAddress, as: 'freeAddresses' },
@@ -163,6 +163,21 @@ export class User extends Base {
         { model: ReferrerProfile, as: 'affiliateProfile', attributes: ['code', 'tpid'] },
       ],
     });
+
+    if (!user) return null;
+
+    const walletPublicKeys = user.fioWallets.map(wallet => wallet.publicKey);
+    const freeAddresses = await FreeAddress.findAll({
+      where: {
+        publicKey: {
+          [Op.in]: walletPublicKeys,
+        },
+      },
+    });
+
+    user.dataValues.freeAddresses = [...user.freeAddresses, ...freeAddresses];
+
+    return user;
   }
 
   static findDeletedUser() {
@@ -186,6 +201,19 @@ export class User extends Base {
         },
       ],
     });
+
+    if (!user) return null;
+
+    const walletPublicKeys = user.fioWallets.map(wallet => wallet.publicKey);
+    const freeAddresses = await FreeAddress.findAll({
+      where: {
+        publicKey: {
+          [Op.in]: walletPublicKeys,
+        },
+      },
+    });
+
+    user.freeAddresses = [...user.freeAddresses, ...freeAddresses];
 
     // Need to get orders separately because of sequelize bad performance if user has a lot of orders
     const orders = await Order.findAll({ where: { userId: user.id } });

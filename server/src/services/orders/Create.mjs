@@ -24,8 +24,6 @@ import {
   handlePrices,
 } from '../../utils/cart.mjs';
 
-import config from '../../config/index.mjs';
-
 export default class OrdersCreate extends Base {
   static get validationRules() {
     return {
@@ -50,6 +48,7 @@ export default class OrdersCreate extends Base {
                 },
               },
             ],
+            refCode: ['string'],
             data: {
               nested_object: {
                 gaClientId: 'string',
@@ -60,7 +59,6 @@ export default class OrdersCreate extends Base {
           },
         },
       ],
-      cookies: ['any_object'],
     };
   }
 
@@ -74,8 +72,8 @@ export default class OrdersCreate extends Base {
       refProfileId,
       data,
       userId,
+      refCode,
     },
-    cookies,
   }) {
     let order = await Order.findOne({
       where: {
@@ -90,8 +88,6 @@ export default class OrdersCreate extends Base {
 
     let payment = null;
     const orderItems = [];
-
-    const refCookie = cookies && cookies[config.refCookieName];
 
     const user = await User.findActive(userId);
 
@@ -116,16 +112,18 @@ export default class OrdersCreate extends Base {
     const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
     const dashboardDomains = await Domain.getDashboardDomains();
-    const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-      refCode: refCookie,
-    });
-    const userHasFreeAddress = cartPublicKey
-      ? await FreeAddress.getItems({ publicKey: cartPublicKey })
-      : userId
-      ? await FreeAddress.getItems({
-          userId,
+    const allRefProfileDomains = refCode
+      ? await ReferrerProfile.getRefDomainsList({
+          refCode,
         })
-      : null;
+      : [];
+    const userHasFreeAddress =
+      !publicKey && !userId
+        ? []
+        : await FreeAddress.getItems({
+            publicKey: cartPublicKey,
+            userId,
+          });
 
     const {
       addBundles: addBundlesPrice,
@@ -171,7 +169,7 @@ export default class OrdersCreate extends Base {
       roe: handledRoe,
       userHasFreeAddress,
       walletType: wallet && wallet.from,
-      refCode: refCookie,
+      refCode,
     });
 
     await Order.sequelize.transaction(async t => {
@@ -251,10 +249,10 @@ export default class OrdersCreate extends Base {
   }
 
   static get paramsSecret() {
-    return ['data'];
+    return [];
   }
 
   static get resultSecret() {
-    return ['data'];
+    return [];
   }
 }

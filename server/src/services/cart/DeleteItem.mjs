@@ -1,5 +1,5 @@
-import Base from '../Base';
-import X from '../Exception';
+import Base from '../Base.mjs';
+import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
 import { Domain } from '../../models/Domain.mjs';
@@ -13,8 +13,6 @@ import {
   handleFioHandleCartItemsWithCustomDomain,
   handlePrices,
 } from '../../utils/cart.mjs';
-
-import config from '../../config/index.mjs';
 
 export default class DeleteItem extends Base {
   static get validationRules() {
@@ -33,11 +31,11 @@ export default class DeleteItem extends Base {
       ],
       roe: ['string'],
       userId: ['string'],
-      cookies: ['any_object'],
+      refCode: ['string'],
     };
   }
 
-  async execute({ id, itemId, prices, roe, userId, cookies }) {
+  async execute({ id, itemId, prices, roe, userId, refCode }) {
     try {
       const cart = await Cart.findById(id);
 
@@ -45,22 +43,22 @@ export default class DeleteItem extends Base {
         return { data: { items: [] } };
       }
 
-      const refCookie = cookies && cookies[config.refCookieName];
-
       const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = await ReferrerProfile.getRefDomainsList({
-        refCode: refCookie,
-      });
+      const allRefProfileDomains = refCode
+        ? await ReferrerProfile.getRefDomainsList({
+            refCode,
+          })
+        : [];
 
       const publicKey = cart.publicKey;
 
-      const userHasFreeAddress = publicKey
-        ? await FreeAddress.getItems({ publicKey })
-        : userId
-        ? await FreeAddress.getItems({
-            userId,
-          })
-        : null;
+      const userHasFreeAddress =
+        !publicKey && !userId
+          ? []
+          : await FreeAddress.getItems({
+              publicKey,
+              userId,
+            });
 
       const { handledPrices, handledRoe } = await handlePrices({
         prices,
@@ -105,7 +103,7 @@ export default class DeleteItem extends Base {
         dashboardDomains,
         existingItem,
         userHasFreeAddress,
-        refCode: refCookie,
+        refCode,
       });
 
       const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(

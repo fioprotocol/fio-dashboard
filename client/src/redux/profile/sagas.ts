@@ -232,6 +232,7 @@ export function* profileSuccess(): Generator {
         handleUsersFreeCartItems({
           id: cartId,
           userId: user.id,
+          refCode: user.refProfile?.code,
           publicKey: metamaskUserPublicKey,
         }),
       );
@@ -248,6 +249,7 @@ export function* profileSuccess(): Generator {
             id: cartId,
             itemId: cartItemOnMetamaskDomain.id,
             item: cartItemOnMetamaskDomain,
+            refCode: user.refProfile?.code,
             roe,
             prices: prices?.nativeFio,
           }),

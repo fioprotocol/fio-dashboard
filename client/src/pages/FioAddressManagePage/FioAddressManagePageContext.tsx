@@ -26,6 +26,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
 
@@ -76,6 +77,7 @@ export const useContext = (): UseContextProps => {
     showExpiredDomainWarningFchBadgeSelector,
   );
   const prices = useSelector(pricesSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
 
@@ -120,6 +122,7 @@ export const useContext = (): UseContextProps => {
           id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
@@ -143,6 +146,7 @@ export const useContext = (): UseContextProps => {
       dispatch,
       history,
       prices?.nativeFio,
+      refCode,
       roe,
       userId,
     ],
