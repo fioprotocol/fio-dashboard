@@ -29,6 +29,7 @@ import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
 } from '../../redux/cart/selectors';
+import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
@@ -71,6 +72,7 @@ export const useContext = (): UseContextProps => {
   const lastAuthData = useSelector(lastAuthDataSelector);
   const prices = useSelector(pricesSelector);
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
+  const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
@@ -140,6 +142,7 @@ export const useContext = (): UseContextProps => {
           item: newItem,
           publicKey: metamaskUserPublicKey,
           prices: prices?.nativeFio,
+          refCode,
           roe,
           userId,
         }),
@@ -147,7 +150,15 @@ export const useContext = (): UseContextProps => {
 
       toggleHasItemAddedToCart(true);
     },
-    [cartId, dispatch, prices?.nativeFio, roe, user?.userProfileType, userId],
+    [
+      cartId,
+      dispatch,
+      prices?.nativeFio,
+      refCode,
+      roe,
+      user?.userProfileType,
+      userId,
+    ],
   );
 
   const onFieldChange = (value: string) => {
@@ -163,7 +174,7 @@ export const useContext = (): UseContextProps => {
   };
 
   useEffectOnce(() => {
-    dispatch(getDomains());
+    dispatch(getDomains({ refCode }));
   }, []);
 
   useEffect(() => {

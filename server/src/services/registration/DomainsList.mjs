@@ -3,18 +3,14 @@ import { Domain, ReferrerProfile, Username } from '../../models';
 
 import { isDomainExpired } from '../../utils/fio.mjs';
 
-const REF_COOKIE_NAME = process.env.REFERRAL_PROFILE_COOKIE_NAME || 'ref';
-
 export default class DomainsList extends Base {
   static get validationRules() {
     return {
-      cookies: ['any_object'],
+      refCode: ['string'],
     };
   }
 
-  async execute({ cookies }) {
-    const refCookie = cookies && cookies[REF_COOKIE_NAME];
-
+  async execute({ refCode }) {
     const availableDomains = await Domain.getAvailableDomains();
     const dashboardDomains = await Domain.getDashboardDomains();
     const usernamesOnCustomDomains = await Username.findAll({
@@ -50,9 +46,9 @@ export default class DomainsList extends Base {
       refProfileDomain.isExpired = isExpired;
     }
 
-    const allRefProfileDomainsHandledGatedDomains = dashboardDomains.filter(
+    const allRefProfileDomainsHandledGatedDomains = allRefProfileDomains.filter(
       refProfileDomain => {
-        const dashboardDomainList = allRefProfileDomains.map(
+        const dashboardDomainList = dashboardDomains.map(
           dashboardDomain => dashboardDomain.name,
         );
 
@@ -60,13 +56,12 @@ export default class DomainsList extends Base {
           refProfileDomain.name,
         );
 
-        const isRefCookieEqualRefprofile =
-          refCookie && refCookie === refProfileDomain.code;
+        const isRefCodeEqualRefprofile = refCode && refCode === refProfileDomain.code;
 
         return !(
           refDomainExistsInDashboardDomain &&
           refProfileDomain.hasGatedRegistration &&
-          !isRefCookieEqualRefprofile
+          !isRefCodeEqualRefprofile
         );
       },
     );
@@ -74,19 +69,17 @@ export default class DomainsList extends Base {
     const dashboardDomainsHandledGatedDomains = dashboardDomains.filter(
       dashboardDomain => {
         const dashboardDomainExistsInRefProfile = allRefProfileDomains.find(
-          allRefProfileDomain => allRefProfileDomain.name === dashboardDomain.name,
+          allRefProfileDomain =>
+            allRefProfileDomain.name === dashboardDomain.name &&
+            allRefProfileDomain.hasGatedRegistration,
         );
 
-        const isRefCookieEqualRefprofile =
-          refCookie &&
+        const isRefCodeEqualRefprofile =
+          refCode &&
           dashboardDomainExistsInRefProfile &&
-          refCookie === dashboardDomainExistsInRefProfile.code;
+          refCode === dashboardDomainExistsInRefProfile.code;
 
-        return !(
-          dashboardDomainExistsInRefProfile &&
-          dashboardDomainExistsInRefProfile.hasGatedRegistration &&
-          isRefCookieEqualRefprofile
-        );
+        return !(dashboardDomainExistsInRefProfile && isRefCodeEqualRefprofile);
       },
     );
 
