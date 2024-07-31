@@ -1,9 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useCheckIfDesktop } from '../../../screenType';
 import { log, transformBaseUrl } from '../../../util/general';
 import apis from '../api';
-import useEffectOnce from '../../../hooks/general';
 
 type UseContext = {
   fioBaseUrl: string;
@@ -19,10 +18,10 @@ export const useContext = (): UseContext => {
   const isDesktop = useCheckIfDesktop();
 
   const [fch, setFch] = useState<string>('');
+  const [isApiReady, setIsApiReady] = useState(false);
   const [isValidating, toggleIsValidating] = useState<boolean>(false);
 
-  const pathnames = window.location.pathname?.split('/');
-  const pathname = pathnames[1];
+  const [, fioHandle] = window.location.pathname.split('/');
 
   const validateFCH = useCallback(async (fch: string) => {
     if (!fch) return;
@@ -44,41 +43,39 @@ export const useContext = (): UseContext => {
     window.history.pushState({}, null, '/');
   }, []);
 
-  const getApiUrls = useCallback(async () => {
-    const apiUrls = await apis.fioReg.apiUrls();
-    apis.fio.setApiUrls(apiUrls);
-  }, []);
-
-  useEffectOnce(() => {
-    const handlePathChange = async () => {
-      toggleIsValidating(true);
-      if (!(await validateFCH(pathname))) {
-        resetPath();
-      } else {
-        if (
-          pathnames.length > 2 ||
-          window.location.search ||
-          window.location.hash
-        ) {
-          window.history.pushState({}, null, `/${pathname}`);
-        }
-        setFch(pathname);
-      }
-      toggleIsValidating(false);
-    };
-
-    if (pathname) {
-      handlePathChange();
-    }
-  }, [pathname, validateFCH]);
-
-  useEffectOnce(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffectOnce(() => {
-    getApiUrls();
-  }, [getApiUrls]);
+  useEffect(() => {
+    apis.fioReg
+      .apiUrls()
+      .then(apis.fio.setApiUrls)
+      .then(() => setIsApiReady(true));
+  }, []);
+
+  useEffect(() => {
+    if (!isApiReady || !fioHandle) {
+      return;
+    }
+
+    toggleIsValidating(true);
+
+    validateFCH(fioHandle).then(isValid => {
+      if (!isValid) {
+        resetPath();
+        return;
+      }
+
+      if (!!fioHandle || window.location.search || window.location.hash) {
+        window.history.pushState({}, null, `/${fioHandle}`);
+      }
+
+      setFch(fioHandle);
+    });
+
+    toggleIsValidating(false);
+  }, [fioHandle, isApiReady, resetPath, validateFCH]);
 
   return { fioBaseUrl, fch, isDesktop, isValidating, resetPath, setFch };
 };
