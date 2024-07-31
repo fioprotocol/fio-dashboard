@@ -394,63 +394,33 @@ export const handleUsersFreeCartItems = ({
       return cartItem;
     });
   } else {
-    const freeCartItem = cartItems.find(cartItem => {
-      const { domain, domainType, isFree, type: cartItemType } = cartItem;
+    updatedCartItems = cartItems.map(cartItem => {
+      const { domain, domainType, isFree, type } = cartItem;
+
+      if (type !== CART_ITEM_TYPE.ADDRESS) return cartItem;
 
       const existingDashboardDomain = domainsArr.find(
-        domainItem => domainItem.name === domain,
+        domainItem =>
+          domainItem.name === domain &&
+          (!refCode || (refCode && refCode === domainItem.code)),
       );
-
       const existingIsFirstRegFree = isFirstRegFreeDomains.find(
         isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
       );
 
-      return (
+      if (
         isFree &&
-        ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
-          (!existingDashboardDomain &&
-            existingIsFirstRegFree &&
-            !existingIsFirstRegFree.isPremium) ||
-          (!existingDashboardDomain && !existingIsFirstRegFree)) &&
         domainType === DOMAIN_TYPE.ALLOW_FREE &&
-        cartItemType === CART_ITEM_TYPE.ADDRESS
-      );
-    });
-
-    const allowedFreeItem = cartItems.find(cartItem => {
-      const {
-        domain: cartItemDomain,
-        domainType: cartItemDomainType,
-        isFree: cartItemIsFree,
-        type: cartItemType,
-      } = cartItem;
-
-      const existingDashboardDomain = domainsArr.find(
-        domainItem => domainItem.name === cartItemDomain,
-      );
-
-      const existingIsFirstRegFree = isFirstRegFreeDomains.find(
-        isFirstRegFreeDomain => isFirstRegFreeDomain.name === cartItemDomain,
-      );
-
-      return (
-        !freeCartItem &&
-        !cartItemIsFree &&
         ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
           (!existingDashboardDomain &&
             existingIsFirstRegFree &&
-            !existingIsFirstRegFree.isPremium) ||
-          (!existingDashboardDomain && !existingIsFirstRegFree)) &&
-        cartItemDomainType === DOMAIN_TYPE.ALLOW_FREE &&
-        cartItemType === CART_ITEM_TYPE.ADDRESS
-      );
+            !existingIsFirstRegFree.isPremium))
+      ) {
+        return { ...cartItem, isFree: true };
+      } else {
+        return { ...cartItem, isFree: false };
+      }
     });
-
-    if (allowedFreeItem) {
-      updatedCartItems = cartItems.map(cartItem =>
-        cartItem.id === allowedFreeItem.id ? { ...cartItem, isFree: true } : cartItem,
-      );
-    }
   }
 
   return updatedCartItems;
