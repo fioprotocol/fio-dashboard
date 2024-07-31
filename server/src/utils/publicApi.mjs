@@ -74,12 +74,15 @@ export const generateErrorResponse = (res, { error, errorCode, statusCode }) => 
   return { error, errorCode, success: false };
 };
 
-export const generateSuccessResponse = (res, { accountId, charge, ...other }) => ({
-  error: false,
-  account_id: accountId,
-  success: charge ? { charge } : true,
-  ...other,
-});
+export const generateSuccessResponse = (res, { accountId, charge, ...other }) => {
+  const accountIdNumber = Number(accountId);
+  return {
+    error: false,
+    account_id: isNaN(accountIdNumber) ? accountId : accountIdNumber,
+    success: charge ? { charge } : true,
+    ...other,
+  };
+};
 
 export const resolveRefProfileDomains = refProfile =>
   refProfile.settings &&
