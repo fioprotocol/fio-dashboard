@@ -41,9 +41,9 @@ export default class Summary extends Base {
     type,
     accountPayId,
   }) {
-    if (!address && !domain && !externId) {
+    if (!address && !domain && !externId && !publicKey) {
       return generateErrorResponse(this.res, {
-        error: `Invalid parameters address, domain, or externId is required`,
+        error: `Invalid parameters address, domain, externId or publicKey is required`,
         errorCode: PUB_API_ERROR_CODES.INVALID_PARAMETERS,
         statusCode: HTTP_CODES.BAD_REQUEST,
       });
