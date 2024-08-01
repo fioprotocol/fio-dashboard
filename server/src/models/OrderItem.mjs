@@ -179,7 +179,6 @@ export class OrderItem extends Base {
           o."publicKey", 
           o.total,
           o."userId",
-          o.data->>'orderUserType' as "orderUserType",
           ois."blockchainTransactionId",
           ois."paymentId",
           rp.label,
