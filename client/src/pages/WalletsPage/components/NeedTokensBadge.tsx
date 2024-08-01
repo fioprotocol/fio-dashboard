@@ -6,7 +6,7 @@ import FioTokens from '../../../assets/images/fio-tokens.png';
 import classes from '../styles/NeedTokensBadge.module.scss';
 import config from '../../../config';
 
-const TotalBalanceBadge: FC = () => {
+export const NeedTokensBadge: FC = () => {
   return (
     <div className={classnames(classes.actionBadgeContainer)}>
       <div className={classes.content}>
@@ -26,5 +26,3 @@ const TotalBalanceBadge: FC = () => {
     </div>
   );
 };
-
-export default TotalBalanceBadge;
