@@ -12,7 +12,7 @@ import WalletSettings from './components/WalletSettings';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
-import NeedTokensBadge from '../WalletsPage/components/NeedTokensBadge';
+import { NeedTokensBadge } from '../WalletsPage/components/NeedTokensBadge';
 import Title from '../WalletsPage/components/Title';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';

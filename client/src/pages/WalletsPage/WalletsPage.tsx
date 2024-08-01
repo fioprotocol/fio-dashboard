@@ -27,7 +27,7 @@ import { useContext } from './WalletsPageContext';
 import { Props } from './types';
 
 import classes from './styles/WalletsPage.module.scss';
-import NeedTokensBadge from './components/NeedTokensBadge';
+import { NeedTokensBadge } from './components/NeedTokensBadge';
 
 type TitleComponentProps = {
   isAlternativeAccountType: boolean;
