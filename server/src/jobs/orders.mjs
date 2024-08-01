@@ -42,7 +42,6 @@ import {
   ORDER_ERROR_TYPES,
   FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
-import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
 import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
 
@@ -416,7 +415,7 @@ class OrdersJob extends CommonJob {
     fallbackFreeFioActor,
     fallbackFreeFioPermision,
     processOrderItem,
-    existingDashboardDomain,
+    registeringDomainExistingInAppDomainsList,
     publicKey,
   }) {
     const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
@@ -442,8 +441,9 @@ class OrdersJob extends CommonJob {
     if (
       userHasFreeAddress &&
       userHasFreeAddress.length &&
-      (!existingDashboardDomain.isFirstRegFree ||
-        (existingDashboardDomain.isFirstRegFree && existingUsersFreeAddress))
+      (!registeringDomainExistingInAppDomainsList.isFirstRegFree ||
+        (registeringDomainExistingInAppDomainsList.isFirstRegFree &&
+          existingUsersFreeAddress))
     ) {
       logger.error(USER_HAS_FREE_ERROR);
 
@@ -916,7 +916,6 @@ class OrdersJob extends CommonJob {
         paidActor,
         paidPermission,
         userId,
-        orderUserType,
       } = orderItem;
 
       const hasSignedTx = data && !!data.signedTx;
@@ -943,20 +942,29 @@ class OrdersJob extends CommonJob {
           auth = { actor, permission };
         }
 
-        const existingDashboardDomain = [
-          ...dashboardDomains,
-          ...allRefProfileDomains,
-        ].find(dashboardDomain =>
-          code && orderUserType !== ORDER_USER_TYPES.PARTNER_API_CLIENT
-            ? dashboardDomain.code === code && dashboardDomain.name === domain
-            : dashboardDomain.name === domain,
+        let registeringDomainExistingInAppDomainsList = null;
+
+        const domainExistingInDashboardDomains = dashboardDomains.find(
+          dashboardDomain => dashboardDomain.name === domain,
         );
+
+        const domainExistingInRefProfile = code
+          ? allRefProfileDomains.find(
+              refProfileDomain =>
+                refProfileDomain.code === code && refProfileDomain.name === domain,
+            )
+          : null;
+
+        registeringDomainExistingInAppDomainsList =
+          code && domainExistingInRefProfile
+            ? domainExistingInRefProfile
+            : domainExistingInDashboardDomains;
 
         // Handle free addresses
         if (
           (!price || price === '0') &&
-          existingDashboardDomain &&
-          !existingDashboardDomain.isPremium &&
+          registeringDomainExistingInAppDomainsList &&
+          !registeringDomainExistingInAppDomainsList.isPremium &&
           action === FIO_ACTIONS.registerFioAddress &&
           !domainOwner
         ) {
@@ -966,7 +974,7 @@ class OrdersJob extends CommonJob {
             orderItem,
             fallbackFreeFioActor,
             fallbackFreeFioPermision,
-            existingDashboardDomain,
+            registeringDomainExistingInAppDomainsList,
             publicKey: data && data.publicKey,
             processOrderItem,
           });
