@@ -171,7 +171,11 @@ export default class BuyAddress extends Base {
         if (refDomain) {
           isFreeRegistration =
             (!refDomain.isPremium || refDomain.isFirstRegFree) &&
-            (await this.isFreeAddressNotExist(user.id, fioDomain));
+            (await this.isFreeAddressNotExist({
+              userId: user.id,
+              fioDomain,
+              enableCompareByDomainName: refDomain && refDomain.isFirstRegFree,
+            }));
         } else {
           const dashboardDomains = await Domain.getDashboardDomains();
           const dashboardDomain = dashboardDomains.find(it => it.name === fioDomain);
@@ -179,7 +183,12 @@ export default class BuyAddress extends Base {
           isFreeRegistration =
             dashboardDomain &&
             !dashboardDomain.isPremium &&
-            (await this.isFreeAddressNotExist(user.id, fioDomain));
+            (await this.isFreeAddressNotExist({
+              userId: user.id,
+              fioDomain,
+              enableCompareByDomainName:
+                dashboardDomain && dashboardDomain.isFirstRegFree,
+            }));
         }
       }
 
@@ -305,17 +314,21 @@ export default class BuyAddress extends Base {
     return { order, orderItem, payment, charge };
   }
 
-  async isFreeAddressNotExist(userId, fioDomain) {
+  async isFreeAddressNotExist({ userId, fioDomain, enableCompareByDomainName }) {
     const freeAddresses = await FreeAddress.findAll({
       where: { userId },
     });
 
-    const freeRegisteredAddressWithDomain = freeAddresses.find(it => {
-      const { fioDomain: addressFioDomain } = destructAddress(it.name);
-      return addressFioDomain === fioDomain;
-    });
+    const freeRegisteredAddressWithDomain = enableCompareByDomainName
+      ? freeAddresses.find(it => {
+          const { fioDomain: addressFioDomain } = destructAddress(it.name);
+          return addressFioDomain === fioDomain;
+        })
+      : null;
 
-    return !freeRegisteredAddressWithDomain;
+    return enableCompareByDomainName
+      ? !freeRegisteredAddressWithDomain
+      : !freeAddresses.length;
   }
 
   async isSameAccountRegistrationExist(publicKey, refProfile, address) {
