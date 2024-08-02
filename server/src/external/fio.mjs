@@ -401,13 +401,19 @@ class Fio {
     if (!chainId) throw new Error('Missing FIO chain environment');
     if (chainId.chain_id !== process.env.FIO_CHAIN_ID)
       throw new Error(
-        `Missmatch of preffered FIO chain: ${process.env.FIO_CHAIN_ID} and Public FIO SDK chain: ${chainId.chain_id}`,
+        `Mismatch of preferred FIO chain: ${process.env.FIO_CHAIN_ID} and Public FIO SDK chain: ${chainId.chain_id}`,
       );
   }
 
   async getActor(publicKey) {
     const publicFioSDK = await this.getPublicFioSDK();
     return publicFioSDK.transactions.getActor(publicKey);
+  }
+
+  async getPublicAddressByFioAddress(fioAddress) {
+    const publicFioSDK = await this.getPublicFioSDK();
+    const res = await publicFioSDK.getFioPublicAddress(fioAddress);
+    return res.public_address;
   }
 
   async getTableRows({ params, apiUrlType }) {
@@ -518,11 +524,12 @@ class Fio {
   }
 
   async isAccountCouldBeRenewed(address) {
-    const isDomain = address.indexOf(FIO_ADDRESS_DELIMITER) !== -1;
-    const [, fioDomain] = address.split(FIO_ADDRESS_DELIMITER);
+    const isDomain = address.indexOf(FIO_ADDRESS_DELIMITER) === -1;
+
     const data = isDomain
-      ? await this.getFioDomain(fioDomain)
+      ? await this.getFioDomain(address)
       : await this.getFioAddress(address);
+
     return !!data;
   }
 }

@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Cookies from 'js-cookie';
+import { Ecc } from '@fioprotocol/fiojs';
 
 import {
   refProfileInfo,
@@ -67,6 +68,16 @@ export const useContext = (): UseContextProps => {
     return value;
   }, []);
 
+  const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
+    try {
+      apis.fio.isFioPublicKeyValid(publicKeyToValid);
+      return Ecc.PublicKey.isValid(publicKeyToValid);
+    } catch (error) {
+      log.error(error);
+      return false;
+    }
+  }, []);
+
   const customHandleSubmit = useCallback(
     ({ address: publicKeyValue }: { address: string }) => {
       if (!publicKeyValue) return;
@@ -74,9 +85,9 @@ export const useContext = (): UseContextProps => {
       try {
         toggleIsVerifying(true);
 
-        try {
-          apis.fio.isFioPublicKeyValid(publicKeyValue);
-        } catch (error) {
+        const isPublicKeyVerified = checkIsFioPublicKeyValid(publicKeyValue);
+
+        if (!isPublicKeyVerified) {
           setInfoMessage(NON_VALID_FIO_PUBLIC_KEY);
           toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
@@ -94,7 +105,7 @@ export const useContext = (): UseContextProps => {
         log.error(error);
       }
     },
-    [history],
+    [checkIsFioPublicKeyValid, history],
   );
 
   const addressWidgetContent = {
@@ -127,18 +138,33 @@ export const useContext = (): UseContextProps => {
     },
   };
 
+  useEffect(() => {
+    if (publicKey) {
+      const isFioPublicKeyValid = checkIsFioPublicKeyValid(publicKey);
+
+      if (!isFioPublicKeyValid) {
+        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, null, { expires: null });
+
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+        const newSearchString = searchParams.toString();
+        history.push({ search: newSearchString });
+      }
+    }
+  }, [history, publicKey, checkIsFioPublicKeyValid]);
+
   useEffectOnce(
     () => {
       (!publicKeyCookie ||
         (publicKey && publicKeyCookie && publicKey !== publicKeyCookie)) &&
-        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, null);
+        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, { expires: null });
       !publicKeyQueryParams &&
         history.push({
           search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
         });
     },
     [],
-    !!publicKey,
+    !!publicKey && checkIsFioPublicKeyValid(publicKey),
   );
 
   return {
