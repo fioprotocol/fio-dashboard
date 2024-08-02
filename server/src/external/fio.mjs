@@ -525,10 +525,11 @@ class Fio {
 
   async isAccountCouldBeRenewed(address) {
     const isDomain = address.indexOf(FIO_ADDRESS_DELIMITER) === -1;
-    const [, fioDomain] = address.split(FIO_ADDRESS_DELIMITER);
+
     const data = isDomain
-      ? await this.getFioDomain(fioDomain)
+      ? await this.getFioDomain(address)
       : await this.getFioAddress(address);
+
     return !!data;
   }
 }
