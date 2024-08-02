@@ -24,7 +24,9 @@ export default class IsDomainPublic extends Base {
   }
 
   async processing({ domain }) {
-    if (!FIOSDK.isFioDomainValid(domain)) {
+    try {
+      FIOSDK.isFioDomainValid(domain);
+    } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid domain`,
         errorCode: PUB_API_ERROR_CODES.INVALID_FIO_NAME,
