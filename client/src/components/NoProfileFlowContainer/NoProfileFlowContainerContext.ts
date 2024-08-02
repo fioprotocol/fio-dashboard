@@ -15,6 +15,7 @@ import { NON_VALID_FIO_PUBLIC_KEY } from '../../constants/errors';
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 import { setCookies } from '../../util/cookies';
+import apis from '../../api';
 import { log } from '../../util/general';
 
 import { RefProfile } from '../../types';
@@ -69,6 +70,7 @@ export const useContext = (): UseContextProps => {
 
   const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
     try {
+      apis.fio.isFioPublicKeyValid(publicKeyToValid);
       return Ecc.PublicKey.isValid(publicKeyToValid);
     } catch (error) {
       log.error(error);
