@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Cookies from 'js-cookie';
@@ -127,18 +127,43 @@ export const useContext = (): UseContextProps => {
     },
   };
 
+  const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
+    try {
+      apis.fio.isFioPublicKeyValid(publicKeyToValid);
+      return true;
+    } catch (error) {
+      log.error(error);
+      return false;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (publicKey) {
+      const isFioPublicKeyValid = checkIsFioPublicKeyValid(publicKey);
+
+      if (!isFioPublicKeyValid) {
+        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, null, { expires: null });
+
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete(QUERY_PARAMS_NAMES.PUBLIC_KEY);
+        const newSearchString = searchParams.toString();
+        history.push({ search: newSearchString });
+      }
+    }
+  }, [history, publicKey, checkIsFioPublicKeyValid]);
+
   useEffectOnce(
     () => {
       (!publicKeyCookie ||
         (publicKey && publicKeyCookie && publicKey !== publicKeyCookie)) &&
-        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, null);
+        setCookies(QUERY_PARAMS_NAMES.PUBLIC_KEY, publicKey, { expires: null });
       !publicKeyQueryParams &&
         history.push({
           search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
         });
     },
     [],
-    !!publicKey,
+    !!publicKey && checkIsFioPublicKeyValid(publicKey),
   );
 
   return {
