@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Cookies from 'js-cookie';
+import { Ecc } from '@fioprotocol/fiojs';
 
 import {
   refProfileInfo,
@@ -14,7 +15,6 @@ import { NON_VALID_FIO_PUBLIC_KEY } from '../../constants/errors';
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 import { setCookies } from '../../util/cookies';
-import apis from '../../api';
 import { log } from '../../util/general';
 
 import { RefProfile } from '../../types';
@@ -67,6 +67,15 @@ export const useContext = (): UseContextProps => {
     return value;
   }, []);
 
+  const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
+    try {
+      return Ecc.PublicKey.isValid(publicKeyToValid);
+    } catch (error) {
+      log.error(error);
+      return false;
+    }
+  }, []);
+
   const customHandleSubmit = useCallback(
     ({ address: publicKeyValue }: { address: string }) => {
       if (!publicKeyValue) return;
@@ -74,9 +83,9 @@ export const useContext = (): UseContextProps => {
       try {
         toggleIsVerifying(true);
 
-        try {
-          apis.fio.isFioPublicKeyValid(publicKeyValue);
-        } catch (error) {
+        const isPublicKeyVerified = checkIsFioPublicKeyValid(publicKeyValue);
+
+        if (!isPublicKeyVerified) {
           setInfoMessage(NON_VALID_FIO_PUBLIC_KEY);
           toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
@@ -94,7 +103,7 @@ export const useContext = (): UseContextProps => {
         log.error(error);
       }
     },
-    [history],
+    [checkIsFioPublicKeyValid, history],
   );
 
   const addressWidgetContent = {
@@ -126,16 +135,6 @@ export const useContext = (): UseContextProps => {
         'We strongly recommend that you use one of our partner wallet instead.',
     },
   };
-
-  const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
-    try {
-      apis.fio.isFioPublicKeyValid(publicKeyToValid);
-      return true;
-    } catch (error) {
-      log.error(error);
-      return false;
-    }
-  }, []);
 
   useEffect(() => {
     if (publicKey) {
