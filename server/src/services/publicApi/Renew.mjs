@@ -13,18 +13,20 @@ import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.m
 import { fioApi } from '../../external/fio.mjs';
 import { getROE } from '../../external/roe.mjs';
 import { FIO_ACTIONS } from '../../config/constants.js';
-import { CHAIN_CODES, CURRENCY_CODES } from '../../constants/fio.mjs';
+import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import { normalizePriceForBitPayInTestNet } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
+import logger from '../../logger.mjs';
 
 export default class Renew extends Base {
   async execute(args) {
     try {
       return await this.processing(args);
     } catch (e) {
+      logger.error(e);
       return generateErrorResponse(this.res, {
         error: `Server error. Please try later.`,
         errorCode: PUB_API_ERROR_CODES.SERVER_ERROR,
@@ -65,10 +67,15 @@ export default class Renew extends Base {
 
     const { type, fioAddress, fioDomain } = destructAddress(address);
 
-    if (
-      (fioAddress && !FIOSDK.isFioAddressValid(address)) ||
-      !FIOSDK.isFioDomainValid(fioDomain)
-    ) {
+    const addressCantBeRenewedRes = {
+      error: `${type} not registered`,
+      errorCode: PUB_API_ERROR_CODES.ADDRESS_CANT_BE_RENEWED,
+      statusCode: HTTP_CODES.NOT_FOUND,
+    };
+
+    try {
+      fioAddress ? FIOSDK.isFioAddressValid(address) : FIOSDK.isFioDomainValid(fioDomain);
+    } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid ${type}`,
         errorCode: PUB_API_ERROR_CODES.INVALID_FIO_NAME,
@@ -78,11 +85,11 @@ export default class Renew extends Base {
 
     if (!publicKey) {
       if (type === 'account') {
-        publicKey = await FIOSDK.getPublicAddress(
-          fioAddress,
-          CHAIN_CODES.FIO,
-          CURRENCY_CODES.FIO,
-        );
+        try {
+          publicKey = await fioApi.getPublicAddressByFioAddress(address);
+        } catch (e) {
+          return generateErrorResponse(this.res, addressCantBeRenewedRes);
+        }
       } else {
         const domainFromChain = await fioApi
           .getFioDomain(fioDomain)
@@ -91,7 +98,9 @@ export default class Renew extends Base {
       }
     }
 
-    if (!FIOSDK.isFioPublicKeyValid(publicKey)) {
+    try {
+      FIOSDK.isFioPublicKeyValid(publicKey);
+    } catch (e) {
       const err = {
         error: 'Missing public key',
         errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
@@ -115,12 +124,10 @@ export default class Renew extends Base {
       }
     }
 
-    if (!(await fioApi.isAccountCouldBeRenewed(address))) {
-      return generateErrorResponse(this.res, {
-        error: `${type} not registered`,
-        errorCode: PUB_API_ERROR_CODES.ADDRESS_CANT_BE_RENEWED,
-        statusCode: HTTP_CODES.BAD_REQUEST,
-      });
+    const isAccountCouldBeRenewed = await fioApi.isAccountCouldBeRenewed(address);
+
+    if (!isAccountCouldBeRenewed) {
+      return generateErrorResponse(this.res, addressCantBeRenewedRes);
     }
 
     const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);

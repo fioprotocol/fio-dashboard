@@ -49,12 +49,16 @@ export default class Summary extends Base {
       });
     }
 
-    if (publicKey && !FIOSDK.isFioPublicKeyValid(publicKey)) {
-      return generateErrorResponse(this.res, {
-        error: 'Invalid public key',
-        errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
-        statusCode: HTTP_CODES.BAD_REQUEST,
-      });
+    if (publicKey) {
+      try {
+        FIOSDK.isFioPublicKeyValid(publicKey);
+      } catch (e) {
+        return generateErrorResponse(this.res, {
+          error: 'Invalid public key',
+          errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
+          statusCode: HTTP_CODES.BAD_REQUEST,
+        });
+      }
     }
 
     const orderItemWhere = {};
