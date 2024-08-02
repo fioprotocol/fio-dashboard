@@ -94,10 +94,9 @@ export default class BuyAddress extends Base {
 
     const { type, fioAddress, fioDomain } = destructAddress(address);
 
-    if (
-      (fioAddress && !FIOSDK.isFioAddressValid(address)) ||
-      !FIOSDK.isFioDomainValid(fioDomain)
-    ) {
+    try {
+      fioAddress ? FIOSDK.isFioAddressValid(address) : FIOSDK.isFioDomainValid(fioDomain);
+    } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid ${type}`,
         errorCode: PUB_API_ERROR_CODES.INVALID_FIO_NAME,
@@ -105,7 +104,9 @@ export default class BuyAddress extends Base {
       });
     }
 
-    if (!FIOSDK.isFioPublicKeyValid(publicKey)) {
+    try {
+      FIOSDK.isFioPublicKeyValid(publicKey);
+    } catch (e) {
       return generateErrorResponse(this.res, {
         error: 'Missing public key',
         errorCode: PUB_API_ERROR_CODES.NO_PUBLIC_KEY_SPECIFIED,
