@@ -83,6 +83,10 @@ const WalletsPage: React.FC<Props> = () => {
     onWalletCreated,
   } = useContext();
 
+  const welcomeElement = (
+    <WelcomeComponent withoutMarginTop {...welcomeComponentProps} />
+  );
+
   return (
     <div className={classes.container}>
       <CreateWallet
@@ -157,10 +161,11 @@ const WalletsPage: React.FC<Props> = () => {
             />
           </div>
         )}
-        <WelcomeComponent {...welcomeComponentProps} />
+        <div className={classes.onlyDesktop}>{welcomeElement}</div>
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge {...fioWalletsBalances.total} isNew itTotalWallets />
+        <div className={classes.onlyMobile}>{welcomeElement}</div>
         <NeedTokensBadge />
       </div>
     </div>

@@ -36,6 +36,13 @@
     gap: 30px;
   }
 
+  .layoutBadges {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
   .editIcon {
     margin-left: 5px;
     margin-bottom: 2px;
@@ -136,6 +143,10 @@
   margin-bottom: 0;
 }
 
+.onlyDesktop {
+  display: none;
+}
+
 @include sm {
   .hideTextOnMobile {
     display: none;
@@ -151,7 +162,6 @@
     padding: 30px 20px;
 
     .actionBadges {
-      flex-direction: row;
       margin-bottom: 0;
     }
   }
@@ -162,6 +172,14 @@
 }
 
 @include lg {
+  .onlyMobile {
+    display: none;
+  }
+
+  .onlyDesktop {
+    display: block;
+  }
+
   .container {
     flex-direction: row;
     max-width: 1200px;
@@ -172,8 +190,7 @@
     .actionBadges {
       width: 100%;
       max-width: 365px;
-      margin: 0 20px 30px 10px;
-      flex-direction: column;
+      margin: 60px 20px 30px 10px;
     }
   }
 }
@@ -184,6 +201,6 @@
   }
 
   .actionBadges {
-    margin: 0 20px 30px 30px;
+    margin: 60px 20px 30px 30px;
   }
 }

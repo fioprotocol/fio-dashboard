@@ -199,7 +199,10 @@ const WalletPage: React.FC = () => {
           receivedFioRequestsLoading={receivedFioRequestsLoading}
           tabAction={tabAction}
         />
-        <WelcomeComponent {...welcomeComponentProps} />
+        <div className={classes.layoutBadges}>
+          <WelcomeComponent withoutMarginTop {...welcomeComponentProps} />
+          <NeedTokensBadge className={classes.onlyMobile} />
+        </div>
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge
@@ -207,7 +210,7 @@ const WalletPage: React.FC = () => {
           publicKey={fioWallet.publicKey}
           isOpenLockedList={isOpenLockedList}
         />
-        <NeedTokensBadge />
+        <NeedTokensBadge className={classes.onlyDesktop} />
       </div>
     </div>
   );
