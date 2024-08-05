@@ -84,6 +84,10 @@
   gap: 30px;
 }
 
+.onlyDesktop {
+  display: none;
+}
+
 @include rwd(768) {
   .container {
     padding: 30px 20px;
@@ -91,13 +95,18 @@
 
   .actionBadges {
     margin: 0 20px 30px;
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
   }
 }
 
 @include lg {
+  .onlyMobile {
+    display: none;
+  }
+
+  .onlyDesktop {
+    display: block;
+  }
+
   .container {
     flex-direction: row;
     max-width: 1200px;
@@ -108,11 +117,11 @@
       margin-top: 60px;
     }
   }
+
   .actionBadges {
+    margin-top: 60px;
     width: 100%;
     max-width: 365px;
-    display: flex;
-    flex-direction: column;
   }
 }
 

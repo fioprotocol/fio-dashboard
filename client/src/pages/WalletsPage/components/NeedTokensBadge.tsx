@@ -6,9 +6,13 @@ import FioTokens from '../../../assets/images/fio-tokens.png';
 import classes from '../styles/NeedTokensBadge.module.scss';
 import config from '../../../config';
 
-export const NeedTokensBadge: FC = () => {
+type Props = {
+  className?: string;
+};
+
+export const NeedTokensBadge: FC<Props> = ({ className }) => {
   return (
-    <div className={classnames(classes.actionBadgeContainer)}>
+    <div className={classnames(classes.actionBadgeContainer, className)}>
       <div className={classes.content}>
         <div className={classes.imageContainer}>
           <img src={FioTokens} alt="fio tokens" />

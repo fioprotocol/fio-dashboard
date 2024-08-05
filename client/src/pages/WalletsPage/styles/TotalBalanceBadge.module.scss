@@ -63,7 +63,7 @@
 }
 
 .actionBadgeContainer {
-  width: auto;
+  width: 100%;
   padding: 9px;
   border-radius: 14px;
   border: 1px solid $leadbelcher;
@@ -187,35 +187,5 @@
         }
       }
     }
-  }
-}
-
-@include sm {
-  .onlyMobile {
-    display: block;
-    margin-top: 40px;
-  }
-}
-
-@include md {
-  .actionBadgeContainer {
-    width: 100%;
-  }
-
-  .onlyMobile {
-    display: block;
-    margin-top: 40px;
-  }
-}
-
-@include lg {
-  .actionBadgeContainer {
-    margin-top: 60px;
-    max-width: 365px;
-    width: 100%;
-  }
-
-  .onlyMobile {
-    display: none;
   }
 }
