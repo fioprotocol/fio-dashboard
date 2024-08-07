@@ -1,7 +1,7 @@
 const defaultSupportUrl =
   'https://fioprotocol.atlassian.net/servicedesk/customer/portal/4';
 const defaultWrapPage = 'https://wrap.fio.net';
-const defaultGetTokensUrl = 'https://fio.net/token/overview#get-fio-tokens';
+const defaultGetTokensUrl = 'https://fio.net/token/get-fio-tokens';
 
 const config = {
   apiPrefix: 'api/v1/',

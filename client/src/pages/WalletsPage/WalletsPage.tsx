@@ -161,11 +161,11 @@ const WalletsPage: React.FC<Props> = () => {
             />
           </div>
         )}
-        <div className={classes.onlyDesktop}>{welcomeElement}</div>
+        <div className={classes.welcomeWrapperDesktop}>{welcomeElement}</div>
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge {...fioWalletsBalances.total} isNew itTotalWallets />
-        <div className={classes.onlyMobile}>{welcomeElement}</div>
+        <div className={classes.welcomeWrapperMobile}>{welcomeElement}</div>
         <NeedTokensBadge />
       </div>
     </div>

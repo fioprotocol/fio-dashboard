@@ -19,7 +19,6 @@
   }
 }
 
-
 @include md {
   .signInCallToAction {
     font-size: 12px;
@@ -29,6 +28,10 @@
 
 @include sm {
   .signInCallToAction {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
     font-size: 12px;
     max-width: 100%;
   }

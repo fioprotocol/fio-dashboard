@@ -84,7 +84,8 @@
   gap: 30px;
 }
 
-.onlyDesktop {
+.welcomeWrapperDesktop {
+  margin-top: 30px;
   display: none;
 }
 
@@ -99,11 +100,11 @@
 }
 
 @include lg {
-  .onlyMobile {
+  .welcomeWrapperMobile {
     display: none;
   }
 
-  .onlyDesktop {
+  .welcomeWrapperDesktop {
     display: block;
   }
 

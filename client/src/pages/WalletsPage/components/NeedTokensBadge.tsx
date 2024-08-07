@@ -22,7 +22,12 @@ export const NeedTokensBadge: FC<Props> = ({ className }) => {
           Easily get FIO tokens with a credit/debit card or crypto.
         </p>
         <div className={classes.actionButtons}>
-          <a href={config.getTokensUrl} className={classes.link}>
+          <a
+            href={config.getTokensUrl}
+            className={classes.link}
+            target="_blank"
+            rel="noreferrer"
+          >
             Get FIO Tokens
           </a>
         </div>
