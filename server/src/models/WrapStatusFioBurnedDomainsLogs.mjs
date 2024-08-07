@@ -64,12 +64,7 @@ export class WrapStatusFioBurnedDomainsLogs extends Base {
 
   static async addLogs(data) {
     const values = data.map(log => {
-      return [
-        log.action_trace.trx_id,
-        log.action_trace.act.data.domainname,
-        log.block_num,
-        JSON.stringify({ ...log }),
-      ];
+      return [log.trx_id, log.data.name, log.block_num, JSON.stringify({ ...log })];
     });
 
     const query =
