@@ -137,6 +137,10 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
     fioApiUrlItem =>
       fioApiUrlItem.type === FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_URL,
   );
+  const wrapStatusPageHistoryV2ApiUrls = fioApiUrlsList.filter(
+    fioApiUrlItem =>
+      fioApiUrlItem.type === FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
+  );
 
   const DragDropComponent = ({ apiUrlsList }: { apiUrlsList: FioApiUrl[] }) => (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -222,6 +226,8 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
         <DragDropComponent apiUrlsList={wrapStatusPageApiUrls} />
         <p className={classes.apiTitles}>WRAP STATUS PAGE HISTORY URLS:</p>
         <DragDropComponent apiUrlsList={wrapStatusPageHistoryApiUrls} />
+        <p className={classes.apiTitles}>WRAP STATUS PAGE HISTORY V2 URLS:</p>
+        <DragDropComponent apiUrlsList={wrapStatusPageHistoryV2ApiUrls} />
 
         <div className={classes.paginationContainer}>{paginationComponent}</div>
 
