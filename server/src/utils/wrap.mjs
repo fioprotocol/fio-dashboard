@@ -182,6 +182,64 @@ export const normalizeUnwrapData = unwrapItem => {
   };
 };
 
+export const normalizeBurnData = burnDomainItem => {
+  const {
+    blockNumber,
+    confirmData,
+    data,
+    domain,
+    oravotes,
+    transactionId,
+  } = burnDomainItem;
+
+  const { timestamp } = data || {};
+
+  const approvals = {
+      chainCode: WRAP_STATUS_NETWORKS.POLYGON,
+    },
+    voters = [];
+
+  const { blockNumber: confirmBlockNumber, blockTimeStamp, transactionHash } =
+    confirmData || {};
+
+  const isComplete =
+    confirmData &&
+    (!Object.keys(confirmData).includes('isComplete') || !!data.confirmData.isComplete);
+
+  const status = parseActionStatus({
+    blockTimestamp: timestamp + 'Z',
+    isComplete,
+  });
+
+  if (confirmBlockNumber) {
+    approvals.blockNumber = confirmBlockNumber;
+  }
+  if (blockTimeStamp) {
+    approvals.blockTimeStamp = blockTimeStamp ? convertToNewDate(blockTimeStamp) : null;
+  }
+  if (transactionHash) {
+    approvals.txId = transactionHash;
+  }
+
+  if (oravotes && oravotes.length)
+    for (const oracleVoter of oravotes) {
+      const { returnValues: { account } = {}, transactionHash } = oracleVoter;
+      voters.push({ account, transactionHash });
+    }
+
+  return {
+    actionType: 'burnexpired',
+    approvals,
+    blockNumber,
+    blockTimestamp: timestamp + 'Z',
+    chain: WRAP_STATUS_NETWORKS.FIO,
+    domain,
+    status,
+    transactionId,
+    voters,
+  };
+};
+
 export const filterWrapItemsByDateRange = ({
   createdAt,
   dateRange,
