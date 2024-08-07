@@ -333,6 +333,8 @@ const WrapStatus: React.FC<PageProps> = props => {
             onChange={e => {
               if (e.target?.value === '2') {
                 setIsBurnedDomainsSelected(true);
+                setIsWrapSelected(false);
+                setIsTokensSelected(false);
               } else {
                 setIsWrapSelected(!parseInt(e.target.value));
                 setIsBurnedDomainsSelected(false);
@@ -352,7 +354,7 @@ const WrapStatus: React.FC<PageProps> = props => {
             defaultValue={isTokensSelected ? 0 : 1}
             onChange={e => setIsTokensSelected(!parseInt(e.target.value))}
           >
-            {!isBurned && <option value={0}>Tokens</option>}
+            {!isBurnedDomainsSelected && <option value={0}>Tokens</option>}
             <option value={1}>Domains</option>
           </select>
 
