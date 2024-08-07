@@ -670,8 +670,9 @@ class WrapStatusJob extends CommonJob {
         this.postMessage(`${logPrefix} Searching for Burned Domains`);
 
         const unprocessedBurnedDomainsList = [];
-        const DEFAULT_V2_ITEMS_LIMIT_PER_REQUEST =
-          process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_OFFSET;
+        const DEFAULT_V2_ITEMS_LIMIT_PER_REQUEST = parseInt(
+          process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_OFFSET,
+        );
 
         const after = lastProcessedBlockNumber;
         const before = chainInfo.last_irreversible_block_num;
