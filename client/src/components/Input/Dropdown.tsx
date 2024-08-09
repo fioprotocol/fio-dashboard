@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useEffect } from 'react';
 import { FieldRenderProps } from 'react-final-form';
 
 import { Label, LabelSuffix } from './StaticInputParts';
@@ -33,9 +33,10 @@ type DropdownProps = {
   defaultOptionValue?: { id: string; name: string };
   toggleToCustom?: (isCustom: boolean) => void;
   actionOnChange?: () => void;
+  additionalOnchangeAction?: (id: string) => void;
 };
 
-const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
+const Dropdown: FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
   input,
   meta,
   uiType,
@@ -47,7 +48,9 @@ const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
   errorColor = '',
   hideError,
   description,
+  defaultOptionValue,
   withoutMarginBottom = true,
+  additionalOnchangeAction,
   ...rest
 }: DropdownProps & FieldRenderProps<DropdownProps>) => {
   const {
@@ -61,7 +64,14 @@ const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
     submitSucceeded,
   } = meta;
 
-  const { value } = input;
+  const { value, onChange } = input;
+
+  useEffect(() => {
+    if (defaultOptionValue) {
+      onChange?.(defaultOptionValue.id);
+      additionalOnchangeAction?.(defaultOptionValue.id);
+    }
+  }, [defaultOptionValue?.id]);
 
   const hasError =
     ((error || data?.error) &&
@@ -77,9 +87,14 @@ const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
         options={options}
         {...input}
         {...rest}
+        defaultOptionValue={defaultOptionValue}
         value={value}
         isHigh={isHigh}
         isSimple={isSimple}
+        onChange={(id: string) => {
+          onChange?.(id);
+          additionalOnchangeAction?.(id);
+        }}
       />
       {!hideError && !data?.hideError && (
         <div className={classes.regInputWrapper}>

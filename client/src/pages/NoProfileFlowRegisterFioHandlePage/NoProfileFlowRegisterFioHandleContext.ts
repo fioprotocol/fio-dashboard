@@ -307,7 +307,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     defaultValue: options && options[0],
     convert: onFocusOut,
     customHandleSubmit: isFioItemVerified ? verifiedSubmit : nonVerifiedSubmit,
-    onInputChanged: onInputChanged,
+    onInputChanged,
     toggleShowCustomDomain,
   };
 
@@ -320,7 +320,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
   useEffect(() => {
     if (publicKey) {
-      getFreePublicKeyAddresses(publicKey);
+      void getFreePublicKeyAddresses(publicKey);
     }
   }, [getFreePublicKeyAddresses, publicKey]);
 
