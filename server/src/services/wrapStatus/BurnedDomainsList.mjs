@@ -1,6 +1,6 @@
 import Base from '../Base';
 import { WrapStatusFioBurnedDomainsLogs } from '../../models';
-import { normalizeWrapData, filterWrapItemsByDateRange } from '../../utils/wrap.mjs';
+import { filterWrapItemsByDateRange, normalizeBurnData } from '../../utils/wrap.mjs';
 
 export default class BurnedDomainsList extends Base {
   static get validationRules() {
@@ -33,7 +33,7 @@ export default class BurnedDomainsList extends Base {
 
     let burnedDomainsList = [];
 
-    const normalizedBurnedDomainsList = list.map(listItem => normalizeWrapData(listItem));
+    const normalizedBurnedDomainsList = list.map(listItem => normalizeBurnData(listItem));
 
     if (createdAt || (dateRange && dateRange.startDate && dateRange.endDate)) {
       burnedDomainsList = filterWrapItemsByDateRange({

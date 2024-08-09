@@ -15,6 +15,7 @@ import { UnlockPeriod, WalletBalances } from '../../../types';
 import classes from '../styles/TotalBalanceBadge.module.scss';
 
 type Props = WalletBalances & {
+  className?: string;
   publicKey?: string;
   isOpenLockedList?: boolean;
   isNew?: boolean;
@@ -52,7 +53,7 @@ const LockedItemsList = ({ data }: { data?: UnlockPeriod[] }) => {
 
   return (
     <div className={classnames(classes.itemsList)}>
-      {data.map((o, i) => (
+      {data.map(o => (
         <div
           key={o.date?.getTime()}
           className={classnames(classes.itemContainer, 'row')}
@@ -72,6 +73,7 @@ const LockedItemsList = ({ data }: { data?: UnlockPeriod[] }) => {
 
 const TotalBalanceBadge: React.FC<Props> = props => {
   const {
+    className,
     total,
     available,
     locked,
@@ -80,7 +82,6 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     unlockPeriods,
     publicKey,
     isOpenLockedList,
-    isMobile = false,
     itTotalWallets = false,
   } = props;
 
@@ -97,12 +98,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
   };
 
   return (
-    <div
-      className={classnames(
-        classes.actionBadgeContainer,
-        isMobile && classes.onlyMobile,
-      )}
-    >
+    <div className={classnames(classes.actionBadgeContainer, className)}>
       <div className={classes.totalBadge}>
         <p className={classes.title}>
           Total {itTotalWallets && 'Wallets'} FIO Balance
@@ -132,7 +128,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
         {staked?.nativeFio ? (
           <Balance fio={staked.fio} usdc={staked.usdc} title="Staked" />
         ) : null}
-
+        <div className="flex-grow-1" />
         {publicKey ? (
           <div className={classes.actionButtons}>
             <Link

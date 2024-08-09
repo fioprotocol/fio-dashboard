@@ -46,6 +46,21 @@ module.exports = {
       },
     };
 
+    // Add rule for node_modules packages
+    config.module.rules.unshift({
+      test: /\.(js|mjs)$/,
+      exclude: /node_modules\/(?!edge-core-js)/, // There is an issue with edge-core-js@1.12.0 version. Maybe don't need on update package
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env', '@babel/preset-react'],
+          plugins: [
+            '@babel/plugin-proposal-nullish-coalescing-operator'
+          ],
+        },
+      },
+    });
+
     return config;
   },
   paths: function(paths, env) {

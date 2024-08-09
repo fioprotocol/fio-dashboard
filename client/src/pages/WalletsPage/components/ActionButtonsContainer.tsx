@@ -7,7 +7,7 @@ type Props = {
 };
 
 const ActionButtonsContainer: React.FC<Props> = props => {
-  return <div className={classes.container}>{props.children}</div>;
+  return <div className={classes.actionsContainer}>{props.children}</div>;
 };
 
 export default ActionButtonsContainer;

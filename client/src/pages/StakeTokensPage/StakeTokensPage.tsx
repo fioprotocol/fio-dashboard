@@ -46,7 +46,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
   ] = useState<StakeTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
   const [proxyList, setProxyList] = useState<string[]>([]);
-  const [proxyLoading, toggleProxyloading] = useState<boolean>(false);
+  const [proxyLoading, toggleProxyLoading] = useState<boolean>(false);
 
   const [walletFioAddresses, isWalletFioAddressesLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
@@ -54,13 +54,13 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
 
   const getProxyList = async () => {
     try {
-      toggleProxyloading(true);
+      toggleProxyLoading(true);
       const proxies = await apis.fio.getProxies();
       setProxyList(shuffle(proxies));
     } catch (error) {
       log.error(error);
     } finally {
-      toggleProxyloading(false);
+      toggleProxyLoading(false);
     }
   };
 

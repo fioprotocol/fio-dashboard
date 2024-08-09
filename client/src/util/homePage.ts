@@ -7,7 +7,7 @@ import {
 } from '../constants/containedFlow';
 import { DEFAULT_DOMAIN_NAME } from '../constants/ref';
 
-import { removeExtraCharactersFromString } from '../util/general';
+import { removeExtraCharactersFromString } from './general';
 
 import {
   ContainedFlowQueryParams,

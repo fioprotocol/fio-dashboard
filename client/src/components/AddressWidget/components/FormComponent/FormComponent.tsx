@@ -38,10 +38,9 @@ type Props = {
   formatOnFocusOut?: boolean;
   loading?: boolean;
   notification?: AddressWidgetNotification;
-  customHandleSubmit?: ({
-    address,
-  }: {
+  customHandleSubmit?: (data: {
     address: string;
+    domain?: string;
   }) => Promise<void> | void;
   showCustomDomainInput?: boolean;
   showSubmitButton?: boolean;
@@ -61,6 +60,8 @@ type Props = {
   regInputCustomDomainClassNames?: string;
   isBlueButton?: boolean;
   onInputChanged?: (value: string) => string;
+  onAddressChanged?: (value: string) => void;
+  onDomainChanged?: (value: string) => void;
   toggleShowCustomDomain?: (isCustomDomain: boolean) => void;
 };
 
@@ -179,12 +180,20 @@ export const FormComponent: React.FC<Props> = props => {
     regInputCustomDomainClassNames,
     isBlueButton,
     onInputChanged,
+    onAddressChanged,
+    onDomainChanged,
     toggleShowCustomDomain,
   } = props;
 
   const history = useHistory();
 
-  const onSubmit = ({ address }: { address: string }) => {
+  const onSubmit = ({
+    address,
+    domain,
+  }: {
+    address: string;
+    domain?: string;
+  }) => {
     if (links && links.getCryptoHandle) return;
 
     const params: {
@@ -193,14 +202,22 @@ export const FormComponent: React.FC<Props> = props => {
     } = { pathname: ROUTES.FIO_ADDRESSES_SELECTION };
 
     if (address) {
-      params.search = `${QUERY_PARAMS_NAMES.ADDRESS}=${address}`;
+      params.search = `${QUERY_PARAMS_NAMES.ADDRESS}=${address}${
+        domain ? `@${domain}` : ''
+      }`;
     }
 
     history.push(params);
   };
 
   return (
-    <Form onSubmit={customHandleSubmit ? customHandleSubmit : onSubmit}>
+    <Form
+      onSubmit={customHandleSubmit ? customHandleSubmit : onSubmit}
+      initialValues={{
+        address: '',
+        domain: defaultValue?.id,
+      }}
+    >
       {({ handleSubmit }) => (
         <div className={classes.formContainer}>
           {notification && notification.hasNotification && (
@@ -233,6 +250,7 @@ export const FormComponent: React.FC<Props> = props => {
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
                 parse={onInputChanged}
+                additionalOnchangeAction={onAddressChanged}
                 disabled={disabledInput}
                 disabledInputGray={disabledInputGray}
                 loading={loading}
@@ -254,12 +272,14 @@ export const FormComponent: React.FC<Props> = props => {
                     formatOnBlur={formatOnFocusOut}
                     format={convert}
                     onClose={() => {
-                      toggleShowCustomDomain(false);
+                      toggleShowCustomDomain?.(false);
                     }}
                     parse={onInputChanged}
+                    additionalOnchangeAction={onDomainChanged}
                     hideError="true"
                     prefix={prefix}
                     disabled={disabledInput}
+                    disabledInputGray={disabledInputGray}
                     loading={isValidating}
                     hasRoundRadius={hasRoundRadius}
                     inputClassNames={inputCustomDomainClassNames}
@@ -271,12 +291,16 @@ export const FormComponent: React.FC<Props> = props => {
                   name="domain"
                   component={Dropdown}
                   options={options}
-                  customValue={CUSTOM_DROPDOWN_VALUE}
+                  customValue={
+                    toggleShowCustomDomain ? CUSTOM_DROPDOWN_VALUE : undefined
+                  }
                   toggleToCustom={() => {
-                    toggleShowCustomDomain(true);
+                    toggleShowCustomDomain?.(true);
                   }}
                   placeholder="Select Domain"
                   hideError
+                  disabled={disabledInput}
+                  additionalOnchangeAction={onDomainChanged}
                   actionOnChange={onInputChanged}
                   dropdownClassNames={dropdownClassNames}
                   controlClassNames={controlClassNames}
