@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { FieldRenderProps } from 'react-final-form';
 
 import { Label, LabelSuffix } from './StaticInputParts';
@@ -65,13 +65,6 @@ const Dropdown: FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
   } = meta;
 
   const { value, onChange } = input;
-
-  useEffect(() => {
-    if (defaultOptionValue) {
-      onChange?.(defaultOptionValue.id);
-      additionalOnchangeAction?.(defaultOptionValue.id);
-    }
-  }, [defaultOptionValue?.id]);
 
   const hasError =
     ((error || data?.error) &&

@@ -348,7 +348,7 @@ export const useContext = (): UseContextProps => {
         const { isPremium } = refDomainObj || {};
 
         const isRegistered = await apis.fio.availCheckTableRows(
-          setFioName(addressValue, refDomain),
+          setFioName(addressValue, domainValue),
         );
 
         if (isRegistered) {
@@ -361,11 +361,11 @@ export const useContext = (): UseContextProps => {
 
         const { fio, usdc } = convertFioPrices(prices.nativeFio.address, roe);
 
-        const fch = setFioName(addressValue, refDomain);
+        const fch = setFioName(addressValue, domainValue);
         const cartItem = {
           id: fch,
           address: addressValue,
-          domain: refDomain,
+          domain: domainValue,
           costFio: fio,
           costUsdc: usdc,
           costNativeFio: prices.nativeFio.address,
@@ -407,7 +407,6 @@ export const useContext = (): UseContextProps => {
       }
     },
     [
-      refDomain,
       prices.nativeFio,
       refCode,
       roe,

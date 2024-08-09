@@ -211,7 +211,13 @@ export const FormComponent: React.FC<Props> = props => {
   };
 
   return (
-    <Form onSubmit={customHandleSubmit ? customHandleSubmit : onSubmit}>
+    <Form
+      onSubmit={customHandleSubmit ? customHandleSubmit : onSubmit}
+      initialValues={{
+        address: '',
+        domain: defaultValue?.id,
+      }}
+    >
       {({ handleSubmit }) => (
         <div className={classes.formContainer}>
           {notification && notification.hasNotification && (
@@ -285,7 +291,9 @@ export const FormComponent: React.FC<Props> = props => {
                   name="domain"
                   component={Dropdown}
                   options={options}
-                  customValue={CUSTOM_DROPDOWN_VALUE}
+                  customValue={
+                    toggleShowCustomDomain ? CUSTOM_DROPDOWN_VALUE : undefined
+                  }
                   toggleToCustom={() => {
                     toggleShowCustomDomain?.(true);
                   }}

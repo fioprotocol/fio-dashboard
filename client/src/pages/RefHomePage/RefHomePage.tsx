@@ -210,7 +210,9 @@ export const RefHomePage: React.FC<Props &
           convert={onFocusOut}
           onInputChanged={onInputChanged}
           customHandleSubmit={isGatedFlow && customHandleSubmit}
-          toggleShowCustomDomain={setShowCustomDomainEdit}
+          toggleShowCustomDomain={
+            !isGatedFlow ? setShowCustomDomainEdit : undefined
+          }
           disabled={disabled && isGatedFlow}
           disabledInput={!isVerified && isGatedFlow}
           disabledInputGray
@@ -234,7 +236,12 @@ export const RefHomePage: React.FC<Props &
           inputCustomDomainClassNames={classes.customDomainInput}
           regInputCustomDomainClassNames={classes.customDomainRegInput}
           prefix="@"
-          options={options}
+          suffixText={
+            isGatedFlow && refDomainObjs.length === 1 && refDomain
+              ? `@${refDomain}`
+              : undefined
+          }
+          options={options.length > 1 || !isGatedFlow ? options : undefined}
           defaultValue={options.length > 0 ? options[0] : undefined}
           onDomainChanged={setRefDomain}
           formatOnFocusOut
