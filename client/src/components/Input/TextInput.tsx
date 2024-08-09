@@ -181,7 +181,7 @@ export const TextInput: React.ForwardRefRenderFunction<
 
     const currentValue = e.target.value;
 
-    const handleComboOnChange = (value: string) => {
+    const handleOnChange = (value: string) => {
       onChange?.(value);
       additionalOnchangeAction?.(value);
     };
@@ -191,7 +191,7 @@ export const TextInput: React.ForwardRefRenderFunction<
       transformInputValues({
         e,
         transformedValue,
-        onChange: handleComboOnChange,
+        onChange: handleOnChange,
       });
       return;
     }
@@ -200,11 +200,11 @@ export const TextInput: React.ForwardRefRenderFunction<
       transformInputValues({
         e,
         transformedValue,
-        onChange: handleComboOnChange,
+        onChange: handleOnChange,
       });
       return;
     }
-    handleComboOnChange(currentValue);
+    handleOnChange(currentValue);
   };
 
   if (type === 'hidden') return null;
