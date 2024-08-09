@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ethers } from 'ethers';
 import { useSelector, useDispatch } from 'react-redux';
@@ -62,7 +62,8 @@ type UseContextProps = {
   isWalletConnected: boolean;
   loaderText: string;
   publicKey: string | null;
-  refDomainObj: RefProfileDomain;
+  refDomain: string;
+  refDomainObjs: RefProfileDomain[];
   showBrowserExtensionErrorModal: boolean;
   showProviderWindowError: boolean;
   showProviderLoadingIcon: boolean;
@@ -70,10 +71,14 @@ type UseContextProps = {
   verifyLoading: boolean;
   connectWallet: () => void;
   closeSelectProviderModal: () => void;
-  customHandleSubmit: ({ address }: { address: string }) => Promise<void>;
+  customHandleSubmit: (data: {
+    address: string;
+    domain?: string;
+  }) => Promise<void>;
   onClick: () => void;
   onFocusOut: (value: string) => string;
   onInputChanged: (value: string) => string;
+  setRefDomain: (value: string) => void;
   setConnectionError: (data: null) => void;
   setShowBrowserExtensionErrorModal: (show: boolean) => void;
 };
@@ -141,16 +146,24 @@ export const useContext = (): UseContextProps => {
 
   const asset = refProfileInfo?.settings?.gatedRegistration?.params?.asset;
 
-  const refDomainObj = refProfileInfo?.settings?.domains.find(refDomainItem => {
-    if (!refDomainItem.expirationDate) return false;
+  const refDomainObjs = useMemo(
+    () =>
+      refProfileInfo?.settings?.domains.filter(refDomainItem => {
+        if (!refDomainItem.expirationDate) return false;
 
-    const isExpired = isDomainExpired(
-      refDomainItem.name,
-      refDomainItem.expirationDate,
-    );
+        const isExpired = isDomainExpired(
+          refDomainItem.name,
+          refDomainItem.expirationDate,
+        );
 
-    return !isExpired;
-  });
+        return !isExpired;
+      }) ?? [],
+    [refProfileInfo],
+  );
+
+  const [refDomain, setRefDomain] = useState(
+    refDomainObjs.length > 0 ? refDomainObjs[0]?.name : '',
+  );
 
   const isGatedFlow = refProfileInfo?.settings?.gatedRegistration?.isOn;
   const gatedChainId =
@@ -167,7 +180,7 @@ export const useContext = (): UseContextProps => {
     usersFreeAddresses &&
     usersFreeAddresses.find(
       freeAddress =>
-        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === refDomainObj?.name,
+        freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === refDomain,
     );
 
   const verifiedMessage = `${refProfileInfo?.label} ${
@@ -304,10 +317,7 @@ export const useContext = (): UseContextProps => {
   const onFocusOut = (value: string) => {
     if (!value) return;
 
-    const isNotValidAddressError = validateFioAddress(
-      value,
-      refDomainObj?.name,
-    );
+    const isNotValidAddressError = validateFioAddress(value, refDomain);
 
     if (isNotValidAddressError) {
       toggleFioVerificationError(true);
@@ -321,15 +331,24 @@ export const useContext = (): UseContextProps => {
   };
 
   const customHandleSubmit = useCallback(
-    async ({ address: addressValue }: { address: string }) => {
+    async ({
+      address: addressValue,
+      domain: domainValue,
+    }: {
+      address: string;
+      domain?: string;
+    }) => {
       if (!addressValue) return;
-      try {
-        const { name: refDomain, isPremium } = refDomainObj || {};
 
-        if (!refDomain) return;
+      try {
+        const refDomainObj = refDomainObjs.find(it => it.name === domainValue);
+
+        if (!domainValue || !refDomainObj) return;
+
+        const { isPremium } = refDomainObj || {};
 
         const isRegistered = await apis.fio.availCheckTableRows(
-          setFioName(addressValue, refDomain),
+          setFioName(addressValue, domainValue),
         );
 
         if (isRegistered) {
@@ -342,11 +361,11 @@ export const useContext = (): UseContextProps => {
 
         const { fio, usdc } = convertFioPrices(prices.nativeFio.address, roe);
 
-        const fch = setFioName(addressValue, refDomain);
+        const fch = setFioName(addressValue, domainValue);
         const cartItem = {
           id: fch,
           address: addressValue,
-          domain: refDomain,
+          domain: domainValue,
           costFio: fio,
           costUsdc: usdc,
           costNativeFio: prices.nativeFio.address,
@@ -388,7 +407,6 @@ export const useContext = (): UseContextProps => {
       }
     },
     [
-      refDomainObj,
       prices.nativeFio,
       refCode,
       roe,
@@ -502,11 +520,11 @@ export const useContext = (): UseContextProps => {
   ]);
 
   useEffect(() => {
-    if (refProfileInfo && !refDomainObj?.name) {
+    if (refProfileInfo && !refDomain) {
       toggleFioVerificationError(true);
       setInfoMessage(allDomainsHasBeenExpiredOrDoesnotExists);
     }
-  }, [refProfileInfo, refDomainObj?.name]);
+  }, [refProfileInfo, refDomain]);
 
   return {
     connectButtonDisabled:
@@ -522,7 +540,8 @@ export const useContext = (): UseContextProps => {
     isWalletConnected,
     loaderText,
     publicKey,
-    refDomainObj,
+    refDomain,
+    refDomainObjs,
     showBrowserExtensionErrorModal,
     showProviderWindowError:
       connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE,
@@ -535,6 +554,7 @@ export const useContext = (): UseContextProps => {
     onClick,
     onFocusOut,
     onInputChanged,
+    setRefDomain,
     setConnectionError,
     setShowBrowserExtensionErrorModal,
   };

@@ -57,14 +57,15 @@ export type AddressWidgetProps = {
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   notification?: AddressWidgetNotification;
-  customHandleSubmit?: ({
-    address,
-  }: {
+  customHandleSubmit?: (data: {
     address: string;
+    domain?: string;
   }) => Promise<void> | void;
   showSubmitButton?: boolean;
   placeHolderText?: string;
   onInputChanged?: (value: string) => string;
+  onAddressChanged?: (value: string) => void;
+  onDomainChanged?: (value: string) => void;
   buttonText?: string;
   stepNumber?: string;
   stepText?: string;
@@ -108,6 +109,8 @@ const AddressWidget: React.FC<AddressWidgetProps> = props => {
     showSubmitButton = true,
     placeHolderText,
     onInputChanged,
+    onAddressChanged,
+    onDomainChanged,
     buttonText,
     stepNumber,
     stepText,
@@ -180,6 +183,8 @@ const AddressWidget: React.FC<AddressWidgetProps> = props => {
         showSubmitButton={showSubmitButton}
         placeHolderText={placeHolderText}
         onInputChanged={onInputChanged}
+        onAddressChanged={onAddressChanged}
+        onDomainChanged={onDomainChanged}
         buttonText={buttonText}
         isBlueButton={isBlueButton}
         options={options}
