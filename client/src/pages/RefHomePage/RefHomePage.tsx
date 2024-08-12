@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
+import classNames from 'classnames';
+
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import { RefFioHandleBanner } from '../../components/RefFioHandleBanner';
@@ -63,6 +65,7 @@ export const RefHomePage: React.FC<Props &
     refLinkError,
     isContainedFlow,
   } = props;
+  const [showCustomDomainEdit, setShowCustomDomainEdit] = useState(false);
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
@@ -77,7 +80,8 @@ export const RefHomePage: React.FC<Props &
     isVerified,
     loaderText,
     publicKey,
-    refDomainObj,
+    refDomain,
+    refDomainObjs,
     showBrowserExtensionErrorModal,
     showProviderWindowError,
     showProviderLoadingIcon,
@@ -89,6 +93,7 @@ export const RefHomePage: React.FC<Props &
     onClick,
     onFocusOut,
     onInputChanged,
+    setRefDomain,
     setConnectionError,
     setShowBrowserExtensionErrorModal,
   } = useContext();
@@ -98,6 +103,7 @@ export const RefHomePage: React.FC<Props &
       setHideLoader(true);
     }
   }, [refProfileInfo]);
+
   useEffect(() => {
     if (refProfileInfo?.code) {
       firePageViewAnalyticsEvent(
@@ -106,6 +112,7 @@ export const RefHomePage: React.FC<Props &
       );
     }
   }, [refProfileInfo?.code, refProfileInfo?.label]);
+
   useEffect(() => {
     if (hideLoader) {
       const tId = setTimeout(
@@ -147,7 +154,6 @@ export const RefHomePage: React.FC<Props &
     });
 
     const refTitle = addressWidgetContent?.title as string;
-    const refDomain = refDomainObj?.name;
 
     const domainName = refDomain || 'rulez';
 
@@ -179,6 +185,11 @@ export const RefHomePage: React.FC<Props &
       );
     }
 
+    const options = refDomainObjs?.map(domain => ({
+      id: domain.name,
+      name: `@${domain.name}`,
+    }));
+
     return (
       <div className={classes.container}>
         <Helmet>
@@ -199,13 +210,41 @@ export const RefHomePage: React.FC<Props &
           convert={onFocusOut}
           onInputChanged={onInputChanged}
           customHandleSubmit={isGatedFlow && customHandleSubmit}
+          toggleShowCustomDomain={
+            !isGatedFlow ? setShowCustomDomainEdit : undefined
+          }
           disabled={disabled && isGatedFlow}
           disabledInput={!isVerified && isGatedFlow}
           disabledInputGray
           isAuthenticated={isAuthenticated}
           isDarkWhite
+          hasRoundRadius
+          showCustomDomainInput={showCustomDomainEdit}
+          inputClassNames={classes.input}
+          dropdownClassNames={classNames(
+            classes.dropdown,
+            disabled && isGatedFlow && classes.dropdownDisabled,
+          )}
+          controlClassNames={classes.control}
+          placeholderClassNames={classes.placeholder}
+          menuClassNames={classes.menu}
+          arrowCloseClassNames={classes.arrowClose}
+          arrowOpenClassNames={classes.arrowOpen}
+          optionItemClassNames={classes.optionItem}
+          optionButtonClassNames={classes.optionButton}
+          classNameContainer={classes.widgetContainer}
+          inputCustomDomainClassNames={classes.customDomainInput}
+          regInputCustomDomainClassNames={classes.customDomainRegInput}
+          prefix="@"
+          suffixText={
+            isGatedFlow && refDomainObjs.length === 1 && refDomain
+              ? `@${refDomain}`
+              : undefined
+          }
+          options={options.length > 1 || !isGatedFlow ? options : undefined}
+          defaultValue={options.length > 0 ? options[0] : undefined}
+          onDomainChanged={setRefDomain}
           formatOnFocusOut
-          suffixText={refDomain && `@${refDomain}`}
           showSignInWidget={!isGatedFlow}
         >
           {isGatedFlow && (

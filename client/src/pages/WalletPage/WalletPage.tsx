@@ -12,6 +12,7 @@ import WalletSettings from './components/WalletSettings';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
+import { NeedTokensBadge } from '../WalletsPage/components/NeedTokensBadge';
 import Title from '../WalletsPage/components/Title';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
@@ -58,6 +59,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
         text="Back"
         classNames={classes.backButton}
       />
+
       <Title title={title}>
         <ActionButtonsContainer>
           <Link
@@ -197,7 +199,10 @@ const WalletPage: React.FC = () => {
           receivedFioRequestsLoading={receivedFioRequestsLoading}
           tabAction={tabAction}
         />
-        <WelcomeComponent {...welcomeComponentProps} />
+        <div className={classes.layoutBadges}>
+          <WelcomeComponent withoutMarginTop {...welcomeComponentProps} />
+          <NeedTokensBadge className={classes.onlyMobile} />
+        </div>
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge
@@ -205,6 +210,7 @@ const WalletPage: React.FC = () => {
           publicKey={fioWallet.publicKey}
           isOpenLockedList={isOpenLockedList}
         />
+        <NeedTokensBadge className={classes.onlyDesktop} />
       </div>
     </div>
   );

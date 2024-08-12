@@ -41,16 +41,15 @@
     }
 
     .respondButtonText {
+      display: flex;
+      align-items: center;
+
       .buttonText {
-        margin: 0;
+        margin: 0 5px;
       }
 
       .icon {
-        position: absolute;
         color: $light-seafoam;
-        top: 50%;
-        right: 5px;
-        transform: translate(0, -50%);
       }
     }
   }

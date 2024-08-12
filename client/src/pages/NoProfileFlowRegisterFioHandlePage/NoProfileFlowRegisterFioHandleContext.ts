@@ -150,8 +150,9 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         }
 
         const isRegistered = await apis.fio.availCheckTableRows(fioHandle);
+        const chainDomain = await apis.fio.getFioDomain(domain);
 
-        if (isRegistered) {
+        if (isRegistered || (chainDomain && chainDomain.is_public === 0)) {
           toggleFioVerificationError(true);
           setInfoMessage(
             `This FIO Handle - ${setFioName(
@@ -201,12 +202,18 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
             domainListItem => domainListItem.name === domainValue,
           );
 
+          const existingDomainInChain = await apis.fio.getFioDomain(
+            domainValue,
+          );
+
           domain = domainValue;
 
-          if (existingDomainInList) {
-            domainType = existingDomainInList.isPremium
-              ? DOMAIN_TYPE.PREMIUM
-              : DOMAIN_TYPE.ALLOW_FREE;
+          if (existingDomainInList || existingDomainInChain) {
+            domainType =
+              existingDomainInList?.isPremium ||
+              (!existingDomainInList && existingDomainInChain)
+                ? DOMAIN_TYPE.PREMIUM
+                : DOMAIN_TYPE.ALLOW_FREE;
             type = CART_ITEM_TYPE.ADDRESS;
             nativeFioItemPrice = prices.nativeFio.address;
           } else {
@@ -300,7 +307,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     defaultValue: options && options[0],
     convert: onFocusOut,
     customHandleSubmit: isFioItemVerified ? verifiedSubmit : nonVerifiedSubmit,
-    onInputChanged: onInputChanged,
+    onInputChanged,
     toggleShowCustomDomain,
   };
 
@@ -313,7 +320,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
   useEffect(() => {
     if (publicKey) {
-      getFreePublicKeyAddresses(publicKey);
+      void getFreePublicKeyAddresses(publicKey);
     }
   }, [getFreePublicKeyAddresses, publicKey]);
 

@@ -50,17 +50,20 @@ export function useFioAddresses(
   const fioCryptoHandles: FioAddressDoublet[] = useSelector(fioAddresses);
   const isLoading: boolean = useSelector(walletsFioAddressesLoading);
 
-  useEffect(() => {
-    if (publicKey && isAuth) {
-      dispatch(getWalletsFioAddresses([publicKey]));
-    }
-  }, [publicKey, isAuth, dispatch]);
+  const walletsKeysDiffString = wallets
+    .map(it => it.publicKey)
+    .sort()
+    .join(';');
 
   useEffect(() => {
-    if (wallets.length > 0 && isAuth && !publicKey) {
+    if (!isAuth) return;
+
+    if (publicKey) {
+      dispatch(getWalletsFioAddresses([publicKey]));
+    } else if (wallets.length > 0) {
       dispatch(getWalletsFioAddresses(wallets.map(wallet => wallet.publicKey)));
     }
-  }, [wallets.length, isAuth, publicKey, wallets, dispatch]);
+  }, [publicKey, isAuth, walletsKeysDiffString, dispatch]);
 
   useEffect(() => {
     setResultFioAddressesList(

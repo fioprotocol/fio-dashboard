@@ -221,8 +221,8 @@ const WrapStatus: React.FC<PageProps> = props => {
     const preparedWrapDataListToCsv: {
       number: number;
       transactionId: string;
-      from: string;
-      to: string;
+      from?: string;
+      to?: string;
       amount?: string;
       domain?: string;
       status?: string;
@@ -246,8 +246,8 @@ const WrapStatus: React.FC<PageProps> = props => {
       const wrapObjectToCsv: {
         number: number;
         transactionId: string;
-        from: string;
-        to: string;
+        from?: string;
+        to?: string;
         amount?: string;
         domain?: string;
         status?: string;
@@ -256,8 +256,6 @@ const WrapStatus: React.FC<PageProps> = props => {
       } = {
         number: index + 1,
         transactionId,
-        from,
-        to,
       };
 
       if (asset === WRAP_FILTERS_NAME.TOKENS) {
@@ -266,6 +264,13 @@ const WrapStatus: React.FC<PageProps> = props => {
 
       if (asset === WRAP_FILTERS_NAME.DOMAINS) {
         wrapObjectToCsv.domain = domain;
+      }
+
+      if (from) {
+        wrapObjectToCsv.from = from;
+      }
+      if (to) {
+        wrapObjectToCsv.to = to;
       }
 
       wrapObjectToCsv.status = WRAP_STATUS_CONTENT[status].text;
@@ -278,6 +283,15 @@ const WrapStatus: React.FC<PageProps> = props => {
     }
 
     const currentDate = new Date();
+
+    const burnHeaders = [
+      '#',
+      'TransactionId',
+      'Domain',
+      'Status',
+      'Fitst transaction',
+      'Last transaction',
+    ];
 
     const headers = [
       '#',
@@ -297,14 +311,14 @@ const WrapStatus: React.FC<PageProps> = props => {
           wrapData.maxCount
         }_${currentDate.getFullYear()}-${currentDate.getMonth() +
           1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
-        headers,
+        headers: isBurned ? burnHeaders : headers,
       }).generateCsv(preparedWrapDataListToCsv);
     } catch (err) {
       log.error(err);
     }
 
     toggleIsExportingCsv(false);
-  }, [filters]);
+  }, [filters, isBurned]);
 
   const handleOpenLink = () => {
     if (isWrapSelected && isTokensSelected && !isBurnedDomainsSelected)
@@ -333,6 +347,8 @@ const WrapStatus: React.FC<PageProps> = props => {
             onChange={e => {
               if (e.target?.value === '2') {
                 setIsBurnedDomainsSelected(true);
+                setIsWrapSelected(false);
+                setIsTokensSelected(false);
               } else {
                 setIsWrapSelected(!parseInt(e.target.value));
                 setIsBurnedDomainsSelected(false);
@@ -352,7 +368,7 @@ const WrapStatus: React.FC<PageProps> = props => {
             defaultValue={isTokensSelected ? 0 : 1}
             onChange={e => setIsTokensSelected(!parseInt(e.target.value))}
           >
-            {!isBurned && <option value={0}>Tokens</option>}
+            {!isBurnedDomainsSelected && <option value={0}>Tokens</option>}
             <option value={1}>Domains</option>
           </select>
 

@@ -181,12 +181,17 @@ export const TextInput: React.ForwardRefRenderFunction<
 
     const currentValue = e.target.value;
 
+    const handleOnChange = (value: string) => {
+      onChange?.(value);
+      additionalOnchangeAction?.(value);
+    };
+
     if (lowerCased) {
       const transformedValue = currentValue.toLowerCase();
       transformInputValues({
         e,
         transformedValue,
-        onChange,
+        onChange: handleOnChange,
       });
       return;
     }
@@ -195,12 +200,11 @@ export const TextInput: React.ForwardRefRenderFunction<
       transformInputValues({
         e,
         transformedValue,
-        onChange,
+        onChange: handleOnChange,
       });
       return;
     }
-    onChange(currentValue);
-    if (additionalOnchangeAction) additionalOnchangeAction(currentValue);
+    handleOnChange(currentValue);
   };
 
   if (type === 'hidden') return null;

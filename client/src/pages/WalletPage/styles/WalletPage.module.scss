@@ -33,6 +33,14 @@
     max-width: none;
     width: auto;
     margin: 20px 20px 0;
+    gap: 30px;
+  }
+
+  .layoutBadges {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
   }
 
   .editIcon {
@@ -135,6 +143,10 @@
   margin-bottom: 0;
 }
 
+.onlyDesktop {
+  display: none;
+}
+
 @include sm {
   .hideTextOnMobile {
     display: none;
@@ -145,24 +157,12 @@
   }
 }
 
-@include md {
+@include rwd(768) {
   .container {
     padding: 30px 20px;
 
     .actionBadges {
-      margin: 0 20px;
-      width: auto;
-
-      > div {
-        a {
-          button {
-            min-width: auto !important;
-          }
-        }
-      }
-    }
-    .actionButton {
-      width: 40vw;
+      margin-bottom: 0;
     }
   }
 
@@ -172,6 +172,14 @@
 }
 
 @include lg {
+  .onlyMobile {
+    display: none;
+  }
+
+  .onlyDesktop {
+    display: block;
+  }
+
   .container {
     flex-direction: row;
     max-width: 1200px;
@@ -182,7 +190,7 @@
     .actionBadges {
       width: 100%;
       max-width: 365px;
-      margin: 0 20px 0 10px;
+      margin: 60px 20px 30px 10px;
     }
   }
 }
@@ -193,6 +201,6 @@
   }
 
   .actionBadges {
-    margin: 0 20px 0 30px;
+    margin: 60px 20px 30px 30px;
   }
 }

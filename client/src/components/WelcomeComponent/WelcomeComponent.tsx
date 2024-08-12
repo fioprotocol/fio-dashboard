@@ -15,6 +15,7 @@ import WelcomePromoSrc from '../../assets/images/welcome-promo.svg';
 import classes from './WelcomeComponent.module.scss';
 
 type Props = {
+  className?: string;
   onlyActions?: boolean;
   noPaddingTop?: boolean;
   withoutMarginTop?: boolean;
@@ -22,6 +23,7 @@ type Props = {
 
 export const WelcomeComponent: FC<Props> = props => {
   const {
+    className,
     onlyActions = false,
     noPaddingTop = false,
     withoutMarginTop,
@@ -43,6 +45,7 @@ export const WelcomeComponent: FC<Props> = props => {
       className={classnames(
         classes.container,
         withoutMarginTop && classes.withoutMarginTop,
+        className,
       )}
     >
       <div

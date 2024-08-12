@@ -18,7 +18,7 @@ import {
   checkAddressOrDomainIsExist,
   isDomainExpired,
   vaildateFioDomain,
-} from '../../util/fio';
+} from '../fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
 
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
