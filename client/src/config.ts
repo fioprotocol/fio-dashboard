@@ -15,6 +15,14 @@ const config = {
   getTokensUrl: process.env.REACT_APP_GET_TOKENS_URL || defaultGetTokensUrl,
   wrapStatusPage:
     process.env.REACT_APP_WRAP_STATUS_PAGE_BASE_URL || defaultWrapPage,
+  sentryDsn: process.env.REACT_APP_SENTRY_DSN,
+  sentryEnv: process.env.REACT_APP_SENTRY_ENV,
+  sentryReplaysSampleRate: Number(
+    process.env.REACT_APP_SENTRY_REPLAYS_SAMPLE_RATE || 0,
+  ),
+  sentryReplaysOnErrorSampleRate: Number(
+    process.env.REACT_APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1,
+  ),
 };
 
 export default config;

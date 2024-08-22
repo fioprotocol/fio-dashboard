@@ -1,11 +1,12 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Switch } from 'react-router-dom';
 
 import { WrapStatusContainer } from './components/WrapStatusContainer/WrapStatusContainer';
 import ScrollToTop from '../../components/ScrollToTop';
 import { Loader } from './components/Loader';
 
 import { ROUTES } from '../../constants/routes';
+import { SentryRoute } from '../../sentry';
 
 const WrapStatusPageUnwrapTokens = React.lazy(() =>
   import(
@@ -42,37 +43,37 @@ const Routes = (): React.ReactElement => (
     <ScrollToTop>
       <React.Suspense fallback={<Loader />}>
         <Switch>
-          <Route
+          <SentryRoute
             path={ROUTES.HOME}
             component={() => <Redirect to={ROUTES.WRAP_STATUS_WRAP_TOKENS} />}
             exact
           />
-          <Route
+          <SentryRoute
             path={ROUTES.WRAP_STATUS}
             component={() => <Redirect to={ROUTES.WRAP_STATUS_WRAP_TOKENS} />}
             exact
           />
-          <Route
+          <SentryRoute
             path={ROUTES.WRAP_STATUS_UNWRAP_TOKENS}
             component={WrapStatusPageUnwrapTokens}
             exact
           />
-          <Route
+          <SentryRoute
             path={ROUTES.WRAP_STATUS_WRAP_TOKENS}
             component={WrapStatusPageWrapTokens}
             exact
           />
-          <Route
+          <SentryRoute
             path={ROUTES.WRAP_STATUS_WRAP_DOMAINS}
             component={WrapStatusPageWrapDomains}
             exact
           />
-          <Route
+          <SentryRoute
             path={ROUTES.WRAP_STATUS_UNWRAP_DOMAINS}
             component={WrapStatusPageUnwrapDomains}
             exact
           />
-          <Route
+          <SentryRoute
             path={ROUTES.WRAP_STATUS_BURNED_DOMAINS}
             component={WrapStatusPageBurnedDomains}
             exact

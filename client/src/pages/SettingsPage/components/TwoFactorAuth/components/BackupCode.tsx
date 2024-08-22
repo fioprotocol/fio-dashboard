@@ -3,6 +3,8 @@ import CircleIcon from '@mui/icons-material/Circle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
+import classnames from 'classnames';
+
 import Badge, { BADGE_TYPES } from '../../../../../components/Badge/Badge';
 import EdgeConfirmAction from '../../../../../components/EdgeConfirmAction';
 
@@ -69,7 +71,7 @@ const BackupCode: React.FC = () => {
       <Badge
         show={true}
         type={BADGE_TYPES.WHITE}
-        className={classes.badgeContainer}
+        className={classnames(classes.badgeContainer, 'sentry-mask')}
       >
         {renderResults()}
         {!show ? (

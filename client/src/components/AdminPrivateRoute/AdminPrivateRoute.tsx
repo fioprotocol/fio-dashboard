@@ -1,12 +1,8 @@
 import React from 'react';
-import {
-  Redirect,
-  Route,
-  RouteComponentProps,
-  RouteProps,
-} from 'react-router-dom';
+import { Redirect, RouteComponentProps, RouteProps } from 'react-router-dom';
 
 import { ADMIN_ROUTES } from '../../constants/routes';
+import { SentryRoute } from '../../sentry';
 
 type Props = {
   isAdminAuthenticated: boolean;
@@ -26,7 +22,7 @@ const AdminPrivateRoute: React.FC<Props & RouteProps> = props => {
     return <Redirect to={ADMIN_ROUTES.ADMIN_LOGIN} />;
 
   return (
-    <Route
+    <SentryRoute
       render={(props: RouteComponentProps) => {
         return <Component {...props} />;
       }}

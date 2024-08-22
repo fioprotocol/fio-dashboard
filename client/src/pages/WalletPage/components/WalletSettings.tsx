@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
+import classnames from 'classnames';
+
 import Modal from '../../../components/Modal/Modal';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 import CopyTooltip from '../../../components/CopyTooltip';
@@ -223,7 +225,9 @@ const WalletSettings: React.FC<Props> = props => {
 
           <Badge type={BADGE_TYPES.WHITE} show={true}>
             <div className={classes.publicAddressContainer}>
-              <div className={classes.publicKey}>{key}</div>
+              <div className={classnames(classes.publicKey, 'sentry-mask')}>
+                {key}
+              </div>
             </div>
           </Badge>
 
