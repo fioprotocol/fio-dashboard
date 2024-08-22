@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Switch, Redirect } from 'react-router-dom';
 
 import AdminContainer from './components/AdminContainer';
 import ScrollToTop from '../components/ScrollToTop';
@@ -7,6 +7,7 @@ import AdminPrivateRoute from '../components/AdminPrivateRoute';
 import FioLoader from '../components/common/FioLoader/FioLoader';
 
 import { ADMIN_ROUTES } from '../constants/routes';
+import { SentryRoute } from '../sentry';
 
 const AdminLoginPage = React.lazy(() =>
   import(/* webpackChunkName: 'adminLoginPage' */ '../pages/AdminLoginPage'),
@@ -78,7 +79,7 @@ const Routes = (): React.ReactElement => (
     <ScrollToTop>
       <React.Suspense fallback={<FioLoader wrap />}>
         <Switch>
-          <Route
+          <SentryRoute
             path={ADMIN_ROUTES.ADMIN_LOGIN}
             component={AdminLoginPage}
             exact
@@ -103,12 +104,12 @@ const Routes = (): React.ReactElement => (
             component={AdminDefaultsPage}
             exact
           />
-          <Route
+          <SentryRoute
             path={ADMIN_ROUTES.ADMIN_CONFIRM_EMAIL}
             component={AdminEmailConfirmPage}
             exact
           />
-          <Route
+          <SentryRoute
             path={ADMIN_ROUTES.ADMIN_RESET_PASSWORD}
             component={AdminPasswordResetPage}
             exact

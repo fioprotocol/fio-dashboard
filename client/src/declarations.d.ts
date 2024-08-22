@@ -9,7 +9,10 @@ interface Window {
   initGeetest?: any;
   ethereum?: any;
   bitpay: any;
-  fioCorsFixfetch: any;
+  fioCorsFixfetch: (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ) => Promise<Response>;
 }
 
 declare module '@fioprotocol/fiosdk';
