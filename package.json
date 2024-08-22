@@ -130,7 +130,7 @@
     "@metamask/providers": "14.0.2",
     "@mui/icons-material": "5.11.0",
     "@mui/material": "5.11.5",
-    "@sentry/react": "^8.26.0",
+    "@sentry/react": "8.26.0",
     "@stripe/react-stripe-js": "1.14.2",
     "@stripe/stripe-js": "1.42.1",
     "@types/qrcode.react": "1.0.2",
