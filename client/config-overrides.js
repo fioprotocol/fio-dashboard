@@ -88,4 +88,13 @@ module.exports = {
 
     return paths;
   },
+  devServer: function(configFunction) {
+    return function(proxy, allowedHost) {
+      const config = configFunction(proxy, allowedHost)
+      config.headers = {
+        'Document-Policy': 'js-profiling'
+      }
+      return config
+    }
+  }
 };

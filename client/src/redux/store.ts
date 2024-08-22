@@ -20,6 +20,7 @@ import rootSaga from './sagas';
 
 import { Api } from '../api';
 import { ReduxState } from './init';
+import { sentryReduxEnhancer } from '../sentry';
 
 export default function configureStore(api: Api, history: History): Store {
   const compose =
@@ -38,6 +39,7 @@ export default function configureStore(api: Api, history: History): Store {
         routerMiddleware(history),
         sagaMiddleware,
       ),
+      sentryReduxEnhancer,
     ),
   );
 

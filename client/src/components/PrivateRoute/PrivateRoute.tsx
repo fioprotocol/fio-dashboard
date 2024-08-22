@@ -1,11 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Redirect,
-  Route,
-  RouteComponentProps,
-  RouteProps,
-} from 'react-router-dom';
+import { Redirect, RouteComponentProps, RouteProps } from 'react-router-dom';
 
 import Loader from '../Loader/Loader';
 
@@ -16,6 +11,7 @@ import {
 } from '../../redux/profile/selectors';
 
 import { ROUTES } from '../../constants/routes';
+import { SentryRoute } from '../../sentry';
 
 type OwnProps = {
   redirectOptions?: {
@@ -33,7 +29,7 @@ export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
   const isAuthenticated = useSelector(isAuthenticatedSelector);
 
   return (
-    <Route
+    <SentryRoute
       {...rest}
       render={(props: RouteComponentProps) => {
         if (loading && !isAuthenticated) {
