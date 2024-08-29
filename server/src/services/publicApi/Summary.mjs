@@ -64,11 +64,11 @@ export default class Summary extends Base {
     const orderItemWhere = {};
 
     if (address) {
-      orderItemWhere.address = address;
+      orderItemWhere.address = address.toLowerCase();
     }
 
     if (domain) {
-      orderItemWhere.domain = domain;
+      orderItemWhere.domain = domain.toLowerCase();
     }
 
     if (type) {

@@ -92,10 +92,13 @@ export default class BuyAddress extends Base {
       });
     }
 
-    const { type, fioAddress, fioDomain } = destructAddress(address);
+    const lowerCasedAddress = address ? address.toLowerCase() : address;
+    const { type, fioAddress, fioDomain } = destructAddress(lowerCasedAddress);
 
     try {
-      fioAddress ? FIOSDK.isFioAddressValid(address) : FIOSDK.isFioDomainValid(fioDomain);
+      fioAddress
+        ? FIOSDK.isFioAddressValid(lowerCasedAddress)
+        : FIOSDK.isFioDomainValid(fioDomain);
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid ${type}`,
@@ -137,7 +140,7 @@ export default class BuyAddress extends Base {
 
     if (type === 'account') {
       const addressFromChain = await fioApi
-        .getFioAddress(address)
+        .getFioAddress(lowerCasedAddress)
         .then(formatChainAddress);
 
       if (addressFromChain) {
@@ -151,7 +154,7 @@ export default class BuyAddress extends Base {
       const isRegistrationAddressExist = await this.isSameAccountRegistrationExist(
         publicKey,
         refProfile,
-        address,
+        lowerCasedAddress,
       );
 
       if (isRegistrationAddressExist) {
