@@ -151,10 +151,32 @@
 
 .walletTextInModal {
   color: black;
+  @include proxima-nova-semibold;
 }
 
 .deleteSecondText {
-  font-family: 'Proxima Nova Bold', sans-serif;
+  margin-top: 1em;
+  display: inline-block;
+  @include proxima-nova-regular;
+}
+
+.balance {
+  display: block;
+  margin-bottom: 1.25em;
+  @include proxima-nova-regular;
+
+  .balanceValue {
+    display: inline-flex !important;
+  }
+}
+
+.dependenciesCount {
+  margin-bottom: 1.25em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  @include proxima-nova-regular;
 }
 
 @include lg {
