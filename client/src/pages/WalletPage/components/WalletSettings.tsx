@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
@@ -41,6 +41,12 @@ import {
 } from '../types';
 
 import classes from '../styles/WalletDetailsModal.module.scss';
+import {
+  fioDomains as fioDomainsSelector,
+  fioAddresses as fioAddressesSelector,
+  fioWalletsBalances as fioWalletsBalancesSelector,
+} from '../../../redux/fio/selectors';
+import { PriceComponent } from '../../../components/PriceComponent';
 
 type Props = {
   show: boolean;
@@ -54,6 +60,19 @@ const WalletSettings: React.FC<Props> = props => {
   const { show, fioWallet, fioWalletsAmount, userType, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const fioDomains = useSelector(fioDomainsSelector);
+  const fioAddresses = useSelector(fioAddressesSelector);
+  const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
+
+  const balance = fioWalletsBalances.wallets[fioWallet.publicKey].total;
+
+  const walletFioDomainsCount = fioDomains.filter(
+    it => it.walletPublicKey === fioWallet.publicKey,
+  ).length;
+  const walletFioAddressesCount = fioAddresses.filter(
+    it => it.walletPublicKey === fioWallet.publicKey,
+  ).length;
 
   const isPrimaryUserProfileType = userType === USER_PROFILE_TYPE.PRIMARY;
 
@@ -354,42 +373,50 @@ const WalletSettings: React.FC<Props> = props => {
         onClose={() => setShowDeleteConfirm(false)}
         onActionButtonClick={onDeleteConfirm}
         buttonText="Yes, Delete This Wallet"
-        title="Are You Sure?"
+        title={`Delete ${fioWallet.name}`}
         showCancel={true}
         cancelButtonText="Cancel"
         subtitle={
           <>
-            <span>
-              If you permanently delete your wallet, you will no longer have
-              access to it from the FIO App.
+            <span className={classes.balance}>
+              Wallet Balance:&nbsp;
+              <PriceComponent
+                className={classes.balanceValue}
+                costFio={balance.fio}
+                costUsdc={balance.usdc}
+              />
             </span>
-            <br />
-            {isLedgerWallet ? (
-              <span className={classes.deleteSecondText}>
-                <b>
-                  However, this wallet’s private keys are stored on your Ledger
-                  device and can be import again at any time.
-                </b>
-              </span>
-            ) : isMetamaskWallet ? (
-              <span className={classes.deleteSecondText}>
-                <b>
-                  However, this wallet’s private keys are stored on your
-                  MetaMask wallet and can be import again at any time.
-                </b>
-              </span>
-            ) : (
-              <span className={classes.deleteSecondText}>
-                <b>
-                  Please make sure that you have recorded your private keys for
-                  this{' '}
-                  <span className={classes.walletTextInModal}>
-                    {fioWallet?.name || 'wallet'}
-                  </span>{' '}
-                  to prevent loss of your holdings.
-                </b>
+            {walletFioDomainsCount + walletFioAddressesCount > 0 && (
+              <span className={classes.dependenciesCount}>
+                {walletFioDomainsCount > 0 && (
+                  <span>Domains: {walletFioDomainsCount} Domains</span>
+                )}
+                {walletFioAddressesCount > 0 && (
+                  <span>FIO Handles: {walletFioAddressesCount} Handles</span>
+                )}
               </span>
             )}
+            <span>
+              If you permanently delete your wallet, you will no longer have
+              access to it or your crypto/NFT holdings within this wallet.
+            </span>
+            <br />
+            <span className={classes.deleteSecondText}>
+              {isLedgerWallet ? (
+                'However, this wallet’s private keys are stored on your Ledger device and can be import again at any time.'
+              ) : isMetamaskWallet ? (
+                'However, this wallet’s private keys are stored on your MetaMask wallet and can be import again at any time.'
+              ) : (
+                <>
+                  Please make sure that you have recorded your private keys for
+                  this
+                  <span className={classes.walletTextInModal}>
+                    &nbsp;wallet&nbsp;
+                  </span>
+                  to prevent loss of your holdings.
+                </>
+              )}
+            </span>
           </>
         }
       />
