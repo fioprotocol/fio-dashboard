@@ -170,8 +170,10 @@ const WalletSettings: React.FC<Props> = props => {
   const onDeleteConfirmModal = async (values: DeleteWalletFormValues) => {
     setLoading({ ...loading, deleteWallet: true });
     try {
-      const account = await apis.edge.login(values.username, values.password);
-      if (!account) throw new Error();
+      if (isPrimaryUserProfileType) {
+        const account = await apis.edge.login(values.username, values.password);
+        if (!account) throw new Error();
+      }
     } catch (e) {
       return { password: 'Invalid Password' };
     } finally {
@@ -328,10 +330,10 @@ const WalletSettings: React.FC<Props> = props => {
               title={isLedgerWallet ? 'Private Key' : 'Warning!'}
               message={
                 isLedgerWallet
-                  ? 'Your private key for this wallet is stored on your ledger device. Once Deleted, it can be added back at any time.'
+                  ? "However, this wallet's private keys are stored on your Ledger device and can be import again at any time."
                   : isMetamaskWallet
-                  ? 'Your private key for this wallet is stored on your MetaMask wallet. Once Deleted, it can be added back at any time.'
-                  : 'Record your private key as this wallet will be permanently lost.'
+                  ? "However, this wallet's private keys are stored on your MetaMask wallet and can be import again at any time."
+                  : 'If you permanently delete your wallet, you will no longer have access to it from the FIO App.'
               }
             />
             <DeleteWalletForm
