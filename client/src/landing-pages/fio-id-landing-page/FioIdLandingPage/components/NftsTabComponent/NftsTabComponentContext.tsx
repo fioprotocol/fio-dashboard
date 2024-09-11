@@ -93,7 +93,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       (await apis.fio.getNFTs({ fioAddress: fch }, DEFAULT_LIMIT, offset)) ||
       {};
 
-    toggleHasMore(more);
+    toggleHasMore(!!more);
     setOffset(offset + DEFAULT_LIMIT);
 
     if (!nfts?.length) {

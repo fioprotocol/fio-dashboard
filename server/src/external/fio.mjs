@@ -2,11 +2,8 @@ import crypto from 'crypto';
 
 import superagent from 'superagent';
 
-import fiosdkLib from '@fioprotocol/fiosdk';
-import entities from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import fetch from 'node-fetch';
-import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
-import { Constants } from '@fioprotocol/fiosdk/lib/utils/constants';
+import { FIOSDK, fioConstants, EndPoint } from '@fioprotocol/fiosdk';
 
 import { FioApiUrl, Var } from '../models';
 
@@ -24,7 +21,6 @@ import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
 
-export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
 export const INSUFFICIENT_BALANCE = 'Insufficient balance';
@@ -35,7 +31,6 @@ export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
 export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
 const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
-const EndPoint = entities.EndPoint;
 
 const FIO_ACTION_NAMES = {
   [FIO_ACTIONS.registerFioAddress]: 'regaddress',
@@ -83,8 +78,8 @@ class Fio {
         masterPubKey,
         apiUrls,
         fetch,
-        '',
-        '',
+        null,
+        null,
         true,
       );
     }
@@ -154,9 +149,9 @@ class Fio {
     if (abisVar && !Var.updateRequired(abisVar.updatedAt, ABIS_UPDATE_TIMEOUT_SEC)) {
       const abis = JSON.parse(abisVar.value);
 
-      for (const accountName of Constants.rawAbiAccountName) {
-        if (!Transactions.abiMap.get(accountName) && abis[accountName]) {
-          Transactions.abiMap.set(abis[accountName].name, abis[accountName].response);
+      for (const accountName of fioConstants.rawAbiAccountName) {
+        if (!FIOSDK.abiMap.get(accountName) && abis[accountName]) {
+          FIOSDK.abiMap.set(abis[accountName].name, abis[accountName].response);
         }
       }
 
@@ -164,13 +159,13 @@ class Fio {
     }
 
     const abisObj = {};
-    for (const accountName of Constants.rawAbiAccountName) {
+    for (const accountName of fioConstants.rawAbiAccountName) {
       try {
         const fioPublicSdk = await fioApi.getPublicFioSDK();
 
-        if (!Transactions.abiMap.get(accountName)) {
+        if (!FIOSDK.abiMap.get(accountName)) {
           const abiResponse = await fioPublicSdk.getAbi(accountName);
-          Transactions.abiMap.set(abiResponse.account_name, abiResponse);
+          FIOSDK.abiMap.set(abiResponse.account_name, abiResponse);
           abisObj[accountName] = {
             name: abiResponse.account_name,
             response: abiResponse,

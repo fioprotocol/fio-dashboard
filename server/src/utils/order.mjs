@@ -1,4 +1,4 @@
-import fiosdkLib from '@fioprotocol/fiosdk';
+import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import { Payment } from '../models/Payment.mjs';
 import { Wallet } from '../models/Wallet.mjs';
@@ -89,15 +89,14 @@ export const countTotalPriceAmount = orderItems =>
       return {
         fioNativeTotal,
         usdcTotal,
-        fioTotal: fiosdkLib.FIOSDK.SUFToAmount(fioNativeTotal).toFixed(2),
+        fioTotal: FIOSDK.SUFToAmount(fioNativeTotal).toFixed(2),
       };
     },
     { fioNativeTotal: 0, usdcTotal: 0 },
   );
 
 export const transformCostToPriceString = ({ fioNativeAmount, usdcAmount }) => {
-  if (fioNativeAmount)
-    return `${fiosdkLib.FIOSDK.SUFToAmount(fioNativeAmount).toFixed(2)} FIO`;
+  if (fioNativeAmount) return `${FIOSDK.SUFToAmount(fioNativeAmount).toFixed(2)} FIO`;
 
   if (usdcAmount) {
     if (typeof usdcAmount === 'string') return `$${usdcAmount}`;
@@ -143,7 +142,7 @@ export const transformOrderItemCostToPriceString = ({
 export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
   return errItems.reduce((acc, errItem) => {
     const { errorType, errorData } = errItem;
-    let badgeKey = '';
+    let badgeKey;
     let totalCurrency;
     let customItemAmount = null;
 

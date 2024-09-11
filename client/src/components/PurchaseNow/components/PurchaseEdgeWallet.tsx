@@ -91,12 +91,13 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
 
       if (!registration.isFree) {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
+        // TODO invalid types
         let signedTx: SignedTxArgs;
         if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-          signedTx = await apis.fio.walletFioSDK.genericAction(
+          signedTx = ((await apis.fio.walletFioSDK.genericAction(
             registration.isCombo
-              ? ACTIONS.registerFioDomainAddress
-              : ACTIONS.registerFioAddress,
+              ? (ACTIONS.registerFioDomainAddress as 'registerFioDomainAddress')
+              : (ACTIONS.registerFioAddress as 'registerFioAddress'),
             {
               fioAddress: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -108,7 +109,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 : apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
-          );
+          )) as unknown) as SignedTxArgs;
         } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
@@ -121,8 +122,8 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS);
           }
 
-          signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.addBundledTransactions,
+          signedTx = ((await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.addBundledTransactions as 'addBundledTransactions',
             {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
@@ -133,7 +134,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
-          );
+          )) as unknown) as SignedTxArgs;
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
@@ -146,8 +147,8 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
           }
 
-          signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioDomain,
+          signedTx = ((await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.registerFioDomain as 'registerFioDomain',
             {
               fioDomain: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -158,7 +159,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
               ownerPublicKey: ownerFioPublicKey,
             },
-          );
+          )) as unknown) as SignedTxArgs;
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
           const hasTheSameItem = registrations.some(
             registrationItem =>
@@ -171,8 +172,8 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             await sleep(DEFAULT_TIME_TO_WAIT_BEFORE_SIMILAR_TRANSACTIONS); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
           }
 
-          signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.renewFioDomain,
+          signedTx = ((await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.renewFioDomain as 'renewFioDomain',
             {
               fioDomain: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -182,10 +183,10 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
-          );
+          )) as unknown) as SignedTxArgs;
         } else {
-          signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioAddress,
+          signedTx = ((await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.registerFioAddress as 'registerFioAddress',
             {
               fioAddress: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -196,7 +197,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               ownerPublicKey: ownerFioPublicKey,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
-          );
+          )) as unknown) as SignedTxArgs;
         }
 
         result.registered.push({
