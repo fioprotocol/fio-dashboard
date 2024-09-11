@@ -1,4 +1,4 @@
-import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+import { EndPoint, GenericAction, PublicAddress } from '@fioprotocol/fiosdk';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
@@ -39,7 +39,7 @@ const linkTokens = async ({
   fee?: number;
   disconnectAll?: boolean;
   executeAction: (
-    action: string,
+    action: GenericAction,
     params: {
       fioAddress: string;
       fee?: number;
@@ -49,7 +49,7 @@ const linkTokens = async ({
 }): Promise<LinkActionResult> => {
   const updatePubAddresses = async (
     publicAddresses: PublicAddressDoublet[],
-    action: string,
+    action: GenericAction,
     oneBundleTransaction?: boolean,
   ) => {
     let updatedConnections: PublicAddressDoublet[] = [];
@@ -132,7 +132,7 @@ const linkTokens = async ({
         error?: string | null;
       } = await updatePubAddresses(
         normalizePublicAddresses(connectList),
-        ACTIONS.addPublicAddresses,
+        ACTIONS.addPublicAddresses as GenericAction,
       );
 
       const connectionsFailed: PublicAddressDoublet[] = [];
@@ -162,8 +162,8 @@ const linkTokens = async ({
       } = await updatePubAddresses(
         normalizePublicAddresses(disconnectList),
         disconnectAll
-          ? ACTIONS.removeAllPublicAddresses
-          : ACTIONS.removePublicAddresses,
+          ? (ACTIONS.removeAllPublicAddresses as GenericAction)
+          : (ACTIONS.removePublicAddresses as GenericAction),
         disconnectAll,
       );
 
@@ -208,7 +208,7 @@ export const linkTokensEdge = async ({
   disconnectAll?: boolean;
 }): Promise<LinkActionResult> => {
   const executeAction = async (
-    action: string,
+    action: GenericAction,
     params: {
       fioAddress: string;
       fee?: number;
@@ -246,7 +246,7 @@ export const linkTokensLedger = async ({
   fioWallet: FioWalletDoublet;
 }): Promise<LinkActionResult> => {
   const executeAction = async (
-    action: string,
+    action: GenericAction,
     params: {
       fioAddress: string;
       fee?: number;
@@ -282,7 +282,7 @@ export const linkTokensLedger = async ({
     });
 
     await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
+      apis.fio.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]] as EndPoint,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

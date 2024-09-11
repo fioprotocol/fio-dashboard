@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import isEqual from 'lodash/isEqual';
-import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+import { PublicAddress } from '@fioprotocol/fiosdk';
 
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
 import {

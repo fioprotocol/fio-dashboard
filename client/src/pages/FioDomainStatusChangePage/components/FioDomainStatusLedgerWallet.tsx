@@ -2,6 +2,8 @@ import React from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
@@ -69,7 +71,7 @@ const FioDomainStatusLedgerWallet: React.FC<Props> = props => {
     });
 
     return await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints.setFioDomainPublic,
+      apis.fio.actionEndPoints.setFioDomainPublic as EndPoint,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

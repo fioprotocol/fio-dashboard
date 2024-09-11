@@ -2,7 +2,7 @@ import {
   FieldValidationFunctionSync,
   FieldValidationFunctionAsync,
 } from '@lemoncode/fonk';
-import { allRules } from '@fioprotocol/fiosdk/lib/utils/validation';
+import { allRules } from '@fioprotocol/fiosdk';
 
 import {
   DOMAIN_ALREADY_EXISTS,

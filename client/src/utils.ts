@@ -3,7 +3,7 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
 import camelCase from 'camelcase';
-import { GetObtDataRecord } from '@fioprotocol/fiosdk/src/entities/GetObtDataRecord';
+import { FioItem, FioSentItem } from '@fioprotocol/fiosdk';
 
 import {
   Domain,
@@ -145,10 +145,10 @@ export const getElementByFioName = ({
 };
 
 export const camelizeFioRequestsData = (
-  data: GetObtDataRecord[],
+  data: (FioSentItem | FioItem)[],
 ): FioRecord[] => {
   const result: FioRecord[] = [];
-  data.forEach((o: GetObtDataRecord, i: number) => {
+  data.forEach((o: FioSentItem | FioItem, i: number) => {
     const resultItem: FioRecord = {
       content: '',
       fioRequestId: 0,

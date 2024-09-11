@@ -1,6 +1,6 @@
 import { MouseEvent as ReactMouseEvent } from 'react';
 import { EdgeAccount } from 'edge-core-js';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+import { NftItem } from '@fioprotocol/fiosdk';
 
 import { LocationState, Path } from 'history';
 
