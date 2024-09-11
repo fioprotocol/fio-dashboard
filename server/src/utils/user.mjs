@@ -3,6 +3,7 @@ import { fioApi } from '../external/fio.mjs';
 import logger from '../logger.mjs';
 import { Notification, ReferrerProfile, User, Wallet } from '../models/index.mjs';
 import { WALLET_CREATED_FROM } from '../config/constants.js';
+import config from '../config/index.mjs';
 
 const DEFAULT_CHUNK_LIMIT = 100;
 
@@ -146,3 +147,13 @@ export const getExistUsersByPublicKeyOrCreateNew = async (
 
   return [user.json()];
 };
+
+export function emailToUsername(email) {
+  if (email && email.indexOf('@') > 0) {
+    const [name, domain] = email.toLowerCase().split('@');
+    // return name
+    return `${name}${config.user.fioDashUsernameDelimiter}${domain}`;
+  }
+
+  return '';
+}
