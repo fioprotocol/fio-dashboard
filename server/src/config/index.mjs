@@ -51,5 +51,8 @@ export default {
     fioTokenEthContract: process.env.WRAP_STATUS_PAGE_FIO_TOKEN_ETH_CONTRACT,
     fioHistoryOffset: process.env.WRAP_STATUS_PAGE_FIO_HISTORY_OFFSET,
   },
+  user: {
+    fioDashUsernameDelimiter: `.fio.dash.${process.env.EDGE_ACC_DELIMITER || ''}`,
+  },
   ...dbConfig,
 };

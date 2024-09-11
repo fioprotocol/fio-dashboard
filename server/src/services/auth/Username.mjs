@@ -1,6 +1,7 @@
 import { User } from '../../models';
 import Base from '../Base';
-import X from '../Exception';
+
+import { emailToUsername } from '../../utils/user.mjs';
 
 export default class AuthUsername extends Base {
   static get validationRules() {
@@ -17,12 +18,7 @@ export default class AuthUsername extends Base {
     });
 
     if (!user) {
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: {
-          email: 'INVALID',
-        },
-      });
+      return { data: emailToUsername(email) };
     }
     const { username } = user;
 
