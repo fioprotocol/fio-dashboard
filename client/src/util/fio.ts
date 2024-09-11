@@ -1,8 +1,14 @@
 import { TextDecoder, TextEncoder } from 'text-encoding';
-import { Transactions as FioTransactionsProvider } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
-import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+import {
+  PublicAddress,
+  FIOSDK,
+  Account,
+  Action,
+  allRules,
+  validate,
+  RawRequest,
+} from '@fioprotocol/fiosdk';
 import { Api as ChainApi, Numeric as ChainNumeric } from '@fioprotocol/fiojs';
-import { allRules, validate } from '@fioprotocol/fiosdk/lib/utils/validation';
 
 import {
   AbiProvider,
@@ -12,7 +18,7 @@ import {
 import apis from '../api';
 import { AdminDomain } from '../api/responses';
 import { setFioName } from '../utils';
-import { convertToNewDate, log } from '../util/general';
+import { convertToNewDate, log } from './general';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
@@ -228,7 +234,7 @@ export const serializeTransaction = async (
   try {
     const abiProvider: AbiProvider = {
       getRawAbi: async (accountName: string) => {
-        const rawAbi = FioTransactionsProvider.abiMap.get(accountName);
+        const rawAbi = FIOSDK.abiMap.get(accountName);
         if (!rawAbi) {
           throw new Error(`Missing ABI for account ${accountName}`);
         }
@@ -380,12 +386,12 @@ export const prepareChainTransaction = async (
   walletPublicKey: string,
   action: string,
   data: AnyObject,
-): Promise<{ chainId: string; transaction: RawTransaction }> => {
+): Promise<{ chainId: string; transaction: RawRequest }> => {
   const chainData = await apis.fio.publicFioSDK.transactions.getChainDataForTx();
   const transaction = await apis.fio.publicFioSDK.transactions.createRawTransaction(
     {
-      account: FIO_ACCOUNT_NAMES[action],
-      action: FIO_ACTION_NAMES[action],
+      account: FIO_ACCOUNT_NAMES[action] as Account,
+      action: FIO_ACTION_NAMES[action] as Action,
       data: data,
       publicKey: walletPublicKey,
       chainData,

@@ -1,4 +1,4 @@
-import { FioAddresses } from '@fioprotocol/fiosdk/src/entities/FioAddresses';
+import { EndPoint, FioAddress } from '@fioprotocol/fiosdk';
 
 import apis, { Api } from '../../api';
 
@@ -95,7 +95,7 @@ export const getFee = (
       return api.fio.getFeeFromTable(ENDPOINT_FEE_HASH[endpoint]);
     }
 
-    return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
+    return api.fio.publicFioSDK.getFee(endpoint as EndPoint, fioAddress);
   },
   endpoint,
 });
@@ -138,7 +138,7 @@ export const getWalletsFioAddresses = (
     GET_WALLETS_FIO_ADDRESSES_FAILURE,
   ],
   promise: async (api: Api) => {
-    let list: FioAddresses[] = [];
+    let list: FioAddress[] = [];
     const responses = await Promise.allSettled(
       publicKeys.map((publicKey: string) =>
         api.fio

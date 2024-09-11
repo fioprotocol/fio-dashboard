@@ -33,7 +33,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       offset,
     );
 
-    toggleHasMore(more);
+    toggleHasMore(!!more);
     setOffset(offset + DEFAULT_LIMIT);
 
     const socialLinksList = public_addresses

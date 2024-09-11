@@ -26,6 +26,7 @@ import {
   BeforeSubmitProps,
 } from '../types';
 import { prices as pricesSelector } from '../../../redux/registrations/selectors';
+import { SignedTxArgs } from '../../../api/fio';
 
 const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
   const {
@@ -62,10 +63,10 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
         signedTxs[item.name] = {
-          signedTx: await apis.fio.walletFioSDK.genericAction(
+          signedTx: ((await apis.fio.walletFioSDK.genericAction(
             isComboRegistration
-              ? ACTIONS.registerFioDomainAddress
-              : ACTIONS.registerFioAddress,
+              ? (ACTIONS.registerFioDomainAddress as 'registerFioDomainAddress')
+              : (ACTIONS.registerFioAddress as 'registerFioAddress'),
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
@@ -80,7 +81,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
-          ),
+          )) as unknown) as SignedTxArgs,
           signingWalletPubKey:
             allWalletKeysInAccount[item.fioWallet.edgeId].public,
         };

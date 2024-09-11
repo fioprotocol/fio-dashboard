@@ -3,6 +3,8 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 import { Ecc } from '@fioprotocol/fiojs';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
@@ -89,7 +91,7 @@ const PaymentDetailsLedgerWallet: React.FC<Props> = props => {
     });
 
     const result = await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints.recordObtData,
+      apis.fio.actionEndPoints.recordObtData as EndPoint,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

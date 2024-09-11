@@ -4,6 +4,8 @@ import { Ecc } from '@fioprotocol/fiojs';
 
 import { FC, useEffect, useState } from 'react';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
@@ -81,7 +83,7 @@ const SendLedgerWallet: FC<Props> = props => {
     });
 
     const result: TrxResponse = await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints.transferTokens,
+      apis.fio.actionEndPoints.transferTokens as EndPoint,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(
@@ -153,7 +155,7 @@ const SendLedgerWallet: FC<Props> = props => {
         });
 
         await apis.fio.publicFioSDK.executePreparedTrx(
-          apis.fio.actionEndPoints.recordObtData,
+          apis.fio.actionEndPoints.recordObtData as EndPoint,
           {
             compression: 0,
             packed_context_free_data: arrayToHex(
