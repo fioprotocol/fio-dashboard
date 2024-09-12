@@ -142,7 +142,7 @@ export const transformOrderItemCostToPriceString = ({
 export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
   return errItems.reduce((acc, errItem) => {
     const { errorType, errorData } = errItem;
-    let badgeKey;
+    let badgeKey = '';
     let totalCurrency;
     let customItemAmount = null;
 

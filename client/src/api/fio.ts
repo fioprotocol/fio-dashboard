@@ -134,11 +134,11 @@ export default class Fio {
 
   constructor() {
     this.publicFioSDK = new FIOSDK(
-      null,
-      null,
+      '',
+      '',
       this.baseurls,
       window.fioCorsFixfetch,
-      null,
+      '',
       this.tpid,
     );
   }
@@ -247,7 +247,7 @@ export default class Fio {
       keys.public,
       this.baseurls,
       window.fioCorsFixfetch,
-      null,
+      '',
       this.tpid,
     );
   };
