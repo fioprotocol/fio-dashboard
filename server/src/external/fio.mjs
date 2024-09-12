@@ -78,8 +78,8 @@ class Fio {
         masterPubKey,
         apiUrls,
         fetch,
-        null,
-        null,
+        '',
+        '',
         true,
       );
     }
