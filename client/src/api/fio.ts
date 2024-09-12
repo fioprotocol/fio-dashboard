@@ -258,7 +258,7 @@ export default class Fio {
       keys.public,
       this.baseurls,
       window.fioCorsFixfetch,
-      null,
+      '',
       this.tpid,
     );
   };
