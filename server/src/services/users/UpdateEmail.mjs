@@ -2,6 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { User } from '../../models';
+import logger from '../../logger.mjs';
 
 export default class UsersUpdateEmail extends Base {
   static get validationRules() {
@@ -15,22 +16,23 @@ export default class UsersUpdateEmail extends Base {
   }
 
   async execute({ data: { newEmail } }) {
-    const user = await User.findById(this.context.id, {
-      where: { status: User.STATUS.ACTIVE },
-    });
+    try {
+      const user = await User.findById(this.context.id, {
+        where: { status: User.STATUS.ACTIVE },
+      });
 
-    if (!user) {
+      await user.update({ email: newEmail });
+
+      return { data: { success: true } };
+    } catch (error) {
+      logger.error(error);
       throw new X({
-        code: 'NOT_FOUND',
+        code: 'SERVER_ERROR',
         fields: {
-          id: 'NOT_FOUND',
+          id: 'UPDATE_EMAIL_FAILED',
         },
       });
     }
-
-    await user.update({ email: newEmail });
-
-    return { data: { success: true } };
   }
 
   static get paramsSecret() {
