@@ -13,8 +13,6 @@ import {
 } from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
-import { emailAvailable } from '../../../../api/middleware/auth';
-import { minWaitTimeFunction } from '../../../../utils';
 import { log } from '../../../../util/general';
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
@@ -33,35 +31,31 @@ const SUCCESS_MODAL_CONTENT = {
 
 type Props = {
   user: User;
-  pinModalIsOpen: boolean;
   preopenedEmailModal: boolean;
   loading: boolean;
   loadProfile: () => void;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const {
-    user,
-    pinModalIsOpen,
-    loading,
-    preopenedEmailModal,
-    loadProfile,
-  } = props;
+  const { user, loading, preopenedEmailModal, loadProfile } = props;
   const [showModal, toggleModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
     newEmail: string;
   } | null>(null);
+  const [error, setError] = useState(false);
 
   const isPrimaryProfile = user?.userProfileType === USER_PROFILE_TYPE.PRIMARY;
 
   const onCancel = () => {
     setProcessing(false);
+    setSubmitData(null);
   };
 
   const onSuccess = () => {
     setProcessing(false);
+    setSubmitData(null);
   };
 
   const onSuccessClose = () => toggleSuccessModal(false);
@@ -71,6 +65,7 @@ const ChangeEmail: React.FC<Props> = props => {
   };
 
   const onActionButtonClick = () => {
+    setError(false);
     toggleModal(true);
     setSubmitData(null);
   };
@@ -84,26 +79,24 @@ const ChangeEmail: React.FC<Props> = props => {
   const submit = async ({ data }: SubmitActionParams) => {
     const { newEmail } = data;
     try {
-      const res = await apis.auth.updateEmail(newEmail);
-      if (res) {
+      const result = await apis.auth.updateEmail(newEmail);
+
+      if (result) {
         loadProfile();
         onCloseModal();
         toggleSuccessModal(true);
       }
     } catch (err) {
       log.error(err);
+      setError(true);
+    } finally {
+      setSubmitData(null);
     }
   };
 
   const onSubmit = async (values: FormValuesProps) => {
     const { newEmail } = values;
-
-    const result = await minWaitTimeFunction(
-      () => emailAvailable(newEmail),
-      1000,
-    );
-    if (result.error)
-      return { newEmail: 'This Email Address is already registered' };
+    error && setError(false);
 
     if (isPrimaryProfile) {
       setSubmitData({ newEmail });
@@ -145,7 +138,7 @@ const ChangeEmail: React.FC<Props> = props => {
         </div>
         <ModalUIComponent
           onClose={onCloseModal}
-          showModal={showModal && !pinModalIsOpen}
+          showModal={showModal}
           isWide={true}
           title={!user.email ? 'Setup Email' : 'Update Email'}
           subtitle="Your email address is used access your FIO App and recover your account."
@@ -154,7 +147,8 @@ const ChangeEmail: React.FC<Props> = props => {
             hasNoEmail={!user.email}
             onSubmit={onSubmit}
             loading={loading || processing}
-            initialValues={submitData}
+            error={error}
+            setError={setError}
           />
         </ModalUIComponent>
         {isPrimaryProfile && (
