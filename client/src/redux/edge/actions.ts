@@ -119,6 +119,7 @@ export const login = ({
     }
     return {
       account,
+      email,
       fioWallets,
       options,
       voucherId,

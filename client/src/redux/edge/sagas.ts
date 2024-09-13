@@ -13,6 +13,7 @@ import { refreshBalance } from '../fio/actions';
 import { logout } from './actions';
 
 import { locationState as locationStateSelector } from '../navigation/selectors';
+import { refProfileCode } from '../refProfile/selectors';
 
 import { getWalletKeys } from '../../utils';
 import { log } from '../../util/general';
@@ -28,7 +29,14 @@ import {
 
 export function* edgeLoginSuccess(): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
-    const { account, fioWallets, options, voucherId, isPinLogin } = action.data;
+    const {
+      account,
+      email,
+      fioWallets,
+      options,
+      voucherId,
+      isPinLogin,
+    } = action.data;
 
     try {
       if (!fioWallets.length) {
@@ -84,9 +92,11 @@ export function* edgeLoginSuccess(): Generator {
       from: WALLET_CREATED_FROM.EDGE,
     }));
 
+    const referrerCode: string = yield select<Action>(refProfileCode);
+
     yield put<
       Action
-    >(makeNonce({ username: account.username, edgeWallets, keys, otpKey: options?.otpKey, voucherId, isPinLogin }));
+    >(makeNonce({ email, username: account.username, edgeWallets, keys, otpKey: options?.otpKey, voucherId, isPinLogin, referrerCode }));
   });
 }
 
