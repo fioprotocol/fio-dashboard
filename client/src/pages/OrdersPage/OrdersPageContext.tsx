@@ -77,7 +77,8 @@ export const useContext = (): OrdersPageProps => {
     }
   };
 
-  const getOrder = async (orderId: string) => await apis.orders.get(orderId);
+  const getOrder = async (orderId: string) =>
+    await apis.orders.get(orderId, publicKey);
 
   const fireInvoiceAnalytics = () =>
     firePageViewAnalyticsEvent(
