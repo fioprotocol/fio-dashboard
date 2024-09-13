@@ -114,11 +114,7 @@ export default class WsStatus extends WsBase {
           delete data.data;
           delete data.user;
 
-          this.send(
-            JSON.stringify({
-              data: this.messageData,
-            }),
-          );
+          this.send(data);
         }
       } catch (e) {
         logger.error(`WS ERROR. Order status. ${orderId}. ${e}`);
