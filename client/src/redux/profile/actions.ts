@@ -44,29 +44,36 @@ export const NONCE_FAILURE = `${prefix}/NONCE_FAILURE`;
 
 export const makeNonce = ({
   edgeWallets,
+  email,
   username,
   keys,
   otpKey,
   voucherId,
   isPinLogin,
   isSignUp,
+  referrerCode,
 }: {
   edgeWallets: FioWalletDoublet[];
+  email?: string;
   username: string;
   keys: WalletKeysObj;
   otpKey?: string;
   voucherId?: string;
   isPinLogin?: boolean;
   isSignUp?: boolean;
+  referrerCode?: string;
 }): CommonPromiseAction => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
-    const { nonce, email } = await api.auth.nonce(username);
-    const signatures: string[] = Object.values(keys).map(keysItem =>
-      Ecc.sign(nonce, keysItem.private),
-    );
+    const { nonce, email: existingEmail } = await api.auth.nonce(username);
+    const signatures: string[] = nonce
+      ? Object.values(keys).map(keysItem => Ecc.sign(nonce, keysItem.private))
+      : [];
+
+    const emailToLogin = existingEmail ?? email;
+
     return {
-      email,
+      email: emailToLogin,
       edgeWallets,
       nonce,
       signatures,
@@ -74,6 +81,8 @@ export const makeNonce = ({
       voucherId,
       isPinLogin,
       isSignUp,
+      referrerCode,
+      username,
     };
   },
 });
@@ -93,6 +102,7 @@ export const login = ({
   voucherId,
   isPinLogin,
   isSignUp,
+  username,
 }: {
   email: string;
   edgeWallets: FioWalletDoublet[];
@@ -104,6 +114,7 @@ export const login = ({
   voucherId?: string;
   isPinLogin?: boolean;
   isSignUp?: boolean;
+  username: string;
 }): CommonPromiseAction => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: (api: Api) =>
@@ -114,6 +125,7 @@ export const login = ({
       challenge,
       referrerCode,
       timeZone,
+      username,
     }),
   otpKey,
   voucherId,
@@ -349,4 +361,10 @@ export const getUsersFreeAddresses = (data: {
     GET_USERS_FREE_ADDRESSES_FAILURE,
   ],
   promise: (api: Api) => api.users.getFreeAddresses(data),
+});
+
+export const RESET_ERROR = `${prefix}/RESET_ERROR`;
+
+export const resetError = (): CommonAction => ({
+  type: RESET_ERROR,
 });

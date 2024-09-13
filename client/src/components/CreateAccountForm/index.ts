@@ -6,6 +6,7 @@ import {
   resetSuccessState,
   makeNonce,
   signup,
+  resetError,
 } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import {
@@ -18,6 +19,7 @@ import { setRedirectPath } from '../../redux/navigation/actions';
 import {
   successfullyRegistered,
   loading as serverSignUpLoading,
+  error,
 } from '../../redux/profile/selectors';
 import { refProfileInfo } from '../../redux/refProfile/selectors';
 import { redirectLink } from '../../redux/navigation/selectors';
@@ -31,6 +33,7 @@ const selector = createStructuredSelector({
   refProfileInfo,
   signupSuccess,
   redirectLink,
+  error,
 });
 
 const actions = {
@@ -42,6 +45,7 @@ const actions = {
   setPinSetupPostponed,
   setRedirectPath,
   toggleTwoFactorAuth,
+  resetError,
 };
 
 const reduxConnect = connect(selector, actions);

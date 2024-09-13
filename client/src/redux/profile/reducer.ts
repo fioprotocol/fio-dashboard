@@ -130,7 +130,10 @@ export default combineReducers({
     switch (action.type) {
       case actions.LOGIN_FAILURE:
       case actions.LOGOUT_FAILURE:
+      case actions.SIGNUP_FAILURE:
         return action.error;
+      case actions.RESET_ERROR:
+        return null;
       default:
         return state;
     }
@@ -140,6 +143,7 @@ export default combineReducers({
       case actions.SIGNUP_SUCCESS:
         return true;
       case actions.RESET_SUCCESS_STATE:
+      case actions.SIGNUP_FAILURE:
         return false;
       default:
         return state;

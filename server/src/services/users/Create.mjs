@@ -5,6 +5,7 @@ import emailSender from '../emailSender';
 import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
 
 import { User, Notification, ReferrerProfile, Wallet } from '../../models';
+import logger from '../../logger.mjs';
 
 export default class UsersCreate extends Base {
   static get validationRules() {
@@ -34,58 +35,59 @@ export default class UsersCreate extends Base {
   }
 
   async execute({ data: { username, email, fioWallets, refCode, addEmailToPromoList } }) {
-    if (await User.findOneWhere({ email })) {
+    try {
+      const refProfile = await ReferrerProfile.findOneWhere({
+        code: refCode,
+      });
+
+      const refProfileId = refProfile ? refProfile.id : null;
+
+      const user = new User({
+        username,
+        email,
+        status: User.STATUS.ACTIVE,
+        refProfileId,
+        isOptIn: !!addEmailToPromoList,
+      });
+
+      await user.save();
+
+      if (addEmailToPromoList) {
+        await marketingSendinblue.addEmailToPromoList(email);
+      }
+
+      await emailSender.send(templates.createAccount, email);
+
+      await new Notification({
+        type: Notification.TYPE.INFO,
+        contentType: Notification.CONTENT_TYPE.ACCOUNT_CREATE,
+        userId: user.id,
+        data: { pagesToShow: ['/myfio'] },
+      }).save();
+
+      for (const { edgeId, name, publicKey } of fioWallets) {
+        const newWallet = new Wallet({
+          edgeId,
+          name,
+          publicKey,
+          userId: user.id,
+        });
+
+        await newWallet.save();
+      }
+
+      return {
+        data: user.json(),
+      };
+    } catch (error) {
+      logger.error(email, username, error);
       throw new X({
-        code: 'NOT_UNIQUE',
+        code: 'SERVER_ERROR',
         fields: {
-          email: 'NOT_UNIQUE',
+          registration: 'REGISTRATION_FAILED',
         },
       });
     }
-
-    const refProfile = await ReferrerProfile.findOneWhere({
-      code: refCode,
-    });
-
-    const refProfileId = refProfile ? refProfile.id : null;
-
-    const user = new User({
-      username,
-      email,
-      status: User.STATUS.ACTIVE,
-      refProfileId,
-      isOptIn: !!addEmailToPromoList,
-    });
-
-    await user.save();
-
-    if (addEmailToPromoList) {
-      await marketingSendinblue.addEmailToPromoList(email);
-    }
-
-    await emailSender.send(templates.createAccount, email);
-
-    await new Notification({
-      type: Notification.TYPE.INFO,
-      contentType: Notification.CONTENT_TYPE.ACCOUNT_CREATE,
-      userId: user.id,
-      data: { pagesToShow: ['/myfio'] },
-    }).save();
-
-    for (const { edgeId, name, publicKey } of fioWallets) {
-      const newWallet = new Wallet({
-        edgeId,
-        name,
-        publicKey,
-        userId: user.id,
-      });
-
-      await newWallet.save();
-    }
-
-    return {
-      data: user.json(),
-    };
   }
 
   static get paramsSecret() {

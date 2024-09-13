@@ -297,6 +297,8 @@ export function* nonceSuccess(): Generator {
       voucherId,
       isPinLogin,
       isSignUp,
+      referrerCode,
+      username,
     } = action.data;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -311,6 +313,8 @@ export function* nonceSuccess(): Generator {
         voucherId,
         isPinLogin,
         isSignUp,
+        referrerCode,
+        username,
       }),
     );
   });

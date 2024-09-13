@@ -28,10 +28,8 @@ import {
   usernameAvailable,
   createAccount,
   checkUsernameAndPassword,
-  checkEdgeLogin,
 } from './middleware';
 import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
-import { emailAvailable } from '../../api/middleware/auth';
 import { log } from '../../util/general';
 
 import {
@@ -72,7 +70,6 @@ type State = {
   step: string;
   keys: WalletKeysObj;
   loading: boolean;
-  retrySignup: boolean;
   emailWasBlurred: boolean;
 };
 
@@ -97,11 +94,13 @@ type Props = {
     redirectLink?: string;
     addEmailToPromoList: boolean;
   }) => void;
+  resetError: () => void;
   signupSuccess: boolean;
   refProfileInfo: RefProfile | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
   redirectLink: RedirectLinkData;
+  error?: Error;
 };
 
 export default class CreateAccountForm extends React.Component<Props, State> {
@@ -121,7 +120,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       step: STEPS.EMAIL_PASSWORD,
       keys: {},
       loading: false,
-      retrySignup: false,
       emailWasBlurred: false,
     };
 
@@ -131,6 +129,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State): void {
     if (!prevProps.signupSuccess && this.props.signupSuccess) {
       this.setState({ step: STEPS.SUCCESS });
+    }
+
+    if (this.state.step === STEPS.SUCCESS && this.props.error) {
+      this.setState({ step: STEPS.EMAIL_PASSWORD });
     }
   }
 
@@ -165,7 +167,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         {
           error: !!emailError && (
             <span>
-              This Email Address is already registered,{' '}
+              This username is not available,{' '}
               <Link to="#" onClick={this.openLogin}>
                 Sign-in
               </Link>{' '}
@@ -177,28 +179,24 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       );
   };
 
-  isEmailExists = async (email: string) => {
+  isUsernameExists = async (email: string) => {
     this.setState({
       usernameAvailableLoading: true,
       usernameIsAvailable: false,
-      retrySignup: false,
     });
-    const { error: emailError } = await emailAvailable(email);
     const { error: usernameError } = await usernameAvailable(
       emailToUsername(email),
     );
 
     this.setState({
       usernameAvailableLoading: false,
-      usernameIsAvailable: !emailError,
-      retrySignup: !emailError && !!usernameError,
+      usernameIsAvailable: !usernameError,
     });
 
-    this.setEmailError(emailError);
+    this.setEmailError(usernameError);
 
     return {
-      usernameIsAvailable: !emailError,
-      retrySignup: !emailError && !!usernameError,
+      usernameIsAvailable: !usernameError,
     };
   };
 
@@ -295,7 +293,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     const { value, error } = this.form.getFieldState(EMAIL_FIELD_NAME);
 
-    !error && (await this.isEmailExists(value || ''));
+    !error && (await this.isUsernameExists(value || ''));
   };
 
   debouncedEmailChange = debounce(
@@ -309,41 +307,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     switch (step) {
       case STEPS.EMAIL_PASSWORD: {
+        this.props.resetError();
+
         const { email, password, confirmPassword } = values;
-        const { emailWasBlurred } = this.state;
-        let { retrySignup } = this.state;
         this.setState({ loading: true });
-
-        if (!emailWasBlurred) {
-          const emailExistsRes = await this.isEmailExists(email);
-          retrySignup = emailExistsRes.retrySignup;
-        }
-
-        // Retry signup if there is no user on our end
-        if (retrySignup) {
-          const { account, fioWallet, errors } = await checkEdgeLogin(
-            emailToUsername(email),
-            password,
-          );
-          if (errors.username) {
-            this.setEmailError(errors.username);
-            return this.setState({
-              loading: false,
-              usernameIsAvailable: false,
-            });
-          }
-
-          if (account) {
-            this.setState({
-              step: STEPS.SUCCESS,
-              loading: false,
-              retrySignup: false,
-            });
-            await this.confirm(account, fioWallet, values);
-          }
-
-          return errors;
-        }
 
         const { errors } = await checkUsernameAndPassword({
           email,

@@ -36,10 +36,11 @@ export default class Auth extends Base {
   login(data: {
     email: string;
     edgeWallets?: FioWalletDoublet[];
-    signatures: string[];
-    challenge: string;
+    signatures?: string[];
+    challenge?: string;
     referrerCode?: string;
     timeZone?: string;
+    username: string;
   }): Promise<AuthLoginResponse> {
     return this.apiClient.post('auth', data);
   }
