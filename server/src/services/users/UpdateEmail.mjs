@@ -29,7 +29,7 @@ export default class UsersUpdateEmail extends Base {
       throw new X({
         code: 'SERVER_ERROR',
         fields: {
-          id: 'UPDATE_EMAIL_FAILED',
+          update: 'UPDATE_FAILED',
         },
       });
     }
