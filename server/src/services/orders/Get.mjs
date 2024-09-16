@@ -16,12 +16,14 @@ export default class OrdersGet extends Base {
   static get validationRules() {
     return {
       id: 'string',
+      publicKey: 'string',
     };
   }
-  async execute({ id }) {
+  async execute({ id, publicKey }) {
     const order = await Order.findOne({
       where: {
         id,
+        publicKey,
       },
       include: [
         {
@@ -52,9 +54,12 @@ export default class OrdersGet extends Base {
         },
       });
 
-    return {
-      data: await Order.formatDetailed(order.get({ plain: true })),
-    };
+    const data = await Order.formatDetailed(order.get({ plain: true }));
+
+    delete data.data;
+    delete data.user;
+
+    return { data };
   }
 
   static get paramsSecret() {

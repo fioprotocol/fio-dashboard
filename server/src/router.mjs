@@ -40,7 +40,6 @@ router.get('/admin-auth/reset-password/check', routes.auth.adminResetPasswordChe
 
 router.post('/actions/:hash', routes.actions.submit);
 
-router.get('/users/available/:email', routes.users.available);
 router.get('/users/me', checkAuth, routes.users.info);
 router.delete('/users/me', checkAuth, routes.users.delete);
 router.get('/users/:id', checkAdminAuth, routes.users.show);
@@ -199,7 +198,7 @@ router.get('/orders', routes.orders.list);
 router.get('/orders/active', routes.orders.getActive);
 router.post('/orders', routes.orders.create);
 router.post('/orders/update/:id', routes.orders.update);
-router.get('/orders/item/:id', routes.orders.get);
+router.get('/orders/item/:id/:publicKey', routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
