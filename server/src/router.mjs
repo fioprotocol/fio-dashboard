@@ -199,7 +199,7 @@ router.get('/orders', routes.orders.list);
 router.get('/orders/active', routes.orders.getActive);
 router.post('/orders', routes.orders.create);
 router.post('/orders/update/:id', routes.orders.update);
-router.get('/orders/item/:id', routes.orders.get);
+router.get('/orders/item/:id/:publicKey', routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
