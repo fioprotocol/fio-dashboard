@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Action } from '@fioprotocol/fiosdk';
+
 import { AddBundledTransaction } from './AddBundledTransaction';
 import { AddPublicAddressForm } from './AddPublicAddressForm';
 import { AddNftForm } from './AddNftForm';
@@ -25,10 +27,6 @@ import { WrapFioDomain } from './WrapFioDomain';
 import { WrapFioTokens } from './WrapFioTokens';
 
 import {
-  ACTIONS,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../../../constants/fio';
-import {
   CUSTOM_ACTION_NAME,
   DECRYPT_FIO_REQUEST_CONTENT_NAME,
   DECRYPT_OBT_DATA_CONTENT_NAME,
@@ -43,45 +41,45 @@ export const FioActionForms: React.FC<Props> = props => {
   const { action, onSubmit } = props;
 
   switch (action) {
-    case TRANSACTION_ACTION_NAMES[ACTIONS.addBundledTransactions]:
+    case Action.addBundledTransactions:
       return <AddBundledTransaction onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.addNft]:
+    case Action.addNft:
       return <AddNftForm onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddress]:
+    case Action.addPublicAddresses:
       return <AddPublicAddressForm onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest]:
+    case Action.cancelFundsRequest:
       return <CancelFioRequest onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds]:
+    case Action.newFundsRequest:
       return <RequestNewFunds onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress]:
+    case Action.regAddress:
       return <RegisterFioHandle onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.registerFioDomain]:
+    case Action.regDomain:
       return <RegisterFioDomain onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility]:
+    case Action.setDomainPublic:
       return <ChangeDomainVisibility onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData]:
+    case Action.recordObt:
       return <RecordObtData onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest]:
+    case Action.rejectFundsRequest:
       return <RejectFioRequest onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses]:
+    case Action.removeAllAddresses:
       return <RemoveAllPublicAddresses onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses]:
+    case Action.removeAddress:
       return <RemovePublicAddress onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.renewFioDomain]:
+    case Action.renewDomain:
       return <RenewFioDomain onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens]:
+    case Action.stake:
       return <StakeFioTokens onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress]:
+    case Action.transferAddress:
       return <TransferFioHandle onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain]:
+    case Action.transferDomain:
       return <TransferFioDomain onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens]:
+    case Action.transferTokensKey:
       return <TransferFioTokens onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain]:
+    case Action.wrapDomain:
       return <WrapFioDomain onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens]:
+    case Action.wrapTokens:
       return <WrapFioTokens onSubmit={onSubmit} />;
-    case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
+    case Action.unstake:
       return <UnstakeFioTokens onSubmit={onSubmit} />;
     case DECRYPT_FIO_REQUEST_CONTENT_NAME:
       return <DecryptContentFioRequestForm onSubmit={onSubmit} />;

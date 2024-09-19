@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import { compose } from '../../utils';
 
 import { getFee, refreshBalance } from '../../redux/fio/actions';
@@ -23,8 +25,6 @@ import SendPage from './SendPage';
 import { emptyWallet } from '../../redux/fio/reducer';
 import { DEFAULT_BALANCES, DEFAULT_FEE_PRICES } from '../../util/prices';
 
-import apis from '../../api';
-
 import { ReduxState } from '../../redux/init';
 import { ContainerOwnProps } from './types';
 import { FioWalletDoublet, OwnPropsAny } from '../../types';
@@ -46,11 +46,9 @@ const reduxConnect = connect(
     loading,
     roe,
     feePrice: (state: ReduxState) =>
-      state.fio.fees[apis.fio.actionEndPoints.transferTokens] ||
-      DEFAULT_FEE_PRICES,
+      state.fio.fees[EndPoint.transferTokensPublicKey] || DEFAULT_FEE_PRICES,
     feePriceRecordObtData: (state: ReduxState) =>
-      state.fio.fees[apis.fio.actionEndPoints.recordObtData] ||
-      DEFAULT_FEE_PRICES,
+      state.fio.fees[EndPoint.recordObtData] || DEFAULT_FEE_PRICES,
     balance: (state: ReduxState, ownProps: ContainerOwnProps & OwnPropsAny) => {
       const fioWallets = fioWalletsSelector(state);
       const fioWalletsBalances = fioWalletsBalancesSelector(state);
@@ -71,9 +69,9 @@ const reduxConnect = connect(
   }),
   {
     refreshBalance,
-    getFee: () => getFee(apis.fio.actionEndPoints.transferTokens),
+    getFee: () => getFee(EndPoint.transferTokensPublicKey),
     getFeeRecordObtData: (fioAddress: string) =>
-      getFee(apis.fio.actionEndPoints.recordObtData, fioAddress),
+      getFee(EndPoint.recordObtData, fioAddress),
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,

@@ -1,7 +1,7 @@
 import MathOp from '../util/math';
 import apis from '../api';
 
-import { ACTIONS } from '../constants/fio';
+import { AdditionalAction } from '../constants/fio';
 
 import {
   FioBalanceRes,
@@ -99,9 +99,10 @@ export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
 export const DEFAULT_BALANCES = calculateBalances({}, 1);
 
 export const DEFAULT_ORACLE_FEE_PRICES = {
-  [ACTIONS.wrapFioDomain]:
+  [AdditionalAction.wrapFioDomain]:
     process.env.REACT_APP_DEFAULT_WRAP_DOMAIN_ORACLE_FEES,
-  [ACTIONS.wrapFioTokens]: process.env.REACT_APP_DEFAULT_WRAP_TOKEN_ORACLE_FEES,
+  [AdditionalAction.wrapFioTokens]:
+    process.env.REACT_APP_DEFAULT_WRAP_TOKEN_ORACLE_FEES,
 };
 
 export const getDefaultOracleFeePrices = ({
@@ -109,7 +110,7 @@ export const getDefaultOracleFeePrices = ({
   action,
 }: {
   roe?: number;
-  action: string;
+  action: AdditionalAction.wrapFioDomain | AdditionalAction.wrapFioTokens;
 }) =>
   convertFioPrices(
     DEFAULT_ORACLE_FEE_PRICES[action]

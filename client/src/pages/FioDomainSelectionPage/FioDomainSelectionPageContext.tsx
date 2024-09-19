@@ -27,7 +27,7 @@ import { convertFioPrices } from '../../util/prices';
 import {
   checkAddressOrDomainIsExist,
   checkIsDomainItemExistsOnCart,
-  vaildateFioDomain,
+  validateFioDomain,
 } from '../../util/fio';
 import MathOp from '../../util/math';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
@@ -105,7 +105,7 @@ const validateDomainItems = async ({
   (
     await Promise.all(
       domainArr.map(async domain => {
-        const error = vaildateFioDomain(domain.name);
+        const error = validateFioDomain(domain.name);
 
         if (!error)
           return await handleDomainItem({
@@ -272,7 +272,7 @@ export const useContext = () => {
 
       toggleLoading(true);
 
-      const validationError = vaildateFioDomain(domain);
+      const validationError = validateFioDomain(domain);
 
       if (validationError) {
         setError(validationError);

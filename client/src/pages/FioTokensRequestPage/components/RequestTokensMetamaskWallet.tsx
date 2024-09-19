@@ -1,18 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { Account, Action, ContentType } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  BUNDLES_TX_COUNT,
-  FIO_CHAIN_CODE,
-  FIO_CONTENT_TYPES,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -68,8 +63,8 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
   } = submitData || {};
 
   const requestActionParams: ActionParams = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt,
+    action: Action.newFundsRequest,
+    account: Account.reqObt,
     data: {
       payer_fio_address: payerFioAddress,
       payee_fio_address: payeeFioAddress,
@@ -85,15 +80,15 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
       tpid: apis.fio.tpid,
       max_fee: DEFAULT_ACTION_FEE_AMOUNT,
     },
-    contentType: FIO_CONTENT_TYPES.NEW_FUNDS,
+    contentType: ContentType.newFundsContent,
     payerFioPublicKey,
     derivationIndex: fioWallet.data?.derivationIndex,
   };
 
   const mapAddressActionParams = useMemo(
     () => ({
-      action: TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddresses],
-      account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+      action: Action.addPublicAddresses,
+      account: Account.address,
       data: {
         fio_address: payeeFioAddress,
         public_addresses: [

@@ -1,19 +1,10 @@
-import { TextDecoder, TextEncoder } from 'text-encoding';
 import {
   PublicAddress,
-  FIOSDK,
-  Account,
-  Action,
   allRules,
   validate,
   RawRequest,
+  RequestStatus,
 } from '@fioprotocol/fiosdk';
-import { Api as ChainApi, Numeric as ChainNumeric } from '@fioprotocol/fiojs';
-
-import {
-  AbiProvider,
-  BinaryAbi,
-} from '@fioprotocol/fiojs/dist/chain-api-interfaces';
 
 import apis from '../api';
 import { AdminDomain } from '../api/responses';
@@ -22,11 +13,11 @@ import { convertToNewDate, log } from './general';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
+  DashboardAction,
   DOMAIN_EXPIRED_DAYS,
   DOMAIN_TYPE,
-  FIO_ACCOUNT_NAMES,
-  FIO_ACTION_NAMES,
-  FIO_REQUEST_STATUS_TYPES,
+  getAccountByDashboardAction,
+  getActionByDashboardAction,
 } from '../constants/fio';
 
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
@@ -39,16 +30,13 @@ import { FIO_ADDRESS_DELIMITER } from '../utils';
 import {
   NftTokenResponse,
   NFTTokenDoublet,
-  Prices,
   PublicAddressDoublet,
-  IncomePrices,
   AnyObject,
   CartItem,
 } from '../types';
-import { RawTransaction } from '../api/fio';
 import { ActionDataParams, FioServerResponse } from '../types/fio';
 
-export const vaildateFioDomain = (domain: string) => {
+export const validateFioDomain = (domain: string) => {
   if (!domain) {
     return 'Domain Field Should Be Filled';
   }
@@ -91,7 +79,7 @@ export const validateFioAddress = (address: string, domain: string) => {
     return 'FIO Handle only allows letters, numbers and dash in the middle';
   }
 
-  vaildateFioDomain(domain);
+  validateFioDomain(domain);
 
   return null;
 };
@@ -195,77 +183,13 @@ export const statusBadgeColours = (
   isRose: boolean;
   isYellowGreen: boolean;
 } => ({
-  isBlue: FIO_REQUEST_STATUS_TYPES.PAID === status,
-  isOrange: FIO_REQUEST_STATUS_TYPES.REJECTED === status,
-  isRose: FIO_REQUEST_STATUS_TYPES.PENDING === status,
-  isYellowGreen: FIO_REQUEST_STATUS_TYPES.CANCELED === status,
+  isBlue: RequestStatus.paid === status,
+  isOrange: RequestStatus.rejected === status,
+  isRose: RequestStatus.pending === status,
+  isYellowGreen: RequestStatus.canceled === status,
 });
 
 export const isFioChain = (chain: string): boolean => chain === CHAIN_CODES.FIO;
-
-export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
-  const pricing = {
-    ...prices.pricing,
-    fio: { address: 0, domain: 0 },
-    usdt: { address: 0, domain: 0 },
-  };
-
-  pricing.fio = {
-    address: apis.fio.sufToAmount(pricing.nativeFio.address) || 0,
-    domain: apis.fio.sufToAmount(pricing.nativeFio.domain) || 0,
-  };
-
-  pricing.usdt = {
-    address: apis.fio.convertFioToUsdc(
-      pricing.nativeFio.address,
-      pricing.usdtRoe,
-    ),
-    domain: apis.fio.convertFioToUsdc(
-      pricing.nativeFio.domain,
-      pricing.usdtRoe,
-    ),
-  };
-  return { pricing };
-};
-
-export const serializeTransaction = async (
-  tx: RawTransaction,
-): Promise<string> => {
-  try {
-    const abiProvider: AbiProvider = {
-      getRawAbi: async (accountName: string) => {
-        const rawAbi = FIOSDK.abiMap.get(accountName);
-        if (!rawAbi) {
-          throw new Error(`Missing ABI for account ${accountName}`);
-        }
-        const abi = ChainNumeric.base64ToBinary(rawAbi.abi);
-        const binaryAbi: BinaryAbi = { accountName: rawAbi.account_name, abi };
-        return binaryAbi;
-      },
-    };
-    const chainApi = new ChainApi({
-      signatureProvider: null,
-      authorityProvider: null,
-      abiProvider,
-      chainId: null,
-      textDecoder: new TextDecoder(),
-      textEncoder: new TextEncoder(),
-    });
-    const serTx = {
-      ...tx,
-      context_free_actions: await chainApi.serializeActions(
-        tx.context_free_actions || [],
-      ),
-      actions: await chainApi.serializeActions(tx.actions),
-    };
-
-    return Buffer.from(chainApi.serializeTransaction(serTx)).toString('hex');
-  } catch (e) {
-    log.error(e);
-  }
-
-  return '';
-};
 
 export const transformNonPremiumDomains = (domains: Partial<AdminDomain>[]) =>
   domains
@@ -384,14 +308,14 @@ export const handleFioServerResponseActionData = (
 
 export const prepareChainTransaction = async (
   walletPublicKey: string,
-  action: string,
+  action: DashboardAction,
   data: AnyObject,
 ): Promise<{ chainId: string; transaction: RawRequest }> => {
   const chainData = await apis.fio.publicFioSDK.transactions.getChainDataForTx();
   const transaction = await apis.fio.publicFioSDK.transactions.createRawTransaction(
     {
-      account: FIO_ACCOUNT_NAMES[action] as Account,
-      action: FIO_ACTION_NAMES[action] as Action,
+      account: getAccountByDashboardAction(action),
+      action: getActionByDashboardAction(action),
       data: data,
       publicKey: walletPublicKey,
       chainData,

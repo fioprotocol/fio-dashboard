@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -9,7 +11,6 @@ import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { FioWalletDoublet } from '../../../types';
 import { PaymentDetailsValues, TxValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import { ACTIONS } from '../../../constants/fio';
 import { camelizeObjKeys } from '../../../utils';
 
 type Props = {
@@ -36,19 +37,23 @@ const PaymentDetailsEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
-    const result = await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
-      payerFioAddress: data.payerFioAddress,
-      payeeFioAddress: data.payeeFioAddress,
-      payerTokenPublicAddress: keys.public,
-      payeeTokenPublicAddress: data.payeePublicAddress,
-      payeeFioPublicKey: data.payeeFioPublicKey,
-      amount: Number(data.amount),
-      chainCode: data.chainCode,
-      tokenCode: data.tokenCode,
-      obtId: data.obtId,
-      memo: data.memo,
-      fioRequestId: data.fioRequestId,
-    });
+    const result = await apis.fio.executeAction(
+      keys,
+      GenericAction.recordObtData,
+      {
+        payerFioAddress: data.payerFioAddress,
+        payeeFioAddress: data.payeeFioAddress,
+        payerTokenPublicAddress: keys.public,
+        payeeTokenPublicAddress: data.payeePublicAddress,
+        payeeFioPublicKey: data.payeeFioPublicKey,
+        amount: Number(data.amount),
+        chainCode: data.chainCode,
+        tokenCode: data.tokenCode,
+        obtId: data.obtId,
+        memo: data.memo,
+        fioRequestId: data.fioRequestId,
+      },
+    );
 
     if (!contactsList?.filter(c => c === data.payeeFioAddress).length)
       createContact(data.payeeFioAddress);

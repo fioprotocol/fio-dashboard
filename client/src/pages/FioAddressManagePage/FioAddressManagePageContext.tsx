@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import {
   getFee,
   toggleFchBundleWarningBadge,
@@ -43,7 +45,7 @@ import {
   CART_ITEM_TYPE,
   ANALYTICS_EVENT_ACTIONS,
 } from '../../constants/common';
-import { ACTIONS, LOW_BUNDLES_THRESHOLD } from '../../constants/fio';
+import { LOW_BUNDLES_THRESHOLD } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import { EMPTY_STATE_CONTENT, WARNING_CONTENT } from './constants';
 
@@ -102,7 +104,7 @@ export const useContext = (): UseContextProps => {
     );
 
   const addBundlesFeePrice =
-    fees[apis.fio.actionEndPoints.addBundledTransactions] || DEFAULT_FEE_PRICES;
+    fees[EndPoint.addBundledTransactions] || DEFAULT_FEE_PRICES;
 
   const handleAddBundles = useCallback(
     (name: string) => {
@@ -111,7 +113,7 @@ export const useContext = (): UseContextProps => {
         address,
         domain,
         type: CART_ITEM_TYPE.ADD_BUNDLES,
-        id: `${name}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
+        id: `${name}-${GenericAction.addBundledTransactions}-${+new Date()}`,
         costNativeFio: addBundlesFeePrice?.nativeFio,
         costFio: addBundlesFeePrice.fio,
         costUsdc: addBundlesFeePrice.usdc,
@@ -228,7 +230,7 @@ export const useContext = (): UseContextProps => {
   }, [hasExpiredDomain, showExpiredDomainWarningFchBadge]);
 
   useEffect(() => {
-    dispatch(getFee(apis.fio.actionEndPoints.addBundledTransactions));
+    dispatch(getFee(EndPoint.addBundledTransactions));
   }, [dispatch]);
 
   useEffectOnce(

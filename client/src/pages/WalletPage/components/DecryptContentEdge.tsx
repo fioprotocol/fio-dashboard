@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ContentType, RequestStatus } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
@@ -12,10 +14,6 @@ import {
 } from '../../../types';
 import { decryptFioRequestData } from '../../../utils';
 import { FIO_RECORD_TYPES } from '../constants';
-import {
-  FIO_REQUEST_STATUS_TYPES,
-  FIO_CONTENT_TYPES,
-} from '../../../constants/fio';
 
 type Props = {
   submitData: {
@@ -39,8 +37,8 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
 
   const contentType =
     fioRecordType === FIO_RECORD_TYPES.DATA
-      ? FIO_CONTENT_TYPES.RECORD_OBT_DATA
-      : FIO_CONTENT_TYPES.NEW_FUNDS;
+      ? ContentType.recordObtDataContent
+      : ContentType.newFundsContent;
   const decryptedContent = decryptFioRequestData({
     data: itemData,
     walletKeys: {
@@ -51,14 +49,14 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
   });
 
   let paymentData = null;
-  if (itemData.status === FIO_REQUEST_STATUS_TYPES.PAID && paymentOtbData) {
+  if (itemData.status === RequestStatus.paid && paymentOtbData) {
     const paymentDecryptedContent = decryptFioRequestData({
       data: paymentOtbData,
       walletKeys: {
         public: keys.public,
         private: keys.private,
       },
-      contentType: FIO_CONTENT_TYPES.RECORD_OBT_DATA,
+      contentType: ContentType.recordObtDataContent,
     });
 
     paymentData = {

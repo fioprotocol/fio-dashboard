@@ -7,7 +7,7 @@ import { Props as ComponentProps } from './NoProfileFlowRegisterFioDomainPage';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
-import { vaildateFioDomain } from '../../util/fio';
+import { validateFioDomain } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
 
@@ -59,7 +59,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const onFocusOut = useCallback((value: string) => {
     if (!value) return;
 
-    const isNotValidAddressError = vaildateFioDomain(value);
+    const isNotValidAddressError = validateFioDomain(value);
 
     if (isNotValidAddressError) {
       toggleFioVerificationError(true);

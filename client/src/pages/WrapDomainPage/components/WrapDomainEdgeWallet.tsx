@@ -1,16 +1,13 @@
 import React from 'react';
 
+import { Account, Action, GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 import MathOp from '../../../util/math';
 
-import {
-  ACTIONS,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  TRANSACTION_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
+import { DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../../constants/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { TrxResponse } from '../../../api/fio';
 
@@ -42,21 +39,25 @@ const WrapDomainEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const wrap = async ({ keys, data }: SubmitActionParams) => {
-    const result = await apis.fio.executeAction(keys, ACTIONS.pushTransaction, {
-      action: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain],
-      account: TRANSACTION_ACCOUNT_NAMES[ACTIONS.wrapFioDomain],
-      data: {
-        fio_domain: data.name,
-        chain_code: data.chainCode,
-        public_address: data.publicAddress,
-        max_oracle_fee: oracleFee,
-        max_fee: new MathOp(fee)
-          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-          .round(0)
-          .toNumber(),
-        tpid: apis.fio.tpid,
+    const result = await apis.fio.executeAction(
+      keys,
+      GenericAction.pushTransaction,
+      {
+        action: Action.wrapDomain,
+        account: Account.oracle,
+        data: {
+          fio_domain: data.name,
+          chain_code: data.chainCode,
+          public_address: data.publicAddress,
+          max_oracle_fee: oracleFee,
+          max_fee: new MathOp(fee)
+            .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+            .round(0)
+            .toNumber(),
+          tpid: apis.fio.tpid,
+        },
       },
-    });
+    );
 
     return { ...result };
   };

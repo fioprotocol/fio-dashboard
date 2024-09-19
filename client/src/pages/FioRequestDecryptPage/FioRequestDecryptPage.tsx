@@ -1,6 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import { RequestStatus } from '@fioprotocol/fiosdk';
+
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import DecryptContentEdge from '../WalletPage/components/DecryptContentEdge';
@@ -23,10 +25,7 @@ import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import {
-  FIO_REQUEST_STATUS_TYPES,
-  FIO_REQUEST_STATUS_TYPES_TITLES,
-} from '../../constants/fio';
+import { FIO_REQUEST_STATUS_TYPES_TITLES } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { emptyWallet } from '../../redux/fio/reducer';
@@ -176,7 +175,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
       if (receivedRequest) {
         setFioRequest(receivedRequest);
         setFioRecordType(FIO_RECORD_TYPES.RECEIVED);
-        if (receivedRequest.status !== FIO_REQUEST_STATUS_TYPES.PENDING) {
+        if (receivedRequest.status !== RequestStatus.pending) {
           setError(
             `Your request is ${
               FIO_REQUEST_STATUS_TYPES_TITLES[receivedRequest.status]
@@ -189,7 +188,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (sentRequest) {
-        if (sentRequest.status === FIO_REQUEST_STATUS_TYPES.PAID) {
+        if (sentRequest.status === RequestStatus.paid) {
           setPaymentData(
             obtData.find(
               (item: FioRecord) => item.fioRequestId === fioRequestId,

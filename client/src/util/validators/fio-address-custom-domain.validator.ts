@@ -17,7 +17,7 @@ import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import {
   checkAddressOrDomainIsExist,
   isDomainExpired,
-  vaildateFioDomain,
+  validateFioDomain,
 } from '../fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
 
@@ -89,7 +89,7 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
       message = NON_VALID_FCH;
     }
   } else {
-    const errorValidaton = vaildateFioDomain(domain);
+    const errorValidaton = validateFioDomain(domain);
 
     if (errorValidaton) {
       succeeded = false;
