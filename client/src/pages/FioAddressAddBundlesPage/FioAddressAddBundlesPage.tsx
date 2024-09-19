@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
@@ -29,8 +30,6 @@ import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
-
-import apis from '../../api';
 
 import {
   fireAnalyticsEvent,
@@ -60,8 +59,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
 
   const fch = queryParams.get(QUERY_PARAMS_NAMES.NAME);
 
-  const addBundledTransactions =
-    apis.fio.actionEndPoints.addBundledTransactions;
+  const addBundledTransactions = EndPoint.addBundledTransactions;
 
   const addBundlesFeePrice = fees[addBundledTransactions];
   const addBundledFeeLoading = feeLoading[addBundledTransactions];
@@ -92,7 +90,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
       address,
       domain,
       type: CART_ITEM_TYPE.ADD_BUNDLES,
-      id: `${fch}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
+      id: `${fch}-${GenericAction.addBundledTransactions}-${+new Date()}`,
       costNativeFio: addBundlesFeePrice?.nativeFio,
       costFio: addBundlesFeePrice.fio,
       costUsdc: addBundlesFeePrice.usdc,

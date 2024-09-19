@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import { compose } from '../../utils';
 import SignNft from './SignNft';
 
@@ -11,10 +13,7 @@ import {
   getNFTSignatures,
 } from '../../redux/fio/actions';
 
-import apis from '../../api';
-
 import { DEFAULT_FEE_PRICES } from '../../util/prices';
-import { ACTIONS } from '../../constants/fio';
 
 import { ReduxState } from '../../redux/init';
 
@@ -25,15 +24,12 @@ const reduxConnect = connect(
     feePrice: (state: ReduxState) => {
       const { fees } = state.fio;
 
-      return (
-        fees[apis.fio.actionEndPoints[ACTIONS.addNft]] || DEFAULT_FEE_PRICES
-      );
+      return fees[EndPoint.addNft] || DEFAULT_FEE_PRICES;
     },
     loading,
   }),
   {
-    getFee: (fioAddress: string) =>
-      getFee(apis.fio.actionEndPoints[ACTIONS.addNft], fioAddress),
+    getFee: (fioAddress: string) => getFee(EndPoint.addNft, fioAddress),
     refreshFioNames,
     getNFTSignatures,
   },

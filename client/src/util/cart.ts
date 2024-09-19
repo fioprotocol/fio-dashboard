@@ -1,8 +1,10 @@
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
+import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import MathOp from './math';
@@ -72,10 +74,11 @@ export const cartIsRelative = (
   const orderItemsLength = orderItems.reduce(
     (length, item) =>
       length +
-      (item.action === ACTIONS.registerFioDomain &&
+      (item.action === GenericAction.registerFioDomain &&
       !!orderItems.find(
         it =>
-          it.action === ACTIONS.registerFioAddress && it.domain === item.domain,
+          it.action === GenericAction.registerFioAddress &&
+          it.domain === item.domain,
       )
         ? 0
         : 1),
@@ -152,14 +155,14 @@ export const actionFromCartItem = (
   isComboSupport: boolean,
 ) =>
   cartItemType === CART_ITEM_TYPE.DOMAIN_RENEWAL
-    ? ACTIONS.renewFioDomain
+    ? GenericAction.renewFioDomain
     : cartItemType === CART_ITEM_TYPE.ADD_BUNDLES
-    ? ACTIONS.addBundledTransactions
+    ? GenericAction.addBundledTransactions
     : cartItemType === CART_ITEM_TYPE.DOMAIN
-    ? ACTIONS.registerFioDomain
+    ? GenericAction.registerFioDomain
     : isComboSupport
-    ? ACTIONS.registerFioDomainAddress
-    : ACTIONS.registerFioAddress;
+    ? GenericAction.registerFioDomainAddress
+    : GenericAction.registerFioAddress;
 
 export type GroupedCartItem = {
   type?: string;

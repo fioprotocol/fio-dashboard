@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { Account, EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import { getFee, toggleExpiredDomainBadge } from '../../redux/fio/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
@@ -42,11 +44,7 @@ import {
   CART_ITEM_TYPE,
   ANALYTICS_EVENT_ACTIONS,
 } from '../../constants/common';
-import {
-  ACTIONS,
-  DOMAIN_TYPE,
-  FIO_ORACLE_ACCOUNT_NAME,
-} from '../../constants/fio';
+import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import {
   EMPTY_STATE_CONTENT,
@@ -169,7 +167,7 @@ export const useContext = (): UseContextProps => {
   const fioDomainsJSON = JSON.stringify(fioDomains);
 
   const renewDomainFeePrice =
-    fees[apis.fio.actionEndPoints.renewFioDomain] || DEFAULT_FEE_PRICES;
+    fees[EndPoint.renewFioDomain] || DEFAULT_FEE_PRICES;
 
   const {
     nativeFio: { domain: nativeFioDomainPrice },
@@ -182,7 +180,7 @@ export const useContext = (): UseContextProps => {
       const newCartItem: CartItem = {
         domain,
         type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-        id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
+        id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
         period: 1,
         costNativeFio: renewDomainFeePrice?.nativeFio,
         costFio: renewDomainFeePrice.fio,
@@ -349,7 +347,7 @@ export const useContext = (): UseContextProps => {
               walletPublicKey: '',
             };
 
-            if (account !== FIO_ORACLE_ACCOUNT_NAME) {
+            if (account !== Account.oracle) {
               walletPublicKey = await apis.fio.getAccountPubKey(account);
             }
 
@@ -434,7 +432,7 @@ export const useContext = (): UseContextProps => {
   );
 
   useEffect(() => {
-    dispatch(getFee(apis.fio.actionEndPoints.renewFioDomain));
+    dispatch(getFee(EndPoint.renewFioDomain));
   }, [dispatch]);
 
   useEffectOnce(() => {

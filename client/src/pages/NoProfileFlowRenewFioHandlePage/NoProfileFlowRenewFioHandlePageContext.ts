@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import { Props as ComponentProps } from './NoProfileFlowRenewFioHandlePage';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -13,7 +15,6 @@ import { log } from '../../util/general';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { ACTIONS } from '../../constants/fio';
 
 import {
   prices as pricesSelector,
@@ -113,7 +114,9 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         }
 
         const cartItem = {
-          id: `${fioHandle}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
+          id: `${fioHandle}-${
+            GenericAction.addBundledTransactions
+          }-${+new Date()}`,
           address,
           domain,
           costFio: fio,

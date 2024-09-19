@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import {
@@ -10,7 +12,6 @@ import {
   DEFAULT_BUNDLE_SET_VALUE,
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
@@ -76,31 +77,31 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
 
       for (const registration of registrations) {
         if (!registration.isFree) {
-          let action: string;
+          let action: GenericAction;
           let data: AnyObject = {};
 
           if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
-            action = ACTIONS.addBundledTransactions;
+            action = GenericAction.addBundledTransactions;
             data = {
               fio_address: registration.fioName,
               bundle_sets: DEFAULT_BUNDLE_SET_VALUE,
               tpid: apis.fio.tpid,
             };
           } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-            action = ACTIONS.renewFioDomain;
+            action = GenericAction.renewFioDomain;
             data = {
               fio_domain: registration.fioName,
               tpid: apis.fio.tpid,
             };
           } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
-            action = ACTIONS.registerFioDomain;
+            action = GenericAction.registerFioDomain;
             data = {
               fio_domain: registration.fioName,
               owner_fio_public_key: ownerFioPublicKey,
               tpid: apis.fio.domainTpid,
             };
           } else if (registration.type === CART_ITEM_TYPE.ADDRESS) {
-            action = ACTIONS.registerFioAddress;
+            action = GenericAction.registerFioAddress;
             data = {
               fio_address: registration.fioName,
               owner_fio_public_key: ownerFioPublicKey,

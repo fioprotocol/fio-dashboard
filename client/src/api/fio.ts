@@ -15,8 +15,9 @@ import {
   ReceivedFioRequestsDecryptedResponse,
   FioSentItem,
   FioItem,
+  Action,
 } from '@fioprotocol/fiosdk';
-import { Action } from 'ledgerjs-hw-app-fio/dist/types/public';
+import { Action as LedgerAction } from 'ledgerjs-hw-app-fio/dist/types/public';
 import { createHash } from 'crypto-browserify';
 import superagent from 'superagent';
 
@@ -26,15 +27,10 @@ import { log } from '../util/general';
 import { camelizeFioRequestsData, isDomain } from '../utils';
 
 import {
-  ACTIONS,
-  ACTIONS_TO_END_POINT_KEYS,
   DEFAULT_TABLE_RAWS_LIMIT,
   FIO_PROXY_LIST,
-  FIO_ACCOUNT_NAMES,
-  FIO_ACTION_NAMES,
-  TRANSACTION_ACTION_NAMES,
   DEFAULT_FIO_RECORDS_LIMIT,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
+  getEndPointByGenericAction,
 } from '../constants/fio';
 
 import {
@@ -75,7 +71,7 @@ export type RawTransaction = {
   max_net_usage_words?: number;
   max_cpu_usage_ms?: number;
   delay_sec?: number;
-  context_free_actions: Action[];
+  context_free_actions: LedgerAction[];
   actions: {
     account: string;
     name: string;
@@ -123,11 +119,6 @@ export default class Fio {
   baseurls: string[] = [];
   publicFioSDK: FIOSDK | null = null;
   walletFioSDK: FIOSDK | null = null;
-  actionEndPoints: { [actionName: string]: string } = {
-    ...EndPoint,
-    [ACTIONS.addNft]: 'add_nft',
-    [ACTIONS.pushTransaction]: 'push_transaction',
-  };
   tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   domainTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   fioChainIdEnvironment: string = process.env.REACT_APP_FIO_CHAIN_ID || '';
@@ -596,26 +587,6 @@ export default class Fio {
     };
   };
 
-  getTransferTokensAction = (
-    publicKey: string,
-    amount: string,
-    fee: number,
-  ) => {
-    return {
-      account: FIO_ACCOUNT_NAMES[ACTIONS.transferTokens],
-      name: FIO_ACTION_NAMES[ACTIONS.transferTokens],
-      data: {
-        payee_public_key: publicKey,
-        amount,
-        max_fee: new MathOp(fee)
-          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-          .round(0)
-          .toNumber(),
-        tpid: this.tpid,
-      },
-    };
-  };
-
   getPublicAddresses = async (
     fioAddress: string,
     limit: number | null = null,
@@ -637,23 +608,27 @@ export default class Fio {
     nfts: NFTTokenDoublet[],
   ): Promise<TrxResponse> => {
     try {
-      const result = await this.executeAction(keys, ACTIONS.pushTransaction, {
-        action: TRANSACTION_ACTION_NAMES.addNft,
-        account: fioConstants.defaultAccount,
-        data: {
-          fio_address: fioAddress,
-          nfts: nfts.map(
-            ({ contractAddress, chainCode, tokenId, ...rest }) => ({
-              contract_address: contractAddress,
-              chain_code: chainCode,
-              token_id: tokenId,
-              ...rest,
-            }),
-          ),
-          max_fee: DEFAULT_ACTION_FEE_AMOUNT,
-          tpid: this.tpid,
+      const result = await this.executeAction(
+        keys,
+        GenericAction.pushTransaction,
+        {
+          action: Action.addNft,
+          account: fioConstants.defaultAccount,
+          data: {
+            fio_address: fioAddress,
+            nfts: nfts.map(
+              ({ contractAddress, chainCode, tokenId, ...rest }) => ({
+                contract_address: contractAddress,
+                chain_code: chainCode,
+                token_id: tokenId,
+                ...rest,
+              }),
+            ),
+            max_fee: DEFAULT_ACTION_FEE_AMOUNT,
+            tpid: this.tpid,
+          },
         },
-      });
+      );
       return { other: { nfts }, ...result };
     } catch (err) {
       this.logError(err);
@@ -663,7 +638,7 @@ export default class Fio {
 
   executeAction = async (
     keys: WalletKeys,
-    action: string,
+    action: GenericAction,
     params: AnyObject,
   ): Promise<TrxResponse> => {
     this.setWalletFioSdk(keys);
@@ -672,13 +647,10 @@ export default class Fio {
 
     try {
       this.walletFioSDK.setSignedTrxReturnOption(true);
-      const preparedTrx = await this.walletFioSDK.genericAction(
-        action as GenericAction,
-        params,
-      );
+      const preparedTrx = await this.walletFioSDK.genericAction(action, params);
       this.validateAction();
       const result = await this.walletFioSDK.executePreparedTrx(
-        this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]] as EndPoint,
+        getEndPointByGenericAction(action),
         preparedTrx as object,
       );
       this.clearWalletFioSdk();
@@ -686,29 +658,6 @@ export default class Fio {
     } catch (err) {
       this.logError(err);
       this.clearWalletFioSdk();
-      throw err;
-    }
-  };
-
-  executeActionWithoutKeys = async (
-    action: string,
-    params: AnyObject,
-  ): Promise<TrxResponse> => {
-    if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
-
-    try {
-      this.walletFioSDK.setSignedTrxReturnOption(true);
-      const preparedTrx = await this.walletFioSDK.genericAction(
-        action as GenericAction,
-        params,
-      );
-      this.validateAction();
-      return await this.walletFioSDK.executePreparedTrx(
-        this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]] as EndPoint,
-        preparedTrx as object,
-      );
-    } catch (err) {
-      this.logError(err);
       throw err;
     }
   };

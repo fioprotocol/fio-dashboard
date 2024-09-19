@@ -1,7 +1,7 @@
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import MathOp from './math';
 import apis from '../api';
-
-import { ACTIONS } from '../constants/fio';
 
 import { OrderItem } from '../types';
 
@@ -13,7 +13,7 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
       const customDomainItem = {
         ...item,
         id: `customDomain_${item.id}`,
-        action: ACTIONS.registerFioDomain,
+        action: GenericAction.registerFioDomain,
         address: '',
         nativeFio: item.data.hasCustomDomainFee,
         price: apis.fio
@@ -42,10 +42,10 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
         feeCollected: apis.fio
           .sufToAmount(
             (item.blockchainTransactions?.find(
-              ({ action }) => action === ACTIONS.registerFioDomain,
+              ({ action }) => action === GenericAction.registerFioDomain,
             )
               ? item.blockchainTransactions.find(
-                  ({ action }) => action === ACTIONS.registerFioAddress,
+                  ({ action }) => action === GenericAction.registerFioAddress,
                 )?.feeCollected
               : item.blockchainTransactions?.[0]?.feeCollected -
                 +item.data.hasCustomDomainFee) || 0,

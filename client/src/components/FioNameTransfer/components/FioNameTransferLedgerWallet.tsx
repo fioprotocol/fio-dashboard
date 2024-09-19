@@ -2,12 +2,11 @@ import React from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
-import { EndPoint } from '@fioprotocol/fiosdk';
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS, DOMAIN } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
 
 import { prepareChainTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
@@ -45,8 +44,8 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
       fioNameType === DOMAIN
-        ? ACTIONS.transferFioDomain
-        : ACTIONS.transferFioAddress,
+        ? GenericAction.transferFioDomain
+        : GenericAction.transferFioAddress,
       {
         [fioNameType === DOMAIN ? 'fio_domain' : 'fio_address']: name,
         new_owner_fio_public_key: newOwnerPublicKey,
@@ -74,8 +73,8 @@ const FioNameTransferLedgerWallet: React.FC<Props> = props => {
 
     const result = await apis.fio.publicFioSDK.executePreparedTrx(
       fioNameType === DOMAIN
-        ? (apis.fio.actionEndPoints.transferFioDomain as EndPoint)
-        : (apis.fio.actionEndPoints.transferFioAddress as EndPoint),
+        ? EndPoint.transferFioDomain
+        : EndPoint.transferFioAddress,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { makeRegistrationOrder } from '../middleware';
@@ -18,7 +20,6 @@ import {
 } from '../../../constants/purchase';
 import apis from '../../../api';
 import {
-  ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
 } from '../../../constants/fio';
@@ -96,8 +97,8 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
           signedTx = ((await apis.fio.walletFioSDK.genericAction(
             registration.isCombo
-              ? (ACTIONS.registerFioDomainAddress as 'registerFioDomainAddress')
-              : (ACTIONS.registerFioAddress as 'registerFioAddress'),
+              ? GenericAction.registerFioDomainAddress
+              : GenericAction.registerFioAddress,
             {
               fioAddress: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -123,7 +124,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
           }
 
           signedTx = ((await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.addBundledTransactions as 'addBundledTransactions',
+            GenericAction.addBundledTransactions,
             {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
@@ -148,7 +149,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
           }
 
           signedTx = ((await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioDomain as 'registerFioDomain',
+            GenericAction.registerFioDomain,
             {
               fioDomain: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -173,7 +174,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
           }
 
           signedTx = ((await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.renewFioDomain as 'renewFioDomain',
+            GenericAction.renewFioDomain,
             {
               fioDomain: registration.fioName,
               maxFee: new MathOp(registration.fee)
@@ -186,7 +187,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
           )) as unknown) as SignedTxArgs;
         } else {
           signedTx = ((await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioAddress as 'registerFioAddress',
+            GenericAction.registerFioAddress,
             {
               fioAddress: registration.fioName,
               maxFee: new MathOp(registration.fee)

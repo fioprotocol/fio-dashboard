@@ -1,16 +1,15 @@
 import React, { useCallback } from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
 import {
-  ACTIONS,
   BUNDLES_TX_COUNT,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
@@ -48,8 +47,8 @@ export const UnstakeTokensMetamaskWallet: React.FC<Props> = props => {
   const { amount, fioAddress } = submitData || {};
 
   const actionParams = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioStaking,
+    action: Action.unstake,
+    account: Account.staking,
     data: {
       amount: apis.fio.amountToSUF(Number(amount)),
       fio_address: fioAddress,

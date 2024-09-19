@@ -2,18 +2,20 @@ import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import { Props as ComponentProps } from './NoProfileFlowRenewFioDomainPage';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
-import { vaildateFioDomain } from '../../util/fio';
+import { validateFioDomain } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import { DOMAIN_TYPE } from '../../constants/fio';
 import { NON_VAILD_DOMAIN } from '../../constants/errors';
 
 import {
@@ -59,7 +61,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const onFocusOut = useCallback((value: string) => {
     if (!value) return;
 
-    const isNotValidAddressError = vaildateFioDomain(value);
+    const isNotValidAddressError = validateFioDomain(value);
 
     if (isNotValidAddressError) {
       toggleFioVerificationError(true);
@@ -107,7 +109,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         }
 
         const cartItem = {
-          id: `${domainValue}-${ACTIONS.renewFioDomain}-${+new Date()}`,
+          id: `${domainValue}-${GenericAction.renewFioDomain}-${+new Date()}`,
           domain: domainValue,
           costFio: fio,
           costUsdc: usdc,

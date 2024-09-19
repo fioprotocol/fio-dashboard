@@ -1,16 +1,13 @@
 import React from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
+import { DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -51,8 +48,8 @@ export const WrapTokensMetamaskWallet: React.FC<Props> = props => {
   const { amount, chainCode, publicAddress } = submitData || {};
 
   const actionParams = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioOracle,
+    action: Action.wrapTokens,
+    account: Account.oracle,
     data: {
       amount: apis.fio.amountToSUF(Number(amount)),
       chain_code: chainCode,

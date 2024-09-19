@@ -2,6 +2,8 @@ import React from 'react';
 
 import { useSelector } from 'react-redux';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -14,7 +16,6 @@ import {
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
 import {
-  ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
 } from '../../../constants/fio';
@@ -65,8 +66,8 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
         signedTxs[item.name] = {
           signedTx: ((await apis.fio.walletFioSDK.genericAction(
             isComboRegistration
-              ? (ACTIONS.registerFioDomainAddress as 'registerFioDomainAddress')
-              : (ACTIONS.registerFioAddress as 'registerFioAddress'),
+              ? GenericAction.registerFioDomainAddress
+              : GenericAction.registerFioAddress,
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -7,7 +9,6 @@ import MathOp from '../../../util/math';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
-  ACTIONS,
   BUNDLES_TX_COUNT,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
 } from '../../../constants/fio';
@@ -41,7 +42,7 @@ const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
   const unstake = async ({ keys, data }: SubmitActionParams) => {
     const result = await apis.fio.executeAction(
       keys,
-      ACTIONS.unStakeFioTokens,
+      GenericAction.unStakeFioTokens,
       {
         fioAddress: data.fioAddress,
         amount: apis.fio.amountToSUF(data.amount),

@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 
 import {
@@ -28,8 +30,6 @@ import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
-
-import apis from '../../api';
 
 import {
   fireAnalyticsEvent,
@@ -59,7 +59,7 @@ const FioDomainRenewPage: React.FC = () => {
 
   const domain = queryParams.get(QUERY_PARAMS_NAMES.NAME);
 
-  const renewFioDomain = apis.fio.actionEndPoints.renewFioDomain;
+  const renewFioDomain = EndPoint.renewFioDomain;
 
   const renewDomainFeePrice = fees[renewFioDomain];
   const domainRenewFeeLoading = feeLoading[renewFioDomain];
@@ -87,7 +87,7 @@ const FioDomainRenewPage: React.FC = () => {
     const newCartItem = {
       domain,
       type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-      id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
+      id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
       period: 1,
       costNativeFio: renewDomainFeePrice?.nativeFio,
       costFio: renewDomainFeePrice.fio,

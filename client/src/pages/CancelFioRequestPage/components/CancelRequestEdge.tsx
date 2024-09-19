@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -7,7 +9,6 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
@@ -42,7 +43,7 @@ const CancelRequestEdge: React.FC<Props> = props => {
     try {
       const result = await apis.fio.executeAction(
         keys,
-        ACTIONS.cancelFundsRequest,
+        GenericAction.cancelFundsRequest,
         {
           fioRequestId: data.fioRecord.id,
         },

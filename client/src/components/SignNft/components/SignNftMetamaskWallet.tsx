@@ -1,15 +1,12 @@
 import React from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
-} from '../../../components/MetamaskConfirmAction';
+} from '../../MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -54,8 +51,8 @@ export const SignNftMetamaskWallet: React.FC<Props> = props => {
     data: ActionDataParams;
     derivationIndex: number;
   } = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.addNft],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+    action: Action.addNft,
+    account: Account.address,
     data: {
       fio_address: fioAddress,
       nfts: [

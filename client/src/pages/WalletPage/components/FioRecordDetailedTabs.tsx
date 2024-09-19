@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { RequestStatus } from '@fioprotocol/fiosdk';
+
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
 import FioRecordDetailedItem from './FioRecordDetailedItem';
@@ -9,7 +11,6 @@ import {
   FIO_RECORD_DETAILED_TYPE,
   FIO_RECORD_TYPES,
 } from '../constants';
-import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
 
 import { FioRecordViewDecrypted, FioRecordViewKeysProps } from '../types';
 
@@ -59,7 +60,7 @@ const FioRecordDetailedTabs: React.FC<Props> = props => {
   const { fioRecordDecrypted } = props;
   if (!fioRecordDecrypted) return null;
 
-  if (fioRecordDecrypted.fioRecord.status !== FIO_REQUEST_STATUS_TYPES.PAID)
+  if (fioRecordDecrypted.fioRecord.status !== RequestStatus.paid)
     return (
       <>
         <h5 className={classes.subtitle}>{DetailedTabsList[0].title}</h5>

@@ -1,7 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import apis from '../../api';
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import { compose } from '../../utils';
 
 import { refreshBalance, getFee } from '../../redux/fio/actions';
@@ -26,14 +27,13 @@ const reduxConnect = connect(
     confirmingPin,
     roe,
     feePrice: (state: ReduxState) =>
-      state.fio.fees[apis.fio.actionEndPoints.setFioDomainPublic] ||
-      DEFAULT_FEE_PRICES,
+      state.fio.fees[EndPoint.setFioDomainPublic] || DEFAULT_FEE_PRICES,
     selectedFioDomain,
     fioWallet: fioWalletForDomain,
   }),
   {
     refreshBalance,
-    getFee: () => getFee(apis.fio.actionEndPoints.setFioDomainPublic),
+    getFee: () => getFee(EndPoint.setFioDomainPublic),
   },
 );
 

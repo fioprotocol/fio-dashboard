@@ -1,3 +1,5 @@
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import apis from '../../../../admin/api';
 
 import MathOp from '../../../../util/math';
@@ -16,7 +18,6 @@ import {
   PAYMENT_PROVIDER_LABEL,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
-import { ACTIONS } from '../../../../constants/fio';
 
 import {
   BcTx,
@@ -104,15 +105,7 @@ const setHistory = (
   });
 
   order.payments.forEach(
-    ({
-      price,
-      currency,
-      status,
-      createdAt,
-      spentType,
-      data,
-      paymentEventLogs,
-    }) => {
+    ({ price, currency, createdAt, spentType, data, paymentEventLogs }) => {
       if (spentType !== PAYMENT_SPENT_TYPES.ORDER) {
         const amount =
           currency === CURRENCY_CODES.FIO
@@ -160,7 +153,7 @@ const setHistory = (
       });
 
       statusMsg += `Item ${setFioName(
-        bt.action === ACTIONS.registerFioDomain ? '' : orderItem.address,
+        bt.action === GenericAction.registerFioDomain ? '' : orderItem.address,
         orderItem.domain,
       )} status update: ${BC_TX_STATUS_LABELS[status]}. \nAction: ${
         bt.action

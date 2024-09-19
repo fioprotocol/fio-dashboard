@@ -1,4 +1,4 @@
-import { EndPoint, GenericAction, PublicAddress } from '@fioprotocol/fiosdk';
+import { GenericAction, PublicAddress } from '@fioprotocol/fiosdk';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
@@ -13,9 +13,8 @@ import { formatLedgerSignature, getPath } from '../../util/ledger';
 import { log } from '../../util/general';
 
 import {
-  ACTIONS,
-  ACTIONS_TO_END_POINT_KEYS,
   ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+  getEndPointByGenericAction,
 } from '../../constants/fio';
 
 import {
@@ -132,7 +131,7 @@ const linkTokens = async ({
         error?: string | null;
       } = await updatePubAddresses(
         normalizePublicAddresses(connectList),
-        ACTIONS.addPublicAddresses as GenericAction,
+        GenericAction.addPublicAddresses,
       );
 
       const connectionsFailed: PublicAddressDoublet[] = [];
@@ -162,8 +161,8 @@ const linkTokens = async ({
       } = await updatePubAddresses(
         normalizePublicAddresses(disconnectList),
         disconnectAll
-          ? (ACTIONS.removeAllPublicAddresses as GenericAction)
-          : (ACTIONS.removePublicAddresses as GenericAction),
+          ? GenericAction.removeAllPublicAddresses
+          : GenericAction.removePublicAddresses,
         disconnectAll,
       );
 
@@ -282,7 +281,7 @@ export const linkTokensLedger = async ({
     });
 
     await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]] as EndPoint,
+      getEndPointByGenericAction(action),
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

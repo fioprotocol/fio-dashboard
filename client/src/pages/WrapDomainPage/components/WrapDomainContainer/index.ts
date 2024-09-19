@@ -1,7 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import apis from '../../../../api';
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import { compose } from '../../../../utils';
 
 import {
@@ -18,7 +19,7 @@ import {
 } from '../../../../redux/fio/selectors';
 import { roe } from '../../../../redux/registrations/selectors';
 
-import { ACTIONS } from '../../../../constants/fio';
+import { AdditionalAction } from '../../../../constants/fio';
 
 import WrapDomainContainer from './WrapDomainContainer';
 import { refreshWalletDataPublicKey } from '../../../../redux/fioWalletsData/actions';
@@ -35,18 +36,17 @@ const reduxConnect = connect(
     currentWallet,
     fioDomains,
     feePrice: (state: ReduxState) =>
-      state.fio.fees[apis.fio.actionEndPoints.wrapFioDomain] ||
-      DEFAULT_FEE_PRICES,
+      state.fio.fees[EndPoint.wrapFioDomain] || DEFAULT_FEE_PRICES,
     oracleFeePrice: (state: ReduxState) =>
-      state.fio.oracleFees[apis.fio.actionEndPoints.wrapFioDomain] ||
+      state.fio.oracleFees[EndPoint.wrapFioDomain] ||
       getDefaultOracleFeePrices({
         roe: state.fio.roe,
-        action: ACTIONS.wrapFioDomain,
+        action: AdditionalAction.wrapFioDomain,
       }),
   }),
   {
     refreshBalance,
-    getFee: () => getFee(apis.fio.actionEndPoints.wrapFioDomain),
+    getFee: () => getFee(EndPoint.wrapFioDomain),
     getOracleFees: () => getOracleFees(),
     refreshWalletDataPublicKey,
     resetFioNames,
