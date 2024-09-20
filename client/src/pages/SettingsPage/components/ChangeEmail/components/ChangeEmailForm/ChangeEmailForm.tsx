@@ -2,20 +2,22 @@ import React, { useCallback } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 
-import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import SubmitButton from '../../../../../../components/common/SubmitButton/SubmitButton';
+import Input, {
+  INPUT_UI_STYLES,
+} from '../../../../../../components/Input/Input';
 
 import {
   COLOR_TYPE,
   ERROR_UI_TYPE,
   ErrorBadge,
-} from '../../../../components/Input/ErrorBadge';
+} from '../../../../../../components/Input/ErrorBadge';
 
-import { FormValuesProps } from './types';
+import { FormValuesProps } from '../../types';
 
-import { formValidation } from './validation';
+import { formValidation } from '../../validation';
 
-import classes from './ChangeEmail.module.scss';
+import classes from './ChangeEmailForm.module.scss';
 
 type Props = {
   hasNoEmail: boolean;

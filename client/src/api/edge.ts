@@ -250,6 +250,41 @@ export default class Edge extends Base {
     }
   }
 
+  async changeUsername({
+    newUsername,
+    password,
+    username,
+  }: {
+    newUsername: string;
+    password: string;
+    username: string;
+  }): Promise<{ status: number }> {
+    try {
+      const account = await this.login(username, password);
+      const results: { status: number } = { status: 0 };
+
+      if (account) {
+        await account.changeUsername({ username: newUsername, password });
+
+        // change username method doesn't return anything, so to be sure that new username was successfully changed we check if username available
+        const isNewUsernameSet = await this.usernameAvailable(newUsername);
+
+        await account.logout();
+
+        if (isNewUsernameSet) {
+          results.status = 1;
+        } else {
+          results.status = 0;
+        }
+      }
+
+      return results;
+    } catch (error) {
+      this.logError(error);
+      throw error;
+    }
+  }
+
   async checkRecoveryQuestions(username: string): Promise<boolean | undefined> {
     try {
       this.validateEdgeContext();

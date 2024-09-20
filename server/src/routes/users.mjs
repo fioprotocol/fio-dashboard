@@ -9,7 +9,7 @@ import FreeAddressRegistered from '../services/users/FreeAddressRegistered';
 import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersResendRecovery from '../services/users/ResendRecovery';
 import UsersList from '../services/users/List';
-import UsersUpdateEmail from '../services/users/UpdateEmail';
+import UsersUpdateEmail from '../services/users/UpdateEmail.mjs';
 import UsersUpdateEmailNotificationParams from '../services/users/UpdateEmailNotificationParams';
 import ActivateAffiliate from '../services/users/ActivateAffiliate';
 import UpdateAffiliate from '../services/users/UpdateAffiliate';

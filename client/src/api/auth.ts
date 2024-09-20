@@ -92,9 +92,15 @@ export default class Auth extends Base {
     return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
 
-  updateEmail(newEmail: string): Promise<AuthUpdateEmailResponse> {
+  updateEmail({
+    newEmail,
+    newUsername,
+  }: {
+    newEmail: string;
+    newUsername?: string;
+  }): Promise<AuthUpdateEmailResponse> {
     return this.apiClient.post('users/update-email', {
-      data: { newEmail },
+      data: { newEmail, newUsername },
     });
   }
 
