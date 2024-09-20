@@ -49,7 +49,7 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
   });
 
   let paymentData = null;
-  if (itemData.status === RequestStatus.paid && paymentOtbData) {
+  if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
     const paymentDecryptedContent = decryptFioRequestData({
       data: paymentOtbData,
       walletKeys: {

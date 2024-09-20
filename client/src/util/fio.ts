@@ -183,9 +183,9 @@ export const statusBadgeColours = (
   isRose: boolean;
   isYellowGreen: boolean;
 } => ({
-  isBlue: RequestStatus.paid === status,
+  isBlue: RequestStatus.sentToBlockchain === status,
   isOrange: RequestStatus.rejected === status,
-  isRose: RequestStatus.pending === status,
+  isRose: RequestStatus.requested === status,
   isYellowGreen: RequestStatus.canceled === status,
 });
 
