@@ -1,26 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import SuccessModal from '../../../../components/Modal/SuccessModal';
+import { usernameAvailable } from '../../../../components/CreateAccountForm/middleware';
+import Modal from '../../../../components/Modal/Modal';
+
 import ActionButton from '../ActionButton';
 import ModalUIComponent from '../ModalUIComponent';
-import ChangeEmailForm from './ChangeEmailForm';
-import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
-import SuccessModal from '../../../../components/Modal/SuccessModal';
 
-import {
-  CONFIRM_METAMASK_ACTION,
-  CONFIRM_PIN_ACTIONS,
-} from '../../../../constants/common';
+import ChangeEmailForm from './components/ChangeEmailForm/ChangeEmailForm';
+import { PasswordForm } from './components/PasswordForm';
+
+import { CONFIRM_METAMASK_ACTION } from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
 import { log } from '../../../../util/general';
+import { emailToUsername } from '../../../../utils';
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
 import apis from '../../../../api';
 
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
-import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
 import classes from './ChangeEmail.module.scss';
 
@@ -32,42 +33,51 @@ const SUCCESS_MODAL_CONTENT = {
 type Props = {
   user: User;
   preopenedEmailModal: boolean;
-  loading: boolean;
   loadProfile: () => void;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, loading, preopenedEmailModal, loadProfile } = props;
+  const { user, preopenedEmailModal, loadProfile } = props;
   const [showModal, toggleModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
-  const [processing, setProcessing] = useState(false);
+  const [loading, toggleLoading] = useState(false);
   const [submitData, setSubmitData] = useState<{
     newEmail: string;
+    newUsername?: string;
   } | null>(null);
   const [error, setError] = useState(false);
+  const [passwordModalError, setPasswordModalError] = useState<Error | null>(
+    null,
+  );
+  const [showPasswordModal, togglePasswordModal] = useState(false);
 
   const isPrimaryProfile = user?.userProfileType === USER_PROFILE_TYPE.PRIMARY;
 
-  const onCancel = () => {
-    setProcessing(false);
-    setSubmitData(null);
-  };
-
-  const onSuccess = () => {
-    setProcessing(false);
-    setSubmitData(null);
-  };
-
   const onSuccessClose = () => toggleSuccessModal(false);
 
-  const onCloseModal = () => {
-    if (!processing && !loading) toggleModal(false);
-  };
+  const onCloseModal = useCallback(() => {
+    if (!loading) {
+      setSubmitData(null);
+      toggleModal(false);
+    }
+  }, [loading]);
+
+  const onClosePasswordModal = useCallback(() => {
+    if (!loading) {
+      setSubmitData(null);
+      setPasswordModalError(null);
+      togglePasswordModal(false);
+    }
+  }, [loading]);
 
   const onActionButtonClick = () => {
     setError(false);
     toggleModal(true);
     setSubmitData(null);
+  };
+
+  const onPasswordFormChange = () => {
+    setPasswordModalError(null);
   };
 
   useEffect(() => {
@@ -76,44 +86,105 @@ const ChangeEmail: React.FC<Props> = props => {
     }
   }, [preopenedEmailModal]);
 
-  const submit = async ({ data }: SubmitActionParams) => {
-    const { newEmail } = data;
-    try {
-      const result = await apis.auth.updateEmail(newEmail);
+  const onChangeEmail = useCallback(
+    async ({ password }: { password?: string } = {}) => {
+      const { newEmail, newUsername } = submitData;
+      toggleLoading(true);
 
-      if (result) {
-        loadProfile();
-        onCloseModal();
-        toggleSuccessModal(true);
+      try {
+        const updateEmailResult = await apis.auth.updateEmail({
+          newEmail,
+          newUsername,
+        });
+
+        let updateEmailSuccess = !!updateEmailResult;
+
+        if (newUsername && password && showPasswordModal) {
+          try {
+            await apis.edge.changeUsername({
+              newUsername,
+              password,
+              username: user?.username,
+            });
+          } catch (error) {
+            log.error('Change edge username error');
+
+            updateEmailSuccess = false;
+
+            await apis.auth.updateEmail({
+              newEmail: user?.email,
+              newUsername: user?.username,
+            });
+
+            toggleLoading(false);
+            setPasswordModalError(error);
+          }
+        }
+
+        if (updateEmailSuccess) {
+          loadProfile();
+          setSubmitData(null);
+          toggleLoading(false);
+          toggleModal(false);
+          togglePasswordModal(false);
+          toggleSuccessModal(true);
+        }
+      } catch (err) {
+        log.error(err);
+        setError(true);
+
+        toggleLoading(false);
+        setSubmitData(null);
+        togglePasswordModal(false);
       }
-    } catch (err) {
-      log.error(err);
-      setError(true);
-    } finally {
-      setSubmitData(null);
-    }
-  };
+    },
+    [loadProfile, showPasswordModal, submitData, user?.email, user?.username],
+  );
 
-  const onSubmit = async (values: FormValuesProps) => {
-    const { newEmail } = values;
-    error && setError(false);
+  const handleChangeEmail = useCallback(
+    async (values: FormValuesProps) => {
+      const { newEmail } = values;
+      error && setError(false);
 
-    if (isPrimaryProfile) {
-      setSubmitData({ newEmail });
-    } else {
-      const analyticsData = { newEmail };
-      let analyticAction: string;
+      if (isPrimaryProfile) {
+        const newUsername = emailToUsername(newEmail);
 
-      if (window.ethereum?.isMetaMask) {
-        analyticAction = CONFIRM_METAMASK_ACTION.UPDATE_EMAIL;
+        const { error: usernameError } = await usernameAvailable(newUsername);
+
+        if (usernameError) {
+          setError(true);
+
+          toggleLoading(false);
+          return { newEmail: 'This username is not available' };
+        }
+
+        setSubmitData({ newEmail, newUsername });
+      } else {
+        const analyticsData = { newEmail };
+        let analyticAction: string;
+
+        if (window.ethereum?.isMetaMask) {
+          analyticAction = CONFIRM_METAMASK_ACTION.UPDATE_EMAIL;
+        }
+
+        fireActionAnalyticsEvent(analyticAction, analyticsData);
+
+        setSubmitData({ newEmail });
       }
+      return {};
+    },
+    [error, isPrimaryProfile],
+  );
 
-      fireActionAnalyticsEvent(analyticAction, analyticsData);
-
-      submit({ data: { newEmail } });
+  useEffect(() => {
+    if (submitData?.newEmail && !showPasswordModal) {
+      if (submitData?.newUsername) {
+        togglePasswordModal(true);
+      } else {
+        onChangeEmail();
+      }
     }
-    return {};
-  };
+  }, [submitData, onChangeEmail, showPasswordModal]);
 
   return (
     <div>
@@ -145,24 +216,31 @@ const ChangeEmail: React.FC<Props> = props => {
         >
           <ChangeEmailForm
             hasNoEmail={!user.email}
-            onSubmit={onSubmit}
-            loading={loading || processing}
+            onSubmit={handleChangeEmail}
+            loading={loading}
             error={error}
             setError={setError}
           />
         </ModalUIComponent>
         {isPrimaryProfile && (
-          <EdgeConfirmAction
-            action={CONFIRM_PIN_ACTIONS.UPDATE_EMAIL}
-            setProcessing={setProcessing}
-            onSuccess={onSuccess}
-            onCancel={onCancel}
-            processing={processing}
-            data={submitData}
-            submitAction={submit}
-            edgeAccountLogoutBefore={true}
-            hideProcessing={true}
-          />
+          <Modal
+            show={showPasswordModal}
+            onClose={onClosePasswordModal}
+            closeButton
+            backdrop="static"
+            isSecondModal
+          >
+            <>
+              <h3>Email Change</h3>
+              <p>Enter your password to confirm email change</p>
+              <PasswordForm
+                error={passwordModalError}
+                loading={loading}
+                onChange={onPasswordFormChange}
+                onSubmit={onChangeEmail}
+              />
+            </>
+          </Modal>
         )}
         <SuccessModal
           title={SUCCESS_MODAL_CONTENT.successModalTitle}

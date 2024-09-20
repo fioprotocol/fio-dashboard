@@ -1,0 +1,14 @@
+@import '../../../../../../assets/styles/colors.scss';
+
+.error {
+  color: $warn-red;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  font-size: 0.875em;
+  width: 100%;
+
+  >div {
+    display: flex;
+    gap: 10px;
+  }
+}
