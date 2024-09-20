@@ -175,7 +175,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
       if (receivedRequest) {
         setFioRequest(receivedRequest);
         setFioRecordType(FIO_RECORD_TYPES.RECEIVED);
-        if (receivedRequest.status !== RequestStatus.pending) {
+        if (receivedRequest.status !== RequestStatus.requested) {
           setError(
             `Your request is ${
               FIO_REQUEST_STATUS_TYPES_TITLES[receivedRequest.status]
@@ -188,7 +188,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (sentRequest) {
-        if (sentRequest.status === RequestStatus.paid) {
+        if (sentRequest.status === RequestStatus.sentToBlockchain) {
           setPaymentData(
             obtData.find(
               (item: FioRecord) => item.fioRequestId === fioRequestId,

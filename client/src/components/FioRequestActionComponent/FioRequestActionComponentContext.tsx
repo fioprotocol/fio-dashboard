@@ -50,7 +50,7 @@ export const useContext = (): UseContextProps => {
         if (receivedFioRequest.length) {
           const lastRequest = receivedFioRequest.find(
             receivedFioRequestItem =>
-              receivedFioRequestItem.status === RequestStatus.pending,
+              receivedFioRequestItem.status === RequestStatus.requested,
           );
 
           if (lastRequest) {

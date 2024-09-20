@@ -166,7 +166,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
           to: resultsData.other.toFioAddress,
           payeeFioPublicKey: resultsData.other.payeeTokenPublicAddress,
           date: resultsData.other.block_time,
-          status: RequestStatus.pending,
+          status: RequestStatus.requested,
           fioTxType: FIO_RECORD_TYPES.SENT,
         },
         fioDecryptedContent: {

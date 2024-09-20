@@ -60,7 +60,7 @@ const FioRecordDetailedTabs: React.FC<Props> = props => {
   const { fioRecordDecrypted } = props;
   if (!fioRecordDecrypted) return null;
 
-  if (fioRecordDecrypted.fioRecord.status !== RequestStatus.paid)
+  if (fioRecordDecrypted.fioRecord.status !== RequestStatus.sentToBlockchain)
     return (
       <>
         <h5 className={classes.subtitle}>{DetailedTabsList[0].title}</h5>

@@ -73,7 +73,7 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
 
     let paymentData;
 
-    if (itemData.status === RequestStatus.paid && paymentOtbData) {
+    if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
       paymentData = {
         fioRecord: paymentOtbData,
         fioDecryptedContent: {

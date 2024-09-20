@@ -72,7 +72,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     );
 
     let paymentData = null;
-    if (itemData.status === RequestStatus.paid && paymentOtbData) {
+    if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
       const paymentDecodedMessage = await appFio.decodeMessage({
         path: getPath(fioWallet.data.derivationIndex),
         publicKeyHex: Ecc.PublicKey(
