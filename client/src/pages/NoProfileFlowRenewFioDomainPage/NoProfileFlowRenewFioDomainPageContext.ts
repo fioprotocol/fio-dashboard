@@ -89,9 +89,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
       try {
         toggleIsVerifying(true);
 
-        try {
-          apis.fio.isFioDomainValid(domainValue);
-        } catch (error) {
+        if (!apis.fio.publicFioSDK.validateFioDomain(domainValue)) {
           setInfoMessage(NON_VAILD_DOMAIN);
           toggleIsFioItemVerified(false);
           toggleIsVerifying(false);

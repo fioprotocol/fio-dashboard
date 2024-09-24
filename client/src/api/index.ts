@@ -29,8 +29,6 @@ import Users from './users';
 import Vars from './vars';
 import WrapStatus from './wrap-status';
 
-import { log } from '../util/general';
-
 const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
@@ -47,7 +45,7 @@ window.fioCorsFixfetch = async (
   try {
     return await fioCorsFixfetch(uri, { ...opts });
   } catch (err) {
-    log.error(err);
+    //
   }
 };
 

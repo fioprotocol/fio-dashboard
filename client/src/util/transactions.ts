@@ -1,3 +1,5 @@
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import apis from '../api';
 
 import { FIO_CHAIN_CODE } from '../constants/fio';
@@ -69,7 +71,7 @@ const processTransaction = (
   // Transfer funds transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER_PUB_KEY && data.amount != null) {
     nativeAmount = data.amount.toString();
-    const amount = `${apis.fio.sufToAmount(parseInt(nativeAmount, 10))}`;
+    const amount = `${FIOSDK.SUFToAmount(nativeAmount)}`;
     actorSender = data.actor;
     if (data.payee_public_key === publicKey) {
       ourReceiveAddresses.push(publicKey);

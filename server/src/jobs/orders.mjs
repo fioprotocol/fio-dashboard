@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import '../db';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import {
   Domain,
   OrderItem,
@@ -546,7 +548,7 @@ class OrdersJob extends CommonJob {
       orderId,
       status: Payment.STATUS.PENDING,
       eventStatus: PaymentEventLog.STATUS.PENDING,
-      price: fioApi.sufToAmount(balanceDifference || fee),
+      price: FIOSDK.SUFToAmount(balanceDifference || fee),
       currency: Payment.CURRENCY.FIO,
       data: { roe, sendingFioTokens: true },
     });
@@ -583,7 +585,7 @@ class OrdersJob extends CommonJob {
             action,
             orderId,
             spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-            price: fioApi.sufToAmount(balanceDifference || fee),
+            price: FIOSDK.SUFToAmount(balanceDifference || fee),
             currency: Payment.CURRENCY.FIO,
             data: {
               roe,
@@ -717,7 +719,7 @@ class OrdersJob extends CommonJob {
           fioName: domain,
           orderId,
           action: FIO_ACTIONS.registerFioDomain,
-          price: fioApi.sufToAmount(data.hasCustomDomainFee),
+          price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
           currency: Payment.CURRENCY.FIO,
           data: { roe },
         });
@@ -762,7 +764,7 @@ class OrdersJob extends CommonJob {
         fioName: domain,
         orderId,
         action: FIO_ACTIONS.registerFioDomain,
-        price: fioApi.sufToAmount(data.hasCustomDomainFee),
+        price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
         data: { roe, error },

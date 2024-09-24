@@ -15,15 +15,12 @@ export const isNativeBlockchainPublicAddressValidator: FieldValidationFunctionSy
         : message?.[0] || 'Not valid address',
   };
 
-  try {
-    apis.fio.isPublicAddressValid(value);
+  if (apis.fio.publicFioSDK.validatePublicAddress(value)) {
     return {
       ...validationResult,
       succeeded: true,
       message: '',
     };
-  } catch (e) {
-    //
   }
 
   return validationResult;

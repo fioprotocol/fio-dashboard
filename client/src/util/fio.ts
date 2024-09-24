@@ -124,16 +124,9 @@ export const transformNft = (nfts: NftTokenResponse[]): NFTTokenDoublet[] => {
 export const fioAddressToPubKey = async (
   fioAddress: string,
 ): Promise<string> => {
-  let isFioAddress = false;
   let pubKey = '';
-  try {
-    apis.fio.isFioAddressValid(fioAddress);
-    isFioAddress = true;
-  } catch (e) {
-    //
-  }
 
-  if (isFioAddress) {
+  if (apis.fio.publicFioSDK.validateFioAddress(fioAddress)) {
     try {
       const {
         public_address: publicAddress,

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import classNames from 'classnames';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import WrapTokensForm from './components/WrapTokensForm';
@@ -11,8 +13,6 @@ import WalletAction from '../../components/WalletAction/WalletAction';
 import WrapTokenResults from '../../components/common/TransactionResults/components/WrapTokenResults';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { WrapTokensMetamaskWallet } from './components/WrapTokensMetamaskWallet';
-
-import apis from '../../api';
 
 import { useFioAddresses, useWalletBalances } from '../../util/hooks';
 import useEffectOnce from '../../hooks/general';
@@ -97,9 +97,9 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
       chainCode: sendData.chainCode,
       publicAddress: sendData.publicAddress,
       feeCollectedAmount: new MathOp(
-        apis.fio.sufToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
+        FIOSDK.SUFToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
       )
-        .add(apis.fio.sufToAmount(res.fee_collected) || feePrice.fio)
+        .add(FIOSDK.SUFToAmount(res.fee_collected) || feePrice.fio)
         .toNumber(),
       nativeFeeCollectedAmount: new MathOp(res.oracle_fee_collected)
         .add(res.fee_collected)

@@ -1,6 +1,7 @@
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import { BlockchainTransaction, Notification, Order, Payment, User } from '../models';
 
-import { fioApi } from '../external/fio.mjs';
 import { sendGTMEvent } from '../external/googleapi.mjs';
 import { sendSendinblueEvent } from './external/SendinblueEvent.mjs';
 
@@ -97,9 +98,9 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${fioApi
-    .sufToAmount(nativeAmount)
-    .toFixed(2)}) FIO`;
+  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${FIOSDK.SUFToAmount(
+    nativeAmount || 0,
+  ).toFixed(2)}) FIO`;
 };
 
 const transformOrderItemsForEmail = orderItems =>

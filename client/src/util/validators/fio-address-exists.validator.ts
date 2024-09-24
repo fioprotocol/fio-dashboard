@@ -1,5 +1,7 @@
 import { FieldValidationFunctionAsync } from '@lemoncode/fonk';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import apis from '../../api';
 
 interface FieldArgs {
@@ -37,22 +39,21 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
         : message?.[0] || 'FIO Handle is not valid',
   };
 
-  try {
-    apis.fio.isFioAddressValid(value);
-
+  if (apis.fio.publicFioSDK.validateFioAddress(value)) {
     const {
       public_address: publicAddress,
     } = await apis.fio.getFioPublicAddress(value);
 
     transferAddress = publicAddress;
-  } catch (e) {
-    //
   }
 
   try {
-    apis.fio.isFioPublicKeyValid(transferAddress);
-    await apis.fio.publicFioSDK.getFioBalance(transferAddress);
+    FIOSDK.isFioPublicKeyValid(transferAddress);
+    await apis.fio.publicFioSDK.getFioBalance({
+      fioPublicKey: transferAddress,
+    });
   } catch (e) {
+    // TODO refactor error handling
     if (e.json && e.json.type === 'invalid_input') {
       return validationResult;
     }

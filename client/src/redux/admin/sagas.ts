@@ -1,6 +1,8 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { ExportToCsv } from 'export-to-csv';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import {
   RESET_ADMIN_USER_PASSWORD_SUCCESS,
   DELETE_ADMIN_USER_SUCCESS,
@@ -20,8 +22,6 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
 } from '../../constants/purchase';
 import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
-
-import apis from '../../api';
 
 import { transformOrderItems } from '../../util/purchase';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
@@ -112,7 +112,7 @@ export function* exportOrdersDataSuccess(): Generator {
           fio:
             orderItem.price === '0'
               ? '0'
-              : apis.fio.sufToAmount(Number(orderItem.nativeFio)).toFixed(2),
+              : FIOSDK.SUFToAmount(orderItem.nativeFio).toFixed(2),
           feeCollected: `${orderItem.feeCollected} FIO`,
           status:
             BC_TX_STATUS_LABELS[orderItem.orderItemStatus?.txStatus] ||
