@@ -548,7 +548,7 @@ class OrdersJob extends CommonJob {
       orderId,
       status: Payment.STATUS.PENDING,
       eventStatus: PaymentEventLog.STATUS.PENDING,
-      price: FIOSDK.SUFToAmount(balanceDifference || fee || 0),
+      price: FIOSDK.SUFToAmount(balanceDifference || fee),
       currency: Payment.CURRENCY.FIO,
       data: { roe, sendingFioTokens: true },
     });
@@ -585,7 +585,7 @@ class OrdersJob extends CommonJob {
             action,
             orderId,
             spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-            price: FIOSDK.SUFToAmount(balanceDifference || fee || 0),
+            price: FIOSDK.SUFToAmount(balanceDifference || fee),
             currency: Payment.CURRENCY.FIO,
             data: {
               roe,
