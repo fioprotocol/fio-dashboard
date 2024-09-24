@@ -4,6 +4,8 @@ import Sequelize from 'sequelize';
 import Web3 from 'web3';
 import superagent from 'superagent';
 
+import { Account } from '@fioprotocol/fiosdk';
+
 import MathOp from '../services/math.mjs';
 import { fioApi } from '../external/fio.mjs';
 
@@ -455,8 +457,8 @@ class WrapStatusJob extends CommonJob {
       const getFioOraclesVotes = async (startPosition, limit) => {
         const res = await fioApi.getTableRows({
           params: {
-            code: 'fio.oracle',
-            scope: 'fio.oracle',
+            code: Account.oracle,
+            scope: Account.oracle,
             table: 'oravotes',
             lower_bound: startPosition + '',
             limit,
@@ -678,11 +680,11 @@ class WrapStatusJob extends CommonJob {
         const before = chainInfo.last_irreversible_block_num;
 
         const paramsToPass = {
+          code: Account.address,
+          scope: Account.address,
           after,
           before,
-          code: 'fio.address',
           present: 0,
-          scope: 'fio.address',
           table: 'domains',
           limit: DEFAULT_V2_ITEMS_LIMIT_PER_REQUEST,
         };

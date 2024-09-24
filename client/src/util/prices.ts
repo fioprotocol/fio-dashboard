@@ -1,3 +1,5 @@
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import MathOp from '../util/math';
 import apis from '../api';
 
@@ -14,7 +16,7 @@ export function convertFioPrices(
   nativeFio: number | null | undefined,
   roe: number,
 ): WalletBalancesItem {
-  const fioAmount = apis.fio.sufToAmount(nativeFio || 0);
+  const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
 
   return {
     nativeFio,

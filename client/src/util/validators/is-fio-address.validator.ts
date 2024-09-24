@@ -22,28 +22,20 @@ export const isFioAddressValidator: FieldValidationFunctionSync<OnlyFioAddressFi
         : message?.[0] || 'FIO Handle is not valid',
   };
 
-  try {
-    apis.fio.isFioAddressValid(value);
+  if (apis.fio.publicFioSDK.validateFioAddress(value)) {
     return {
       ...validationResult,
       succeeded: true,
       message: '',
     };
-  } catch (e) {
-    //
   }
 
-  if (!onlyFioAddress) {
-    try {
-      apis.fio.isFioPublicKeyValid(value);
-      return {
-        ...validationResult,
-        succeeded: true,
-        message: '',
-      };
-    } catch (e) {
-      //
-    }
+  if (!onlyFioAddress && apis.fio.publicFioSDK.validateFioPublicKey(value)) {
+    return {
+      ...validationResult,
+      succeeded: true,
+      message: '',
+    };
   }
 
   return validationResult;

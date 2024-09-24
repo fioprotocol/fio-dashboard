@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import superagent from 'superagent';
 
 import fetch from 'node-fetch';
-import { FIOSDK, fioConstants, EndPoint } from '@fioprotocol/fiosdk';
+import { Account, FIOSDK, fioConstants, EndPoint } from '@fioprotocol/fiosdk';
 
 import { FioApiUrl, Var } from '../models';
 
@@ -60,7 +60,10 @@ class Fio {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
-      this.publicFioSDK = new FIOSDK('', '', apiUrls, fetch);
+      this.publicFioSDK = new FIOSDK({
+        apiUrls,
+        fetchJson: fetch,
+      });
     }
     return this.publicFioSDK;
   }
@@ -73,15 +76,13 @@ class Fio {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
-      this.masterFioSDK = new FIOSDK(
-        process.env.MASTER_FIOSDK_KEY,
-        masterPubKey,
+      this.masterFioSDK = new FIOSDK({
+        privateKey: process.env.MASTER_FIOSDK_KEY,
+        publicKey: masterPubKey,
         apiUrls,
-        fetch,
-        '',
-        '',
-        true,
-      );
+        fetchJson: fetch,
+        returnPreparedTrx: true,
+      });
     }
     return this.masterFioSDK;
   }
@@ -90,11 +91,11 @@ class Fio {
     const apiUrls = await FioApiUrl.getApiUrls({
       type: FIO_API_URLS_TYPES.DASHBOARD_API,
     });
-    return new FIOSDK('', publicKey, apiUrls, fetch);
-  }
-
-  sufToAmount(suf = 0) {
-    return FIOSDK.SUFToAmount(suf);
+    return new FIOSDK({
+      publicKey,
+      apiUrls,
+      fetchJson: fetch,
+    });
   }
 
   amountToSUF(amount) {
@@ -118,7 +119,7 @@ class Fio {
   convertFioToUsdc(nativeAmount, roe) {
     if (roe == null) return 0;
 
-    return new MathOp(this.sufToAmount(nativeAmount))
+    return new MathOp(FIOSDK.SUFToAmount(nativeAmount || 0))
       .mul(roe)
       .round(2, 1)
       .toNumber();
@@ -244,9 +245,9 @@ class Fio {
     try {
       const publicFioSDK = await this.getPublicFioSDK();
 
-      const { fee } = await publicFioSDK.getFee(
-        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
-      );
+      const { fee } = await publicFioSDK.getFee({
+        endPoint: EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+      });
 
       return fee;
     } catch (e) {
@@ -407,7 +408,7 @@ class Fio {
 
   async getPublicAddressByFioAddress(fioAddress) {
     const publicFioSDK = await this.getPublicFioSDK();
-    const res = await publicFioSDK.getFioPublicAddress(fioAddress);
+    const res = await publicFioSDK.getFioPublicAddress({ fioAddress });
     return res.public_address;
   }
 
@@ -451,8 +452,8 @@ class Fio {
         .toString('hex');
 
     const params = {
-      code: 'fio.address',
-      scope: 'fio.address',
+      code: Account.address,
+      scope: Account.address,
       table: 'fionames',
       lower_bound: bound,
       upper_bound: bound,
@@ -460,6 +461,7 @@ class Fio {
       index_position: '5',
       json: true,
     };
+
     if (isDomain(fioName)) {
       params.table = 'domains';
       params.index_position = '4';
@@ -471,8 +473,8 @@ class Fio {
   async getPublicAddressByAccount(account) {
     const { rows } = await this.getTableRows({
       params: {
-        code: 'fio.address',
-        scope: 'fio.address',
+        code: Account.address,
+        scope: Account.address,
         table: 'accountmap',
         lower_bound: account,
         upper_bound: account,

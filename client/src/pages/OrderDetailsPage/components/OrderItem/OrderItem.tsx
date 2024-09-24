@@ -1,13 +1,14 @@
 import { FC } from 'react';
 import classnames from 'classnames';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import Badge from '../../../../components/Badge/Badge';
 import CartItem from '../../../../components/Cart/CartItem';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { DOMAIN_TYPE } from '../../../../constants/fio';
 
-import apis from '../../../../api';
 import MathOp from '../../../../util/math';
 
 import { OrderItemDetailed } from '../../../../types';
@@ -38,7 +39,7 @@ export const OrderItem: FC<Props> = props => {
     domain,
     type,
     period,
-    costFio: apis.fio.sufToAmount(fee_collected).toFixed(2),
+    costFio: FIOSDK.SUFToAmount(fee_collected).toFixed(2),
     costUsdc,
     costNativeFio: fee_collected ? new MathOp(fee_collected).toNumber() : null,
     id,

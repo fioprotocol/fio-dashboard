@@ -1,4 +1,4 @@
-import { GenericAction } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import MathOp from './math';
 import apis from '../api';
@@ -22,9 +22,9 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
             new MathOp(item.order.roe).toNumber(),
           )
           .toFixed(2),
-        feeCollected: apis.fio
-          .sufToAmount(+item.data.hasCustomDomainFee || 0)
-          .toFixed(2),
+        feeCollected: FIOSDK.SUFToAmount(
+          +item.data.hasCustomDomainFee || 0,
+        ).toFixed(2),
       };
 
       orderItems.push(customDomainItem);
@@ -39,25 +39,23 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
             new MathOp(item.order.roe).toNumber(),
           )
           .toFixed(2),
-        feeCollected: apis.fio
-          .sufToAmount(
-            (item.blockchainTransactions?.find(
-              ({ action }) => action === GenericAction.registerFioDomain,
-            )
-              ? item.blockchainTransactions.find(
-                  ({ action }) => action === GenericAction.registerFioAddress,
-                )?.feeCollected
-              : item.blockchainTransactions?.[0]?.feeCollected -
-                +item.data.hasCustomDomainFee) || 0,
+        feeCollected: FIOSDK.SUFToAmount(
+          (item.blockchainTransactions?.find(
+            ({ action }) => action === GenericAction.registerFioDomain,
           )
-          .toFixed(2),
+            ? item.blockchainTransactions.find(
+                ({ action }) => action === GenericAction.registerFioAddress,
+              )?.feeCollected
+            : item.blockchainTransactions?.[0]?.feeCollected -
+              +item.data.hasCustomDomainFee) || 0,
+        ).toFixed(2),
       });
     } else {
       orderItems.push({
         ...item,
-        feeCollected: apis.fio
-          .sufToAmount(item.blockchainTransactions?.[0]?.feeCollected || 0)
-          .toFixed(2),
+        feeCollected: FIOSDK.SUFToAmount(
+          item.blockchainTransactions?.[0]?.feeCollected || 0,
+        ).toFixed(2),
       });
     }
   });

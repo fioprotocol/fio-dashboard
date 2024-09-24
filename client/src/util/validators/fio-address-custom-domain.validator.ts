@@ -82,16 +82,12 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
 
   if (address) {
-    try {
-      apis.fio.isFioAddressValid(fchValue);
-    } catch (e) {
+    if (!apis.fio.publicFioSDK.validateFioAddress(fchValue)) {
       succeeded = false;
       message = NON_VALID_FCH;
     }
   } else {
-    const errorValidaton = validateFioDomain(domain);
-
-    if (errorValidaton) {
+    if (validateFioDomain(domain)) {
       succeeded = false;
       message = NON_VAILD_DOMAIN;
     }

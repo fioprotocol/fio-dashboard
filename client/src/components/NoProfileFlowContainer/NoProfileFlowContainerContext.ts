@@ -69,13 +69,10 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
-    try {
-      apis.fio.isFioPublicKeyValid(publicKeyToValid);
+    if (apis.fio.publicFioSDK.validateFioPublicKey(publicKeyToValid)) {
       return Ecc.PublicKey.isValid(publicKeyToValid);
-    } catch (error) {
-      log.error(error);
-      return false;
     }
+    return false;
   }, []);
 
   const customHandleSubmit = useCallback(
