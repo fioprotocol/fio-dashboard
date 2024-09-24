@@ -719,7 +719,7 @@ class OrdersJob extends CommonJob {
           fioName: domain,
           orderId,
           action: FIO_ACTIONS.registerFioDomain,
-          price: FIOSDK.SUFToAmount(data.hasCustomDomainFee || 0),
+          price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
           currency: Payment.CURRENCY.FIO,
           data: { roe },
         });
@@ -764,7 +764,7 @@ class OrdersJob extends CommonJob {
         fioName: domain,
         orderId,
         action: FIO_ACTIONS.registerFioDomain,
-        price: FIOSDK.SUFToAmount(data.hasCustomDomainFee || 0),
+        price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
         data: { roe, error },
