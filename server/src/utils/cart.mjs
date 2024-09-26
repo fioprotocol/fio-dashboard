@@ -1,5 +1,7 @@
 import MathOp from 'big.js';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import {
   CART_ITEM_TYPE,
   FIO_ACTIONS,
@@ -48,7 +50,7 @@ export const handlePrices = async ({ prices, roe }) => {
 };
 
 export function convertFioPrices(nativeFio, roe) {
-  const fioAmount = fioApi.sufToAmount(nativeFio || 0);
+  const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
 
   return {
     nativeFio,
