@@ -117,7 +117,7 @@
     "@emotion/react": "11.10.5",
     "@emotion/styled": "11.10.5",
     "@fioprotocol/fiojs": "github:fioprotocol/fiojs#82de180a6781b7a654d21b5e33f624ef63848ead",
-    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#6c91202445cc004b5a863f0c45cb94837a77e57a",
+    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#7eb5d8e7d831ebcd88338fb3af9834ddcc93941c",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
     "@fortawesome/free-brands-svg-icons": "5.15.4",
     "@fortawesome/free-regular-svg-icons": "5.15.4",
