@@ -15,8 +15,8 @@ import X from '../Exception.mjs';
 export default class OrdersGet extends Base {
   static get validationRules() {
     return {
-      id: 'string',
-      publicKey: 'string',
+      id: ['required', 'string'],
+      publicKey: ['required', 'string'],
     };
   }
   async execute({ id, publicKey }) {
