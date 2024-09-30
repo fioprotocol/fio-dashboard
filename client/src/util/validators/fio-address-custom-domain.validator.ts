@@ -2,7 +2,6 @@ import {
   FieldValidationFunctionSync,
   FieldValidationFunctionAsync,
 } from '@lemoncode/fonk';
-import { allRules } from '@fioprotocol/fiosdk';
 
 import {
   DOMAIN_ALREADY_EXISTS,
@@ -13,7 +12,7 @@ import {
 import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 import apis from '../../api';
-import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
+import { setFioName } from '../../utils';
 import {
   checkAddressOrDomainIsExist,
   isDomainExpired,
@@ -32,14 +31,7 @@ interface MatchFieldArgs {
 export const fioAddressFieldValidator: FieldValidationFunctionSync<MatchFieldArgs> = props => {
   const { value } = props;
 
-  // Get regexp string from full FCH regexp
-  const fioAddressRegexString = allRules.fioAddress.matchParams.regex
-    .split(FIO_ADDRESS_DELIMITER)[0]
-    .replace('(?:', '')
-    .replace('3,64', '1,62')
-    .concat('$');
-
-  const fioAddressRegex = new RegExp(fioAddressRegexString, 'i');
+  const fioAddressRegex = /^(?=.{1,62}$)[a-zA-Z0-9](?:(?!-{2,})[a-zA-Z0-9-]*[a-zA-Z0-9]+)?$/i;
   const succeeded = fioAddressRegex.test(value);
 
   return {

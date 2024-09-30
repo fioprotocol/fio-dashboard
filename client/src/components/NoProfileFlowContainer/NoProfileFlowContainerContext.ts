@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Cookies from 'js-cookie';
-import { Ecc } from '@fioprotocol/fiojs';
 
 import {
   refProfileInfo,
@@ -69,10 +68,7 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   const checkIsFioPublicKeyValid = useCallback((publicKeyToValid: string) => {
-    if (apis.fio.publicFioSDK.validateFioPublicKey(publicKeyToValid)) {
-      return Ecc.PublicKey.isValid(publicKeyToValid);
-    }
-    return false;
+    return apis.fio.publicFioSDK.validateFioPublicKey(publicKeyToValid);
   }, []);
 
   const customHandleSubmit = useCallback(
