@@ -3,6 +3,8 @@ import {
   FieldValidationFunctionAsync,
 } from '@lemoncode/fonk';
 
+import { allRules } from '@fioprotocol/fiosdk';
+
 import {
   DOMAIN_ALREADY_EXISTS,
   FIO_ADDRESS_ALREADY_EXISTS,
@@ -31,8 +33,7 @@ interface MatchFieldArgs {
 export const fioAddressFieldValidator: FieldValidationFunctionSync<MatchFieldArgs> = props => {
   const { value } = props;
 
-  const fioAddressRegex = /^(?=.{1,62}$)[a-zA-Z0-9](?:(?!-{2,})[a-zA-Z0-9-]*[a-zA-Z0-9]+)?$/i;
-  const succeeded = fioAddressRegex.test(value);
+  const succeeded = allRules.fioName.match.test(value);
 
   return {
     succeeded,
