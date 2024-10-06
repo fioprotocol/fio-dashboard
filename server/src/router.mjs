@@ -3,8 +3,6 @@ import fs from 'fs';
 import express from 'express';
 import superagent from 'superagent';
 
-import { createProxyMiddleware } from 'http-proxy-middleware';
-
 import routes from './routes';
 
 const router = express.Router();
@@ -38,13 +36,10 @@ router.get('/admin-auth/create/check', routes.auth.adminCreateCheck);
 router.post('/admin-auth/reset-password', routes.auth.adminResetPassword);
 router.get('/admin-auth/reset-password/check', routes.auth.adminResetPasswordCheck);
 
-router.post('/actions/:hash', routes.actions.submit);
-
 router.get('/users/me', checkAuth, routes.users.info);
 router.delete('/users/me', checkAuth, routes.users.delete);
 router.get('/users/:id', checkAdminAuth, routes.users.show);
 router.post('/users', routes.users.create);
-router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
 router.post('/users/update-email', checkAuth, routes.users.updateEmail);
@@ -56,7 +51,7 @@ router.put(
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
-router.post('/users/without-registration', routes.users.createUserWithoutRegistrtion);
+router.post('/users/without-registration', routes.users.createUserWithoutRegistration);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);
@@ -167,28 +162,6 @@ router.post('/fio-api/chain/get_table_rows', async (req, res) => {
   return res.status(200).send(result);
 });
 
-router.use(
-  '/fio-api/chain/:url',
-  createProxyMiddleware({
-    target: process.env.API_BASE_URL,
-    changeOrigin: true,
-    pathRewrite: {
-      [`^/api/v1/fio-api`]: '',
-    },
-  }),
-);
-
-router.use(
-  '/mumbai-api',
-  createProxyMiddleware({
-    target: 'https://mumbai.polygonscan.com/',
-    changeOrigin: true,
-    pathRewrite: {
-      [`^/api/v1/mumbai-api`]: '',
-    },
-  }),
-);
-
 router.post('/contacts', checkAuth, routes.contacts.create);
 router.get('/contacts', checkAuth, routes.contacts.list);
 
@@ -253,7 +226,8 @@ router.get(
 
 router.get('/edge-cr', routes.external.getEdgeApiCreds);
 
-router.get('/fetch-image-hash', routes.general.imageToHash);
+// TODO: commented due to DASH-711 task. We hide it until figure out with hash
+// router.get('/fetch-image-hash', routes.general.imageToHash);
 
 router.get('/get-url-content', routes.general.getUrlContent);
 
@@ -262,7 +236,7 @@ router.delete('/domains-watchlist', checkAuth, routes.domainsWatchlist.delete);
 router.get('/domains-watchlist', checkAuth, routes.domainsWatchlist.list);
 
 router.get('/vars/:key', routes.vars.get);
-router.post('/vars/update/:key', routes.vars.update);
+router.post('/vars/update/:key', checkAdminAuth, routes.vars.update);
 router.post(
   '/vars/update_email/:type/:password',
   checkSimpleAuth,

@@ -33,6 +33,7 @@ export default class OrdersList extends Base {
       isProcessed: true,
       publicKey,
     });
+
     const ordersCountWhere = {
       status: {
         [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],

@@ -329,11 +329,10 @@ export const useContext = (): UseContextReturnType => {
         orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
 
         if (!userId && publicKey && refCode) {
-          const users = await apis.auth.createNoRegisterUser({
+          orderParams.userId = await apis.auth.createNoRegisterUser({
             publicKey,
             refCode,
           });
-          orderParams.userId = users[0]?.id;
         }
       }
 

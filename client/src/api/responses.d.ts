@@ -2,7 +2,6 @@ import {
   AdminSearchResult,
   AdminUser,
   ChainCodeProps,
-  ContainedFlowQueryParams,
   FioAccountProfile,
   FioWalletDoublet,
   Notification,
@@ -38,12 +37,9 @@ export type AuthLoginResponse = {
   jwt: string;
   isSignUp?: boolean;
 };
-export type AuthNonceResponse = { email?: string; nonce: string };
+export type AuthNonceResponse = { nonce: string };
 export type AuthGenerateNonceResponse = { nonce: string };
 export type AuthSignUpResponse = User;
-export type AuthConfirmResponse = {
-  stateData: { containedFlowQueryParams?: ContainedFlowQueryParams };
-} & User;
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;
 export type AuthResendRecoveryResponse = DefaultSuccessResponse;
@@ -251,7 +247,6 @@ export type ApisResponse = AccountGetWalletsResponse &
   AuthLoginResponse &
   AuthNonceResponse &
   AuthSignUpResponse &
-  AuthConfirmResponse &
   AuthSetRecoveryResponse &
   AuthLogoutResponse &
   AuthResendRecoveryResponse &

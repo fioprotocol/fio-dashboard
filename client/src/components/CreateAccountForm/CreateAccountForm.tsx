@@ -76,6 +76,7 @@ type State = {
 type Props = {
   resetSuccessState: () => void;
   makeNonce: (data: {
+    email: string;
     username: string;
     keys: WalletKeysObj;
     isPinLogin: boolean;
@@ -152,6 +153,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     } = this.form ? this.form.getState() : { values: { email: undefined } };
 
     this.props.makeNonce({
+      email,
       username: emailToUsername(email),
       keys: this.state.keys,
       isPinLogin: false,

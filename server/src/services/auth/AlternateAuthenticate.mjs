@@ -37,19 +37,14 @@ export default class AlternateAuthenticate extends Base {
     if (!isVerified) {
       throw new X({
         code: 'AUTHENTICATION_FAILED',
-        fields: {
-          nonce: 'INVALID',
-          signature: 'INVALID',
-        },
       });
     }
 
     const generateJwt = userId => {
       const now = new Date();
-      const jwtTokenObj = {
+      return {
         jwt: generate({ id: userId }, new Date(EXPIRATION_TIME + now.getTime())),
       };
-      return jwtTokenObj;
     };
 
     const existingWallet = await Wallet.findOneWhere({
@@ -63,9 +58,6 @@ export default class AlternateAuthenticate extends Base {
       if (!user) {
         throw new X({
           code: 'AUTHENTICATION_FAILED',
-          fields: {
-            user: 'NOT FOUND',
-          },
         });
       }
 

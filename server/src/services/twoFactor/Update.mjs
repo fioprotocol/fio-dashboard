@@ -1,5 +1,4 @@
 import Base from '../Base';
-import X from '../Exception';
 
 import { NewDeviceTwoFactor } from '../../models';
 
@@ -18,16 +17,15 @@ export default class NewDeviceTwoFactorUpdate extends Base {
       ],
     };
   }
+
   async execute({ data, id }) {
-    const newDeviceTwoFactor = await NewDeviceTwoFactor.getItem({ id });
+    const newDeviceTwoFactor = await NewDeviceTwoFactor.getItem({
+      id,
+      userId: this.context.id,
+    });
 
     if (!newDeviceTwoFactor) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
-          id: 'NOT_FOUND',
-        },
-      });
+      return { data: { success: false, message: 'Not Found' } };
     }
 
     await newDeviceTwoFactor.update(data);
