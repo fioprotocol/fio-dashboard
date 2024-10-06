@@ -117,6 +117,7 @@ export const login = ({
         addEmailToPromoList: true,
       });
     }
+
     return {
       account,
       email,

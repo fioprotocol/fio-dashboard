@@ -114,4 +114,8 @@ export class FreeAddress extends Base {
       userId,
     };
   }
+
+  static formatMinimal({ name }) {
+    return { name };
+  }
 }

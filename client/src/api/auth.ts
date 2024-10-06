@@ -3,7 +3,6 @@ import Base from './base';
 import { FioWalletDoublet } from '../types';
 import {
   AuthCheckRejectedResponse,
-  AuthConfirmResponse,
   AuthCreateNewDeviceRequestResponse,
   AuthDeleteNewDeviceRequestResponse,
   AuthLoginResponse,
@@ -74,10 +73,6 @@ export default class Auth extends Base {
     return this.apiClient.post('users', {
       data: { ...data, addEmailToPromoList: data.addEmailToPromoList ? 1 : 0 },
     });
-  }
-
-  confirm(hash: string): Promise<AuthConfirmResponse> {
-    return this.apiClient.post(`actions/${hash}`, {});
   }
 
   setRecovery(token: string): Promise<AuthSetRecoveryResponse> {
@@ -215,7 +210,7 @@ export default class Auth extends Base {
   }: {
     publicKey: string;
     refCode: string;
-  }): Promise<AuthProfileResponse[]> {
+  }): Promise<string> {
     return this.apiClient.post('users/without-registration', {
       data: { publicKey, refCode },
     });

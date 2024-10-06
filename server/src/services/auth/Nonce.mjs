@@ -28,6 +28,7 @@ export default class AuthNonce extends Base {
         email,
       },
     });
+
     if (existingNonce) {
       if (!Nonce.isExpired(existingNonce.createdAt)) {
         return {
@@ -37,7 +38,9 @@ export default class AuthNonce extends Base {
 
       await existingNonce.destroy();
     }
+
     const nonceValue = Nonce.generateHash(crypto.randomBytes(8).toString('hex'));
+
     const nonce = new Nonce({
       email,
       value: nonceValue,
@@ -46,7 +49,7 @@ export default class AuthNonce extends Base {
     await nonce.save();
 
     return {
-      data: { email, nonce: nonce.value },
+      data: { nonce: nonce.value },
     };
   }
 

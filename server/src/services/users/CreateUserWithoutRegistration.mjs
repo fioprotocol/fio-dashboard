@@ -2,7 +2,7 @@ import Base from '../Base';
 
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
-export default class CreateUserWithoutRegistrtion extends Base {
+export default class CreateUserWithoutRegistration extends Base {
   static get validationRules() {
     return {
       data: [
@@ -21,7 +21,9 @@ export default class CreateUserWithoutRegistrtion extends Base {
   async execute({ data: { publicKey, refCode, timeZone } }) {
     const users = await getExistUsersByPublicKeyOrCreateNew(publicKey, refCode, timeZone);
 
-    return { data: users };
+    const [user] = users;
+
+    return { data: user ? user.id : undefined };
   }
 
   static get paramsSecret() {

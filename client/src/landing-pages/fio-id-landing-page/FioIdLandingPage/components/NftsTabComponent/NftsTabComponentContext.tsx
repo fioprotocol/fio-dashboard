@@ -261,7 +261,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         !!externalProviderLink ||
         !!fetchedImageFileString;
 
-      // todo: commented due to DASH-711 task. We hide it until figureout with hash
+      // TODO: commented due to DASH-711 task. We hide it until figure out with hash
       // if (
       //   hash &&
       //   nftItemObj.imageUrl &&

@@ -29,20 +29,20 @@ export default class WalletsAddMissing extends Base {
     });
 
     if (!user) {
+      // leave for debug reasons
+      // eslint-disable-next-line no-console
+      console.error('WalletsAddMissing: username not found');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
-        fields: {
-          username: 'INVALID',
-        },
       });
     }
 
     if (await Wallet.findOneWhere({ userId: user.id, publicKey })) {
+      // leave for debug reasons
+      // eslint-disable-next-line no-console
+      console.error('WalletsAddMissing: public key and user id pair not unique');
       throw new X({
-        code: 'NOT_UNIQUE',
-        fields: {
-          publicKey: 'NOT_UNIQUE',
-        },
+        code: 'AUTHENTICATION_FAILED',
       });
     }
 
@@ -53,6 +53,7 @@ export default class WalletsAddMissing extends Base {
       userId: user.id,
       from,
     });
+
     await newWallet.save();
 
     return {

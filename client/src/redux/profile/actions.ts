@@ -54,7 +54,7 @@ export const makeNonce = ({
   referrerCode,
 }: {
   edgeWallets: FioWalletDoublet[];
-  email?: string;
+  email: string;
   username: string;
   keys: WalletKeysObj;
   otpKey?: string;
@@ -65,15 +65,13 @@ export const makeNonce = ({
 }): CommonPromiseAction => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
-    const { nonce, email: existingEmail } = await api.auth.nonce(username);
+    const { nonce } = await api.auth.nonce(username);
     const signatures: string[] = nonce
       ? Object.values(keys).map(keysItem => Ecc.sign(nonce, keysItem.private))
       : [];
 
-    const emailToLogin = existingEmail ?? email;
-
     return {
-      email: emailToLogin,
+      email,
       edgeWallets,
       nonce,
       signatures,
