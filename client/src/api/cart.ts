@@ -60,9 +60,6 @@ export default class Cart extends Base {
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-update-item-period', data);
   }
-  updateUserId(cartId: string): Promise<CartResponseType> {
-    return this.apiClient.patch('cart-update-user-id', { cartId });
-  }
   createCartFromOrder(orderId: string): Promise<CartResponseType> {
     return this.apiClient.post('cart-create-from-order', { orderId });
   }

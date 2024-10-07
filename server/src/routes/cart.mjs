@@ -9,7 +9,6 @@ import GetUsersCart from '../services/cart/GetUsersCart.mjs';
 import HandleUsersFreeCartItems from '../services/cart/HandleUsersFreeCartItems.mjs';
 import RecalculateOnPriceUpdate from '../services/cart/RecalculateOnPriceUpdate.mjs';
 import UpdateItemPeriod from '../services/cart/UpdateItemPeriod.mjs';
-import UpdateUserId from '../services/cart/UpdateUserId.mjs';
 
 export default {
   addItem: makeServiceRunner(AddItem, req => req.body),
@@ -21,5 +20,4 @@ export default {
   handleUsersFreeCartItems: makeServiceRunner(HandleUsersFreeCartItems, req => req.body),
   recalculateOnPriceUpdate: makeServiceRunner(RecalculateOnPriceUpdate, req => req.body),
   updateItemPeriod: makeServiceRunner(UpdateItemPeriod, req => req.body),
-  updateUserId: makeServiceRunner(UpdateUserId, req => req.body),
 };
