@@ -17,10 +17,7 @@ import {
   loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
-import {
-  isAuthenticated,
-  userId as userIdSelector,
-} from '../../redux/profile/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -108,14 +105,12 @@ export const useContext = (): UseContextReturnType => {
   const userWallets = useSelector(fioWalletsSelector);
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
   const history = useHistory();
 
   const isNoProfileFlow = refProfile?.settings?.hasNoProfileFlow;
-  const refCode = refProfile?.code;
   const isAffiliateEnabled = refProfile?.type === REF_PROFILE_TYPE.AFFILIATE;
 
   const walletCount = userWallets.length;
@@ -319,20 +314,12 @@ export const useContext = (): UseContextReturnType => {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
-        refCode,
-        userId,
+        refCode: refProfile?.code,
       };
 
       if (isNoProfileFlow) {
         orderParams.refProfileId = refProfile.id;
         orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
-
-        if (!userId && publicKey && refCode) {
-          orderParams.userId = await apis.auth.createNoRegisterUser({
-            publicKey,
-            refCode,
-          });
-        }
       }
 
       await apis.orders.create(orderParams);
@@ -349,7 +336,7 @@ export const useContext = (): UseContextReturnType => {
             NOT_FOUND_CART_BUTTON_TEXT,
           ),
         );
-        dispatch(clearCart({}));
+        dispatch(clearCart());
       } else {
         dispatch(showGenericErrorModal());
       }

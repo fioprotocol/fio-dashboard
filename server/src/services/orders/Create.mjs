@@ -23,6 +23,7 @@ import {
   cartItemsToOrderItems,
   handlePrices,
 } from '../../utils/cart.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -36,7 +37,6 @@ export default class OrdersCreate extends Base {
             publicKey: 'string',
             paymentProcessor: 'string',
             refProfileId: 'string',
-            userId: 'string',
             prices: [
               {
                 nested_object: {
@@ -71,14 +71,28 @@ export default class OrdersCreate extends Base {
       prices,
       refProfileId,
       data,
-      userId,
       refCode,
     },
   }) {
+    let user;
+
+    if (this.context.id) {
+      user = await User.findActive(this.context.id);
+    } else if (publicKey && refCode) {
+      const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+        publicKey,
+        refCode,
+      );
+      user = resolvedUser;
+    }
+
+    const userId = user ? user.id : null;
+
     let order = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
-        userId,
+        userId: userId,
+        guestId: this.context.guestId,
         createdAt: {
           [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
         },
@@ -88,8 +102,6 @@ export default class OrdersCreate extends Base {
 
     let payment = null;
     const orderItems = [];
-
-    const user = await User.findActive(userId);
 
     const cart = await Cart.findById(cartId);
 
@@ -182,6 +194,7 @@ export default class OrdersCreate extends Base {
             publicKey,
             customerIp: this.context.ipAddress,
             userId,
+            guestId: this.context.guestId,
             refProfileId: refProfileId ? refProfileId : user.refProfileId,
             data,
           },

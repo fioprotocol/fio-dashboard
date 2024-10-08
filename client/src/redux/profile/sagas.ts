@@ -269,7 +269,7 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 
     const cartId: string | null = yield select(cartIdSelector);
     if (cartId) {
-      yield put<Action>(clearCart({}));
+      yield put<Action>(clearCart());
     }
 
     const { redirect } = action;

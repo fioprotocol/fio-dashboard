@@ -64,17 +64,17 @@ export const useContext = (): OrdersPageProps => {
   const hasMoreOrders = totalOrdersCount - ordersList.length > 0;
 
   const getMoreOrders = () => {
-    if (userId || publicKey) {
-      dispatch(
-        getUserOrdersList({
-          limit: ORDERS_ITEMS_LIMIT,
-          offset,
-          publicKey,
-          userId,
-        }),
-      );
-      setOffset(offset + ORDERS_ITEMS_LIMIT);
+    if (!userId && !publicKey) {
+      return;
     }
+    dispatch(
+      getUserOrdersList({
+        limit: ORDERS_ITEMS_LIMIT,
+        offset,
+        publicKey,
+      }),
+    );
+    setOffset(offset + ORDERS_ITEMS_LIMIT);
   };
 
   const getOrder = async (orderId: string) => {
@@ -88,23 +88,7 @@ export const useContext = (): OrdersPageProps => {
       `${window.location.origin}${ROUTES.ORDER_INVOICE}`,
     );
 
-  useEffectOnce(
-    () => {
-      if (userId || publicKey) {
-        dispatch(
-          getUserOrdersList({
-            limit: ORDERS_ITEMS_LIMIT,
-            offset,
-            publicKey,
-            userId,
-          }),
-        );
-        setOffset(offset + ORDERS_ITEMS_LIMIT);
-      }
-    },
-    [dispatch, offset],
-    !!userId || !!publicKey,
-  );
+  useEffectOnce(getMoreOrders, [dispatch, offset], !!userId || !!publicKey);
 
   const onDownloadClick = async (data: {
     orderId: string;

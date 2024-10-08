@@ -58,7 +58,6 @@ router.put(
 router.post('/users/affiliate', checkUserAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkUserAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkUserOptionalAuth, routes.users.sendEvent);
-router.post('/users/without-registration', routes.users.createUserWithoutRegistration);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);
@@ -178,11 +177,11 @@ router.get('/contacts', checkUserAuth, routes.contacts.list);
 
 router.get('/check-pub-address', checkUserAuth, routes.external.validatePubAddress);
 
-router.get('/orders', routes.orders.list);
-router.get('/orders/active', routes.orders.getActive);
-router.post('/orders', routes.orders.create);
-router.post('/orders/update/:id', routes.orders.update);
-router.get('/orders/item/:id/:publicKey', routes.orders.get);
+router.get('/orders', checkUserOptionalAuth, routes.orders.list);
+router.get('/orders/active', checkGuestOrUserAuth, routes.orders.getActive);
+router.post('/orders', checkGuestOrUserAuth, routes.orders.create);
+router.post('/orders/update/:id', checkGuestOrUserAuth, routes.orders.update);
+router.get('/orders/item/:id/:publicKey', checkUserOptionalAuth, routes.orders.get);
 
 router.post('/payments', checkUserAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);

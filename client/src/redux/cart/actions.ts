@@ -115,7 +115,7 @@ export const clearCart = ({
   isNotify = false,
 }: {
   isNotify?: boolean;
-}): CommonPromiseAction => ({
+} = {}): CommonPromiseAction => ({
   types: [CLEAR_CART_REQUEST, CLEAR_CART_SUCCESS, CLEAR_CART_FAILURE],
   promise: (api: Api) => api.cart.clearCart(),
   isNotify,

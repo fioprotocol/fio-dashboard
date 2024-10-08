@@ -1,6 +1,6 @@
 import { Api } from '../../api';
 
-import { CommonAction, CommonPromiseAction } from '../types';
+import { CommonPromiseAction } from '../types';
 
 export const prefix = 'orders';
 
@@ -12,7 +12,6 @@ export const getUserOrdersList = (data: {
   publicKey?: string;
   limit: number;
   offset: number;
-  userId?: string;
 }): CommonPromiseAction => ({
   types: [
     GET_USER_ORDERS_LIST_REQUEST,
@@ -20,10 +19,4 @@ export const getUserOrdersList = (data: {
     GET_USER_ORDERS_LIST_FAILURE,
   ],
   promise: (api: Api) => api.orders.getList(data),
-});
-
-export const CLEAR_USER_ORDERS_LIST = `${prefix}/CLEAR_USER_ORDERS_LIST`;
-
-export const clearUserOrdersList = (): CommonAction => ({
-  type: CLEAR_USER_ORDERS_LIST,
 });

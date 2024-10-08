@@ -71,6 +71,14 @@ export default class OrdersUpdate extends Base {
       id,
     };
 
+    if (this.context.id) {
+      where.userId = this.context.id;
+    }
+
+    if (this.context.guestId) {
+      where.guestId = this.context.guestId;
+    }
+
     const order = await Order.findOne({
       where,
       include: [
