@@ -1,4 +1,4 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import {
@@ -21,7 +21,6 @@ import {
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
 import { fioApi } from '../../external/fio';
 import { getROE } from '../../external/roe';
-import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -273,9 +272,9 @@ export default class BuyAddress extends Base {
 
       const action = address
         ? isDomainExist
-          ? FIO_ACTIONS.registerFioAddress
-          : FIO_ACTIONS.registerFioDomainAddress
-        : FIO_ACTIONS.registerFioDomain;
+          ? GenericAction.registerFioAddress
+          : GenericAction.registerFioDomainAddress
+        : GenericAction.registerFioDomain;
 
       orderItem = await OrderItem.create(
         {

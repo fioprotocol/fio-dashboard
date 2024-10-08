@@ -3,14 +3,13 @@ import crypto from 'crypto';
 import superagent from 'superagent';
 
 import fetch from 'node-fetch';
-import { Account, FIOSDK, fioConstants, EndPoint } from '@fioprotocol/fiosdk';
+import { Account, FIOSDK, fioConstants, GenericAction } from '@fioprotocol/fiosdk';
 
 import { FioApiUrl, Var } from '../models';
 
 import {
   DAY_MS,
-  FIO_ACTIONS,
-  FIO_ACTIONS_TO_END_POINT_KEYS,
+  FIO_ACTIONS_TO_END_POINT_MAP,
   FIO_ADDRESS_DELIMITER,
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../config/constants.js';
@@ -33,25 +32,25 @@ const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 
 const FIO_ACTION_NAMES = {
-  [FIO_ACTIONS.registerFioAddress]: 'regaddress',
-  [FIO_ACTIONS.registerFioDomain]: 'regdomain',
-  [FIO_ACTIONS.registerFioDomainAddress]: 'regdomadd',
-  [FIO_ACTIONS.renewFioDomain]: 'renewdomain',
-  [FIO_ACTIONS.setFioDomainVisibility]: 'setdomainpub',
-  [FIO_ACTIONS.transferFioAddress]: 'xferaddress',
-  [FIO_ACTIONS.transferFioDomain]: 'xferdomain',
-  [FIO_ACTIONS.addPublicAddress]: 'addaddress',
-  [FIO_ACTIONS.removePublicAddresses]: 'remaddress',
-  [FIO_ACTIONS.removeAllPublicAddresses]: 'remalladdr',
-  [FIO_ACTIONS.requestFunds]: 'newfundsreq',
-  [FIO_ACTIONS.recordObtData]: 'recordobt',
-  [FIO_ACTIONS.rejectFundsRequest]: 'rejectfndreq',
-  [FIO_ACTIONS.transferTokens]: 'trnsfiopubky',
-  [FIO_ACTIONS.addBundledTransactions]: 'addbundles',
+  [GenericAction.registerFioAddress]: 'regaddress',
+  [GenericAction.registerFioDomain]: 'regdomain',
+  [GenericAction.registerFioDomainAddress]: 'regdomadd',
+  [GenericAction.renewFioDomain]: 'renewdomain',
+  [GenericAction.setFioDomainVisibility]: 'setdomainpub',
+  [GenericAction.transferFioAddress]: 'xferaddress',
+  [GenericAction.transferFioDomain]: 'xferdomain',
+  [GenericAction.addPublicAddress]: 'addaddress',
+  [GenericAction.removePublicAddresses]: 'remaddress',
+  [GenericAction.removeAllPublicAddresses]: 'remalladdr',
+  [GenericAction.requestFunds]: 'newfundsreq',
+  [GenericAction.recordObtData]: 'recordobt',
+  [GenericAction.rejectFundsRequest]: 'rejectfndreq',
+  [GenericAction.transferTokens]: 'trnsfiopubky',
+  [GenericAction.addBundledTransactions]: 'addbundles',
 };
 
 const FIO_ACCOUNT_NAMES = {
-  [FIO_ACTIONS.transferTokens]: 'fio.token',
+  [GenericAction.transferTokens]: 'fio.token',
 };
 
 class Fio {
@@ -184,7 +183,7 @@ class Fio {
     if (options.fee) actionParams.max_fee = options.fee;
 
     switch (options.action) {
-      case FIO_ACTIONS.registerFioAddress: {
+      case GenericAction.registerFioAddress: {
         actionParams = {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
@@ -193,7 +192,7 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.registerFioDomain: {
+      case GenericAction.registerFioDomain: {
         actionParams = {
           ...actionParams,
           fio_domain: options.domain,
@@ -201,7 +200,7 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.registerFioDomainAddress: {
+      case GenericAction.registerFioDomainAddress: {
         actionParams = {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
@@ -211,7 +210,7 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.transferTokens: {
+      case GenericAction.transferTokens: {
         actionParams = {
           ...actionParams,
           payee_public_key: options.publicKey,
@@ -219,14 +218,14 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.renewFioDomain: {
+      case GenericAction.renewFioDomain: {
         actionParams = {
           ...actionParams,
           fio_domain: options.domain,
         };
         break;
       }
-      case FIO_ACTIONS.addBundledTransactions: {
+      case GenericAction.addBundledTransactions: {
         actionParams = {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
@@ -246,7 +245,7 @@ class Fio {
       const publicFioSDK = await this.getPublicFioSDK();
 
       const { fee } = await publicFioSDK.getFee({
-        endPoint: EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+        endPoint: FIO_ACTIONS_TO_END_POINT_MAP[action],
       });
 
       return fee;
@@ -288,7 +287,7 @@ class Fio {
       });
 
       return await fioSdk.executePreparedTrx(
-        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+        FIO_ACTIONS_TO_END_POINT_MAP[action],
         preparedTrx,
       );
     } catch (err) {
@@ -309,8 +308,9 @@ class Fio {
   async executeTx(action, signedTx) {
     try {
       const fioSdk = await this.getMasterFioSDK();
+
       return await fioSdk.executePreparedTrx(
-        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+        FIO_ACTIONS_TO_END_POINT_MAP[action],
         signedTx,
       );
     } catch (err) {
@@ -366,11 +366,11 @@ class Fio {
           renewDomainFee,
           addBundlesFee,
         ] = await Promise.all([
-          this.getFee(FIO_ACTIONS.registerFioAddress),
-          this.getFee(FIO_ACTIONS.registerFioDomain),
-          this.getFee(FIO_ACTIONS.registerFioDomainAddress),
-          this.getFee(FIO_ACTIONS.renewFioDomain),
-          this.getFee(FIO_ACTIONS.addBundledTransactions),
+          this.getFee(GenericAction.registerFioAddress),
+          this.getFee(GenericAction.registerFioDomain),
+          this.getFee(GenericAction.registerFioDomainAddress),
+          this.getFee(GenericAction.renewFioDomain),
+          this.getFee(GenericAction.addBundledTransactions),
         ]);
 
         prices = {

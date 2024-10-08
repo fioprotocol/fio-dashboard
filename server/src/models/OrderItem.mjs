@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 
-import { FIO_ACTIONS } from '../config/constants.js';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from './Base';
 import { Order } from './Order';
@@ -14,7 +14,7 @@ const { DataTypes: DT } = Sequelize;
 
 export class OrderItem extends Base {
   static get ACTION() {
-    return FIO_ACTIONS;
+    return GenericAction;
   }
 
   static init(sequelize) {

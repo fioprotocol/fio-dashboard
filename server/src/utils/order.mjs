@@ -1,4 +1,4 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import { Payment } from '../models/Payment.mjs';
 import { Wallet } from '../models/Wallet.mjs';
@@ -10,7 +10,6 @@ import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
   CART_ITEM_TYPES_COMBO,
-  FIO_ACTIONS,
   FIO_ACTIONS_LABEL,
 } from '../config/constants';
 
@@ -142,7 +141,7 @@ export const transformOrderItemCostToPriceString = ({
 export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
   return errItems.reduce((acc, errItem) => {
     const { errorType, errorData } = errItem;
-    let badgeKey = '';
+    let badgeKey;
     let totalCurrency;
     let customItemAmount = null;
 
@@ -194,7 +193,7 @@ export const combineOrderItems = ({ orderItems = [] }) => {
         if (!existsItem.address) {
           existsItem.address = item.address;
         }
-        existsItem.action = FIO_ACTIONS.registerFioAddress;
+        existsItem.action = GenericAction.registerFioAddress;
         existsItem.hasCustomDomain = true;
         existsItem.transaction_ids = [
           ...(existsItem.transaction_ids || []),
@@ -214,7 +213,7 @@ export const combineOrderItems = ({ orderItems = [] }) => {
         existsItem.type = CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         existsItem.action =
           FIO_ACTIONS_LABEL[
-            `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+            `${GenericAction.registerFioAddress}_${GenericAction.registerFioDomain}`
           ];
       } else if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && existsItem) {
         existsItem.period++;

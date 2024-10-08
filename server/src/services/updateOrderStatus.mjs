@@ -1,4 +1,4 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import { BlockchainTransaction, Notification, Order, Payment, User } from '../models';
 
@@ -12,7 +12,6 @@ import logger from '../logger.mjs';
 import {
   ANALYTICS_EVENT_ACTIONS,
   FIO_ACTIONS_LABEL,
-  FIO_ACTIONS,
   FIO_ACTIONS_WITH_PERIOD,
   FIO_ACTIONS_COMBO,
 } from '../config/constants.js';
@@ -121,7 +120,7 @@ const transformOrderItemsForEmail = orderItems =>
         if (!existsItem.address) {
           existsItem.address = item.address;
         }
-        existsItem.action = FIO_ACTIONS.registerFioAddress;
+        existsItem.action = GenericAction.registerFioAddress;
         existsItem.data.hasCustomDomain = true;
         existsItem.nativeFio = new MathOp(existsItem.nativeFio)
           .add(item.nativeFio)
@@ -150,7 +149,7 @@ const transformOrderItemsForEmail = orderItems =>
     }, [])
     .map(orderItem => {
       const { action, address, data, domain, nativeFio, price } = orderItem;
-      let priceAmount = {};
+      let priceAmount;
 
       if (price && price !== '0') {
         priceAmount = transformFioPrice(price, nativeFio);
@@ -173,7 +172,7 @@ const transformOrderItemsForEmail = orderItems =>
         transformedOrderItem.hasCustomDomain = data.hasCustomDomain;
         transformedOrderItem.descriptor =
           FIO_ACTIONS_LABEL[
-            `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+            `${GenericAction.registerFioAddress}_${GenericAction.registerFioDomain}`
           ];
       }
 
