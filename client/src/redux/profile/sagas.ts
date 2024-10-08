@@ -21,6 +21,7 @@ import {
   RESET_ADMIN_PASSWORD_SUCCESS,
   ACTIVATE_AFFILIATE_SUCCESS,
   getUsersFreeAddresses,
+  GUEST_LOGIN_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -75,13 +76,13 @@ import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
 export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
+    api.client.setToken(action.data.jwt);
     const hasRedirectTo: {
       pathname: string;
       state: object;
       search: string;
     } = yield select(redirectLink);
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
-    api.client.setToken(action.data.jwt);
     if (action.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
       yield put<Action>(setIsNewUser(true));
@@ -145,14 +146,20 @@ export function* loginSuccess(history: History, api: Api): Generator {
   });
 }
 
+export function* guestLoginSuccess(api: Api): Generator {
+  yield takeEvery(GUEST_LOGIN_SUCCESS, function(action: Action) {
+    api.client.setGuestToken(action.data.jwt);
+  });
+}
+
 export function* alternateLoginSuccess(history: History, api: Api): Generator {
   yield takeEvery(ALTERNATE_LOGIN_SUCCESS, function*(action: Action) {
+    api.client.setToken(action.data.jwt);
     const hasRedirectTo: {
       pathname: string;
       state: object;
       search: string;
     } = yield select(redirectLink);
-    api.client.setToken(action.data.jwt);
     if (action.data.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
       yield put<Action>(setIsNewUser(true));
@@ -230,8 +237,6 @@ export function* profileSuccess(): Generator {
     if (cartId && user && action.shouldHandleUsersFreeCart) {
       yield put<Action>(
         handleUsersFreeCartItems({
-          id: cartId,
-          userId: user.id,
           refCode: user.refProfile?.code,
           publicKey: metamaskUserPublicKey,
         }),
@@ -246,7 +251,6 @@ export function* profileSuccess(): Generator {
       if (cartItemOnMetamaskDomain) {
         yield put<Action>(
           deleteCartItem({
-            id: cartId,
             itemId: cartItemOnMetamaskDomain.id,
             item: cartItemOnMetamaskDomain,
             refCode: user.refProfile?.code,
@@ -265,7 +269,7 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 
     const cartId: string | null = yield select(cartIdSelector);
     if (cartId) {
-      yield put<Action>(clearCart({ id: cartId }));
+      yield put<Action>(clearCart({}));
     }
 
     const { redirect } = action;

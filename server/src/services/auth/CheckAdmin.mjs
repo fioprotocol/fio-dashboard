@@ -1,21 +1,18 @@
 import Base from '../Base';
 import X from '../Exception';
-import { verify } from './authToken';
 
 import { AdminUser } from '../../models';
 
-export default class AuthAdminCheck extends Base {
+export default class AuthCheckAdmin extends Base {
   static get validationRules() {
     return {
-      token: ['required', 'token'],
+      id: ['string', 'required'],
     };
   }
 
-  async execute({ token }) {
+  async execute({ id }) {
     try {
-      const userData = await verify(token);
-
-      const adminUser = await AdminUser.findActive(userData.id);
+      const adminUser = await AdminUser.findActive(id);
 
       if (!adminUser) throw new Error('NOT_VALID_USER');
 

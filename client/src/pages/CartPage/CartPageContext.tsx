@@ -289,7 +289,6 @@ export const useContext = (): UseContextReturnType => {
 
         dispatch(
           recalculateOnPriceUpdate({
-            id: cartId,
             prices: updatedPrices?.pricing?.nativeFio,
             roe: updatedRoe,
           }),
@@ -350,7 +349,7 @@ export const useContext = (): UseContextReturnType => {
             NOT_FOUND_CART_BUTTON_TEXT,
           ),
         );
-        dispatch(clearCart({ id: cartId }));
+        dispatch(clearCart({}));
       } else {
         dispatch(showGenericErrorModal());
       }

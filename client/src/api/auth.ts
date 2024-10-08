@@ -43,6 +43,10 @@ export default class Auth extends Base {
     return this.apiClient.post('auth', data);
   }
 
+  loginGuest(): Promise<AuthLoginResponse> {
+    return this.apiClient.post('guest-auth', {});
+  }
+
   alternateAuth(data: {
     derivationIndex: number;
     from: string;

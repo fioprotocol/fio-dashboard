@@ -19,6 +19,7 @@ const defaultParamsBuilder = () => ({});
 const defaultContextBuilder = req =>
   cloneDeep({
     ...(req.user || {}),
+    ...(req.guest || {}),
     ...(req.adminUser || {}),
     ipAddress: getIpAddress(req),
     userAgent: req.headers['user-agent'],
@@ -213,16 +214,42 @@ export function compareHashString(string, hash) {
   return bcrypt.compareSync(string, hash);
 }
 
-export async function authCheck(req, res, next, model, isAdmin) {
-  const promise = runService(model, {
-    params: { token: req.header('Authorization') },
+export const AUTH_TYPE = {
+  USER: 'user',
+  ADMIN: 'admin',
+  GUEST: 'guest',
+};
+
+export async function authCheck(req, res, next, { services, resolver, isOptional }) {
+  let type, payload;
+
+  try {
+    const data = await runService(resolver, {
+      params: {
+        token: req.header('Authorization'),
+        supportedTypes: Object.keys(services),
+      },
+    });
+    type = data.type;
+    payload = data.payload;
+  } catch (err) {
+    if (isOptional) {
+      return next();
+    }
+    return renderPromiseAsJson(req, res, Promise.reject(err), { token: '<secret>' });
+  }
+
+  const promise = runService(services[type], {
+    params: payload,
   });
 
   try {
-    if (isAdmin) {
+    if (type === AUTH_TYPE.ADMIN) {
       req.adminUser = await promise;
-    } else {
+    } else if (type === AUTH_TYPE.USER) {
       req.user = await promise;
+    } else if (type === AUTH_TYPE.GUEST) {
+      req.guest = await promise;
     }
 
     return next();

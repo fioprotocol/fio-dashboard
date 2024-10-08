@@ -12,16 +12,12 @@ import {
   fees as feesSelector,
   showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector,
 } from '../../redux/fio/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
@@ -108,7 +104,6 @@ type UseContextProps = {
 };
 
 export const useContext = (): UseContextProps => {
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
@@ -116,7 +111,6 @@ export const useContext = (): UseContextProps => {
   const roe = useSelector(roeSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -189,12 +183,10 @@ export const useContext = (): UseContextProps => {
       };
       dispatch(
         addItemToCart({
-          id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
       fireAnalyticsEvent(
@@ -208,7 +200,6 @@ export const useContext = (): UseContextProps => {
       history.push(ROUTES.CART);
     },
     [
-      cartId,
       cartItems,
       dispatch,
       history,
@@ -218,7 +209,6 @@ export const useContext = (): UseContextProps => {
       renewDomainFeePrice.usdc,
       refCode,
       roe,
-      userId,
     ],
   );
 
@@ -288,18 +278,15 @@ export const useContext = (): UseContextProps => {
 
       dispatch(
         addItemToCart({
-          id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
       return history.push(ROUTES.CART);
     },
     [
-      cartId,
       cartItemsJSON,
       dispatch,
       fio,
@@ -309,7 +296,6 @@ export const useContext = (): UseContextProps => {
       refCode,
       roe,
       usdc,
-      userId,
     ],
   );
 

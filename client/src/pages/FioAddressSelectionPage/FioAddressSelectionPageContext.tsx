@@ -8,10 +8,7 @@ import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
 import { loadProfile } from '../../redux/profile/actions';
 
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -22,7 +19,6 @@ import {
 import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
-  userId as userIdSelector,
   user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
@@ -324,7 +320,6 @@ const handleSelectedDomain = ({
 
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
-  const cartId = useSelector(cartIdSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const domainsLoading = useSelector(domainsLoadingSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
@@ -333,7 +328,6 @@ export const useContext = (): UseContextProps => {
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const userId = useSelector(userIdSelector);
   const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
@@ -766,25 +760,15 @@ export const useContext = (): UseContextProps => {
 
       dispatch(
         addItemToCart({
-          id: cartId,
           item: selectedItem,
           publicKey: metamaskUserPublicKey,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
     },
-    [
-      cartId,
-      dispatch,
-      prices?.nativeFio,
-      refCode,
-      roe,
-      user?.userProfileType,
-      userId,
-    ],
+    [dispatch, prices?.nativeFio, refCode, roe, user?.userProfileType],
   );
 
   const getFioRawAbis = useCallback(async () => {

@@ -96,12 +96,10 @@ const FioDomainRenewPage: React.FC = () => {
     };
     dispatch(
       addItemToCart({
-        id: cartId,
         item: newCartItem,
         prices: prices?.nativeFio,
         refCode,
         roe,
-        userId,
       }),
     );
     fireAnalyticsEvent(

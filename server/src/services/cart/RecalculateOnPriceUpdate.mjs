@@ -18,7 +18,6 @@ import { CART_ITEM_TYPE } from '../../config/constants';
 export default class RecalculateOnPriceUpdate extends Base {
   static get validationRules() {
     return {
-      id: ['required', 'string'],
       prices: [
         {
           nested_object: {
@@ -33,9 +32,16 @@ export default class RecalculateOnPriceUpdate extends Base {
     };
   }
 
-  async execute({ id, prices, roe }) {
+  async execute({ prices, roe }) {
     try {
-      const cart = await Cart.findById(id);
+      const userId = this.context.id || null;
+      const guestId = this.context.guestId || null;
+
+      const where = {};
+      if (userId) where.userId = userId;
+      if (guestId) where.guestId = guestId;
+
+      const cart = await Cart.findOne({ where });
 
       if (!cart) {
         throw new X({

@@ -42,6 +42,7 @@ export const usernameAvailable = async (
   return result;
 };
 
+// TODO not used maybe delete
 export const checkEdgeLogin = async (
   username: string,
   password: string,

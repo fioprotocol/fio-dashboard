@@ -24,7 +24,6 @@ import { CART_ITEM_TYPE } from '../../config/constants';
 export default class AddItem extends Base {
   static get validationRules() {
     return {
-      id: ['string'],
       item: [
         'required',
         {
@@ -58,18 +57,22 @@ export default class AddItem extends Base {
       ],
       roe: ['string'],
       token: ['string'],
-      userId: ['string'],
       refCode: ['string'],
     };
   }
 
-  async execute({ id, item, publicKey, prices, roe, token, userId: reqUserId, refCode }) {
+  async execute({ item, publicKey, prices, roe, token, refCode }) {
     try {
       const { domain, type } = item;
 
-      const userId = this.context.id || reqUserId || null;
+      const userId = this.context.id || null;
+      const guestId = this.context.guestId || null;
 
-      const existingCart = await Cart.findById(id);
+      const where = {};
+      if (userId) where.userId = userId;
+      if (guestId) where.guestId = guestId;
+
+      const existingCart = await Cart.findOne({ where });
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
@@ -77,6 +80,7 @@ export default class AddItem extends Base {
             refCode,
           })
         : [];
+
       const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
 
       const userHasFreeAddress =
@@ -179,6 +183,7 @@ export default class AddItem extends Base {
         const cart = await Cart.create({
           items: [handledFreeCartItem],
           userId,
+          guestId,
           publicKey,
         });
 

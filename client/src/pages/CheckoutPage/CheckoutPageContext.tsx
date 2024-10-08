@@ -6,7 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
 import {
   clearCart,
-  getUsersCart,
+  getCart,
   setWallet as setWalletAction,
 } from '../../redux/cart/actions';
 import { setProcessing } from '../../redux/registrations/actions';
@@ -375,7 +375,7 @@ export const useContext = (): {
               NOT_FOUND_CART_BUTTON_TEXT,
             ),
           );
-          dispatch(clearCart({ id: cartId }));
+          dispatch(clearCart({}));
         } else {
           dispatch(showGenericErrorModal());
         }
@@ -553,7 +553,7 @@ export const useContext = (): {
           });
         }
         if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.FAILED) {
-          dispatch(getUsersCart());
+          dispatch(getCart());
         }
       }
     },
@@ -615,7 +615,7 @@ export const useContext = (): {
             NOT_FOUND_CART_BUTTON_TEXT,
           ),
         );
-        dispatch(clearCart({ id: cartId }));
+        dispatch(clearCart({}));
       }
 
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);

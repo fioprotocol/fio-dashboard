@@ -5,7 +5,7 @@ import X from '../Exception';
 import { generate } from './authToken';
 
 import { Action, AdminUser } from '../../models';
-import { adminTfaValidate } from '../../tools.mjs';
+import { adminTfaValidate, AUTH_TYPE } from '../../tools.mjs';
 import { ACTION_EPX_TIME } from '../../constants/general.mjs';
 
 export default class AuthAdminCreate extends Base {
@@ -81,7 +81,7 @@ export default class AuthAdminCreate extends Base {
 
     return {
       data: {
-        jwt: generate({ id: adminUser.id }),
+        jwt: generate({ type: AUTH_TYPE.ADMIN, id: adminUser.id }),
       },
     };
   }

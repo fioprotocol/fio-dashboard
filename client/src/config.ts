@@ -11,6 +11,7 @@ const config = {
   supportUrl:
     process.env.REACT_APP_FIOPROTOCOL_SUPPORT_URL || defaultSupportUrl,
   userTokenName: process.env.REACT_APP_USER_TOKEN_NAME,
+  guestTokenName: process.env.REACT_APP_GUEST_TOKEN_NAME,
   adminTokenName: process.env.REACT_APP_ADMIN_TOKEN_NAME,
   getTokensUrl: process.env.REACT_APP_GET_TOKENS_URL || defaultGetTokensUrl,
   wrapStatusPage:

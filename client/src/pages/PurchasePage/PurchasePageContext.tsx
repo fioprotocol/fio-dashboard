@@ -92,7 +92,7 @@ export const useContext = (
 
   useEffectOnce(() => {
     if (cartId) {
-      dispatch(clearCart({ id: cartId }));
+      dispatch(clearCart({}));
     }
   }, [dispatch, cartId]);
 

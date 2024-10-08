@@ -21,10 +21,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
@@ -47,7 +44,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const { refProfile, publicKey } = componentProps;
 
   const cartItems = useSelector(cartItemsSelector);
-  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
@@ -243,7 +239,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
         dispatch(
           addItemToCart({
-            id: cartId,
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
@@ -267,7 +262,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
       cartHasFreeItem,
       existingPublicKeyFreeAddress,
       dispatch,
-      cartId,
       publicKey,
       history,
       domainsList,
