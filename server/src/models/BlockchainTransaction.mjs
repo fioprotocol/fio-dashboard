@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 
-import { FIO_ACTIONS } from '../config/constants.js';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from './Base';
 import { OrderItem } from './OrderItem.mjs';
@@ -11,7 +11,7 @@ const { DataTypes: DT } = Sequelize;
 
 export class BlockchainTransaction extends Base {
   static get ACTION() {
-    return FIO_ACTIONS;
+    return GenericAction;
   }
   static get STATUS_LABELS() {
     return {

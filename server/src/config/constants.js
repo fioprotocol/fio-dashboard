@@ -1,3 +1,4 @@
+const { GenericAction, EndPoint } = require('@fioprotocol/fiosdk');
 const WALLET_CREATED_FROM = {
   EDGE: 'EDGE',
   LEDGER: 'LEDGER',
@@ -29,64 +30,44 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
 
 const USER_HAS_FREE_ADDRESS_MESSAGE = 'You have already registered a free FIO Handle';
 
-const FIO_ACTIONS = {
-  transferTokens: 'transferTokens',
-  addPublicAddress: 'addPublicAddress',
-  addPublicAddresses: 'addPublicAddresses',
-  removeAllPublicAddresses: 'removeAllPublicAddresses',
-  removePublicAddresses: 'removePublicAddresses',
-  setFioDomainVisibility: 'setFioDomainVisibility',
-  rejectFundsRequest: 'rejectFundsRequest',
-  requestFunds: 'requestFunds',
-  recordObtData: 'recordObtData',
-  registerFioAddress: 'registerFioAddress',
-  registerFioDomain: 'registerFioDomain',
-  registerFioDomainAddress: 'registerFioDomainAddress',
-  renewFioDomain: 'renewFioDomain',
-  transferFioAddress: 'transferFioAddress',
-  transferFioDomain: 'transferFioDomain',
-  pushTransaction: 'pushTransaction',
-  addBundledTransactions: 'addBundledTransactions',
-  addNft: 'addNft',
-  stakeFioTokens: 'stakeFioTokens',
-  unStakeFioTokens: 'unStakeFioTokens',
-};
-
-const FIO_ACTIONS_TO_END_POINT_KEYS = {
-  [FIO_ACTIONS.requestFunds]: 'newFundsRequest',
-  [FIO_ACTIONS.registerFioAddress]: 'registerFioAddress',
-  [FIO_ACTIONS.registerFioDomain]: 'registerFioDomain',
-  [FIO_ACTIONS.registerFioDomainAddress]: 'registerFioDomainAddress',
-  [FIO_ACTIONS.renewFioDomain]: 'renewFioDomain',
-  [FIO_ACTIONS.addPublicAddresses]: 'addPubAddress',
-  [FIO_ACTIONS.removeAllPublicAddresses]: 'removeAllPubAddresses',
-  [FIO_ACTIONS.removePublicAddresses]: 'removePubAddress',
-  [FIO_ACTIONS.setFioDomainVisibility]: 'setFioDomainPublic',
-  [FIO_ACTIONS.rejectFundsRequest]: 'rejectFundsRequest',
-  [FIO_ACTIONS.recordObtData]: 'recordObtData',
-  [FIO_ACTIONS.transferTokens]: 'transferTokens',
-  [FIO_ACTIONS.pushTransaction]: 'pushTransaction',
-  [FIO_ACTIONS.transferFioAddress]: 'transferFioAddress',
-  [FIO_ACTIONS.transferFioDomain]: 'transferFioDomain',
-  [FIO_ACTIONS.stakeFioTokens]: 'pushTransaction',
-  [FIO_ACTIONS.unStakeFioTokens]: 'pushTransaction',
-  [FIO_ACTIONS.addBundledTransactions]: 'addBundledTransactions',
+const FIO_ACTIONS_TO_END_POINT_MAP = {
+  [GenericAction.requestFunds]: EndPoint.newFundsRequest,
+  [GenericAction.registerFioAddress]: EndPoint.registerFioAddress,
+  [GenericAction.registerFioDomain]: EndPoint.registerFioDomain,
+  [GenericAction.registerFioDomainAddress]: EndPoint.registerFioDomainAddress,
+  [GenericAction.renewFioDomain]: EndPoint.renewFioDomain,
+  [GenericAction.addPublicAddresses]: EndPoint.addPublicAddress,
+  [GenericAction.removeAllPublicAddresses]: EndPoint.removeAllPublicAddresses,
+  [GenericAction.removePublicAddresses]: EndPoint.removePublicAddress,
+  [GenericAction.setFioDomainVisibility]: EndPoint.setFioDomainPublic,
+  [GenericAction.rejectFundsRequest]: EndPoint.rejectFundsRequest,
+  [GenericAction.recordObtData]: EndPoint.recordObtData,
+  [GenericAction.transferTokens]: EndPoint.transferTokensPublicKey,
+  [GenericAction.pushTransaction]: EndPoint.pushTransaction,
+  [GenericAction.transferFioAddress]: EndPoint.transferFioAddress,
+  [GenericAction.transferFioDomain]: EndPoint.transferFioDomain,
+  [GenericAction.stakeFioTokens]: EndPoint.pushTransaction,
+  [GenericAction.unStakeFioTokens]: EndPoint.pushTransaction,
+  [GenericAction.addBundledTransactions]: EndPoint.addBundledTransactions,
 };
 
 const FIO_ACTIONS_LABEL = {
-  [FIO_ACTIONS.registerFioAddress]: 'FIO Handle Registration',
-  [FIO_ACTIONS.registerFioDomain]: 'FIO Domain Registration',
-  [`${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`]: 'FIO Handle and Domain Registration',
-  [FIO_ACTIONS.renewFioDomain]: 'FIO Domain Renewal',
-  [FIO_ACTIONS.addBundledTransactions]: 'Add Bundled Transactions',
+  [GenericAction.registerFioAddress]: 'FIO Handle Registration',
+  [GenericAction.registerFioDomain]: 'FIO Domain Registration',
+  [`${GenericAction.registerFioAddress}_${GenericAction.registerFioDomain}`]: 'FIO Handle and Domain Registration',
+  [GenericAction.renewFioDomain]: 'FIO Domain Renewal',
+  [GenericAction.addBundledTransactions]: 'Add Bundled Transactions',
 };
 
 const FIO_ACTIONS_WITH_PERIOD = [
-  FIO_ACTIONS.renewFioDomain,
-  FIO_ACTIONS.registerFioDomain,
+  GenericAction.renewFioDomain,
+  GenericAction.registerFioDomain,
 ];
 
-const FIO_ACTIONS_COMBO = [FIO_ACTIONS.registerFioAddress, FIO_ACTIONS.registerFioDomain];
+const FIO_ACTIONS_COMBO = [
+  GenericAction.registerFioAddress,
+  GenericAction.registerFioDomain,
+];
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -256,8 +237,7 @@ module.exports = {
   ERROR_CODES,
   EXPIRING_DOMAINS_EMAIL_SUBJECTS,
   EXPIRING_DOMAINS_EMAIL_TITLE,
-  FIO_ACTIONS,
-  FIO_ACTIONS_TO_END_POINT_KEYS,
+  FIO_ACTIONS_TO_END_POINT_MAP,
   FIO_ACTIONS_LABEL,
   FIO_ADDRESS_DELIMITER,
   FIO_ACTIONS_WITH_PERIOD,

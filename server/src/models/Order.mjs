@@ -1,6 +1,8 @@
 import Sequelize from 'sequelize';
 import Hashids from 'hashids';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import Base from './Base';
 import { User } from './User';
 import { ReferrerProfile } from './ReferrerProfile';
@@ -24,7 +26,6 @@ import {
   FIO_ADDRESS_DELIMITER,
   FIO_ACTIONS_LABEL,
   CART_ITEM_TYPE,
-  FIO_ACTIONS,
   ORDER_ERROR_TYPES,
 } from '../config/constants.js';
 import { ORDER_USER_TYPES } from '../constants/order.mjs';
@@ -606,14 +607,14 @@ export class Order extends Base {
     const { action, address, data } = orderItem;
     const { hasCustomDomain } = data || {};
 
-    if (action === FIO_ACTIONS.renewFioDomain) {
+    if (action === GenericAction.renewFioDomain) {
       return CART_ITEM_TYPE.DOMAIN_RENEWAL;
-    } else if (action === FIO_ACTIONS.addBundledTransactions) {
+    } else if (action === GenericAction.addBundledTransactions) {
       return CART_ITEM_TYPE.ADD_BUNDLES;
     } else if (!address) {
       return CART_ITEM_TYPE.DOMAIN;
     } else if (
-      action === FIO_ACTIONS.registerFioDomainAddress ||
+      action === GenericAction.registerFioDomainAddress ||
       (address && hasCustomDomain)
     ) {
       return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
@@ -688,7 +689,7 @@ export class Order extends Base {
           ) || {};
         if (hasCustomDomain) {
           customDomainBcTx = blockchainTransactions.find(
-            bcTxItem => bcTxItem.action === FIO_ACTIONS.registerFioDomain,
+            bcTxItem => bcTxItem.action === GenericAction.registerFioDomain,
           );
           if (customDomainBcTx && customDomainBcTx.feeCollected) {
             bcTx.feeCollected = +bcTx.feeCollected + +customDomainBcTx.feeCollected;
@@ -717,7 +718,7 @@ export class Order extends Base {
         errItems.push({
           action: hasCustomDomain
             ? FIO_ACTIONS_LABEL[
-                `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+                `${GenericAction.registerFioAddress}_${GenericAction.registerFioDomain}`
               ]
             : FIO_ACTIONS_LABEL[action],
           originalAction: action,
@@ -750,7 +751,7 @@ export class Order extends Base {
       regItems.push({
         action: hasCustomDomain
           ? FIO_ACTIONS_LABEL[
-              `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+              `${GenericAction.registerFioAddress}_${GenericAction.registerFioDomain}`
             ]
           : FIO_ACTIONS_LABEL[action],
         address,

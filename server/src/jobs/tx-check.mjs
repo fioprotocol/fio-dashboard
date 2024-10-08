@@ -1,4 +1,6 @@
 import '../db';
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import {
   OrderItemStatus,
   BlockchainTransaction,
@@ -14,7 +16,7 @@ import { updateOrderStatus } from '../services/updateOrderStatus.mjs';
 import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
 
-import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS, ERROR_CODES } from '../config/constants.js';
+import { FIO_ADDRESS_DELIMITER, ERROR_CODES } from '../config/constants.js';
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
@@ -63,19 +65,19 @@ class TxCheckJob extends CommonJob {
           let status = BlockchainTransaction.STATUS.PENDING;
 
           switch (action) {
-            case FIO_ACTIONS.renewFioDomain:
-            case FIO_ACTIONS.addBundledTransactions:
+            case GenericAction.renewFioDomain:
+            case GenericAction.addBundledTransactions:
               status = BlockchainTransaction.STATUS.SUCCESS;
               break;
-            case FIO_ACTIONS.registerFioDomainAddress:
-            case FIO_ACTIONS.registerFioAddress:
-            case FIO_ACTIONS.registerFioDomain: {
+            case GenericAction.registerFioDomainAddress:
+            case GenericAction.registerFioAddress:
+            case GenericAction.registerFioDomain: {
               const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
                 (params && params.owner_fio_public_key) || publicKey,
               );
               const isAddress =
-                action === FIO_ACTIONS.registerFioAddress ||
-                action === FIO_ACTIONS.registerFioDomainAddress;
+                action === GenericAction.registerFioAddress ||
+                action === GenericAction.registerFioDomainAddress;
               const fioName = isAddress
                 ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
                 : domain;

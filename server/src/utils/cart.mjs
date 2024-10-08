@@ -1,10 +1,9 @@
 import MathOp from 'big.js';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import {
   CART_ITEM_TYPE,
-  FIO_ACTIONS,
   FIO_ADDRESS_DELIMITER,
   ORDER_ERROR_TYPES,
   WALLET_CREATED_FROM,
@@ -350,7 +349,7 @@ export const handleUsersFreeCartItems = ({
   userHasFreeAddress,
   refCode,
 }) => {
-  let updatedCartItems = cartItems;
+  let updatedCartItems;
 
   const domainsArr = [
     ...dashboardDomains,
@@ -486,7 +485,7 @@ export const cartItemsToOrderItems = async ({
 
     const renewOrderItem = {
       ...orderItem,
-      action: FIO_ACTIONS.renewFioDomain,
+      action: GenericAction.renewFioDomain,
       address: null,
       nativeFio: renewDomainPrice.toString(),
       price: convertFioPrices(renewDomainPrice, roe).usdc,
@@ -495,7 +494,7 @@ export const cartItemsToOrderItems = async ({
     const domainOrderItem = {
       ...orderItem,
       address: null,
-      action: FIO_ACTIONS.registerFioDomain,
+      action: GenericAction.registerFioDomain,
       nativeFio: fioDomainPrice.toString(),
       price: convertFioPrices(fioDomainPrice, roe).usdc,
     };
@@ -511,8 +510,8 @@ export const cartItemsToOrderItems = async ({
           }
 
           orderItem.action = useComboAction
-            ? FIO_ACTIONS.registerFioDomainAddress
-            : FIO_ACTIONS.registerFioAddress;
+            ? GenericAction.registerFioDomainAddress
+            : GenericAction.registerFioAddress;
           orderItem.address = address;
           orderItem.nativeFio = (useComboAction
             ? fioDomainHandlePrice
@@ -539,7 +538,7 @@ export const cartItemsToOrderItems = async ({
         }
         break;
       case CART_ITEM_TYPE.ADD_BUNDLES:
-        orderItem.action = FIO_ACTIONS.addBundledTransactions;
+        orderItem.action = GenericAction.addBundledTransactions;
         orderItem.address = address;
         orderItem.nativeFio = addBundlesPrice;
         orderItem.price = convertFioPrices(addBundlesPrice, roe).usdc;
@@ -577,7 +576,7 @@ export const cartItemsToOrderItems = async ({
               (userHasFreeAddress.length && !existingUsersFreeAddress)) &&
             !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id));
 
-        orderItem.action = FIO_ACTIONS.registerFioAddress;
+        orderItem.action = GenericAction.registerFioAddress;
         orderItem.address = address;
         orderItem.nativeFio =
           isFree && isUserAbleRegisterFree ? '0' : fioHandlePrice.toString();
@@ -667,22 +666,22 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
 
     const fioName = fioApi.setFioName(address, domain);
     switch (originalAction) {
-      case FIO_ACTIONS.addBundledTransactions:
-        cartItemId = `${fioName}-${FIO_ACTIONS.addBundledTransactions}-${+new Date()}`;
+      case GenericAction.addBundledTransactions:
+        cartItemId = `${fioName}-${GenericAction.addBundledTransactions}-${+new Date()}`;
         costNativeFio = addBundlesPrice;
         break;
-      case FIO_ACTIONS.registerFioAddress:
+      case GenericAction.registerFioAddress:
         cartItemId = fioName;
         costNativeFio = addressPrice;
         domainType = isFree ? DOMAIN_TYPE.ALLOW_FREE : DOMAIN_TYPE.PREMIUM;
         break;
-      case FIO_ACTIONS.registerFioDomain:
+      case GenericAction.registerFioDomain:
         cartItemId = fioName;
         costNativeFio = domainPrice;
         domainType = DOMAIN_TYPE.CUSTOM;
         break;
-      case FIO_ACTIONS.renewFioDomain:
-        cartItemId = `${fioName}-${FIO_ACTIONS.renewFioDomain}-${+new Date()}`;
+      case GenericAction.renewFioDomain:
+        cartItemId = `${fioName}-${GenericAction.renewFioDomain}-${+new Date()}`;
         costNativeFio = renewDomainPrice;
         break;
       default:
