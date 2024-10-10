@@ -84,6 +84,7 @@ export default class Auth extends Base {
   }
 
   async logout(): Promise<AuthLogoutResponse> {
+    this.apiClient.removeToken();
     return null;
   }
 
@@ -153,6 +154,7 @@ export default class Auth extends Base {
   }
 
   async adminLogout(): Promise<AuthLogoutResponse> {
+    this.apiClient.removeAdminToken();
     return null;
   }
 

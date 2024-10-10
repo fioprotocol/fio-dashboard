@@ -333,7 +333,7 @@ export default combineReducers({
   isPinEnabled(state: boolean = false, action) {
     switch (action.type) {
       case actions.SET_IS_PIN_ENABLED_SUCCESS: {
-        return action.data;
+        return action.data ?? state;
       }
       default:
         return state;

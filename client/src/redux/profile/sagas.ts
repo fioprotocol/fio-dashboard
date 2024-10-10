@@ -263,10 +263,8 @@ export function* profileSuccess(): Generator {
   });
 }
 
-export function* logoutSuccess(history: History, api: Api): Generator {
+export function* logoutSuccess(history: History): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
-    api.client.removeToken();
-
     const cartId: string | null = yield select(cartIdSelector);
     if (cartId) {
       yield put<Action>(clearCart());
@@ -324,13 +322,8 @@ export function* nonceSuccess(): Generator {
   });
 }
 
-export function* adminLogoutSuccess(
-  history: History,
-  api: AdminApi,
-): Generator {
+export function* adminLogoutSuccess(history: History): Generator {
   yield takeEvery(ADMIN_LOGOUT_SUCCESS, function(action: Action) {
-    api.client.removeAdminToken();
-
     const { redirect } = action;
 
     if (redirect) history.push(redirect, {});
@@ -362,7 +355,7 @@ export function* adminConfirmSuccess(
 }
 
 export function* adminResetPasswordSuccess(history: History): Generator {
-  yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
+  yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function() {
     history.replace(ADMIN_ROUTES.ADMIN_LOGIN, {});
   });
 }

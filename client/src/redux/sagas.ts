@@ -44,7 +44,7 @@ export default function* rootSaga(history: History, api: Api) {
     guestLoginSuccess(api),
     alternateLoginSuccess(history, api),
     loginSuccess(history, api),
-    logoutSuccess(history, api),
+    logoutSuccess(history),
     profileSuccess(),
     nonceSuccess(),
     activateAffiliateSuccess(history),
