@@ -13,10 +13,7 @@ import {
   roe as roeSelector,
   prices as pricesSelector,
 } from '../../redux/registrations/selectors';
-import {
-  noProfileLoaded,
-  userId as userIdSelector,
-} from '../../redux/profile/selectors';
+import { noProfileLoaded } from '../../redux/profile/selectors';
 import {
   containedFlowQueryParams,
   isContainedFlow as isContainedFlowSelector,
@@ -80,7 +77,6 @@ export const useContext = (
   const isContainedFlow = useSelector(isContainedFlowSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
   const refProfileCode = useSelector(refProfileCodeSelector);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -92,7 +88,7 @@ export const useContext = (
 
   useEffectOnce(() => {
     if (cartId) {
-      dispatch(clearCart({ id: cartId }));
+      dispatch(clearCart());
     }
   }, [dispatch, cartId]);
 
@@ -168,7 +164,6 @@ export const useContext = (
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
           },
-          userId,
         },
       },
     });

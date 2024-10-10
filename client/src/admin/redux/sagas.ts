@@ -19,7 +19,7 @@ import { Api } from '../api';
 export default function* rootSaga(history: History, api: Api) {
   yield all([
     notify(history),
-    adminLogoutSuccess(history, api),
+    adminLogoutSuccess(history),
     adminLoginSuccess(history, api),
     adminConfirmSuccess(history, api),
     adminResetPasswordSuccess(history),

@@ -27,6 +27,10 @@ export class Cart extends Base {
           onUpdate: 'cascade',
           allowNull: true,
         },
+        guestId: {
+          type: DT.UUID,
+          allowNull: true,
+        },
         publicKey: {
           type: DT.STRING,
           allowNull: true,

@@ -17,7 +17,6 @@ import {
 export default class DeleteItem extends Base {
   static get validationRules() {
     return {
-      id: ['string'],
       itemId: ['required', 'string'],
       prices: [
         {
@@ -30,14 +29,20 @@ export default class DeleteItem extends Base {
         },
       ],
       roe: ['string'],
-      userId: ['string'],
       refCode: ['string'],
     };
   }
 
-  async execute({ id, itemId, prices, roe, userId, refCode }) {
+  async execute({ itemId, prices, roe, refCode }) {
+    const userId = this.context.id || null;
+    const guestId = this.context.guestId || null;
+
+    const where = {};
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
     try {
-      const cart = await Cart.findById(id);
+      const cart = await Cart.findOne({ where });
 
       if (!cart) {
         return { data: { items: [] } };
@@ -128,7 +133,7 @@ export default class DeleteItem extends Base {
           data: Cart.format(cart.get({ plain: true })),
         };
       } else {
-        await Cart.destroy({ where: { id } });
+        await Cart.destroy({ where });
         return { data: { items: [] } };
       }
     } catch (error) {

@@ -17,11 +17,7 @@ import {
   fees as feesSelector,
   feesLoading as feeLoadingSelector,
 } from '../../redux/fio/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -40,14 +36,12 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import useEffectOnce from '../../hooks/general';
 
 const FioAddressAddBundlesPage: React.FC = () => {
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
-  const userId = useSelector(userIdSelector);
 
   const [feeLoadingFinished, toggleFeeLoadingFinished] = useState<boolean>(
     false,
@@ -98,11 +92,9 @@ const FioAddressAddBundlesPage: React.FC = () => {
 
     dispatch(
       addItemToCart({
-        id: cartId,
         item: newCartItem,
         prices: prices?.nativeFio,
         roe,
-        userId,
         refCode,
       }),
     );
@@ -118,7 +110,6 @@ const FioAddressAddBundlesPage: React.FC = () => {
   }, [
     addBundledTransactions,
     addBundlesFeePrice,
-    cartId,
     cartItems,
     dispatch,
     fch,
@@ -128,7 +119,6 @@ const FioAddressAddBundlesPage: React.FC = () => {
     prices?.nativeFio,
     refCode,
     roe,
-    userId,
   ]);
 
   return (

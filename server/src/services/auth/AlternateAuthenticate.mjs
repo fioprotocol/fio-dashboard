@@ -6,10 +6,11 @@ import X from '../Exception';
 import { User, Notification, ReferrerProfile, Wallet } from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
+import { AUTH_TYPE } from '../../tools.mjs';
 
 const EXPIRATION_TIME = DAY_MS; // 1 day
 
-export default class AlternateAuthenticate extends Base {
+export default class AuthAlternateAuthenticate extends Base {
   static get validationRules() {
     return {
       data: [
@@ -43,7 +44,10 @@ export default class AlternateAuthenticate extends Base {
     const generateJwt = userId => {
       const now = new Date();
       return {
-        jwt: generate({ id: userId }, new Date(EXPIRATION_TIME + now.getTime())),
+        jwt: generate(
+          { type: AUTH_TYPE.USER, id: userId },
+          new Date(EXPIRATION_TIME + now.getTime()),
+        ),
       };
     };
 

@@ -154,8 +154,8 @@ export const whereLastRow = (tableName, parentTableName, joinColumn) => ({
   },
 });
 
-export const whereNotOf = (key, variants) => ({
+export const whereOneOf = (key, variants) => ({
   [key]: {
-    [Sequelize.Op.notIn]: variants,
+    [Sequelize.Op.in]: variants,
   },
 });

@@ -8,6 +8,8 @@ import { history } from './history';
 import config from './config';
 
 Sentry.init({
+  // TODO remove enabled after close all sentry tasks
+  enabled: false,
   dsn: config.sentryDsn,
   environment: config.sentryEnv,
   integrations: [

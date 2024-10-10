@@ -5,8 +5,9 @@ import Base from '../Base';
 import { generate } from './authToken';
 import { AdminUser } from '../../models';
 import X from '../Exception.mjs';
+import { AUTH_TYPE } from '../../tools.mjs';
 
-export default class AdminLogin extends Base {
+export default class AuthAdminLogin extends Base {
   static get validationRules() {
     return {
       data: [
@@ -60,7 +61,7 @@ export default class AdminLogin extends Base {
 
     return {
       data: {
-        jwt: generate({ id: adminUser.id }),
+        jwt: generate({ type: AUTH_TYPE.ADMIN, id: adminUser.id }),
       },
     };
   }

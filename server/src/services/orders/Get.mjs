@@ -20,6 +20,17 @@ export default class OrdersGet extends Base {
     };
   }
   async execute({ id, publicKey }) {
+    const userId = this.context.id;
+
+    const where = {
+      id,
+      publicKey,
+    };
+
+    if (userId) {
+      where.userId = userId;
+    }
+
     const order = await Order.findOne({
       where: {
         id,

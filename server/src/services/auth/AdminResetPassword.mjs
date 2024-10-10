@@ -4,7 +4,7 @@ import X from '../Exception';
 import { Action, AdminUser } from '../../models';
 import { ACTION_EPX_TIME } from '../../constants/general.mjs';
 
-export default class AuthAdminCreate extends Base {
+export default class AuthAdminResetPassword extends Base {
   static get validationRules() {
     return {
       data: [

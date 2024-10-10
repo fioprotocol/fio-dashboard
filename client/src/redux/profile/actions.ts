@@ -85,6 +85,15 @@ export const makeNonce = ({
   },
 });
 
+export const GUEST_LOGIN_REQUEST = `${prefix}/GUEST_LOGIN_REQUEST`;
+export const GUEST_LOGIN_SUCCESS = `${prefix}/GUEST_LOGIN_SUCCESS`;
+export const GUEST_LOGIN_FAILURE = `${prefix}/GUEST_LOGIN_FAILURE`;
+
+export const loginGuest = (): CommonPromiseAction => ({
+  types: [GUEST_LOGIN_REQUEST, GUEST_LOGIN_SUCCESS, GUEST_LOGIN_FAILURE],
+  promise: (api: Api) => api.auth.loginGuest(),
+});
+
 export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
@@ -131,7 +140,7 @@ export const login = ({
   isSignUp,
 });
 
-export const ALTERNATE_LOGIN_REUQEST = `${prefix}/ALTERNATE_LOGIN_REUQEST`;
+export const ALTERNATE_LOGIN_REQUEST = `${prefix}/ALTERNATE_LOGIN_REQUEST`;
 export const ALTERNATE_LOGIN_SUCCESS = `${prefix}/ALTERNATE_LOGIN_SUCCESS`;
 export const ALTERNATE_LOGIN_FAILURE = `${prefix}/ALTERNATE_LOGIN_FAILURE`;
 
@@ -145,7 +154,7 @@ export const alternateLogin = (params: {
   timeZone?: string;
 }) => ({
   types: [
-    ALTERNATE_LOGIN_REUQEST,
+    ALTERNATE_LOGIN_REQUEST,
     ALTERNATE_LOGIN_SUCCESS,
     ALTERNATE_LOGIN_FAILURE,
   ],

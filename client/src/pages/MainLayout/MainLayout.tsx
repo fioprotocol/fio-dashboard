@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
@@ -57,8 +57,9 @@ type Props = {
   getApiUrls: () => void;
   isMaintenance?: boolean;
   isLoading?: boolean;
-  getCart: (cartId: string) => void;
+  getCart: () => void;
   logout: () => void;
+  loginGuest: () => void;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -81,10 +82,18 @@ const MainLayout: React.FC<Props> = props => {
     isLoading,
     getCart,
     logout,
+    loginGuest,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
   const routeName = getObjKeyByValue(ROUTES, pathname);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      return;
+    }
+    loginGuest();
+  }, [loginGuest, isAuthenticated]);
 
   useEffectOnce(() => {
     edgeContextInit();
@@ -102,7 +111,7 @@ const MainLayout: React.FC<Props> = props => {
 
   useEffectOnce(() => {
     if (cartId) {
-      getCart(cartId);
+      getCart();
     }
   }, [cartId]);
 

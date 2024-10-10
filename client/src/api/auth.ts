@@ -43,6 +43,10 @@ export default class Auth extends Base {
     return this.apiClient.post('auth', data);
   }
 
+  loginGuest(): Promise<AuthLoginResponse> {
+    return this.apiClient.post('guest-auth', {});
+  }
+
   alternateAuth(data: {
     derivationIndex: number;
     from: string;
@@ -80,6 +84,7 @@ export default class Auth extends Base {
   }
 
   async logout(): Promise<AuthLogoutResponse> {
+    this.apiClient.removeToken();
     return null;
   }
 
@@ -149,6 +154,7 @@ export default class Auth extends Base {
   }
 
   async adminLogout(): Promise<AuthLogoutResponse> {
+    this.apiClient.removeAdminToken();
     return null;
   }
 
@@ -202,17 +208,5 @@ export default class Auth extends Base {
 
   deleteUser(): Promise<GenericStatusResponse> {
     return this.apiClient.delete('users/me');
-  }
-
-  createNoRegisterUser({
-    publicKey,
-    refCode,
-  }: {
-    publicKey: string;
-    refCode: string;
-  }): Promise<string> {
-    return this.apiClient.post('users/without-registration', {
-      data: { publicKey, refCode },
-    });
   }
 }

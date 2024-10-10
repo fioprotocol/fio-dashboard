@@ -103,17 +103,17 @@ export function* deleteItem(): Generator {
 
 export function* updatePeriodItem(): Generator {
   yield takeEvery(UPDATE_CART_ITEM_PERIOD_SUCCESS, function*(action: Action) {
-    const { cartItem, newPeroid } = action;
+    const { cartItem, newPeriod } = action;
     const { period } = cartItem;
 
-    if (newPeroid !== period) {
-      const periodDiff = Math.abs(period - newPeroid);
+    if (newPeriod !== period) {
+      const periodDiff = Math.abs(period - newPeriod);
 
       const prices: Prices = yield select(pricesSelector);
       const roe: number = yield select(roeSelector);
 
       fireAnalyticsEvent(
-        newPeroid > period
+        newPeriod > period
           ? ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART
           : ANALYTICS_EVENT_ACTIONS.REMOVE_ITEM_FROM_CART,
         getCartItemsDataForAnalytics([

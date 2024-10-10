@@ -19,7 +19,6 @@ export default combineReducers({
   },
   ordersList(state: UserOrderDetails[] = [], action = {}) {
     switch (action.type) {
-      case actions.CLEAR_USER_ORDERS_LIST:
       case LOGOUT_SUCCESS:
         return [];
       case actions.GET_USER_ORDERS_LIST_SUCCESS: {
@@ -47,8 +46,6 @@ export default combineReducers({
   },
   totalOrdersCount(state: number = 0, action = {}) {
     switch (action.type) {
-      case actions.CLEAR_USER_ORDERS_LIST:
-        return 0;
       case actions.GET_USER_ORDERS_LIST_SUCCESS:
         return action.data.totalOrdersCount;
       default:

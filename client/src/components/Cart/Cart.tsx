@@ -75,13 +75,11 @@ const Cart: React.FC<Props> = props => {
     (item: CartItemType) => {
       dispatch(
         deleteItem({
-          id: cartId,
           itemId: item.id,
           item,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
     },
@@ -98,7 +96,6 @@ const Cart: React.FC<Props> = props => {
     }) => {
       dispatch(
         updateCartItemPeriod({
-          id: cartId,
           itemId: cartItem.id,
           item: cartItem,
           period: newPeriod,

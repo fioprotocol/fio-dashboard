@@ -1,6 +1,7 @@
 import Base from '../Base';
 import { ReferrerProfile } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { DEFAULT_LIMIT, MAX_LIMIT } from '../../constants/general.mjs';
 
 export default class PartnersList extends Base {
   static get requiredPermissions() {
@@ -9,8 +10,8 @@ export default class PartnersList extends Base {
 
   static get validationRules() {
     return {
-      offset: 'string',
-      limit: 'string',
+      offset: ['integer', { min_number: 0 }],
+      limit: ['integer', { min_number: 0 }, { max_number: MAX_LIMIT }],
       filters: [
         {
           nested_object: {
@@ -21,7 +22,7 @@ export default class PartnersList extends Base {
     };
   }
 
-  async execute({ limit = 25, offset = 0, filters }) {
+  async execute({ limit = DEFAULT_LIMIT, offset = 0, filters }) {
     const where = {};
     if (filters.type) {
       where.type = filters.type;

@@ -119,7 +119,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
         dispatch(
           addItemToCart({
-            id: cartId,
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
