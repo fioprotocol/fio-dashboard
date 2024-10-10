@@ -1,4 +1,4 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import {
@@ -12,7 +12,6 @@ import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.mjs';
 import { fioApi } from '../../external/fio.mjs';
 import { getROE } from '../../external/roe.mjs';
-import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -182,8 +181,8 @@ export default class Renew extends Base {
           address,
           domain,
           action: address
-            ? FIO_ACTIONS.addBundledTransactions
-            : FIO_ACTIONS.renewFioDomain,
+            ? GenericAction.addBundledTransactions
+            : GenericAction.renewFioDomain,
           nativeFio: nativeFio.toString(),
           price: normalizedPriceUsdc,
           priceCurrency: CURRENCY_CODES.USDC,

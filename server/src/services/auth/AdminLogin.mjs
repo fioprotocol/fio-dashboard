@@ -36,16 +36,21 @@ export default class AuthAdminLogin extends Base {
       !adminUser.checkPassword(password) ||
       !adminUser.tfaValidate(tfaToken)
     ) {
-      const error_fields = {};
-      if (!adminUser) error_fields.email = 'NOT_FOUND';
-      if (adminUser && (!adminUser.password || !adminUser.checkPassword(password)))
-        error_fields.password = 'INVALID';
-      if (adminUser && (!adminUser.tfaSecret || !adminUser.tfaValidate(tfaToken)))
-        error_fields.tfaToken = 'INVALID';
+      const errorFields = {};
+      if (
+        !adminUser ||
+        (adminUser && (!adminUser.password || !adminUser.checkPassword(password)))
+      ) {
+        errorFields.email = 'INVALID_CREDENTIALS';
+        errorFields.password = 'INVALID_CREDENTIALS';
+      }
+      if (adminUser && (!adminUser.tfaSecret || !adminUser.tfaValidate(tfaToken))) {
+        errorFields.tfaToken = 'INVALID';
+      }
 
       throw new X({
         code: 'AUTHENTICATION_FAILED',
-        fields: error_fields,
+        fields: errorFields,
       });
     }
 

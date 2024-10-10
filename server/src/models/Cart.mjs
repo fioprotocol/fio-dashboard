@@ -11,9 +11,9 @@ export class Cart extends Base {
     super.init(
       {
         id: {
-          type: DT.BIGINT,
-          autoIncrement: true,
+          type: DT.UUID,
           primaryKey: true,
+          autoIncrement: true,
         },
         items: {
           type: DT.JSON,
