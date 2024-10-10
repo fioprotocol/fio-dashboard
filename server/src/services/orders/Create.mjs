@@ -86,6 +86,17 @@ export default class OrdersCreate extends Base {
       user = resolvedUser;
     }
 
+    const cart = await Cart.findById(cartId);
+
+    if (!user || !cart) {
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {
+          cart: 'NOT_FOUND',
+        },
+      });
+    }
+
     const userId = user ? user.id : null;
 
     let order = await Order.findOne({
@@ -102,17 +113,6 @@ export default class OrdersCreate extends Base {
 
     let payment = null;
     const orderItems = [];
-
-    const cart = await Cart.findById(cartId);
-
-    if (!cart) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
-          cart: 'NOT_FOUND',
-        },
-      });
-    }
 
     const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
       cartItems: cart.items,

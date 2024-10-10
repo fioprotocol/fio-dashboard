@@ -131,6 +131,14 @@ router.get('/admin/reg-users/:id', checkAdminAuth, routes.users.detailedInfo);
 router.get('/admin/defaults', checkAdminAuth, routes.adminUsers.getDefaults);
 router.post('/admin/defaults', checkAdminAuth, routes.adminUsers.saveDefaults);
 
+router.post('/admin/vars/update/:key', checkAdminAuth, routes.vars.update);
+router.post(
+  '/vars/update_email/:type/:password',
+  checkSimpleAuth,
+  routes.vars.updateEmail,
+);
+router.get('/vars/:key', routes.vars.get);
+
 router.get('/notifications', checkUserAuth, routes.notifications.list);
 router.post('/notifications', checkUserAuth, routes.notifications.create);
 router.put('/notifications', checkUserAuth, routes.notifications.update);
@@ -254,14 +262,6 @@ router.get('/get-url-content', routes.general.getUrlContent);
 router.post('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.create);
 router.delete('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.delete);
 router.get('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.list);
-
-router.get('/vars/:key', routes.vars.get);
-router.post('/vars/update/:key', checkAdminAuth, routes.vars.update);
-router.post(
-  '/vars/update_email/:type/:password',
-  checkSimpleAuth,
-  routes.vars.updateEmail,
-);
 
 let WRAPPED_DOMAIN_ABI;
 let WRAPPED_TOKEN_ABI;
