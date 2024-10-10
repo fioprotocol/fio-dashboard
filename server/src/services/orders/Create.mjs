@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Base from '../Base';
+import logger from '../../logger.mjs';
 
 import {
   Cart,
@@ -89,20 +90,24 @@ export default class OrdersCreate extends Base {
     const cart = await Cart.findById(cartId);
 
     if (!user || !cart) {
+      if (!user)
+        logger.error(
+          `Error user not found: cartId - ${cartId}, refCode - ${refCode}, publicKey - ${publicKey}`,
+        );
+      if (!cart)
+        logger.error(
+          `Error cart not found: cartId - ${cartId}, refCode - ${refCode}, publicKey - ${publicKey}`,
+        );
+
       throw new X({
         code: 'NOT_FOUND',
-        fields: {
-          cart: 'NOT_FOUND',
-        },
       });
     }
-
-    const userId = user ? user.id : null;
 
     let order = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
-        userId: userId,
+        userId: user.id,
         guestId: this.context.guestId,
         createdAt: {
           [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
@@ -129,13 +134,12 @@ export default class OrdersCreate extends Base {
           refCode,
         })
       : [];
-    const userHasFreeAddress =
-      !publicKey && !userId
-        ? []
-        : await FreeAddress.getItems({
-            publicKey: cartPublicKey,
-            userId,
-          });
+    const userHasFreeAddress = !publicKey
+      ? []
+      : await FreeAddress.getItems({
+          publicKey: cartPublicKey,
+          userId: user.id,
+        });
 
     const {
       addBundles: addBundlesPrice,
@@ -170,7 +174,7 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    const wallet = await Wallet.findOneWhere({ userId, publicKey });
+    const wallet = await Wallet.findOneWhere({ userId: user.id, publicKey });
 
     const items = await cartItemsToOrderItems({
       allRefProfileDomains,
@@ -193,7 +197,7 @@ export default class OrdersCreate extends Base {
             roe,
             publicKey,
             customerIp: this.context.ipAddress,
-            userId,
+            userId: user.id,
             guestId: this.context.guestId,
             refProfileId: refProfileId ? refProfileId : user.refProfileId,
             data,

@@ -302,7 +302,7 @@ export default class Edge extends Base {
       const localUser = this.edgeContext.localUsers.find(
         localUser => localUser.username === username,
       );
-      return localUser && localUser.pinLoginEnabled;
+      return !!localUser?.pinLoginEnabled;
     } catch (e) {
       log.error(e);
     }
