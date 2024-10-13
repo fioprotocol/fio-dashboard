@@ -2,13 +2,13 @@ import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
-import { FioWalletSnapComponent } from './FioWalletSnapComponent';
+import { FioSdkLiteComponent } from './FioSdkLiteComponent';
 
 class FioWalletSnapPage extends Component<{}, {}> {
   render() {
     return (
       <HelmetProvider>
-        <FioWalletSnapComponent />
+        <FioSdkLiteComponent />
       </HelmetProvider>
     );
   }
