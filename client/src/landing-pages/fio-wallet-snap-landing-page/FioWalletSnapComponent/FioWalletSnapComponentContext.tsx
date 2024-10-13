@@ -87,7 +87,7 @@ export const useContext = (
       toggleExecutedTxnLoading(true);
 
       const pushResult = await fetch(
-        'https://fiotestnet.blockpane.com/v1/chain/push_transaction',
+        'https://test.fio.eosusa.io/v1/chain/push_transaction',
         {
           body: JSON.stringify(signedTxn),
           method: 'POST',

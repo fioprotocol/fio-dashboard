@@ -1,0 +1,72 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets//styles/fontMixins.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  
+  .header {
+    display: flex;
+    background: $white;
+    box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.2);
+    padding: 5px 50px;
+    min-height: 80px;
+
+    .logo {
+      width: 76px;
+      height: 100%;
+      background-image: url("../../../assets/images/fio-logo.svg");
+      background-size: 100%;
+      background-repeat: no-repeat;
+      background-position: left;
+    }
+  }
+
+  .contentContainer {
+    align-items: stretch;
+    flex: 1 0 auto;
+    padding: 50px;
+
+    .title {
+      @include proxima-nova-semibold;
+    }
+
+    .snapErrorMessage {
+      color: $warn-red;
+    }
+
+    .txn {
+      word-wrap: break-word;
+      max-width: 700px;
+    }
+
+    .dropdown {
+      max-width: 300px;
+      align-self: center;
+    }
+  }
+
+  .footer {
+    background: $baltic-sea;
+    height: 100px;
+    padding: 5px 50px;
+    flex-shrink: 0;
+
+    .logoLink {
+      display: block;
+      width: fit-content;
+
+      .logo {
+        margin-top: 25px;
+        width: 76px;
+        min-height: 36px;
+        background-image: url("../../../assets/images/fio-logo-white-text.svg");
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: left;
+      }
+    }
+  }
+}
