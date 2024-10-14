@@ -29,7 +29,7 @@ import { ContainerProps, InitialValues, UnWrapDomainValues } from './types';
 import classes from './styles/UnwrapDomainPage.module.scss';
 
 const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
-  o => o.chain_code === 'MATIC',
+  o => o.chain_code === 'POL',
 );
 
 const initialValues: InitialValues = {

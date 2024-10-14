@@ -43,7 +43,7 @@ import classes from '../../styles/WrapDomainPage.module.scss';
 import { log } from '../../../../util/general';
 
 const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
-  o => o.chain_code === 'MATIC',
+  o => o.chain_code === 'POL',
 );
 
 const WrapDomainContainer: React.FC<ContainerProps> = props => {
