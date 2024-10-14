@@ -68,7 +68,6 @@ export const useContext = (): AddTokenContextProps => {
   const onBack = (formProps: FormRenderProps<AddTokenValues>) => {
     const { form } = formProps;
     form.reset();
-    form.mutators.push('tokens');
     setResultsData(null);
     changeBundleCost(0);
   };

@@ -169,10 +169,8 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
   );
 
   return (
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={handleSubmit}>
       <ActionContainer
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onActionButtonClick={handleSubmit}
         isDisabled={!valid}
         containerName={CONTAINER_NAMES.ADD}
@@ -208,7 +206,9 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
             Add
           </Button>
         </div>
-        <h5 className={classes.subtitle}>FIO Handle Linking Information</h5>
+        {tokens?.length ? (
+          <h5 className={classes.subtitle}>FIO Handle Linking Information</h5>
+        ) : null}
         {tokens.map((token, index) => (
           <AddTokenBadge
             token={token}
