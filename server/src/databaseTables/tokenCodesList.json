@@ -19786,11 +19786,6 @@
   },
   {
     "chainCodeId": "ETH",
-    "tokenCodeId": "MATIC",
-    "tokenCodeName": "Matic Network"
-  },
-  {
-    "chainCodeId": "ETH",
     "tokenCodeId": "MATICBULL",
     "tokenCodeName": "3X Long Matic Token"
   },
@@ -28585,367 +28580,367 @@
     "tokenCodeName": "Massnet"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "ANGEL",
     "tokenCodeName": "Polylauncher"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "ARTH",
     "tokenCodeName": "ARTH [polygon]"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "ARTHX",
     "tokenCodeName": "ARTH Shares"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "AURUM",
     "tokenCodeName": "Crypto Raiders"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "BLOK",
     "tokenCodeName": "Bloktopia"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "BMG",
     "tokenCodeName": "Black Market Gaming"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "CHICK",
     "tokenCodeName": "LoserChick"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "CHUM",
     "tokenCodeName": "Chumhum"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "CIOTX",
     "tokenCodeName": "Crosschain IOTX"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "CRYSTL",
     "tokenCodeName": "Crystl Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "DAW",
     "tokenCodeName": "Deswap"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "DGOLD",
     "tokenCodeName": "PolyDragon"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "DINO",
     "tokenCodeName": "DinoSwap"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "DLYCOP",
     "tokenCodeName": "Daily COP"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "DOGIRA",
     "tokenCodeName": "Dogira"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "EGG",
     "tokenCodeName": "LoserChick EGG"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "ELK",
     "tokenCodeName": "Elk Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "FBE",
     "tokenCodeName": "Foobee"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "FISH",
     "tokenCodeName": "Polycat Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "GAJ",
     "tokenCodeName": "Gaj Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "GBTS",
     "tokenCodeName": "GemBites"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "GFI",
     "tokenCodeName": "Gravity Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "HONOR",
     "tokenCodeName": "FarmHero"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "IRON",
     "tokenCodeName": "Iron"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "KNIGHT",
     "tokenCodeName": "Forest Knight"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "KOGECOIN",
     "tokenCodeName": "KogeCoin.io"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "KRILL",
     "tokenCodeName": "Krill"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "LEO",
     "tokenCodeName": "AstroFarms Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MAAAVE",
     "tokenCodeName": "Matic Aave Interest Bearing AAVE"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MALINK",
     "tokenCodeName": "Matic Aave Interest Bearing LINK"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MATPAD",
     "tokenCodeName": "MaticPad"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MAUNI",
     "tokenCodeName": "Matic Aave Interest Bearing UNI"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MAUSDC",
     "tokenCodeName": "Matic Aave Interest Bearing USDC"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MAUSDT",
     "tokenCodeName": "Matic Aave Interest Bearing USDT"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MAWETH",
     "tokenCodeName": "Matic Aave Interest Bearing WETH"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MAYFI",
     "tokenCodeName": "Matic Aave Interest Bearing YFI"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MCASH",
     "tokenCodeName": "Monsoon Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MEEB",
     "tokenCodeName": "Meeb Master"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MIMATIC",
     "tokenCodeName": "MAI"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MOCA",
     "tokenCodeName": "Museum of Crypto Art"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MOON",
     "tokenCodeName": "Polywolf"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MOONED",
     "tokenCodeName": "MoonEdge"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "MTCL",
     "tokenCodeName": "MaticLaunch"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "NDEFI",
     "tokenCodeName": "Polly DeFi nest"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "NSDX",
     "tokenCodeName": "NASDEX"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PCHART",
     "tokenCodeName": "Polychart"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PEAR",
     "tokenCodeName": "PearZap"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PENKY",
     "tokenCodeName": "Penky"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PLA",
     "tokenCodeName": "Plair"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "POLR",
     "tokenCodeName": "Polystarter.net"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "POLYDOGE",
     "tokenCodeName": "PolyDoge"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PolyMoon",
     "tokenCodeName": "PolyMoon"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PSWAMP",
     "tokenCodeName": "pSwampy"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PYQ",
     "tokenCodeName": "PolyQuity"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "PZAP",
     "tokenCodeName": "PolyZap Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "QI",
     "tokenCodeName": "QiDao"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "ROLL",
     "tokenCodeName": "Polyroll"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SANDMAN",
     "tokenCodeName": "SandMan"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SHI3LD",
     "tokenCodeName": "PolyShield Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SILVER",
     "tokenCodeName": "Silver Token"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SIM",
     "tokenCodeName": "Simba Empire"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SNK",
     "tokenCodeName": "Snook"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SPADE",
     "tokenCodeName": "PolygonFarm Finance"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SRAT",
     "tokenCodeName": "SpaceRat"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "SXC",
     "tokenCodeName": "SupremeX"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "TEXO",
     "tokenCodeName": "tEXO"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "TITAN",
     "tokenCodeName": "IRON Titanium Token"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "TOMI",
     "tokenCodeName": "TOMI"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "UFARM",
     "tokenCodeName": "UniFarm"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "WEXPOLY",
     "tokenCodeName": "WaultSwap Polygon"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "WMATIC",
     "tokenCodeName": "Wrapped Matic"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "WOLF",
     "tokenCodeName": "moonwolf.io"
   },
   {
-    "chainCodeId": "MATIC",
+    "chainCodeId": "POL",
     "tokenCodeId": "WORK",
     "tokenCodeName": "The Employment Commons Work Token"
   },
@@ -29416,7 +29411,7 @@
   },
   {
     "chainCodeId": "ONE",
-    "tokenCodeId": "MATIC",
+    "tokenCodeId": "POL",
     "tokenCodeName": "Polygon"
   },
   {

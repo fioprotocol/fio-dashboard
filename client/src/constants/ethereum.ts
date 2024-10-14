@@ -39,12 +39,12 @@ export const NETWORKS_LIST: {
   },
   Polygon: {
     name: 'Polygon Mainnet',
-    currency: 'MATIC',
+    currency: 'POL',
     chainID: 137,
   },
   Mumbai: {
     name: 'Polygon Testnet',
-    currency: 'MATIC',
+    currency: 'POL',
     chainID: 80001,
   },
   ArbitrumOne: {

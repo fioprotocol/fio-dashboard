@@ -857,7 +857,8 @@ class WrapStatusJob extends CommonJob {
             (elem.action_trace.act.name === 'wraptokens' &&
               elem.action_trace.act.data.chain_code === 'ETH') ||
             (elem.action_trace.act.name === 'wrapdomain' &&
-              elem.action_trace.act.data.chain_code === 'MATIC') ||
+              (elem.action_trace.act.data.chain_code === 'MATIC' ||
+                elem.action_trace.act.data.chain_code === 'POL')) ||
             elem.action_trace.act.name === 'unwraptokens' ||
             elem.action_trace.act.name === 'unwrapdomain',
         );

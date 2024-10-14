@@ -171,7 +171,7 @@ export const NFT_CHAIN_CODE_LIST = [
   { id: 'EOS', name: 'EOS' },
   { id: 'ETH', name: 'Ethereum' },
   { id: 'FLOW', name: 'Flow' },
-  { id: 'MATIC', name: 'Polygon' },
+  { id: 'POL', name: 'Polygon' },
   { id: 'SOL', name: 'Solana' },
   { id: 'XTZ', name: 'TEZOS' },
   { id: 'THETA', name: 'THETA' },
@@ -182,7 +182,7 @@ export const NFT_CHAIN_CODE_LIST = [
 export const DOMAIN_WRAP_NETWORKS_LIST = [
   {
     name: 'Polygon',
-    chain_code: 'MATIC',
+    chain_code: 'POL',
   },
 ];
 
@@ -276,7 +276,7 @@ export const CHAIN_CODE_LIST = [
         name: 'Kyber Network',
       },
       {
-        id: 'MATIC',
+        id: 'POL',
         name: 'Polymath Network',
       },
       {
@@ -604,7 +604,7 @@ export const CHAIN_CODE_LIST = [
   { id: 'DGB', name: 'DigiByte' },
   { id: 'EOS', name: 'EOS' },
   { id: 'FLOW', name: 'Flow' },
-  { id: 'MATIC', name: 'Polygon' },
+  { id: 'POL', name: 'Polygon' },
   { id: 'SOL', name: 'Solana' },
   { id: 'XTZ', name: 'TEZOS' },
   { id: 'THETA', name: 'THETA' },
