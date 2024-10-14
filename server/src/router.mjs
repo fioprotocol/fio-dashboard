@@ -247,10 +247,6 @@ router.get(
 router.get('/free-addresses', routes.freeAddresses.getFreeAddresses);
 
 router.get('/gas-oracle', routes.external.getGasOracle);
-router.get(
-  '/estimation-of-confirmation-time',
-  routes.external.getEstimationOfConfirmationTime,
-);
 
 router.get('/edge-cr', routes.external.getEdgeApiCreds);
 

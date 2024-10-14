@@ -45,31 +45,6 @@ export function useLoadFeePriceSuggestions(
           },
         ];
 
-        // This could be used in production
-        // if (!isNFT) {
-        //   const getHighPriceEstimation = apis.etherScan
-        //     .getEstimationOfConfirmationTime(gasData?.FastGasPrice)
-        //     .then((val: string) => {
-        //       dataList[0].estimation = val;
-        //     });
-        //   const getMediumPriceEstimation = apis.etherScan
-        //     .getEstimationOfConfirmationTime(gasData?.ProposeGasPrice)
-        //     .then((val: string) => {
-        //       dataList[1].estimation = val;
-        //     });
-        //   const getLowPriceEstimation = apis.etherScan
-        //     .getEstimationOfConfirmationTime(gasData?.SafeGasPrice)
-        //     .then((val: string) => {
-        //       dataList[2].estimation = val;
-        //     });
-        //
-        //   await Promise.all([
-        //     getHighPriceEstimation,
-        //     getMediumPriceEstimation,
-        //     getLowPriceEstimation,
-        //   ]);
-        // }
-
         setFeePriceOptionsList(dataList);
         setIsLoading(false);
       } catch (e) {
