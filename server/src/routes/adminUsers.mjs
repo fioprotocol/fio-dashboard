@@ -12,8 +12,8 @@ import AdminStatusesList from '../services/adminUsers/AdminStatusesList';
 import OrdersList from '../services/adminUsers/OrdersList';
 import ExportOrdersData from '../services/adminUsers/ExportOrdersData';
 import OrderInfo from '../services/adminUsers/OrderInfo.mjs';
-import RegularUserInfo from '../services/adminUsers/RegularUserInfo.mjs';
-import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
+// import RegularUserInfo from '../services/adminUsers/RegularUserInfo.mjs';
+// import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
 import FioAccountsList from '../services/adminUsers/FioAccountsList.mjs';
 import FioAccountProfileUpdate from '../services/adminUsers/FioAccountProfileUpdate.mjs';
 import FioAccountProfileCreate from '../services/adminUsers/FioAccountProfileCreate.mjs';
@@ -46,8 +46,8 @@ export default {
   invite: makeServiceRunner(AdminUserInvite, req => req.body),
   rolesList: makeServiceRunner(AdminRolesList, req => req.body),
   statusesList: makeServiceRunner(AdminStatusesList, req => req.body),
-  regularUserInfo: makeServiceRunner(RegularUserInfo, req => req.params),
-  regularUsersList: makeServiceRunner(RegularUsersList, req => req.query),
+  // regularUserInfo: makeServiceRunner(RegularUserInfo, req => req.params),
+  // regularUsersList: makeServiceRunner(RegularUsersList, req => req.query),
   fioAccountsProfilesList: makeServiceRunner(FioAccountsList, req => req.query),
   createFioAccountProfile: makeServiceRunner(FioAccountProfileCreate, req => req.body),
   updateFioAccountProfile: makeServiceRunner(FioAccountProfileUpdate, req => ({
