@@ -1,5 +1,4 @@
 import Infura from '../../external/infura.mjs';
-import EtherScan from '../../external/ether-scan.mjs';
 import logger from '../../logger';
 import Base from '../Base';
 import X from '../Exception.mjs';
@@ -9,16 +8,12 @@ export default class GetGasOracle extends Base {
     return {
       isPolygon: ['boolean'],
       isInfuraProvider: ['boolean'],
-      isEtherScanProvider: ['boolean'],
     };
   }
-  async execute({ isPolygon, isInfuraProvider, isEtherScanProvider }) {
+  async execute({ isPolygon, isInfuraProvider }) {
     try {
       let res = null;
 
-      if (isEtherScanProvider) {
-        res = await new EtherScan().getGasOracle({ isPolygon });
-      }
       if (isInfuraProvider) {
         res = await new Infura().getGasOracle({ isPolygon });
       }
