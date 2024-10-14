@@ -300,18 +300,6 @@ export const clearChangePinError = (): CommonAction => ({
   type: CLEAR_CHANGE_PIN_ERROR,
 });
 
-export const CLEAR_CACHED_USERS_REQUEST = `${prefix}/CLEAR_CACHED_USERS_REQUEST`;
-export const CLEAR_CACHED_USERS_SUCCESS = `${prefix}/CLEAR_CACHED_USERS_SUCCESS`;
-export const CLEAR_CACHED_USERS_FAILURE = `${prefix}/CLEAR_CACHED_USERS_FAILURE`;
-export const clearCachedUser = (username: string): CommonPromiseAction => ({
-  types: [
-    CLEAR_CACHED_USERS_REQUEST,
-    CLEAR_CACHED_USERS_SUCCESS,
-    CLEAR_CACHED_USERS_FAILURE,
-  ],
-  promise: (api: Api) => api.edge.clearCachedUser(username),
-});
-
 export const CHANGE_RECOVERY_QUESTIONS_OPEN = `${prefix}/CHANGE_RECOVERY_QUESTIONS_OPEN`;
 export const changeRecoveryQuestionsOpen = (): CommonAction => ({
   type: CHANGE_RECOVERY_QUESTIONS_OPEN,

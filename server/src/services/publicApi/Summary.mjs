@@ -77,7 +77,7 @@ export default class Summary extends Base {
     }
 
     const orderWhere = {
-      'data.orderUserType:unquote': ORDER_USER_TYPES.PARTNER_API_CLIENT,
+      'data.orderUserType': ORDER_USER_TYPES.PARTNER_API_CLIENT,
     };
 
     if (publicKey) {

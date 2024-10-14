@@ -108,6 +108,7 @@ const PaymentsBlock: React.FC<Props> = props => {
       priceIsLowerThanHalfADollar
         ? '$0.50 to pay with credit card,'
         : '';
+
     const cryptoMessagePart =
       formsOfPayment?.bitpay &&
       (priceIsLowerThanHalfADollar || priceIsLowerThanOneDollar)
@@ -123,6 +124,7 @@ const PaymentsBlock: React.FC<Props> = props => {
       stripeMessagePart || cryptoMessagePart
         ? 'or you need to deposit FIO Tokens.'
         : '';
+
     return (
       <NotificationBadge
         message={`${beginningOfTheMessage} ${stripeMessagePart} ${cryptoMessagePart} ${endOfTheMessage}`}

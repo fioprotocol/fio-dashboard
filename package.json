@@ -222,12 +222,12 @@
     "sequelize-cli": "6.5.2",
     "sib-api-v3-sdk": "8.5.0",
     "slick-carousel": "1.8.1",
-    "uuid": "9.0.1",
     "speakeasy": "2.0.0",
     "stream-browserify": "3.0.0",
     "stripe": "9.16.0",
     "superagent": "7.1.5",
     "timezone-support": "3.1.0",
+    "uuid": "9.0.1",
     "web3": "1.8.0",
     "ws": "8.11.0"
   },

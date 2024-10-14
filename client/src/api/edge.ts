@@ -27,8 +27,11 @@ export type EdgeContextRes = {
   iv: { data: Buffer };
 };
 
+// TODO replace account.logout in all places by new method accountLogout
 export default class Edge extends Base {
   edgeContext: EdgeContext | null;
+
+  accounts: Map<string, EdgeAccount[]> = new Map<string, EdgeAccount[]>();
 
   logError = (e: Error | string) => {
     log.error(e);
@@ -84,10 +87,17 @@ export default class Edge extends Base {
     });
   }
 
-  clearCachedUser(username: string): Promise<void> {
+  async clearCachedUser(username: string): Promise<void> {
     try {
       this.validateEdgeContext();
-      return this.edgeContext.deleteLocalAccount(username);
+      if (!this.accounts.has(username)) {
+        return;
+      }
+      const logoutPromises = this.accounts
+        .get(username)
+        .filter(it => it.loggedIn)
+        .map(() => this.edgeContext.deleteLocalAccount(username));
+      await Promise.all(logoutPromises);
     } catch (e) {
       this.logError(e);
     }
@@ -106,6 +116,9 @@ export default class Edge extends Base {
         password,
         options,
       );
+
+      this.addAccount(account);
+
       return account;
     } catch (e) {
       this.logError(e);
@@ -122,10 +135,10 @@ export default class Edge extends Base {
   async loginPIN(username: string, pin: string): Promise<EdgeAccount> {
     try {
       this.validateEdgeContext();
-      const account: EdgeAccount = await this.edgeContext.loginWithPIN(
-        username,
-        pin,
-      );
+      const account = await this.edgeContext.loginWithPIN(username, pin);
+
+      this.addAccount(account);
+
       return account;
     } catch (e) {
       this.logError(e);
@@ -156,7 +169,14 @@ export default class Edge extends Base {
     // create account
     try {
       this.validateEdgeContext();
-      return this.edgeContext.createAccount({ username, password });
+      const account = await this.edgeContext.createAccount({
+        username,
+        password,
+      });
+
+      this.addAccount(account);
+
+      return account;
     } catch (e) {
       this.logError(e);
       throw e;
@@ -354,7 +374,15 @@ export default class Edge extends Base {
   ): Promise<EdgeAccount> {
     try {
       this.validateEdgeContext();
-      return this.edgeContext.loginWithRecovery2(token, username, answers);
+      const account = await this.edgeContext.loginWithRecovery2(
+        token,
+        username,
+        answers,
+      );
+
+      this.addAccount(account);
+
+      return account;
     } catch (e) {
       this.logError(e);
       throw e;
@@ -431,5 +459,13 @@ export default class Edge extends Base {
       this.logError(e);
       throw e;
     }
+  }
+
+  private addAccount(account: EdgeAccount) {
+    if (!this.accounts.has(account.username)) {
+      this.accounts.set(account.username, []);
+    }
+
+    this.accounts.get(account.username).push(account);
   }
 }
