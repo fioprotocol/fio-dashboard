@@ -87,7 +87,7 @@ const PaymentsBlock: React.FC<Props> = props => {
   }
 
   if (
-    hasLowBalance &&
+    !hasLowBalance &&
     !isFree &&
     !loading &&
     cartItems.length &&
@@ -114,7 +114,7 @@ const PaymentsBlock: React.FC<Props> = props => {
         ? '$1.00 to pay with crypto,'
         : '';
 
-    const beginingOfTheMessage =
+    const beginningOfTheMessage =
       stripeMessagePart || cryptoMessagePart
         ? 'Your cart needs to be at least'
         : 'You need to deposit FIO Tokens.';
@@ -125,7 +125,7 @@ const PaymentsBlock: React.FC<Props> = props => {
         : '';
     return (
       <NotificationBadge
-        message={`${beginingOfTheMessage} ${stripeMessagePart} ${cryptoMessagePart} ${endOfTheMessage}`}
+        message={`${beginningOfTheMessage} ${stripeMessagePart} ${cryptoMessagePart} ${endOfTheMessage}`}
         show
         title="Minimum cart total not met"
         type={BADGE_TYPES.ERROR}
