@@ -80,9 +80,6 @@ router.get('/admin/orders', checkAdminAuth, routes.adminUsers.ordersList);
 router.get('/admin/orders/export', checkAdminAuth, routes.adminUsers.exportOrdersData);
 router.get('/admin/orders/:id', checkAdminAuth, routes.adminUsers.order);
 
-// router.get('/admin/users/list', checkAdminAuth, routes.adminUsers.regularUsersList);
-// router.get('/admin/users/:id', checkAdminAuth, routes.adminUsers.regularUserInfo);
-
 router.get(
   '/admin/accounts/list',
   checkAdminAuth,
