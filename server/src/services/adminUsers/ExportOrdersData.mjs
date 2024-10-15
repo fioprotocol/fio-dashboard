@@ -1,10 +1,6 @@
-import Sequelize from 'sequelize';
-
 import Base from '../Base';
 import { Order, OrderItem } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
-
-const { Op } = Sequelize;
 
 export default class ExportOrdersData extends Base {
   static get requiredPermissions() {
@@ -40,9 +36,8 @@ export default class ExportOrdersData extends Base {
     });
 
     const ordersIds = ordersList.map(order => order.id);
-
-    const orderItemsList = await OrderItem.listAll(0, null, {
-      orderId: { [Op.or]: ordersIds },
+    const orderItemsList = await OrderItem.listAll({
+      ordersIds,
     });
 
     return {

@@ -23,11 +23,12 @@ import {
 } from '../../constants/purchase';
 import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
 
-import { transformOrderItems } from '../../util/purchase';
+import { transformOrderItemsPDF } from '../../util/purchase';
+
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import { Action } from '../types';
-import { OrderDetails, OrderItem } from '../../types';
+import { OrderDetails } from '../../types';
 
 export function* resetAdminUserPasswordSuccess(): Generator {
   yield takeEvery(RESET_ADMIN_USER_PASSWORD_SUCCESS, function*() {
@@ -104,21 +105,19 @@ export function* exportOrdersDataSuccess(): Generator {
         'Status',
       ],
     }).generateCsv(
-      transformOrderItems(action.data.orderItems).map(
-        (orderItem: OrderItem) => ({
-          number: orderItem.order?.number,
-          itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
-          amount: `${orderItem.price} ${orderItem.priceCurrency}`,
-          fio:
-            orderItem.price === '0'
-              ? '0'
-              : FIOSDK.SUFToAmount(orderItem.nativeFio).toFixed(2),
-          feeCollected: `${orderItem.feeCollected} FIO`,
-          status:
-            BC_TX_STATUS_LABELS[orderItem.orderItemStatus?.txStatus] ||
-            BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE],
-        }),
-      ),
+      transformOrderItemsPDF(action.data.orderItems).map(orderItem => ({
+        number: orderItem.number,
+        itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
+        amount: `${orderItem.price} ${orderItem.priceCurrency}`,
+        fio:
+          orderItem.price === '0'
+            ? '0'
+            : FIOSDK.SUFToAmount(orderItem.nativeFio).toFixed(2),
+        feeCollected: `${orderItem.feeCollected} FIO`,
+        status:
+          BC_TX_STATUS_LABELS[orderItem.txStatus] ||
+          BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE],
+      })),
     );
   });
 }
