@@ -104,15 +104,20 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    let order = await Order.findOne({
-      where: {
-        status: Order.STATUS.NEW,
-        userId: user.id,
-        guestId: this.context.guestId,
-        createdAt: {
-          [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
-        },
+    const orderWhere = {
+      status: Order.STATUS.NEW,
+      userId: user.id,
+      createdAt: {
+        [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
       },
+    };
+
+    if (cart.guestId) {
+      orderWhere.guestId = cart.guestId;
+    }
+
+    let order = await Order.findOne({
+      where: orderWhere,
       include: [OrderItem],
     });
 
@@ -198,7 +203,7 @@ export default class OrdersCreate extends Base {
             publicKey,
             customerIp: this.context.ipAddress,
             userId: user.id,
-            guestId: this.context.guestId,
+            guestId: cart.guestId,
             refProfileId: refProfileId ? refProfileId : user.refProfileId,
             data,
           },
