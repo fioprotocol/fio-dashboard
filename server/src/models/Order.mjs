@@ -91,6 +91,10 @@ export class Order extends Base {
             'Order status: NEW (1) , PENDING (2), PAYMENT_AWAITING (3), PAID (4), TRANSACTION_EXECUTED (5), PARTIALLY_SUCCESS (6), DONE (7)',
         },
         data: { type: DT.JSON, comment: 'Any additional data for the order' },
+        guestId: {
+          type: DT.UUID,
+          allowNull: true,
+        },
         publicKey: {
           type: DT.STRING,
           allowNull: true,

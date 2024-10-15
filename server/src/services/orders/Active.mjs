@@ -34,17 +34,9 @@ export default class OrdersActive extends Base {
       });
     }
 
-    if (userId) {
-      where.userId = userId;
-    }
-
-    if (guestId) {
-      where.guestId = guestId;
-    }
-
-    if (publicKey) {
-      where.publicKey = publicKey;
-    }
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+    if (publicKey) where.publicKey = publicKey;
 
     const order = await Order.findOne({
       where,
