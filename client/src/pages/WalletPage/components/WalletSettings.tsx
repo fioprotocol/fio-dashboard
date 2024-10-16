@@ -67,7 +67,7 @@ const WalletSettings: React.FC<Props> = props => {
   const fioAddresses = useSelector(fioAddressesSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
 
-  const balance = fioWalletsBalances.wallets[fioWallet.publicKey].total;
+  const balance = fioWalletsBalances?.wallets[fioWallet?.publicKey]?.total;
 
   const walletFioDomainsCount = fioDomains.filter(
     it => it.walletPublicKey === fioWallet.publicKey,
@@ -173,6 +173,7 @@ const WalletSettings: React.FC<Props> = props => {
       if (isPrimaryUserProfileType) {
         const account = await apis.edge.login(values.username, values.password);
         if (!account) throw new Error();
+        await account.logout();
       }
     } catch (e) {
       return { password: 'Invalid Password' };
