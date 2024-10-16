@@ -28826,6 +28826,11 @@
   },
   {
     "chainCodeId": "POL",
+    "tokenCodeId": "POL",
+    "tokenCodeName": "Polygon"
+  },
+  {
+    "chainCodeId": "POL",
     "tokenCodeId": "POLR",
     "tokenCodeName": "Polystarter.net"
   },
