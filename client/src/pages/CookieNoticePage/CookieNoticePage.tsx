@@ -10,11 +10,14 @@ const CookieNoticePage: React.FC = () => {
       const elCollection = document.getElementsByClassName(
         'cky-btn-revisit-wrapper',
       );
+
       if (elCollection.length > 0) {
         setButtonVisible(true);
         clearInterval(intervalId);
       }
     }, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
