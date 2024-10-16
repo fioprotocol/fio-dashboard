@@ -1,16 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
+import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
@@ -69,8 +66,8 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
       }
 
       const actionParam = {
-        action: TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddresses],
-        account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+        action: Action.addPublicAddresses,
+        account: Account.address,
         data: {
           fio_address: fioHandle,
           public_addresses,

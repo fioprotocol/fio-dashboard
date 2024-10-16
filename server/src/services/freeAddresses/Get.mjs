@@ -1,6 +1,7 @@
 import Base from '../Base';
 
 import { FreeAddress } from '../../models';
+import X from '../Exception.mjs';
 
 export default class GetFreeAddress extends Base {
   static get validationRules() {
@@ -13,18 +14,27 @@ export default class GetFreeAddress extends Base {
 
   async execute({ name, publicKey, userId }) {
     const where = {};
-    if (name) {
-      where.name = name;
+
+    if (!name && !publicKey && !userId) {
+      throw new X({
+        code: 'REQUEST_FAILED',
+        fields: {
+          name: 'NOT_PROVIDED',
+          publicKey: 'NOT_PROVIDED',
+          userId: 'NOT_PROVIDED',
+        },
+      });
     }
 
-    where.publicKey = publicKey;
-    where.userId = userId;
+    if (name) where.name = name;
+    if (publicKey) where.publicKey = publicKey;
+    if (userId) where.userId = userId;
 
     const freeAddressList = await FreeAddress.getItems(where);
 
     return {
       data: freeAddressList.map(freeAddressItem =>
-        FreeAddress.format(freeAddressItem.get({ plain: true })),
+        FreeAddress.formatMinimal(freeAddressItem.get({ plain: true })),
       ),
     };
   }

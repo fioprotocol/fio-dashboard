@@ -93,7 +93,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       (await apis.fio.getNFTs({ fioAddress: fch }, DEFAULT_LIMIT, offset)) ||
       {};
 
-    toggleHasMore(more);
+    toggleHasMore(!!more);
     setOffset(offset + DEFAULT_LIMIT);
 
     if (!nfts?.length) {
@@ -261,7 +261,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         !!externalProviderLink ||
         !!fetchedImageFileString;
 
-      // todo: commented due to DASH-711 task. We hide it until figureout with hash
+      // TODO: commented due to DASH-711 task. We hide it until figure out with hash
       // if (
       //   hash &&
       //   nftItemObj.imageUrl &&

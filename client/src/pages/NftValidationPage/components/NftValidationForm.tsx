@@ -28,12 +28,8 @@ const validate = (
   if (activeOption.id === OPTIONS.fioAddress.id) {
     if (!values.fioAddress) {
       errors.fioAddress = 'Required';
-    } else {
-      try {
-        apis.fio.isFioAddressValid(values.fioAddress);
-      } catch (e) {
-        errors.fioAddress = 'FIO Handle is not valid';
-      }
+    } else if (!apis.fio.publicFioSDK.validateFioAddress(values.fioAddress)) {
+      errors.fioAddress = 'FIO Handle is not valid';
     }
   }
   if (activeOption.id === OPTIONS.hash.id) {

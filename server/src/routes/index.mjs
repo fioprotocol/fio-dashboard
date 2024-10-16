@@ -1,5 +1,4 @@
 import account from './account';
-import actions from './actions';
 import adminUsers from './adminUsers';
 import auth from './auth';
 import cart from './cart.mjs';
@@ -25,7 +24,6 @@ import vars from './vars.mjs';
 
 export default {
   account,
-  actions,
   adminUsers,
   auth,
   cart,

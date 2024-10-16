@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
@@ -16,11 +17,7 @@ import {
   fees as feesSelector,
   feesLoading as feeLoadingSelector,
 } from '../../redux/fio/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -29,8 +26,6 @@ import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 import { getFee } from '../../redux/fio/actions';
-
-import apis from '../../api';
 
 import {
   fireAnalyticsEvent,
@@ -41,14 +36,12 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import useEffectOnce from '../../hooks/general';
 
 const FioAddressAddBundlesPage: React.FC = () => {
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
-  const userId = useSelector(userIdSelector);
 
   const [feeLoadingFinished, toggleFeeLoadingFinished] = useState<boolean>(
     false,
@@ -60,8 +53,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
 
   const fch = queryParams.get(QUERY_PARAMS_NAMES.NAME);
 
-  const addBundledTransactions =
-    apis.fio.actionEndPoints.addBundledTransactions;
+  const addBundledTransactions = EndPoint.addBundledTransactions;
 
   const addBundlesFeePrice = fees[addBundledTransactions];
   const addBundledFeeLoading = feeLoading[addBundledTransactions];
@@ -92,7 +84,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
       address,
       domain,
       type: CART_ITEM_TYPE.ADD_BUNDLES,
-      id: `${fch}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
+      id: `${fch}-${GenericAction.addBundledTransactions}-${+new Date()}`,
       costNativeFio: addBundlesFeePrice?.nativeFio,
       costFio: addBundlesFeePrice.fio,
       costUsdc: addBundlesFeePrice.usdc,
@@ -100,11 +92,9 @@ const FioAddressAddBundlesPage: React.FC = () => {
 
     dispatch(
       addItemToCart({
-        id: cartId,
         item: newCartItem,
         prices: prices?.nativeFio,
         roe,
-        userId,
         refCode,
       }),
     );
@@ -120,7 +110,6 @@ const FioAddressAddBundlesPage: React.FC = () => {
   }, [
     addBundledTransactions,
     addBundlesFeePrice,
-    cartId,
     cartItems,
     dispatch,
     fch,
@@ -130,7 +119,6 @@ const FioAddressAddBundlesPage: React.FC = () => {
     prices?.nativeFio,
     refCode,
     roe,
-    userId,
   ]);
 
   return (

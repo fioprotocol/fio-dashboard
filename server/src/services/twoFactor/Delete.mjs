@@ -8,12 +8,16 @@ export default class NewDeviceTwoFactorDelete extends Base {
       voucherId: ['required', 'string'],
     };
   }
+
   async execute({ voucherId }) {
     const newDeviceTwoFactor = await NewDeviceTwoFactor.getItem({
       voucherId,
       userId: this.context.id,
     });
-    if (!newDeviceTwoFactor) return { data: { success: false, message: 'Not Found' } };
+
+    if (!newDeviceTwoFactor) {
+      return { data: { success: false, message: 'Not Found' } };
+    }
 
     await newDeviceTwoFactor.destroy({ force: true });
 

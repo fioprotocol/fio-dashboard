@@ -58,7 +58,7 @@ export function* notify(history: History): Generator {
 
       if (!genericErrorIsShowing) {
         const { buttonText, message, redirect, title } =
-          ErrorData[action.type] || {};
+          ErrorData[action.type as keyof typeof ErrorData] || {};
 
         yield put(showGenericErrorModal(message, title, buttonText));
         if (redirect) history.push(redirect);

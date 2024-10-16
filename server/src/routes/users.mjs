@@ -2,26 +2,23 @@ import { makeServiceRunner } from '../tools';
 
 import AlternativeUserVerification from '../services/users/AlternativeUserVerification.mjs';
 import UsersCreate from '../services/users/Create';
-import UsersUpdate from '../services/users/Update';
 import UsersInfo from '../services/users/Info';
 import ShowInfo from '../services/users/Show';
 import FreeAddressRegistered from '../services/users/FreeAddressRegistered';
 import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersResendRecovery from '../services/users/ResendRecovery';
 import UsersList from '../services/users/List';
-import UsersUpdateEmail from '../services/users/UpdateEmail';
+import UsersUpdateEmail from '../services/users/UpdateEmail.mjs';
 import UsersUpdateEmailNotificationParams from '../services/users/UpdateEmailNotificationParams';
 import ActivateAffiliate from '../services/users/ActivateAffiliate';
 import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
 import UsersSendEvent from '../services/users/SendEvent';
 import UsersDelete from '../services/users/Delete';
-import CreateUserWithoutRegistrtion from '../services/users/CreateUserWithoutRegistrtion.mjs';
 
 export default {
   alternativeUserVerification: makeServiceRunner(AlternativeUserVerification),
   create: makeServiceRunner(UsersCreate, req => req.body),
-  update: makeServiceRunner(UsersUpdate, req => req.body),
   delete: makeServiceRunner(UsersDelete),
   info: makeServiceRunner(UsersInfo),
   detailedInfo: makeServiceRunner(UsersDetailedInfo, req => req.params),
@@ -38,8 +35,4 @@ export default {
   activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
   updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
   sendEvent: makeServiceRunner(UsersSendEvent, req => req.body),
-  createUserWithoutRegistrtion: makeServiceRunner(
-    CreateUserWithoutRegistrtion,
-    req => req.body,
-  ),
 };

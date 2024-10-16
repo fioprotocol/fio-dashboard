@@ -7,7 +7,6 @@ import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
 } from '../../constants/common';
-import { FIO_CHAIN_CODE } from '../../constants/fio';
 
 type CreateAccountRes = {
   errors: { email?: string; username?: string };
@@ -37,47 +36,6 @@ export const usernameAvailable = async (
     }
   } catch (e) {
     result.error = e.message;
-  }
-
-  return result;
-};
-
-export const checkEdgeLogin = async (
-  username: string,
-  password: string,
-): Promise<CreateAccountRes> => {
-  const result: CreateAccountRes = { errors: {} };
-  try {
-    await apis.edge.clearCachedUser(username);
-    const account = await apis.edge.login(username, password);
-
-    if (!account) {
-      throw new Error('Not available');
-    }
-    result.account = account;
-
-    const fioWallets = [];
-    try {
-      for (const walletId of account.activeWalletIds) {
-        const wallet = await account.waitForCurrencyWallet(walletId);
-        if (wallet.currencyInfo.currencyCode === FIO_CHAIN_CODE) {
-          fioWallets.push(wallet);
-        }
-      }
-
-      result.fioWallet = fioWallets[0];
-    } catch (e) {
-      log.error(e);
-    }
-
-    if (!result.fioWallet) result.fioWallet = await createFioWallet(account);
-  } catch (e) {
-    try {
-      result.account && result.account.logout();
-    } catch (e) {
-      log.error(e);
-    }
-    result.errors = { username: e.message };
   }
 
   return result;
@@ -148,7 +106,7 @@ export const createAccount = async (
   } catch (e) {
     log.error('Create Edge Account Error:', e);
     try {
-      result.account && result.account.logout();
+      result.account && (await result.account.logout());
     } catch (e) {
       log.error(e);
     }

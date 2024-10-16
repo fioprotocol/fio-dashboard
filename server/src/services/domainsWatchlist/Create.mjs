@@ -11,11 +11,11 @@ export default class DomainWatchlistCreate extends Base {
   }
 
   async execute({ domain }) {
-    const user = this.context.id;
+    const userId = this.context.id;
 
     const existing = await DomainsWatchlist.findOne({
       where: {
-        userId: user,
+        userId,
         domain,
       },
     });
@@ -31,7 +31,7 @@ export default class DomainWatchlistCreate extends Base {
 
     const domainWatchlist = new DomainsWatchlist({
       domain,
-      userId: user,
+      userId,
     });
 
     await domainWatchlist.save();

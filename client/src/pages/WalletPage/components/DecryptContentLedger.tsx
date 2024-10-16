@@ -3,15 +3,11 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { Ecc, Serialize } from '@fioprotocol/fiojs';
 import { deserialize } from '@fioprotocol/fiojs/dist/encryption-fio';
 
+import { Action, ContentType, RequestStatus } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
-import {
-  ACTIONS,
-  FIO_ACTION_NAMES,
-  FIO_CONTENT_TYPES,
-  FIO_REQUEST_STATUS_TYPES,
-} from '../../../constants/fio';
 import { FIO_RECORD_TYPES } from '../constants';
 
 import { getPath } from '../../../util/ledger';
@@ -49,12 +45,12 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     const { itemData, fioRecordType, paymentOtbData } = submitData;
     const contentType =
       fioRecordType === FIO_RECORD_TYPES.DATA
-        ? FIO_CONTENT_TYPES.RECORD_OBT_DATA
-        : FIO_CONTENT_TYPES.NEW_FUNDS;
+        ? ContentType.recordObtDataContent
+        : ContentType.newFundsContent;
     const context =
       fioRecordType === FIO_RECORD_TYPES.DATA
-        ? FIO_ACTION_NAMES[ACTIONS.recordObtData]
-        : FIO_ACTION_NAMES[ACTIONS.requestFunds];
+        ? Action.recordObt
+        : Action.newFundsRequest;
     const decodedMessage = await appFio.decodeMessage({
       path: getPath(fioWallet.data.derivationIndex),
       publicKeyHex: Ecc.PublicKey(
@@ -76,7 +72,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     );
 
     let paymentData = null;
-    if (itemData.status === FIO_REQUEST_STATUS_TYPES.PAID && paymentOtbData) {
+    if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
       const paymentDecodedMessage = await appFio.decodeMessage({
         path: getPath(fioWallet.data.derivationIndex),
         publicKeyHex: Ecc.PublicKey(
@@ -88,12 +84,12 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
           .toBuffer()
           .toString('hex'),
         message: paymentOtbData.content,
-        context: FIO_ACTION_NAMES[ACTIONS.recordObtData],
+        context: Action.recordObt,
       });
       const paymentDecryptedContent = camelizeObjKeys(
         deserialize(
           new Serialize.SerialBuffer({ array: paymentDecodedMessage.message }),
-          FIO_CONTENT_TYPES.RECORD_OBT_DATA,
+          ContentType.recordObtDataContent,
         ),
       );
 

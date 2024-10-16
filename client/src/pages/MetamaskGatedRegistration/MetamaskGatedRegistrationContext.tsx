@@ -6,10 +6,7 @@ import { useHistory } from 'react-router';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { user as userSelector } from '../../redux/profile/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -133,7 +130,6 @@ const TitleComponent = () => (
 );
 
 export const useContext = (): UseContext => {
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const user = useSelector(userSelector);
   const prices = useSelector(pricesSelector);
@@ -258,14 +254,12 @@ export const useContext = (): UseContext => {
 
         dispatch(
           addItemToCart({
-            id: cartId,
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
             refCode,
             roe,
             token: gatedToken,
-            userId: user.id,
           }),
         );
 
@@ -277,16 +271,7 @@ export const useContext = (): UseContext => {
         toggleLoading(false);
       }
     },
-    [
-      cartId,
-      dispatch,
-      history,
-      prices.nativeFio,
-      publicKey,
-      refCode,
-      roe,
-      user?.id,
-    ],
+    [dispatch, history, prices.nativeFio, publicKey, refCode, roe],
   );
 
   const getFreeUserMetamaskAddresses = useCallback(

@@ -4,6 +4,8 @@ import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
 import classnames from 'classnames';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
@@ -39,7 +41,7 @@ export const FindFioHandleForm: React.FC<Props> = props => {
       let errors;
 
       try {
-        apis.fio.isFioAddressValid(fch);
+        FIOSDK.isFioAddressValid(fch);
 
         const isAvail = await apis.fio.availCheck(fch);
 

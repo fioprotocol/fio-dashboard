@@ -4,18 +4,20 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { Order } from '../../models';
+import { DEFAULT_LIMIT, MAX_LIMIT } from '../../constants/general.mjs';
 
 export default class OrdersList extends Base {
   static get validationRules() {
     return {
-      limit: 'string',
-      offset: 'string',
+      offset: ['integer', { min_number: 0 }],
+      limit: ['integer', { min_number: 0 }, { max_number: MAX_LIMIT }],
       publicKey: 'string',
-      userId: 'string',
     };
   }
 
-  async execute({ limit, offset, publicKey, userId }) {
+  async execute({ limit = DEFAULT_LIMIT, offset = 0, publicKey }) {
+    const userId = this.context.id;
+
     if (!userId && !publicKey) {
       throw new X({
         code: 'GET_ORDERS_LIST_ERROR',
@@ -33,6 +35,7 @@ export default class OrdersList extends Base {
       isProcessed: true,
       publicKey,
     });
+
     const ordersCountWhere = {
       status: {
         [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],

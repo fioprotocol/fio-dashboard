@@ -294,7 +294,13 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
           onChange={fieldValuesChanged}
         />
         <div className={classes.formBox}>
-          <div className={classnames(classes.box, isQuestions && classes.show)}>
+          <div
+            className={classnames(
+              classes.box,
+              isQuestions && classes.show,
+              'sentry-block',
+            )}
+          >
             <FormHeader
               title="Setup Password Recovery"
               header={!isSettings && 'One Last Thing!'}
@@ -349,7 +355,13 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
               </p>
             )}
           </div>
-          <div className={classnames(classes.box, isQuestions && classes.show)}>
+          <div
+            className={classnames(
+              classes.box,
+              isQuestions && classes.show,
+              'sentry-block',
+            )}
+          >
             <FormHeader
               title="Setup Password Recovery"
               subtitle="Choose Recovery Question"

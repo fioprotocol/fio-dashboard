@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -14,7 +16,6 @@ import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 import {
-  ACTIONS,
   BUNDLES_TX_COUNT,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_CHAIN_CODE,
@@ -44,19 +45,23 @@ const SendEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
-    const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
-      payeeFioPublicKey: data.toPubKey,
-      amount: Number(data.nativeAmount),
-      maxFee: new MathOp(fee)
-        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-        .round(0)
-        .toNumber(),
-    });
+    const result = await apis.fio.executeAction(
+      keys,
+      GenericAction.transferTokens,
+      {
+        payeeFioPublicKey: data.toPubKey,
+        amount: Number(data.nativeAmount),
+        maxFee: new MathOp(fee)
+          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+          .round(0)
+          .toNumber(),
+      },
+    );
     let obtError = null;
     let bundlesCollected = 0;
     if (data.memo || data.fioRequestId) {
       try {
-        await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
+        await apis.fio.executeAction(keys, GenericAction.recordObtData, {
           payerFioAddress: data.from,
           payeeFioAddress: data.to,
           payerTokenPublicAddress: keys.public,

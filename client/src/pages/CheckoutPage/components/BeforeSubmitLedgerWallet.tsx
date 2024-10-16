@@ -2,13 +2,14 @@ import React from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import {
   CONFIRM_LEDGER_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
 
 import { prepareChainTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
@@ -42,7 +43,7 @@ const BeforeSubmitLedgerWallet: React.FC<BeforeSubmitProps> = props => {
     for (const item of fioAddressItems) {
       const { chainId, transaction } = await prepareChainTransaction(
         item.fioWallet?.publicKey,
-        ACTIONS.registerFioAddress,
+        GenericAction.registerFioAddress,
         {
           fio_address: item.name,
           owner_fio_public_key: item.ownerKey,

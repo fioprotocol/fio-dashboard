@@ -2,7 +2,8 @@ import {
   FieldValidationFunctionSync,
   FieldValidationFunctionAsync,
 } from '@lemoncode/fonk';
-import { allRules } from '@fioprotocol/fiosdk/lib/utils/validation';
+
+import { allRules } from '@fioprotocol/fiosdk';
 
 import {
   DOMAIN_ALREADY_EXISTS,
@@ -13,11 +14,11 @@ import {
 import { WARNING_CONTENT } from '../../pages/FioAddressManagePage/constants';
 
 import apis from '../../api';
-import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
+import { setFioName } from '../../utils';
 import {
   checkAddressOrDomainIsExist,
   isDomainExpired,
-  vaildateFioDomain,
+  validateFioDomain,
 } from '../fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
 
@@ -32,15 +33,7 @@ interface MatchFieldArgs {
 export const fioAddressFieldValidator: FieldValidationFunctionSync<MatchFieldArgs> = props => {
   const { value } = props;
 
-  // Get regexp string from full FCH regexp
-  const fioAddressRegexString = allRules.fioAddress.matchParams.regex
-    .split(FIO_ADDRESS_DELIMITER)[0]
-    .replace('(?:', '')
-    .replace('3,64', '1,62')
-    .concat('$');
-
-  const fioAddressRegex = new RegExp(fioAddressRegexString, 'i');
-  const succeeded = fioAddressRegex.test(value);
+  const succeeded = allRules.fioName.match.test(value);
 
   return {
     succeeded,
@@ -82,16 +75,12 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
 
   if (address) {
-    try {
-      apis.fio.isFioAddressValid(fchValue);
-    } catch (e) {
+    if (!apis.fio.publicFioSDK.validateFioAddress(fchValue)) {
       succeeded = false;
       message = NON_VALID_FCH;
     }
   } else {
-    const errorValidaton = vaildateFioDomain(domain);
-
-    if (errorValidaton) {
+    if (validateFioDomain(domain)) {
       succeeded = false;
       message = NON_VAILD_DOMAIN;
     }

@@ -169,6 +169,9 @@ class GetMoralis {
       case 'MATIC':
         chainNameValue = 'POLYGON';
         break;
+      case 'POL':
+        chainNameValue = 'POLYGON';
+        break;
       case 'AVAX':
         chainNameValue = 'AVALANCHE';
         break;

@@ -2,18 +2,14 @@ import crypto from 'crypto';
 
 import superagent from 'superagent';
 
-import fiosdkLib from '@fioprotocol/fiosdk';
-import entities from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import fetch from 'node-fetch';
-import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
-import { Constants } from '@fioprotocol/fiosdk/lib/utils/constants';
+import { Account, FIOSDK, fioConstants, GenericAction } from '@fioprotocol/fiosdk';
 
 import { FioApiUrl, Var } from '../models';
 
 import {
   DAY_MS,
-  FIO_ACTIONS,
-  FIO_ACTIONS_TO_END_POINT_KEYS,
+  FIO_ACTIONS_TO_END_POINT_MAP,
   FIO_ADDRESS_DELIMITER,
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../config/constants.js';
@@ -24,7 +20,6 @@ import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
 
-export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
 export const INSUFFICIENT_BALANCE = 'Insufficient balance';
@@ -35,28 +30,27 @@ export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
 export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
 const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
-const EndPoint = entities.EndPoint;
 
 const FIO_ACTION_NAMES = {
-  [FIO_ACTIONS.registerFioAddress]: 'regaddress',
-  [FIO_ACTIONS.registerFioDomain]: 'regdomain',
-  [FIO_ACTIONS.registerFioDomainAddress]: 'regdomadd',
-  [FIO_ACTIONS.renewFioDomain]: 'renewdomain',
-  [FIO_ACTIONS.setFioDomainVisibility]: 'setdomainpub',
-  [FIO_ACTIONS.transferFioAddress]: 'xferaddress',
-  [FIO_ACTIONS.transferFioDomain]: 'xferdomain',
-  [FIO_ACTIONS.addPublicAddress]: 'addaddress',
-  [FIO_ACTIONS.removePublicAddresses]: 'remaddress',
-  [FIO_ACTIONS.removeAllPublicAddresses]: 'remalladdr',
-  [FIO_ACTIONS.requestFunds]: 'newfundsreq',
-  [FIO_ACTIONS.recordObtData]: 'recordobt',
-  [FIO_ACTIONS.rejectFundsRequest]: 'rejectfndreq',
-  [FIO_ACTIONS.transferTokens]: 'trnsfiopubky',
-  [FIO_ACTIONS.addBundledTransactions]: 'addbundles',
+  [GenericAction.registerFioAddress]: 'regaddress',
+  [GenericAction.registerFioDomain]: 'regdomain',
+  [GenericAction.registerFioDomainAddress]: 'regdomadd',
+  [GenericAction.renewFioDomain]: 'renewdomain',
+  [GenericAction.setFioDomainVisibility]: 'setdomainpub',
+  [GenericAction.transferFioAddress]: 'xferaddress',
+  [GenericAction.transferFioDomain]: 'xferdomain',
+  [GenericAction.addPublicAddress]: 'addaddress',
+  [GenericAction.removePublicAddresses]: 'remaddress',
+  [GenericAction.removeAllPublicAddresses]: 'remalladdr',
+  [GenericAction.requestFunds]: 'newfundsreq',
+  [GenericAction.recordObtData]: 'recordobt',
+  [GenericAction.rejectFundsRequest]: 'rejectfndreq',
+  [GenericAction.transferTokens]: 'trnsfiopubky',
+  [GenericAction.addBundledTransactions]: 'addbundles',
 };
 
 const FIO_ACCOUNT_NAMES = {
-  [FIO_ACTIONS.transferTokens]: 'fio.token',
+  [GenericAction.transferTokens]: 'fio.token',
 };
 
 class Fio {
@@ -65,7 +59,10 @@ class Fio {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
-      this.publicFioSDK = new FIOSDK('', '', apiUrls, fetch);
+      this.publicFioSDK = new FIOSDK({
+        apiUrls,
+        fetchJson: fetch,
+      });
     }
     return this.publicFioSDK;
   }
@@ -78,15 +75,13 @@ class Fio {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
-      this.masterFioSDK = new FIOSDK(
-        process.env.MASTER_FIOSDK_KEY,
-        masterPubKey,
+      this.masterFioSDK = new FIOSDK({
+        privateKey: process.env.MASTER_FIOSDK_KEY,
+        publicKey: masterPubKey,
         apiUrls,
-        fetch,
-        '',
-        '',
-        true,
-      );
+        fetchJson: fetch,
+        returnPreparedTrx: true,
+      });
     }
     return this.masterFioSDK;
   }
@@ -95,11 +90,11 @@ class Fio {
     const apiUrls = await FioApiUrl.getApiUrls({
       type: FIO_API_URLS_TYPES.DASHBOARD_API,
     });
-    return new FIOSDK('', publicKey, apiUrls, fetch);
-  }
-
-  sufToAmount(suf = 0) {
-    return FIOSDK.SUFToAmount(suf);
+    return new FIOSDK({
+      publicKey,
+      apiUrls,
+      fetchJson: fetch,
+    });
   }
 
   amountToSUF(amount) {
@@ -123,7 +118,7 @@ class Fio {
   convertFioToUsdc(nativeAmount, roe) {
     if (roe == null) return 0;
 
-    return new MathOp(this.sufToAmount(nativeAmount))
+    return new MathOp(FIOSDK.SUFToAmount(nativeAmount || 0))
       .mul(roe)
       .round(2, 1)
       .toNumber();
@@ -154,9 +149,9 @@ class Fio {
     if (abisVar && !Var.updateRequired(abisVar.updatedAt, ABIS_UPDATE_TIMEOUT_SEC)) {
       const abis = JSON.parse(abisVar.value);
 
-      for (const accountName of Constants.rawAbiAccountName) {
-        if (!Transactions.abiMap.get(accountName) && abis[accountName]) {
-          Transactions.abiMap.set(abis[accountName].name, abis[accountName].response);
+      for (const accountName of fioConstants.rawAbiAccountName) {
+        if (!FIOSDK.abiMap.get(accountName) && abis[accountName]) {
+          FIOSDK.abiMap.set(abis[accountName].name, abis[accountName].response);
         }
       }
 
@@ -164,13 +159,13 @@ class Fio {
     }
 
     const abisObj = {};
-    for (const accountName of Constants.rawAbiAccountName) {
+    for (const accountName of fioConstants.rawAbiAccountName) {
       try {
         const fioPublicSdk = await fioApi.getPublicFioSDK();
 
-        if (!Transactions.abiMap.get(accountName)) {
+        if (!FIOSDK.abiMap.get(accountName)) {
           const abiResponse = await fioPublicSdk.getAbi(accountName);
-          Transactions.abiMap.set(abiResponse.account_name, abiResponse);
+          FIOSDK.abiMap.set(abiResponse.account_name, abiResponse);
           abisObj[accountName] = {
             name: abiResponse.account_name,
             response: abiResponse,
@@ -188,7 +183,7 @@ class Fio {
     if (options.fee) actionParams.max_fee = options.fee;
 
     switch (options.action) {
-      case FIO_ACTIONS.registerFioAddress: {
+      case GenericAction.registerFioAddress: {
         actionParams = {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
@@ -197,7 +192,7 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.registerFioDomain: {
+      case GenericAction.registerFioDomain: {
         actionParams = {
           ...actionParams,
           fio_domain: options.domain,
@@ -205,7 +200,7 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.registerFioDomainAddress: {
+      case GenericAction.registerFioDomainAddress: {
         actionParams = {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
@@ -215,7 +210,7 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.transferTokens: {
+      case GenericAction.transferTokens: {
         actionParams = {
           ...actionParams,
           payee_public_key: options.publicKey,
@@ -223,14 +218,14 @@ class Fio {
         };
         break;
       }
-      case FIO_ACTIONS.renewFioDomain: {
+      case GenericAction.renewFioDomain: {
         actionParams = {
           ...actionParams,
           fio_domain: options.domain,
         };
         break;
       }
-      case FIO_ACTIONS.addBundledTransactions: {
+      case GenericAction.addBundledTransactions: {
         actionParams = {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
@@ -249,9 +244,9 @@ class Fio {
     try {
       const publicFioSDK = await this.getPublicFioSDK();
 
-      const { fee } = await publicFioSDK.getFee(
-        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
-      );
+      const { fee } = await publicFioSDK.getFee({
+        endPoint: FIO_ACTIONS_TO_END_POINT_MAP[action],
+      });
 
       return fee;
     } catch (e) {
@@ -292,7 +287,7 @@ class Fio {
       });
 
       return await fioSdk.executePreparedTrx(
-        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+        FIO_ACTIONS_TO_END_POINT_MAP[action],
         preparedTrx,
       );
     } catch (err) {
@@ -313,8 +308,9 @@ class Fio {
   async executeTx(action, signedTx) {
     try {
       const fioSdk = await this.getMasterFioSDK();
+
       return await fioSdk.executePreparedTrx(
-        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+        FIO_ACTIONS_TO_END_POINT_MAP[action],
         signedTx,
       );
     } catch (err) {
@@ -370,11 +366,11 @@ class Fio {
           renewDomainFee,
           addBundlesFee,
         ] = await Promise.all([
-          this.getFee(FIO_ACTIONS.registerFioAddress),
-          this.getFee(FIO_ACTIONS.registerFioDomain),
-          this.getFee(FIO_ACTIONS.registerFioDomainAddress),
-          this.getFee(FIO_ACTIONS.renewFioDomain),
-          this.getFee(FIO_ACTIONS.addBundledTransactions),
+          this.getFee(GenericAction.registerFioAddress),
+          this.getFee(GenericAction.registerFioDomain),
+          this.getFee(GenericAction.registerFioDomainAddress),
+          this.getFee(GenericAction.renewFioDomain),
+          this.getFee(GenericAction.addBundledTransactions),
         ]);
 
         prices = {
@@ -412,7 +408,7 @@ class Fio {
 
   async getPublicAddressByFioAddress(fioAddress) {
     const publicFioSDK = await this.getPublicFioSDK();
-    const res = await publicFioSDK.getFioPublicAddress(fioAddress);
+    const res = await publicFioSDK.getFioPublicAddress({ fioAddress });
     return res.public_address;
   }
 
@@ -456,8 +452,8 @@ class Fio {
         .toString('hex');
 
     const params = {
-      code: 'fio.address',
-      scope: 'fio.address',
+      code: Account.address,
+      scope: Account.address,
       table: 'fionames',
       lower_bound: bound,
       upper_bound: bound,
@@ -465,6 +461,7 @@ class Fio {
       index_position: '5',
       json: true,
     };
+
     if (isDomain(fioName)) {
       params.table = 'domains';
       params.index_position = '4';
@@ -476,8 +473,8 @@ class Fio {
   async getPublicAddressByAccount(account) {
     const { rows } = await this.getTableRows({
       params: {
-        code: 'fio.address',
-        scope: 'fio.address',
+        code: Account.address,
+        scope: Account.address,
         table: 'accountmap',
         lower_bound: account,
         upper_bound: account,

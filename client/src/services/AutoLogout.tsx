@@ -210,7 +210,7 @@ const AutoLogout = (
       const lastActivity = new Date(lastActivityDate);
 
       if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-        cartId && dispatch(clearCart({ id: cartId, isNotify: true }));
+        cartId && dispatch(clearCart({ isNotify: true }));
       }
     }
   }, [cartId, dispatch, initLoad, lastActivityDate]);

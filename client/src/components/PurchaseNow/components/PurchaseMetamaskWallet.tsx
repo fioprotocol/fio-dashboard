@@ -1,5 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
@@ -10,10 +12,7 @@ import { makeRegistrationOrder } from '../middleware';
 import apis from '../../../api';
 
 import {
-  ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
 import {
@@ -162,13 +161,10 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           );
 
           const fioAddressActionParams = {
-            action:
-              TRANSACTION_ACTION_NAMES[
-                registration.isCombo
-                  ? ACTIONS.registerFioDomainAddress
-                  : ACTIONS.registerFioAddress
-              ],
-            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            action: registration.isCombo
+              ? Action.regDomainAddress
+              : Action.regAddress,
+            account: Account.address,
             data: {
               owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
@@ -199,8 +195,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           );
 
           const addBundlesActionParams = {
-            action: TRANSACTION_ACTION_NAMES[ACTIONS.addBundledTransactions],
-            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            action: Action.addBundledTransactions,
+            account: Account.address,
             data: {
               fio_address: registration.fioName,
               bundle_sets: DEFAULT_BUNDLE_SET_VALUE,
@@ -230,8 +226,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           );
 
           const fioDomainActionParams = {
-            action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioDomain],
-            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            action: Action.regDomain,
+            account: Account.address,
             data: {
               fio_domain: registration.fioName,
               owner_fio_public_key: ownerFioPublicKey,
@@ -261,8 +257,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           );
 
           const fioDomainRenewActionParams = {
-            action: TRANSACTION_ACTION_NAMES[ACTIONS.renewFioDomain],
-            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            action: Action.renewDomain,
+            account: Account.address,
             data: {
               fio_domain: registration.fioName,
               tpid: apis.fio.tpid,
@@ -284,8 +280,8 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
           actionParamsArr.push(fioDomainRenewActionParams);
         } else {
           const fioHandleActionParams = {
-            action: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
-            account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+            action: Action.regAddress,
+            account: Account.address,
             data: {
               owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,

@@ -11,11 +11,10 @@ export default class OrdersActive extends Base {
   static get validationRules() {
     return {
       publicKey: 'string',
-      userId: 'string',
     };
   }
 
-  async execute({ userId, publicKey }) {
+  async execute({ publicKey }) {
     const where = {
       status: Order.STATUS.NEW,
       updatedAt: {
@@ -23,13 +22,21 @@ export default class OrdersActive extends Base {
       },
     };
 
-    if (userId) {
-      where.userId = userId;
+    const userId = this.context.id;
+    const guestId = this.context.guestId;
+
+    if (!userId && !guestId && !publicKey) {
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {
+          id: 'NOT_FOUND',
+        },
+      });
     }
 
-    if (publicKey) {
-      where.publicKey = publicKey;
-    }
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+    if (publicKey) where.publicKey = publicKey;
 
     const order = await Order.findOne({
       where,
@@ -37,13 +44,14 @@ export default class OrdersActive extends Base {
       order: [['createdAt', 'DESC']],
     });
 
-    if (!order)
+    if (!order) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
           id: 'NOT_FOUND',
         },
       });
+    }
 
     const payment = order.Payments[0];
 
@@ -64,14 +72,17 @@ export default class OrdersActive extends Base {
           blockchainTransactions: [],
           orderItemStatus: {},
         })),
-        payment: {
-          id: payment.id,
-          processor: payment.processor,
-          externalPaymentId: payment.externalId,
-          amount: payment.amount,
-          currency: payment.currency,
-          secret: payment.data ? payment.data.secret : null,
-        },
+        payment:
+          (payment && userId === order.userId) || guestId === order.guestId
+            ? {
+                id: payment.id,
+                processor: payment.processor,
+                externalPaymentId: payment.externalId,
+                amount: payment.amount,
+                currency: payment.currency,
+                secret: payment.data ? payment.data.secret : null,
+              }
+            : null,
       },
     };
   }

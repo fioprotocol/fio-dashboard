@@ -1,6 +1,6 @@
-import { FioAddresses } from '@fioprotocol/fiosdk/src/entities/FioAddresses';
+import { EndPoint, FioAddress } from '@fioprotocol/fiosdk';
 
-import apis, { Api } from '../../api';
+import { Api } from '../../api';
 
 import { ENDPOINT_FEE_HASH } from '../../api/fio';
 
@@ -80,17 +80,14 @@ export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
 export const SET_FEE = `${prefix}/SET_FEE`;
 
 export const getFee = (
-  endpoint: string,
+  endpoint: EndPoint,
   fioAddress: string = '',
 ): CommonPromiseAction => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
     // temporary solution for staking fee value
     if (
-      [
-        apis.fio.actionEndPoints.stakeFioTokens,
-        apis.fio.actionEndPoints.unStakeFioTokens,
-      ].includes(endpoint)
+      [EndPoint.stakeFioTokens, EndPoint.unStakeFioTokens].includes(endpoint)
     ) {
       return api.fio.getFeeFromTable(ENDPOINT_FEE_HASH[endpoint]);
     }
@@ -138,7 +135,7 @@ export const getWalletsFioAddresses = (
     GET_WALLETS_FIO_ADDRESSES_FAILURE,
   ],
   promise: async (api: Api) => {
-    let list: FioAddresses[] = [];
+    let list: FioAddress[] = [];
     const responses = await Promise.allSettled(
       publicKeys.map((publicKey: string) =>
         api.fio

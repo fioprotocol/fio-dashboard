@@ -1,3 +1,5 @@
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import apis from '../../../../api';
 
 export const validate = async (values: {
@@ -9,17 +11,7 @@ export const validate = async (values: {
     throw new Error('Required');
   }
 
-  let isFioAddress = false;
-  let isValid = false;
-
-  try {
-    apis.fio.isFioAddressValid(transferAddress);
-    isFioAddress = true;
-  } catch (e) {
-    //
-  }
-
-  if (isFioAddress) {
+  if (apis.fio.publicFioSDK.validateFioAddress(transferAddress)) {
     try {
       const {
         public_address: publicAddress,
@@ -30,11 +22,16 @@ export const validate = async (values: {
     }
   }
 
+  let isValid = false;
+
   try {
-    apis.fio.isFioPublicKeyValid(transferAddress);
-    await apis.fio.publicFioSDK.getFioBalance(transferAddress);
+    FIOSDK.isFioPublicKeyValid(transferAddress);
+    await apis.fio.publicFioSDK.getFioBalance({
+      fioPublicKey: transferAddress,
+    });
     isValid = true;
   } catch (e) {
+    // TODO refactor validation
     if (e.json && e.json.type !== 'invalid_input') {
       isValid = true;
     }

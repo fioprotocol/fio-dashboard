@@ -1,4 +1,4 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import {
@@ -12,7 +12,6 @@ import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { Order, OrderItem, Payment, ReferrerProfile } from '../../models/index.mjs';
 import { fioApi } from '../../external/fio.mjs';
 import { getROE } from '../../external/roe.mjs';
-import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -65,7 +64,9 @@ export default class Renew extends Base {
       });
     }
 
-    const { type, fioAddress, fioDomain } = destructAddress(address);
+    const lowerCasedAddress = address ? address.toLowerCase() : address;
+
+    const { type, fioAddress, fioDomain } = destructAddress(lowerCasedAddress);
 
     const addressCantBeRenewedRes = {
       error: `${type} not registered`,
@@ -74,7 +75,9 @@ export default class Renew extends Base {
     };
 
     try {
-      fioAddress ? FIOSDK.isFioAddressValid(address) : FIOSDK.isFioDomainValid(fioDomain);
+      fioAddress
+        ? FIOSDK.isFioAddressValid(lowerCasedAddress)
+        : FIOSDK.isFioDomainValid(fioDomain);
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid ${type}`,
@@ -86,7 +89,7 @@ export default class Renew extends Base {
     if (!publicKey) {
       if (type === 'account') {
         try {
-          publicKey = await fioApi.getPublicAddressByFioAddress(address);
+          publicKey = await fioApi.getPublicAddressByFioAddress(lowerCasedAddress);
         } catch (e) {
           return generateErrorResponse(this.res, addressCantBeRenewedRes);
         }
@@ -124,7 +127,9 @@ export default class Renew extends Base {
       }
     }
 
-    const isAccountCouldBeRenewed = await fioApi.isAccountCouldBeRenewed(address);
+    const isAccountCouldBeRenewed = await fioApi.isAccountCouldBeRenewed(
+      lowerCasedAddress,
+    );
 
     if (!isAccountCouldBeRenewed) {
       return generateErrorResponse(this.res, addressCantBeRenewedRes);
@@ -176,8 +181,8 @@ export default class Renew extends Base {
           address,
           domain,
           action: address
-            ? FIO_ACTIONS.addBundledTransactions
-            : FIO_ACTIONS.renewFioDomain,
+            ? GenericAction.addBundledTransactions
+            : GenericAction.renewFioDomain,
           nativeFio: nativeFio.toString(),
           price: normalizedPriceUsdc,
           priceCurrency: CURRENCY_CODES.USDC,

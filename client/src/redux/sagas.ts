@@ -8,6 +8,7 @@ import {
   profileSuccess,
   activateAffiliateSuccess,
   alternateLoginSuccess,
+  guestLoginSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess, edgePinUpdateSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
@@ -40,9 +41,10 @@ import { Api } from '../api';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function* rootSaga(history: History, api: Api) {
   yield all([
+    guestLoginSuccess(api),
     alternateLoginSuccess(history, api),
     loginSuccess(history, api),
-    logoutSuccess(history, api),
+    logoutSuccess(history),
     profileSuccess(),
     nonceSuccess(),
     activateAffiliateSuccess(history),

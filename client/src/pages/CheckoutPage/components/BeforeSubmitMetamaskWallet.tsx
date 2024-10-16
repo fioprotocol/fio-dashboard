@@ -2,16 +2,15 @@ import React, { useCallback, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
 import {
-  ACTIONS,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
   TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
 } from '../../../constants/fio';
 import {
@@ -103,13 +102,10 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
           fioAddressItem.cartItem.type ===
             CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         const fioHandleActionParams = {
-          action:
-            TRANSACTION_ACTION_NAMES[
-              isComboRegistration
-                ? ACTIONS.registerFioDomainAddress
-                : ACTIONS.registerFioAddress
-            ],
-          account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+          action: isComboRegistration
+            ? Action.regDomainAddress
+            : Action.regAddress,
+          account: Account.address,
           data: {
             owner_fio_public_key: fioAddressItem.ownerKey,
             fio_address: fioAddressItem.name,

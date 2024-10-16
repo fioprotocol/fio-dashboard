@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import { compose } from '../../utils';
 
 import { createContact, getContactsList } from '../../redux/contacts/actions';
@@ -16,8 +18,6 @@ import PaymentDetailsPage from './PaymentDetailsPage';
 
 import { DEFAULT_FEE_PRICES } from '../../util/prices';
 
-import apis from '../../api';
-
 import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
@@ -25,15 +25,13 @@ const reduxConnect = connect(
     contactsList,
     loading: contactsLoading,
     feePrice: (state: ReduxState) =>
-      state.fio.fees[apis.fio.actionEndPoints.recordObtData] ||
-      DEFAULT_FEE_PRICES,
+      state.fio.fees[EndPoint.recordObtData] || DEFAULT_FEE_PRICES,
   }),
   {
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
-    getFee: (fioAddress: string) =>
-      getFee(apis.fio.actionEndPoints.recordObtData, fioAddress),
+    getFee: (fioAddress: string) => getFee(EndPoint.recordObtData, fioAddress),
   },
 );
 

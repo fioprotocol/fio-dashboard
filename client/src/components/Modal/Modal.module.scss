@@ -81,6 +81,7 @@
 
 .backdropSecondModal {
   z-index: 1050;
+  opacity: 0.3 !important;
 }
 
 @include sm {

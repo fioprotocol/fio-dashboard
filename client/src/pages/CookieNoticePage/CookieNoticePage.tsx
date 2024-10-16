@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classes from './CookieNoticePage.module.scss';
 
 const CookieNoticePage: React.FC = () => {
+  const [isButtonVisible, setButtonVisible] = useState(false);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const elCollection = document.getElementsByClassName(
+        'cky-btn-revisit-wrapper',
+      );
+
+      if (elCollection.length > 0) {
+        setButtonVisible(true);
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className={classes.container}>
       <h1 className="cookie-policy-h1">Cookie Notice</h1>
@@ -49,10 +66,12 @@ const CookieNoticePage: React.FC = () => {
       &nbsp;
       <h5 className="mb-4">Types of Cookies we use</h5>
       <div className="cky-audit-table-element" />
-      &nbsp;
-      <h5 className="mb-4">Manage cookie preferences</h5>
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <a className="cky-banner-element">Cookie Settings</a> <br />
+      <div style={{ display: isButtonVisible ? 'block' : 'none' }}>
+        &nbsp;
+        <h5 className="mb-4">Manage cookie preferences</h5>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <a className="cky-banner-element">Cookie Settings</a> <br />
+      </div>
       <div>
         <p>&nbsp;</p>
         <p>

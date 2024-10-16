@@ -89,7 +89,7 @@ export const NftItemComponent: React.FC<Props> = props => {
 
   const isDesktop = useCheckIfDesktop();
 
-  // todo: show badge false due to DASH-711 task. We hide it until figureout with hash
+  // TODO: show badge false due to DASH-711 task. We hide it until figure out with hash
   const showBage = false; //isImage && !!hash;
 
   return (

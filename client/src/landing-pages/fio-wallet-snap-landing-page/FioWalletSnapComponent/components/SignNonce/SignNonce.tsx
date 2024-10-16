@@ -26,7 +26,7 @@ const validateForm = ({ secret }: { secret: string }): ErrorsProps => {
 
 type Props = {
   signatureError: Error | null;
-  signatureLoading: boolean;
+  signatureLoading?: boolean;
   isSignatureVerified: boolean | null;
   nonce: string | null;
   signature: string | null;

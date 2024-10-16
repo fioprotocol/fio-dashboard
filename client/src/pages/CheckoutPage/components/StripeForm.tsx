@@ -13,6 +13,8 @@ import {
 
 import { StripePaymentElementChangeEvent } from '@stripe/stripe-js/types/stripe-js/elements/payment';
 
+import classnames from 'classnames';
+
 import Loader from '../../../components/Loader/Loader';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import {
@@ -171,7 +173,7 @@ export const StripeForm: React.FC<{
   return (
     <form onSubmit={onSubmit}>
       <h6 className={classes.subtitle}>Card Information</h6>
-      <div className={classes.paymentContainer}>
+      <div className={classnames(classes.paymentContainer, 'sentry-block')}>
         <PaymentElement onChange={onPaymentElChange} />
       </div>
       <ErrorBadge

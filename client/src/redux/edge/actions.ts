@@ -117,6 +117,7 @@ export const login = ({
         addEmailToPromoList: true,
       });
     }
+
     return {
       account,
       email,
@@ -297,18 +298,6 @@ export const clearChangePinResults = (): CommonAction => ({
 export const CLEAR_CHANGE_PIN_ERROR = `${prefix}/CLEAR_CHANGE_PIN_ERROR`;
 export const clearChangePinError = (): CommonAction => ({
   type: CLEAR_CHANGE_PIN_ERROR,
-});
-
-export const CLEAR_CACHED_USERS_REQUEST = `${prefix}/CLEAR_CACHED_USERS_REQUEST`;
-export const CLEAR_CACHED_USERS_SUCCESS = `${prefix}/CLEAR_CACHED_USERS_SUCCESS`;
-export const CLEAR_CACHED_USERS_FAILURE = `${prefix}/CLEAR_CACHED_USERS_FAILURE`;
-export const clearCachedUser = (username: string): CommonPromiseAction => ({
-  types: [
-    CLEAR_CACHED_USERS_REQUEST,
-    CLEAR_CACHED_USERS_SUCCESS,
-    CLEAR_CACHED_USERS_FAILURE,
-  ],
-  promise: (api: Api) => api.edge.clearCachedUser(username),
 });
 
 export const CHANGE_RECOVERY_QUESTIONS_OPEN = `${prefix}/CHANGE_RECOVERY_QUESTIONS_OPEN`;

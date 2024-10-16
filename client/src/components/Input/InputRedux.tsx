@@ -121,6 +121,7 @@ const InputRedux: React.FC<Props> = props => {
             uiType && classes[uiType],
             prefix && classes.prefixSpace,
             type === 'password' && classes.doubleIconInput,
+            type === 'password' && 'sentry-ignore',
             showPasteButton && classes.hasPasteButton,
           )}
           {...input}

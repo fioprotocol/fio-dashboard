@@ -1,17 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Account, Action, ContentType } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 import {
-  ACTIONS,
   BUNDLES_TX_COUNT,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_CHAIN_CODE,
-  FIO_CONTENT_TYPES,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
 } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
@@ -67,8 +65,8 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
   } = submitData || {};
 
   const transferTokensActionParams = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioToken,
+    action: Action.transferTokensKey,
+    account: Account.token,
     data: {
       amount: apis.fio.amountToSUF(Number(amount)),
       payee_public_key: toPubKey,
@@ -151,9 +149,9 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
 
     if (requestResult && (fioRequestId || memo) && !isTransferTokensFinished) {
       const recordObtActionParams = {
-        action: TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData],
-        account: FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt,
-        contentType: FIO_CONTENT_TYPES.RECORD_OBT_DATA,
+        action: Action.recordObt,
+        account: Account.reqObt,
+        contentType: ContentType.recordObtDataContent,
         data: {
           content: {
             amount: Number(amount),

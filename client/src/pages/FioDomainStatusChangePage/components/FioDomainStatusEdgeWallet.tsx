@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
 
 import apis from '../../../api';
 
@@ -35,11 +36,15 @@ const FioDomainStatusEdgeWallet: React.FC<Props> = props => {
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
     const { publicStatusToSet, name } = data;
-    return await apis.fio.executeAction(keys, ACTIONS.setFioDomainVisibility, {
-      fioDomain: name,
-      isPublic: publicStatusToSet,
-      maxFee: fee,
-    });
+    return await apis.fio.executeAction(
+      keys,
+      GenericAction.setFioDomainVisibility,
+      {
+        fioDomain: name,
+        isPublic: publicStatusToSet,
+        maxFee: fee,
+      },
+    );
   };
 
   return (

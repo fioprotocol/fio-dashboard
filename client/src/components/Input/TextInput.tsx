@@ -287,9 +287,10 @@ export const TextInput: React.ForwardRefRenderFunction<
             type={showPass ? 'text' : type}
             data-clear={isInputHasValue}
             disabled={disabled || isWalletConnected}
-            className={
-              isWalletConnected ? classes.isWalletConnected && classes.dark : ''
-            }
+            className={classnames(
+              isWalletConnected && classes.isWalletConnected && classes.dark,
+              type === 'password' && 'sentry-ignore',
+            )}
           />
         </div>
         {connectWalletProps ? (

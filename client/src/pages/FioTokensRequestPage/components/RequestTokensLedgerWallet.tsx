@@ -3,14 +3,12 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 import { Ecc } from '@fioprotocol/fiojs';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
-import {
-  ACTIONS,
-  BUNDLES_TX_COUNT,
-  FIO_CHAIN_CODE,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../constants/fio';
 
 import { prepareChainTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
@@ -54,7 +52,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     } = await apis.fio.getFioPublicAddress(submitData.payerFioAddress);
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
-      ACTIONS.requestFunds,
+      GenericAction.requestFunds,
       {
         payer_fio_address: submitData.payerFioAddress,
         payee_fio_address: submitData.payeeFioAddress,
@@ -92,7 +90,7 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     });
 
     const result = await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints.newFundsRequest,
+      EndPoint.newFundsRequest,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

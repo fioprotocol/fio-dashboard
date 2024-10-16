@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { Action, AdminUser } from '../../models';
-import { ACTION_EPX_TIME } from '../actions/Submit.mjs';
+import { ACTION_EPX_TIME } from '../../constants/general.mjs';
 
 export default class AuthAdminCreateCheck extends Base {
   static get validationRules() {
@@ -22,7 +22,7 @@ export default class AuthAdminCreateCheck extends Base {
       statusId: AdminUser.STATUS.NEW,
     });
 
-    if (!emailToken || !adminUser) {
+    if (!emailToken || !adminUser || emailToken.data.adminId !== adminUser.id) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
@@ -40,15 +40,6 @@ export default class AuthAdminCreateCheck extends Base {
         code: 'TOKEN_EXPIRED',
         fields: {
           hash: 'EXPIRED',
-        },
-      });
-    }
-
-    if (emailToken.data.adminId !== adminUser.id) {
-      throw new X({
-        code: 'EMAIL_TOKEN_NOT_VALID',
-        fields: {
-          email: 'INVALID',
         },
       });
     }

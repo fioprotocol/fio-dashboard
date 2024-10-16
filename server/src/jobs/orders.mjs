@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import '../db';
 
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+
 import {
   Domain,
   OrderItem,
@@ -37,7 +39,6 @@ import { convertFioPrices } from '../utils/cart.mjs';
 
 import {
   FIO_ACCOUNT_TYPES,
-  FIO_ACTIONS,
   USER_HAS_FREE_ADDRESS_MESSAGE,
   ORDER_ERROR_TYPES,
   FIO_ADDRESS_DELIMITER,
@@ -325,11 +326,11 @@ class OrdersJob extends CommonJob {
         }
         default:
           refundTx = await fioApi.executeAction(
-            FIO_ACTIONS.transferTokens,
+            GenericAction.transferTokens,
             fioApi.getActionParams({
               ...orderItemProps,
               amount: nativePrice,
-              action: FIO_ACTIONS.transferTokens,
+              action: GenericAction.transferTokens,
             }),
           );
       }
@@ -546,7 +547,7 @@ class OrdersJob extends CommonJob {
       orderId,
       status: Payment.STATUS.PENDING,
       eventStatus: PaymentEventLog.STATUS.PENDING,
-      price: fioApi.sufToAmount(balanceDifference || fee),
+      price: FIOSDK.SUFToAmount(balanceDifference || fee),
       currency: Payment.CURRENCY.FIO,
       data: { roe, sendingFioTokens: true },
     });
@@ -566,11 +567,11 @@ class OrdersJob extends CommonJob {
 
       try {
         const transferRes = await fioApi.executeAction(
-          FIO_ACTIONS.transferTokens,
+          GenericAction.transferTokens,
           fioApi.getActionParams({
             publicKey: data.signingWalletPubKey || orderItem.publicKey,
             amount: balanceDifference || fee,
-            action: FIO_ACTIONS.transferTokens,
+            action: GenericAction.transferTokens,
           }),
           auth,
         );
@@ -583,7 +584,7 @@ class OrdersJob extends CommonJob {
             action,
             orderId,
             spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-            price: fioApi.sufToAmount(balanceDifference || fee),
+            price: FIOSDK.SUFToAmount(balanceDifference || fee),
             currency: Payment.CURRENCY.FIO,
             data: {
               roe,
@@ -634,18 +635,18 @@ class OrdersJob extends CommonJob {
       }
     }
 
-    if (action === FIO_ACTIONS.renewFioDomain) {
+    if (action === GenericAction.renewFioDomain) {
       await this.checkIfDomainOnOrderRegistered({
         orderItem,
-        action: FIO_ACTIONS.registerFioDomain,
+        action: GenericAction.registerFioDomain,
         errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
       });
     }
 
-    if (action === FIO_ACTIONS.registerFioAddress) {
+    if (action === GenericAction.registerFioAddress) {
       await this.checkIfDomainOnOrderRegistered({
         orderItem,
-        action: FIO_ACTIONS.registerFioDomainAddress,
+        action: GenericAction.registerFioDomainAddress,
         errorMessage: `RegisterFioHandle has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
       });
     }
@@ -716,19 +717,19 @@ class OrdersJob extends CommonJob {
         await this.spend({
           fioName: domain,
           orderId,
-          action: FIO_ACTIONS.registerFioDomain,
-          price: fioApi.sufToAmount(data.hasCustomDomainFee),
+          action: GenericAction.registerFioDomain,
+          price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
           currency: Payment.CURRENCY.FIO,
           data: { roe },
         });
 
         const result = await fioApi.executeAction(
-          FIO_ACTIONS.registerFioDomain,
+          GenericAction.registerFioDomain,
           fioApi.getActionParams({
-            action: FIO_ACTIONS.registerFioDomain,
+            action: GenericAction.registerFioDomain,
             domain,
             publicKey: orderItem.publicKey,
-            fee: await this.getFeeForAction(FIO_ACTIONS.registerFioDomain),
+            fee: await this.getFeeForAction(GenericAction.registerFioDomain),
             tpid: orderItem.domainTpid,
           }),
           auth,
@@ -736,7 +737,7 @@ class OrdersJob extends CommonJob {
 
         if (result.transaction_id) {
           const bcTx = await BlockchainTransaction.create({
-            action: FIO_ACTIONS.registerFioDomain,
+            action: GenericAction.registerFioDomain,
             txId: result.transaction_id,
             blockNum: result.block_num,
             blockTime: result.block_time ? result.block_time + 'Z' : new Date(),
@@ -761,8 +762,8 @@ class OrdersJob extends CommonJob {
       await this.spend({
         fioName: domain,
         orderId,
-        action: FIO_ACTIONS.registerFioDomain,
-        price: fioApi.sufToAmount(data.hasCustomDomainFee),
+        action: GenericAction.registerFioDomain,
+        price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
         data: { roe, error },
@@ -795,10 +796,10 @@ class OrdersJob extends CommonJob {
         currency: Payment.CURRENCY.USDC,
       });
 
-      if (action === FIO_ACTIONS.renewFioDomain) {
+      if (action === GenericAction.renewFioDomain) {
         await this.checkIfDomainOnOrderRegistered({
           orderItem,
-          action: FIO_ACTIONS.registerFioDomain,
+          action: GenericAction.registerFioDomain,
           errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
         });
       }
@@ -808,8 +809,8 @@ class OrdersJob extends CommonJob {
         fioApi.getActionParams({
           ...orderItem,
           tpid:
-            action === FIO_ACTIONS.registerFioDomain ||
-            action === FIO_ACTIONS.registerFioDomainAddress
+            action === GenericAction.registerFioDomain ||
+            action === GenericAction.registerFioDomainAddress
               ? orderItem.domainTpid
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
@@ -935,14 +936,12 @@ class OrdersJob extends CommonJob {
 
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
         const useDomainOwnerAuthParams =
-          domainOwner && action === FIO_ACTIONS.registerFioAddress;
+          domainOwner && action === GenericAction.registerFioAddress;
 
         if (useDomainOwnerAuthParams) {
           const { actor, permission } = domainOwner;
           auth = { actor, permission };
         }
-
-        let registeringDomainExistingInAppDomainsList = null;
 
         const domainExistingInDashboardDomains = dashboardDomains.find(
           dashboardDomain => dashboardDomain.name === domain,
@@ -955,7 +954,7 @@ class OrdersJob extends CommonJob {
             )
           : null;
 
-        registeringDomainExistingInAppDomainsList =
+        const registeringDomainExistingInAppDomainsList =
           code && domainExistingInRefProfile
             ? domainExistingInRefProfile
             : domainExistingInDashboardDomains;
@@ -965,7 +964,7 @@ class OrdersJob extends CommonJob {
           (!price || price === '0') &&
           registeringDomainExistingInAppDomainsList &&
           !registeringDomainExistingInAppDomainsList.isPremium &&
-          action === FIO_ACTIONS.registerFioAddress &&
+          action === GenericAction.registerFioAddress &&
           !domainOwner
         ) {
           return this.registerFree({
@@ -987,19 +986,19 @@ class OrdersJob extends CommonJob {
           let nativeFio = null;
 
           switch (action) {
-            case FIO_ACTIONS.registerFioDomainAddress:
+            case GenericAction.registerFioDomainAddress:
               nativeFio = domainAddressPrice;
               break;
-            case FIO_ACTIONS.registerFioAddress:
+            case GenericAction.registerFioAddress:
               nativeFio = addressPrice;
               break;
-            case FIO_ACTIONS.addBundledTransactions:
+            case GenericAction.addBundledTransactions:
               nativeFio = addBundlesPrice;
               break;
-            case FIO_ACTIONS.registerFioDomain:
+            case GenericAction.registerFioDomain:
               nativeFio = domainPrice;
               break;
-            case FIO_ACTIONS.renewFioDomain:
+            case GenericAction.renewFioDomain:
               nativeFio = renewDomainPrice;
               break;
             default:

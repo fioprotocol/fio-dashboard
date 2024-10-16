@@ -2,12 +2,12 @@ import React from 'react';
 
 import { RouteComponentProps } from 'react-router-dom';
 
+import { EndPoint } from '@fioprotocol/fiosdk';
+
 import FioNameTransferContainer from '../../components/FioNameTransfer';
 
 import { DOMAIN } from '../../constants/common';
 import { DEFAULT_FEE_PRICES } from '../../util/prices';
-
-import apis from '../../api';
 
 import { FeePrice, FioNameItemProps } from '../../types';
 
@@ -35,9 +35,7 @@ export const FioDomainTransferPage: React.FC<Props &
       fioNameType={DOMAIN}
       fioNameList={fioNameList}
       name={name}
-      feePrice={
-        fees[apis.fio.actionEndPoints.transferFioDomain] || DEFAULT_FEE_PRICES
-      }
+      feePrice={fees[EndPoint.transferFioDomain] || DEFAULT_FEE_PRICES}
       history={history}
     />
   );

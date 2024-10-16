@@ -4,13 +4,14 @@ import Base from '../Base';
 import X from '../Exception';
 import { generate } from './authToken';
 
-import { User, Nonce, Notification, ReferrerProfile, Wallet } from '../../models';
+import { User, Nonce, Notification, ReferrerProfile, Wallet, Cart } from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
 import logger from '../../logger.mjs';
 import emailSender from '../emailSender.mjs';
 import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
 import { templates } from '../../emails/emailTemplate';
+import { AUTH_TYPE } from '../../tools.mjs';
 
 const EXPIRATION_TIME = DAY_MS; // 1 day
 
@@ -59,6 +60,10 @@ export default class AuthCreate extends Base {
 
     let user;
 
+    const changeGuestCartOwner = async (guestId, userId) => {
+      await Cart.update({ userId, guestId: null }, { where: { guestId } });
+    };
+
     if (userByEmail && userByUsername && userByEmail.id === userByUsername.id) {
       user = userByEmail;
     } else if (!userByEmail && !userByUsername) {
@@ -103,7 +108,10 @@ export default class AuthCreate extends Base {
 
         const now = new Date();
         const responseData = {
-          jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
+          jwt: generate(
+            { type: AUTH_TYPE.USER, id: user.id },
+            new Date(EXPIRATION_TIME + now.getTime()),
+          ),
           isSignUp: true,
         };
 
@@ -188,11 +196,18 @@ export default class AuthCreate extends Base {
 
     const now = new Date();
     const responseData = {
-      jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
+      jwt: generate(
+        { type: AUTH_TYPE.USER, id: user.id },
+        new Date(EXPIRATION_TIME + now.getTime()),
+      ),
     };
 
     if (timeZone) {
       await user.update({ timeZone });
+    }
+
+    if (this.context.guestId) {
+      await changeGuestCartOwner(this.context.guestId, user.id);
     }
 
     return {

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { Table } from 'react-bootstrap';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import Modal from '../../../../components/Modal/Modal';
 
 import useContext from './AdminOrderModalContext';
@@ -89,7 +91,7 @@ const AdminOrderModal: React.FC<Props> = ({
 
     if (orderPayment.currency === CURRENCY_CODES.FIO) {
       orderPaymentPrice =
-        apis.fio.sufToAmount(Number(orderPayment.price)).toFixed(2) +
+        FIOSDK.SUFToAmount(orderPayment.price).toFixed(2) +
         ` ${orderPayment.currency.toUpperCase()}`;
 
       orderPaymentPrice += ` (${apis.fio.convertFioToUsdc(

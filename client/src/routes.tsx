@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 
-import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Redirect, RouteComponentProps, Switch } from 'react-router-dom';
 
 import MainLayout from './pages/MainLayout';
 import PrivateRoute from './components/PrivateRoute';
@@ -12,6 +12,7 @@ import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 import useMaintenance from './hooks/useMaintenance';
 import { useGTMGlobalTags } from './hooks/googleTagManager';
+import { SentryRoute } from './sentry';
 
 const TwitterPage = lazy(() =>
   import(/* webpackChunkName: 'twitterPage' */ './pages/TwitterPage'),
@@ -304,12 +305,12 @@ const Routes = (): React.ReactElement => {
             <>
               {navigator.userAgent !== REACT_SNAP_AGENT && (
                 <Switch>
-                  <Route
+                  <SentryRoute
                     path={ROUTES.UNAVAILABLE}
                     component={UnavailablePage}
                     exact
                   />
-                  <Route
+                  <SentryRoute
                     path="*"
                     component={() => <Redirect to={ROUTES.UNAVAILABLE} />}
                   />
@@ -318,7 +319,7 @@ const Routes = (): React.ReactElement => {
             </>
           ) : (
             <Switch>
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_REQUEST_OLD}
                 component={(
                   props: RouteComponentProps<{
@@ -332,7 +333,7 @@ const Routes = (): React.ReactElement => {
                 )}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_WALLET_OLD}
                 component={(
                   props: RouteComponentProps<{ publicKey?: string }>,
@@ -344,36 +345,40 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <Route path={ROUTES.HOME} component={HomePage} exact />
-              <Route
+              <SentryRoute path={ROUTES.HOME} component={HomePage} exact />
+              <SentryRoute
                 path={ROUTES.TWITTER_HANDLE}
                 component={TwitterPage}
                 exact
               />
               {navigator.userAgent !== REACT_SNAP_AGENT && (
-                <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
+                <SentryRoute
+                  path={ROUTES.NOT_FOUND}
+                  component={NotFoundPage}
+                  exact
+                />
               )}
-              <Route
+              <SentryRoute
                 path={ROUTES.UNAVAILABLE}
                 component={() => <Redirect to={ROUTES.HOME} />}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.REF_PROFILE_HOME}
                 component={RefHomePage}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.CREATE_ACCOUNT}
                 component={CreateAccount}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_ADDRESSES_SELECTION}
                 component={FioAddressSelectionPage}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION}
                 component={FioAddressCustomSelectionPage}
                 exact
@@ -394,12 +399,12 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_DOMAIN}
                 component={FioDomainLandingPage}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_DOMAINS_SELECTION}
                 component={FioDomainSelectionPage}
                 exact
@@ -415,9 +420,17 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <Route path={ROUTES.CART} component={CartPage} exact />
-              <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
-              <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
+              <SentryRoute path={ROUTES.CART} component={CartPage} exact />
+              <SentryRoute
+                path={ROUTES.CHECKOUT}
+                component={CheckoutPage}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.PURCHASE}
+                component={PurchasePage}
+                exact
+              />
 
               <PrivateRoute
                 path={ROUTES.TOKENS}
@@ -565,7 +578,7 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.ACCOUNT_RECOVERY}
                 component={AccountRecoveryPage}
                 exact
@@ -576,25 +589,25 @@ const Routes = (): React.ReactElement => {
                 component={FioAddressNftPage}
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.PRIVACY_POLICY}
                 component={PrivacyPolicyPage}
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.TERMS_OF_SERVICE}
                 component={TermsOfServicePage}
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.COOKIE_NOTICE}
                 component={CookieNoticePage}
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.NFT_VALIDATION}
                 component={NftValidationPage}
                 exact
@@ -612,14 +625,14 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <Route path={ROUTES.ORDERS} component={OrdersPage} exact />
-              <Route
+              <SentryRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
+              <SentryRoute
                 path={ROUTES.ORDER_DETAILS}
                 component={OrderDetailsPage}
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.FIO_AFFILIATE_PROGRAM_LANDING}
                 component={FioAffiliateProgramLandingPage}
                 exact
@@ -630,41 +643,41 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.METAMASK_LANDING_PAGE}
                 component={MetamaskLandingPage}
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.METAMASK_GATED_REGISTRATION}
                 component={MetamaskGatedRegistration}
                 exact
               />
 
-              <Route
+              <SentryRoute
                 path={ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE}
                 component={NoProfileFlowRegisterFioHandlePage}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.NO_PROFILE_REGISTER_FIO_DOMAIN}
                 component={NoProfileFlowRegisterFioDomainPage}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.NO_PROFILE_RENEW_DOMAIN}
                 component={NoProfileFlowRenewFioDomainPage}
                 exact
               />
-              <Route
+              <SentryRoute
                 path={ROUTES.NO_PROFILE_ADD_BUNDLES}
                 component={NoProfileFlowRenewFioHandlePage}
                 exact
               />
 
-              <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} />
-              <Route
+              <SentryRoute path={ROUTES.NOT_FOUND} component={NotFoundPage} />
+              <SentryRoute
                 path="*"
                 component={() => <Redirect to={ROUTES.NOT_FOUND} />}
               />

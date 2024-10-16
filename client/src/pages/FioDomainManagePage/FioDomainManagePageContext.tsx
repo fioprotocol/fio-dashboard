@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { Account, EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import { getFee, toggleExpiredDomainBadge } from '../../redux/fio/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
@@ -10,16 +12,12 @@ import {
   fees as feesSelector,
   showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector,
 } from '../../redux/fio/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
@@ -42,11 +40,7 @@ import {
   CART_ITEM_TYPE,
   ANALYTICS_EVENT_ACTIONS,
 } from '../../constants/common';
-import {
-  ACTIONS,
-  DOMAIN_TYPE,
-  FIO_ORACLE_ACCOUNT_NAME,
-} from '../../constants/fio';
+import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import {
   EMPTY_STATE_CONTENT,
@@ -110,7 +104,6 @@ type UseContextProps = {
 };
 
 export const useContext = (): UseContextProps => {
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
@@ -118,7 +111,6 @@ export const useContext = (): UseContextProps => {
   const roe = useSelector(roeSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -169,7 +161,7 @@ export const useContext = (): UseContextProps => {
   const fioDomainsJSON = JSON.stringify(fioDomains);
 
   const renewDomainFeePrice =
-    fees[apis.fio.actionEndPoints.renewFioDomain] || DEFAULT_FEE_PRICES;
+    fees[EndPoint.renewFioDomain] || DEFAULT_FEE_PRICES;
 
   const {
     nativeFio: { domain: nativeFioDomainPrice },
@@ -182,7 +174,7 @@ export const useContext = (): UseContextProps => {
       const newCartItem: CartItem = {
         domain,
         type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-        id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
+        id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
         period: 1,
         costNativeFio: renewDomainFeePrice?.nativeFio,
         costFio: renewDomainFeePrice.fio,
@@ -191,12 +183,10 @@ export const useContext = (): UseContextProps => {
       };
       dispatch(
         addItemToCart({
-          id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
       fireAnalyticsEvent(
@@ -210,7 +200,6 @@ export const useContext = (): UseContextProps => {
       history.push(ROUTES.CART);
     },
     [
-      cartId,
       cartItems,
       dispatch,
       history,
@@ -220,7 +209,6 @@ export const useContext = (): UseContextProps => {
       renewDomainFeePrice.usdc,
       refCode,
       roe,
-      userId,
     ],
   );
 
@@ -290,18 +278,15 @@ export const useContext = (): UseContextProps => {
 
       dispatch(
         addItemToCart({
-          id: cartId,
           item: newCartItem,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
       return history.push(ROUTES.CART);
     },
     [
-      cartId,
       cartItemsJSON,
       dispatch,
       fio,
@@ -311,7 +296,6 @@ export const useContext = (): UseContextProps => {
       refCode,
       roe,
       usdc,
-      userId,
     ],
   );
 
@@ -349,7 +333,7 @@ export const useContext = (): UseContextProps => {
               walletPublicKey: '',
             };
 
-            if (account !== FIO_ORACLE_ACCOUNT_NAME) {
+            if (account !== Account.oracle) {
               walletPublicKey = await apis.fio.getAccountPubKey(account);
             }
 
@@ -434,7 +418,7 @@ export const useContext = (): UseContextProps => {
   );
 
   useEffect(() => {
-    dispatch(getFee(apis.fio.actionEndPoints.renewFioDomain));
+    dispatch(getFee(EndPoint.renewFioDomain));
   }, [dispatch]);
 
   useEffectOnce(() => {

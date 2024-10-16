@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 
 const superagent = require('superagent');
+const { Account } = require('@fioprotocol/fiosdk');
 
 module.exports = {
   up: async (QI, DT) => {
@@ -43,8 +44,8 @@ module.exports = {
           .toString('hex');
 
       const params = {
-        code: 'fio.address',
-        scope: 'fio.address',
+        code: Account.address,
+        scope: Account.address,
         table: 'domains',
         lower_bound: bound,
         upper_bound: bound,

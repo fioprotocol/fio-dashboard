@@ -1,4 +1,4 @@
-import { ACTIONS } from './fio';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import { PurchaseTxStatus, ColorTypes } from '../types';
 
@@ -95,11 +95,12 @@ export const PAYMENT_PROVIDER_LABEL = {
   [PAYMENT_PROVIDER.BITPAY]: 'BitPay',
 };
 
-export const PAYMENT_ITEM_TYPE_LABEL = {
-  [ACTIONS.registerFioAddress]: 'FCH',
-  [ACTIONS.registerFioDomain]: 'Domain',
-  [ACTIONS.addBundledTransactions]: 'Add Bundled Transactions',
-  [ACTIONS.renewFioDomain]: 'Domain Renewal',
+export const PAYMENT_ITEM_TYPE_LABEL: Record<string, string> = {
+  [GenericAction.registerFioAddress]: 'FCH',
+  [GenericAction.registerFioDomain]: 'Domain',
+  [GenericAction.registerFioDomainAddress]: 'DomainFCH',
+  [GenericAction.addBundledTransactions]: 'Add Bundled Transactions',
+  [GenericAction.renewFioDomain]: 'Domain Renewal',
 };
 
 export const PAYMENT_STATUSES = {

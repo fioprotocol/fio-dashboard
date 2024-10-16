@@ -7,6 +7,6 @@ export default class Var extends Base {
   }
 
   update(key: string, value: string): Promise<VarsResponse> {
-    return this.apiClient.post(`vars/update/${key}`, { value });
+    return this.apiClient.post(`admin/vars/update/${key}`, { value });
   }
 }

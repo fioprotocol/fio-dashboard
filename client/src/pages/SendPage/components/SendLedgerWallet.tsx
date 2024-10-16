@@ -4,14 +4,12 @@ import { Ecc } from '@fioprotocol/fiojs';
 
 import { FC, useEffect, useState } from 'react';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
-import {
-  ACTIONS,
-  BUNDLES_TX_COUNT,
-  FIO_CHAIN_CODE,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../constants/fio';
 
 import apis from '../../../api';
 import { prepareChainTransaction } from '../../../util/fio';
@@ -54,7 +52,7 @@ const SendLedgerWallet: FC<Props> = props => {
   const send = async (appFio: LedgerFioApp) => {
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
-      ACTIONS.transferTokens,
+      GenericAction.transferTokens,
       {
         payee_public_key: submitData.toPubKey,
         amount: new MathOp(submitData.nativeAmount).toNumber(),
@@ -81,7 +79,7 @@ const SendLedgerWallet: FC<Props> = props => {
     });
 
     const result: TrxResponse = await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints.transferTokens,
+      EndPoint.transferTokensPublicKey,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(
@@ -108,7 +106,7 @@ const SendLedgerWallet: FC<Props> = props => {
       try {
         const { chainId, transaction } = await prepareChainTransaction(
           fioWallet.publicKey,
-          ACTIONS.recordObtData,
+          GenericAction.recordObtData,
           {
             payer_fio_address: submitData.from,
             payee_fio_address: submitData.to,
@@ -152,17 +150,14 @@ const SendLedgerWallet: FC<Props> = props => {
           transaction,
         });
 
-        await apis.fio.publicFioSDK.executePreparedTrx(
-          apis.fio.actionEndPoints.recordObtData,
-          {
-            compression: 0,
-            packed_context_free_data: arrayToHex(
-              serializedContextFreeData || new Uint8Array(0),
-            ),
-            packed_trx: arrayToHex(serializedTransaction),
-            signatures: [signatureLedger],
-          },
-        );
+        await apis.fio.publicFioSDK.executePreparedTrx(EndPoint.recordObtData, {
+          compression: 0,
+          packed_context_free_data: arrayToHex(
+            serializedContextFreeData || new Uint8Array(0),
+          ),
+          packed_trx: arrayToHex(serializedTransaction),
+          signatures: [signatureLedger],
+        });
         bundlesCollected = BUNDLES_TX_COUNT.RECORD_OBT_DATA;
       } catch (e) {
         log.error(e);

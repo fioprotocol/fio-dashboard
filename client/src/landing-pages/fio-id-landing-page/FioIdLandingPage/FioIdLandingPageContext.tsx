@@ -24,11 +24,9 @@ export const useContext = (): UseContext => {
   const [, fioHandle] = window.location.pathname.split('/');
 
   const validateFCH = useCallback(async (fch: string) => {
-    if (!fch) return;
+    if (!fch || !apis.fio.publicFioSDK.validateFioAddress(fch)) return;
 
     try {
-      apis.fio.isFioAddressValid(fch);
-
       const isAvail = await apis.fio.availCheck(fch);
 
       return isAvail && isAvail.is_registered === 1;

@@ -34,4 +34,8 @@ export default {
   cors: cors({ origin: true, credentials: true }),
   multipart: multipart(),
   cookieParser: cookieParser(),
+  defaultHeaders: (req, res, next) => {
+    res.setHeader('Referrer-Policy', 'no-referrer-when-downgrade');
+    next();
+  },
 };
