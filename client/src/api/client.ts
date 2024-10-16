@@ -5,6 +5,7 @@ import config from '../config';
 import { ApisResponse } from './responses';
 
 export const isAdminService = (url: string): boolean => /admin/g.test(url);
+export const isGuestService = (url: string): boolean => /guest/g.test(url);
 
 export default class ApiClient {
   prefix: string;
@@ -111,12 +112,10 @@ export default class ApiClient {
 
     if (isAdminService(url) && this.adminToken) {
       req.set('Authorization', `Bearer ${this.getAdminToken()}`);
+    } else if (this.token && !isGuestService(url)) {
+      req.set('Authorization', `Bearer ${this.getToken()}`);
     } else {
-      if (this.token) {
-        req.set('Authorization', `Bearer ${this.getToken()}`);
-      } else if (this.guestToken) {
-        req.set('Authorization', `Bearer ${this.getGuestToken()}`);
-      }
+      req.set('Authorization', `Bearer ${this.getGuestToken()}`);
     }
 
     // TODO: pass refcode to request?

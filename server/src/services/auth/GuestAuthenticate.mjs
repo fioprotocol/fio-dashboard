@@ -21,8 +21,11 @@ export default class AuthGuestAuthenticate extends Base {
 
     if (token) {
       try {
-        await verify(token);
-        jwt = token.replace('Bearer ', '');
+        const tokenData = await verify(token);
+        const { type } = tokenData;
+        if (type === AUTH_TYPE.GUEST) {
+          jwt = token.replace('Bearer ', '');
+        }
       } catch (e) {
         //
       }
