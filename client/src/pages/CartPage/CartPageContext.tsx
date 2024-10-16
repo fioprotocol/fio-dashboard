@@ -16,7 +16,10 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
-import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import {
+  loading as walletsLoadingSelector,
+  fioWallets as fioWalletsSelector,
+} from '../../redux/fio/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
@@ -77,7 +80,7 @@ type UseContextReturnType = {
   isFree: boolean;
   isNoProfileFlow: boolean;
   isPriceChanged: boolean;
-  loadingCart: boolean;
+  loading: boolean;
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   paymentWalletPublicKey: string;
@@ -103,6 +106,7 @@ export const useContext = (): UseContextReturnType => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userWallets = useSelector(fioWalletsSelector);
+  const walletsLoading = useSelector(walletsLoadingSelector);
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
 
@@ -427,7 +431,7 @@ export const useContext = (): UseContextReturnType => {
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
     hasLowBalance,
-    loadingCart,
+    loading: loading || loadingCart || walletsLoading,
     walletCount,
     isAffiliateEnabled,
     isFree,
