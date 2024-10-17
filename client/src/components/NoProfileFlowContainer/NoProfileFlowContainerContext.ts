@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import Cookies from 'js-cookie';
 
@@ -7,6 +7,7 @@ import {
   refProfileInfo,
   loading as loadingSelector,
 } from '../../redux/refProfile/selectors';
+import { setWallet } from '../../redux/cart/actions';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { NON_VALID_FIO_PUBLIC_KEY } from '../../constants/errors';
@@ -52,6 +53,8 @@ export const useContext = (): UseContextProps => {
 
   const [isVerifying, toggleIsVerifying] = useState<boolean>(false);
   const [isFioItemVerified, toggleIsFioItemVerified] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
 
   const publicKeyQueryParams =
     queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY) || null;
@@ -142,9 +145,11 @@ export const useContext = (): UseContextProps => {
         searchParams.delete(QUERY_PARAMS_NAMES.PUBLIC_KEY);
         const newSearchString = searchParams.toString();
         history.push({ search: newSearchString });
+      } else {
+        dispatch(setWallet(publicKey));
       }
     }
-  }, [history, publicKey, checkIsFioPublicKeyValid]);
+  }, [dispatch, history, publicKey, checkIsFioPublicKeyValid]);
 
   useEffectOnce(
     () => {

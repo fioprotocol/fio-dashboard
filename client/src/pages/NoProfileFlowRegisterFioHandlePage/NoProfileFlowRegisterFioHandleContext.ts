@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Props as ComponentProps } from './NoProfileFlowRegisterFioHandle';
 
-import { addItem as addItemToCart, setWallet } from '../../redux/cart/actions';
+import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
@@ -246,8 +246,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
             roe,
           }),
         );
-
-        dispatch(setWallet(publicKey));
 
         history.push(ROUTES.CART);
       } catch (error) {
