@@ -38,6 +38,7 @@ export default class AuthAlternateAuthenticate extends Base {
     if (!isVerified) {
       throw new X({
         code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
 
@@ -62,6 +63,7 @@ export default class AuthAlternateAuthenticate extends Base {
       if (!user) {
         throw new X({
           code: 'AUTHENTICATION_FAILED',
+          fields: {},
         });
       }
 

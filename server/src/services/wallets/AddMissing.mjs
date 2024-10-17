@@ -34,6 +34,7 @@ export default class WalletsAddMissing extends Base {
       console.error('WalletsAddMissing: username not found');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
 
@@ -43,6 +44,7 @@ export default class WalletsAddMissing extends Base {
       console.error('WalletsAddMissing: public key and user id pair not unique');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
 

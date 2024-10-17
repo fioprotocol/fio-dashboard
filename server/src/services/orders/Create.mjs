@@ -101,6 +101,7 @@ export default class OrdersCreate extends Base {
 
       throw new X({
         code: 'NOT_FOUND',
+        fields: {},
       });
     }
 

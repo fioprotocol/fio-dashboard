@@ -137,6 +137,7 @@ export default class AuthCreate extends Base {
       logger.error(email, username, 'Auth failed');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
 
@@ -174,6 +175,7 @@ export default class AuthCreate extends Base {
       logger.error(email, username, 'Verification failed');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
 
@@ -190,6 +192,7 @@ export default class AuthCreate extends Base {
       logger.error(email, username, 'Challenge failed');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
     await nonce.destroy();
