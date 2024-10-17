@@ -10,9 +10,18 @@ export default class DomainWatchlistDelete extends Base {
   }
 
   async execute({ id }) {
-    const domainWatchlistItem = await DomainsWatchlist.findById(id);
+    const userId = this.context.id;
 
-    if (!domainWatchlistItem) return { data: { success: false, message: 'Not Found' } };
+    const domainWatchlistItem = await DomainsWatchlist.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!domainWatchlistItem) {
+      return { data: { success: false, message: 'Not Found' } };
+    }
 
     await domainWatchlistItem.destroy({ force: true });
 

@@ -12,8 +12,6 @@ import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
-import { cartId as cartIdSelector } from '../../redux/cart/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -112,11 +110,9 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
 
-  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -362,13 +358,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       };
       dispatch(
         addItemToCart({
-          id: cartId,
           item: cartItem,
           prices: prices?.nativeFio,
           refCode,
           roe,
           token,
-          userId,
         }),
       );
 

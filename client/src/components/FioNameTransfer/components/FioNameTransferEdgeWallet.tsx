@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { CONFIRM_PIN_ACTIONS, DOMAIN } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
 
 import apis from '../../../api';
 
@@ -39,8 +40,8 @@ const FioNameTransferEdgeWallet: React.FC<Props> = props => {
     const result = await apis.fio.executeAction(
       keys,
       fioNameType === DOMAIN
-        ? ACTIONS.transferFioDomain
-        : ACTIONS.transferFioAddress,
+        ? GenericAction.transferFioDomain
+        : GenericAction.transferFioAddress,
       {
         [fioNameType === DOMAIN ? 'fioDomain' : 'fioAddress']: name,
         newOwnerKey: newOwnerPublicKey,

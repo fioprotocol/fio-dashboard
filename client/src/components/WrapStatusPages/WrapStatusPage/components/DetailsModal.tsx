@@ -3,17 +3,17 @@ import React from 'react';
 import Badge from 'react-bootstrap/Badge';
 import classNames from 'classnames';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import Modal from '../../../../components/Modal/Modal';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
-import { CommandComponent } from '../components/CommandComponent';
+import { CommandComponent } from './CommandComponent';
 
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { WRAP_ITEM_STATUS } from '../../../../constants/wrap';
 import { WRAP_STATUS_CONTENT } from '../constants';
 
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
-
-import apis from '../../../../api';
 
 import { AnyType, WrapStatusWrapItem } from '../../../../types';
 
@@ -143,10 +143,7 @@ const DetailsModal: React.FC<Props> = props => {
                 <div className="mr-3">
                   <b>Amount:</b>
                 </div>
-                <div>
-                  {apis.fio.sufToAmount(Number(amount) || 0).toFixed(2) +
-                    ' FIO'}
-                </div>
+                <div>{FIOSDK.SUFToAmount(amount || 0).toFixed(2) + ' FIO'}</div>
               </div>
             )}
             {domain && (

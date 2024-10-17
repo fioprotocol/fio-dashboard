@@ -1,15 +1,12 @@
 import React from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
-} from '../../../components/MetamaskConfirmAction';
+} from '../../MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
 import {
   ADDRESS,
   CONFIRM_METAMASK_ACTION,
@@ -57,7 +54,7 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
     derivationIndex: number;
   } = {
     action: '',
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+    account: Account.address,
     data: {
       new_owner_fio_public_key: newOwnerPublicKey,
       tpid: apis.fio.tpid,
@@ -67,12 +64,12 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
   };
 
   if (fioNameType === ADDRESS) {
-    actionParams.action = TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress];
+    actionParams.action = Action.transferAddress;
     actionParams.data.fio_address = fioName;
   }
 
   if (fioNameType === DOMAIN) {
-    actionParams.action = TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain];
+    actionParams.action = Action.transferDomain;
     actionParams.data.fio_domain = fioName;
   }
 

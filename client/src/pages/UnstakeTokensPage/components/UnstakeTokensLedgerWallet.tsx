@@ -2,6 +2,8 @@ import React from 'react';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
@@ -13,7 +15,7 @@ import { formatLedgerSignature, getPath } from '../../../util/ledger';
 
 import { FioWalletDoublet } from '../../../types';
 import { StakeTokensValues } from '../types';
-import { ACTIONS, BUNDLES_TX_COUNT } from '../../../constants/fio';
+import { BUNDLES_TX_COUNT } from '../../../constants/fio';
 import MathOp from '../../../util/math';
 
 type Props = {
@@ -40,7 +42,7 @@ const UnstakeTokensLedgerWallet: React.FC<Props> = props => {
   const unstake = async (appFio: LedgerFioApp) => {
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
-      ACTIONS.unStakeFioTokens,
+      GenericAction.unStakeFioTokens,
       {
         amount: apis.fio.amountToSUF(new MathOp(submitData.amount).toNumber()),
         fio_address: submitData.fioAddress,
@@ -67,7 +69,7 @@ const UnstakeTokensLedgerWallet: React.FC<Props> = props => {
     });
 
     const result = await apis.fio.publicFioSDK.executePreparedTrx(
-      apis.fio.actionEndPoints.pushTransaction,
+      EndPoint.pushTransaction,
       {
         compression: 0,
         packed_context_free_data: arrayToHex(

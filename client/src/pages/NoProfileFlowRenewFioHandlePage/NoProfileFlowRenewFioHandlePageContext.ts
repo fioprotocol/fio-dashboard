@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import { Props as ComponentProps } from './NoProfileFlowRenewFioHandlePage';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -13,13 +15,11 @@ import { log } from '../../util/general';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { ACTIONS } from '../../constants/fio';
 
 import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { cartId as cartIdSelector } from '../../redux/cart/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
@@ -39,7 +39,6 @@ type UseContextProps = {
 export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const { refProfile, publicKey } = componentProps;
 
-  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
@@ -113,7 +112,9 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         }
 
         const cartItem = {
-          id: `${fioHandle}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
+          id: `${fioHandle}-${
+            GenericAction.addBundledTransactions
+          }-${+new Date()}`,
           address,
           domain,
           costFio: fio,
@@ -124,7 +125,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
         dispatch(
           addItemToCart({
-            id: cartId,
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
@@ -142,17 +142,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         log.error(error);
       }
     },
-    [
-      fio,
-      usdc,
-      prices.nativeFio,
-      dispatch,
-      cartId,
-      publicKey,
-      refCode,
-      roe,
-      history,
-    ],
+    [fio, usdc, prices.nativeFio, dispatch, publicKey, refCode, roe, history],
   );
 
   const addressWidgetContent = {

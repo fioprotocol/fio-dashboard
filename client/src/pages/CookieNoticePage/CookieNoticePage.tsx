@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classes from './CookieNoticePage.module.scss';
 
 const CookieNoticePage: React.FC = () => {
+  const [isCookieYesVisible, setCookieYesVisible] = useState(false);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const elCollection = document.getElementsByClassName(
+        'cky-btn-revisit-wrapper',
+      );
+
+      if (elCollection.length > 0) {
+        setCookieYesVisible(true);
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className={classes.container}>
       <h1 className="cookie-policy-h1">Cookie Notice</h1>
@@ -51,11 +68,13 @@ const CookieNoticePage: React.FC = () => {
       <div className="cky-audit-table-element" />
       &nbsp;
       <h5 className="mb-4">Manage cookie preferences</h5>
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <a className="cky-banner-element">Cookie Settings</a> <br />
-      <div>
+      <div style={{ display: isCookieYesVisible ? 'block' : 'none' }}>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <a className="cky-banner-element">Cookie Settings</a> <br />
         <p>&nbsp;</p>
-        <p>
+      </div>
+      <div>
+        <p style={{ display: isCookieYesVisible ? 'block' : 'none' }}>
           You can change your cookie preferences any time by clicking the above
           button. This will let you revisit the cookie consent banner and change
           your preferences or withdraw your consent right away.

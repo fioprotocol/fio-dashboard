@@ -1,3 +1,11 @@
+import {
+  Account,
+  Action,
+  EndPoint,
+  GenericAction,
+  RequestStatus,
+} from '@fioprotocol/fiosdk';
+
 export const ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION = 5;
 
 export const FIO_CHAIN_CODE = 'FIO';
@@ -20,108 +28,19 @@ export const TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS =
 
 export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 
-export const FIO_ORACLE_ACCOUNT_NAME = 'fio.oracle';
+export enum AdditionalAction {
+  addNft = 'addNft',
+  wrapFioTokens = 'wrapFioTokens',
+  wrapFioDomain = 'wrapFioDomain',
+}
 
-export const FIO_DEFAULT_ACCOUNT = 'fio.address';
-
-export const FIO_CONTRACT_ACCOUNT_NAMES = {
-  fioAddress: 'fio.address',
-  fioToken: 'fio.token',
-  fioRecordObt: 'fio.reqobt',
-  fioStaking: 'fio.staking',
-  fioOracle: 'fio.oracle',
-};
-
-export const ACTIONS = {
-  transferTokens: 'transferTokens',
-  addPublicAddress: 'addPublicAddress',
-  addPublicAddresses: 'addPublicAddresses',
-  removeAllPublicAddresses: 'removeAllPublicAddresses',
-  removePublicAddresses: 'removePublicAddresses',
-  setFioDomainVisibility: 'setFioDomainVisibility',
-  rejectFundsRequest: 'rejectFundsRequest',
-  requestFunds: 'requestFunds',
-  cancelFundsRequest: 'cancelFundsRequest',
-  recordObtData: 'recordObtData',
-  registerFioAddress: 'registerFioAddress',
-  registerFioDomain: 'registerFioDomain',
-  registerFioDomainAddress: 'registerFioDomainAddress',
-  registerOwnerFioDomain: 'registerOwnerFioDomain',
-  renewFioDomain: 'renewFioDomain',
-  transferFioAddress: 'transferFioAddress',
-  transferFioDomain: 'transferFioDomain',
-  pushTransaction: 'pushTransaction',
-  addBundledTransactions: 'addBundledTransactions',
-  addNft: 'addNft',
-  stakeFioTokens: 'stakeFioTokens',
-  unStakeFioTokens: 'unStakeFioTokens',
-  wrapFioTokens: 'wrapFioTokens',
-  wrapFioDomain: 'wrapFioDomain',
-};
-
-export const TRANSACTION_ACTION_NAMES = {
-  [ACTIONS.addBundledTransactions]: 'addbundles',
-  [ACTIONS.addPublicAddress]: 'addaddress',
-  [ACTIONS.addPublicAddresses]: 'addaddress',
-  [ACTIONS.addNft]: 'addnft',
-  [ACTIONS.cancelFundsRequest]: 'cancelfndreq',
-  [ACTIONS.requestFunds]: 'newfundsreq',
-  [ACTIONS.registerFioAddress]: 'regaddress',
-  [ACTIONS.registerFioDomain]: 'regdomain',
-  [ACTIONS.registerFioDomainAddress]: 'regdomadd',
-  [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
-  [ACTIONS.recordObtData]: 'recordobt',
-  [ACTIONS.rejectFundsRequest]: 'rejectfndreq',
-  [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
-  [ACTIONS.removePublicAddresses]: 'remaddress',
-  [ACTIONS.renewFioDomain]: 'renewdomain',
-  [ACTIONS.stakeFioTokens]: 'stakefio',
-  [ACTIONS.transferFioAddress]: 'xferaddress',
-  [ACTIONS.transferFioDomain]: 'xferdomain',
-  [ACTIONS.transferTokens]: 'trnsfiopubky',
-  [ACTIONS.unStakeFioTokens]: 'unstakefio',
-  [ACTIONS.wrapFioTokens]: 'wraptokens',
-  [ACTIONS.wrapFioDomain]: 'wrapdomain',
-};
-
-export const TRANSACTION_ACCOUNT_NAMES = {
-  [ACTIONS.wrapFioTokens]: FIO_ORACLE_ACCOUNT_NAME,
-  [ACTIONS.wrapFioDomain]: FIO_ORACLE_ACCOUNT_NAME,
-};
-
-export const ACTIONS_TO_END_POINT_KEYS = {
-  [ACTIONS.requestFunds]: 'newFundsRequest',
-  [ACTIONS.cancelFundsRequest]: 'cancelFundsRequest',
-  [ACTIONS.registerFioAddress]: 'registerFioAddress',
-  [ACTIONS.registerFioDomain]: 'registerFioDomain',
-  [ACTIONS.renewFioDomain]: 'renewFioDomain',
-  [ACTIONS.addPublicAddresses]: 'addPubAddress',
-  [ACTIONS.removeAllPublicAddresses]: 'removeAllPubAddresses',
-  [ACTIONS.removePublicAddresses]: 'removePubAddress',
-  [ACTIONS.setFioDomainVisibility]: 'setFioDomainPublic',
-  [ACTIONS.rejectFundsRequest]: 'rejectFundsRequest',
-  [ACTIONS.recordObtData]: 'recordObtData',
-  [ACTIONS.transferTokens]: 'transferTokens',
-  [ACTIONS.pushTransaction]: 'pushTransaction',
-  [ACTIONS.transferFioAddress]: 'transferFioAddress',
-  [ACTIONS.transferFioDomain]: 'transferFioDomain',
-  [ACTIONS.stakeFioTokens]: 'pushTransaction',
-  [ACTIONS.unStakeFioTokens]: 'pushTransaction',
-  [ACTIONS.addBundledTransactions]: 'addBundledTransactions',
-};
-
-export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
-  REJECTED: 'rejected',
-  PAID: 'sent_to_blockchain',
-  PENDING: 'requested',
-  CANCELED: 'cancelled',
-};
+export type DashboardAction = AdditionalAction | GenericAction;
 
 export const FIO_REQUEST_STATUS_TYPES_TITLES: { [key: string]: string } = {
-  [FIO_REQUEST_STATUS_TYPES.REJECTED]: 'REJECTED',
-  [FIO_REQUEST_STATUS_TYPES.PAID]: 'PAID',
-  [FIO_REQUEST_STATUS_TYPES.PENDING]: 'PENDING',
-  [FIO_REQUEST_STATUS_TYPES.CANCELED]: 'CANCELED',
+  [RequestStatus.rejected]: 'REJECTED',
+  [RequestStatus.sentToBlockchain]: 'PAID',
+  [RequestStatus.requested]: 'PENDING',
+  [RequestStatus.canceled]: 'CANCELED',
 };
 
 export const BUNDLES_TX_COUNT = {
@@ -138,52 +57,155 @@ export const BUNDLES_TX_COUNT = {
   UNSTAKE: 1,
 };
 
-export const FIO_ACCOUNT_NAMES = {
-  [ACTIONS.transferTokens]: 'fio.token',
-  [ACTIONS.recordObtData]: 'fio.reqobt',
-  [ACTIONS.stakeFioTokens]: 'fio.staking',
-  [ACTIONS.unStakeFioTokens]: 'fio.staking',
-  [ACTIONS.transferFioDomain]: 'fio.address',
-  [ACTIONS.transferFioAddress]: 'fio.address',
-  [ACTIONS.setFioDomainVisibility]: 'fio.address',
-  [ACTIONS.renewFioDomain]: 'fio.address',
-  [ACTIONS.addBundledTransactions]: 'fio.address',
-  [ACTIONS.requestFunds]: 'fio.reqobt',
-  [ACTIONS.rejectFundsRequest]: 'fio.reqobt',
-  [ACTIONS.cancelFundsRequest]: 'fio.reqobt',
-  [ACTIONS.addNft]: 'fio.address',
-  [ACTIONS.registerFioAddress]: 'fio.address',
-  [ACTIONS.registerFioDomain]: 'fio.address',
-  [ACTIONS.registerFioDomainAddress]: 'fio.address',
-  [ACTIONS.addPublicAddresses]: 'fio.address',
-  [ACTIONS.removeAllPublicAddresses]: 'fio.address',
-  [ACTIONS.removePublicAddresses]: 'fio.address',
-  [ACTIONS.wrapFioTokens]: 'fio.oracle',
-  [ACTIONS.wrapFioDomain]: 'fio.oracle',
+const GENERIC_ACTIONS_ENDPOINTS = {
+  [GenericAction.pushTransaction]: EndPoint.pushTransaction,
+  [GenericAction.burnFioAddress]: EndPoint.burnFioAddress,
+  [GenericAction.cancelFundsRequest]: EndPoint.cancelFundsRequest,
+  [GenericAction.setFioDomainVisibility]: EndPoint.setFioDomainPublic,
+  [GenericAction.rejectFundsRequest]: EndPoint.rejectFundsRequest,
+  [GenericAction.requestFunds]: EndPoint.newFundsRequest,
+  [GenericAction.isAvailable]: EndPoint.availCheck,
+  [GenericAction.stakeFioTokens]: EndPoint.pushTransaction,
+  [GenericAction.unStakeFioTokens]: EndPoint.pushTransaction,
+  [GenericAction.recordObtData]: EndPoint.recordObtData,
+  [GenericAction.registerFioDomainAddress]: EndPoint.registerFioDomainAddress,
+  [GenericAction.registerFioAddress]: EndPoint.registerFioAddress,
+  [GenericAction.registerOwnerFioAddress]: EndPoint.registerFioAddress,
+  [GenericAction.registerFioDomain]: EndPoint.registerFioDomain,
+  [GenericAction.registerOwnerFioDomain]: EndPoint.registerFioDomain,
+  [GenericAction.renewFioDomain]: EndPoint.renewFioDomain,
+  [GenericAction.renewFioAddress]: EndPoint.renewFioAddress,
+  [GenericAction.transferFioAddress]: EndPoint.transferFioAddress,
+  [GenericAction.transferFioDomain]: EndPoint.transferFioDomain,
+  [GenericAction.transferTokens]: EndPoint.transferTokensPublicKey,
+  [GenericAction.transferLockedTokens]: EndPoint.transferLockedTokens,
+  [GenericAction.addBundledTransactions]: EndPoint.addBundledTransactions,
+  [GenericAction.addPublicAddress]: EndPoint.addPublicAddress,
+  [GenericAction.addPublicAddresses]: EndPoint.addPublicAddress,
+  [GenericAction.removePublicAddresses]: EndPoint.removePublicAddress,
+  [GenericAction.removeAllPublicAddresses]: EndPoint.removeAllPublicAddresses,
+  [GenericAction.getObtData]: EndPoint.getObtData,
+  [GenericAction.getGranteePermissions]: EndPoint.getGranteePermissions,
+  [GenericAction.getGrantorPermissions]: EndPoint.getGrantorPermissions,
+  [GenericAction.getObjectPermissions]: EndPoint.getObjectPermissions,
+  [GenericAction.getFioBalance]: EndPoint.getFioBalance,
+  [GenericAction.getFioNames]: EndPoint.getFioNames,
+  [GenericAction.getFioDomains]: EndPoint.getFioDomains,
+  [GenericAction.getFioAddresses]: EndPoint.getFioAddresses,
+  [GenericAction.getPendingFioRequests]: EndPoint.getPendingFioRequests,
+  [GenericAction.getReceivedFioRequests]: EndPoint.getReceivedFioRequests,
+  [GenericAction.getCancelledFioRequests]: EndPoint.getCancelledFioRequests,
+  [GenericAction.getSentFioRequests]: EndPoint.getSentFioRequests,
+  [GenericAction.getPublicAddress]: EndPoint.getPublicAddress,
+  [GenericAction.getFioPublicAddress]: EndPoint.getPublicAddress,
+  [GenericAction.getPublicAddresses]: EndPoint.getPublicAddresses,
+  [GenericAction.getAccount]: EndPoint.getAccount,
+  [GenericAction.getLocks]: EndPoint.getLocks,
+  [GenericAction.getNfts]: EndPoint.getNftsFioAddress,
+  [GenericAction.getAbi]: EndPoint.getRawAbi,
+  [GenericAction.getOracleFees]: EndPoint.getOracleFees,
+  [GenericAction.getFee]: EndPoint.getFee,
+  [GenericAction.getFeeForRecordObtData]: EndPoint.getFee,
+  [GenericAction.getFeeForNewFundsRequest]: EndPoint.getFee,
+  [GenericAction.getFeeForRejectFundsRequest]: EndPoint.getFee,
+  [GenericAction.getFeeForBurnFioAddress]: EndPoint.getFee,
+  [GenericAction.getFeeForTransferFioAddress]: EndPoint.getFee,
+  [GenericAction.getFeeForTransferFioDomain]: EndPoint.getFee,
+  [GenericAction.getFeeForAddBundledTransactions]: EndPoint.getFee,
+  [GenericAction.getFeeForAddPublicAddress]: EndPoint.getFee,
+  [GenericAction.getFeeForCancelFundsRequest]: EndPoint.getFee,
+  [GenericAction.getFeeForRemovePublicAddresses]: EndPoint.getFee,
+  [GenericAction.getFeeForRemoveAllPublicAddresses]: EndPoint.getFee,
+  [GenericAction.getFeeForTransferLockedTokens]: EndPoint.getFee,
+  [GenericAction.getEncryptKey]: EndPoint.getEncryptKey,
+  [GenericAction.getAccountPubKey]: EndPoint.getAccountFioPublicKey,
 };
 
-export const FIO_ACTION_NAMES = {
-  [ACTIONS.transferTokens]: 'trnsfiopubky',
-  [ACTIONS.recordObtData]: 'recordobt',
-  [ACTIONS.stakeFioTokens]: 'stakefio',
-  [ACTIONS.unStakeFioTokens]: 'unstakefio',
-  [ACTIONS.transferFioDomain]: 'xferdomain',
-  [ACTIONS.transferFioAddress]: 'xferaddress',
-  [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
-  [ACTIONS.renewFioDomain]: 'renewdomain',
-  [ACTIONS.addBundledTransactions]: 'addbundles',
-  [ACTIONS.requestFunds]: 'newfundsreq',
-  [ACTIONS.rejectFundsRequest]: 'rejectfndreq',
-  [ACTIONS.cancelFundsRequest]: 'cancelfndreq',
-  [ACTIONS.addNft]: 'addnft',
-  [ACTIONS.registerFioAddress]: 'regaddress',
-  [ACTIONS.registerFioDomain]: 'regdomain',
-  [ACTIONS.registerFioDomainAddress]: 'regdomadd',
-  [ACTIONS.addPublicAddresses]: 'addaddress',
-  [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
-  [ACTIONS.removePublicAddresses]: 'remaddress',
-  [ACTIONS.wrapFioTokens]: 'wraptokens',
-  [ACTIONS.wrapFioDomain]: 'wrapdomain',
+export const getEndPointByGenericAction = (genericAction: GenericAction) => {
+  const endpoint =
+    GENERIC_ACTIONS_ENDPOINTS[
+      genericAction as keyof typeof GENERIC_ACTIONS_ENDPOINTS
+    ];
+
+  if (!endpoint) {
+    throw new Error(`EndPoint for ${genericAction} not exist`);
+  }
+
+  return endpoint;
+};
+
+const FIO_ACCOUNT_NAMES = {
+  [GenericAction.transferTokens]: Account.token,
+  [GenericAction.recordObtData]: Account.reqObt,
+  [GenericAction.stakeFioTokens]: Account.staking,
+  [GenericAction.unStakeFioTokens]: Account.staking,
+  [GenericAction.transferFioDomain]: Account.address,
+  [GenericAction.transferFioAddress]: Account.address,
+  [GenericAction.setFioDomainVisibility]: Account.address,
+  [GenericAction.renewFioDomain]: Account.address,
+  [GenericAction.addBundledTransactions]: Account.address,
+  [GenericAction.requestFunds]: Account.reqObt,
+  [GenericAction.rejectFundsRequest]: Account.reqObt,
+  [GenericAction.cancelFundsRequest]: Account.reqObt,
+  [AdditionalAction.addNft]: Account.address,
+  [GenericAction.registerFioAddress]: Account.address,
+  [GenericAction.registerFioDomain]: Account.address,
+  [GenericAction.registerFioDomainAddress]: Account.address,
+  [GenericAction.addPublicAddresses]: Account.address,
+  [GenericAction.removeAllPublicAddresses]: Account.address,
+  [GenericAction.removePublicAddresses]: Account.address,
+  [AdditionalAction.wrapFioTokens]: Account.oracle,
+  [AdditionalAction.wrapFioDomain]: Account.oracle,
+};
+
+export const getAccountByDashboardAction = (
+  dashboardAction: DashboardAction,
+) => {
+  const account =
+    FIO_ACCOUNT_NAMES[dashboardAction as keyof typeof FIO_ACCOUNT_NAMES];
+
+  if (!account) {
+    throw new Error(`Account for ${dashboardAction} not exist`);
+  }
+
+  return account;
+};
+
+const FIO_ACTION_NAMES = {
+  [GenericAction.transferTokens]: Action.transferTokensKey,
+  [GenericAction.recordObtData]: Action.recordObt,
+  [GenericAction.stakeFioTokens]: Action.stake,
+  [GenericAction.unStakeFioTokens]: Action.unstake,
+  [GenericAction.transferFioDomain]: Action.transferDomain,
+  [GenericAction.transferFioAddress]: Action.transferAddress,
+  [GenericAction.setFioDomainVisibility]: Action.setDomainPublic,
+  [GenericAction.renewFioDomain]: Action.renewDomain,
+  [GenericAction.addBundledTransactions]: Action.addBundledTransactions,
+  [GenericAction.requestFunds]: Action.newFundsRequest,
+  [GenericAction.rejectFundsRequest]: Action.rejectFundsRequest,
+  [GenericAction.cancelFundsRequest]: Action.cancelFundsRequest,
+  [AdditionalAction.addNft]: Action.addNft,
+  [GenericAction.registerFioAddress]: Action.regAddress,
+  [GenericAction.registerFioDomain]: Action.regDomain,
+  [GenericAction.registerFioDomainAddress]: Action.regDomainAddress,
+  [GenericAction.addPublicAddresses]: Action.addPublicAddresses,
+  [GenericAction.removeAllPublicAddresses]: Action.removeAllAddresses,
+  [GenericAction.removePublicAddresses]: Action.removeAddress,
+  [AdditionalAction.wrapFioTokens]: Action.wrapTokens,
+  [AdditionalAction.wrapFioDomain]: Action.wrapDomain,
+};
+
+export const getActionByDashboardAction = (
+  dashboardAction: DashboardAction,
+) => {
+  const action =
+    FIO_ACTION_NAMES[dashboardAction as keyof typeof FIO_ACTION_NAMES];
+
+  if (!action) {
+    throw new Error(`Action for ${dashboardAction} not exist`);
+  }
+
+  return action;
 };
 
 export const DOMAIN_TYPE = {
@@ -326,11 +348,6 @@ export const LOW_BUNDLES_THRESHOLD = 25;
 export const DEFAULT_FIO_RECORDS_LIMIT = 100;
 
 export const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
-
-export const FIO_CONTENT_TYPES = {
-  RECORD_OBT_DATA: 'record_obt_data_content',
-  NEW_FUNDS: 'new_funds_content',
-};
 
 export const FIO_API_URLS_TYPES = {
   DASHBOARD_API: 'DASHBOARD_API',

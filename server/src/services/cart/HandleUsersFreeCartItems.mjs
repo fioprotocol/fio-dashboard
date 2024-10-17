@@ -13,16 +13,21 @@ import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
     return {
-      id: ['required', 'string'],
-      userId: ['string'],
       publicKey: ['string'],
       refCode: ['string'],
     };
   }
 
-  async execute({ id, userId, publicKey, refCode }) {
+  async execute({ publicKey, refCode }) {
     try {
-      const cart = await Cart.findById(id);
+      const userId = this.context.id || null;
+      const guestId = this.context.guestId || null;
+
+      const where = {};
+      if (userId) where.userId = userId;
+      if (guestId) where.guestId = guestId;
+
+      const cart = await Cart.findOne({ where });
 
       if (!cart) {
         return {

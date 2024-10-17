@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { useHistory } from 'react-router';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import FioLoader from '../../../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import WrapDomainForm from '../WarapDomainForm';
@@ -41,7 +43,7 @@ import classes from '../../styles/WrapDomainPage.module.scss';
 import { log } from '../../../../util/general';
 
 const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
-  o => o.chain_code === 'MATIC',
+  o => o.chain_code === 'POL',
 );
 
 const WrapDomainContainer: React.FC<ContainerProps> = props => {
@@ -107,9 +109,9 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
       chainCode: sendData.chainCode,
       publicAddress: sendData.publicAddress,
       feeCollectedAmount: new MathOp(
-        apis.fio.sufToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
+        FIOSDK.SUFToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
       )
-        .add(apis.fio.sufToAmount(res.fee_collected) || feePrice.fio)
+        .add(FIOSDK.SUFToAmount(res.fee_collected) || feePrice.fio)
         .toNumber(),
       nativeFeeCollectedAmount: new MathOp(res.oracle_fee_collected)
         .add(res.fee_collected)

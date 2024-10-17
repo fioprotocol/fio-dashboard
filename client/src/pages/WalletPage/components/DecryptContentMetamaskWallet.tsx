@@ -1,14 +1,12 @@
 import React from 'react';
 
+import { ContentType, RequestStatus } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  FIO_CONTENT_TYPES,
-  FIO_REQUEST_STATUS_TYPES,
-} from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import {
@@ -53,8 +51,8 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
 
   const contentType =
     fioRecordType === FIO_RECORD_TYPES.DATA
-      ? FIO_CONTENT_TYPES.RECORD_OBT_DATA
-      : FIO_CONTENT_TYPES.NEW_FUNDS;
+      ? ContentType.recordObtDataContent
+      : ContentType.newFundsContent;
 
   const encryptionPublicKey =
     payerFioPublicKey === publicKey ? payeeFioPublicKey : payerFioPublicKey;
@@ -75,7 +73,7 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
 
     let paymentData;
 
-    if (itemData.status === FIO_REQUEST_STATUS_TYPES.PAID && paymentOtbData) {
+    if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
       paymentData = {
         fioRecord: paymentOtbData,
         fioDecryptedContent: {

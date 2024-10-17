@@ -6,17 +6,16 @@ import { Cart } from '../../models/Cart.mjs';
 import logger from '../../logger.mjs';
 
 export default class ClearCart extends Base {
-  static get validationRules() {
-    return {
-      id: ['string'],
-    };
-  }
+  async execute() {
+    const userId = this.context.id || null;
+    const guestId = this.context.guestId || null;
 
-  async execute({ id }) {
+    const where = {};
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
     try {
-      if (id) {
-        await Cart.destroy({ where: { id } });
-      }
+      await Cart.destroy({ where });
 
       return {
         data: { success: true },

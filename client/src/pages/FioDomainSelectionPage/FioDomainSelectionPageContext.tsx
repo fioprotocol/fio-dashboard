@@ -6,15 +6,11 @@ import {
   updateCartItemPeriod,
 } from '../../redux/cart/actions';
 
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { CART_ITEM_TYPE } from '../../constants/common';
@@ -27,7 +23,7 @@ import { convertFioPrices } from '../../util/prices';
 import {
   checkAddressOrDomainIsExist,
   checkIsDomainItemExistsOnCart,
-  vaildateFioDomain,
+  validateFioDomain,
 } from '../../util/fio';
 import MathOp from '../../util/math';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
@@ -105,7 +101,7 @@ const validateDomainItems = async ({
   (
     await Promise.all(
       domainArr.map(async domain => {
-        const error = vaildateFioDomain(domain.name);
+        const error = validateFioDomain(domain.name);
 
         if (!error)
           return await handleDomainItem({
@@ -121,12 +117,10 @@ const validateDomainItems = async ({
   ).filter(Boolean);
 
 export const useContext = () => {
-  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
@@ -176,16 +170,14 @@ export const useContext = () => {
     (selectedItem: CartItem) => {
       dispatch(
         addItemToCart({
-          id: cartId,
           item: selectedItem,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
     },
-    [cartId, dispatch, prices?.nativeFio, refCode, roe, userId],
+    [dispatch, prices?.nativeFio, refCode, roe],
   );
 
   const onPeriodChange = (period: string, id: string) => {
@@ -246,7 +238,6 @@ export const useContext = () => {
 
       dispatch(
         updateCartItemPeriod({
-          id: cartId,
           itemId: existingCartItem.id,
           item: existingCartItem,
           period: Number(period),
@@ -272,7 +263,7 @@ export const useContext = () => {
 
       toggleLoading(true);
 
-      const validationError = vaildateFioDomain(domain);
+      const validationError = validateFioDomain(domain);
 
       if (validationError) {
         setError(validationError);

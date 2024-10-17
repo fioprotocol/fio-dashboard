@@ -7,7 +7,7 @@ import { Props as ComponentProps } from './NoProfileFlowRegisterFioDomainPage';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
-import { vaildateFioDomain } from '../../util/fio';
+import { validateFioDomain } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
 
@@ -20,7 +20,6 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { cartId as cartIdSelector } from '../../redux/cart/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { AddressWidgetProps } from '../../components/AddressWidget/AddressWidget';
@@ -38,7 +37,6 @@ type UseContextProps = {
 export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const { refProfile, publicKey } = componentProps;
 
-  const cartId = useSelector(cartIdSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
@@ -59,7 +57,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const onFocusOut = useCallback((value: string) => {
     if (!value) return;
 
-    const isNotValidAddressError = vaildateFioDomain(value);
+    const isNotValidAddressError = validateFioDomain(value);
 
     if (isNotValidAddressError) {
       toggleFioVerificationError(true);
@@ -87,9 +85,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
       try {
         toggleIsVerifying(true);
 
-        try {
-          apis.fio.isFioDomainValid(domainValue);
-        } catch (error) {
+        if (!apis.fio.publicFioSDK.validateFioDomain(domainValue)) {
           setInfoMessage(NON_VAILD_DOMAIN);
           toggleIsFioItemVerified(false);
           toggleIsVerifying(false);
@@ -134,7 +130,6 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
         dispatch(
           addItemToCart({
-            id: cartId,
             item: cartItem,
             publicKey,
             prices: prices?.nativeFio,
@@ -148,17 +143,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         log.error(error);
       }
     },
-    [
-      fio,
-      usdc,
-      prices.nativeFio,
-      dispatch,
-      cartId,
-      publicKey,
-      refCode,
-      roe,
-      history,
-    ],
+    [fio, usdc, prices.nativeFio, dispatch, publicKey, refCode, roe, history],
   );
 
   const addressWidgetContent = {

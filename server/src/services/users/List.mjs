@@ -2,6 +2,7 @@ import Base from '../Base';
 
 import { AdminUser, ReferrerProfile, User, Wallet } from '../../models';
 import { USER_PROFILE_TYPE, WALLET_CREATED_FROM } from '../../config/constants';
+import { DEFAULT_LIMIT, MAX_LIMIT } from '../../constants/general.mjs';
 
 export default class UsersList extends Base {
   static get requiredPermissions() {
@@ -10,8 +11,8 @@ export default class UsersList extends Base {
 
   static get validationRules() {
     return {
-      offset: 'string',
-      limit: 'string',
+      offset: ['integer', { min_number: 0 }],
+      limit: ['integer', { min_number: 0 }, { max_number: MAX_LIMIT }],
       includeMoreDetailedInfo: 'boolean',
       filters: [
         {
@@ -23,7 +24,7 @@ export default class UsersList extends Base {
     };
   }
 
-  async execute({ limit = 25, offset = 0, includeMoreDetailedInfo, filters }) {
+  async execute({ limit = DEFAULT_LIMIT, offset = 0, includeMoreDetailedInfo, filters }) {
     const include = [
       { model: Wallet, as: 'fioWallets' },
       { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },

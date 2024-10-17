@@ -3,7 +3,6 @@ import Base from './base';
 import { FioWalletDoublet } from '../types';
 import {
   AuthCheckRejectedResponse,
-  AuthConfirmResponse,
   AuthCreateNewDeviceRequestResponse,
   AuthDeleteNewDeviceRequestResponse,
   AuthLoginResponse,
@@ -44,6 +43,10 @@ export default class Auth extends Base {
     return this.apiClient.post('auth', data);
   }
 
+  loginGuest(): Promise<AuthLoginResponse> {
+    return this.apiClient.post('guest-auth', {});
+  }
+
   alternateAuth(data: {
     derivationIndex: number;
     from: string;
@@ -76,15 +79,12 @@ export default class Auth extends Base {
     });
   }
 
-  confirm(hash: string): Promise<AuthConfirmResponse> {
-    return this.apiClient.post(`actions/${hash}`, {});
-  }
-
   setRecovery(token: string): Promise<AuthSetRecoveryResponse> {
     return this.apiClient.post('users/setRecovery', { data: { token } });
   }
 
   async logout(): Promise<AuthLogoutResponse> {
+    this.apiClient.removeToken();
     return null;
   }
 
@@ -92,9 +92,15 @@ export default class Auth extends Base {
     return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
 
-  updateEmail(newEmail: string): Promise<AuthUpdateEmailResponse> {
+  updateEmail({
+    newEmail,
+    newUsername,
+  }: {
+    newEmail: string;
+    newUsername?: string;
+  }): Promise<AuthUpdateEmailResponse> {
     return this.apiClient.post('users/update-email', {
-      data: { newEmail },
+      data: { newEmail, newUsername },
     });
   }
 
@@ -148,6 +154,7 @@ export default class Auth extends Base {
   }
 
   async adminLogout(): Promise<AuthLogoutResponse> {
+    this.apiClient.removeAdminToken();
     return null;
   }
 
@@ -201,17 +208,5 @@ export default class Auth extends Base {
 
   deleteUser(): Promise<GenericStatusResponse> {
     return this.apiClient.delete('users/me');
-  }
-
-  createNoRegisterUser({
-    publicKey,
-    refCode,
-  }: {
-    publicKey: string;
-    refCode: string;
-  }): Promise<AuthProfileResponse[]> {
-    return this.apiClient.post('users/without-registration', {
-      data: { publicKey, refCode },
-    });
   }
 }

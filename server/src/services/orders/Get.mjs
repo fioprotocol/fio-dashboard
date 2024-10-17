@@ -15,11 +15,22 @@ import X from '../Exception.mjs';
 export default class OrdersGet extends Base {
   static get validationRules() {
     return {
-      id: 'string',
-      publicKey: 'string',
+      id: ['required', 'string'],
+      publicKey: ['required', 'string'],
     };
   }
   async execute({ id, publicKey }) {
+    const userId = this.context.id;
+
+    const where = {
+      id,
+      publicKey,
+    };
+
+    if (userId) {
+      where.userId = userId;
+    }
+
     const order = await Order.findOne({
       where: {
         id,

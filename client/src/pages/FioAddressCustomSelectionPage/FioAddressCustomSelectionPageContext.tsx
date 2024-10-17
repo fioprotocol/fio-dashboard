@@ -12,7 +12,6 @@ import { addItem as addItemToCart } from '../../redux/cart/actions';
 import {
   isAuthenticated as isAuthenticatedSelector,
   lastAuthData as lastAuthDataSelector,
-  userId as userIdSelector,
   user as userSelector,
 } from '../../redux/profile/selectors';
 import {
@@ -25,10 +24,7 @@ import {
   fioWallets as fioWalletsSelector,
   loading as userDomainsLoadingSelector,
 } from '../../redux/fio/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
@@ -67,7 +63,6 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
-  const cartId = useSelector(cartIdSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
   const lastAuthData = useSelector(lastAuthDataSelector);
   const prices = useSelector(pricesSelector);
@@ -77,7 +72,6 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const userId = useSelector(userIdSelector);
   const user = useSelector(userSelector);
 
   const queryParams = useQuery();
@@ -138,27 +132,17 @@ export const useContext = (): UseContextProps => {
 
       dispatch(
         addItemToCart({
-          id: cartId,
           item: newItem,
           publicKey: metamaskUserPublicKey,
           prices: prices?.nativeFio,
           refCode,
           roe,
-          userId,
         }),
       );
 
       toggleHasItemAddedToCart(true);
     },
-    [
-      cartId,
-      dispatch,
-      prices?.nativeFio,
-      refCode,
-      roe,
-      user?.userProfileType,
-      userId,
-    ],
+    [dispatch, prices?.nativeFio, refCode, roe, user?.userProfileType],
   );
 
   const onFieldChange = (value: string) => {

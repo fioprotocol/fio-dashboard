@@ -6,10 +6,11 @@ import X from '../Exception';
 import { User, Notification, ReferrerProfile, Wallet } from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
+import { AUTH_TYPE } from '../../tools.mjs';
 
 const EXPIRATION_TIME = DAY_MS; // 1 day
 
-export default class AlternateAuthenticate extends Base {
+export default class AuthAlternateAuthenticate extends Base {
   static get validationRules() {
     return {
       data: [
@@ -37,19 +38,17 @@ export default class AlternateAuthenticate extends Base {
     if (!isVerified) {
       throw new X({
         code: 'AUTHENTICATION_FAILED',
-        fields: {
-          nonce: 'INVALID',
-          signature: 'INVALID',
-        },
       });
     }
 
     const generateJwt = userId => {
       const now = new Date();
-      const jwtTokenObj = {
-        jwt: generate({ id: userId }, new Date(EXPIRATION_TIME + now.getTime())),
+      return {
+        jwt: generate(
+          { type: AUTH_TYPE.USER, id: userId },
+          new Date(EXPIRATION_TIME + now.getTime()),
+        ),
       };
-      return jwtTokenObj;
     };
 
     const existingWallet = await Wallet.findOneWhere({
@@ -63,9 +62,6 @@ export default class AlternateAuthenticate extends Base {
       if (!user) {
         throw new X({
           code: 'AUTHENTICATION_FAILED',
-          fields: {
-            user: 'NOT FOUND',
-          },
         });
       }
 

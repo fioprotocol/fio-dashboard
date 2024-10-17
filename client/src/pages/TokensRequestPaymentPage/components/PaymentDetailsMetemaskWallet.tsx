@@ -1,16 +1,12 @@
 import React, { useCallback } from 'react';
 
+import { Account, Action, ContentType } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  FIO_CONTENT_TYPES,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -59,9 +55,9 @@ export const PaymentDetailsMetemaskWallet: React.FC<Props> = props => {
   const { data, publicKey } = fioWallet || {};
 
   const actionParams = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt,
-    contentType: FIO_CONTENT_TYPES.RECORD_OBT_DATA,
+    action: Action.recordObt,
+    account: Account.reqObt,
+    contentType: ContentType.recordObtDataContent,
     data: {
       content: {
         amount: Number(amount),

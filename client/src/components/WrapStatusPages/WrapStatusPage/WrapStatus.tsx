@@ -9,6 +9,8 @@ import { ExportToCsv } from 'export-to-csv';
 
 import { useHistory } from 'react-router';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import Loader from '../../../components/Loader/Loader';
 import DetailsModal from './components/DetailsModal';
 import CustomDropdown from '../../CustomDropdown';
@@ -510,9 +512,8 @@ const WrapStatus: React.FC<PageProps> = props => {
                       {wrapItem.domain
                         ? wrapItem.domain
                         : wrapItem.amount
-                        ? apis.fio
-                            .sufToAmount(wrapItem.amount || 0)
-                            .toFixed(2) + ' FIO'
+                        ? FIOSDK.SUFToAmount(wrapItem.amount || 0).toFixed(2) +
+                          ' FIO'
                         : 'N/A'}
                     </th>
                     <th>

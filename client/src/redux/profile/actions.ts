@@ -54,7 +54,7 @@ export const makeNonce = ({
   referrerCode,
 }: {
   edgeWallets: FioWalletDoublet[];
-  email?: string;
+  email: string;
   username: string;
   keys: WalletKeysObj;
   otpKey?: string;
@@ -65,15 +65,13 @@ export const makeNonce = ({
 }): CommonPromiseAction => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
-    const { nonce, email: existingEmail } = await api.auth.nonce(username);
+    const { nonce } = await api.auth.nonce(username);
     const signatures: string[] = nonce
       ? Object.values(keys).map(keysItem => Ecc.sign(nonce, keysItem.private))
       : [];
 
-    const emailToLogin = existingEmail ?? email;
-
     return {
-      email: emailToLogin,
+      email,
       edgeWallets,
       nonce,
       signatures,
@@ -85,6 +83,15 @@ export const makeNonce = ({
       username,
     };
   },
+});
+
+export const GUEST_LOGIN_REQUEST = `${prefix}/GUEST_LOGIN_REQUEST`;
+export const GUEST_LOGIN_SUCCESS = `${prefix}/GUEST_LOGIN_SUCCESS`;
+export const GUEST_LOGIN_FAILURE = `${prefix}/GUEST_LOGIN_FAILURE`;
+
+export const loginGuest = (): CommonPromiseAction => ({
+  types: [GUEST_LOGIN_REQUEST, GUEST_LOGIN_SUCCESS, GUEST_LOGIN_FAILURE],
+  promise: (api: Api) => api.auth.loginGuest(),
 });
 
 export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
@@ -133,7 +140,7 @@ export const login = ({
   isSignUp,
 });
 
-export const ALTERNATE_LOGIN_REUQEST = `${prefix}/ALTERNATE_LOGIN_REUQEST`;
+export const ALTERNATE_LOGIN_REQUEST = `${prefix}/ALTERNATE_LOGIN_REQUEST`;
 export const ALTERNATE_LOGIN_SUCCESS = `${prefix}/ALTERNATE_LOGIN_SUCCESS`;
 export const ALTERNATE_LOGIN_FAILURE = `${prefix}/ALTERNATE_LOGIN_FAILURE`;
 
@@ -147,7 +154,7 @@ export const alternateLogin = (params: {
   timeZone?: string;
 }) => ({
   types: [
-    ALTERNATE_LOGIN_REUQEST,
+    ALTERNATE_LOGIN_REQUEST,
     ALTERNATE_LOGIN_SUCCESS,
     ALTERNATE_LOGIN_FAILURE,
   ],

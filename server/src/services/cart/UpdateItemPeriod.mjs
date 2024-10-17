@@ -16,7 +16,6 @@ import { CART_ITEM_TYPE } from '../../config/constants';
 export default class UpdateItemPeriod extends Base {
   static get validationRules() {
     return {
-      id: ['required', 'string'],
       itemId: ['required', 'string'],
       period: ['required', 'string'],
       prices: [
@@ -34,9 +33,16 @@ export default class UpdateItemPeriod extends Base {
     };
   }
 
-  async execute({ id, itemId, period, prices, roe }) {
+  async execute({ itemId, period, prices, roe }) {
     try {
-      const cart = await Cart.findById(id);
+      const userId = this.context.id || null;
+      const guestId = this.context.guestId || null;
+
+      const where = {};
+      if (userId) where.userId = userId;
+      if (guestId) where.guestId = guestId;
+
+      const cart = await Cart.findOne({ where });
 
       const existingCartItem = cart.items.find(cartItem => cartItem.id === itemId);
 

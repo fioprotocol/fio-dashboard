@@ -17,7 +17,6 @@ import Loader from '../../Loader/Loader';
 
 import useLoadFeePriceSuggestions from '../../../hooks/externalWalletsConnection/useLoadFeesSuggestions';
 import MathOp from '../../../util/math';
-import apis from '../../../api';
 
 import classes from './FeesModalInput.module.scss';
 
@@ -27,7 +26,6 @@ export type FeePriceOptionItem = {
   name: string;
   gasPrice: string;
   gasLimit?: string;
-  estimation?: string;
 };
 
 export const DEFAULT_GAS_LIMIT = 60000;
@@ -100,12 +98,6 @@ type TabProps = FieldRenderProps<Props> & {
   valueTitle: string;
 };
 
-const displayEstimation = (estimation: string) => {
-  return Number(estimation) / 60 >= 1
-    ? Number(estimation) / 60 + ' min'
-    : estimation + ' sec';
-};
-
 const CustomFeeInputsTab = ({
   input,
   hasError,
@@ -122,7 +114,6 @@ const CustomFeeInputsTab = ({
 }: TabProps) => {
   const advancedTabName = TabsList[1].title;
 
-  const [gasPriceEstimation, setGasPriceEstimation] = useState<string>(null);
   const [isGasLimitFieldDirty, setIsGasLimitFieldDirty] = useState(false);
   const [gasLimit, setGasLimit] = useState(
     input.value?.name === advancedTabName && input.value?.gasLimit
@@ -145,24 +136,9 @@ const CustomFeeInputsTab = ({
           ? ethers.utils.parseUnits(gasPrice, 'gwei').toString()
           : null,
         gasLimit: gasLimit?.length ? gasLimit : null,
-        estimation: null,
       });
     } else handleChangeModalValue(null);
   }, [gasLimit, gasPrice, isActive, handleChangeModalValue, advancedTabName]);
-
-  useEffect(() => {
-    const loadTimeEstimation = async () => {
-      if (gasPrice?.length) {
-        const predestinationValue = await apis.etherScan.getEstimationOfConfirmationTime(
-          gasPrice,
-        );
-        setGasPriceEstimation(
-          parseFloat(predestinationValue) > 0 ? predestinationValue : null, // if gasPrice value too big, etherscan returns 'Error!' string
-        );
-      } else setGasPriceEstimation(null);
-    };
-    if (!isNFT) loadTimeEstimation(); // polygonscan currently unable to make predestination
-  }, [gasPrice, isNFT]);
 
   return (
     <div>
@@ -249,16 +225,6 @@ const CustomFeeInputsTab = ({
               type="number"
               placeholder="Enter gas price"
             />
-            {gasPriceEstimation ? (
-              <div className={classes.customPredestination}>
-                <div className={classes.predestinationContainer}>
-                  <span className={classes.relateSymbolForCustomFeesInput}>
-                    &#126;
-                  </span>
-                  <span>{displayEstimation(gasPriceEstimation)}</span>
-                </div>
-              </div>
-            ) : null}
             <div>GWEI</div>
           </div>
           <LoadingIcon isVisible={isLoading} />
@@ -310,12 +276,6 @@ const TabsList = [
                     }
                   />
                   {o.name}
-                  {o.estimation?.length ? (
-                    <>
-                      <span className={classes.relateSymbol}>&#126;</span>
-                      {displayEstimation(o.estimation)}
-                    </>
-                  ) : null}
                 </div>
                 <div className={classes.suggestedOptionValue}>
                   {calculateGasFee(o.gasPrice)} {valueTitle}

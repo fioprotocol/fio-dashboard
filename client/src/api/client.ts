@@ -5,11 +5,13 @@ import config from '../config';
 import { ApisResponse } from './responses';
 
 export const isAdminService = (url: string): boolean => /admin/g.test(url);
+export const isGuestService = (url: string): boolean => /guest/g.test(url);
 
 export default class ApiClient {
   prefix: string;
   baseUrl: string;
   token: string | null;
+  guestToken: string | null;
   adminToken: string | null;
 
   constructor(prefix: string) {
@@ -17,6 +19,8 @@ export default class ApiClient {
     this.prefix = prefix;
     this.baseUrl = config.apiBaseUrl || '';
     this.token = window.localStorage.getItem(config.userTokenName) || null;
+    this.guestToken =
+      window.localStorage.getItem(config.guestTokenName) || null;
     this.adminToken =
       window.localStorage.getItem(config.adminTokenName) || null;
   }
@@ -33,6 +37,22 @@ export default class ApiClient {
   removeToken(): void {
     this.token = null;
     window.localStorage.removeItem(config.userTokenName);
+  }
+
+  setGuestToken(token: string): void {
+    this.guestToken = token;
+    window.localStorage.setItem(config.guestTokenName, token);
+  }
+
+  getGuestToken(): string {
+    return (
+      this.guestToken || window.localStorage.getItem(config.guestTokenName)
+    );
+  }
+
+  removeGuestToken(): void {
+    this.guestToken = null;
+    window.localStorage.removeItem(config.guestTokenName);
   }
 
   setAdminToken(adminToken: string): void {
@@ -90,9 +110,13 @@ export default class ApiClient {
     if (body) req.send(body);
     req.withCredentials();
 
-    if (isAdminService(url))
+    if (isAdminService(url) && this.adminToken) {
       req.set('Authorization', `Bearer ${this.getAdminToken()}`);
-    else if (this.token) req.set('Authorization', `Bearer ${this.getToken()}`);
+    } else if (this.token && !isGuestService(url)) {
+      req.set('Authorization', `Bearer ${this.getToken()}`);
+    } else {
+      req.set('Authorization', `Bearer ${this.getGuestToken()}`);
+    }
 
     // TODO: pass refcode to request?
 

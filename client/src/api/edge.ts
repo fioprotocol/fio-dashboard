@@ -93,7 +93,7 @@ export default class Edge extends Base {
     }
   }
 
-  async login(
+  login(
     username: string,
     password: string,
     options: EdgeAccountOptions = {},
@@ -101,12 +101,7 @@ export default class Edge extends Base {
     // returns EdgeAccount
     try {
       this.validateEdgeContext();
-      const account = await this.edgeContext.loginWithPassword(
-        username,
-        password,
-        options,
-      );
-      return account;
+      return this.edgeContext.loginWithPassword(username, password, options);
     } catch (e) {
       this.logError(e);
       throw e;
@@ -119,14 +114,10 @@ export default class Edge extends Base {
     }
   }
 
-  async loginPIN(username: string, pin: string): Promise<EdgeAccount> {
+  loginPIN(username: string, pin: string): Promise<EdgeAccount> {
     try {
       this.validateEdgeContext();
-      const account: EdgeAccount = await this.edgeContext.loginWithPIN(
-        username,
-        pin,
-      );
-      return account;
+      return this.edgeContext.loginWithPIN(username, pin);
     } catch (e) {
       this.logError(e);
       throw e;
@@ -152,11 +143,14 @@ export default class Edge extends Base {
     return true;
   }
 
-  async signup(username: string, password: string): Promise<EdgeAccount> {
+  signup(username: string, password: string): Promise<EdgeAccount> {
     // create account
     try {
       this.validateEdgeContext();
-      return this.edgeContext.createAccount({ username, password });
+      return this.edgeContext.createAccount({
+        username,
+        password,
+      });
     } catch (e) {
       this.logError(e);
       throw e;
@@ -250,6 +244,41 @@ export default class Edge extends Base {
     }
   }
 
+  async changeUsername({
+    newUsername,
+    password,
+    username,
+  }: {
+    newUsername: string;
+    password: string;
+    username: string;
+  }): Promise<{ status: number }> {
+    try {
+      const account = await this.login(username, password);
+      const results: { status: number } = { status: 0 };
+
+      if (account) {
+        await account.changeUsername({ username: newUsername, password });
+
+        // change username method doesn't return anything, so to be sure that new username was successfully changed we check if username available
+        const isNewUsernameSet = await this.usernameAvailable(newUsername);
+
+        await account.logout();
+
+        if (isNewUsernameSet) {
+          results.status = 1;
+        } else {
+          results.status = 0;
+        }
+      }
+
+      return results;
+    } catch (error) {
+      this.logError(error);
+      throw error;
+    }
+  }
+
   async checkRecoveryQuestions(username: string): Promise<boolean | undefined> {
     try {
       this.validateEdgeContext();
@@ -267,7 +296,7 @@ export default class Edge extends Base {
       const localUser = this.edgeContext.localUsers.find(
         localUser => localUser.username === username,
       );
-      return localUser && localUser.pinLoginEnabled;
+      return !!localUser?.pinLoginEnabled;
     } catch (e) {
       log.error(e);
     }
@@ -312,7 +341,7 @@ export default class Edge extends Base {
     }
   }
 
-  async loginWithRecovery(
+  loginWithRecovery(
     token: string,
     username: string,
     answers: string[],

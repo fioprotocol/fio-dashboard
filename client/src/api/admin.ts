@@ -211,7 +211,7 @@ export default class Admin extends Base {
     newPassword: string;
     oldPassword: string;
   }): Promise<AdminChangePasswordResponse> {
-    return this.apiClient.put(`admin/change-passowrd`, {
+    return this.apiClient.put(`admin/change-password`, {
       data,
     });
   }

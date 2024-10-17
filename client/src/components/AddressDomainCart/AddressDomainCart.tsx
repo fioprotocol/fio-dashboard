@@ -17,7 +17,6 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
 import {
   isNoProfileFlow as isNoProfileFlowSelector,
   refProfileCode,
@@ -52,13 +51,11 @@ type Props = {
   lastAuthData: LastAuthData;
   loading: boolean;
   deleteItem: (data: {
-    id: string;
     itemId: string;
     item: CartItem;
     prices: NativePrices;
     refCode?: string;
     roe: number;
-    userId?: string;
   }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
@@ -66,7 +63,6 @@ type Props = {
 
 const AddressDomainCart: React.FC<Props> = props => {
   const {
-    cartId,
     cartItems,
     deleteItem,
     hasFreeAddress,
@@ -81,7 +77,6 @@ const AddressDomainCart: React.FC<Props> = props => {
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
-  const userId = useSelector(userIdSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
 
   const isCartEmpty = count === 0;
@@ -118,13 +113,11 @@ const AddressDomainCart: React.FC<Props> = props => {
 
   const handleDeleteItem = (item: CartItem) => {
     deleteItem({
-      id: cartId,
       itemId: item.id,
       item,
       prices: prices?.nativeFio,
       refCode,
       roe,
-      userId,
     });
   };
 

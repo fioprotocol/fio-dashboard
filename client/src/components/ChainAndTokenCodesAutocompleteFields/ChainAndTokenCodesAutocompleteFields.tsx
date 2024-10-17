@@ -73,10 +73,12 @@ export const ChainAndTokenCodesAutocompleteFields: React.FC<ChainAndTokenCodesAu
           label={tokenCodeFieldLabel}
           onClear={setSelectedTokensToList}
           onInputChange={onTokenCodeChange}
-          optionsList={tokenCodesList.map(chainCodeItem => {
-            const { tokenCodeId: id, tokenCodeName: name } = chainCodeItem;
-            return { id, name };
-          })}
+          optionsList={tokenCodesList
+            .sort((a, b) => a?.tokenCodeId?.localeCompare(b?.tokenCodeId))
+            .map(chainCodeItem => {
+              const { tokenCodeId: id, tokenCodeName: name } = chainCodeItem;
+              return { id, name };
+            })}
           onBlur={onBlur}
           placeholder="Type Token Code"
           upperCased={true}

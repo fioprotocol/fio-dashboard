@@ -1,16 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
+import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../constants/fio';
 
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
@@ -59,8 +56,8 @@ export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {
 
     if (allowDisconnectAll) {
       const actionParam = {
-        action: TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses],
-        account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+        action: Action.removeAllAddresses,
+        account: Account.address,
         data: {
           fio_address: fioHandle,
           tpid: apis.fio.tpid,
@@ -87,8 +84,8 @@ export const DeleteSocialMediaLinkMetamaskWallet: React.FC<Props> = props => {
         }
 
         const actionParam = {
-          action: TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses],
-          account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+          action: Action.removeAddress,
+          account: Account.address,
           data: {
             fio_address: fioHandle,
             public_addresses,

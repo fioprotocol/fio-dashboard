@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -8,11 +10,7 @@ import { linkTokensEdge } from '../../../api/middleware/fio';
 import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import {
-  ACTIONS,
-  BUNDLES_TX_COUNT,
-  FIO_CHAIN_CODE,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { RequestTokensValues } from '../types';
@@ -63,7 +61,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
 
     const result = await apis.fio.executeAction(
       keys,
-      ACTIONS.requestFunds,
+      GenericAction.requestFunds,
       params,
     );
     let mapError;

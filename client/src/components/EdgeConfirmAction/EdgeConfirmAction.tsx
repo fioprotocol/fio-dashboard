@@ -1,4 +1,5 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
+import isEqual from 'lodash/isEqual';
 
 import Processing from '../../components/common/TransactionProcessing';
 
@@ -51,7 +52,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     fioActionExecuted,
   } = props;
 
-  const [initLaunch, setInitLaunch] = useState<boolean>(false);
+  const lastDataRef = useRef<AnyType>(null);
 
   // Submit an action
   const submit = useCallback(
@@ -149,23 +150,27 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
   // Show pin modal
   useEffect(() => {
-    if (data != null && !confirmPinKeys && !initLaunch) {
+    if (
+      data != null &&
+      !confirmPinKeys &&
+      !isEqual(data, lastDataRef.current)
+    ) {
       const pinData = data ? { ...data, onCancel } : null;
+      lastDataRef.current = data;
       showPinModal(action, pinData);
     }
-  }, [data, action, confirmPinKeys, showPinModal, onCancel, initLaunch]);
+  }, [data, action, confirmPinKeys, showPinModal, onCancel]);
 
   // Handle confirmPinKeys is set
   useEffect(() => {
-    if (!initLaunch && data != null && confirmPinKeys && !processing) {
-      setInitLaunch(true);
+    if (data != null && confirmPinKeys && !processing) {
       submit({
         keys: confirmPinKeys,
         action,
         data,
       });
     }
-  }, [data, action, confirmPinKeys, initLaunch, submit, processing]);
+  }, [data, action, confirmPinKeys, submit, processing]);
 
   // Handle pin confirmation
   useEffect(() => {
@@ -173,13 +178,11 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       pinConfirmation != null &&
       pinConfirmation.action &&
       pinConfirmation.action === action &&
-      !processing &&
-      !initLaunch
+      !processing
     ) {
-      setInitLaunch(true);
       submit(pinConfirmation);
     }
-  }, [pinConfirmation, action, processing, submit, initLaunch]);
+  }, [pinConfirmation, action, processing, submit]);
 
   return (
     <Processing

@@ -1,4 +1,4 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
+import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import {
@@ -21,7 +21,6 @@ import {
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
 import { fioApi } from '../../external/fio';
 import { getROE } from '../../external/roe';
-import { FIO_ACTIONS } from '../../config/constants.js';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -92,10 +91,13 @@ export default class BuyAddress extends Base {
       });
     }
 
-    const { type, fioAddress, fioDomain } = destructAddress(address);
+    const lowerCasedAddress = address ? address.toLowerCase() : address;
+    const { type, fioAddress, fioDomain } = destructAddress(lowerCasedAddress);
 
     try {
-      fioAddress ? FIOSDK.isFioAddressValid(address) : FIOSDK.isFioDomainValid(fioDomain);
+      fioAddress
+        ? FIOSDK.isFioAddressValid(lowerCasedAddress)
+        : FIOSDK.isFioDomainValid(fioDomain);
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid ${type}`,
@@ -137,7 +139,7 @@ export default class BuyAddress extends Base {
 
     if (type === 'account') {
       const addressFromChain = await fioApi
-        .getFioAddress(address)
+        .getFioAddress(lowerCasedAddress)
         .then(formatChainAddress);
 
       if (addressFromChain) {
@@ -151,7 +153,7 @@ export default class BuyAddress extends Base {
       const isRegistrationAddressExist = await this.isSameAccountRegistrationExist(
         publicKey,
         refProfile,
-        address,
+        lowerCasedAddress,
       );
 
       if (isRegistrationAddressExist) {
@@ -270,9 +272,9 @@ export default class BuyAddress extends Base {
 
       const action = address
         ? isDomainExist
-          ? FIO_ACTIONS.registerFioAddress
-          : FIO_ACTIONS.registerFioDomainAddress
-        : FIO_ACTIONS.registerFioDomain;
+          ? GenericAction.registerFioAddress
+          : GenericAction.registerFioDomainAddress
+        : GenericAction.registerFioDomain;
 
       orderItem = await OrderItem.create(
         {

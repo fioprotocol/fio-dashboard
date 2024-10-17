@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import apis from '../../api';
+import { EndPoint } from '@fioprotocol/fiosdk';
 
 import { refreshBalance, getFee } from '../../redux/fio/actions';
 
@@ -20,9 +20,7 @@ const reduxConnect = connect(
     refreshBalance,
     getFee: (isFioAddress: boolean) =>
       getFee(
-        isFioAddress
-          ? apis.fio.actionEndPoints.transferFioAddress
-          : apis.fio.actionEndPoints.transferFioDomain,
+        isFioAddress ? EndPoint.transferFioAddress : EndPoint.transferFioDomain,
       ),
   },
 );

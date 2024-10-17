@@ -15,15 +15,12 @@ export const isFioDomainValidator: FieldValidationFunctionSync = ({
         : message?.[0] || 'FIO Domain is not valid',
   };
 
-  try {
-    apis.fio.isFioDomainValid(value);
+  if (apis.fio.publicFioSDK.validateFioDomain(value)) {
     return {
       ...validationResult,
       succeeded: true,
       message: '',
     };
-  } catch (e) {
-    //
   }
 
   return validationResult;

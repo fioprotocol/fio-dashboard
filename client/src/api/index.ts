@@ -9,7 +9,6 @@ import ChainCode from './chain-code';
 import Contacts from './contacts';
 import DomainsWatchlist from './domains-watchilst';
 import Edge from './edge';
-import EtherScan from './ether-scan';
 import Fio from './fio';
 import FioHistory from './fio-history';
 import FioReg from './fio-reg';
@@ -29,8 +28,6 @@ import Users from './users';
 import Vars from './vars';
 import WrapStatus from './wrap-status';
 
-import { log } from '../util/general';
-
 const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
@@ -47,7 +44,7 @@ window.fioCorsFixfetch = async (
   try {
     return await fioCorsFixfetch(uri, { ...opts });
   } catch (err) {
-    log.error(err);
+    //
   }
 };
 
@@ -61,7 +58,6 @@ export type Api = {
   contacts: Contacts;
   domainsWatchlist: DomainsWatchlist;
   edge: Edge;
-  etherScan: EtherScan;
   fioReg: FioReg;
   fio: Fio;
   general: General;
@@ -91,7 +87,6 @@ const apis = {
   contacts: new Contacts(apiClient),
   domainsWatchlist: new DomainsWatchlist(apiClient),
   edge: new Edge(apiClient),
-  etherScan: new EtherScan(apiClient),
   fioHistory: new FioHistory(),
   fioReg: new FioReg(apiClient),
   fio: new Fio(),

@@ -14,10 +14,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   userId as userIdSelector,
   user as userSelector,
@@ -96,7 +93,6 @@ export const useContext = (): UseContextProps => {
     setNetwork,
   } = providerData;
 
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
   const lastAuthData = useSelector(lastAuthDataSelector);
   const refProfileInfo = useSelector(refProfileInfoSelector);
@@ -381,14 +377,12 @@ export const useContext = (): UseContextProps => {
 
         dispatch(
           addItemToCart({
-            id: cartId,
             item: cartItem,
             publicKey: metamaskUserPublicKey,
             prices: prices?.nativeFio,
             refCode,
             roe,
             token: gatedToken,
-            userId,
           }),
         );
 
@@ -414,9 +408,7 @@ export const useContext = (): UseContextProps => {
       existingUsersFreeAddress,
       user?.userProfileType,
       dispatch,
-      cartId,
       gatedToken,
-      userId,
       isNoProfileFlow,
       history,
       lastAuthData,

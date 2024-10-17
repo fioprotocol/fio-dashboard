@@ -144,7 +144,7 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               subTitle="Manually set fees by selecting one of the basics options or for a more advanced option, set your own."
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              valueTitle="MATIC"
+              valueTitle="POL"
               isNFT
             />
 

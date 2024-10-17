@@ -1,4 +1,4 @@
-import { ACTIONS, TRANSACTION_ACTION_NAMES } from '../../../constants/fio';
+import { Action } from '@fioprotocol/fiosdk';
 
 export const CUSTOM_ACTION_NAME = 'customAction';
 export const DECRYPT_FIO_REQUEST_CONTENT_NAME = 'decryptContent';
@@ -6,80 +6,80 @@ export const DECRYPT_OBT_DATA_CONTENT_NAME = 'decryptObtDataContent';
 
 export const FIO_ACTIONS_OBJECT_LIST = [
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.addBundledTransactions],
+    id: Action.addBundledTransactions,
     name: 'Add Bundles',
   },
-  { id: TRANSACTION_ACTION_NAMES[ACTIONS.addNft], name: 'Add NFT' },
+  { id: Action.addNft, name: 'Add NFT' },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddress],
+    id: Action.addPublicAddresses,
     name: 'Add Public Address',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility],
+    id: Action.setDomainPublic,
     name: 'Change FIO Domain Visibility',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress],
+    id: Action.regAddress,
     name: 'Register FIO Handle',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.registerFioDomain],
+    id: Action.regDomain,
     name: 'Register FIO Domain',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.renewFioDomain],
+    id: Action.renewDomain,
     name: 'Renew FIO Domain',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses],
+    id: Action.removeAllAddresses,
     name: 'Remove All Public Addresses',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses],
+    id: Action.removeAddress,
     name: 'Remove Public Address',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens],
+    id: Action.stake,
     name: 'Stake FIO Tokens',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress],
+    id: Action.transferAddress,
     name: 'Transfer FIO Address',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain],
+    id: Action.transferDomain,
     name: 'Transfer FIO Domain',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens],
+    id: Action.transferTokensKey,
     name: 'Transfer FIO Tokens',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens],
+    id: Action.unstake,
     name: 'Unstake FIO Tokens',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds],
+    id: Action.newFundsRequest,
     name: 'Create FIO Request',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
+    id: Action.cancelFundsRequest,
     name: 'Cancel FIO Request',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData],
+    id: Action.recordObt,
     name: 'Record Obt Data',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest],
+    id: Action.rejectFundsRequest,
     name: 'Reject FIO Request',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain],
+    id: Action.wrapDomain,
     name: 'Wrap FIO Domain',
   },
   {
-    id: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens],
+    id: Action.wrapTokens,
     name: 'Wrap FIO Tokens',
   },
   {

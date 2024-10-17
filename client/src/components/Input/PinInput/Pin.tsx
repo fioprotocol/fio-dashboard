@@ -95,6 +95,7 @@ const PinInput: React.FC<PinProps> = props => {
           classes.pin,
           error && classes.error,
           withoutMargin && classes.withoutMargin,
+          'sentry-block',
         )}
       >
         <input

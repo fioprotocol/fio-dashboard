@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Base from '../Base';
+import logger from '../../logger.mjs';
 
 import {
   Cart,
@@ -23,6 +24,7 @@ import {
   cartItemsToOrderItems,
   handlePrices,
 } from '../../utils/cart.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -36,7 +38,6 @@ export default class OrdersCreate extends Base {
             publicKey: 'string',
             paymentProcessor: 'string',
             refProfileId: 'string',
-            userId: 'string',
             prices: [
               {
                 nested_object: {
@@ -71,36 +72,57 @@ export default class OrdersCreate extends Base {
       prices,
       refProfileId,
       data,
-      userId,
       refCode,
     },
   }) {
-    let order = await Order.findOne({
-      where: {
-        status: Order.STATUS.NEW,
-        userId,
-        createdAt: {
-          [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
-        },
+    let user;
+
+    if (this.context.id) {
+      user = await User.findActive(this.context.id);
+    } else if (publicKey && refCode) {
+      const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+        publicKey,
+        refCode,
+      );
+      user = resolvedUser;
+    }
+
+    const cart = await Cart.findById(cartId);
+
+    if (!user || !cart) {
+      if (!user)
+        logger.error(
+          `Error user not found: cartId - ${cartId}, refCode - ${refCode}, publicKey - ${publicKey}`,
+        );
+      if (!cart)
+        logger.error(
+          `Error cart not found: cartId - ${cartId}, refCode - ${refCode}, publicKey - ${publicKey}`,
+        );
+
+      throw new X({
+        code: 'NOT_FOUND',
+      });
+    }
+
+    const orderWhere = {
+      status: Order.STATUS.NEW,
+      userId: user.id,
+      createdAt: {
+        [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
       },
+    };
+
+    if (cart.guestId) {
+      orderWhere.guestId = cart.guestId;
+    }
+
+    let order = await Order.findOne({
+      where: orderWhere,
       include: [OrderItem],
     });
 
     let payment = null;
     const orderItems = [];
-
-    const user = await User.findActive(userId);
-
-    const cart = await Cart.findById(cartId);
-
-    if (!cart) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
-          cart: 'NOT_FOUND',
-        },
-      });
-    }
 
     const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
       cartItems: cart.items,
@@ -117,13 +139,12 @@ export default class OrdersCreate extends Base {
           refCode,
         })
       : [];
-    const userHasFreeAddress =
-      !publicKey && !userId
-        ? []
-        : await FreeAddress.getItems({
-            publicKey: cartPublicKey,
-            userId,
-          });
+    const userHasFreeAddress = !publicKey
+      ? []
+      : await FreeAddress.getItems({
+          publicKey: cartPublicKey,
+          userId: user.id,
+        });
 
     const {
       addBundles: addBundlesPrice,
@@ -158,7 +179,7 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    const wallet = await Wallet.findOneWhere({ userId, publicKey });
+    const wallet = await Wallet.findOneWhere({ userId: user.id, publicKey });
 
     const items = await cartItemsToOrderItems({
       allRefProfileDomains,
@@ -181,7 +202,8 @@ export default class OrdersCreate extends Base {
             roe,
             publicKey,
             customerIp: this.context.ipAddress,
-            userId,
+            userId: user.id,
+            guestId: cart.guestId,
             refProfileId: refProfileId ? refProfileId : user.refProfileId,
             data,
           },

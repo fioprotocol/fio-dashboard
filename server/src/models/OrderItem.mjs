@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 
-import { FIO_ACTIONS } from '../config/constants.js';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from './Base';
 import { Order } from './Order';
@@ -14,7 +14,7 @@ const { DataTypes: DT } = Sequelize;
 
 export class OrderItem extends Base {
   static get ACTION() {
-    return FIO_ACTIONS;
+    return GenericAction;
   }
 
   static init(sequelize) {
@@ -123,16 +123,37 @@ export class OrderItem extends Base {
     });
   }
 
-  static async listAll(limit = 25, offset = 0, where) {
-    const orderItems = await this.findAll({
-      include: [Order, OrderItemStatus, BlockchainTransaction],
-      limit: limit ? limit : undefined,
-      skip: offset,
-      where,
-      order: [['id', 'DESC']],
-    });
+  static async listAll({ ordersIds }) {
+    const query = `
+      SELECT
+          oi.action,
+          oi."priceCurrency",
+          oi.price,
+          oi."nativeFio",
+          oi.data,
+          oi.id,
+          o.number,
+          o.roe,
+          ois."txStatus",
+          ois."paymentStatus",
+          bt."feeCollected"
+      FROM
+          "order-items" AS oi
+      JOIN
+          orders AS o ON oi."orderId" = o.id
+      JOIN
+          "order-items-status" AS ois ON oi.id = ois."orderItemId"
+      LEFT JOIN
+        "blockchain-transactions" AS bt ON ois."blockchainTransactionId" = bt.id
+      WHERE
+          oi."orderId" IN (${ordersIds})
+      ORDER BY
+          oi.id DESC
+  `;
 
-    return orderItems.map(orderItem => this.format(orderItem));
+    return this.sequelize.query(query, {
+      type: this.sequelize.QueryTypes.SELECT,
+    });
   }
 
   // todo: one of the usage is to get amount of FIO Handle registrations by fio domains to check if there is no limit reached

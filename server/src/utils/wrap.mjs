@@ -76,7 +76,7 @@ export const normalizeWrapData = wrapItem => {
   }
   if (chain_code) {
     approvals.chainCode =
-      chain_code === WRAP_STATUS_NETWORKS.MATIC
+      chain_code === WRAP_STATUS_NETWORKS.MATIC || chain_code === WRAP_STATUS_NETWORKS.POL
         ? WRAP_STATUS_NETWORKS.POLYGON
         : chain_code;
   }

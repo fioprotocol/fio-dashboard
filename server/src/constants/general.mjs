@@ -1,3 +1,5 @@
+import { DAY_MS } from '../config/constants.js';
+
 export const NFT_LABEL = 'NFT';
 export const TOKEN_LABEL = 'TOKEN';
 
@@ -8,3 +10,9 @@ export const HTTP_CODES = {
   INTERNAL_SERVER_ERROR: 500,
   SERVICE_UNAVAILABLE: 503,
 };
+
+export const ACTION_EPX_TIME = DAY_MS * 30;
+
+export const DEFAULT_LIMIT = 25;
+export const MAX_LIMIT = 50;
+export const DEFAULT_OFFSET = 0;

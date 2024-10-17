@@ -2,15 +2,11 @@ import { ChangeEvent, useCallback, useState } from 'react';
 
 import { createHmac, randomBytes } from 'crypto-browserify';
 
+import { Account, Action, ContentType } from '@fioprotocol/fiosdk';
+
 import { MetamaskSnapProps } from '../../../services/MetamaskSnap';
 import { log } from '../../../util/general';
-import {
-  ACTIONS,
-  FIO_CHAIN_CODE,
-  FIO_CONTENT_TYPES,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
+import { FIO_CHAIN_CODE } from '../../../constants/fio';
 import { DEFAULT_BUNDLE_SET_VALUE } from '../../../constants/common';
 import {
   CUSTOM_ACTION_NAME,
@@ -18,16 +14,17 @@ import {
   DECRYPT_OBT_DATA_CONTENT_NAME,
 } from './constants';
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+import { AnyType } from '../../../types';
 
 const DEFAULT_ORACLE_FEE_AMOUNT = '150000000000';
 
 type UseContextProps = {
   activeAction: string;
   derivationIndex: number;
-  executedTxn: any;
+  executedTxn: AnyType;
   executedTxnError: Error | null;
   executedTxnLoading: boolean;
-  fioActionFormParams: any;
+  fioActionFormParams: AnyType;
   nonce: string | null;
   signature: string;
   onActionChange: (value: string) => void;
@@ -36,7 +33,7 @@ type UseContextProps = {
   onDecryptContent: () => void;
   onDerivationIndexUpdate: (event: ChangeEvent<HTMLInputElement>) => void;
   onSignTxn: () => void;
-  onSubmitActionForm: (values: any) => void;
+  onSubmitActionForm: (values: AnyType) => void;
   onSubmitSecret: (values: { secret: string }) => void;
   signNonce: () => void;
 };
@@ -60,14 +57,15 @@ export const useContext = (
   } = metamaskSnapContext;
 
   const [activeAction, setActiveAction] = useState<string | null>(null);
-  const [executedTxn, setExecutedTxn] = useState<any | null>(null);
+  const [executedTxn, setExecutedTxn] = useState<AnyType | null>(null);
   const [executedTxnLoading, toggleExecutedTxnLoading] = useState<boolean>(
     false,
   );
   const [executedTxnError, setExecutedTxnError] = useState<Error | null>(null);
-  const [fioActionFormParams, setFioActionFormParams] = useState<any | null>(
-    null,
-  );
+  const [
+    fioActionFormParams,
+    setFioActionFormParams,
+  ] = useState<AnyType | null>(null);
   const [nonce, setNonce] = useState<string | null>(null);
 
   const onActionChange = useCallback(
@@ -89,7 +87,7 @@ export const useContext = (
       toggleExecutedTxnLoading(true);
 
       const pushResult = await fetch(
-        'https://fiotestnet.blockpane.com/v1/chain/push_transaction',
+        'https://test.fio.eosusa.io/v1/chain/push_transaction',
         {
           body: JSON.stringify(signedTxn),
           method: 'POST',
@@ -191,7 +189,7 @@ export const useContext = (
     } = {
       apiUrl: 'https://fiotestnet.blockpane.com',
       action: activeAction,
-      account: FIO_CONTRACT_ACCOUNT_NAMES.fioAddress,
+      account: Account.address,
       data: {
         tpid: process.env.REACT_APP_DEFAULT_TPID || '',
         max_fee: DEFAULT_ACTION_FEE_AMOUNT,
@@ -200,14 +198,14 @@ export const useContext = (
     };
 
     switch (activeAction) {
-      case TRANSACTION_ACTION_NAMES[ACTIONS.addBundledTransactions]:
+      case Action.addBundledTransactions:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
           bundle_sets: DEFAULT_BUNDLE_SET_VALUE,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.addNft]:
+      case Action.addNft:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -225,7 +223,7 @@ export const useContext = (
           ],
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.addPublicAddress]:
+      case Action.addPublicAddresses:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -238,18 +236,18 @@ export const useContext = (
           ],
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+      case Action.cancelFundsRequest:
+        params.account = Account.reqObt;
         params.data = {
           ...params.data,
           fio_request_id: fioActionFormParams.fioRequestId,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.recordObtData]: {
+      case Action.recordObt: {
         const payeePublicKey = await new FioApi().getFioPublicAddress(
           fioActionFormParams.payeeFioHandle,
         );
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+        params.account = Account.reqObt;
         params.data = {
           ...params.data,
           content: {
@@ -268,26 +266,26 @@ export const useContext = (
           payee_fio_address: fioActionFormParams.payeeFioHandle,
           fio_request_id: fioActionFormParams.fioRequestId || '',
         };
-        params.contentType = FIO_CONTENT_TYPES.RECORD_OBT_DATA;
+        params.contentType = ContentType.recordObtDataContent;
         break;
       }
-      case TRANSACTION_ACTION_NAMES[ACTIONS.registerFioAddress]:
+      case Action.regAddress:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
           owner_fio_public_key: publicKey,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.registerFioDomain]:
+      case Action.regDomain:
         params.data = {
           ...params.data,
           fio_domain: fioActionFormParams.fioDomain,
           owner_fio_public_key: publicKey,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.requestFunds]:
+      case Action.newFundsRequest:
         {
-          params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+          params.account = Account.reqObt;
           params.data = {
             ...params.data,
             payer_fio_address: fioActionFormParams.payerFioHandle,
@@ -303,34 +301,34 @@ export const useContext = (
               offline_url: fioActionFormParams.offlineUrl || null,
             },
           };
-          params.contentType = FIO_CONTENT_TYPES.NEW_FUNDS;
+          params.contentType = ContentType.newFundsContent;
           const payerFioPublicKey = await new FioApi().getFioPublicAddress(
             fioActionFormParams.payerFioHandle,
           );
           params.payerFioPublicKey = payerFioPublicKey.public_address;
         }
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.setFioDomainVisibility]:
+      case Action.setDomainPublic:
         params.data = {
           ...params.data,
           fio_domain: fioActionFormParams.fioDomain,
           is_public: Number(fioActionFormParams.isPublic),
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.rejectFundsRequest]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt;
+      case Action.rejectFundsRequest:
+        params.account = Account.reqObt;
         params.data = {
           ...params.data,
           fio_request_id: fioActionFormParams.fioRequestId,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.removeAllPublicAddresses]:
+      case Action.removeAllAddresses:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.removePublicAddresses]:
+      case Action.removeAddress:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -343,14 +341,14 @@ export const useContext = (
           ],
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.renewFioDomain]:
+      case Action.renewDomain:
         params.data = {
           ...params.data,
           fio_domain: fioActionFormParams.fioDomain,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.stakeFioTokens]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
+      case Action.stake:
+        params.account = Account.staking;
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -360,22 +358,22 @@ export const useContext = (
           tpid: 'dashboard@fiotestnet',
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioAddress]:
+      case Action.transferAddress:
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
           new_owner_fio_public_key: fioActionFormParams.newOwnerPublicKey,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.transferFioDomain]:
+      case Action.transferDomain:
         params.data = {
           ...params.data,
           fio_domain: fioActionFormParams.fioDomain,
           new_owner_fio_public_key: fioActionFormParams.newOwnerPublicKey,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.transferTokens]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioToken;
+      case Action.transferTokensKey:
+        params.account = Account.token;
         params.data = {
           ...params.data,
           amount: new FioApi()
@@ -384,8 +382,8 @@ export const useContext = (
           payee_public_key: fioActionFormParams.payeeFioPublicKey,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.unStakeFioTokens]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioStaking;
+      case Action.unstake:
+        params.account = Account.staking;
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
@@ -395,8 +393,8 @@ export const useContext = (
           tpid: 'dashboard@fiotestnet',
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioOracle;
+      case Action.wrapDomain:
+        params.account = Account.oracle;
         params.data = {
           ...params.data,
           fio_domain: fioActionFormParams.fioDomain,
@@ -405,8 +403,8 @@ export const useContext = (
           max_oracle_fee: DEFAULT_ORACLE_FEE_AMOUNT,
         };
         break;
-      case TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens]:
-        params.account = FIO_CONTRACT_ACCOUNT_NAMES.fioOracle;
+      case Action.wrapTokens:
+        params.account = Account.oracle;
         params.data = {
           ...params.data,
           amount: new FioApi()
@@ -439,7 +437,7 @@ export const useContext = (
   ]);
 
   const onSubmitActionForm = useCallback(
-    (values: any) => {
+    (values: AnyType) => {
       setFioActionFormParams(values);
       setExecutedTxn(null);
       setExecutedTxnError(null);
@@ -485,10 +483,10 @@ export const useContext = (
 
     switch (activeAction) {
       case DECRYPT_FIO_REQUEST_CONTENT_NAME:
-        params.contentType = FIO_CONTENT_TYPES.NEW_FUNDS;
+        params.contentType = ContentType.newFundsContent;
         break;
       case DECRYPT_OBT_DATA_CONTENT_NAME:
-        params.contentType = FIO_CONTENT_TYPES.RECORD_OBT_DATA;
+        params.contentType = ContentType.recordObtDataContent;
         break;
       default:
         break;

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { RequestStatus } from '@fioprotocol/fiosdk';
+
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
@@ -12,7 +14,7 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import { RequestTokensMetamaskWallet } from './components/RequestTokensMetamaskWallet';
 
 import { LINKS } from '../../constants/labels';
-import { FIO_CHAIN_CODE, FIO_REQUEST_STATUS_TYPES } from '../../constants/fio';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { emptyWallet } from '../../redux/fio/reducer';
@@ -164,7 +166,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
           to: resultsData.other.toFioAddress,
           payeeFioPublicKey: resultsData.other.payeeTokenPublicAddress,
           date: resultsData.other.block_time,
-          status: FIO_REQUEST_STATUS_TYPES.PENDING,
+          status: RequestStatus.requested,
           fioTxType: FIO_RECORD_TYPES.SENT,
         },
         fioDecryptedContent: {

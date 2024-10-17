@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
@@ -7,7 +9,6 @@ import MathOp from '../../../util/math';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
-  ACTIONS,
   BUNDLES_TX_COUNT,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
 } from '../../../constants/fio';
@@ -39,15 +40,19 @@ const StakeTokensEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const stake = async ({ keys, data }: SubmitActionParams) => {
-    const result = await apis.fio.executeAction(keys, ACTIONS.stakeFioTokens, {
-      amount: apis.fio.amountToSUF(data.amount),
-      fioAddress: data.fioAddress,
-      maxFee: new MathOp(fee)
-        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-        .round(0)
-        .toNumber(),
-      technologyProviderId: data.proxy,
-    });
+    const result = await apis.fio.executeAction(
+      keys,
+      GenericAction.stakeFioTokens,
+      {
+        amount: apis.fio.amountToSUF(data.amount),
+        fioAddress: data.fioAddress,
+        maxFee: new MathOp(fee)
+          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+          .round(0)
+          .toNumber(),
+        technologyProviderId: data.proxy,
+      },
+    );
     return {
       ...result,
       bundlesCollected: result.fee_collected ? 0 : BUNDLES_TX_COUNT.STAKE,

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
+import { FIOSDK } from '@fioprotocol/fiosdk';
+
 import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
@@ -14,11 +16,11 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
-import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
-  isAuthenticated,
-  userId as userIdSelector,
-} from '../../redux/profile/selectors';
+  loading as walletsLoadingSelector,
+  fioWallets as fioWalletsSelector,
+} from '../../redux/fio/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   hasGetPricesError as hasGetPricesErrorSelector,
   loading as loadingSelector,
@@ -78,7 +80,7 @@ type UseContextReturnType = {
   isFree: boolean;
   isNoProfileFlow: boolean;
   isPriceChanged: boolean;
-  loadingCart: boolean;
+  loading: boolean;
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   paymentWalletPublicKey: string;
@@ -104,16 +106,15 @@ export const useContext = (): UseContextReturnType => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userWallets = useSelector(fioWalletsSelector);
+  const walletsLoading = useSelector(walletsLoadingSelector);
   const loadingCart = useSelector(loadingCartSelector);
   const refProfile = useSelector(refProfileInfo);
-  const userId = useSelector(userIdSelector);
 
   const dispatch = useDispatch();
 
   const history = useHistory();
 
   const isNoProfileFlow = refProfile?.settings?.hasNoProfileFlow;
-  const refCode = refProfile?.code;
   const isAffiliateEnabled = refProfile?.type === REF_PROFILE_TYPE.AFFILIATE;
 
   const walletCount = userWallets.length;
@@ -155,9 +156,7 @@ export const useContext = (): UseContextReturnType => {
     costUsdc: totalCartUsdcAmount,
   } = (cartItems && totalCost(cartItems, roe)) || {};
 
-  const totalCartAmount = apis.fio
-    .sufToAmount(totalCartNativeAmount)
-    .toFixed(2);
+  const totalCartAmount = FIOSDK.SUFToAmount(totalCartNativeAmount).toFixed(2);
 
   const hasLowBalance =
     userWallets &&
@@ -289,7 +288,6 @@ export const useContext = (): UseContextReturnType => {
 
         dispatch(
           recalculateOnPriceUpdate({
-            id: cartId,
             prices: updatedPrices?.pricing?.nativeFio,
             roe: updatedRoe,
           }),
@@ -320,21 +318,12 @@ export const useContext = (): UseContextReturnType => {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
-        refCode,
-        userId,
+        refCode: refProfile?.code,
       };
 
       if (isNoProfileFlow) {
         orderParams.refProfileId = refProfile.id;
         orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
-
-        if (!userId && publicKey && refCode) {
-          const users = await apis.auth.createNoRegisterUser({
-            publicKey,
-            refCode,
-          });
-          orderParams.userId = users[0]?.id;
-        }
       }
 
       await apis.orders.create(orderParams);
@@ -351,7 +340,7 @@ export const useContext = (): UseContextReturnType => {
             NOT_FOUND_CART_BUTTON_TEXT,
           ),
         );
-        dispatch(clearCart({ id: cartId }));
+        dispatch(clearCart());
       } else {
         dispatch(showGenericErrorModal());
       }
@@ -442,7 +431,7 @@ export const useContext = (): UseContextReturnType => {
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
     hasLowBalance,
-    loadingCart,
+    loading: loading || loadingCart || walletsLoading,
     walletCount,
     isAffiliateEnabled,
     isFree,

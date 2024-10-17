@@ -15,15 +15,12 @@ export const isChainCodeValidator: FieldValidationFunctionSync = ({
         : message?.[0] || 'Not valid chain code',
   };
 
-  try {
-    apis.fio.isChainCodeValid(value);
+  if (apis.fio.publicFioSDK.validateChainCode(value)) {
     return {
       ...validationResult,
       succeeded: true,
       message: '',
     };
-  } catch (e) {
-    //
   }
 
   return validationResult;

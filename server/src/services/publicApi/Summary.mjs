@@ -5,7 +5,7 @@ import {
   generateErrorResponse,
   generateSummaryResponse,
   whereLastRow,
-  whereNotOf,
+  whereOneOf,
 } from '../../utils/publicApi.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
@@ -18,6 +18,7 @@ import {
   PaymentEventLog,
   ReferrerProfile,
 } from '../../models/index.mjs';
+import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 
 export default class Summary extends Base {
   async execute(args) {
@@ -64,18 +65,20 @@ export default class Summary extends Base {
     const orderItemWhere = {};
 
     if (address) {
-      orderItemWhere.address = address;
+      orderItemWhere.address = address.toLowerCase();
     }
 
     if (domain) {
-      orderItemWhere.domain = domain;
+      orderItemWhere.domain = domain.toLowerCase();
     }
 
     if (type) {
       orderItemWhere.action = type;
     }
 
-    const orderWhere = {};
+    const orderWhere = {
+      'data.orderUserType': ORDER_USER_TYPES.PARTNER_API_CLIENT,
+    };
 
     if (publicKey) {
       orderWhere.publicKey = publicKey;
@@ -102,7 +105,7 @@ export default class Summary extends Base {
     }
 
     const paymentWhere = {
-      ...whereNotOf('processor', [Payment.PROCESSOR.SYSTEM]),
+      ...whereOneOf('processor', [Payment.PROCESSOR.FIO, Payment.PROCESSOR.BITPAY]),
     };
 
     if (accountPayId) {
@@ -114,7 +117,6 @@ export default class Summary extends Base {
     }
 
     const isItemFilterApplied = Object.keys(orderItemWhere).length > 0;
-    const isOrderFilterApplied = Object.keys(orderWhere).length > 0;
 
     const result = await OrderItem.findAll({
       attributes: ['address', 'domain'],
@@ -125,7 +127,7 @@ export default class Summary extends Base {
           attributes: ['id', 'publicKey'],
           model: Order,
           required: true,
-          where: isOrderFilterApplied ? orderWhere : undefined,
+          where: orderWhere,
           include: [
             {
               attributes: [

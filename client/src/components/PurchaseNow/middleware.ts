@@ -1,10 +1,12 @@
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import { setFioName } from '../../utils';
 
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
 import { CartItem, NativePrices } from '../../types';
@@ -79,7 +81,7 @@ export const makeRegistrationOrder = ({
       ) {
         for (let i = 1; i < cartItem.period; i++) {
           registrations.push({
-            action: ACTIONS.renewFioDomain,
+            action: GenericAction.renewFioDomain,
             fioName: cartItem.domain,
             cartItemId: cartItem.id,
             fee: fees?.domain,
@@ -100,7 +102,7 @@ export const makeRegistrationOrder = ({
       cartItem.domainType === DOMAIN_TYPE.CUSTOM
     ) {
       registrations.push({
-        action: ACTIONS.registerFioDomain,
+        action: GenericAction.registerFioDomain,
         fioName: cartItem.domain,
         cartItemId: cartItem.id,
         fee: fees?.domain,
@@ -120,7 +122,7 @@ export const makeRegistrationOrder = ({
       for (let i = 1; i < cartItem.period; i++) {
         registrations.push({
           fioName: cartItem.domain,
-          action: ACTIONS.renewFioDomain,
+          action: GenericAction.renewFioDomain,
           cartItemId: cartItem.id,
           fee: fees?.domain,
           type: CART_ITEM_TYPE.DOMAIN_RENEWAL,

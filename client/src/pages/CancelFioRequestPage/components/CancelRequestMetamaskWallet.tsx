@@ -1,15 +1,12 @@
 import React, { useCallback } from 'react';
 
+import { Account, Action } from '@fioprotocol/fiosdk';
+
 import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  ACTIONS,
-  FIO_CONTRACT_ACCOUNT_NAMES,
-  TRANSACTION_ACTION_NAMES,
-} from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -41,8 +38,8 @@ export const CancelRequestMetamaskWallet: React.FC<Props> = props => {
   const { fioRecord, fioDecryptedContent } = submitData || {};
 
   const actionParams = {
-    action: TRANSACTION_ACTION_NAMES[ACTIONS.cancelFundsRequest],
-    account: FIO_CONTRACT_ACCOUNT_NAMES.fioRecordObt,
+    action: Action.cancelFundsRequest,
+    account: Account.reqObt,
     data: {
       fio_request_id: fioRecord?.id,
       tpid: apis.fio.tpid,

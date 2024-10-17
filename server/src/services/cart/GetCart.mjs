@@ -6,15 +6,16 @@ import { Cart } from '../../models/Cart.mjs';
 import logger from '../../logger.mjs';
 
 export default class GetCart extends Base {
-  static get validationRules() {
-    return {
-      id: ['required', 'string'],
-    };
-  }
+  async execute() {
+    const userId = this.context.id || null;
+    const guestId = this.context.guestId || null;
 
-  async execute({ id }) {
+    const where = {};
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
     try {
-      const cart = await Cart.findById(id);
+      const cart = await Cart.findOne({ where });
 
       return {
         data: cart ? Cart.format(cart.get({ plain: true })) : { items: [] },

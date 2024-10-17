@@ -1,6 +1,7 @@
 import Base from '../Base';
 import { AdminUser } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { DEFAULT_LIMIT, MAX_LIMIT } from '../../constants/general.mjs';
 
 export default class AdminUsersList extends Base {
   static get requiredPermissions() {
@@ -9,12 +10,12 @@ export default class AdminUsersList extends Base {
 
   static get validationRules() {
     return {
-      offset: 'string',
-      limit: 'string',
+      offset: ['integer', { min_number: 0 }],
+      limit: ['integer', { min_number: 0 }, { max_number: MAX_LIMIT }],
     };
   }
 
-  async execute({ limit = 25, offset = 0 }) {
+  async execute({ limit = DEFAULT_LIMIT, offset = 0 }) {
     const adminUsers = await AdminUser.list(limit, offset);
     const usersCount = await AdminUser.usersCount();
 

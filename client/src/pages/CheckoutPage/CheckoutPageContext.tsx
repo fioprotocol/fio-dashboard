@@ -6,7 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
 import {
   clearCart,
-  getUsersCart,
+  getCart,
   setWallet as setWalletAction,
 } from '../../redux/cart/actions';
 import { setProcessing } from '../../redux/registrations/actions';
@@ -200,15 +200,10 @@ export const useContext = (): {
 
   const getActiveOrderParams: {
     publicKey?: string;
-    userId?: string;
   } = useMemo(() => ({}), []);
 
   if (publicKeyQueryParams) {
     getActiveOrderParams.publicKey = publicKeyQueryParams;
-  }
-
-  if (userId) {
-    getActiveOrderParams.userId = userId;
   }
 
   const setWallet = useCallback(
@@ -269,7 +264,6 @@ export const useContext = (): {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
         },
-        userId,
       })
       .then(() => apis.orders.getActive(getActiveOrderParams))
       .then(setOrder);
@@ -283,7 +277,6 @@ export const useContext = (): {
     paymentWalletPublicKey,
     prices?.nativeFio,
     roe,
-    userId,
   ]);
 
   const createOrder = useCallback(
@@ -313,7 +306,6 @@ export const useContext = (): {
             gaSessionId: getGASessionId(),
           },
           refCode,
-          userId,
         };
       }
 
@@ -358,8 +350,9 @@ export const useContext = (): {
       }
 
       // There is no order, redirect to cart
-      if (!orderParams || cartHasExpiredDomain)
+      if (!orderParams || cartHasExpiredDomain) {
         return history.push(ROUTES.CART);
+      }
 
       try {
         result = await apis.orders.create(orderParams);
@@ -375,7 +368,7 @@ export const useContext = (): {
               NOT_FOUND_CART_BUTTON_TEXT,
             ),
           );
-          dispatch(clearCart({ id: cartId }));
+          dispatch(clearCart());
         } else {
           dispatch(showGenericErrorModal());
         }
@@ -401,7 +394,6 @@ export const useContext = (): {
       refCode,
       roe,
       setWallet,
-      userId,
     ],
   );
 
@@ -409,7 +401,7 @@ export const useContext = (): {
     (event?: Event) => {
       // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel oreder on close BitPay payment page
       if (!event && order?.id) {
-        apis.orders.update(order.id, {
+        void apis.orders.update(order.id, {
           status: PURCHASE_RESULTS_STATUS.CANCELED,
         });
       }
@@ -427,7 +419,7 @@ export const useContext = (): {
           }
         }
       }
-      getOrder();
+      void getOrder();
     },
     [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
     (fioWallets.length > 0 &&
@@ -505,7 +497,7 @@ export const useContext = (): {
   useEffectOnce(
     () => {
       setOrder(undefined);
-      createOrder({
+      void createOrder({
         paymentWalletPublicKey,
         fioWallets,
         orderParamsFromLocation,
@@ -553,7 +545,7 @@ export const useContext = (): {
           });
         }
         if (stripeRedirectStatusParam === STRIPE_REDIRECT_STATUSES.FAILED) {
-          dispatch(getUsersCart());
+          dispatch(getCart());
         }
       }
     },
@@ -615,7 +607,7 @@ export const useContext = (): {
             NOT_FOUND_CART_BUTTON_TEXT,
           ),
         );
-        dispatch(clearCart({ id: cartId }));
+        dispatch(clearCart());
       }
 
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
@@ -672,7 +664,7 @@ export const useContext = (): {
 
   const onClose = useCallback(() => {
     if (order?.id) {
-      apis.orders.update(order.id, {
+      void apis.orders.update(order.id, {
         status: PURCHASE_RESULTS_STATUS.CANCELED,
       });
     }
