@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import classes from './CookieNoticePage.module.scss';
 
 const CookieNoticePage: React.FC = () => {
-  const [isButtonVisible, setButtonVisible] = useState(false);
+  const [isCookieYesVisible, setCookieYesVisible] = useState(false);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -12,7 +12,7 @@ const CookieNoticePage: React.FC = () => {
       );
 
       if (elCollection.length > 0) {
-        setButtonVisible(true);
+        setCookieYesVisible(true);
         clearInterval(intervalId);
       }
     }, 1000);
@@ -66,15 +66,15 @@ const CookieNoticePage: React.FC = () => {
       &nbsp;
       <h5 className="mb-4">Types of Cookies we use</h5>
       <div className="cky-audit-table-element" />
-      <div style={{ display: isButtonVisible ? 'block' : 'none' }}>
-        &nbsp;
-        <h5 className="mb-4">Manage cookie preferences</h5>
+      &nbsp;
+      <h5 className="mb-4">Manage cookie preferences</h5>
+      <div style={{ display: isCookieYesVisible ? 'block' : 'none' }}>
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a className="cky-banner-element">Cookie Settings</a> <br />
+        <p>&nbsp;</p>
       </div>
       <div>
-        <p>&nbsp;</p>
-        <p>
+        <p style={{ display: isCookieYesVisible ? 'block' : 'none' }}>
           You can change your cookie preferences any time by clicking the above
           button. This will let you revisit the cookie consent banner and change
           your preferences or withdraw your consent right away.
