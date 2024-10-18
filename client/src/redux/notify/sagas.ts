@@ -23,6 +23,7 @@ import {
 } from '../fio/actions';
 import { showGenericErrorModal } from '../modal/actions';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
+import { isNoProfileFlow as isNoProfileFlowSelector } from '../refProfile/selectors';
 
 import { ErrorData } from './constants';
 import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
@@ -71,9 +72,13 @@ export function* notify(history: History): Generator {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
-      if (action.type === ADMIN_PROFILE_FAILURE) {
-        yield put<Action>(adminLogout({ history }, ADMIN_ROUTES.ADMIN_LOGIN));
-      } else yield put<Action>(logout({ history, redirect: ROUTES.HOME }));
+      const isNoProfileFlow: boolean = yield select(isNoProfileFlowSelector);
+
+      if (!isNoProfileFlow) {
+        if (action.type === ADMIN_PROFILE_FAILURE) {
+          yield put<Action>(adminLogout({ history }, ADMIN_ROUTES.ADMIN_LOGIN));
+        } else yield put<Action>(logout({ history, redirect: ROUTES.HOME }));
+      }
     }
   });
 }
