@@ -38,7 +38,7 @@ export type MetamaskSnapProps = {
     encryptionPublicKey: string;
     contentType: string;
   }) => void;
-  handleConnectClick: () => void;
+  handleConnectClick: (shouldConnectToStrictVersion?: boolean) => void;
   resetSnap: () => void;
   signSnapTxn: (params: any) => void;
   signNonceSnap: (params: { nonce: string; derivationIndex?: number }) => void;
@@ -69,25 +69,40 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
     setSignedTxnError(null);
   }, []);
 
-  const handleConnectClick = useCallback(async () => {
-    try {
-      toggleSnapLoading(true);
-      setSnapError(null);
+  const handleConnectClick = useCallback(
+    async (shouldConnectToStrictVersion?: boolean) => {
+      try {
+        toggleSnapLoading(true);
+        setSnapError(null);
+        let version = process.env.REACT_APP_SNAP_VERSION;
 
-      await connectSnap(defaultSnapOrigin, {
-        version: process.env.REACT_APP_SNAP_VERSION,
-      });
+        if (shouldConnectToStrictVersion) {
+          version = process.env.REACT_APP_SNAP_STRICT_VERSION;
+        }
 
-      const installedSnap = await getSnap();
+        await connectSnap(defaultSnapOrigin, {
+          version,
+        });
 
-      setState(installedSnap);
-    } catch (error) {
-      log.error('Metamask snap connection error', error);
-      setSnapError(error);
-    } finally {
-      toggleSnapLoading(false);
-    }
-  }, []);
+        const installedSnap = await getSnap();
+
+        setState(installedSnap);
+      } catch (error) {
+        log.error('Metamask snap connection error', error);
+        if (
+          /One or more permissions are not allowed/.test(error?.message) &&
+          !shouldConnectToStrictVersion
+        ) {
+          await handleConnectClick(true);
+        } else {
+          setSnapError(error);
+        }
+      } finally {
+        toggleSnapLoading(false);
+      }
+    },
+    [],
+  );
 
   const getPublicKeyFromSnap = useCallback(
     async ({ derivationIndex }: { derivationIndex?: number }) => {
