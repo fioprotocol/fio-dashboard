@@ -12,8 +12,10 @@ import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import { ROUTES } from '../../constants/routes';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { handleHomePageContent } from '../../util/homePage';
+import useQuery from '../../hooks/useQuery';
 
 import { RefProfile, ContainedFlowQueryParams } from '../../types';
 
@@ -29,6 +31,9 @@ type Props = {
 const HomePage: React.FC<Props & RouteComponentProps> = props => {
   const history = useHistory();
   const redirectLink = useSelector(redirectLinkSelector);
+  const queryParams = useQuery();
+
+  const publicKeyQueryParam = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
   const {
     isAuthenticated,
@@ -61,6 +66,9 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
             REF_PROFILE_SLUG_NAME,
             refProfileInfo?.code,
           )}`,
+          search: publicKeyQueryParam
+            ? `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKeyQueryParam}`
+            : '',
         }}
       />
     );
