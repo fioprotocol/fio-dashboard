@@ -48,6 +48,10 @@ import {
   prices as pricesSelector,
 } from '../registrations/selectors';
 import {
+  isNoProfileFlow as isNoProfileFlowSelector,
+  refProfileCode as refProfileCodeSelector,
+} from '../refProfile/selectors';
+import {
   user as userSelector,
   isNewUser as isNewUserSelectors,
 } from './selectors';
@@ -58,6 +62,8 @@ import {
 } from '../../constants/common';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
 import { METAMASK_DOMAIN_NAME } from '../../constants/fio';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { getZeroIndexPublicKey } from '../../util/snap';
@@ -277,6 +283,31 @@ export function* logoutSuccess(history: History): Generator {
 
     if (isNewUser) {
       yield put<Action>(setIsNewUser(false));
+    }
+
+    const isNoProfileFlow: boolean = yield select(isNoProfileFlowSelector);
+    const refCode: string = yield select(refProfileCodeSelector);
+
+    if (isNoProfileFlow && refCode) {
+      const search = window.location?.search;
+
+      const noProfileFlowRedirectParams = {
+        pathname: `${ROUTES.NO_PROFILE_REGISTER_FIO_HANDLE.replace(
+          REF_PROFILE_SLUG_NAME,
+          refCode,
+        )}`,
+        search: '',
+      };
+
+      if (search) {
+        const urlParams = new URLSearchParams(search);
+
+        const publicKey = urlParams.get('publicKey');
+        noProfileFlowRedirectParams.search = `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`;
+      }
+
+      history.push(noProfileFlowRedirectParams);
+      return;
     }
 
     if (redirect) history.push(redirect, {});
