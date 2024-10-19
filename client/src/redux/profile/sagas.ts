@@ -307,13 +307,12 @@ export function* logoutSuccess(history: History): Generator {
       }
 
       history.push(noProfileFlowRedirectParams);
-      return;
-    }
-
-    if (redirect) history.push(redirect, {});
-    if (!redirect) {
-      if (!PUBLIC_ROUTES.includes(pathname)) {
-        history.replace(ROUTES.HOME, {});
+    } else {
+      if (redirect) history.push(redirect, {});
+      if (!redirect) {
+        if (!PUBLIC_ROUTES.includes(pathname)) {
+          history.replace(ROUTES.HOME, {});
+        }
       }
     }
   });
