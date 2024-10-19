@@ -44,6 +44,7 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
+  refProfileLoading: boolean;
   loadProfile: ({
     shouldHandleUsersFreeCart,
   }: {
@@ -71,6 +72,7 @@ const MainLayout: React.FC<Props> = props => {
     isAuthenticated,
     isActiveUser,
     isNoProfileFlow,
+    refProfileLoading,
     showLogin,
     showRecovery,
     loadProfile,
@@ -95,11 +97,15 @@ const MainLayout: React.FC<Props> = props => {
     loginGuest();
   }, [loginGuest, isAuthenticated]);
 
-  useEffectOnce(() => {
-    edgeContextInit();
-    loadProfile({ shouldHandleUsersFreeCart: true });
-    getApiUrls();
-  }, [edgeContextInit, loadProfile, getApiUrls]);
+  useEffectOnce(
+    () => {
+      edgeContextInit();
+      loadProfile({ shouldHandleUsersFreeCart: true });
+      getApiUrls();
+    },
+    [edgeContextInit, loadProfile, getApiUrls],
+    !refProfileLoading,
+  );
 
   useEffectOnce(
     () => {
