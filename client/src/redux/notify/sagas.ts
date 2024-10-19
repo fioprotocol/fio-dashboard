@@ -23,6 +23,7 @@ import {
 } from '../fio/actions';
 import { showGenericErrorModal } from '../modal/actions';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
+import apis from '../../api';
 
 import { ErrorData } from './constants';
 import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
@@ -71,9 +72,11 @@ export function* notify(history: History): Generator {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
+      const userToken = apis.client.getToken();
+
       if (action.type === ADMIN_PROFILE_FAILURE) {
         yield put<Action>(adminLogout({ history }, ADMIN_ROUTES.ADMIN_LOGIN));
-      } else {
+      } else if (userToken) {
         yield put<Action>(logout({ history, redirect: ROUTES.HOME }));
       }
     }
