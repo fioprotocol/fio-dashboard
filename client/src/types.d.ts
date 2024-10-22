@@ -836,6 +836,23 @@ export type OrderDetails = {
   orderUserType?: string;
 };
 
+export type OrderItemPdf = {
+  action: string;
+  data: {
+    hasCustomDomain: boolean;
+    hasCustomDomainFee: string;
+  };
+  feeCollected: string;
+  id: string;
+  nativeFio: string;
+  number: string;
+  price: string;
+  priceCurrency: string;
+  roe: string;
+  txStatus: number;
+  paymentStatus: number;
+};
+
 export type DateRange = { startDate?: number; endDate?: number };
 
 export type OrderListFilters = {
@@ -843,6 +860,8 @@ export type OrderListFilters = {
   freeStatus: string;
   dateRange: DateRange | null;
   orderUserType: string | null;
+  offset?: number;
+  limit?: number | null;
 };
 
 export type UserOrderDetails = {

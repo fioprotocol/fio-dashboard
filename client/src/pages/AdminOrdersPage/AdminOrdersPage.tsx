@@ -28,10 +28,13 @@ import {
 } from '../../constants/common';
 import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
 
+import config from '../../config';
+
 import {
   AdminUser,
   DateRange,
   OrderDetails,
+  OrderItemPdf,
   OrderListFilters,
 } from '../../types';
 
@@ -45,7 +48,10 @@ import {
   DateRangeConditions,
   dateRangeConditions,
 } from '../../util/date';
-import { truncateTextInMiddle } from '../../util/general';
+import { log, truncateTextInMiddle } from '../../util/general';
+import { generateCSVOrderData } from '../../util/order';
+
+import apis from '../../api';
 
 type Props = {
   loading: boolean;
@@ -54,7 +60,7 @@ type Props = {
     offset: number,
     filters: OrderListFilters,
   ) => Promise<void>;
-  exportOrdersData: (filters: OrderListFilters) => void;
+  showGenericErrorModal: () => void;
   adminUser: AdminUser;
   ordersList: OrderDetails[];
   orderItem: OrderDetails;
@@ -68,8 +74,8 @@ const AdminOrdersPage: React.FC<Props> = props => {
     loading,
     ordersList,
     getOrdersList,
-    exportOrdersData,
     getOrder,
+    showGenericErrorModal,
     orderItem,
   } = props;
 
@@ -91,6 +97,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
     null,
   );
   const [showDatePicker, toggleShowDatePicker] = useState<boolean>(false);
+  const [isExporting, toggleIsExporting] = useState<boolean>(false);
 
   const openDatePicker = useCallback(() => {
     toggleShowDatePicker(true);
@@ -196,9 +203,38 @@ const AdminOrdersPage: React.FC<Props> = props => {
     openOrderDetails(orderId);
   };
 
-  const handleExportOrderData = useCallback(() => {
-    exportOrdersData(filters);
-  }, [exportOrdersData, filters]);
+  const handleExportOrderData = useCallback(async () => {
+    let offset = 0;
+    const limit = config.exportOrdersCSVLimit;
+    let allOrders: OrderDetails[] = [];
+    let allOrderItems: OrderItemPdf[] = [];
+    let hasMoreData = true;
+
+    toggleIsExporting(true);
+
+    try {
+      while (hasMoreData) {
+        const { orders = [], orderItems = [] } =
+          (await apis.admin.exportOrdersData({ filters, offset, limit })) || {};
+
+        allOrders = [...allOrders, ...orders];
+        allOrderItems = [...allOrderItems, ...orderItems];
+
+        if (orders.length < limit) {
+          hasMoreData = false;
+        } else {
+          offset += limit;
+        }
+      }
+
+      generateCSVOrderData({ orders: allOrders, orderItems: allOrderItems });
+    } catch (error) {
+      log.error(error);
+      showGenericErrorModal();
+    } finally {
+      toggleIsExporting(false);
+    }
+  }, [filters, showGenericErrorModal]);
 
   useEffectOnce(
     () => {
@@ -215,11 +251,11 @@ const AdminOrdersPage: React.FC<Props> = props => {
           <div className="mr-4">
             <Button
               onClick={handleExportOrderData}
-              disabled={loading}
+              disabled={isExporting}
               className="mb-4 d-flex flex-direction-row align-items-center"
             >
               <FontAwesomeIcon icon="download" className="mr-2" />{' '}
-              {loading ? (
+              {isExporting ? (
                 <>
                   <span className="mr-3">Exporting...</span>
                   <Loader isWhite hasInheritFontSize hasSmallSize />

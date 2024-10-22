@@ -56,21 +56,6 @@ export const getOrdersList = (
   promise: (api: Api) => api.admin.ordersList(limit, offset, filters),
 });
 
-export const EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST`;
-export const EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS`;
-export const EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE`;
-
-export const exportOrdersData = (
-  filters: OrderListFilters,
-): CommonPromiseAction => ({
-  types: [
-    EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST,
-    EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS,
-    EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE,
-  ],
-  promise: (api: Api) => api.admin.exportOrdersData(filters),
-});
-
 export const ADMIN_SEARCH_REQUEST = `${prefix}/ADMIN_SEARCH_REQUEST`;
 export const ADMIN_SEARCH_SUCCESS = `${prefix}/ADMIN_SEARCH_SUCCESS`;
 export const ADMIN_SEARCH_FAILURE = `${prefix}/ADMIN_SEARCH_FAILURE`;
