@@ -13,7 +13,6 @@ export class Cart extends Base {
         id: {
           type: DT.UUID,
           primaryKey: true,
-          autoIncrement: true,
         },
         items: {
           type: DT.JSON,
