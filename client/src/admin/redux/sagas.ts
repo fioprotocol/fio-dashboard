@@ -11,7 +11,6 @@ import { notify } from '../../redux/notify/sagas';
 import {
   resetAdminUserPasswordSuccess,
   deleteAdminUserSuccess,
-  exportOrdersDataSuccess,
 } from '../../redux/admin/sagas';
 
 import { Api } from '../api';
@@ -25,6 +24,5 @@ export default function* rootSaga(history: History, api: Api) {
     adminResetPasswordSuccess(history),
     resetAdminUserPasswordSuccess(),
     deleteAdminUserSuccess(),
-    exportOrdersDataSuccess(),
   ]);
 }

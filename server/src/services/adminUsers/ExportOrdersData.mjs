@@ -26,12 +26,15 @@ export default class ExportOrdersData extends Base {
           },
         },
       ],
+      offest: 'integer',
+      limit: 'integer',
     };
   }
 
-  async execute({ filters }) {
+  async execute({ offset, filters, limit }) {
     const ordersList = await Order.listAll({
-      limit: 0,
+      offset,
+      limit,
       filters,
     });
 

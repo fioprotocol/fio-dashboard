@@ -16,6 +16,7 @@ import {
   RefProfileDomain,
   FioApiUrls,
   OrderDetails,
+  OrderItemsToCsv,
 } from '../types';
 
 export type DefaultSuccessResponse = { success: true };
@@ -213,7 +214,10 @@ export type VarsResponse = {
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
-export type AdminOrdersListResponse = AdminUser[];
+export type AdminOrdersListResponse = {
+  orders: OrderDetails[];
+  orderItems: OrderItemsToCsv[];
+};
 export type AdminOrderItemResponse = OrderDetails;
 export type AdminFioApiUrlsListResponse = FioApiUrls;
 export type AdminFioApiUrlsListUpdateResponse = DefaultSuccessResponse;
