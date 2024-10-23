@@ -61,7 +61,7 @@ export const useContext = (orderItem: OrderDetailed): Props => {
           totalCostPrice: regTotalCost,
         }),
       },
-      { title: 'Paid With', value: paidWith },
+      { title: 'Paid With', value: paidWith ?? 'N/A' },
     ],
   };
 

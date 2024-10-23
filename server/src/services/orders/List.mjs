@@ -17,6 +17,7 @@ export default class OrdersList extends Base {
 
   async execute({ limit = DEFAULT_LIMIT, offset = 0, publicKey }) {
     const userId = this.context.id;
+    const guestId = this.context.guestId;
 
     if (!userId && !publicKey) {
       throw new X({
@@ -55,8 +56,15 @@ export default class OrdersList extends Base {
     });
 
     const orders = [];
+
     for (const order of ordersList) {
-      orders.push(await Order.formatToMinData(order.get({ plain: true })));
+      const formatedOrder = await Order.formatToMinData(order.get({ plain: true }));
+
+      if (!userId && order.guestId !== guestId) {
+        delete formatedOrder.payment;
+      }
+
+      orders.push(formatedOrder);
     }
 
     return {

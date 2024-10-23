@@ -180,12 +180,15 @@ export default class AddItem extends Base {
       });
 
       if (!existingCart) {
-        const cart = await Cart.create({
+        const cartFields = {
           items: [handledFreeCartItem],
-          userId,
-          guestId,
           publicKey,
-        });
+        };
+
+        if (userId) cartFields.userId = userId;
+        if (guestId) cartFields.guestId = guestId;
+
+        const cart = await Cart.create(cartFields);
 
         return { data: Cart.format(cart.get({ plain: true })) };
       }
