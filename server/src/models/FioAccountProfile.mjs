@@ -108,9 +108,9 @@ export class FioAccountProfile extends Base {
     return domainOwner ? this.format(domainOwner) : null;
   }
 
-  static getFreePaidItems() {
+  static async getFreePaidItems() {
     const freeAndPaidFioAccountProfiles =
-      this.findAll({
+      (await this.findAll({
         order: [['createdAt', 'DESC']],
         [Op.and]: [
           {
@@ -126,7 +126,7 @@ export class FioAccountProfile extends Base {
             accountType: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
           },
         ],
-      }) || [];
+      })) || [];
 
     return freeAndPaidFioAccountProfiles.map(freeAndPaidFioAccountProfile =>
       this.format(freeAndPaidFioAccountProfile),

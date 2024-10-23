@@ -47,7 +47,7 @@ export default class NftTokenVerification extends Base {
         });
       }
 
-      const refProfile = await ReferrerProfile.findById(refId);
+      const refProfile = await ReferrerProfile.findByPk(refId);
 
       if (!refProfile) {
         throw new X({

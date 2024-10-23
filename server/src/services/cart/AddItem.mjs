@@ -86,9 +86,11 @@ export default class AddItem extends Base {
       const userHasFreeAddress =
         !publicKey && !userId ? [] : await FreeAddress.getItems({ publicKey, userId });
 
-      const refProfile = await ReferrerProfile.findOne({
-        where: { code: refCode },
-      });
+      const refProfile = refCode
+        ? await ReferrerProfile.findOne({
+            where: { code: refCode },
+          })
+        : null;
 
       const gatedRefProfiles = await ReferrerProfile.findAll({
         where: Sequelize.literal(
