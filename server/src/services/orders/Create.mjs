@@ -116,6 +116,7 @@ export default class OrdersCreate extends Base {
     if (cart.guestId && this.context.guestId && cart.guestId !== this.context.guestId) {
       throw new X({
         code: 'NOT_FOUND',
+        fields: {},
       });
     }
 
