@@ -113,8 +113,16 @@ export default class OrdersCreate extends Base {
       },
     };
 
-    if (cart.guestId) {
-      orderWhere.guestId = cart.guestId;
+    if (cart.guestId && this.context.guestId && cart.guestId !== this.context.guestId) {
+      throw new X({
+        code: 'NOT_FOUND',
+      });
+    }
+
+    const guestId = cart.guestId || this.context.guestId;
+
+    if (guestId) {
+      orderWhere.guestId = guestId;
     }
 
     let order = await Order.findOne({
@@ -204,7 +212,7 @@ export default class OrdersCreate extends Base {
             publicKey,
             customerIp: this.context.ipAddress,
             userId: user.id,
-            guestId: cart.guestId,
+            guestId: guestId,
             refProfileId: refProfileId ? refProfileId : user.refProfileId,
             data,
           },
