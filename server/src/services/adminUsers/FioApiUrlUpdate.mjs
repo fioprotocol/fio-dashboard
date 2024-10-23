@@ -17,7 +17,7 @@ export default class FioApiUrlUpdate extends Base {
   }
 
   async execute({ id, url }) {
-    const fioApiUrl = await FioApiUrl.findById(id);
+    const fioApiUrl = await FioApiUrl.findByPk(id);
 
     if (!fioApiUrl) {
       throw new X({

@@ -34,7 +34,7 @@ export class WrapStatusFioHistoryOffsetParams extends Base {
   }
 
   static async getAccountActionSequence({ accountName }) {
-    const data = await this.find({ where: { accountName } });
+    const data = await this.findOne({ where: { accountName } });
     return parseInt(data.accountActionSequence);
   }
 

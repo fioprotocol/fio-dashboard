@@ -87,7 +87,7 @@ export default class OrdersCreate extends Base {
       user = resolvedUser;
     }
 
-    const cart = await Cart.findById(cartId);
+    const cart = await Cart.findByPk(cartId);
 
     if (!user || !cart) {
       if (!user)

@@ -16,7 +16,7 @@ export default class FioAccountProfileDelete extends Base {
   }
 
   async execute({ id }) {
-    const fioAccountProfile = await FioAccountProfile.findById(id);
+    const fioAccountProfile = await FioAccountProfile.findByPk(id);
 
     if (!fioAccountProfile) {
       throw new X({

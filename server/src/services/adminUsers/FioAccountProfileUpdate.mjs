@@ -23,7 +23,7 @@ export default class FioAccountProfileUpdate extends Base {
   }
 
   async execute({ id, name, actor, permission, accountType, domains }) {
-    const fioAccountProfile = await FioAccountProfile.findById(id);
+    const fioAccountProfile = await FioAccountProfile.findByPk(id);
 
     if (!fioAccountProfile) {
       throw new X({

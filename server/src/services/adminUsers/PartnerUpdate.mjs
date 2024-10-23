@@ -86,7 +86,7 @@ export default class PartnerUpdate extends Base {
   }
 
   async execute({ id, ...data }) {
-    const partner = await ReferrerProfile.findById(id);
+    const partner = await ReferrerProfile.findByPk(id);
 
     if (!partner) {
       throw new X({

@@ -9,5 +9,4 @@ module.exports = {
   host: process.env.SQL_HOST,
   port: process.env.SQL_PORT,
   dialect: 'postgres',
-  operatorsAliases: require('sequelize').Op,
 };

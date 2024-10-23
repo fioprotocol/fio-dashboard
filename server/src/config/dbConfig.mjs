@@ -13,9 +13,8 @@ export default {
     port: process.env.SQL_PORT,
     dialect: 'postgres',
     logging: false,
-    operatorsAliases: false,
     pool: {
-      max: process.env.SQL_MAX_POOL || 50,
+      max: parseInt(process.env.SQL_MAX_POOL) || 50,
       min: 0,
       acquire: 30000,
       idle: 10000,

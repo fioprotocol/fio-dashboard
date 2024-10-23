@@ -9,7 +9,7 @@ export default class AlternativeUserVerification extends Base {
     try {
       const userId = this.context.id;
 
-      const userWithAlternativeProfile = await User.findById(userId, {
+      const userWithAlternativeProfile = await User.findByPk(userId, {
         where: {
           userProfileType: User.USER_PROFILE_TYPE.ALTERNATIVE,
         },

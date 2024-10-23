@@ -99,7 +99,7 @@ export class AdminUser extends Base {
   }
 
   static findActive(id) {
-    return this.findById(id, {
+    return this.findByPk(id, {
       where: { statusId: { [Op.ne]: ADMIN_STATUS_IDS.BLOCKED } },
       include: [
         {
@@ -117,7 +117,7 @@ export class AdminUser extends Base {
   }
 
   static profileInfo(id) {
-    return this.findById(id, {
+    return this.findByPk(id, {
       include: [
         {
           model: AdminUsersRole,
