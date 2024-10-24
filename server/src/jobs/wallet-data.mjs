@@ -623,7 +623,7 @@ class WalletDataJob extends CommonJob {
       include: [
         {
           model: User,
-          where: { status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED } },
+          where: { status: { [Op.ne]: User.STATUS.BLOCKED } },
         },
         { model: PublicWalletData, as: 'publicWalletData' },
       ],
