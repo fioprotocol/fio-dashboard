@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+import { Op } from 'sequelize';
 
 import Stripe from '../../external/payment-processor/stripe';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
@@ -96,7 +96,7 @@ export default class PaymentsWebhook extends Base {
       }
 
       const payment = await Payment.findOneWhere({
-        [Sequelize.Op.or]: [
+        [Op.or]: [
           {
             externalId: webhookData.txn_id,
             orderId: order.id,
@@ -167,7 +167,7 @@ export default class PaymentsWebhook extends Base {
           await OrderItemStatus.update(orderItemStatusUpdates, {
             where: {
               orderItemId: {
-                [OrderItemStatus.sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+                [Op.in]: order.OrderItems.map(({ id }) => id),
               },
               paymentId: payment.id,
             },
