@@ -67,24 +67,22 @@ class MissedTransactions extends CommonJob {
           pos: -1,
         });
 
-        const addressTransactionHistory = res.actions
-          .filter(action => action.action_trace.receiver === 'fio.address')
-          .find(
-            action =>
-              action.action_trace.act.data.fio_address ||
-              action.action_trace.act.data.fio_domain === fioName,
-          );
+        const addressTransactionHistory =
+          res && res.actions
+            ? res.actions
+                .filter(action => action.action_trace.receiver === 'fio.address')
+                .find(
+                  action =>
+                    action.action_trace.act.data.fio_address ||
+                    action.action_trace.act.data.fio_domain === fioName,
+                )
+            : null;
 
         const {
           block_num,
           block_time,
-          action_trace: {
-            trx_id,
-            act: {
-              data: { max_fee },
-            },
-          },
-        } = addressTransactionHistory;
+          action_trace: { trx_id, act: { data: { max_fee } } = {} } = {},
+        } = addressTransactionHistory || {};
 
         await BlockchainTransaction.sequelize.transaction(async t => {
           const bcTxExists = await BlockchainTransaction.findOne({

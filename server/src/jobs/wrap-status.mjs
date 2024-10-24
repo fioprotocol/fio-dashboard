@@ -825,18 +825,20 @@ class WrapStatusJob extends CommonJob {
           }
 
           if (actionTraceHasNonIrreversibleBlockIndex >= 0) {
-            actionsList.push(
-              ...actionsLogsResult.actions.slice(
-                0,
-                actionTraceHasNonIrreversibleBlockIndex,
-              ),
-            );
+            if (actionsLogsResult && actionsLogsResult.actions) {
+              actionsList.push(
+                ...actionsLogsResult.actions.slice(
+                  0,
+                  actionTraceHasNonIrreversibleBlockIndex,
+                ),
+              );
 
-            lastProcessedAccountActionSequence =
-              actionTraceHasNonIrreversibleBlockIndex > 0
-                ? actionsLogsResult.actions[actionTraceHasNonIrreversibleBlockIndex - 1]
-                    .account_action_seq
-                : lastProcessedAccountActionSequence;
+              lastProcessedAccountActionSequence =
+                actionTraceHasNonIrreversibleBlockIndex > 0
+                  ? actionsLogsResult.actions[actionTraceHasNonIrreversibleBlockIndex - 1]
+                      .account_action_seq
+                  : lastProcessedAccountActionSequence;
+            }
           }
         };
 
