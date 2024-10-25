@@ -1,0 +1,41 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.tabsContainer {
+  margin-top: 30px;
+  border: none !important;
+}
+
+.dropdownContainer {
+  margin-top: 30px;
+  display: none;
+}
+
+.tabItem {
+  color: black;
+  font-size: 0.875em;
+  padding-bottom: 8px;
+  border-bottom: solid 2px $aqua-blue;
+  @include proxima-nova-regular;
+
+  &[aria-selected='false'] {
+    padding-bottom: 9px;
+    border-width: 1px;
+    border-color: grey;
+  }
+
+  &:hover {
+    color: $black;
+  }
+}
+
+@include sm {
+  .tabsContainer {
+    display: none;
+  }
+
+  .dropdownContainer {
+    display: block;
+  }
+}
