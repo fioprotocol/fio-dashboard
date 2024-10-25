@@ -120,6 +120,11 @@ $black-gradient: linear-gradient(
   rgba(43, 43, 46, 1) 0%,
   rgba(39, 39, 39, 1) 100%
 );
+$indigo-gradient: linear-gradient(
+  270deg,
+  $light-indigo 0%,
+  #22a2ff 100%
+);
 $violet-gradient: linear-gradient(
   270deg,
   rgba(149, 121, 221, 1) 0%,

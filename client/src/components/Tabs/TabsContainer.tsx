@@ -2,13 +2,14 @@ import React from 'react';
 import { Tab } from 'react-bootstrap';
 
 type Props = {
+  activeKey?: string;
   defaultActiveKey?: string;
 };
 
 const TabsContainer: React.FC<Props> = props => {
-  const { defaultActiveKey, children } = props;
+  const { activeKey, defaultActiveKey, children } = props;
   return (
-    <Tab.Container defaultActiveKey={defaultActiveKey}>
+    <Tab.Container activeKey={activeKey} defaultActiveKey={defaultActiveKey}>
       {React.cloneElement(children as React.ReactElement, { defaultActiveKey })}
     </Tab.Container>
   );

@@ -38,6 +38,13 @@ const ROUTES: { [route: string]: string } = {
   FIO_AFFILIATE_PROGRAM_ENABLED: '/affiliate-program-enabled',
 
   GOVERNANCE: '/governance',
+  GOVERNANCE_OVERVIEW: '/governance/overview',
+  GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS:
+    '/governance/fio-foundation-board-of-directors',
+  GOVERNANCE_BLOCK_PRODUCERS: '/governance/block-producers',
+  GOVERNANCE_PROXIES: '/governance/proxies',
+  GOVERNANCE_VOTING_HELP: '/governance/voting-help',
+
   PROTOCOL_UPDATES: '/protocol-updates',
 
   CART: '/cart',
