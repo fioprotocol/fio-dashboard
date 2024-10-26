@@ -42,7 +42,8 @@
     margin: 0 20px;
 
     .layout {
-      max-width: 650px;
+      min-width: 650px;
+      max-width: 775px;
       padding: 60px 20px;
     }
 
