@@ -1,19 +1,26 @@
 import { FC } from 'react';
 
+import classnames from 'classnames';
+
 import classes from '../styles/WalletPower.module.scss';
 
 export type WalletPowerProps = {
+  className?: string;
   power: number;
+  label?: string;
   withLabel?: boolean;
 };
 
-export const WalletPower: FC<WalletPowerProps> = ({ power, withLabel }) => {
+export const WalletPower: FC<WalletPowerProps> = ({
+  className,
+  power,
+  label = 'Current Voting Power',
+  withLabel,
+}) => {
   return (
-    <p className={classes.powerValue}>
+    <p className={classnames(classes.powerValue, className)}>
       {withLabel && (
-        <span className={classes.powerValueLabel}>
-          Current Voting Power:&nbsp;
-        </span>
+        <span className={classes.powerValueLabel}>{label}:&nbsp;</span>
       )}
       <span>
         {power.toLocaleString('en', {
