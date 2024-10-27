@@ -2,6 +2,10 @@
   font-family: 'Inter Bold';
 }
 
+@mixin inter-semibold {
+  font-family: 'Inter Semibold';
+}
+
 @mixin inter-italic {
   font-family: 'Inter Italic';
 }
