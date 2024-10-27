@@ -1,0 +1,51 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #f7f7ff;
+  border-radius: 12px;
+  padding: 28px 20px;
+}
+
+.title {
+  line-height: 1.25em;
+  @include proxima-nova-semibold
+}
+
+.description {
+  margin: 0;
+  font-size: 0.75em;
+  line-height: 1.25em;
+  @include proxima-nova-regular
+}
+
+.info {
+  margin: auto 0 0;
+}
+
+.infoLabel {
+  font-size: 0.75em;
+  line-height: 0.75em;
+  @include proxima-nova-regular
+}
+
+.infoContent {
+  margin-top: 8px;
+  display: block;
+  font-size: 0.875em;
+  line-height: 1.125em;
+  color: #E17E36;
+  @include proxima-nova-semibold
+}
+
+.actionButton {
+  margin-top: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  font-size: 0.825em;
+  @include proxima-nova-semibold
+}

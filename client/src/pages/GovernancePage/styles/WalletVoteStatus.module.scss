@@ -1,0 +1,45 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.vote {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.voteName {
+  margin: 0;
+  flex: 1;
+  font-size: 0.75em;
+  @include proxima-nova-semibold
+}
+
+.voteStatus {
+  color: white;
+  margin: 0;
+  width: 65px;
+  height: 16px;
+  border-radius: 24px;
+  text-align: center;
+  font-size: 0.5em;
+  line-height: 2;
+  @include inter-regular;
+
+  &.voteStatusVoted {
+    background-color: #00a86c;
+  }
+
+  &.voteStatusNotVoted {
+    background-color: #B80084;
+  }
+
+  &.voteStatusProxied {
+    background-color: #31B9FF;
+  }
+}
+
+.questionLink {
+  color: inherit;
+  text-decoration: underline;
+}
