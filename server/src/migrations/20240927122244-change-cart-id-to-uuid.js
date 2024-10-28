@@ -20,7 +20,8 @@ module.exports = {
         },
         { transaction },
       );
-      await QI.addConstraint('cart', ['id'], {
+      await QI.addConstraint('cart', {
+        fields: ['id'],
         type: 'primary key',
         name: 'cart_pkey',
         transaction,
@@ -49,7 +50,8 @@ module.exports = {
         },
         { transaction },
       );
-      await QI.addConstraint('cart', ['id'], {
+      await QI.addConstraint('cart', {
+        fields: ['id'],
         type: 'primary key',
         name: 'cart_pkey',
         transaction,
