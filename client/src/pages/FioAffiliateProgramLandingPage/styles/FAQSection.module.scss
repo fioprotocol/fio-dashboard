@@ -6,18 +6,19 @@
 
 .container {
   .accordion {
-    margin: 40px 0 100px;
+    margin: 40px 0 0;
+    padding: 0 100px;
     width: 100%;
 
     .accordionItem {
       border-top: 1px solid $mountain-mist;
-      padding: 20px;
+      padding: 20px 0;
 
       & a {
         color: $white;
-       text-decoration: underline;
-       text-underline-offset: 3px;
-       text-decoration-thickness: 0.5px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 0.5px;
       }
 
       &:last-child {
@@ -66,9 +67,31 @@
       }
 
       .accordionItemText {
-        padding: 20px 20px 0 0;
+        padding: 20px 0 0 0;
+        max-width: 845px;
         @include proxima-nova-thin;
       }
+    }
+  }
+}
+
+@include md {
+  .container {
+    .accordion {
+
+      .accordionItem {
+        .accordionItemText {
+          max-width: initial;
+        }
+      }
+    }
+  }
+}
+
+@include tablet {
+  .container {
+    .accordion {
+      padding: 0;
     }
   }
 }

@@ -7,11 +7,59 @@
 .containerLayout {
   background: $baltic-sea;
 }
+
+.slider {
+  width: 538px;
+  margin-top: -50px;
+  margin-bottom: 20px;
+}
+
+.sliderDots {
+  display: flex !important;
+  padding: 4px 5px;
+  gap: 8px;
+  list-style-type: none;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin-top: -20px;
+  margin-bottom: 0;
+  background-color: $bauhaus;
+  border-radius: 10px;
+
+  & > li {
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+
+    & > div {
+      width: 12px;
+      height: 12px;
+      background-color: $dove-gray;
+      border-radius: 6px;
+    }
+
+    &[class="slick-active"] {
+      & > div {
+        background-color: $light-indigo;
+      }
+    }
+  }
+}
+
+.img {
+  width: 100%;
+  height: 368px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .instruction {
   display: flex;
   flex-direction: column;
   gap: 50px;
-  padding: 50px;
+  padding: 50px 20px;
   width: 100%;
   max-width: 900px;
 
@@ -22,14 +70,14 @@
       width: 110px;
       font-size: 3rem;
       line-height: 1;
-      padding-right: 50px;
-      color: $light-indigo;
+      padding-left: 35px;
+      color: $white;
       @include proxima-nova-bold;
-      border-right: 1px solid $iris;
+      border-left: 1px solid $bauhaus;
     }
 
     .instructionRowInfo {
-      padding-left: 50px;
+      padding-left: 20px;
       flex: 1;
 
       .instructionRowInfoTitle {
@@ -48,6 +96,10 @@
 }
 
 @include sm {
+  .slider {
+    width: auto;
+    max-width: 100%;
+  }
   .instruction {
     gap: 25px;
     padding: 25px;

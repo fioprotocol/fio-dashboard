@@ -4,6 +4,13 @@
 
 @import './commonStyles.module.scss';
 
+.containerLayout {
+  background: $dark-jungle-green;
+  &.dark {
+    background: $black-medium;
+  }
+}
+
 .container {
   background: none;
   text-align: center;
@@ -15,16 +22,22 @@
 
   .title {
     color: white;
-    font-size: 3.625rem;
+    font-size: 3rem;
+    letter-spacing: -4px;
     @include comfortaa-bold;
   }
 
   .subtitle {
     @include proxima-nova-thin;
     font-size: 20px;
-    line-height: 24px;
+    line-height: 32px;
     max-width: 750px;
     margin: 1% auto;
+
+    &.text {
+      font-size: 18px;
+      max-width: 800px;
+    }
   }
 
   .info {
@@ -40,7 +53,7 @@
   .button {
     min-width: 150px;
     height: 54px;
-    border-radius: 100px;
+    border-radius: 8px;
     padding: 17px 30px;
     font-size: 1rem;
     line-height: 1.25rem;
@@ -57,13 +70,22 @@
 
   &.isBig {
     .title {
-      font-size: 3rem;
+      font-size: 3.625rem;
     }
 
     .subtitle {
-      font-size: 24px;
-      line-height: 28px;
-      max-width: 800px;
+      font-size: 32px;
+      line-height: 48px;
+      max-width: 860px;
+
+      &.text {
+        font-size: 24px;
+        max-width: 930px;
+      }
+    }
+
+    .info {
+      font-size: 18px;
     }
   }
 }
