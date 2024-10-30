@@ -4,7 +4,7 @@ import { RouterProps } from 'react-router';
 import { History } from 'history';
 
 import { Api } from '../../api';
-import { FioWalletDoublet, WalletKeysObj } from '../../types';
+import { FioWalletDoublet, RefProfileDomain, WalletKeysObj } from '../../types';
 import { minWaitTimeFunction } from '../../utils';
 
 import { GetState } from '../init';
@@ -326,13 +326,16 @@ export const UPDATE_AFFILIATE_REQUEST = `${prefix}/UPDATE_AFFILIATE_REQUEST`;
 export const UPDATE_AFFILIATE_SUCCESS = `${prefix}/UPDATE_AFFILIATE_SUCCESS`;
 export const UPDATE_AFFILIATE_FAILURE = `${prefix}/UPDATE_AFFILIATE_FAILURE`;
 
-export const updateAffiliate = (fch: string): CommonPromiseAction => ({
+export const updateAffiliate = (
+  fch: string,
+  domains: RefProfileDomain[],
+): CommonPromiseAction => ({
   types: [
     UPDATE_AFFILIATE_REQUEST,
     UPDATE_AFFILIATE_SUCCESS,
     UPDATE_AFFILIATE_FAILURE,
   ],
-  promise: (api: Api) => api.auth.updateAffiliate(fch),
+  promise: (api: Api) => api.auth.updateAffiliate(fch, domains),
 });
 
 export const SET_IS_NEW_USER = `${prefix}/SET_IS_NEW_USER`;

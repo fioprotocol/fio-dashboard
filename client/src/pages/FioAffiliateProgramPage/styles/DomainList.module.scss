@@ -1,0 +1,31 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-top: 30px;
+
+  .headerContainer {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    .actionButtons {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+    }
+  }
+}
+
+@include sm {
+  .container {
+    .headerContainer {
+      .actionButtons {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

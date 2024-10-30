@@ -1,0 +1,42 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../../components/ManagePageContainer/components/ItemsScreenView/UIView.module';
+
+.infoTooltip {
+  @include proxima-nova-regular;
+
+  :global {
+    .tooltip-inner {
+      max-width: 290px;
+      margin-left: -20px;
+      text-align: left;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 10px;
+    }
+  }
+}
+
+.infoCopy {
+  cursor: pointer;
+}
+
+.container {
+  .checkContainer {
+    justify-content: flex-start;
+    &.disabled {
+      .checkIcon {
+        opacity: 0.6;
+        cursor: not-allowed;
+        color: $silver;
+      }
+    }
+
+    .checkIcon {
+      cursor: pointer;
+      margin-right: 10px;
+      color: $light-indigo;
+    }
+  }
+}

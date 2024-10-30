@@ -12,6 +12,20 @@ export default class UpdateAffiliate extends Base {
         {
           nested_object: {
             fch: 'string',
+            domains: {
+              list_of_objects: [
+                {
+                  name: ['required', 'string'],
+                  isPremium: 'boolean',
+                  rank: { min_number: 0 },
+                  isFirstRegFree: 'boolean',
+                  expirationDate: ['string'],
+                  domainType: 'string',
+                  allowFree: 'boolean',
+                  hasGatedRegistration: 'boolean',
+                },
+              ],
+            },
           },
         },
       ],
@@ -33,6 +47,9 @@ export default class UpdateAffiliate extends Base {
     await ReferrerProfile.update(
       {
         tpid: data.fch,
+        settings: {
+          domains: data.domains,
+        },
       },
       {
         where: {

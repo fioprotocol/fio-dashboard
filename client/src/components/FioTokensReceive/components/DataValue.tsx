@@ -1,5 +1,6 @@
 import React, { MouseEvent, useCallback, useRef } from 'react';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import classnames from 'classnames';
 
 import { copyToClipboard } from '../../../util/general';
 
@@ -7,14 +8,15 @@ import classes from '../FioTokensReceive.module.scss';
 
 type Props = {
   value: string;
+  disabled?: boolean;
 };
 
-export const DataValue: React.FC<Props> = ({ value }) => {
+export const DataValue: React.FC<Props> = ({ value, disabled = false }) => {
   const valueRef = useRef<HTMLDivElement | null>(null);
 
   const onCopy = useCallback(() => {
-    copyToClipboard(value);
-  }, [value]);
+    !disabled && copyToClipboard(value);
+  }, [value, disabled]);
 
   const onClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -29,9 +31,16 @@ export const DataValue: React.FC<Props> = ({ value }) => {
   }, []);
 
   return (
-    <div className={classes.value} onClick={onClick} ref={valueRef}>
+    <div
+      className={classes.value}
+      onClick={disabled ? () => null : onClick}
+      ref={valueRef}
+    >
       {value}
-      <ContentCopyIcon className={classes.icon} onClick={onCopy} />
+      <ContentCopyIcon
+        className={classnames(classes.icon, disabled && classes.disabled)}
+        onClick={onCopy}
+      />
     </div>
   );
 };

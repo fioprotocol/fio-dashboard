@@ -160,7 +160,11 @@ export class User extends Base {
           attributes: ['id', 'voucherId', 'deviceDescription', 'createdAt', 'status'],
         },
         { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
-        { model: ReferrerProfile, as: 'affiliateProfile', attributes: ['code', 'tpid'] },
+        {
+          model: ReferrerProfile,
+          as: 'affiliateProfile',
+          attributes: ['code', 'tpid', 'settings'],
+        },
       ],
     });
 

@@ -373,7 +373,7 @@ export type User = {
   createdAt: string;
   timeZone: string;
   refProfile: { code?: string } | null;
-  affiliateProfile: { code?: string; tpid?: string } | null;
+  affiliateProfile: Pick<RefProfile, 'code', 'settings', 'tpid'> | null;
   userProfileType: string;
 };
 

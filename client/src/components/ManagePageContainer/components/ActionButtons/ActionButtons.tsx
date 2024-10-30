@@ -59,7 +59,7 @@ export const AddBundlesActionButton: React.FC<{
   );
 };
 
-const RenewActionButton: React.FC<{
+export const RenewActionButton: React.FC<{
   onRenewDomain: (name: string) => void;
 } & DefautProps> = props => {
   const { isSmallDesktop, name, onRenewDomain } = props;
