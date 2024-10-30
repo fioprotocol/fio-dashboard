@@ -1,8 +1,16 @@
-import { FioAddressDoublet, User } from '../../types';
+import {
+  FioAddressDoublet,
+  FioNameItemProps,
+  RefProfileDomain,
+  User,
+} from '../../types';
 
 export type FormValuesProps = {
   fch: string;
+  domains: RefProfileDomain[];
 };
+
+export type FioDomainSelectable = FioNameItemProps & { selected: boolean };
 
 export type FioAffiliateProgramPageContextProps = {
   showModal: boolean;
@@ -10,7 +18,11 @@ export type FioAffiliateProgramPageContextProps = {
   onCloseModal: () => void;
   fioAddresses: FioAddressDoublet[];
   onAffiliateUpdate: (values: FormValuesProps) => void;
+  handleSelect: (name: string) => void;
   user: User;
+  domains: FioDomainSelectable[];
+  loading: boolean;
   link: string;
+  fchLink: string;
   tpid: string;
 };
