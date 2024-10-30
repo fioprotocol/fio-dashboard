@@ -16,7 +16,7 @@ const GovernanceOverviewTab = React.lazy(() =>
 
 const GovernanceFioFoundationBoardOfDirectorsTab = React.lazy(() =>
   import(
-    /* webpackChunkName: 'GovernanceFioFoundationBoardOfDirectorsTab' */ './components/GovernanceFioFoundationBoardOfDirectorsTab'
+    /* webpackChunkName: 'BoardOfDirectorsTab' */ './components/BoardOfDirectorsTab/'
   ),
 );
 
@@ -38,12 +38,18 @@ const GovernanceVotingHelpTab = React.lazy(() =>
   ),
 );
 
+const CastBoardVotePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'CastBoardVotePage' */ './components/CastBoardVotePage'
+  ),
+);
+
 const GovernancePage: FC = () => {
   return (
-    <GovernancePageContainer>
-      <ScrollToTop>
-        <React.Suspense fallback={<Loader />}>
-          <Switch>
+    <ScrollToTop>
+      <React.Suspense fallback={<Loader />}>
+        <Switch>
+          <GovernancePageContainer>
             <SentryRoute
               path={ROUTES.GOVERNANCE}
               component={() => <Redirect to={ROUTES.GOVERNANCE_OVERVIEW} />}
@@ -74,10 +80,15 @@ const GovernancePage: FC = () => {
               component={GovernanceVotingHelpTab}
               exact
             />
-          </Switch>
-        </React.Suspense>
-      </ScrollToTop>
-    </GovernancePageContainer>
+          </GovernancePageContainer>
+          <SentryRoute
+            path={ROUTES.GOVERNANCE_CAST_BOARD_VOTE}
+            component={CastBoardVotePage}
+            exact
+          />
+        </Switch>
+      </React.Suspense>
+    </ScrollToTop>
   );
 };
 
