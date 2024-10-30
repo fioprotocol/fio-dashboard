@@ -112,6 +112,16 @@
     }
   }
 
+  .notificationBadge {
+    border-radius: 20px;
+
+    .link {
+      color: $white;
+      text-decoration: underline;
+      @include proxima-nova-semibold;
+    }
+  }
+
   .listContainer {
     display: flex;
     flex-direction: column;
@@ -181,8 +191,13 @@
 
           .img {
             width: 68px;
-            background-color: $dark-baltic-sea;
-            border-radius: 8px;
+    
+            &.withoutPhoto {
+              background-color: $dark-baltic-sea;
+              border-radius: 8px;
+              padding: 10px;
+            }
+
 
             @include lg {
               width: 54px;
@@ -270,3 +285,4 @@
     width: 100%;
   }
 }
+
