@@ -1,0 +1,25 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background-color: $ghost-white;
+  border-radius: 12px;
+  padding: 28px 20px;
+  justify-content: space-between;
+  align-items: center;
+
+  .title {
+    color: $dark-tone-ink;
+    font-size: 1.125em;
+    @include proxima-nova-semibold;
+  }
+
+  .button {
+    height: 34px;
+    font-size: 0.8125em;
+    max-width: 128px;
+  }
+}
