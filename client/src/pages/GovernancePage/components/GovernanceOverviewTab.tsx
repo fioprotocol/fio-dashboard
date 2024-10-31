@@ -1,9 +1,10 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import classes from '../styles/GovernanceOverviewTab.module.scss';
 import { OverviewInfoBlock } from './OverviewInfoBlock';
 import { WalletVotingPowerBlock } from './WalletVotingPowerBlock';
 import { WalletVotingPowerTable } from './WalletVotingPowerTable';
+import { WalletVotesDetailsModal } from './WalletVotesDetailsModal';
 
 const MOCK_WALLETS = [
   {
@@ -27,6 +28,8 @@ const MOCK_WALLETS = [
 ];
 
 export const GovernanceOverviewTab: FC = () => {
+  const [isDetailedModalOpen, setIsDetailedModalOpen] = useState(false);
+
   return (
     <>
       <div className={classes.infoBlocks}>
@@ -56,12 +59,18 @@ export const GovernanceOverviewTab: FC = () => {
             power={it.power}
             boardVote={it.boardVote}
             blockProducerVote={it.blockProducerVote}
+            onAction={() => setIsDetailedModalOpen(true)}
           />
         ))}
       </div>
       <WalletVotingPowerTable
         className={classes.walletsTable}
         data={MOCK_WALLETS}
+        onAction={() => setIsDetailedModalOpen(true)}
+      />
+      <WalletVotesDetailsModal
+        show={isDetailedModalOpen}
+        onClose={() => setIsDetailedModalOpen(false)}
       />
     </>
   );

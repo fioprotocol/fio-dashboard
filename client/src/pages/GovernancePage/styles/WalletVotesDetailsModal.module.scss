@@ -1,0 +1,26 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.header {
+  display: block;
+  text-align: start;
+  font-size: 1.125em;
+  @include proxima-nova-semibold;
+}
+
+.container {
+  width: 100%;
+}
+
+.dropdownContainer {
+  margin-top: 20px;
+  margin-bottom: 20px !important;
+}
+
+.tabsContainer {
+  margin-bottom: 20px;
+}
+
+.tabsScrollContainer {
+}

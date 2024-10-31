@@ -1,15 +1,10 @@
 import React from 'react';
 import { useHistory, useLocation } from 'react-router';
 
-import classnames from 'classnames';
-
-import TabsContainer from '../../../components/Tabs/TabsContainer';
-import Tabs from '../../../components/Tabs/Tabs';
-
 import classes from '../styles/GovernanceSelector.module.scss';
-import tabsClasses from '../../../components/Tabs/styles/Tabs.module.scss';
 import { ROUTES } from '../../../constants/routes';
 import CustomDropdown from '../../../components/CustomDropdown';
+import { TabsSelector } from './TabsSelector';
 
 const LINKS = [
   {
@@ -47,19 +42,12 @@ export const GovernanceSelector: React.FC = () => {
 
   return (
     <>
-      <TabsContainer activeKey={activeKey}>
-        <Tabs
-          list={LINKS}
-          containerClass={classnames(
-            tabsClasses.container,
-            classes.tabsContainer,
-          )}
-          tabItemClass={classnames(tabsClasses.tabItem, classes.tabItem)}
-          tabItemContainerClass={tabsClasses.tabItem}
-          tabAction={key => history.push(key)}
-          tabBorderPrimary
-        />
-      </TabsContainer>
+      <TabsSelector
+        className={classes.tabsContainer}
+        activeKey={activeKey}
+        list={LINKS}
+        tabAction={key => history.push(key)}
+      />
       <CustomDropdown
         dropdownClassNames={classes.dropdownContainer}
         value={activeKey}

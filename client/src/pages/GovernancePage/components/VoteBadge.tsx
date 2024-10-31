@@ -1,9 +1,12 @@
 import { FC } from 'react';
 import classnames from 'classnames';
 
+import { Link } from 'react-router-dom';
+
 import FioTokens from '../../../assets/images/vote.svg';
 
 import classes from '../styles/VoteBadge.module.scss';
+import { ROUTES } from '../../../constants/routes';
 
 type Props = {
   className?: string;
@@ -22,9 +25,9 @@ export const VoteBadge: FC<Props> = ({ className }) => {
           Board of directors or Block Producers.
         </p>
         <div className={classes.actionButtons}>
-          <a href="/" className={classes.link} target="_blank" rel="noreferrer">
+          <Link to={ROUTES.GOVERNANCE_VOTING_HELP} className={classes.link}>
             Learn More
-          </a>
+          </Link>
         </div>
       </div>
     </div>

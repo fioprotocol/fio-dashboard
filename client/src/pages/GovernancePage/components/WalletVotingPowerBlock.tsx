@@ -12,6 +12,7 @@ export type WalletVotingPowerBlockProps = {
   power: number;
   boardVote: boolean | 'proxied';
   blockProducerVote: boolean | 'proxied';
+  onAction?: () => void;
 };
 
 export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
@@ -19,6 +20,7 @@ export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
   power,
   boardVote,
   blockProducerVote,
+  onAction,
 }) => {
   const votes = [
     { name: 'FIO Board Vote', vote: boardVote },
@@ -40,7 +42,7 @@ export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
       <ActionButton
         className={classes.actionButton}
         title="View"
-        href="https://"
+        onClick={onAction}
         isIndigo
         isSmall
       />
