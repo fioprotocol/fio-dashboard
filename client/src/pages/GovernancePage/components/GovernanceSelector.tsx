@@ -56,7 +56,6 @@ export const GovernanceSelector: React.FC = () => {
           name: title,
         }))}
         onChange={key => history.push(key)}
-        withoutMarginBottom
         isIndigo
         isSimple
         isSmall

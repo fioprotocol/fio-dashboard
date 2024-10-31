@@ -44,6 +44,7 @@ const ROUTES: { [route: string]: string } = {
   GOVERNANCE_BLOCK_PRODUCERS: '/governance/block-producers',
   GOVERNANCE_PROXIES: '/governance/proxies',
   GOVERNANCE_VOTING_HELP: '/governance/voting-help',
+  GOVERNANCE_CAST_BOARD_VOTE: '/governance/cast-board-vote',
 
   PROTOCOL_UPDATES: '/protocol-updates',
 
