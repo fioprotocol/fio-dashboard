@@ -191,12 +191,8 @@
 
           .img {
             width: 68px;
-    
-            &.withoutPhoto {
-              background-color: $dark-baltic-sea;
-              border-radius: 8px;
-              padding: 10px;
-            }
+            background-color: $dark-baltic-sea;
+            border-radius: 8px;
 
             @include lg {
               width: 54px;
@@ -243,49 +239,10 @@
             width: auto;
             gap: 10px;
           }
-
-          .status,
-          .id,
-          .itemButton {
-            height: 24px;
-          }
-
-          .status,
-          .id {
-            border-radius: 5px;
-            font-size: 0.625em;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 8px;
-            @include inter-semibold;
-
-            @include lg {
-              font-size: 0.6875em;
-            }
-          }
-
-          .status {
-            background-color: $crocus-purple;
-            color: $white;
-
-            &.candidate {
-              background-color: $megaman;
-            }
-
-            &.inactive {
-              background-color: $dull-orange;
-            }
-          }
-
-          .id {
-            color: $dark-baltic-sea;
-            background-color: $showflake;
-          }
-
+          
           .itemButton {
             width: auto;
+            height: 24px;
             font-size: 0.75em;
             padding: 0;
             @include proxima-nova-semibold;
@@ -310,5 +267,16 @@
     height: 34px;
     @include proxima-nova-semibold;
     align-self: flex-end;
+  }
+}
+
+.content {
+  background-color: $desert-storm;
+}
+
+@include lg {
+  .modal {
+    max-width: 674px;
+    width: 100%;
   }
 }

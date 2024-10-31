@@ -1,31 +1,34 @@
 import { FC } from 'react';
 import { Checkbox } from '@mui/material';
 import { Link } from 'react-router-dom';
-import classnames from 'classnames';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Loader from '../../../../components/Loader/Loader';
 import NotificationBadge from '../../../../components/NotificationBadge';
+import ModalComponent from '../../../../components/Modal/Modal';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { ROUTES } from '../../../../constants/routes';
-import { CANDIDATE_STATUS } from '../../../../constants/governance';
-
-import { useContext } from './BoardOfDirectorsTabContext';
 
 import { MyCurrentVotes } from '../MyCurrentVotes';
+import { BoardOfDirectorsDetails } from '../BoardOfDirectorsDetails';
+import { MemberBadge } from '../MemberBadge/MemberBadge';
+import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
 
-import noImageIconSrc from '../../../../assets/images/no-photo.svg';
+import { useContext } from './BoardOfDirectorsTabContext';
 
 import classes from './BoardOfDirectorsTab.module.scss';
 
 export const BoardOfDirectorsTab: FC = () => {
   const {
+    activeCandidate,
     disabledCastBoardVote,
     listOfCandidates,
     loading,
     nextDate,
+    showCandidateDetailsModal,
     onCheckBoxChange,
+    onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,
   } = useContext();
@@ -100,12 +103,9 @@ export const BoardOfDirectorsTab: FC = () => {
                 <div className={classes.contentContainer}>
                   <div className={classes.dataContainer}>
                     <img
-                      src={image || noImageIconSrc}
+                      src={image}
                       alt={`candidate ${id}`}
-                      className={classnames(
-                        classes.img,
-                        !image && classes.withoutPhoto,
-                      )}
+                      className={classes.img}
                     />
                     <div className={classes.nameContainer}>
                       <p className={classes.name}>{name}</p>
@@ -115,18 +115,8 @@ export const BoardOfDirectorsTab: FC = () => {
                     </div>
                   </div>
                   <div className={classes.itemActionContainer}>
-                    <div
-                      className={classnames(
-                        classes.status,
-                        status === CANDIDATE_STATUS.CANDIDATE &&
-                          classes.candidate,
-                        status === CANDIDATE_STATUS.INACTIVE &&
-                          classes.inactive,
-                      )}
-                    >
-                      {status}
-                    </div>
-                    <div className={classes.id}>Candidate: {id}</div>
+                    <MemberBadge status={status} />
+                    <CandidateIdBadge id={id} />
                     <SubmitButton
                       text="View"
                       onClick={() =>
@@ -150,6 +140,15 @@ export const BoardOfDirectorsTab: FC = () => {
         className={classes.button}
         withTopMargin
       />
+      <ModalComponent
+        show={showCandidateDetailsModal}
+        closeButton
+        hasDefaultCloseColor
+        onClose={onCloseModal}
+        classNames={{ dialog: classes.modal, content: classes.content }}
+      >
+        <BoardOfDirectorsDetails activeCandidate={activeCandidate} />
+      </ModalComponent>
     </div>
   );
 };

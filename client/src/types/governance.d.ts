@@ -4,7 +4,7 @@ export type CandidateProps = {
   id: string;
   image: string;
   lastVoteCount: number;
-  links: Array<{ name: string; url: string }>;
+  links: Array<{ name: string; url: string; logo: string }>;
   name: string;
   status: string;
   text: string;

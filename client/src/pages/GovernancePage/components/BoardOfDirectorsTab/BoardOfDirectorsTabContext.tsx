@@ -22,6 +22,7 @@ type UseContextProps = {
   nextDate: string;
   showCandidateDetailsModal: boolean;
   onCheckBoxChange: (id: string) => void;
+  onCloseModal: () => void;
   handleCandidateDetailsModalOpen: (candidate: CandidateProps) => void;
   handleCastVote: () => void;
 };
@@ -39,7 +40,6 @@ export const useContext = (): UseContextProps => {
   const [activeCandidate, setActiveCandidate] = useState<CandidateProps | null>(
     null,
   );
-
   const { loading, candidatesList } = useGetCandidates();
 
   const dispatch = useDispatch();
@@ -64,6 +64,11 @@ export const useContext = (): UseContextProps => {
     },
     [setActiveCandidate],
   );
+
+  const onCloseModal = useCallback(() => {
+    toggleShowCandidateDetailsModal(false);
+    setActiveCandidate(null);
+  }, []);
 
   const handleCastVote = useCallback(() => {
     if (listOfCandidates.every(candidate => !candidate.checked)) {
@@ -97,6 +102,7 @@ export const useContext = (): UseContextProps => {
     nextDate,
     showCandidateDetailsModal,
     onCheckBoxChange,
+    onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,
   };
