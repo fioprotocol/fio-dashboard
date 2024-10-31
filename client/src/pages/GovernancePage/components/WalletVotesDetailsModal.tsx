@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-
 import classnames from 'classnames';
 
 import TelegramIcon from '../../../assets/images/social-network-block-producers/telegram.svg';
@@ -11,6 +10,7 @@ import Modal from '../../../components/Modal/Modal';
 import CustomDropdown from '../../../components/CustomDropdown';
 import { TabsSelector } from './TabsSelector';
 import { TabItemProps } from '../../../components/Tabs/types';
+
 import noImageIconSrc from '../../../assets/images/no-photo.svg';
 
 import { CANDIDATE_STATUS } from '../../../constants/governance';
