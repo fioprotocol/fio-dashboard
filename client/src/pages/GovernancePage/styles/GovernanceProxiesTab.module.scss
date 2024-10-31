@@ -31,7 +31,7 @@
 
 .myVotesTitle {
   margin: 0;
-  color: #171717;
+  color: $cynical-black;
   font-size: 1.125em;
   @include proxima-nova-semibold;
 }
@@ -53,14 +53,14 @@
 }
 
 .infoTitle {
-  color: #171717;
+  color: $cynical-black;
   font-size: 1.125em;
   @include proxima-nova-semibold
 }
 
 .infoDescription {
   margin: 6px 0 0;
-  color: #171717;
+  color: $cynical-black;
   font-size: 0.875em;
   @include proxima-nova-thin
 }

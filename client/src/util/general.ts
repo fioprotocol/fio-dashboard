@@ -315,3 +315,37 @@ export const convertToNewDate = (
   // If it's neither a valid timestamp nor a valid Date string
   throw new Error('Invalid input: Unable to convert to Date.');
 };
+
+export const getNextGovernanceDate = (): string => {
+  const dates = [
+    new Date(Date.UTC(new Date().getUTCFullYear(), 3, 15, 19)), // April 15th 2PM (UTC-5)
+    new Date(Date.UTC(new Date().getUTCFullYear(), 7, 16, 19)), // August 16th 2PM (UTC-5)
+    new Date(Date.UTC(new Date().getUTCFullYear(), 11, 15, 19)), // December 15th 2PM (UTC-5)
+  ];
+
+  const now = new Date();
+
+  const nextDate =
+    dates.find(date => date > now) ||
+    new Date(dates[0].setFullYear(dates[0].getFullYear() + 1));
+
+  const month = nextDate.toLocaleString('en-US', {
+    month: 'long',
+    timeZone: 'America/New_York',
+  });
+  const day = nextDate.toLocaleString('en-US', {
+    day: 'numeric',
+    timeZone: 'America/New_York',
+  });
+  const time = nextDate.toLocaleString('en-US', {
+    hour: 'numeric',
+    hour12: true,
+    timeZone: 'America/New_York',
+  });
+  const year = nextDate.toLocaleString('en-US', {
+    year: 'numeric',
+    timeZone: 'America/New_York',
+  });
+
+  return `${month} ${day}th ${time} (UTC-5), ${year}`;
+};

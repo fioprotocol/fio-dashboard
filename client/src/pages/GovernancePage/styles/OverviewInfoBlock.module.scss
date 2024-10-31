@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background-color: #f7f7ff;
+  background-color: $ghost-white;
   border-radius: 12px;
   padding: 28px 20px;
 }
@@ -38,7 +38,7 @@
   display: block;
   font-size: 0.875em;
   line-height: 1.125em;
-  color: #E17E36;
+  color: $dull-orange;
   @include proxima-nova-semibold
 }
 

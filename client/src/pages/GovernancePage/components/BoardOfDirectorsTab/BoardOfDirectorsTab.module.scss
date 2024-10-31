@@ -1,0 +1,314 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .headerContainer {
+    color: $cynical-black;
+    display: flex;
+    gap: 10px;
+    flex-flow: row wrap;
+    align-items: flex-start;
+
+    .title,
+    .date {
+      font-size: 1.125em;
+      margin-bottom: 0;
+    }
+
+    .date {
+      color: $dull-orange;
+    }
+  }
+
+  .text {
+    margin-top: 30px;
+    color: $cynical-black;
+    font-size: 0.75em;
+    line-height: 2em;
+  }
+
+  .tilesContainer {
+    margin-top: 30px;
+
+    .tileItemContainer {
+      display: flex;
+      flex-flow: row wrap;
+      gap: 20px;
+      background-color: $ghost-white;
+      border-radius: 12px;
+      padding: 28px 20px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+
+      .title {
+        color: $dark-tone-ink;
+        font-size: 1.125em;
+        @include proxima-nova-semibold;
+      }
+
+      .link {
+        width: 100%;
+        max-width: 128px;
+
+        .button {
+          height: 34px;
+          font-size: 0.8125em;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .actionContainer {
+    margin-top: 30px;
+    color: $dark-tone-ink;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 20px;
+
+    @include sm {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-right: 0;
+    }
+
+    .actionTitleContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      .title,
+      .text {
+        margin: 0;
+      }
+
+      .title {
+        font-size: 1.125em;
+        @include proxima-nova-semibold;
+      }
+
+      .text {
+        font-size: 0.75em;
+      }
+    }
+
+    .actionButton {
+      height: 34px;
+      max-width: 132px;
+      font-size: 0.8125em;
+      white-space: nowrap;
+      @include sm {
+        align-self: flex-end;
+      }
+    }
+  }
+
+  .notificationBadge {
+    border-radius: 20px;
+
+    .link {
+      color: $white;
+      text-decoration: underline;
+      @include proxima-nova-semibold;
+    }
+  }
+
+  .listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 30px;
+    align-items: center;
+
+    .itemContainer {
+      background-color: $desert-storm;
+      border-radius: 8px;
+      padding: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      max-width: 400px;
+
+      @include lg {
+        max-width: none;
+      }
+
+      .checkbox {
+        &:hover {
+          background: none;
+        }
+
+        svg[data-testid='CheckBoxOutlineBlankIcon'], svg[data-testid='CheckBoxIcon'] {
+          width: 20px;
+          height: 20px;
+          border-radius: 4px;
+        }
+
+        svg[data-testid='CheckBoxOutlineBlankIcon'] {
+          box-shadow: inset 0 0 0 1px $black-oak;
+          path {
+            display: none;
+          }
+        }
+
+        svg[data-testid='CheckBoxIcon'] {
+          color: $light-indigo;
+          box-shadow: inset 0 0 0 4px $light-indigo;
+          path {
+            display: block;
+          }
+        }
+      }
+
+      .contentContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        justify-content: space-between;
+
+        @include lg {
+          align-items: center;
+          flex-direction: row;
+        }
+
+        .dataContainer {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          width: 100%;
+
+          .img {
+            width: 68px;
+    
+            &.withoutPhoto {
+              background-color: $dark-baltic-sea;
+              border-radius: 8px;
+              padding: 10px;
+            }
+
+            @include lg {
+              width: 54px;
+            }
+          }
+
+          .nameContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            .name,
+            .lastVotedCount {
+              margin: 0;
+            }
+
+            .name {
+              font-size: 0.9375em;
+              color: $dark-tone-ink;
+              @include proxima-nova-semibold;
+            }
+
+            .lastVotedCount {
+              font-size: 0.625em;
+              @include inter-regular;
+
+              span {
+                @include inter-semibold;
+              }
+            }
+          }
+        }
+
+        .itemActionContainer {
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
+          margin: 0;
+          width: 100%;
+          align-items: center;
+
+          @include lg {
+            justify-self: flex-end;
+            width: auto;
+            gap: 10px;
+          }
+
+          .status,
+          .id,
+          .itemButton {
+            height: 24px;
+          }
+
+          .status,
+          .id {
+            border-radius: 5px;
+            font-size: 0.625em;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 8px;
+            @include inter-semibold;
+
+            @include lg {
+              font-size: 0.6875em;
+            }
+          }
+
+          .status {
+            background-color: $crocus-purple;
+            color: $white;
+
+            &.candidate {
+              background-color: $megaman;
+            }
+
+            &.inactive {
+              background-color: $dull-orange;
+            }
+          }
+
+          .id {
+            color: $dark-baltic-sea;
+            background-color: $showflake;
+          }
+
+          .itemButton {
+            width: auto;
+            font-size: 0.75em;
+            padding: 0;
+            @include proxima-nova-semibold;
+
+            @include lg {
+              width: 100%;
+              height: 34px;
+              max-width: 90px;
+              margin-left: 10px;
+              padding: 0 15px;
+              font-size: 0.8125em;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .button {
+    width: auto;
+    font-size: 0.8125em;
+    height: 34px;
+    @include proxima-nova-semibold;
+    align-self: flex-end;
+  }
+}
