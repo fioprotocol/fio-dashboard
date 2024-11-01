@@ -94,6 +94,16 @@ const fioLogger: FioLogger = message => {
   }
 };
 
+export const proxyToDetailedProxy = (row: Proxy): DetailedProxy => ({
+  id: row.id,
+  proxy: row.proxy,
+  owner: row.owner,
+  lastVoteWeight: parseFloat(row.last_vote_weight),
+  proxiedVoteWeight: parseFloat(row.proxied_vote_weight),
+  fioAddress: row.fioaddress,
+  producers: row.producers,
+});
+
 export default class Fio {
   baseurls: string[] = [];
   publicFioSDK: FIOSDK | null = null;
@@ -634,15 +644,7 @@ export default class Fio {
 
       proxies = rows
         .filter(row => row.is_proxy && row.fioaddress)
-        .map(row => ({
-          id: row.id,
-          proxy: row.proxy,
-          owner: row.owner,
-          lastVoteWeight: parseFloat(row.last_vote_weight),
-          proxiedVoteWeight: parseFloat(row.proxied_vote_weight),
-          fioAddress: row.fioaddress,
-          producers: row.producers,
-        }));
+        .map(proxyToDetailedProxy);
     } catch (err) {
       this.logError(err);
     }

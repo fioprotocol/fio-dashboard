@@ -1,4 +1,5 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+
 import classnames from 'classnames';
 
 import TelegramIcon from '../../../../assets/images/social-network-governance/telegram.svg';
@@ -11,7 +12,8 @@ import CustomDropdown from '../../../../components/CustomDropdown';
 import { TabsSelector } from '../TabsSelector';
 import { TabItemProps } from '../../../../components/Tabs/types';
 
-import { useGetCandidates } from '../../../../hooks/governance';
+import { OverviewWallet, useGetCandidates } from '../../../../hooks/governance';
+
 import Loader from '../../../../components/Loader/Loader';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
@@ -22,32 +24,11 @@ import { CANDIDATE_STATUS } from '../../../../constants/governance';
 import { CandidateProps } from '../../../../types/governance';
 
 export type WalletVotesDetailsProps = {
+  overviewWallets: OverviewWallet[];
+  selectedPublicKey: string;
   show?: boolean;
   onClose?: () => void;
 };
-
-const WALLETS_MOCK = [
-  {
-    name: 'Wallet Numero Uno 1',
-    proxied: false,
-    votingPower: 19384759,
-  },
-  {
-    name: 'Wallet Numero Uno 2',
-    proxied: false,
-    votingPower: 0,
-  },
-  {
-    name: 'Wallet Numero Uno 3',
-    proxied: true,
-    votingPower: 19384759,
-  },
-  {
-    name: 'Wallet Numero Uno 4',
-    proxied: true,
-    votingPower: 0,
-  },
-];
 
 const BLOCK_PRODUCERS = [
   {
@@ -108,15 +89,25 @@ const BLOCK_PRODUCERS = [
   },
 ];
 
-type MockWallet = typeof WALLETS_MOCK[number];
-
 type MockBlockProducer = typeof BLOCK_PRODUCERS[number];
 
 export const WalletVotesDetailsModal: FC<WalletVotesDetailsProps> = ({
+  overviewWallets,
+  selectedPublicKey,
   show,
   onClose,
 }) => {
-  const [activeWallet, setActiveWallet] = useState(WALLETS_MOCK[0]);
+  const [activeWalletPublicKey, setActiveWalletPublicKey] = useState(
+    selectedPublicKey,
+  );
+
+  useEffect(() => {
+    setActiveWalletPublicKey(selectedPublicKey);
+  }, [selectedPublicKey]);
+
+  const activeWallet = overviewWallets.find(
+    it => activeWalletPublicKey === it.publicKey,
+  );
 
   const TABS: TabItemProps[] = [
     {
@@ -151,13 +142,11 @@ export const WalletVotesDetailsModal: FC<WalletVotesDetailsProps> = ({
         <CustomDropdown
           dropdownClassNames={classes.dropdownContainer}
           value={activeWallet.name}
-          options={WALLETS_MOCK.map(({ name }) => ({
-            id: name,
+          options={overviewWallets.map(({ name, publicKey }) => ({
+            id: publicKey,
             name,
           }))}
-          onChange={key =>
-            setActiveWallet(WALLETS_MOCK.find(it => it.name === key))
-          }
+          onChange={setActiveWalletPublicKey}
           withoutMarginBottom
           hasAutoWidth
           isWhite
@@ -175,7 +164,7 @@ export const WalletVotesDetailsModal: FC<WalletVotesDetailsProps> = ({
 };
 
 type TabProps = {
-  activeWallet: MockWallet;
+  activeWallet: OverviewWallet;
 };
 
 const BoardTab: FC<TabProps> = ({ activeWallet }) => {
@@ -187,7 +176,7 @@ const BoardTab: FC<TabProps> = ({ activeWallet }) => {
 
   return (
     <>
-      {!activeWallet.proxied && (
+      {!activeWallet.blockProducerVote && (
         <InfoBadge
           className={classes.infoBadge}
           type={BADGE_TYPES.INFO}
@@ -196,11 +185,12 @@ const BoardTab: FC<TabProps> = ({ activeWallet }) => {
           message="If you have vote recently, please note that your vote will show up after the next count date."
         />
       )}
-      {activeWallet.proxied ? (
+      {activeWallet.blockProducerVote ? (
         <ProxyVoteDetails
           power={activeWallet.votingPower}
-          name="t21zeqsjq5cb"
-          handle="finance@edge"
+          name={activeWallet.proxy?.owner}
+          handle={activeWallet.proxy?.fioAddress}
+          hasDetails={candidatesList.length > 0}
         />
       ) : (
         <MyVoteDetails
@@ -224,11 +214,12 @@ const BoardTab: FC<TabProps> = ({ activeWallet }) => {
 const ProducersTab: FC<TabProps> = ({ activeWallet }) => {
   return (
     <>
-      {activeWallet.proxied ? (
+      {activeWallet.blockProducerVote ? (
         <ProxyVoteDetails
           power={activeWallet.votingPower}
-          name="t21zeqsjq5cb"
-          handle="finance@edge"
+          name={activeWallet.proxy?.owner}
+          handle={activeWallet.proxy?.fioAddress}
+          hasDetails={true}
         />
       ) : (
         <MyVoteDetails power={activeWallet.votingPower} />
@@ -324,9 +315,15 @@ type ProxyVoteDetailsProps = {
   power: number;
   name: string;
   handle: string;
+  hasDetails: boolean;
 };
 
-const ProxyVoteDetails: FC<ProxyVoteDetailsProps> = ({ power }) => {
+const ProxyVoteDetails: FC<ProxyVoteDetailsProps> = ({
+  power,
+  name,
+  handle,
+  hasDetails,
+}) => {
   return (
     <>
       <InfoBadge
@@ -346,17 +343,25 @@ const ProxyVoteDetails: FC<ProxyVoteDetailsProps> = ({ power }) => {
         }
       />
       <h5 className={classes.proxyDetailsTitle}>Your Proxy</h5>
-      <div className={classes.detailsContainer}>
-        <p className={classes.detailsItem}>
-          <span className={classes.detailsLabel}>Name:</span>
-          <span className={classes.detailsValue}>t21zeqsjq5cb</span>
-        </p>
-        <p className={classes.detailsItem}>
-          <span className={classes.detailsLabel}>FIO Handle:</span>
-          <span className={classes.detailsValue}>finance@edge</span>
-        </p>
-      </div>
-      <h5 className={classes.proxyDetailsSubTitle}>Proxy Vote Details</h5>
+      {(name || handle) && (
+        <div className={classes.detailsContainer}>
+          {name && (
+            <p className={classes.detailsItem}>
+              <span className={classes.detailsLabel}>Name:</span>
+              <span className={classes.detailsValue}>{name}</span>
+            </p>
+          )}
+          {handle && (
+            <p className={classes.detailsItem}>
+              <span className={classes.detailsLabel}>FIO Handle:</span>
+              <span className={classes.detailsValue}>{handle}</span>
+            </p>
+          )}
+        </div>
+      )}
+      {hasDetails && (
+        <h5 className={classes.proxyDetailsSubTitle}>Proxy Vote Details</h5>
+      )}
       {power === 0 && (
         <InfoBadge
           className={classes.infoBadge}

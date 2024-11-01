@@ -12,7 +12,7 @@ import { OverviewWallet } from '../../../../hooks/governance';
 export type WalletVotingPowerTableProps = {
   className: string;
   data: OverviewWallet[];
-  onAction?: (wallet: OverviewWallet) => void;
+  onAction?: (publicKey: string) => void;
 };
 
 export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
@@ -48,7 +48,7 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
               title="View"
               isIndigo
               isSmall
-              onClick={() => onAction?.(it)}
+              onClick={() => onAction?.(it.publicKey)}
             />
           </div>
         </Fragment>

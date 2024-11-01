@@ -20,17 +20,28 @@ import { DetailedProxy } from '../types';
 import apis from '../api';
 import { fioWallets, isFioWalletsBalanceLoading } from '../redux/fio/selectors';
 
-export const useGetCandidates = (): {
+const getJiraCandidatesUrl = (publicKey?: string) => {
+  if (!publicKey) {
+    return GET_JIRA_CANDIDATES_URL;
+  }
+
+  return `https://jira.fio.net/search?jql=filter=10081 AND summary ~ "${publicKey}"&maxResults=1000`;
+};
+
+export const useGetCandidates = (
+  publicKey?: string,
+): {
   loading: boolean;
   candidatesList: CandidateProps[];
 } => {
   const [loading, toggleLoading] = useState<boolean>(false);
   const [candidatesList, setCandidatesList] = useState<CandidateProps[]>([]);
 
-  const getCandidates = useCallback(async () => {
+  const getCandidates = useCallback(async (publicKey?: string) => {
     try {
       toggleLoading(true);
-      const results = await superagent.get(GET_JIRA_CANDIDATES_URL);
+      const results = await superagent.get(getJiraCandidatesUrl(publicKey));
+
       const jiraCandidates: JiraCandidates = results.body?.issues;
 
       const candidates = jiraCandidates.map(candidate => {
@@ -91,8 +102,8 @@ export const useGetCandidates = (): {
   }, []);
 
   useEffectOnce(() => {
-    getCandidates();
-  }, []);
+    void getCandidates(publicKey);
+  }, [publicKey]);
 
   return { loading, candidatesList };
 };
@@ -126,6 +137,7 @@ export type OverviewWallet = {
   votingPower: number;
   boardVote: boolean;
   blockProducerVote: boolean;
+  proxy?: DetailedProxy;
 };
 
 export const useWalletsOverview = () => {
@@ -137,7 +149,10 @@ export const useWalletsOverview = () => {
     boolean
   >(false);
   const [blockProducersVotedWallets, setBlockProducersVotedWallets] = useState<
-    string[]
+    {
+      publicKey: string;
+      proxy: DetailedProxy;
+    }[]
   >([]);
 
   const walletsKeysToken = wallets
@@ -193,7 +208,10 @@ export const useWalletsOverview = () => {
 
         const votedWallets = walletsToRecords
           .filter(({ records }) => records.length > 0)
-          .map(({ publicKey }) => publicKey);
+          .map(({ publicKey, records: [proxy] }) => ({
+            publicKey,
+            proxy,
+          }));
 
         setBlockProducersVotedWallets(votedWallets);
       } catch (err) {
@@ -213,12 +231,17 @@ export const useWalletsOverview = () => {
     };
   }
 
+  const proxiesWallets = blockProducersVotedWallets.map(it => it.publicKey);
+
   const overviewWallets: OverviewWallet[] = wallets.map(wallet => ({
     name: wallet.name,
     publicKey: wallet.publicKey,
     votingPower: wallet.balance ? wallet.balance / 1000000000 : 0,
     boardVote: boardVotedWallets.includes(wallet.publicKey),
-    blockProducerVote: blockProducersVotedWallets.includes(wallet.publicKey),
+    blockProducerVote: proxiesWallets.includes(wallet.publicKey),
+    proxy: blockProducersVotedWallets.find(
+      it => it.publicKey === wallet.publicKey,
+    )?.proxy,
   }));
 
   return { overviewWallets, loading: false };

@@ -10,7 +10,7 @@ import { OverviewWallet } from '../../../../hooks/governance';
 
 export type WalletVotingPowerBlockProps = {
   data: OverviewWallet;
-  onAction?: (data: OverviewWallet) => void;
+  onAction?: (publicKey: string) => void;
 };
 
 export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
@@ -39,7 +39,7 @@ export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
       <ActionButton
         className={classes.actionButton}
         title="View"
-        onClick={() => onAction?.(data)}
+        onClick={() => onAction?.(data.publicKey)}
         isIndigo
         isSmall
       />
