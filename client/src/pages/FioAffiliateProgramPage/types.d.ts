@@ -19,6 +19,8 @@ export type FioAffiliateProgramPageContextProps = {
   fioAddresses: FioAddressDoublet[];
   onAffiliateUpdate: (values: FormValuesProps) => void;
   handleSelect: (name: string) => void;
+  handleRenewDomain: (name: string) => void;
+  handleVisibilityChange: (name: string) => void;
   user: User;
   domains: FioDomainSelectable[];
   loading: boolean;

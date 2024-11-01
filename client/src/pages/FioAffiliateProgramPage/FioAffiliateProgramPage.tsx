@@ -26,6 +26,8 @@ const FioAffiliateProgramPage: React.FC = () => {
     fioAddresses,
     onAffiliateUpdate,
     handleSelect,
+    handleRenewDomain,
+    handleVisibilityChange,
     domains,
     user,
     link,
@@ -162,8 +164,8 @@ const FioAffiliateProgramPage: React.FC = () => {
             <DomainList
               domains={domains}
               loading={false}
-              handleRenewDomain={() => null}
-              handleVisibility={() => null}
+              handleRenewDomain={handleRenewDomain}
+              handleVisibility={handleVisibilityChange}
               handleSelect={handleSelect}
               isDesktop={true}
             />

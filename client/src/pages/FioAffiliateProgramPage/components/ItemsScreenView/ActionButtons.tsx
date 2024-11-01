@@ -1,13 +1,10 @@
 import React, { useCallback } from 'react';
-// import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 import LibraryAddCheck from '@mui/icons-material/LibraryAddCheck';
 
 import { BUTTONS_TITLE } from '../../../../components/ManagePageContainer/constants';
 import { RenewActionButton } from '../../../../components/ManagePageContainer/components/ActionButtons';
-// import { ROUTES } from '../../../../constants/routes';
-// import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 import { useCheckIfSmallDesktop } from '../../../../screenType';
 

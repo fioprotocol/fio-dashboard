@@ -34,7 +34,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     refreshBalance,
     getFee,
   } = props;
-  const { name } = location.query;
+  const { name, backPath } = location.query;
 
   const domainStatus: string = selectedFioDomain?.isPublic
     ? DOMAIN_STATUS.PUBLIC
@@ -100,7 +100,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     setProcessing(false);
   };
   const onResultsClose = () => {
-    history.push(ROUTES.FIO_DOMAINS);
+    history.push(backPath || ROUTES.FIO_DOMAINS);
   };
   const onResultsRetry = () => {
     setResultsData(null);
@@ -134,7 +134,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     );
 
   if (!selectedFioDomain?.walletPublicKey && !processing)
-    return <Redirect to={{ pathname: ROUTES.FIO_DOMAINS }} />;
+    return <Redirect to={{ pathname: backPath || ROUTES.FIO_DOMAINS }} />;
 
   return (
     <>
@@ -161,6 +161,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         handleSubmit={onSubmit}
         fioWallet={fioWallet}
         walletBalancesAvailable={walletBalancesAvailable}
+        backLink={backPath}
       />
     </>
   );
