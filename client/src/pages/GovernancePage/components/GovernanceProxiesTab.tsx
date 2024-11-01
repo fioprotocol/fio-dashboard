@@ -17,6 +17,7 @@ export const GovernanceProxiesTab: FC = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<DetailedProxy>();
   const [detailedProxy, setDetailedProxy] = useState<DetailedProxy>();
+
   const { loading, proxyList } = useDetailedProxies();
 
   return (
