@@ -1,0 +1,111 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+  
+  .title {
+    margin-top: -26px;
+    margin-bottom: 0;
+    font-size: 1.125em;
+    width: fit-content;
+    float: left;
+    color: $cynical-black;
+    @include proxima-nova-semibold;
+  }
+
+  .dataContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+
+    @include lg {
+      flex-direction: row;
+    }
+
+    .mediaContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .image {
+        width: 128px;
+        background-color: $dark-baltic-sea;
+        border-radius: 16px;
+      }
+
+      .statusContainer {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        font-size: 1.2em;
+
+        @include lg {
+          flex-direction: column;
+        }
+
+        &>div {
+          width: 128px;
+          height: 30px;
+        }
+      }
+    }
+
+    .textContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      color: $dark-gray;
+
+      .name,
+      .count {
+        margin: 0;
+        @include inter-semibold;
+      }
+
+      .name {
+        font-size: 1.125em;
+      }
+
+      .count {
+        font-size: 0.75em;
+      }
+
+      .url {
+        background-color: $showflake;
+        padding: 8px 10px;
+        border-radius: 5px;
+        color: $light-indigo;
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        font-size: 0.75em;
+        @include inter-bold;
+      }
+
+      .country {
+        margin-bottom: 0;
+        font-size: 0.75em;
+        @include inter-semibold;
+      }
+
+      .text {
+        font-size: 0.75em;
+        line-height: 2em;
+        margin-bottom: 0;
+        @include inter-regular;
+      }
+
+      .linksContainer {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
+}

@@ -3,8 +3,8 @@ export type CandidateProps = {
   country: string;
   id: string;
   image: string;
-  lastVoutCount: number;
-  links: Array<{ name: string; url: string }>;
+  lastVoteCount: number;
+  links: Array<{ name: string; url: string; logo: string }>;
   name: string;
   status: string;
   text: string;
