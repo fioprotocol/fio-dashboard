@@ -89,7 +89,9 @@ export const DomainActionButtons: React.FC<{
   return (
     <ActionButtonsContainer>
       <RenewActionButton {...defaultProps} onRenewDomain={onRenewDomain} />
-      {!isPublic && (
+      {isPublic ? (
+        <div className={classes.actionButton} />
+      ) : (
         <VisibilityActionButton
           {...defaultProps}
           onVisibilityChange={onVisibilityChange}

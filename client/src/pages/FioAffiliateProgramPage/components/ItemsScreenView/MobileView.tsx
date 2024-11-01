@@ -47,14 +47,15 @@ export const MobileView: React.FC<MobileViewProps> = props => {
                   classes.checkContainer,
                   !isPublic && classes.disabled,
                 )}
-                onClick={onClick}
               >
                 <CheckedIcon
                   isChecked={selected}
                   onClick={onClick}
                   disabled={!isPublic}
                 />
-                <p className={classes.name}>{name}</p>
+                <p className={classes.name} onClick={onClick}>
+                  {name}
+                </p>
               </div>
               <div className={classes.openIcon} onClick={openDetails}>
                 {(isExpired || isExpiredIn30Days || !isPublic) && (

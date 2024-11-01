@@ -71,7 +71,9 @@ const DomainItemComponent: React.FC<ItemComponentProps & {
             onClick={onClick}
             disabled={!isPublic}
           />
-          <p className={classes.name}>{name}</p>
+          <p className={classes.name} onClick={onClick}>
+            {name}
+          </p>
         </div>
       </div>
       <div className={classes.tableCol}>
