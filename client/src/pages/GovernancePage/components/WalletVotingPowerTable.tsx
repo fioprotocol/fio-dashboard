@@ -18,11 +18,13 @@ export type WalletVotingData = {
 export type WalletVotingPowerTableProps = {
   className: string;
   data: WalletVotingData[];
+  onAction?: () => void;
 };
 
 export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
   className,
   data,
+  onAction,
 }) => {
   return (
     <div className={classnames(classes.grid, className)}>
@@ -50,9 +52,9 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
             <ActionButton
               className={classes.actionButton}
               title="View"
-              href="https://"
               isIndigo
               isSmall
+              onClick={onAction}
             />
           </div>
         </Fragment>

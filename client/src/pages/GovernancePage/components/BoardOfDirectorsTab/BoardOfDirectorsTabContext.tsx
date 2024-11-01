@@ -40,6 +40,7 @@ export const useContext = (): UseContextProps => {
   const [activeCandidate, setActiveCandidate] = useState<CandidateProps | null>(
     null,
   );
+
   const { loading, candidatesList } = useGetCandidates();
 
   const dispatch = useDispatch();

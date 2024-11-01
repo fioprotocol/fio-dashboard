@@ -1,0 +1,315 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.header {
+  display: block;
+  text-align: start;
+  font-size: 1.125em;
+  @include proxima-nova-semibold;
+}
+
+.container {
+  width: 100%;
+}
+
+.dropdownContainer {
+  margin-top: 20px;
+  margin-bottom: 20px !important;
+}
+
+.tabsContainer {
+  margin-bottom: 20px;
+}
+
+.tabsLargeTitle {
+  display: none;
+}
+
+@include lg {
+  .tabsLargeTitle {
+    display: inline;
+  }
+}
+
+.tabsScrollContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.infoBadge {
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  .infoBadgeLink {
+    font-family: inherit;
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.proxyDetailsTitle {
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: 0.875em;
+  color: $cynical-black;
+  @include proxima-nova-semibold;
+}
+
+.proxyDetailsSubTitle {
+  margin-bottom: 20px;
+  font-size: 0.875em;
+  color: $cynical-black;
+  @include proxima-nova-semibold;
+}
+
+.detailsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  .detailsItem {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: $dark-jungle-green;
+    font-size: 0.675em;
+    margin-bottom: 0;
+
+    .detailsLabel {
+      @include proxima-nova-medium;
+    }
+
+    .detailsValue {
+      @include proxima-nova-semibold;
+    }
+  }
+}
+
+.directorContainer {
+  background-color: $desert-storm;
+  border-radius: 8px;
+  padding: 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+
+  @include lg {
+    max-width: none;
+    padding: 16px 28px;
+  }
+
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+
+    @include lg {
+      align-items: center;
+      flex-direction: row;
+      gap: 20px;
+    }
+
+    .dataContainer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+
+      .img {
+        width: 68px;
+
+        &.withoutPhoto {
+          background-color: $dark-baltic-sea;
+          border-radius: 8px;
+          padding: 10px;
+        }
+
+        @include lg {
+          width: 54px;
+        }
+      }
+
+      .nameContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .name,
+        .lastVotedCount {
+          margin: 0;
+        }
+
+        .name {
+          font-size: 0.9375em;
+          color: $dark-tone-ink;
+          @include proxima-nova-semibold;
+        }
+
+        .lastVotedCount {
+          font-size: 0.625em;
+          @include inter-regular;
+
+          span {
+            @include inter-semibold;
+          }
+        }
+      }
+    }
+
+    .itemActionContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      margin: 0;
+      width: 100%;
+      align-items: center;
+
+      @include lg {
+        justify-self: flex-end;
+        width: auto;
+        gap: 10px;
+      }
+
+      .status,
+      .id {
+        height: 28px;
+        border-radius: 5px;
+        font-size: 0.625em;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 10px;
+        @include inter-semibold;
+
+        @include lg {
+          font-size: 0.6875em;
+        }
+      }
+
+      .status {
+        background-color: $crocus-purple;
+        color: $white;
+
+        &.candidate {
+          background-color: $megaman;
+        }
+
+        &.inactive {
+          background-color: $dull-orange;
+        }
+      }
+
+      .id {
+        color: $dark-baltic-sea;
+        background-color: $showflake;
+      }
+    }
+  }
+}
+
+.producerContainer {
+  background-color: $desert-storm;
+  border-radius: 8px;
+  padding: 8px 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  @include lg {
+    padding: 15px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .mainContent {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    .logo {
+      width: 30px;
+      height: 30px;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      @include lg {
+        flex-direction: row;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .name {
+        font-size: 0.925em;
+        line-height: 0.925em;
+        @include inter-semibold;
+      }
+
+      .handle {
+        font-size: 0.925em;
+        line-height: 0.925em;
+        @include inter-regular;
+      }
+    }
+  }
+
+  .infoContent {
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+
+    @include lg {
+      gap: 30px;
+      justify-content: end;
+    }
+
+    .flag {
+      width: 36px;
+      height: 24px;
+    }
+
+    .socialLinks {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .social {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+
+      .tag {
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.825em;
+        color: white;
+        @include proxima-nova-semibold;
+
+        &.green {
+          background-color: #00D26D;
+        }
+
+        &.black {
+          background-color: $baltic-sea;
+        }
+      }
+    }
+  }
+}
