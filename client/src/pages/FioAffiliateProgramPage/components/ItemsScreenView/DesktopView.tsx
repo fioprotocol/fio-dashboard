@@ -2,11 +2,8 @@ import React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classnames from 'classnames';
 
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-
 import { DateComponent } from '../../../../components/ManagePageContainer/components/DateComponent';
-import { DomainActionButtons } from './ActionButtons';
+import { CheckedIcon, DomainActionButtons } from './ActionButtons';
 
 import DomainStatusBadge from '../../../../components/Badges/DomainStatusBadge/DomainStatusBadge';
 
@@ -35,28 +32,12 @@ type ItemComponentProps = {
 };
 
 type DesktopViewProps = {
-  fioNameList: FioDomainSelectable[];
+  domains: FioDomainSelectable[];
   isDesktop?: boolean;
   isDomainWatchlist?: boolean;
   onVisibilityChange?: (name: string) => void;
   onRenewDomain?: (name: string) => void;
   onSelect: (name: string) => void;
-};
-
-type CheckedIconProps = {
-  isChecked: boolean;
-  disabled: boolean;
-  onClick: () => void;
-};
-
-const CheckedIcon: React.FC<CheckedIconProps> = props => {
-  const { isChecked, onClick } = props;
-
-  return isChecked ? (
-    <CheckBoxIcon className={classes.checkIcon} onClick={onClick} />
-  ) : (
-    <CheckBoxOutlineBlankIcon className={classes.checkIcon} onClick={onClick} />
-  );
 };
 
 const DomainItemComponent: React.FC<ItemComponentProps & {
@@ -107,7 +88,7 @@ const DomainItemComponent: React.FC<ItemComponentProps & {
       </div>
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <DomainActionButtons
-          fioNameItem={fioNameItem}
+          fioDomain={fioNameItem}
           isDesktop={isDesktop}
           isExpired={isExpired}
           onRenewDomain={onRenewDomain}
@@ -120,7 +101,7 @@ const DomainItemComponent: React.FC<ItemComponentProps & {
 
 export const DesktopView: React.FC<DesktopViewProps> = props => {
   const {
-    fioNameList,
+    domains,
     isDesktop,
     onVisibilityChange,
     onRenewDomain,
@@ -158,12 +139,12 @@ export const DesktopView: React.FC<DesktopViewProps> = props => {
           )}
         </div>
       ))}
-      {fioNameList &&
-        fioNameList.map(fioNameItem => (
+      {domains &&
+        domains.map(domain => (
           <DomainItemComponent
-            fioNameItem={fioNameItem}
+            fioNameItem={domain}
             isDesktop={isDesktop}
-            key={fioNameItem.name}
+            key={domain.name}
             onVisibilityChange={onVisibilityChange}
             onRenewDomain={onRenewDomain}
             onSelect={onSelect}

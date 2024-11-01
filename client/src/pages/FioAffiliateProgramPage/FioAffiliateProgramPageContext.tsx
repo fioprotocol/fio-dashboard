@@ -19,8 +19,14 @@ import { getFee } from '../../redux/fio/actions';
 import useEffectOnce from '../../hooks/general';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 
-import { FioAffiliateProgramPageContextProps, FormValuesProps } from './types';
+import {
+  FioAffiliateProgramPageContextProps,
+  FioDomainSelectable,
+  FormValuesProps,
+} from './types';
 import { RefProfileDomain } from '../../types';
+
+import { useCheckIfDesktop } from '../../screenType';
 import { isDomainExpired } from '../../util/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
@@ -32,11 +38,24 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   const history = useHistory();
 
   const { fioDomains, loading } = useGetAllFioNamesAndWallets();
+  const [
+    selectedFioDomain,
+    selectFioDomain,
+  ] = useState<FioDomainSelectable | null>(null);
+
+  const isDesktop = useCheckIfDesktop();
 
   const [showModal, toggleShowModal] = useState(false);
+  const [showItemModal, toggleShowItemModal] = useState(false);
 
   const onOpenModal = useCallback(() => toggleShowModal(true), []);
   const onCloseModal = useCallback(() => toggleShowModal(false), []);
+
+  const onItemModalOpen = useCallback(domain => {
+    toggleShowItemModal(true);
+    selectFioDomain(domain);
+  }, []);
+  const onItemModalClose = useCallback(() => toggleShowItemModal(false), []);
 
   const onAffiliateUpdate = useCallback(
     (data: FormValuesProps) => {
@@ -99,9 +118,13 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   }, [dispatch]);
 
   return {
+    isDesktop,
     showModal,
     onCloseModal,
     onOpenModal,
+    showItemModal,
+    onItemModalOpen,
+    onItemModalClose,
     fioAddresses,
     onAffiliateUpdate,
     handleSelect,
@@ -115,6 +138,7 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
       ...fioDomain,
     })),
     user,
+    selectedFioDomain,
     link: `${window.location.origin}/ref/${user?.affiliateProfile?.code}`,
     fchLink: `${window.location.origin}/ref/handle/${user?.affiliateProfile?.code}`,
     tpid: user?.affiliateProfile?.tpid,
