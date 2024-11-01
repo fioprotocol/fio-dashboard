@@ -145,3 +145,9 @@ export const setWallet = (walletPublicKey: string): CommonAction => ({
 export const unsetWallet = (): CommonAction => ({
   type: UNSET_WALLET_FOR_PAYMENT,
 });
+
+export const HANDLE_DOMAIN_RENEW = `${prefix}/HANDLE_DOMAIN_RENEW`;
+export const onDomainRenew = (domain: string): CommonAction => ({
+  type: HANDLE_DOMAIN_RENEW,
+  data: domain,
+});

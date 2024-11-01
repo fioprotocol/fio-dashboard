@@ -1,6 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
+
+import { EndPoint } from '@fioprotocol/fiosdk';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -11,6 +13,8 @@ import {
 import { fioAddresses as fioAddressesSelector } from '../../redux/fio/selectors';
 
 import { updateAffiliate } from '../../redux/profile/actions';
+import { onDomainRenew } from '../../redux/cart/actions';
+import { getFee } from '../../redux/fio/actions';
 
 import useEffectOnce from '../../hooks/general';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
@@ -18,6 +22,7 @@ import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 import { FioAffiliateProgramPageContextProps, FormValuesProps } from './types';
 import { RefProfileDomain } from '../../types';
 import { isDomainExpired } from '../../util/fio';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 export const useContext = (): FioAffiliateProgramPageContextProps => {
   const dispatch = useDispatch();
@@ -72,6 +77,12 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     },
     [fioDomains, user.affiliateProfile, onAffiliateUpdate],
   );
+  const handleRenewDomain = (domain: string) => dispatch(onDomainRenew(domain));
+  const handleVisibilityChange = (domain: string) =>
+    history.push({
+      pathname: ROUTES.FIO_DOMAIN_STATUS_CHANGE,
+      search: `${QUERY_PARAMS_NAMES.NAME}=${domain}&${QUERY_PARAMS_NAMES.BACK_PATH}=${ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED}`,
+    });
 
   useEffectOnce(
     () => {
@@ -83,6 +94,10 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     !isAffiliateEnabled,
   );
 
+  useEffect(() => {
+    dispatch(getFee(EndPoint.renewFioDomain));
+  }, [dispatch]);
+
   return {
     showModal,
     onCloseModal,
@@ -90,6 +105,8 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     fioAddresses,
     onAffiliateUpdate,
     handleSelect,
+    handleRenewDomain,
+    handleVisibilityChange,
     loading,
     domains: fioDomains.map(fioDomain => ({
       selected: !!user?.affiliateProfile?.settings?.domains?.find(

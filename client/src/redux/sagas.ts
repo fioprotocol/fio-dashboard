@@ -17,6 +17,7 @@ import {
   cartWasCleared,
   deleteItem,
   updatePeriodItem,
+  onDomainRenew,
 } from './cart/sagas';
 import {
   containedFlowActionSuccess,
@@ -66,5 +67,6 @@ export default function* rootSaga(history: History, api: Api) {
     addItem(),
     deleteItem(),
     updatePeriodItem(),
+    onDomainRenew(history),
   ]);
 }
