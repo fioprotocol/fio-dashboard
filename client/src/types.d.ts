@@ -571,9 +571,26 @@ export type PrivateRedirectLocationState = {
 };
 
 export type Proxy = {
-  id: string;
-  is_proxy: number;
+  id: number;
   fioaddress: string;
+  addresshash: string;
+  owner: string;
+  proxy: string;
+  producers: string[];
+  last_vote_weight: string;
+  proxied_vote_weight: string;
+  is_proxy: number;
+  is_auto_proxy: number;
+};
+
+export type DetailedProxy = {
+  id: number;
+  proxy: string;
+  owner: string;
+  lastVoteWeight: number;
+  proxiedVoteWeight: number;
+  fioAddress: string;
+  producers: string[];
 };
 
 export type FioHistoryNodeAction = {

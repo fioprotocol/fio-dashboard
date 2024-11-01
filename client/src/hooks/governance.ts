@@ -1,5 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import superagent from 'superagent';
+
+import shuffle from 'lodash/shuffle';
 
 import { GET_JIRA_CANDIDATES_URL } from '../constants/governance';
 
@@ -12,6 +14,8 @@ import webLogo from '../assets/images/candidates-social-icons/website.svg';
 import noImageIconSrc from '../assets/images/no-photo.svg';
 
 import { CandidateProps, JiraCandidates } from '../types/governance';
+import { DetailedProxy } from '../types';
+import apis from '../api';
 
 export const useGetCandidates = (): {
   loading: boolean;
@@ -90,4 +94,27 @@ export const useGetCandidates = (): {
   }, []);
 
   return { loading, candidatesList };
+};
+
+export const useDetailedProxies = () => {
+  const [proxyList, setProxyList] = useState<DetailedProxy[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getProxyList = async () => {
+    try {
+      setLoading(true);
+      const proxies = await apis.fio.getDetailedProxies();
+      setProxyList(shuffle(proxies));
+    } catch (error) {
+      log.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void getProxyList();
+  }, []);
+
+  return { loading, proxyList };
 };

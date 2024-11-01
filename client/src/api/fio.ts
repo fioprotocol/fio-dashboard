@@ -36,6 +36,7 @@ import {
 
 import {
   AnyObject,
+  DetailedProxy,
   FioBalanceRes,
   FioRecord,
   NFTTokenDoublet,
@@ -600,47 +601,7 @@ export default class Fio {
   getProxies = async () => {
     let proxies;
     try {
-      let rows: Proxy[] = [];
-
-      const getRows = async ({
-        limit = DEFAULT_TABLE_RAWS_LIMIT,
-        offset = 0,
-      }: {
-        limit: number;
-        offset: number;
-      }) =>
-        await this.getTableRows({
-          code: Account.eosio,
-          scope: Account.eosio,
-          table: 'voters',
-          limit,
-          lower_bound: offset?.toString() || '0',
-          reverse: false,
-          json: true,
-        });
-
-      const getAllRows = async ({
-        limit = DEFAULT_TABLE_RAWS_LIMIT,
-        offset = 0,
-      }: {
-        limit?: number;
-        offset?: number;
-      }) => {
-        const rowsResponse = await getRows({
-          limit,
-          offset,
-        });
-
-        rows = [...rows, ...rowsResponse.rows];
-
-        const updatedLimit = rowsResponse.rows?.length || limit;
-
-        if (rowsResponse.more) {
-          await getAllRows({ offset: offset + updatedLimit });
-        }
-      };
-
-      await getAllRows({});
+      const rows: Proxy[] = await this.getProxyRows();
 
       const rowsProxies = rows
         .filter(row => row.is_proxy && row.fioaddress)
@@ -664,6 +625,75 @@ export default class Fio {
         `${process.env.REACT_APP_FIO_DEFAULT_PROXY}`,
       ]
     );
+  };
+
+  getDetailedProxies = async (): Promise<DetailedProxy[]> => {
+    let proxies;
+    try {
+      const rows: Proxy[] = await this.getProxyRows();
+
+      proxies = rows
+        .filter(row => row.is_proxy && row.fioaddress)
+        .map(row => ({
+          id: row.id,
+          proxy: row.proxy,
+          owner: row.owner,
+          lastVoteWeight: parseFloat(row.last_vote_weight),
+          proxiedVoteWeight: parseFloat(row.proxied_vote_weight),
+          fioAddress: row.fioaddress,
+          producers: row.producers,
+        }));
+    } catch (err) {
+      this.logError(err);
+    }
+
+    return proxies;
+  };
+
+  getProxyRows = async () => {
+    let rows: Proxy[] = [];
+
+    const getRows = async ({
+      limit = DEFAULT_TABLE_RAWS_LIMIT,
+      offset = 0,
+    }: {
+      limit: number;
+      offset: number;
+    }) =>
+      await this.getTableRows({
+        code: Account.eosio,
+        scope: Account.eosio,
+        table: 'voters',
+        limit,
+        lower_bound: offset?.toString() || '0',
+        reverse: false,
+        json: true,
+      });
+
+    const getAllRows = async ({
+      limit = DEFAULT_TABLE_RAWS_LIMIT,
+      offset = 0,
+    }: {
+      limit?: number;
+      offset?: number;
+    }) => {
+      const rowsResponse = await getRows({
+        limit,
+        offset,
+      });
+
+      rows = [...rows, ...rowsResponse.rows];
+
+      const updatedLimit = rowsResponse.rows?.length || limit;
+
+      if (rowsResponse.more) {
+        await getAllRows({ offset: offset + updatedLimit });
+      }
+    };
+
+    await getAllRows({});
+
+    return rows;
   };
 
   getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
