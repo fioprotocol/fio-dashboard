@@ -6,7 +6,6 @@ import { WalletVotingPowerBlock } from '../WalletVotingPowerBlock';
 import { WalletVotingPowerTable } from '../WalletVotingPowerTable';
 import { WalletVotesDetailsModal } from '../WalletVotesDetailsModal';
 import {
-  OverviewWallet,
   useModalState,
   useWalletsOverview,
 } from '../../../../hooks/governance';
@@ -14,7 +13,7 @@ import Loader from '../../../../components/Loader/Loader';
 import { ROUTES } from '../../../../constants/routes';
 
 export const GovernanceOverviewTab: FC = () => {
-  const modalState = useModalState<OverviewWallet>();
+  const modalState = useModalState<string>();
 
   const { overviewWallets, loading } = useWalletsOverview();
 
@@ -59,10 +58,14 @@ export const GovernanceOverviewTab: FC = () => {
           />
         </>
       )}
-      <WalletVotesDetailsModal
-        show={modalState.isOpen}
-        onClose={modalState.close}
-      />
+      {overviewWallets.length > 0 && modalState.data && (
+        <WalletVotesDetailsModal
+          overviewWallets={overviewWallets}
+          selectedPublicKey={modalState.data}
+          show={modalState.isOpen}
+          onClose={modalState.close}
+        />
+      )}
     </>
   );
 };
