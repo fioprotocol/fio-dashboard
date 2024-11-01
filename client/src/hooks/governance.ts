@@ -3,6 +3,8 @@ import superagent from 'superagent';
 
 import shuffle from 'lodash/shuffle';
 
+import { useSelector } from 'react-redux';
+
 import { GET_JIRA_CANDIDATES_URL } from '../constants/governance';
 
 import useEffectOnce from './general';
@@ -16,6 +18,7 @@ import noImageIconSrc from '../assets/images/no-photo.svg';
 import { CandidateProps, JiraCandidates } from '../types/governance';
 import { DetailedProxy } from '../types';
 import apis from '../api';
+import { fioWallets, isFioWalletsBalanceLoading } from '../redux/fio/selectors';
 
 export const useGetCandidates = (): {
   loading: boolean;
@@ -115,4 +118,121 @@ export const useDetailedProxies = () => {
   }, []);
 
   return { loading, proxyList };
+};
+
+export type OverviewWallet = {
+  name: string;
+  publicKey: string;
+  votingPower: number;
+  boardVote: boolean;
+  blockProducerVote: boolean;
+};
+
+export const useWalletsOverview = () => {
+  const wallets = useSelector(fioWallets);
+  const balancesLoading = useSelector(isFioWalletsBalanceLoading);
+  const [boardVotedLoading, setBoardVotedLoading] = useState<boolean>(false);
+  const [boardVotedWallets, setBoardVotedWallets] = useState<string[]>([]);
+  const [blockProducersVotedLoading, setBlockProducersVotedLoading] = useState<
+    boolean
+  >(false);
+  const [blockProducersVotedWallets, setBlockProducersVotedWallets] = useState<
+    string[]
+  >([]);
+
+  const walletsKeysToken = wallets
+    .map(it => it.publicKey)
+    .sort()
+    .join(';');
+
+  useEffect(() => {
+    const getSentFioRequests = async () => {
+      try {
+        setBoardVotedLoading(true);
+
+        const walletsToRecords = await Promise.all(
+          wallets.map(it =>
+            apis.fio.getSentFioRequests(it.publicKey).then(records => ({
+              publicKey: it.publicKey,
+              records: records,
+            })),
+          ),
+        );
+
+        const votedWallets = walletsToRecords
+          .filter(
+            ({ records }) =>
+              !!records.find(it => it.payeeFioAddress === 'vote@fio'),
+          )
+          .map(({ publicKey }) => publicKey);
+
+        setBoardVotedWallets(votedWallets);
+      } catch (err) {
+        log.error(err);
+      } finally {
+        setBoardVotedLoading(false);
+      }
+    };
+
+    void getSentFioRequests();
+  }, [walletsKeysToken]);
+
+  useEffect(() => {
+    const getSentFioRequests = async () => {
+      try {
+        setBlockProducersVotedLoading(true);
+
+        const walletsToRecords = await Promise.all(
+          wallets.map(it =>
+            apis.fio.getBlockProducersVote(it.publicKey).then(records => ({
+              publicKey: it.publicKey,
+              records: records,
+            })),
+          ),
+        );
+
+        const votedWallets = walletsToRecords
+          .filter(({ records }) => records.length > 0)
+          .map(({ publicKey }) => publicKey);
+
+        setBlockProducersVotedWallets(votedWallets);
+      } catch (err) {
+        log.error(err);
+      } finally {
+        setBlockProducersVotedLoading(false);
+      }
+    };
+
+    void getSentFioRequests();
+  }, [walletsKeysToken]);
+
+  if (balancesLoading || boardVotedLoading || blockProducersVotedLoading) {
+    return {
+      overviewWallets: [] as OverviewWallet[],
+      loading: balancesLoading,
+    };
+  }
+
+  const overviewWallets: OverviewWallet[] = wallets.map(wallet => ({
+    name: wallet.name,
+    publicKey: wallet.publicKey,
+    votingPower: wallet.balance ? wallet.balance / 1000000000 : 0,
+    boardVote: boardVotedWallets.includes(wallet.publicKey),
+    blockProducerVote: blockProducersVotedWallets.includes(wallet.publicKey),
+  }));
+
+  return { overviewWallets, loading: false };
+};
+
+export const useModalState = <T>() => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState<T>();
+
+  const open = useCallback((data?: T) => {
+    setIsOpen(true);
+    setData(data);
+  }, []);
+  const close = useCallback(() => setIsOpen(false), []);
+
+  return { isOpen, open, close, data };
 };

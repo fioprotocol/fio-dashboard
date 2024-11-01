@@ -2,6 +2,8 @@ import { FC } from 'react';
 
 import classnames from 'classnames';
 
+import { useHistory } from 'react-router';
+
 import classes from './OverviewInfoBlock.module.scss';
 import ActionButton from '../../../SettingsPage/components/ActionButton';
 
@@ -24,6 +26,8 @@ export const OverviewInfoBlock: FC<OverviewInfoBlockProps> = ({
   actionLabel,
   actionHref,
 }) => {
+  const history = useHistory();
+
   return (
     <div className={classnames(classes.container, className)}>
       <div className={classes.content}>
@@ -37,8 +41,8 @@ export const OverviewInfoBlock: FC<OverviewInfoBlockProps> = ({
       <ActionButton
         className={classes.actionButton}
         title={actionLabel}
-        href={actionHref}
         isIndigo
+        onClick={() => history.replace(actionHref)}
       />
     </div>
   );
