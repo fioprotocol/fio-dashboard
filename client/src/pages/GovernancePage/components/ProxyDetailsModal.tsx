@@ -6,9 +6,9 @@ import classes from '../styles/ProxyDetailsModal.module.scss';
 import { WalletPower } from './WalletPower';
 
 export type ProxyDetails = {
-  name: string;
+  owner: string;
   handle: string;
-  voteWeight: number;
+  proxiedVoteWeight: number;
   lastVoteWeight: number;
   producers: string[];
 };
@@ -35,7 +35,7 @@ export const ProxyDetailsModal: FC<ProxyDetailsModalProps> = props => {
     >
       <div className={classes.container}>
         <div className={classes.info}>
-          <span>{data.name}</span>
+          <span>{data.owner}</span>
           <span>FIO Handle: {data.handle}</span>
         </div>
         <div className={classes.details}>
@@ -44,7 +44,7 @@ export const ProxyDetailsModal: FC<ProxyDetailsModalProps> = props => {
             <li>
               <WalletPower
                 className={classes.detailsPower}
-                power={data.voteWeight}
+                power={data.proxiedVoteWeight}
                 label="Proxied Vote Weight"
                 withLabel={true}
               />
