@@ -372,6 +372,11 @@ const Routes = (): React.ReactElement => {
                 exact
               />
               <SentryRoute
+                path={ROUTES.REF_PROFILE_HOME_FCH}
+                component={RefHomePage}
+                exact
+              />
+              <SentryRoute
                 path={ROUTES.CREATE_ACCOUNT}
                 component={CreateAccount}
                 exact

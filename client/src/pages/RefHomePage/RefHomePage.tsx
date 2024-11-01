@@ -106,6 +106,7 @@ export const RefHomePage: React.FC<Props &
 
   useEffect(() => {
     if (refProfileInfo?.code) {
+      // todo: /ref/handle
       firePageViewAnalyticsEvent(
         `${APP_TITLE} - ${refProfileInfo.label}`,
         `${window.location.origin}/ref/${refProfileInfo.code}`,
