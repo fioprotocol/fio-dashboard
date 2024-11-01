@@ -8,9 +8,9 @@ import { GET_JIRA_CANDIDATES_URL } from '../constants/governance';
 import useEffectOnce from './general';
 import { log } from '../util/general';
 
-import twitterLogo from '../assets/images/candidates-social-icons/twitter.svg';
-import linkedinLogo from '../assets/images/candidates-social-icons/linkedin.svg';
-import webLogo from '../assets/images/candidates-social-icons/website.svg';
+import twitterLogo from '../assets/images/social-network-governance/twitter.svg';
+import linkedinLogo from '../assets/images/social-network-governance/linkedin.svg';
+import webLogo from '../assets/images/social-network-governance/website.svg';
 import noImageIconSrc from '../assets/images/no-photo.svg';
 
 import { CandidateProps, JiraCandidates } from '../types/governance';

@@ -1,0 +1,22 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.tabsContainer {
+  margin-top: 30px;
+}
+
+.dropdownContainer {
+  margin-top: 30px;
+  display: none;
+}
+
+@include tablet {
+  .tabsContainer {
+    display: none;
+  }
+
+  .dropdownContainer {
+    display: block;
+  }
+}

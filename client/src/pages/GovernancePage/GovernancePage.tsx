@@ -12,7 +12,7 @@ import { useContext } from './GovernancePageContext';
 
 const GovernanceOverviewTab = React.lazy(() =>
   import(
-    /* webpackChunkName: 'GovernanceOverviewTab' */ './components/GovernanceOverviewTab'
+    /* webpackChunkName: 'GovernanceOverviewTab' */ './components/GovernanceOverviewTab/GovernanceOverviewTab'
   ),
 );
 
@@ -24,19 +24,19 @@ const GovernanceFioFoundationBoardOfDirectorsTab = React.lazy(() =>
 
 const GovernanceBlockProducersTab = React.lazy(() =>
   import(
-    /* webpackChunkName: 'GovernanceBlockProducersTab' */ './components/GovernanceBlockProducersTab'
+    /* webpackChunkName: 'GovernanceBlockProducersTab' */ './components/GovernanceBlockProducersTab/GovernanceBlockProducersTab'
   ),
 );
 
 const GovernanceProxiesTab = React.lazy(() =>
   import(
-    /* webpackChunkName: 'GovernanceProxiesTab' */ './components/GovernanceProxiesTab'
+    /* webpackChunkName: 'GovernanceProxiesTab' */ './components/GovernanceProxiesTab/GovernanceProxiesTab'
   ),
 );
 
 const GovernanceVotingHelpTab = React.lazy(() =>
   import(
-    /* webpackChunkName: 'GovernanceVotingHelpTab' */ './components/GovernanceVotingHelpTab'
+    /* webpackChunkName: 'GovernanceVotingHelpTab' */ './components/GovernanceVotingHelpTab/GovernanceVotingHelpTab'
   ),
 );
 

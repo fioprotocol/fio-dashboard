@@ -1,0 +1,160 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.elementContainer {
+  padding: 16px 28px;
+  border-radius: 12px;
+  background-color: #F8F7F7;
+}
+
+.elementRowContainer {
+  @extend .elementContainer;
+  display: flex;
+  align-items: center;
+}
+
+.actionButton {
+  padding: 5px 24px !important;
+  margin: 0 !important;
+  width: auto !important;
+  min-width: unset!important;
+  font-size: 0.75em;
+  @include proxima-nova-semibold;
+}
+
+.myVotes {
+  @extend .elementRowContainer;
+  margin-top: 30px;
+  justify-content: space-between;
+}
+
+.myVotesTitle {
+  margin: 0;
+  color: $cynical-black;
+  font-size: 1.125em;
+  @include proxima-nova-semibold;
+}
+
+.myVotesActionButton {
+  @extend .actionButton;
+}
+
+.info {
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 30px;
+  display: flex;
+}
+
+.infoContent {
+  max-width: 500px;
+}
+
+.infoTitle {
+  color: $cynical-black;
+  font-size: 1.125em;
+  @include proxima-nova-semibold
+}
+
+.infoDescription {
+  margin: 6px 0 0;
+  color: $cynical-black;
+  font-size: 0.875em;
+  @include proxima-nova-thin
+}
+
+.infoLink {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.875em;
+  @include proxima-nova-medium
+}
+
+.infoActionButton {
+  @extend .actionButton;
+  margin: 0 28px 0 0 !important;
+}
+
+.proxiesList {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.proxyBlock {
+  @extend .elementContainer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.proxyBlockContent {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.proxyBlockRadio {
+  cursor: pointer;
+}
+
+.proxyBlockData {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  @include inter-semibold
+}
+
+.proxyBlockActionButton {
+  @extend .actionButton;
+}
+
+.proxyNowActionButton {
+  @extend .actionButton;
+  margin: 40px 28px 0 auto !important;
+}
+
+@include tablet {
+  .proxyBlockData {
+    font-size: 0.875em;
+  }
+}
+
+@include sm {
+  .info {
+    flex-direction: column;
+  }
+
+  .infoActionButton {
+    margin: 0 !important;
+    align-self: end;
+  }
+
+  .proxyBlock {
+    flex-direction: column;
+  }
+
+  .proxyBlockContent {
+    width: 100%;
+  }
+
+  .proxyBlockData {
+    gap: 10px;
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .proxyBlockActionButton {
+    align-self: end;
+    padding: 1px 12px !important;
+  }
+
+  .proxyNowActionButton {
+    margin: 40px 0 0 auto !important;
+  }
+}
