@@ -374,7 +374,7 @@ type DirectorBlockProps = {
 };
 
 const DirectorBlock: FC<DirectorBlockProps> = ({ candidate }) => {
-  const { id, name, image, status, lastVoutCount } = candidate;
+  const { id, name, image, status, lastVoteCount } = candidate;
 
   return (
     <div className={classes.directorContainer}>
@@ -388,7 +388,7 @@ const DirectorBlock: FC<DirectorBlockProps> = ({ candidate }) => {
           <div className={classes.nameContainer}>
             <p className={classes.name}>{name}</p>
             <p className={classes.lastVotedCount}>
-              Last Vote Count: <span>{lastVoutCount.toLocaleString('en')}</span>
+              Last Vote Count: <span>{lastVoteCount.toLocaleString('en')}</span>
             </p>
           </div>
         </div>
