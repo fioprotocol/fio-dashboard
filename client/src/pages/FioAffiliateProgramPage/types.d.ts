@@ -13,17 +13,27 @@ export type FormValuesProps = {
 export type FioDomainSelectable = FioNameItemProps & { selected: boolean };
 
 export type FioAffiliateProgramPageContextProps = {
+  isDesktop: boolean;
+
   showModal: boolean;
   onOpenModal: () => void;
   onCloseModal: () => void;
-  fioAddresses: FioAddressDoublet[];
+
+  showItemModal: boolean;
+  onItemModalOpen: (domain: FioDomainSelectable) => void;
+  onItemModalClose: () => void;
+
   onAffiliateUpdate: (values: FormValuesProps) => void;
   handleSelect: (name: string) => void;
   handleRenewDomain: (name: string) => void;
   handleVisibilityChange: (name: string) => void;
+
   user: User;
+  fioAddresses: FioAddressDoublet[];
   domains: FioDomainSelectable[];
+
   loading: boolean;
+  selectedFioDomain: FioDomainSelectable | null;
   link: string;
   fchLink: string;
   tpid: string;

@@ -16,19 +16,26 @@ import { useContext } from './FioAffiliateProgramPageContext';
 
 import classes from './styles/FioAffiliateProgramPage.module.scss';
 import Loader from '../../components/Loader/Loader';
+import Modal from '../../components/Modal/Modal';
+import { DomainItemComponent } from './components/ItemsScreenView/ModalItemComponent';
 
 const FioAffiliateProgramPage: React.FC = () => {
   const {
     loading,
+    isDesktop,
     showModal,
     onOpenModal,
     onCloseModal,
+    showItemModal,
+    onItemModalOpen,
+    onItemModalClose,
     fioAddresses,
     onAffiliateUpdate,
     handleSelect,
     handleRenewDomain,
     handleVisibilityChange,
     domains,
+    selectedFioDomain,
     user,
     link,
     fchLink,
@@ -164,10 +171,11 @@ const FioAffiliateProgramPage: React.FC = () => {
             <DomainList
               domains={domains}
               loading={false}
+              onItemModalOpen={onItemModalOpen}
               handleRenewDomain={handleRenewDomain}
               handleVisibility={handleVisibilityChange}
               handleSelect={handleSelect}
-              isDesktop={true}
+              isDesktop={isDesktop}
             />
           </div>
         </div>
@@ -190,6 +198,21 @@ const FioAffiliateProgramPage: React.FC = () => {
         onAffiliateUpdate={onAffiliateUpdate}
         user={user}
       />
+
+      <Modal
+        show={showItemModal}
+        onClose={onItemModalClose}
+        hideCloseButton={false}
+        closeButton
+        isSimple
+      >
+        <DomainItemComponent
+          fioDomain={selectedFioDomain}
+          isDesktop={isDesktop}
+          onRenewDomain={handleRenewDomain}
+          onVisibilityChange={handleVisibilityChange}
+        />
+      </Modal>
     </div>
   );
 };

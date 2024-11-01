@@ -25,6 +25,7 @@
 .container {
   .checkContainer {
     justify-content: flex-start;
+
     &.disabled {
       .checkIcon {
         opacity: 0.6;
@@ -38,5 +39,15 @@
       margin-right: 10px;
       color: $light-indigo;
     }
+  }
+
+  .dataItemContainer {
+    & > div {
+      flex: 1;
+    }
+  }
+
+  .openIcon {
+    text-align: right;
   }
 }
