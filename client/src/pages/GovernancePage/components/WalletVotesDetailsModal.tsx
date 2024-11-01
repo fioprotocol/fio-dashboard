@@ -11,14 +11,15 @@ import CustomDropdown from '../../../components/CustomDropdown';
 import { TabsSelector } from './TabsSelector';
 import { TabItemProps } from '../../../components/Tabs/types';
 
-import noImageIconSrc from '../../../assets/images/no-photo.svg';
-
-import { CANDIDATE_STATUS } from '../../../constants/governance';
-import { CandidateProps } from '../../../types/governance';
 import { useGetCandidates } from '../../../hooks/governance';
 import Loader from '../../../components/Loader/Loader';
 import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
+
+import noImageIconSrc from '../../../assets/images/no-photo.svg';
+
+import { CANDIDATE_STATUS } from '../../../constants/governance';
+import { CandidateProps } from '../../../types/governance';
 
 export type WalletVotesDetailsProps = {
   show?: boolean;
