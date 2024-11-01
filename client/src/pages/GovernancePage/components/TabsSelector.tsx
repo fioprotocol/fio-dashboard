@@ -11,6 +11,7 @@ import { TabItemProps } from '../../../components/Tabs/types';
 
 export type TabsSelectorProps = {
   className?: string;
+  defaultActiveKey?: string;
   activeKey?: string;
   list: TabItemProps[];
   tabAction?: (key: string) => void;
@@ -18,13 +19,14 @@ export type TabsSelectorProps = {
 
 export const TabsSelector: React.FC<TabsSelectorProps> = ({
   className,
+  defaultActiveKey,
   activeKey,
   list,
   tabAction,
 }) => {
   return (
     <>
-      <TabsContainer activeKey={activeKey}>
+      <TabsContainer defaultActiveKey={defaultActiveKey} activeKey={activeKey}>
         <Tabs
           list={list}
           containerClass={classnames(
