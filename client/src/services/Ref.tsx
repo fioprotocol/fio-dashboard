@@ -28,6 +28,7 @@ import { REF_PROFILE_TYPE } from '../constants/common';
 import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
 
 import { FioWalletDoublet, RefProfile, User } from '../types';
+import { REF_PROFILE_SLUG_NAME } from '../constants/ref';
 
 type Props = {
   isAuthenticated: boolean;
@@ -67,11 +68,17 @@ const Ref = (
 
   const redirectToDomainLandingPage = useCallback(
     (refType: string) => {
-      if (refType === REF_PROFILE_TYPE.AFFILIATE && isRefLink) {
+      if (
+        refType === REF_PROFILE_TYPE.AFFILIATE &&
+        isRefLink &&
+        pathname.indexOf(
+          `${ROUTES.REF_PROFILE_HOME_FCH}`.replace(REF_PROFILE_SLUG_NAME, ''),
+        ) < 0
+      ) {
         history.push(ROUTES.FIO_DOMAIN);
       }
     },
-    [history, isRefLink],
+    [history, isRefLink, pathname],
   );
 
   useEffect(() => {

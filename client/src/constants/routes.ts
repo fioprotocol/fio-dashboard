@@ -109,6 +109,7 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: `/ref/${REF_PROFILE_SLUG_NAME}`,
+  REF_PROFILE_HOME_FCH: `/ref/handle/${REF_PROFILE_SLUG_NAME}`,
 
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
