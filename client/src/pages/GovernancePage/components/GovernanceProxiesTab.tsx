@@ -16,6 +16,7 @@ import { ROUTES } from '../../../constants/routes';
 export const GovernanceProxiesTab: FC = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedProxy, setSelectedProxy] = useState<DetailedProxy>();
+  const [detailedProxy, setDetailedProxy] = useState<DetailedProxy>();
   const { loading, proxyList } = useDetailedProxies();
 
   return (
@@ -81,7 +82,10 @@ export const GovernanceProxiesTab: FC = () => {
                 className={classes.proxyBlockActionButton}
                 title="View"
                 isIndigo
-                onClick={() => setIsDetailsModalOpen(true)}
+                onClick={() => {
+                  setDetailedProxy(proxy);
+                  setIsDetailsModalOpen(true);
+                }}
               />
             </div>
           ))
@@ -94,14 +98,14 @@ export const GovernanceProxiesTab: FC = () => {
         disabled={!selectedProxy}
         onClick={() => {}}
       />
-      {selectedProxy && (
+      {detailedProxy && (
         <ProxyDetailsModal
           data={{
-            owner: selectedProxy.owner,
-            handle: selectedProxy.fioAddress,
-            proxiedVoteWeight: selectedProxy.proxiedVoteWeight,
-            lastVoteWeight: selectedProxy.lastVoteWeight,
-            producers: selectedProxy.producers,
+            owner: detailedProxy.owner,
+            handle: detailedProxy.fioAddress,
+            proxiedVoteWeight: detailedProxy.proxiedVoteWeight,
+            lastVoteWeight: detailedProxy.lastVoteWeight,
+            producers: detailedProxy.producers,
           }}
           show={isDetailsModalOpen}
           onClose={() => setIsDetailsModalOpen(false)}
