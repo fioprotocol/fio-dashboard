@@ -10,13 +10,16 @@ import ActionButton from '../../../SettingsPage/components/ActionButton';
 import { ProxyDetailsModal } from '../ProxyDetailsModal';
 import Loader from '../../../../components/Loader/Loader';
 import { DetailedProxy } from '../../../../types';
-import { useDetailedProxies } from '../../../../hooks/governance';
+import {
+  useDetailedProxies,
+  useModalState,
+} from '../../../../hooks/governance';
 import { ROUTES } from '../../../../constants/routes';
 
 export const GovernanceProxiesTab: FC = () => {
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const modalState = useModalState<DetailedProxy>();
+
   const [selectedProxy, setSelectedProxy] = useState<DetailedProxy>();
-  const [detailedProxy, setDetailedProxy] = useState<DetailedProxy>();
 
   const { loading, proxyList } = useDetailedProxies();
 
@@ -83,10 +86,7 @@ export const GovernanceProxiesTab: FC = () => {
                 className={classes.proxyBlockActionButton}
                 title="View"
                 isIndigo
-                onClick={() => {
-                  setDetailedProxy(proxy);
-                  setIsDetailsModalOpen(true);
-                }}
+                onClick={() => modalState.open(proxy)}
               />
             </div>
           ))
@@ -99,11 +99,11 @@ export const GovernanceProxiesTab: FC = () => {
         disabled={!selectedProxy}
         onClick={() => {}}
       />
-      {detailedProxy && (
+      {modalState.data && (
         <ProxyDetailsModal
-          data={detailedProxy}
-          show={isDetailsModalOpen}
-          onClose={() => setIsDetailsModalOpen(false)}
+          data={modalState.data}
+          show={modalState.isOpen}
+          onClose={modalState.close}
         />
       )}
     </>

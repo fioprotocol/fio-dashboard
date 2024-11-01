@@ -650,6 +650,36 @@ export default class Fio {
     return proxies;
   };
 
+  getBlockProducersVote = async (
+    publicKey: string,
+  ): Promise<DetailedProxy[]> => {
+    const accountHash = FIOSDK.accountHash(publicKey).accountnm;
+
+    const getRows = async () =>
+      await this.getTableRows({
+        json: true,
+        code: Account.eosio,
+        scope: Account.eosio,
+        table: 'voters',
+        lower_bound: accountHash,
+        upper_bound: accountHash,
+        index_position: '3',
+        key_type: 'i64',
+      });
+
+    return ((await getRows()).rows as Proxy[])
+      .filter(it => it.is_proxy || it.is_auto_proxy)
+      .map(row => ({
+        id: row.id,
+        proxy: row.proxy,
+        owner: row.owner,
+        lastVoteWeight: parseFloat(row.last_vote_weight),
+        proxiedVoteWeight: parseFloat(row.proxied_vote_weight),
+        fioAddress: row.fioaddress,
+        producers: row.producers,
+      }));
+  };
+
   getProxyRows = async () => {
     let rows: Proxy[] = [];
 

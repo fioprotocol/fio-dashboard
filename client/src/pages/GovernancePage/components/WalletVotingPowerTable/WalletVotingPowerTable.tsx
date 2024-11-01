@@ -7,18 +7,12 @@ import WalletIcon from '../../../../assets/images/wallet.svg';
 import ActionButton from '../../../SettingsPage/components/ActionButton';
 import { WalletPower } from '../WalletPower';
 import { WalletVoteStatus } from '../WalletVoteStatus';
-
-export type WalletVotingData = {
-  name: string;
-  power: number;
-  boardVote: boolean | 'proxied';
-  blockProducerVote: boolean | 'proxied';
-};
+import { OverviewWallet } from '../../../../hooks/governance';
 
 export type WalletVotingPowerTableProps = {
   className: string;
-  data: WalletVotingData[];
-  onAction?: () => void;
+  data: OverviewWallet[];
+  onAction?: (wallet: OverviewWallet) => void;
 };
 
 export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
@@ -34,13 +28,13 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
       <div className={classes.gridTitleItem}>Block Producer Vote</div>
       <div className={classes.gridTitleItem}>Voting Details</div>
       {data.map(it => (
-        <Fragment key={it.name}>
+        <Fragment key={it.publicKey}>
           <div className={classes.gridItem}>
             <img src={WalletIcon} alt="wallet" loading="lazy" />
             <h5 className={classes.title}>{it.name}</h5>
           </div>
           <div className={classes.gridItem}>
-            <WalletPower power={it.power} />
+            <WalletPower power={it.votingPower} />
           </div>
           <div className={classes.gridItem}>
             <WalletVoteStatus vote={it.boardVote} />
@@ -54,7 +48,7 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
               title="View"
               isIndigo
               isSmall
-              onClick={onAction}
+              onClick={() => onAction?.(it)}
             />
           </div>
         </Fragment>
