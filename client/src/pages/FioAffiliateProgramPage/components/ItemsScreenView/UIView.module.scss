@@ -23,6 +23,12 @@
 }
 
 .container {
+  .nameContainer {
+    .name {
+      cursor: pointer;
+    }
+  }
+
   .checkContainer {
     justify-content: flex-start;
 
@@ -31,6 +37,9 @@
         opacity: 0.6;
         cursor: not-allowed;
         color: $silver;
+      }
+      .name {
+        cursor: not-allowed;
       }
     }
 
