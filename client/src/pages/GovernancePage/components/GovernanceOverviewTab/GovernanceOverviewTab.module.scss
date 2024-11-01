@@ -1,0 +1,45 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.infoBlocks {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  & > * {
+    flex: 1;
+  }
+}
+
+.walletsTitle {
+  margin-top: 30px;
+  margin-bottom: 12px;
+  color: $cynical-black;
+  font-size: 1.125em;
+  @include proxima-nova-semibold
+}
+
+.walletsList {
+  display: none;
+  flex-direction: column;
+  gap: 15px;
+}
+
+@include tablet {
+  .walletsTitle {
+    margin-bottom: 30px;
+  }
+
+  .walletsList {
+    display: flex;
+  }
+
+  .walletsTable {
+    display: none !important;
+  }
+
+  .infoBlocks {
+    flex-direction: column;
+  }
+}

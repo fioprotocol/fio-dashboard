@@ -1,0 +1,54 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.grid {
+  display: grid;
+  grid-row-gap: 15px;
+  grid-template-columns: auto auto auto auto 86px;
+}
+
+.gridTitleItem {
+  display: flex;
+  align-items: center;
+  font-size: 0.75em;
+  @include proxima-nova-medium;
+  padding-right: 12px;
+  &:first-child {
+    padding-left: 28px;
+  }
+}
+
+.gridItem {
+  display: flex;
+  align-items: center;
+  padding-top: 12px;
+  padding-right: 12px;
+  padding-bottom: 12px;
+  background: #F8F7F7;
+  &:nth-child(5n+1) {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding-left: 28px;
+  }
+  &:nth-child(5n+5) {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding-right: 28px;
+  }
+}
+
+.title {
+  margin: 0 0 0 12px;
+  font-size: 0.9375em;
+  @include proxima-nova-medium
+}
+
+.actionButton {
+  padding-top: 2px!important;
+  padding-bottom: 2px!important;
+  width: 56px!important;
+  min-width: unset!important;
+  font-size: 0.75em;
+  @include proxima-nova-semibold;
+}

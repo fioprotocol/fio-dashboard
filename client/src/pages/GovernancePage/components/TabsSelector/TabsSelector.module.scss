@@ -1,0 +1,27 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.tabsContainer {
+  border: none !important;
+}
+
+.tabItem {
+  color: black;
+  font-size: 0.875em;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+  border-bottom: solid 2px $aqua-blue;
+  @include proxima-nova-regular;
+
+  &[aria-selected='false'] {
+    padding-bottom: 9px;
+    border-width: 1px;
+    border-color: grey;
+  }
+
+  &:hover {
+    color: $black;
+  }
+}
