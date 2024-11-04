@@ -1,12 +1,14 @@
 import React, { FC } from 'react';
 
-import { Redirect, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import ScrollToTop from '../../components/ScrollToTop';
 import { Loader } from '../../landing-pages/wrap-status-landing-page/components/Loader';
 import { SentryRoute } from '../../sentry';
 import { ROUTES } from '../../constants/routes';
 import { GovernancePageContainer } from './components/GovernancePageContainer';
+
+import { useContext } from './GovernancePageContext';
 
 const GovernanceOverviewTab = React.lazy(() =>
   import(
@@ -45,45 +47,67 @@ const CastBoardVotePage = React.lazy(() =>
 );
 
 const GovernancePage: FC = () => {
+  const containerProps = useContext();
+
   return (
     <ScrollToTop>
       <React.Suspense fallback={<Loader />}>
         <Switch>
-          <GovernancePageContainer>
-            <SentryRoute
-              path={ROUTES.GOVERNANCE}
-              component={() => <Redirect to={ROUTES.GOVERNANCE_OVERVIEW} />}
-              exact
-            />
-            <SentryRoute
-              path={ROUTES.GOVERNANCE_OVERVIEW}
-              component={GovernanceOverviewTab}
-              exact
-            />
-            <SentryRoute
-              path={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
-              component={GovernanceFioFoundationBoardOfDirectorsTab}
-              exact
-            />
-            <SentryRoute
-              path={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-              component={GovernanceBlockProducersTab}
-              exact
-            />
-            <SentryRoute
-              path={ROUTES.GOVERNANCE_PROXIES}
-              component={GovernanceProxiesTab}
-              exact
-            />
-            <SentryRoute
-              path={ROUTES.GOVERNANCE_VOTING_HELP}
-              component={GovernanceVotingHelpTab}
-              exact
-            />
-          </GovernancePageContainer>
+          <Route
+            path={[
+              ROUTES.GOVERNANCE,
+              ROUTES.GOVERNANCE_OVERVIEW,
+              ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS,
+              ROUTES.GOVERNANCE_BLOCK_PRODUCERS,
+              ROUTES.GOVERNANCE_PROXIES,
+              ROUTES.GOVERNANCE_VOTING_HELP,
+            ]}
+            exact
+          >
+            <GovernancePageContainer>
+              <SentryRoute
+                path={ROUTES.GOVERNANCE}
+                component={() => <Redirect to={ROUTES.GOVERNANCE_OVERVIEW} />}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.GOVERNANCE_OVERVIEW}
+                component={GovernanceOverviewTab}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
+                render={props => (
+                  <GovernanceFioFoundationBoardOfDirectorsTab
+                    {...props}
+                    {...containerProps}
+                  />
+                )}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+                component={GovernanceBlockProducersTab}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.GOVERNANCE_PROXIES}
+                component={GovernanceProxiesTab}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.GOVERNANCE_VOTING_HELP}
+                component={GovernanceVotingHelpTab}
+                exact
+              />
+            </GovernancePageContainer>
+          </Route>
+
           <SentryRoute
             path={ROUTES.GOVERNANCE_CAST_BOARD_VOTE}
-            component={CastBoardVotePage}
+            render={props => (
+              <CastBoardVotePage {...props} {...containerProps} />
+            )}
             exact
           />
         </Switch>
