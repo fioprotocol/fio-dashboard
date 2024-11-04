@@ -109,7 +109,7 @@ export default class Fio {
   publicFioSDK: FIOSDK | null = null;
   walletFioSDK: FIOSDK | null = null;
   tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
-  domainTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
+  affiliateTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   fioChainIdEnvironment: string = process.env.REACT_APP_FIO_CHAIN_ID || '';
 
   constructor() {
@@ -121,9 +121,9 @@ export default class Fio {
     });
   }
 
-  setTpid = (tpid: string | null, domainTpid?: string): void => {
+  setTpid = (tpid: string | null, affiliateTpid?: string): void => {
     this.tpid = tpid;
-    this.domainTpid = domainTpid || tpid;
+    this.affiliateTpid = affiliateTpid || tpid;
     this.publicFioSDK.technologyProviderId = tpid;
   };
 

@@ -730,7 +730,7 @@ class OrdersJob extends CommonJob {
             domain,
             publicKey: orderItem.publicKey,
             fee: await this.getFeeForAction(GenericAction.registerFioDomain),
-            tpid: orderItem.domainTpid,
+            tpid: orderItem.affiliateTpid,
           }),
           auth,
         );
@@ -809,9 +809,10 @@ class OrdersJob extends CommonJob {
         fioApi.getActionParams({
           ...orderItem,
           tpid:
+            action === GenericAction.registerFioAddress ||
             action === GenericAction.registerFioDomain ||
             action === GenericAction.registerFioDomainAddress
-              ? orderItem.domainTpid
+              ? orderItem.affiliateTpid
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
         }),

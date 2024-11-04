@@ -68,14 +68,14 @@ const Ref = (
 
   const redirectToDomainLandingPage = useCallback(
     (refType: string) => {
-      if (
-        refType === REF_PROFILE_TYPE.AFFILIATE &&
-        isRefLink &&
-        pathname.indexOf(
-          `${ROUTES.REF_PROFILE_HOME_FCH}`.replace(REF_PROFILE_SLUG_NAME, ''),
-        ) < 0
-      ) {
-        history.push(ROUTES.FIO_DOMAIN);
+      if (refType === REF_PROFILE_TYPE.AFFILIATE && isRefLink) {
+        history.push(
+          pathname.indexOf(
+            `${ROUTES.REF_PROFILE_HOME_FCH}`.replace(REF_PROFILE_SLUG_NAME, ''),
+          ) < 0
+            ? ROUTES.FIO_DOMAIN
+            : ROUTES.HOME,
+        );
       }
     },
     [history, isRefLink, pathname],

@@ -63,6 +63,7 @@ type Props = {
   onAddressChanged?: (value: string) => void;
   onDomainChanged?: (value: string) => void;
   toggleShowCustomDomain?: (isCustomDomain: boolean) => void;
+  onFocus?: () => void;
 };
 
 type ActionButtonProps = {
@@ -183,6 +184,7 @@ export const FormComponent: React.FC<Props> = props => {
     onAddressChanged,
     onDomainChanged,
     toggleShowCustomDomain,
+    onFocus,
   } = props;
 
   const history = useHistory();
@@ -218,7 +220,7 @@ export const FormComponent: React.FC<Props> = props => {
         domain: defaultValue?.id,
       }}
     >
-      {({ handleSubmit }) => (
+      {({ handleSubmit, form }) => (
         <div className={classes.formContainer}>
           {notification && notification.hasNotification && (
             <NotificationBadge
@@ -256,6 +258,7 @@ export const FormComponent: React.FC<Props> = props => {
                 loading={loading}
                 hasRoundRadius={hasRoundRadius}
                 inputClassNames={inputClassNames}
+                onFocus={onFocus}
               />
             </div>
             {options ? (
@@ -273,6 +276,10 @@ export const FormComponent: React.FC<Props> = props => {
                     format={convert}
                     onClose={() => {
                       toggleShowCustomDomain?.(false);
+                      if (defaultValue?.id) {
+                        form.change('domain', defaultValue?.id);
+                        onDomainChanged?.(defaultValue.id);
+                      }
                     }}
                     parse={onInputChanged}
                     additionalOnchangeAction={onDomainChanged}
@@ -284,6 +291,7 @@ export const FormComponent: React.FC<Props> = props => {
                     hasRoundRadius={hasRoundRadius}
                     inputClassNames={inputCustomDomainClassNames}
                     regInputClassNames={regInputCustomDomainClassNames}
+                    onFocus={onFocus}
                   />
                 </div>
               ) : (

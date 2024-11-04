@@ -205,7 +205,7 @@ export class OrderItem extends Base {
           rp.label,
           rp."code", 
           rp.tpid,
-          drp.tpid as "domainTpid",
+          drp.tpid as "affiliateTpid",
           fapfree.actor as "freeActor",
           fapfree.permission as "freePermission",
           fappaid.actor as "paidActor",
@@ -227,8 +227,8 @@ export class OrderItem extends Base {
       if (!action.tpid) {
         action.tpid = process.env.DEFAULT_TPID;
       }
-      if (!action.domainTpid) {
-        action.domainTpid = process.env.DEFAULT_TPID;
+      if (!action.affiliateTpid) {
+        action.affiliateTpid = process.env.DEFAULT_TPID;
       }
       return action;
     });
