@@ -106,7 +106,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .round(0)
                 .toNumber(),
               technologyProviderId: registration.isCombo
-                ? apis.fio.domainTpid
+                ? apis.fio.affiliateTpid
                 : apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -156,7 +156,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
-              technologyProviderId: apis.fio.domainTpid,
+              technologyProviderId: apis.fio.affiliateTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
               ownerPublicKey: ownerFioPublicKey,
             },

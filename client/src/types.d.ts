@@ -1062,6 +1062,11 @@ export type DomainWatchlistItem = {
   createdAt: string;
 };
 
+export type AddressWidgetDomain = {
+  id: string;
+  name: string;
+};
+
 declare global {
   interface Window {
     dataLayer: AnyObject[];

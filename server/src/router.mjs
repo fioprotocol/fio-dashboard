@@ -164,6 +164,7 @@ router.post(
 router.post('/account/add-missing-wallet', routes.account.addMissingWallet);
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
+router.get('/ref-profile/settings/:code?', routes.refProfiles.settings);
 
 router.post('/fio-api/chain/get_table_rows', async (req, res) => {
   const sReq = superagent.post(`${process.env.FIO_BASE_URL}chain/get_table_rows`);

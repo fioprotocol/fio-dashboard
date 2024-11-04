@@ -98,7 +98,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
             data = {
               fio_domain: registration.fioName,
               owner_fio_public_key: ownerFioPublicKey,
-              tpid: apis.fio.domainTpid,
+              tpid: apis.fio.affiliateTpid,
             };
           } else if (registration.type === CART_ITEM_TYPE.ADDRESS) {
             action = GenericAction.registerFioAddress;

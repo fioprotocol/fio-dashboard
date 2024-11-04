@@ -51,7 +51,7 @@ type UseContextProps = {
   connectButtonDisabled?: boolean;
   disabled: boolean;
   gatedChainName?: string;
-  hasFioVerificactionError: boolean;
+  hasFioVerificationError: boolean;
   hasVerifiedError: boolean;
   infoMessage: string;
   isGatedFlow?: boolean;
@@ -118,7 +118,7 @@ export const useContext = (): UseContextProps => {
   const [isVerified, toggleVerified] = useState<boolean>(false);
   const [hasVerifiedError, toggleHasVerifiedError] = useState<boolean>(false);
   const [verifyLoading, toggleVerifyLoading] = useState<boolean>(false);
-  const [hasFioVerificactionError, toggleFioVerificationError] = useState<
+  const [hasFioVerificationError, toggleFioVerificationError] = useState<
     boolean
   >(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
@@ -417,7 +417,7 @@ export const useContext = (): UseContextProps => {
   );
 
   const onInputChanged = (value: string) => {
-    hasFioVerificactionError && setInfoMessage(verifiedMessage);
+    hasFioVerificationError && setInfoMessage(verifiedMessage);
 
     toggleFioVerificationError(false);
 
@@ -494,7 +494,7 @@ export const useContext = (): UseContextProps => {
   }, [address, verifyUsersData]);
 
   useEffect(() => {
-    if (isVerified && !hasFioVerificactionError) {
+    if (isVerified && !hasFioVerificationError) {
       setInfoMessage(verifiedMessage);
       toggleHasVerifiedError(false);
     }
@@ -503,7 +503,7 @@ export const useContext = (): UseContextProps => {
       setInfoMessage(nonVerifiedMessage);
     }
   }, [
-    hasFioVerificactionError,
+    hasFioVerificationError,
     hasVerifiedError,
     infoMessage,
     isVerified,
@@ -520,11 +520,11 @@ export const useContext = (): UseContextProps => {
 
   return {
     connectButtonDisabled:
-      hasFioVerificactionError &&
+      hasFioVerificationError &&
       infoMessage === allDomainsHasBeenExpiredOrDoesnotExists,
-    disabled: hasVerifiedError || hasFioVerificactionError || !isVerified,
+    disabled: hasVerifiedError || hasFioVerificationError || !isVerified,
     gatedChainName,
-    hasFioVerificactionError,
+    hasFioVerificationError,
     hasVerifiedError,
     infoMessage,
     isGatedFlow,

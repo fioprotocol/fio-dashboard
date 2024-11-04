@@ -24,6 +24,8 @@ export default combineReducers({
         return null;
       case actions.GET_REF_PROFILE_SUCCESS:
         return action.data;
+      case actions.GET_REF_PROFILE_SETTINGS_SUCCESS:
+        return { ...state, settings: action.data };
       default:
         return state;
     }
