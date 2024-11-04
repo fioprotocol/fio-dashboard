@@ -18,7 +18,7 @@ import Loader from '../../../../components/Loader/Loader';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 
-import noImageIconSrc from '../../../assets/images/no-photo.svg';
+import noImageIconSrc from '../../../../assets/images/no-photo.svg';
 
 import { CANDIDATE_STATUS } from '../../../../constants/governance';
 import { CandidateProps } from '../../../../types/governance';
