@@ -112,16 +112,6 @@
     }
   }
 
-  .notificationBadge {
-    border-radius: 20px;
-
-    .link {
-      color: $white;
-      text-decoration: underline;
-      @include proxima-nova-semibold;
-    }
-  }
-
   .listContainer {
     display: flex;
     flex-direction: column;

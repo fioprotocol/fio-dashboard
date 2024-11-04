@@ -1,37 +1,33 @@
 import { FC } from 'react';
 import { Checkbox } from '@mui/material';
-import { Link } from 'react-router-dom';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Loader from '../../../../components/Loader/Loader';
-import NotificationBadge from '../../../../components/NotificationBadge';
 import ModalComponent from '../../../../components/Modal/Modal';
-
-import { BADGE_TYPES } from '../../../../components/Badge/Badge';
-import { ROUTES } from '../../../../constants/routes';
 
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { BoardOfDirectorsDetails } from '../BoardOfDirectorsDetails';
 import { MemberBadge } from '../MemberBadge/MemberBadge';
 import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
+import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
 
 import { useContext } from './BoardOfDirectorsTabContext';
 
 import classes from './BoardOfDirectorsTab.module.scss';
+import { GovernancePageContextProps } from '../../types';
 
-export const BoardOfDirectorsTab: FC = () => {
+export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
+  const { listOfCandidates, loading, onCandidateSelectChange } = props;
+
   const {
     activeCandidate,
     disabledCastBoardVote,
-    listOfCandidates,
-    loading,
     nextDate,
     showCandidateDetailsModal,
-    onCheckBoxChange,
     onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,
-  } = useContext();
+  } = useContext({ listOfCandidates });
 
   return (
     <div className={classes.container}>
@@ -74,21 +70,7 @@ export const BoardOfDirectorsTab: FC = () => {
           className={classes.actionButton}
         />
       </div>
-      <NotificationBadge
-        show={disabledCastBoardVote}
-        title="No Associated FIO Handles"
-        type={BADGE_TYPES.ERROR}
-        message={
-          <>
-            You must have an associated FIO Handle in order to be able to send
-            this request.{' '}
-            <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.link}>
-              Please add one.
-            </Link>
-          </>
-        }
-        className={classes.notificationBadge}
-      />
+      <NoAssociatedFioHandlesWarningBadge show={disabledCastBoardVote} />
       <div className={classes.listContainer}>
         {!loading ? (
           listOfCandidates.map(candidateItem => {
@@ -97,7 +79,7 @@ export const BoardOfDirectorsTab: FC = () => {
             return (
               <div className={classes.itemContainer} key={id}>
                 <Checkbox
-                  onChange={() => onCheckBoxChange(id)}
+                  onChange={() => onCandidateSelectChange(id)}
                   className={classes.checkbox}
                 />
                 <div className={classes.contentContainer}>

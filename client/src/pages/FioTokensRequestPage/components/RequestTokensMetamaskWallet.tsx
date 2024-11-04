@@ -169,7 +169,7 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
   useEffect(() => {
     if (requestResult) {
       if (!contactsList?.filter(c => c === payerFioAddress).length)
-        createContact(payerFioAddress);
+        createContact && createContact(payerFioAddress);
     }
 
     if (requestResult && isPublicAddressMappedFinished) {

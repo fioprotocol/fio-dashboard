@@ -88,7 +88,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
     }
 
     if (!contactsList?.filter(c => c === params.payerFioAddress).length)
-      createContact(params.payerFioAddress);
+      createContact && createContact(params.payerFioAddress);
 
     return {
       ...result,

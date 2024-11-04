@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -10,30 +10,29 @@ import {
   fioAddresses,
   loading as fioHandlesLoadingSelector,
 } from '../../../../redux/fio/selectors';
-import { useGetCandidates } from '../../../../hooks/governance';
 
 import { CandidateProps } from '../../../../types/governance';
+
+type Props = {
+  listOfCandidates: CandidateProps[];
+};
 
 type UseContextProps = {
   activeCandidate: CandidateProps;
   disabledCastBoardVote: boolean;
-  listOfCandidates: Array<CandidateProps>;
-  loading: boolean;
   nextDate: string;
   showCandidateDetailsModal: boolean;
-  onCheckBoxChange: (id: string) => void;
   onCloseModal: () => void;
   handleCandidateDetailsModalOpen: (candidate: CandidateProps) => void;
   handleCastVote: () => void;
 };
 
-export const useContext = (): UseContextProps => {
+export const useContext = (props: Props): UseContextProps => {
+  const { listOfCandidates } = props;
+
   const fioHandles = useSelector(fioAddresses);
   const fioHandlesLoading = useSelector(fioHandlesLoadingSelector);
 
-  const [listOfCandidates, setListOfCandidates] = useState<
-    Array<CandidateProps>
-  >([]);
   const [showCandidateDetailsModal, toggleShowCandidateDetailsModal] = useState<
     boolean
   >(false);
@@ -41,22 +40,10 @@ export const useContext = (): UseContextProps => {
     null,
   );
 
-  const { loading, candidatesList } = useGetCandidates();
-
   const dispatch = useDispatch();
   const history = useHistory();
 
   const nextDate = getNextGovernanceDate();
-
-  const onCheckBoxChange = useCallback((id: string) => {
-    setListOfCandidates(prevCandidates =>
-      prevCandidates.map(candidate =>
-        candidate.id === id
-          ? { ...candidate, checked: !candidate.checked }
-          : candidate,
-      ),
-    );
-  }, []);
 
   const handleCandidateDetailsModalOpen = useCallback(
     (candidate: CandidateProps) => {
@@ -84,25 +71,11 @@ export const useContext = (): UseContextProps => {
     }
   }, [dispatch, history, listOfCandidates]);
 
-  useEffect(() => {
-    if (candidatesList?.length) {
-      setListOfCandidates(
-        candidatesList.map(candidateItem => ({
-          ...candidateItem,
-          checked: false,
-        })),
-      );
-    }
-  }, [candidatesList]);
-
   return {
     activeCandidate,
     disabledCastBoardVote: !fioHandlesLoading && !fioHandles.length,
-    listOfCandidates,
-    loading,
     nextDate,
     showCandidateDetailsModal,
-    onCheckBoxChange,
     onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,

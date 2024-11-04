@@ -19,12 +19,10 @@ import apis from '../api';
 
 export const useGetCandidates = (): {
   loading: boolean;
-  candidatesList: Array<CandidateProps>;
+  candidatesList: CandidateProps[];
 } => {
   const [loading, toggleLoading] = useState<boolean>(false);
-  const [candidatesList, setCandidatesList] = useState<Array<CandidateProps>>(
-    [],
-  );
+  const [candidatesList, setCandidatesList] = useState<CandidateProps[]>([]);
 
   const getCandidates = useCallback(async () => {
     try {

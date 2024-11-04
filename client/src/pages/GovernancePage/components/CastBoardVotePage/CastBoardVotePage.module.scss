@@ -1,0 +1,134 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+
+  .sendTo {
+    font-size: 0.875em;
+    margin-bottom: 0;
+
+    span {
+      @include proxima-nova-semibold;
+    }
+  }
+
+  .label {
+    font-size: 0.875em;
+    margin-top: 20px;
+    margin-bottom: 0;
+    @include proxima-nova-semibold;
+
+    .regularText {
+      @include proxima-nova-regular;
+    }
+  }
+
+  .dropdown {
+    margin-top: 15px;
+  }
+
+  .votingPower {
+    margin-top: 15px;
+    margin-left: 20px;
+    margin-bottom: 0;
+    font-size: 0.6875em;
+
+    span {
+      @include proxima-nova-semibold;
+    }
+
+    .violet {
+      color: $light-indigo;
+    }
+  }
+
+  .candidatesListContainer {  
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    .candidateItem {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: $white;
+      border-radius: 7px;
+      display: flex;
+      flex-direction: row;
+
+      .candidateImage {
+        width: 47px;
+        height: 47px;
+      }
+
+      .nameContainer {
+        margin-left: 16px;
+        margin-right: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-right: 30px;
+
+        @include sm {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .name {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 0.875em;
+          margin-bottom: 0;
+          @include proxima-nova-semibold;
+        }
+
+        .candidateBadge {
+          background-color: $briquette-grey;
+          color: $white;
+          height: 28px;
+          padding: 8px 16px;
+        }
+      }
+      
+      .closeButton {
+        align-self: center;
+        width: 27px;
+        height: 20px;
+
+        &:before, &:after {
+          width: 20px;
+          height: 1px;
+          background-color: $light-indigo;
+        }
+
+        @include sm {
+          align-self: auto;
+          width: 19px;
+          height: 12px;
+          margin-right: 5px;
+          margin-top: 5px;
+
+          &:before, &:after {
+            width: 19px;
+            height: 1px;
+            border-radius: 1px;
+          }
+        }
+      }
+    }
+  }
+
+  .transactionDetails {
+    margin-top: 20px;
+  }
+}
