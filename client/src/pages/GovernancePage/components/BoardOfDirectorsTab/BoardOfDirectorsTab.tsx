@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import { Checkbox } from '@mui/material';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Loader from '../../../../components/Loader/Loader';
 import ModalComponent from '../../../../components/Modal/Modal';
+import { CheckBox } from '../../../../components/common/CheckBox/CheckBox';
 
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { BoardOfDirectorsDetails } from '../BoardOfDirectorsDetails';
@@ -78,10 +78,7 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
 
             return (
               <div className={classes.itemContainer} key={id}>
-                <Checkbox
-                  onChange={() => onCandidateSelectChange(id)}
-                  className={classes.checkbox}
-                />
+                <CheckBox onChange={() => onCandidateSelectChange(id)} />
                 <div className={classes.contentContainer}>
                   <div className={classes.dataContainer}>
                     <img

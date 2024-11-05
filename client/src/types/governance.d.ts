@@ -1,10 +1,16 @@
+type LinkItemProps = {
+  name: string;
+  url: string;
+  logo: string;
+};
+
 export type CandidateProps = {
   checked?: boolean;
   country: string;
   id: string;
   image: string;
   lastVoteCount: number;
-  links: Array<{ name: string; url: string; logo: string }>;
+  links: LinkItemProps[];
   name: string;
   status: string;
   text: string;
@@ -33,3 +39,44 @@ export type JiraCandidates = {
   };
   key: string;
 }[];
+
+export type BlockProducersResult = {
+  branding: {
+    logo_svg?: string;
+    logo_256?: string;
+  };
+  candidate_name: string;
+  fio_address: string;
+  flagIconUrl: string;
+  id: string;
+  owner: string;
+  score: {
+    details: {
+      valid_fio_address: {
+        status: boolean;
+      };
+    };
+    grade: string;
+  };
+  socials: {
+    telegram?: string;
+    twitter?: string;
+  };
+  total_votes: number;
+  url: string;
+}[];
+
+export type BlockProducersItemProps = {
+  checked?: boolean;
+  fioAddress: string;
+  flagIconUrl: string;
+  grade: string;
+  id: string;
+  isTop21: boolean;
+  isValidFioHandle: boolean;
+  links: LinkItemProps[];
+  logo: string;
+  name: string;
+  owner: string;
+  totalVotes: number;
+};

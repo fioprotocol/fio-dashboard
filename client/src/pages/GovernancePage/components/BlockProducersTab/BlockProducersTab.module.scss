@@ -1,0 +1,245 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .headerContainer {
+    color: $cynical-black;
+    display: flex;
+    gap: 10px;
+    flex-flow: row wrap;
+    align-items: flex-start;
+
+    .title,
+    .date {
+      font-size: 1.125em;
+      margin-bottom: 0;
+    }
+
+    .date {
+      color: $dull-orange;
+    }
+  }
+
+  .tileContainer {
+    margin-top: 30px;
+  }
+
+  .textContainer {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    @include sm {
+      flex-direction: column;
+    }
+    
+    .textHeaderContainer {
+      display: flex;
+      flex-direction: column;
+
+      .textTitle {
+        font-size: 1.125em;
+        margin-bottom: 0;
+        @include proxima-nova-semibold;
+      }
+
+      .text, .link {
+        margin-top: 20px;
+        margin-bottom: 0;
+        font-size: 0.875em;
+      }
+
+      .text {
+        @include proxima-nova-thin;
+      }
+
+      .link {
+        color: $perrywinkle;
+        width: fit-content;
+      }
+    }
+  }
+
+  .bpListContainer {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .bpItemContainer {
+      display: flex;
+      flex-direction: column;
+      background-color: $desert-storm;
+      border-radius: 8px;
+      padding: 20px;
+      gap: 20px;
+
+      .bpItem {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 20px;
+
+        .checkbox {
+          margin-top: 5px;
+        }
+
+        .container {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 20px;
+          width: 100%;
+
+          @include sm {
+            flex-direction: column;
+          }
+
+          .headerContainer {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 10px;
+            flex-shrink: 0;
+
+            .logo {
+              width: 44px;
+              height: 44px;
+            }
+
+            .nameContainer {
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+
+              .name {
+                margin: 0;
+                font-size: 1.125em;
+                @include proxima-nova-semibold;
+
+                @include sm {
+                  font-size: 0.875em;
+                }
+              }
+
+              .details, .totalVotes {
+                margin: 0;
+                font-size: 0.6875em;
+
+                @include sm {
+                  font-size: 0.625em;
+                }
+              }
+
+              .details {
+                span {
+                  margin-left: 5px;
+                }
+                .notValid {
+                  color: $red-orange-juice;
+                }
+              }
+
+              .totalVotes {
+                @include proxima-nova-semibold;
+              }
+            }
+          }
+          
+          .dataContainer {
+            display: flex;
+            gap: 20px;
+            flex-direction: row;
+            margin-left: auto;
+            justify-content: flex-end;
+            align-items: center;
+
+            @include sm {
+              flex-flow: wrap;
+            }
+
+            .linksContainer {
+              display: flex;
+              flex-direction: row;
+              gap: 5px;
+            }
+
+            .flag {
+              height: 24px;
+              margin-right: 50px;
+
+              @include sm {
+                margin-right: 0;
+              }
+            }
+
+            .gradeContainer {
+              display: flex;
+              flex-direction: row;
+              gap: 15px;
+
+              .topScore {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 34px;
+                padding: 8px 13px;
+                border-radius: 8px;
+                color: $white;
+                background-color: $baltic-sea;
+                font-size: 0.8125em;
+                white-space: nowrap;
+                @include proxima-nova-semibold;
+
+                @include sm {
+                  height: 24px;
+                  padding: 2px 8px;
+                  font-size: 0.625em;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .notificationBadge {
+        padding: 5px 11px !important;
+        min-height: auto;
+        margin-left: 58px;
+        width: fit-content;
+        div > p {
+          @include proxima-nova-semibold;
+        }
+
+        @include sm {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+.actionButton, .actionButtonBottom {
+  height: 34px;
+  max-width: 132px;
+  font-size: 0.8125em;
+  white-space: nowrap;
+  margin-right: 20px;  
+}
+
+.actionButton {
+  align-self: flex-start;
+
+  @include sm {
+    align-self: flex-end;
+  }
+}
+
+.actionButtonBottom {
+  align-self: flex-end;
+}

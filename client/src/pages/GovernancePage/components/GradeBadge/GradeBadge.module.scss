@@ -1,0 +1,44 @@
+
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  height: 34px;
+  width: fit-content;
+  padding: 8px 13px;
+  color: $white;
+  background-color: $briquette-grey;
+  font-size: 0.8125em;
+  @include proxima-nova-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+
+  @include sm {
+    height: 24px;
+    font-size: 0.625em;
+    padding: 2px 8px;
+  }
+
+  &.isGreen {
+    background-color: $benzol-green;
+  }
+
+  &.isYellow {
+    background-color: $saffron-gold;
+  }
+  
+  &.isOrange {
+    background-color: $red-orange-juice
+  }
+  
+  &.isRose {
+    background-color: $bright-pink;
+  }
+  
+  &.isRed {
+    background-color: $blood-burst;
+  }
+}

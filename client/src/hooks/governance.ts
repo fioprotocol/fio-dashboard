@@ -5,20 +5,33 @@ import shuffle from 'lodash/shuffle';
 
 import { useSelector } from 'react-redux';
 
-import { GET_JIRA_CANDIDATES_URL } from '../constants/governance';
+import {
+  GET_JIRA_CANDIDATES_URL,
+  GET_BLOCK_PRODUCERS_URL,
+} from '../constants/governance';
+import { FIO_CHAIN_ID } from '../constants/fio';
 
+import apis from '../api';
+import config from '../config';
 import useEffectOnce from './general';
 import { log } from '../util/general';
 
+import { fioWallets, isFioWalletsBalanceLoading } from '../redux/fio/selectors';
+
+import telegramLogo from '../assets/images/social-network-governance/telegram.svg';
 import twitterLogo from '../assets/images/social-network-governance/twitter.svg';
 import linkedinLogo from '../assets/images/social-network-governance/linkedin.svg';
 import webLogo from '../assets/images/social-network-governance/website.svg';
 import noImageIconSrc from '../assets/images/no-photo.svg';
+import noBpIconSrc from '../assets/images/no-bp-image.svg';
 
-import { CandidateProps, JiraCandidates } from '../types/governance';
+import {
+  BlockProducersItemProps,
+  BlockProducersResult,
+  CandidateProps,
+  JiraCandidates,
+} from '../types/governance';
 import { DetailedProxy } from '../types';
-import apis from '../api';
-import { fioWallets, isFioWalletsBalanceLoading } from '../redux/fio/selectors';
 
 const getJiraCandidatesUrl = (publicKey?: string) => {
   if (!publicKey) {
@@ -177,7 +190,7 @@ export const useWalletsOverview = () => {
         const votedWallets = walletsToRecords
           .filter(
             ({ records }) =>
-              !!records.find(it => it.payeeFioAddress === 'vote@fio'),
+              !!records.find(it => it.payeeFioAddress === config.voteFioHandle),
           )
           .map(({ publicKey }) => publicKey);
 
@@ -190,7 +203,7 @@ export const useWalletsOverview = () => {
     };
 
     void getSentFioRequests();
-  }, [walletsKeysToken]);
+  }, [wallets, walletsKeysToken]);
 
   useEffect(() => {
     const getSentFioRequests = async () => {
@@ -222,7 +235,7 @@ export const useWalletsOverview = () => {
     };
 
     void getSentFioRequests();
-  }, [walletsKeysToken]);
+  }, [wallets, walletsKeysToken]);
 
   if (balancesLoading || boardVotedLoading || blockProducersVotedLoading) {
     return {
@@ -258,4 +271,103 @@ export const useModalState = <T>() => {
   const close = useCallback(() => setIsOpen(false), []);
 
   return { isOpen, open, close, data };
+};
+
+export const useGetBlockProducers = (): {
+  loading: boolean;
+  blockProducersList: BlockProducersItemProps[];
+} => {
+  const [loading, toggleLoading] = useState<boolean>(false);
+  const [blockProducersList, setBlockProducersList] = useState<
+    BlockProducersItemProps[]
+  >([]);
+
+  const getBlockProducers = useCallback(async () => {
+    try {
+      toggleLoading(true);
+
+      let blockProducersUrl = GET_BLOCK_PRODUCERS_URL;
+
+      if (config.fioChainId === FIO_CHAIN_ID.TESTNET) {
+        blockProducersUrl += '&chain=Testnet';
+      }
+
+      const results = await superagent.get(blockProducersUrl);
+
+      const blockProducersResult: BlockProducersResult = results.body;
+
+      const blockProducers: BlockProducersItemProps[] = blockProducersResult
+        .sort((a, b) => b.total_votes - a.total_votes)
+        .map(
+          (
+            {
+              branding: { logo_svg, logo_256 },
+              candidate_name,
+              fio_address,
+              flagIconUrl,
+              id,
+              owner,
+              score: {
+                details: {
+                  valid_fio_address: { status },
+                },
+                grade,
+              },
+              socials: { telegram, twitter },
+              total_votes,
+              url,
+            },
+            i,
+          ) => {
+            const links = [];
+
+            if (twitter) {
+              links.push({
+                name: 'Twitter',
+                url: twitter,
+                logo: twitterLogo,
+              });
+            }
+
+            if (telegram) {
+              links.push({
+                name: 'Telegram',
+                url: telegram,
+                logo: telegramLogo,
+              });
+            }
+
+            if (url) {
+              links.push({ name: 'Web', url: url, logo: webLogo });
+            }
+
+            return {
+              fioAddress: fio_address,
+              flagIconUrl,
+              grade,
+              id,
+              isTop21: i <= 21,
+              isValidFioHandle: status,
+              links,
+              logo: logo_svg || logo_256 || noBpIconSrc,
+              name: candidate_name || 'N/A',
+              owner,
+              totalVotes: total_votes,
+            };
+          },
+        );
+
+      setBlockProducersList(blockProducers);
+    } catch (error) {
+      log.error(error);
+    } finally {
+      toggleLoading(false);
+    }
+  }, []);
+
+  useEffectOnce(() => {
+    getBlockProducers();
+  }, []);
+
+  return { loading, blockProducersList };
 };
