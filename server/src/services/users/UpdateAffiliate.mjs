@@ -44,19 +44,20 @@ export default class UpdateAffiliate extends Base {
       });
     }
 
-    await ReferrerProfile.update(
-      {
-        tpid: data.fch,
-        settings: {
-          domains: data.domains,
-        },
+    const fields = {
+      tpid: data.fch,
+    };
+    if (data.domains) {
+      fields.settings = {
+        domains: data.domains,
+      };
+    }
+
+    await ReferrerProfile.update(fields, {
+      where: {
+        id: user.affiliateProfileId,
       },
-      {
-        where: {
-          id: user.affiliateProfileId,
-        },
-      },
-    );
+    });
 
     return await runService(UsersInfo, { context: this.context, params: {} });
   }
