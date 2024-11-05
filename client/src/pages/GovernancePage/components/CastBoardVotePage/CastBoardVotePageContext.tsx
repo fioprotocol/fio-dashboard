@@ -37,7 +37,8 @@ type UseContextProps = {
   onActionClick: () => void;
   onCancel: () => void;
   onSuccess: (results: TrxResponsePaidBundles) => void;
-  onWalletChange: (publicKey: string) => void;
+  onFioHandleChange: (id: string) => void;
+  onWalletChange: (id: string) => void;
   setProcessing: (processing: boolean) => void;
 };
 
@@ -96,6 +97,17 @@ export const useContext = (props: Props): UseContextProps => {
       setSelectedFioWallet(walletToSelect);
     },
     [findWalletsFioHandles, walletsList],
+  );
+
+  const onFioHandleChange = useCallback(
+    (fioHandleId: string) => {
+      const fioHandleToSelect = fioHandlesList.find(
+        ({ id }) => id === fioHandleId,
+      );
+
+      setSelectedFioHandle(fioHandleToSelect);
+    },
+    [fioHandlesList],
   );
 
   const onCancel = () => {
@@ -168,6 +180,7 @@ export const useContext = (props: Props): UseContextProps => {
     onActionClick,
     onCancel,
     onSuccess,
+    onFioHandleChange,
     onWalletChange,
     setProcessing,
   };
