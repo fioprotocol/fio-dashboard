@@ -23,8 +23,7 @@
   .title {
     color: white;
     font-size: 3rem;
-    letter-spacing: -4px;
-    @include comfortaa-bold;
+    @include proxima-nova-bold;
   }
 
   .subtitle {
@@ -48,6 +47,10 @@
 
   .buttonContainer {
     margin: 1% auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
   }
 
   .button {
@@ -94,6 +97,16 @@
   .container {
     .subtitle {
       margin: 10px auto;
+    }
+  }
+}
+
+@include tablet {
+  .container {
+    .buttonContainer {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   }
 }

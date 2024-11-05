@@ -163,8 +163,8 @@ export function* onDomainRenew(history: History): Generator {
       id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
       period: 1,
       costNativeFio: renewDomainFeePrice?.nativeFio,
-      costFio: renewDomainFeePrice.fio,
-      costUsdc: renewDomainFeePrice.usdc,
+      costFio: renewDomainFeePrice?.fio,
+      costUsdc: renewDomainFeePrice?.usdc,
     };
 
     yield put<Action>(
