@@ -67,13 +67,15 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
 
   const handleSelect = useCallback(
     (domainName: string) => {
-      const i = user?.affiliateProfile?.settings?.domains.findIndex(
+      // todo: add to local state
+      const { domains = [] } = user?.affiliateProfile?.settings || {};
+      const i = domains?.findIndex(
         ({ name }: RefProfileDomain) => name === domainName,
       );
       if (i < 0) {
         const selected = fioDomains.find(({ name }) => name === domainName);
 
-        user?.affiliateProfile?.settings?.domains.push({
+        domains.push({
           name: selected.name,
           isPremium: false,
           rank: 0,
@@ -85,12 +87,12 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
           expirationDate: selected.expiration,
         });
       } else {
-        user?.affiliateProfile?.settings?.domains.splice(i, 1);
+        domains?.splice(i, 1);
       }
       if (user?.affiliateProfile?.tpid) {
         onAffiliateUpdate({
           fch: user?.affiliateProfile?.tpid,
-          domains: user?.affiliateProfile?.settings.domains,
+          domains,
         });
       }
     },
