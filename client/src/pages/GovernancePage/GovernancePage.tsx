@@ -22,9 +22,9 @@ const GovernanceFioFoundationBoardOfDirectorsTab = React.lazy(() =>
   ),
 );
 
-const GovernanceBlockProducersTab = React.lazy(() =>
+const BlockProducersTab = React.lazy(() =>
   import(
-    /* webpackChunkName: 'GovernanceBlockProducersTab' */ './components/GovernanceBlockProducersTab/GovernanceBlockProducersTab'
+    /* webpackChunkName: 'BlockProducersTab' */ './components/BlockProducersTab'
   ),
 );
 
@@ -43,6 +43,12 @@ const GovernanceVotingHelpTab = React.lazy(() =>
 const CastBoardVotePage = React.lazy(() =>
   import(
     /* webpackChunkName: 'CastBoardVotePage' */ './components/CastBoardVotePage'
+  ),
+);
+
+const CastBlockProducerVotePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'CastBlockProducerVotePage' */ './components/CastBlockProducerVotePage'
   ),
 );
 
@@ -87,7 +93,9 @@ const GovernancePage: FC = () => {
               />
               <SentryRoute
                 path={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-                component={GovernanceBlockProducersTab}
+                render={props => (
+                  <BlockProducersTab {...props} {...containerProps} />
+                )}
                 exact
               />
               <SentryRoute
@@ -107,6 +115,14 @@ const GovernancePage: FC = () => {
             path={ROUTES.GOVERNANCE_CAST_BOARD_VOTE}
             render={props => (
               <CastBoardVotePage {...props} {...containerProps} />
+            )}
+            exact
+          />
+
+          <SentryRoute
+            path={ROUTES.GOVERNANCE_CAST_BLOCK_PRODUCER_VOTE}
+            render={props => (
+              <CastBlockProducerVotePage {...props} {...containerProps} />
             )}
             exact
           />

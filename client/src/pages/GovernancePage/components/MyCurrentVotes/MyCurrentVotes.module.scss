@@ -14,6 +14,7 @@
   .title {
     color: $dark-tone-ink;
     font-size: 1.125em;
+    margin-bottom: 0;
     @include proxima-nova-semibold;
   }
 

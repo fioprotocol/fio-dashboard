@@ -45,6 +45,7 @@ const ROUTES: { [route: string]: string } = {
   GOVERNANCE_PROXIES: '/governance/proxies',
   GOVERNANCE_VOTING_HELP: '/governance/voting-help',
   GOVERNANCE_CAST_BOARD_VOTE: '/governance/cast-board-vote',
+  GOVERNANCE_CAST_BLOCK_PRODUCER_VOTE: '/governance/cast-block-producer-vote',
 
   PROTOCOL_UPDATES: '/protocol-updates',
 

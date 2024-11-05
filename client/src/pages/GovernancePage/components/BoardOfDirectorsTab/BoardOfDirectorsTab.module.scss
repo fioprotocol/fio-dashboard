@@ -33,21 +33,34 @@
 
   .tilesContainer {
     margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    @include lg {
+      flex-direction: row;
+    }
 
     .tileItemContainer {
+      width: 100%;
       display: flex;
-      flex-flow: row wrap;
+      flex-direction: row;
       gap: 20px;
       background-color: $ghost-white;
       border-radius: 12px;
       padding: 28px 20px;
       justify-content: space-between;
       align-items: center;
-      margin-top: 30px;
+
+      @include sm {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
       .title {
         color: $dark-tone-ink;
         font-size: 1.125em;
+        margin-bottom: 0;
         @include proxima-nova-semibold;
       }
 
@@ -141,33 +154,6 @@
 
       @include lg {
         max-width: none;
-      }
-
-      .checkbox {
-        &:hover {
-          background: none;
-        }
-
-        svg[data-testid='CheckBoxOutlineBlankIcon'], svg[data-testid='CheckBoxIcon'] {
-          width: 20px;
-          height: 20px;
-          border-radius: 4px;
-        }
-
-        svg[data-testid='CheckBoxOutlineBlankIcon'] {
-          box-shadow: inset 0 0 0 1px $black-oak;
-          path {
-            display: none;
-          }
-        }
-
-        svg[data-testid='CheckBoxIcon'] {
-          color: $light-indigo;
-          box-shadow: inset 0 0 0 4px $light-indigo;
-          path {
-            display: block;
-          }
-        }
       }
 
       .contentContainer {
