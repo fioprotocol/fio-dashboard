@@ -59,8 +59,11 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
         <div className={classes.actionTitleContainer}>
           <h3 className={classes.title}>Upcoming Election Candidates</h3>
           <p className={classes.text}>
-            Vote for up to 8 candidates. Note: If your vote contains more
-            candidates, only the first 8 will be considered.
+            Vote for up to 8 candidates.{' '}
+            <span>
+              Note: If your vote contains more candidates, only the first 8 will
+              be considered.
+            </span>
           </p>
         </div>
         <SubmitButton

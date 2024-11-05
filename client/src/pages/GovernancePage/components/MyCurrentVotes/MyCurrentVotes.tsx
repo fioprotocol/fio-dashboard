@@ -11,7 +11,7 @@ export const MyCurrentVotes: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <h5 className={classes.title}>My Current Voutes</h5>
+      <h5 className={classes.title}>My Current Votes</h5>
       <SubmitButton text="View" className={classes.button} onClick={onClick} />
     </div>
   );
