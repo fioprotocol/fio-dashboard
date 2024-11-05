@@ -52,6 +52,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     onActionClick,
     onCancel,
     onSuccess,
+    onFioHandleChange,
     onWalletChange,
     setProcessing,
   } = useContext({ resetSelectedCandidates, selectedCandidates });
@@ -91,7 +92,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
             <>
               <CustomDropdown
                 options={fioHandlesList}
-                onChange={onWalletChange}
+                onChange={onFioHandleChange}
                 defaultOptionValue={selectedFioHandle}
                 loading={fioHandlesLoading}
                 isWhite
