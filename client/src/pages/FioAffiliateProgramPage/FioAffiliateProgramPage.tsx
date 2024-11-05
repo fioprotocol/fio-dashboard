@@ -190,7 +190,6 @@ const FioAffiliateProgramPage: React.FC = () => {
           </Link>
         )}
       </div>
-      {/*<div className={classes.videoContainer} />*/}
       <AffiliateModal
         showModal={showModal}
         onCloseModal={onCloseModal}

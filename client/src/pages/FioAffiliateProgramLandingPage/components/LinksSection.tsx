@@ -69,7 +69,7 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
         )}
         {!isAuthenticated && (
           <Link to={ROUTES.CREATE_ACCOUNT}>
-            <Button className={classnames(classes.button, 'mr-4')}>
+            <Button className={classes.button}>
               Create Account & Activate
             </Button>
           </Link>
