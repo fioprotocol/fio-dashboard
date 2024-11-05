@@ -12,6 +12,8 @@ type LocationProps = {
   location: {
     query: {
       name: string;
+    };
+    state?: {
       backPath?: string;
     };
   };

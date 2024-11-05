@@ -100,7 +100,8 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   const handleVisibilityChange = (domain: string) =>
     history.push({
       pathname: ROUTES.FIO_DOMAIN_STATUS_CHANGE,
-      search: `${QUERY_PARAMS_NAMES.NAME}=${domain}&${QUERY_PARAMS_NAMES.BACK_PATH}=${ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED}`,
+      search: `${QUERY_PARAMS_NAMES.NAME}=${domain}`,
+      state: { backPath: ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED },
     });
 
   useEffectOnce(

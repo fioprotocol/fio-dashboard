@@ -34,7 +34,8 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     refreshBalance,
     getFee,
   } = props;
-  const { name, backPath } = location.query;
+  const { name } = location.query;
+  const { backPath } = location?.state || {};
 
   const domainStatus: string = selectedFioDomain?.isPublic
     ? DOMAIN_STATUS.PUBLIC

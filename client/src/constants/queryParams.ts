@@ -17,5 +17,4 @@ export const QUERY_PARAMS_NAMES = {
   TOKEN: 'token',
   TX_IDS: 'txIds',
   USER_ID: 'userId',
-  BACK_PATH: 'backPath',
 } as const;
