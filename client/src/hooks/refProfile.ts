@@ -17,7 +17,7 @@ import { getSettings } from '../redux/refProfile/actions';
 import { getDomains } from '../redux/registrations/actions';
 import { addItem as addItemToCart } from '../redux/cart/actions';
 
-import { setFioName } from '../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../utils';
 import { convertFioPrices } from '../util/prices';
 import { log } from '../util/general';
 import { isDomainExpired } from '../util/fio';
@@ -243,7 +243,7 @@ export const useRefProfileAddressWidget = ({
     customHandleSubmit,
     options,
     defaultValue: options.length > 0 ? options[0] : undefined,
-    prefix: '@',
+    prefix: FIO_ADDRESS_DELIMITER,
     showCustomDomainInput: showCustomDomainEdit,
     toggleShowCustomDomain: setShowCustomDomainEdit,
     onFocus,
