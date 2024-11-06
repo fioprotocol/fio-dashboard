@@ -13,7 +13,7 @@ import {
 } from '../redux/registrations/selectors';
 import { cartItems as cartItemsSelector } from '../redux/cart/selectors';
 
-import { getSettings } from '../redux/refProfile/actions';
+import { setSettings } from '../redux/refProfile/actions';
 import { getDomains } from '../redux/registrations/actions';
 import { addItem as addItemToCart } from '../redux/cart/actions';
 
@@ -42,7 +42,12 @@ type RefProfileAddressWidget = {
 };
 
 // Check fio domain visibility and expiration
-const checkDomain = async (fioDomain: { name: string }) => {
+const checkDomain = async (fioDomain: {
+  name: string;
+}): Promise<{
+  check: boolean;
+  fioDomain: { name: string };
+}> => {
   try {
     const { is_public, expiration } =
       (await apis.fio.getFioDomain(fioDomain.name)) || {};
@@ -73,7 +78,9 @@ export const useRefProfileAddressWidget = ({
   const history = useHistory();
 
   const [showCustomDomainEdit, setShowCustomDomainEdit] = useState(false);
-  const [checkedDomains, setCheckedDomains] = useState(null); // store affiliate user domains from the affiliate settings page that are public and not expired
+  const [checkedDomains, setCheckedDomains] = useState<
+    RefProfileDomain[] | null
+  >(null); // store affiliate user domains from the affiliate settings page that are public and not expired
   const [verifyLoading, toggleVerifyLoading] = useState<boolean>(false); // fch verification after user confirms selection
   const [hasFioVerificationError, toggleFioVerificationError] = useState<
     boolean
@@ -84,23 +91,29 @@ export const useRefProfileAddressWidget = ({
   const { dashboardDomains } = allDomains;
 
   // Check fio domains if they are public and not expired
-  const checkDomains = useCallback(async domains => {
-    if (!domains) return [];
+  const checkDomains = useCallback(
+    async (refCode: string) => {
+      const { settings } = await apis.refProfile.getSettings(refCode);
+      dispatch(setSettings({ settings }));
+      const { domains } = settings;
+      if (!domains) return setCheckedDomains([]);
 
-    const res: PromiseSettledResult<{
-      check: boolean;
-      fioDomain: RefProfileDomain;
-    }>[] = await Promise.allSettled(domains.map(checkDomain));
-    setCheckedDomains(
-      res.reduce((acc, checkDomainRes) => {
-        if (checkDomainRes.status === 'rejected') return acc;
-        if (checkDomainRes.value.check)
-          acc.push(checkDomainRes.value.fioDomain);
+      const res: PromiseSettledResult<{
+        check: boolean;
+        fioDomain: { name: string };
+      }>[] = await Promise.allSettled(domains.map(checkDomain));
+      setCheckedDomains(
+        res.reduce((acc, checkDomainRes) => {
+          if (checkDomainRes.status === 'rejected') return acc;
+          if (checkDomainRes.value.check)
+            acc.push(checkDomainRes.value.fioDomain);
 
-        return acc;
-      }, []),
-    );
-  }, []);
+          return acc;
+        }, []),
+      );
+    },
+    [dispatch],
+  );
 
   // domains that should be shown to the user - either those which set from affiliate settings or fio app premium
   const refDomainObjs: { name: string; isPremium?: boolean }[] = useMemo(() => {
@@ -221,20 +234,13 @@ export const useRefProfileAddressWidget = ({
     name: `@${domain.name}`,
   }));
 
-  // check domains that was selected on affiliate settings page
+  // check domains that was selected on affiliate settings page and get fio app domains on component 'mount'
   useEffect(() => {
-    checkDomains(refProfileInfo?.settings?.domains);
-  }, [refProfileInfo?.settings?.domains, checkDomains]);
-
-  // get fio app domains
-  useEffect(() => {
-    dispatch(getDomains({ refCode }));
-  }, [refCode, dispatch]);
-
-  // update affiliate domains on component 'mount'
-  useEffect(() => {
-    if (refCode) dispatch(getSettings(refCode));
-  }, [refCode, dispatch]);
+    if (refCode) {
+      checkDomains(refCode);
+      dispatch(getDomains({ refCode }));
+    }
+  }, [refCode, checkDomains, dispatch]);
 
   if (!refProfileInfo || refProfileInfo.type === REF_PROFILE_TYPE.REF)
     return {};

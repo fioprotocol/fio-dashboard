@@ -46,7 +46,7 @@ export default class RefProfileSettings extends Base {
       }
 
       return {
-        data: refProfileFormated.settings,
+        data: { settings: refProfileFormated.settings },
       };
     } else {
       return { data: null };
