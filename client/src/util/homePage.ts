@@ -86,7 +86,7 @@ export const handleHomePageContent = ({
     actionText = CONTAINED_FLOW_ACTION_TEXT[actionName];
   }
 
-  if (refProfileInfo) {
+  if (refProfileInfo && refProfileInfo.type === REF_PROFILE_TYPE.REF) {
     title = title ? title : `Claim your @${DEFAULT_DOMAIN_NAME} web3 name!`;
     subtitle = subtitle
       ? subtitle
