@@ -169,9 +169,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
               is_public: 0,
-              tpid: registration.isCombo
-                ? apis.fio.affiliateTpid
-                : apis.fio.tpid,
+              tpid: apis.fio.affiliateTpid,
               max_fee: new MathOp(registration.fee)
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
@@ -287,7 +285,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             data: {
               owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
-              tpid: apis.fio.tpid,
+              tpid: apis.fio.affiliateTpid,
               max_fee: new MathOp(registration.fee)
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
