@@ -29,6 +29,7 @@ import { RefProfileDomain } from '../../types';
 import { useCheckIfDesktop } from '../../screenType';
 import { isDomainExpired } from '../../util/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 export const useContext = (): FioAffiliateProgramPageContextProps => {
   const dispatch = useDispatch();
@@ -42,6 +43,9 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     selectedFioDomain,
     selectFioDomain,
   ] = useState<FioDomainSelectable | null>(null);
+  const [refProfileDomains, setRefProfileDomains] = useState<
+    RefProfileDomain[] | null
+  >(null);
 
   const isDesktop = useCheckIfDesktop();
 
@@ -67,8 +71,7 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
 
   const handleSelect = useCallback(
     (domainName: string) => {
-      // todo: add to local state
-      const { domains = [] } = user?.affiliateProfile?.settings || {};
+      const domains = [...refProfileDomains];
       const i = domains?.findIndex(
         ({ name }: RefProfileDomain) => name === domainName,
       );
@@ -80,7 +83,7 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
           isPremium: false,
           rank: 0,
           isFirstRegFree: false,
-          domainType: 'public',
+          domainType: DOMAIN_TYPE.PREMIUM,
           allowFree: false,
           hasGatedRegistration: false,
           isExpired: isDomainExpired(selected.name, selected.expiration),
@@ -94,9 +97,15 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
           fch: user?.affiliateProfile?.tpid,
           domains,
         });
+        setRefProfileDomains(domains);
       }
     },
-    [fioDomains, user.affiliateProfile, onAffiliateUpdate],
+    [
+      fioDomains,
+      refProfileDomains,
+      user?.affiliateProfile?.tpid,
+      onAffiliateUpdate,
+    ],
   );
   const handleRenewDomain = (domain: string) => dispatch(onDomainRenew(domain));
   const handleVisibilityChange = (domain: string) =>
@@ -119,6 +128,10 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   useEffect(() => {
     dispatch(getFee(EndPoint.renewFioDomain));
   }, [dispatch]);
+
+  useEffect(() => {
+    setRefProfileDomains(user?.affiliateProfile?.settings?.domains || []);
+  }, [user?.affiliateProfile?.settings?.domains]);
 
   return {
     isDesktop,
