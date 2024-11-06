@@ -22,7 +22,10 @@ import {
   user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
-import { refProfileCode } from '../../redux/refProfile/selectors';
+import {
+  refProfileCode,
+  isAffiliateProfile as isAffiliateProfileSelector,
+} from '../../redux/refProfile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -97,6 +100,7 @@ const handleFCHItems = async ({
   cartHasFreeItem,
   domainArr,
   hasFreeAddress,
+  isAffiliateProfile,
   prices,
   roe,
   usersFreeAddresses,
@@ -107,6 +111,7 @@ const handleFCHItems = async ({
   cartHasFreeItem: boolean;
   domainArr: DomainsArrItemType;
   hasFreeAddress: boolean;
+  isAffiliateProfile: boolean;
   prices: Prices;
   roe: number;
   usersFreeAddresses: { name: string }[];
@@ -192,6 +197,7 @@ const handleFCHItems = async ({
           nativeFioAddressPrice,
           domainType,
           isFree:
+            !isAffiliateProfile &&
             domainType === DOMAIN_TYPE.ALLOW_FREE &&
             (!hasFreeAddress ||
               (hasFreeAddress &&
@@ -326,6 +332,7 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
+  const isAffiliateProfile = useSelector(isAffiliateProfileSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
   const user = useSelector(userSelector);
@@ -537,6 +544,7 @@ export const useContext = (): UseContextProps => {
         prices,
         roe,
         usersFreeAddresses,
+        isAffiliateProfile,
         setError,
       };
 

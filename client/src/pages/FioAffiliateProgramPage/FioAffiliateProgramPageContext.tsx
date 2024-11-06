@@ -80,7 +80,7 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
 
         domains.push({
           name: selected.name,
-          isPremium: false,
+          isPremium: true,
           rank: 0,
           isFirstRegFree: false,
           domainType: DOMAIN_TYPE.PREMIUM,
