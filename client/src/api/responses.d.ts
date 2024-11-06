@@ -176,6 +176,7 @@ export type NotificationsCreateResponse = Notification;
 export type NotificationsUpdateResponse = Notification;
 
 export type RefProfileGetResponse = RefProfile;
+export type RefProfileGetSettingsResponse = Pick<RefProfile, 'settings'>;
 
 export type UsersDetailsResponse = UserDetails;
 export type UsersListResponse = {
