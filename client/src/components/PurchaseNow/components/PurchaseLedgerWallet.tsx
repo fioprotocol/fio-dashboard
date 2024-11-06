@@ -105,7 +105,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
             data = {
               fio_address: registration.fioName,
               owner_fio_public_key: ownerFioPublicKey,
-              tpid: apis.fio.tpid,
+              tpid: apis.fio.affiliateTpid,
             };
           }
 
