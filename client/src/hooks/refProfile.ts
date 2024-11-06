@@ -12,10 +12,16 @@ import {
   roe as roeSelector,
 } from '../redux/registrations/selectors';
 import { cartItems as cartItemsSelector } from '../redux/cart/selectors';
+import {
+  isAuthenticated as isAuthenticatedSelector,
+  lastAuthData as lastAuthDataSelector,
+} from '../redux/profile/selectors';
 
 import { setSettings } from '../redux/refProfile/actions';
 import { getDomains } from '../redux/registrations/actions';
 import { addItem as addItemToCart } from '../redux/cart/actions';
+import { setRedirectPath } from '../redux/navigation/actions';
+import { showLoginModal } from '../redux/modal/actions';
 
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../utils';
 import { convertFioPrices } from '../util/prices';
@@ -23,11 +29,19 @@ import { log } from '../util/general';
 import { isDomainExpired } from '../util/fio';
 
 import { DOMAIN_TYPE } from '../constants/fio';
-import { CART_ITEM_TYPE, REF_PROFILE_TYPE } from '../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+  REF_PROFILE_TYPE,
+} from '../constants/common';
 import { ROUTES } from '../constants/routes';
 
 import { AddressWidgetDomain, RefProfile, RefProfileDomain } from '../types';
 import { VerificationLoaderProps } from '../components/VerificationLoader';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../util/analytics';
 
 type RefProfileAddressWidget = {
   options?: AddressWidgetDomain[];
@@ -70,6 +84,8 @@ export const useRefProfileAddressWidget = ({
 }: {
   refProfileInfo: RefProfile;
 }): RefProfileAddressWidget => {
+  const isAuthenticated = useSelector(isAuthenticatedSelector);
+  const lastAuthData = useSelector(lastAuthDataSelector);
   const allDomains = useSelector(allDomainsSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
@@ -114,6 +130,24 @@ export const useRefProfileAddressWidget = ({
     },
     [dispatch],
   );
+
+  const handleRedirect = useCallback(() => {
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics(cartItems),
+    );
+    let route = ROUTES.CART;
+    if (isAuthenticated || !lastAuthData) {
+      route = ROUTES.CHECKOUT;
+    }
+    if (!isAuthenticated) {
+      dispatch(setRedirectPath({ pathname: route }));
+      return lastAuthData
+        ? dispatch(showLoginModal(route))
+        : history.push(ROUTES.CREATE_ACCOUNT);
+    }
+    history.push(route);
+  }, [cartItems, history, isAuthenticated, lastAuthData, dispatch]);
 
   // domains that should be shown to the user - either those which set from affiliate settings or fio app premium
   const refDomainObjs: { name: string; isPremium?: boolean }[] = useMemo(() => {
@@ -210,7 +244,7 @@ export const useRefProfileAddressWidget = ({
           }),
         );
 
-        history.push(ROUTES.CART);
+        handleRedirect();
       } catch (error) {
         log.error(error);
       } finally {
@@ -218,13 +252,13 @@ export const useRefProfileAddressWidget = ({
       }
     },
     [
+      handleRedirect,
       refDomainObjs,
       cartItems,
       prices.nativeFio,
       roe,
       dispatch,
       refCode,
-      history,
     ],
   );
 
