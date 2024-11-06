@@ -41,6 +41,7 @@ type RefProfileAddressWidget = {
   verificationProps?: VerificationLoaderProps;
 };
 
+// Check fio domain visibility and expiration
 const checkDomain = async (fioDomain: { name: string }) => {
   try {
     const { is_public, expiration } =
@@ -58,6 +59,7 @@ const checkDomain = async (fioDomain: { name: string }) => {
   }
 };
 
+// Used for address widget on affiliate home page
 export const useRefProfileAddressWidget = ({
   refProfileInfo,
 }: {
@@ -71,8 +73,8 @@ export const useRefProfileAddressWidget = ({
   const history = useHistory();
 
   const [showCustomDomainEdit, setShowCustomDomainEdit] = useState(false);
-  const [checkedDomains, setCheckedDomains] = useState(null);
-  const [verifyLoading, toggleVerifyLoading] = useState<boolean>(false);
+  const [checkedDomains, setCheckedDomains] = useState(null); // store affiliate user domains from the affiliate settings page that are public and not expired
+  const [verifyLoading, toggleVerifyLoading] = useState<boolean>(false); // fch verification after user confirms selection
   const [hasFioVerificationError, toggleFioVerificationError] = useState<
     boolean
   >(false);
@@ -81,6 +83,7 @@ export const useRefProfileAddressWidget = ({
   const refCode = refProfileInfo?.code;
   const { dashboardDomains } = allDomains;
 
+  // Check fio domains if they are public and not expired
   const checkDomains = useCallback(async domains => {
     if (!domains) return [];
 
@@ -99,19 +102,25 @@ export const useRefProfileAddressWidget = ({
     );
   }, []);
 
+  // domains that should be shown to the user - either those which set from affiliate settings or fio app premium
   const refDomainObjs: { name: string; isPremium?: boolean }[] = useMemo(() => {
+    // checkedDomains are 'null' on init to understand if the check was executed or not
     if (checkedDomains === null) return [];
+    // if there are no valid domains set on affiliate settings page we show fio app premium domains
     if (!checkedDomains.length)
       return dashboardDomains?.filter(({ isPremium }) => isPremium) || [];
 
+    // show setup valid domains
     return checkedDomains;
   }, [checkedDomains, dashboardDomains]);
 
+  // hide error message when user wants to change handle name or domain
   const onFocus = () => {
     toggleFioVerificationError(false);
     setInfoMessage(null);
   };
 
+  // On fch selection
   const customHandleSubmit = useCallback(
     async ({
       address: addressValue,
@@ -122,6 +131,7 @@ export const useRefProfileAddressWidget = ({
     }) => {
       if (!addressValue || !domainValue) return;
 
+      // show loading state and reset prev error
       toggleVerifyLoading(true);
       toggleFioVerificationError(false);
       setInfoMessage(null);
@@ -145,6 +155,7 @@ export const useRefProfileAddressWidget = ({
         }
 
         let isDomainRegistered = true;
+        // check the domain if user typed custom
         if (!refDomainObj) {
           isDomainRegistered = await apis.fio.availCheckTableRows(domainValue);
           if (isDomainRegistered) {
@@ -193,21 +204,34 @@ export const useRefProfileAddressWidget = ({
         toggleVerifyLoading(false);
       }
     },
-    [cartItems, prices.nativeFio, refCode, roe, dispatch, history],
+    [
+      refDomainObjs,
+      cartItems,
+      prices.nativeFio,
+      roe,
+      dispatch,
+      refCode,
+      history,
+    ],
   );
 
+  // convert domain objects for dropdown interface
   const options = refDomainObjs?.map(domain => ({
     id: domain.name,
     name: `@${domain.name}`,
   }));
 
+  // check domains that was selected on affiliate settings page
   useEffect(() => {
     checkDomains(refProfileInfo?.settings?.domains);
   }, [refProfileInfo?.settings?.domains, checkDomains]);
 
+  // get fio app domains
   useEffect(() => {
     dispatch(getDomains({ refCode }));
   }, [refCode, dispatch]);
+
+  // update affiliate domains on component 'mount'
   useEffect(() => {
     if (refCode) dispatch(getSettings(refCode));
   }, [refCode, dispatch]);
