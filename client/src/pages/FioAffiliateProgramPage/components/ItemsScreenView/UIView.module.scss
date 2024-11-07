@@ -4,7 +4,7 @@
 @import '../../../../components/ManagePageContainer/components/ItemsScreenView/UIView.module';
 
 .infoTooltip {
-  @include proxima-nova-regular;
+  @include inter-regular;
 
   :global {
     .tooltip-inner {

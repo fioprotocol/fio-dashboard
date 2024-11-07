@@ -14,6 +14,18 @@
   font-family: 'Inter Regular';
 }
 
+@mixin inter-medium {
+  font-family: 'Inter Medium';
+}
+
+@mixin inter-thin {
+  font-family: 'Inter Thin';
+}
+
+@mixin inter-thin-it {
+  font-family: 'Inter Thin Italic';
+}
+
 @mixin proxima-nova-regular {
   font-family: 'Proxima Nova Regular';
 }

@@ -21,7 +21,7 @@
 
   .title {
     font-size: 3rem;
-    @include proxima-nova-bold;
+    @include inter-bold;
   }
 
   &.containerDark {
