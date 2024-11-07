@@ -72,7 +72,7 @@
       line-height: 1;
       padding-left: 35px;
       color: $white;
-      @include proxima-nova-bold;
+      @include inter-bold;
       border-left: 1px solid $bauhaus;
     }
 
@@ -83,13 +83,13 @@
       .instructionRowInfoTitle {
         font-size: 2rem;
         line-height: 1;
-        @include proxima-nova-bold;
+        @include inter-bold;
         color: $white;
         margin-bottom: 15px;
       }
 
       .instructionRowInfoText {
-        @include proxima-nova-thin;
+        @include inter-thin;
       }
     }
   }

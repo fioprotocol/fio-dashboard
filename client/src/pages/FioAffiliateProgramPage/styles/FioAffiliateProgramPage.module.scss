@@ -28,22 +28,22 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    @include proxima-nova-semibold;
+    @include inter-semibold;
   }
 
   .text {
     margin: 15px 0;
-    @include proxima-nova-regular;
+    @include inter-regular;
     font-size: 0.75rem;
 
     a {
-      @include proxima-nova-regular;
+      @include inter-regular;
       color: $bright-turquoise;
     }
   }
 
   .info {
-    @include proxima-nova-regular-it;
+    @include inter-italic;
     font-size: 0.75em;
   }
 
@@ -58,12 +58,12 @@
       flex-direction: column;
 
       .label {
-        @include proxima-nova-bold;
+        @include inter-bold;
         font-size: 13px;
       }
 
       .description {
-        @include proxima-nova-regular;
+        @include inter-regular;
         font-size: 0.75rem;
         color: $dove-gray;
         margin: 10px 0;
@@ -78,7 +78,7 @@
         max-width: 375px;
         background: $gallery;
         border-radius: 5px;
-        @include proxima-nova-semibold;
+        @include inter-semibold;
 
         svg {
           top: 0;

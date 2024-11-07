@@ -23,11 +23,11 @@
   .title {
     color: white;
     font-size: 3rem;
-    @include proxima-nova-bold;
+    @include inter-bold;
   }
 
   .subtitle {
-    @include proxima-nova-thin;
+    @include inter-thin;
     font-size: 20px;
     line-height: 32px;
     max-width: 750px;
@@ -40,7 +40,7 @@
   }
 
   .info {
-    @include proxima-nova-thin-it;
+    @include inter-thin-it;
     font-size: 0.875em;
     margin: 20px 0;
   }
