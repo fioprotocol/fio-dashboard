@@ -28,6 +28,9 @@ export type FioAffiliateProgramPageContextProps = {
   handleRenewDomain: (name: string) => void;
   handleVisibilityChange: (name: string) => void;
 
+  hasNextPage: boolean;
+  loadMore: () => void;
+
   user: User;
   fioAddresses: FioAddressDoublet[];
   domains: FioDomainSelectable[];

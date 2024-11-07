@@ -31,6 +31,8 @@ import { isDomainExpired } from '../../util/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
+const ITEMS_LIMIT = 20;
+
 export const useContext = (): FioAffiliateProgramPageContextProps => {
   const dispatch = useDispatch();
   const isAffiliateEnabled = useSelector(isAffiliateEnabledSelector);
@@ -38,6 +40,7 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
   const fioAddresses = useSelector(fioAddressesSelector);
   const history = useHistory();
 
+  const isDesktop = useCheckIfDesktop();
   const { fioDomains, loading } = useGetAllFioNamesAndWallets();
   const [
     selectedFioDomain,
@@ -47,10 +50,10 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     RefProfileDomain[] | null
   >(null);
 
-  const isDesktop = useCheckIfDesktop();
-
   const [showModal, toggleShowModal] = useState(false);
   const [showItemModal, toggleShowItemModal] = useState(false);
+
+  const [visibleItemsCount, setVisibleItemsCount] = useState(ITEMS_LIMIT);
 
   const onOpenModal = useCallback(() => toggleShowModal(true), []);
   const onCloseModal = useCallback(() => toggleShowModal(false), []);
@@ -115,6 +118,12 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
       state: { backPath: ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED },
     });
 
+  const loadMore = useCallback(() => {
+    setVisibleItemsCount(visibleItemsCount + ITEMS_LIMIT);
+  }, [visibleItemsCount]);
+
+  const hasNextPage = visibleItemsCount < fioDomains.length;
+
   useEffectOnce(
     () => {
       if (!isAffiliateEnabled) {
@@ -146,13 +155,17 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
     handleSelect,
     handleRenewDomain,
     handleVisibilityChange,
+    hasNextPage,
+    loadMore,
     loading,
-    domains: fioDomains.map(fioDomain => ({
-      selected: !!user?.affiliateProfile?.settings?.domains?.find(
-        (domain: RefProfileDomain) => domain.name === fioDomain.name,
-      ),
-      ...fioDomain,
-    })),
+    domains: fioDomains
+      .map(fioDomain => ({
+        selected: !!user?.affiliateProfile?.settings?.domains?.find(
+          (domain: RefProfileDomain) => domain.name === fioDomain.name,
+        ),
+        ...fioDomain,
+      }))
+      .slice(0, !hasNextPage ? fioDomains.length : visibleItemsCount),
     user,
     selectedFioDomain,
     link: `${window.location.origin}/ref/${user?.affiliateProfile?.code}`,

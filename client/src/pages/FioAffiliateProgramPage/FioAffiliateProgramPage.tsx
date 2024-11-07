@@ -35,6 +35,8 @@ const FioAffiliateProgramPage: React.FC = () => {
     handleRenewDomain,
     handleVisibilityChange,
     domains,
+    hasNextPage,
+    loadMore,
     selectedFioDomain,
     user,
     link,
@@ -171,6 +173,8 @@ const FioAffiliateProgramPage: React.FC = () => {
             <DomainList
               domains={domains}
               loading={false}
+              hasNextPage={hasNextPage}
+              loadMore={loadMore}
               onItemModalOpen={onItemModalOpen}
               handleRenewDomain={handleRenewDomain}
               handleVisibility={handleVisibilityChange}
