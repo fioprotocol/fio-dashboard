@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-
-import { refreshBalance, refreshFioNames } from '../../../../redux/fio/actions';
+import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import {
   fioAddresses as fioAddressesSelector,
@@ -11,50 +10,49 @@ import {
   loading as loadingSelector,
 } from '../../../../redux/fio/selectors';
 
+import { refreshBalance, refreshFioNames } from '../../../../redux/fio/actions';
+
+import { ROUTES } from '../../../../constants/routes';
+import { DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../../../constants/fio';
+
 import useEffectOnce from '../../../../hooks/general';
 
-import config from '../../../../config';
-import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../../constants/fio';
-import { ROUTES } from '../../../../constants/routes';
-
+import { FioHandleItem } from '../../../../types/governance';
 import { FioWalletDoublet } from '../../../../types';
-import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
-import { CandidateProps, FioHandleItem } from '../../../../types/governance';
-import { TrxResponsePaidBundles } from '../../../../api/fio';
+
+type Props = {
+  selectedBlockProducersFioHandles: string[];
+  resetSelectedBlockProducers: () => void;
+};
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
   fioHandlesLoading: boolean;
   loading: boolean;
-  notEnoughBundles: boolean;
+  fioWallets: FioWalletDoublet[];
   processing: boolean;
-  submitData: RequestTokensValues;
   selectedFioHandle: FioHandleItem;
   selectedFioWallet: FioWalletDoublet;
-  walletsList: FioWalletDoublet[];
+  submitData: any;
   onActionClick: () => void;
   onCancel: () => void;
-  onSuccess: (results: TrxResponsePaidBundles) => void;
   onFioHandleChange: (id: string) => void;
+  onSuccess: (results: any) => void;
   onWalletChange: (id: string) => void;
   setProcessing: (processing: boolean) => void;
 };
 
-type Props = {
-  selectedCandidates: CandidateProps[];
-  resetSelectedCandidates: () => void;
-};
-
 export const useContext = (props: Props): UseContextProps => {
-  const { selectedCandidates, resetSelectedCandidates } = props;
+  const {
+    selectedBlockProducersFioHandles,
+    resetSelectedBlockProducers,
+  } = props;
 
   const fioWallets = useSelector(fioWalletsSelector);
   const fioHandles = useSelector(fioAddressesSelector);
   const fioHandlesLoading = useSelector(fioAddressesLoadingSelector);
   const loading = useSelector(loadingSelector);
 
-  const [walletsList, setWalletsList] = useState<FioWalletDoublet[]>([]);
-  const [fioHandlesList, setFioHandlesList] = useState<FioHandleItem[]>([]);
   const [
     selectedFioWallet,
     setSelectedFioWallet,
@@ -63,18 +61,36 @@ export const useContext = (props: Props): UseContextProps => {
     selectedFioHandle,
     setSelectedFioHandle,
   ] = useState<FioHandleItem | null>(null);
-  const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<RequestTokensValues | null>(
-    null,
-  );
 
-  const notEnoughBundles =
-    selectedFioHandle != null
-      ? selectedFioHandle.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
-      : false;
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [submitData, setSubmitData] = useState<any | null>(null);
+  const [fioHandlesList, setFioHandlesList] = useState<FioHandleItem[]>([]);
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
+  };
+
+  const onSuccess = (results: any) => {
+    setProcessing(false);
+
+    if (results?.transaction_id) {
+      resetSelectedBlockProducers();
+      history.push(ROUTES.GOVERNANCE_BLOCK_PRODUCERS);
+    }
+  };
+
+  const onActionClick = () => {
+    setSubmitData({
+      producers: selectedBlockProducersFioHandles,
+      fioAddress: selectedFioHandle?.name,
+      max_fee: DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
+      actor: FIOSDK.accountHash(selectedFioWallet.publicKey).accountnm,
+    });
+  };
 
   const findWalletsFioHandles = useCallback(
     (publicKey: string) =>
@@ -89,12 +105,12 @@ export const useContext = (props: Props): UseContextProps => {
 
   const onWalletChange = useCallback(
     (walletId: string) => {
-      const walletToSelect = walletsList.find(({ id }) => id === walletId);
+      const walletToSelect = fioWallets.find(({ id }) => id === walletId);
 
       setFioHandlesList(findWalletsFioHandles(walletToSelect.publicKey));
       setSelectedFioWallet(walletToSelect);
     },
-    [findWalletsFioHandles, walletsList],
+    [findWalletsFioHandles, fioWallets],
   );
 
   const onFioHandleChange = useCallback(
@@ -107,40 +123,6 @@ export const useContext = (props: Props): UseContextProps => {
     },
     [fioHandlesList],
   );
-
-  const onCancel = () => {
-    setSubmitData(null);
-    setProcessing(false);
-  };
-
-  const onSuccess = (results: TrxResponsePaidBundles) => {
-    setProcessing(false);
-
-    if (results?.transaction_id) {
-      resetSelectedCandidates();
-      history.push(ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS);
-    }
-  };
-
-  const onActionClick = () => {
-    setSubmitData({
-      payeeFioAddress: selectedFioHandle.name,
-      payerFioAddress: config.voteFioHandle,
-      chainCode: FIO_CHAIN_CODE,
-      tokenCode: FIO_CHAIN_CODE,
-      payeeTokenPublicAddress: selectedFioHandle.walletPublicKey,
-      amount: '1',
-      memo: selectedCandidates.map(({ id }) => id).join(','),
-    });
-  };
-
-  useEffect(() => {
-    if (fioWallets) {
-      setWalletsList(fioWallets);
-    } else {
-      setWalletsList([]);
-    }
-  }, [fioWallets]);
 
   useEffect(() => {
     if (fioHandlesList) {
@@ -169,16 +151,15 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesList,
     fioHandlesLoading,
     loading,
-    notEnoughBundles,
+    fioWallets,
     processing,
-    submitData,
     selectedFioHandle,
     selectedFioWallet,
-    walletsList,
+    submitData,
     onActionClick,
     onCancel,
-    onSuccess,
     onFioHandleChange,
+    onSuccess,
     onWalletChange,
     setProcessing,
   };

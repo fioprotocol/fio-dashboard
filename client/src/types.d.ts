@@ -195,6 +195,7 @@ export type NewFioWalletDoublet = {
 };
 
 export type FioAddressDoublet = {
+  id?: string;
   name: string;
   expiration: number | string;
   remaining: number;

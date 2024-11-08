@@ -24,6 +24,7 @@ import linkedinLogo from '../assets/images/social-network-governance/linkedin.sv
 import webLogo from '../assets/images/social-network-governance/website.svg';
 import noImageIconSrc from '../assets/images/no-photo.svg';
 import noBpIconSrc from '../assets/images/no-bp-image.svg';
+import noBpIconDarkSrc from '../assets/images/no-bp-image-dark.svg';
 
 import {
   BlockProducersItemProps,
@@ -349,7 +350,9 @@ export const useGetBlockProducers = (): {
               isTop21: i <= 21,
               isValidFioHandle: status,
               links,
-              logo: logo_svg || logo_256 || noBpIconSrc,
+              logo: logo_svg || logo_256,
+              defaultLogo: noBpIconSrc,
+              defaultDarkLogo: noBpIconDarkSrc,
               name: candidate_name || 'N/A',
               owner,
               totalVotes: total_votes,
