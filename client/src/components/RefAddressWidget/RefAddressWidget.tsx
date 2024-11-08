@@ -28,6 +28,7 @@ export const RefAddressWidget: React.FC<Props> = props => {
     <AddressWidget
       {...addressWidgetContent}
       {...rest}
+      hasRoundRadius={true}
       inputClassNames={refClasses.input}
       dropdownClassNames={refClasses.dropdown}
       controlClassNames={refClasses.control}
