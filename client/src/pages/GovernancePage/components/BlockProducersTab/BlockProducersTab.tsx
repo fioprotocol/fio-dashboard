@@ -47,26 +47,28 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
             Block Producers (BPs) are the backbone of the FIO Chain, responsible
             for running the infrastructure necessary to maintain the network.
           </p>
-          <Link to={ROUTES.GOVERNANCE_PROXIES} className={classes.link}>
-            Would you rather proxy your vote?
-          </Link>
-          <OverlayTrigger
-            trigger={['hover', 'click']}
-            placement="top-start"
-            overlay={
-              <Tooltip id="status" className={classes.infoTooltip}>
-                The FIO Foundation is responsible for scoring block producers.
-                Block producers are evaluated based on several important tasks.
-                These include keeping their nodes up and running, voting on fees
-                and bundles, offering helpful tools to the community, signing
-                transactions, taking part in the testnet, maintaining an active
-                FIO Handle, and consistently producing blocks without missing
-                any.
-              </Tooltip>
-            }
-          >
-            <div className={classes.link}>Block producer scoring</div>
-          </OverlayTrigger>
+          <div className={classes.links}>
+            <Link to={ROUTES.GOVERNANCE_PROXIES} className={classes.link}>
+              Would you rather proxy your vote?
+            </Link>
+            <OverlayTrigger
+              trigger={['hover', 'click']}
+              placement="top-end"
+              overlay={
+                <Tooltip id="status" className={classes.infoTooltip}>
+                  The FIO Foundation is responsible for scoring block producers.
+                  Block producers are evaluated based on several important
+                  tasks. These include keeping their nodes up and running,
+                  voting on fees and bundles, offering helpful tools to the
+                  community, signing transactions, taking part in the testnet,
+                  maintaining an active FIO Handle, and consistently producing
+                  blocks without missing any.
+                </Tooltip>
+              }
+            >
+              <div className={classes.link}>Block producer scoring</div>
+            </OverlayTrigger>
+          </div>
         </div>
         <SubmitButton
           text="Cast Vote"
