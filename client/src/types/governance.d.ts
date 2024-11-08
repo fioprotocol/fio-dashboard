@@ -1,3 +1,5 @@
+import { FioAddressDoublet } from '../types';
+
 type LinkItemProps = {
   name: string;
   url: string;
@@ -68,6 +70,8 @@ export type BlockProducersResult = {
 
 export type BlockProducersItemProps = {
   checked?: boolean;
+  defaultLogo: string;
+  defaultDarkLogo: string;
   fioAddress: string;
   flagIconUrl: string;
   grade: string;
@@ -80,3 +84,5 @@ export type BlockProducersItemProps = {
   owner: string;
   totalVotes: number;
 };
+
+export type FioHandleItem = FioAddressDoublet & { id: string };

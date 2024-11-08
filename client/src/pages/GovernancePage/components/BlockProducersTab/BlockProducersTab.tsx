@@ -81,6 +81,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         ) : (
           listOfBlockProducers.map(
             ({
+              defaultLogo,
               fioAddress,
               flagIconUrl,
               grade,
@@ -103,7 +104,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                   <div className={classes.container}>
                     <div className={classes.headerContainer}>
                       <img
-                        src={logo}
+                        src={logo || defaultLogo}
                         alt="Block Producer"
                         className={classes.logo}
                       />
