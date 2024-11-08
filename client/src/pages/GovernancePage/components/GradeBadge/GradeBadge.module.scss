@@ -4,8 +4,8 @@
 @import '../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
+  width: 40px;
   height: 34px;
-  width: fit-content;
   padding: 8px 13px;
   color: $white;
   background-color: $briquette-grey;
@@ -27,11 +27,11 @@
   }
 
   &.isYellow {
-    background-color: $saffron-gold;
+    background-color: $golden-foil;
   }
   
   &.isOrange {
-    background-color: $red-orange-juice
+    background-color: $saffron-gold;
   }
   
   &.isRose {

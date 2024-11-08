@@ -2,6 +2,28 @@
 @import '../../../../assets/styles/fontMixins.scss';
 @import '../../../../assets/styles/mediaQueriesMixings.scss';
 
+.infoTooltip {
+  @include inter-regular;
+
+  :global {
+    .arrow {
+      &::before {
+        border-top-color: $black-olive;
+      }
+    }
+
+    .tooltip-inner {
+      max-width: 290px;
+      text-align: left;
+      padding: 15px;
+      background-color: $black-olive;
+      border-radius: 15px;
+      font-size: 10px;
+      line-height: 16px;
+    }
+  }
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -48,13 +70,25 @@
         @include proxima-nova-semibold;
       }
 
-      .text, .link {
+      .links {
         margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+
+        @include sm {
+          gap: 20px;
+          flex-direction: column;
+        }
+      }
+
+      .text, .link {
         margin-bottom: 0;
         font-size: 0.875em;
       }
 
       .text {
+        margin-top: 20px;
         @include proxima-nova-thin;
       }
 
@@ -210,7 +244,7 @@
       .notificationBadge {
         padding: 5px 11px !important;
         min-height: auto;
-        margin-left: 58px;
+        margin-left: 112px;
         width: fit-content;
         div > p {
           @include proxima-nova-semibold;
