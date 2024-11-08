@@ -139,7 +139,9 @@ export const useRefProfileAddressWidget = ({
     const route = ROUTES.CART;
     if (!isAuthenticated) {
       dispatch(setRedirectPath({ pathname: route }));
-      return lastAuthData
+      return lastAuthData ||
+        window.ethereum?.isMetaMask ||
+        window.ethereum?.isOpera
         ? dispatch(showLoginModal(route))
         : history.push(ROUTES.CREATE_ACCOUNT);
     }
