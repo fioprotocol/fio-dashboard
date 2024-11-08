@@ -1,8 +1,12 @@
 import { FC } from 'react';
+import { Link } from 'react-router-dom';
 
-import classes from './GovernanceVotingHelpTab.module.scss';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
+
+import { ROUTES } from '../../../../constants/routes';
+
+import classes from './GovernanceVotingHelpTab.module.scss';
 
 export const GovernanceVotingHelpTab: FC = () => {
   return (
@@ -23,12 +27,19 @@ export const GovernanceVotingHelpTab: FC = () => {
           Once you’ve had the opportunity to do your own research on the FIO
           Block producers, you simply select up to 30 Block producers to cast
           your vote for.&nbsp;
-          <a href="https://fio.net/fio-chain/block-producers">
+          <a
+            href="https://fio.net/fio-chain/block-producers"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Want to know more about Block Producers?
           </a>
-          <a className={classes.blockLink} href="https://">
+          <Link
+            className={classes.blockLink}
+            to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+          >
             Vote for Block Producers
-          </a>
+          </Link>
         </p>
         <h4 className={classes.subtitle}>Vote Via Proxy</h4>
         <p className={classes.content}>
@@ -39,12 +50,9 @@ export const GovernanceVotingHelpTab: FC = () => {
           not actively vote themselves. The idea is that those operators may
           best represent the interests of their users. To withdraw the automatic
           proxy, just vote or proxy yourself.
-          <a
-            className={classes.blockLink}
-            href="https://www.figma.com/design/UzJyp5DM8xvfWRI4Iy44hU/New-FIO-Design-Concepts?node-id=201-18221&t=yGn8pNnbXgwkBwJm-4"
-          >
+          <Link className={classes.blockLink} to={ROUTES.GOVERNANCE_PROXIES}>
             Proxy Your Vote
-          </a>
+          </Link>
         </p>
       </div>
       <h3 className={classes.title}>How to Vote for the Board of Directors</h3>
@@ -62,21 +70,24 @@ export const GovernanceVotingHelpTab: FC = () => {
                 your proxies vote weight and your direct Board vote will be
                 ignored! Remember that if you staked your tokens they may have
                 been automatically proxied. To stop proxying, you must&nbsp;
-                <a href="https://" className={classes.infoBadgeLink}>
+                <Link
+                  className={classes.infoBadgeLink}
+                  to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+                >
                   vote for Block Producers
-                </a>
+                </Link>
                 .
               </>
             }
           />
           Once you’ve had the opportunity to do your own research on the Board
           of Directors, you simply cast your vote via FIO Request.
-          <a
+          <Link
             className={classes.blockLink}
-            href="https://www.figma.com/design/UzJyp5DM8xvfWRI4Iy44hU/New-FIO-Design-Concepts?node-id=201-16181&t=yGn8pNnbXgwkBwJm-4"
+            to={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
           >
             Vote for the Board of Directors
-          </a>
+          </Link>
         </p>
       </div>
       <h3 className={classes.title}>How Votes are Counted</h3>
@@ -85,7 +96,11 @@ export const GovernanceVotingHelpTab: FC = () => {
           <ul>
             <li>
               Your vote issue will be manually created and will show up in&nbsp;
-              <a href="https://fioprotocol.atlassian.net/wiki/spaces/DAO/pages/521076846/Board+Vote+Tracking#Raw-Votes/">
+              <a
+                href="https://fioprotocol.atlassian.net/wiki/spaces/DAO/pages/521076846/Board+Vote+Tracking#Raw-Votes/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Board Vote Tracking | Raw Votes
               </a>
               &nbsp;including the voting power (Current weight in FIO). The
@@ -110,7 +125,11 @@ export const GovernanceVotingHelpTab: FC = () => {
                   </ul>
                 </li>
                 <li>
-                  <a href="https://github.com/fioprotocol/fips/blob/master/fip-0006.md">
+                  <a
+                    href="https://github.com/fioprotocol/fips/blob/master/fip-0006.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     General locks
                   </a>
                   <ul>
@@ -130,7 +149,11 @@ export const GovernanceVotingHelpTab: FC = () => {
             </li>
             <li>
               Results of elections will be posted here:&nbsp;
-              <a href="https://fioprotocol.atlassian.net/wiki/spaces/DAO/pages/521076846/Board+Vote+Tracking">
+              <a
+                href="https://fioprotocol.atlassian.net/wiki/spaces/DAO/pages/521076846/Board+Vote+Tracking"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Board Vote Tracking
               </a>
             </li>
