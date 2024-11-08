@@ -136,10 +136,7 @@ export const useRefProfileAddressWidget = ({
       ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
       getCartItemsDataForAnalytics(cartItems),
     );
-    let route = ROUTES.CART;
-    if (isAuthenticated || !lastAuthData) {
-      route = ROUTES.CHECKOUT;
-    }
+    const route = ROUTES.CART;
     if (!isAuthenticated) {
       dispatch(setRedirectPath({ pathname: route }));
       return lastAuthData
