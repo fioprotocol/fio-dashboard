@@ -48,7 +48,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     submitData,
     selectedFioHandle,
     selectedFioWallet,
-    walletsList,
+    fioWallets,
     onActionClick,
     onCancel,
     onSuccess,
@@ -69,7 +69,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
           </p>
           <h4 className={classes.label}>Your FIO Wallet</h4>
           <CustomDropdown
-            options={walletsList}
+            options={fioWallets}
             onChange={onWalletChange}
             defaultOptionValue={selectedFioWallet}
             loading={loading}

@@ -11,7 +11,6 @@ import CloseButton from '../../../../components/CloseButton/CloseButton';
 import Loader from '../../../../components/Loader/Loader';
 import WalletAction from '../../../../components/WalletAction/WalletAction';
 
-import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { ROUTES } from '../../../../constants/routes';
 
@@ -19,6 +18,9 @@ import MathOp from '../../../../util/math';
 
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
+import { VoteBlockProducerEdgeWallet } from './components/VoteBlockProducerEdgeWallet';
+import { VoteBlockProducerLedgerWallet } from './components/VoteBlockProducerLedgerWallet';
+import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerMetamaskWallet';
 import { useContext } from './CastBlockProducerVotePageContext';
 
 import classes from './CastBlockProducerVotePage.module.scss';
@@ -44,6 +46,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     submitData,
     selectedFioHandle,
     selectedFioWallet,
+    transactionDetails,
     onActionClick,
     onCancel,
     onSuccess,
@@ -100,11 +103,6 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
                 dropdownClassNames={classes.dropdown}
                 withoutMarginBottom
               />
-              <p className={classes.votingPower}>
-                Current Voting Power:{' '}
-                <span>{selectedFioHandle?.remaining || 0}</span>{' '}
-                <span className={classes.violet}>Bundles</span>
-              </p>
             </>
           )}
           <h4 className={classes.label}>Candidate Votes</h4>
@@ -137,10 +135,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           )}
           <p className={classes.label}>Transaction Details</p>
           <TransactionDetails
-            bundles={{
-              remaining: selectedFioHandle?.remaining,
-              fee: BUNDLES_TX_COUNT.NEW_FIO_REQUEST,
-            }}
+            {...transactionDetails}
             className={classes.transactionDetails}
           />
           <SubmitButton
@@ -165,6 +160,9 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
         submitData={submitData}
         processing={processing}
         setProcessing={setProcessing}
+        FioActionWallet={VoteBlockProducerEdgeWallet}
+        LedgerActionWallet={VoteBlockProducerLedgerWallet}
+        MetamaskActionWallet={VoteBlockProducerMetamaskWallet}
       />
     </>
   );

@@ -4,6 +4,8 @@ import { Api } from '../../api';
 
 import { ENDPOINT_FEE_HASH } from '../../api/fio';
 
+import { FullEndPoint } from '../../constants/fio';
+
 import {
   PublicAddressDoublet,
   FeePrice,
@@ -80,19 +82,20 @@ export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
 export const SET_FEE = `${prefix}/SET_FEE`;
 
 export const getFee = (
-  endpoint: EndPoint,
+  endpoint: FullEndPoint,
   fioAddress: string = '',
 ): CommonPromiseAction => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
     // temporary solution for staking fee value
     if (
-      [EndPoint.stakeFioTokens, EndPoint.unStakeFioTokens].includes(endpoint)
+      [EndPoint.stakeFioTokens, EndPoint.unStakeFioTokens].includes(
+        endpoint as EndPoint,
+      )
     ) {
       return api.fio.getFeeFromTable(ENDPOINT_FEE_HASH[endpoint]);
     }
-
-    return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
+    return api.fio.publicFioSDK.getFee(endpoint as EndPoint, fioAddress);
   },
   endpoint,
 });

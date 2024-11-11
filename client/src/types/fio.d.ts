@@ -35,13 +35,14 @@ export type ActionDataParams = {
   payer_fio_address?: string;
   payee_fio_address?: string;
   payee_public_key?: string;
+  producers?: string[];
   public_addresses?: {
     chain_code: string;
     token_code: string;
     public_address: string;
   }[];
   public_address?: string;
-  tpid: string;
+  tpid?: string;
 };
 
 export type ActionParams = {

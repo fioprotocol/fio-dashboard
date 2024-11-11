@@ -17,9 +17,7 @@ export const NoAssociatedFioHandlesWarningBadge: React.FC<Props> = props => (
     title="No Associated FIO Handles"
     type={BADGE_TYPES.ERROR}
     message={
-      props.customMessage ? (
-        props.customMessage
-      ) : (
+      props.customMessage || (
         <>
           You must have an associated FIO Handle in order to be able to send
           this request.{' '}

@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-
-import { refreshBalance, refreshFioNames } from '../../../../redux/fio/actions';
 
 import {
   fioAddresses as fioAddressesSelector,
@@ -11,16 +9,16 @@ import {
   loading as loadingSelector,
 } from '../../../../redux/fio/selectors';
 
-import useEffectOnce from '../../../../hooks/general';
-
 import config from '../../../../config';
 import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
+import { TrxResponsePaidBundles } from '../../../../api/fio';
+
+import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 
 import { FioWalletDoublet } from '../../../../types';
 import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
 import { CandidateProps, FioHandleItem } from '../../../../types/governance';
-import { TrxResponsePaidBundles } from '../../../../api/fio';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
@@ -31,7 +29,7 @@ type UseContextProps = {
   submitData: RequestTokensValues;
   selectedFioHandle: FioHandleItem;
   selectedFioWallet: FioWalletDoublet;
-  walletsList: FioWalletDoublet[];
+  fioWallets: FioWalletDoublet[];
   onActionClick: () => void;
   onCancel: () => void;
   onSuccess: (results: TrxResponsePaidBundles) => void;
@@ -53,60 +51,50 @@ export const useContext = (props: Props): UseContextProps => {
   const fioHandlesLoading = useSelector(fioAddressesLoadingSelector);
   const loading = useSelector(loadingSelector);
 
-  const [walletsList, setWalletsList] = useState<FioWalletDoublet[]>([]);
-  const [fioHandlesList, setFioHandlesList] = useState<FioHandleItem[]>([]);
-  const [
-    selectedFioWallet,
-    setSelectedFioWallet,
-  ] = useState<FioWalletDoublet | null>(null);
-  const [
-    selectedFioHandle,
-    setSelectedFioHandle,
-  ] = useState<FioHandleItem | null>(null);
+  const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
+    fioWallets[0]?.id || null,
+  );
+  const [selectedFioHandleId, setSelectedFioHandleId] = useState<string | null>(
+    null,
+  );
   const [processing, setProcessing] = useState<boolean>(false);
   const [submitData, setSubmitData] = useState<RequestTokensValues | null>(
     null,
   );
+
+  const selectedFioWallet = fioWallets.find(
+    ({ id }) => id === selectedFioWalletId,
+  );
+
+  const fioHandlesList = fioHandles
+    .filter(
+      ({ walletPublicKey }) => walletPublicKey === selectedFioWallet?.publicKey,
+    )
+    .map(fioHandleItem => ({
+      ...fioHandleItem,
+      id: fioHandleItem?.name,
+    }));
+
+  const selectedFioHandle =
+    fioHandlesList.find(({ id }) => id === selectedFioHandleId) ||
+    fioHandlesList[0];
 
   const notEnoughBundles =
     selectedFioHandle != null
       ? selectedFioHandle.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
       : false;
 
-  const dispatch = useDispatch();
   const history = useHistory();
 
-  const findWalletsFioHandles = useCallback(
-    (publicKey: string) =>
-      fioHandles
-        .filter(({ walletPublicKey }) => walletPublicKey === publicKey)
-        .map(fioHandleItem => ({
-          ...fioHandleItem,
-          id: fioHandleItem?.name,
-        })),
-    [fioHandles],
-  );
+  useRefreshBalancesAndFioNames();
 
-  const onWalletChange = useCallback(
-    (walletId: string) => {
-      const walletToSelect = walletsList.find(({ id }) => id === walletId);
+  const onWalletChange = useCallback((walletId: string) => {
+    setSelectedFioWalletId(walletId);
+  }, []);
 
-      setFioHandlesList(findWalletsFioHandles(walletToSelect.publicKey));
-      setSelectedFioWallet(walletToSelect);
-    },
-    [findWalletsFioHandles, walletsList],
-  );
-
-  const onFioHandleChange = useCallback(
-    (fioHandleId: string) => {
-      const fioHandleToSelect = fioHandlesList.find(
-        ({ id }) => id === fioHandleId,
-      );
-
-      setSelectedFioHandle(fioHandleToSelect);
-    },
-    [fioHandlesList],
-  );
+  const onFioHandleChange = useCallback((fioHandleId: string) => {
+    setSelectedFioHandleId(fioHandleId);
+  }, []);
 
   const onCancel = () => {
     setSubmitData(null);
@@ -134,37 +122,6 @@ export const useContext = (props: Props): UseContextProps => {
     });
   };
 
-  useEffect(() => {
-    if (fioWallets) {
-      setWalletsList(fioWallets);
-    } else {
-      setWalletsList([]);
-    }
-  }, [fioWallets]);
-
-  useEffect(() => {
-    if (fioHandlesList) {
-      setSelectedFioHandle(fioHandlesList[0]);
-    }
-  }, [fioHandlesList]);
-
-  useEffectOnce(
-    () => {
-      for (const fioWallet of fioWallets) {
-        if (fioWallet.publicKey) {
-          dispatch(refreshBalance(fioWallet.publicKey));
-          dispatch(refreshFioNames(fioWallet.publicKey));
-        }
-      }
-
-      const walletToSelect = fioWallets[0];
-      setSelectedFioWallet(walletToSelect);
-      setFioHandlesList(findWalletsFioHandles(walletToSelect.publicKey));
-    },
-    [],
-    !!fioWallets?.length && !loading && !fioHandlesLoading,
-  );
-
   return {
     fioHandlesList,
     fioHandlesLoading,
@@ -174,7 +131,7 @@ export const useContext = (props: Props): UseContextProps => {
     submitData,
     selectedFioHandle,
     selectedFioWallet,
-    walletsList,
+    fioWallets,
     onActionClick,
     onCancel,
     onSuccess,

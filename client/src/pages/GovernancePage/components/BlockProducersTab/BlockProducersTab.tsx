@@ -11,6 +11,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 
 import { GradeBadge } from '../GradeBadge/GradeBadge';
 import { MyCurrentVotes } from '../MyCurrentVotes';
+import { WarningNotificationBadge } from '../WarningNotificationBadge/WarningNotificationBadge';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -27,7 +28,12 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
     onBlockProducerSelectChange,
   } = props;
 
-  const { disabledCastBPVote, nextDate, handleCastVote } = useContext({
+  const {
+    disabledCastBPVote,
+    isMetaMaskUser,
+    nextDate,
+    handleCastVote,
+  } = useContext({
     listOfBlockProducers,
   });
 
@@ -73,10 +79,16 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         <SubmitButton
           text="Cast Vote"
           onClick={handleCastVote}
-          disabled={disabledCastBPVote}
+          disabled={disabledCastBPVote || isMetaMaskUser}
           className={classes.actionButton}
         />
       </div>
+      <WarningNotificationBadge
+        show={isMetaMaskUser}
+        title="Warning"
+        type={BADGE_TYPES.ERROR}
+        message="Voting via MetaMask is not supported at this time."
+      />
       <div className={classes.bpListContainer}>
         {bpLoading ? (
           <Loader />
@@ -96,8 +108,8 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
               owner,
               totalVotes,
             }) => (
-              <div className={classes.bpItemContainer}>
-                <div className={classes.bpItem} key={id}>
+              <div className={classes.bpItemContainer} key={id}>
+                <div className={classes.bpItem}>
                   <CheckBox
                     disabled={!isValidFioHandle}
                     onChange={() => onBlockProducerSelectChange(id)}
@@ -115,7 +127,9 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                         <p className={classes.details}>
                           {owner}{' '}
                           <span
-                            className={!isValidFioHandle && classes.notValid}
+                            className={
+                              !isValidFioHandle ? classes.notValid : null
+                            }
                           >
                             {fioAddress}
                           </span>
@@ -175,7 +189,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
       <SubmitButton
         text="Cast Vote"
         onClick={handleCastVote}
-        disabled={disabledCastBPVote}
+        disabled={disabledCastBPVote || isMetaMaskUser}
         className={classes.actionButtonBottom}
         withTopMargin
       />
