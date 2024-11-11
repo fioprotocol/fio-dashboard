@@ -167,3 +167,22 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
     userType: user?.userProfileType,
   };
 };
+
+export const useRefreshBalancesAndFioNames = () => {
+  const fioWallets = useSelector(fioWalletsSelector);
+
+  const dispatch = useDispatch();
+
+  useEffectOnce(
+    () => {
+      for (const fioWallet of fioWallets) {
+        if (fioWallet.publicKey) {
+          dispatch(refreshBalance(fioWallet.publicKey));
+          dispatch(refreshFioNames(fioWallet.publicKey));
+        }
+      }
+    },
+    [],
+    !!fioWallets?.length,
+  );
+};

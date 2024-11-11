@@ -1,11 +1,17 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { BlockProducersItemProps } from '../../../../types/governance';
-import { getNextGovernanceDate } from '../../../../util/general';
 import { showGenericErrorModal } from '../../../../redux/modal/actions';
+
+import { user as userSelector } from '../../../../redux/profile/selectors';
+
+import { getNextGovernanceDate } from '../../../../util/general';
+
 import { ROUTES } from '../../../../constants/routes';
+import { USER_PROFILE_TYPE } from '../../../../constants/profile';
+
+import { BlockProducersItemProps } from '../../../../types/governance';
 
 type Props = {
   listOfBlockProducers: BlockProducersItemProps[];
@@ -13,12 +19,19 @@ type Props = {
 
 type UseContextProps = {
   disabledCastBPVote: boolean;
+  isMetaMaskUser: boolean;
   nextDate: string;
   handleCastVote: () => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
   const { listOfBlockProducers } = props;
+
+  const user = useSelector(userSelector);
+
+  const isMetaMaskUser =
+    window.ethereum?.isMetaMask &&
+    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
 
   const nextDate = getNextGovernanceDate();
 
@@ -40,6 +53,7 @@ export const useContext = (props: Props): UseContextProps => {
 
   return {
     disabledCastBPVote: listOfBlockProducers.every(({ checked }) => !checked),
+    isMetaMaskUser,
     nextDate,
     handleCastVote,
   };
