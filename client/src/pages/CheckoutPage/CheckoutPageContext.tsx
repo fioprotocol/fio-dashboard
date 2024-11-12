@@ -399,7 +399,7 @@ export const useContext = (): {
 
   const cancelOrder = useCallback(
     (event?: Event) => {
-      // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel oreder on close BitPay payment page
+      // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel order on close BitPay payment page
       if (!event && order?.id) {
         void apis.orders.update(order.id, {
           status: PURCHASE_RESULTS_STATUS.CANCELED,
