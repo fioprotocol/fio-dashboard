@@ -84,6 +84,7 @@ class OrdersJob extends CommonJob {
       fee = this.feesJson[action];
     } else {
       fee = await fioApi.getFee(action);
+      this.postMessage(`Fees: ${JSON.stringify({ action, fee })}`);
       this.feesJson[action] = fee;
       this.feesUpdatedAt = new Date();
       await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
