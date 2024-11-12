@@ -1,41 +1,36 @@
 import React from 'react';
 import { FIOSDK } from '@fioprotocol/fiosdk';
 
-import { GovernancePageContextProps } from '../../types';
-
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
+
+import CustomDropdown from '../../../../components/CustomDropdown';
+import Loader from '../../../../components/Loader/Loader';
+import CloseButton from '../../../../components/CloseButton/CloseButton';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import CustomDropdown from '../../../../components/CustomDropdown';
-import CloseButton from '../../../../components/CloseButton/CloseButton';
-import Loader from '../../../../components/Loader/Loader';
 import WalletAction from '../../../../components/WalletAction/WalletAction';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+import { VoteProxyEdgeWallet } from './components/VoteProxyEdgeWallet';
+import { VoteProxyLedgerWallet } from './components/VoteProxyLedgerWallet';
+import { VoteProxyMetamaskWallet } from './components/VoteProxyMetamaskWallet';
+
 import { ROUTES } from '../../../../constants/routes';
+import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
 import MathOp from '../../../../util/math';
 
-import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
-import { VoteBlockProducerEdgeWallet } from './components/VoteBlockProducerEdgeWallet';
-import { VoteBlockProducerLedgerWallet } from './components/VoteBlockProducerLedgerWallet';
-import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerMetamaskWallet';
-import { useContext } from './CastBlockProducerVotePageContext';
+import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
+import { useContext } from './ProxiesVotePageContext';
 
-import classes from './CastBlockProducerVotePage.module.scss';
+import { GovernancePageContextProps } from '../../types';
 
-export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = props => {
-  const {
-    listOfBlockProducers,
-    bpLoading,
-    onBlockProducerSelectChange,
-    resetSelectedBlockProducers,
-  } = props;
+import classes from './ProxiesVotePage.module.scss';
 
-  const selectedBlockProducers = listOfBlockProducers?.filter(
-    ({ checked }) => checked,
-  );
+export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
+  const { listOfProxies, proxiesLoading, resetSelectedProxies } = props;
+
+  const selectedProxy = listOfProxies.find(proxyItem => proxyItem.checked);
 
   const {
     fioHandlesList,
@@ -53,20 +48,18 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     onFioHandleChange,
     onWalletChange,
     setProcessing,
-  } = useContext({
-    resetSelectedBlockProducers,
-    selectedBlockProducersFioHandles: selectedBlockProducers.map(
-      ({ fioAddress }) => fioAddress,
-    ),
-  });
+  } = useContext({ selectedProxy, resetSelectedProxies });
 
   return (
     <>
       <PseudoModalContainer
-        title="Block Producer Vote Request"
-        link={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+        title="Proxy Your Account"
+        link={ROUTES.GOVERNANCE_PROXIES}
       >
         <div className={classes.container}>
+          <div className={classes.proxyAccount}>
+            Proxy account to: <span>{selectedProxy?.fioAddress}</span>
+          </div>
           <h4 className={classes.label}>Your FIO Wallet</h4>
           <CustomDropdown
             options={fioWallets}
@@ -85,6 +78,23 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
             </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          <h4 className={classes.label}>Proxy</h4>
+          {proxiesLoading ? (
+            <Loader />
+          ) : !selectedProxy ? (
+            <NoCandidatesWarningBadge
+              show
+              returnLink={ROUTES.GOVERNANCE_PROXIES}
+            />
+          ) : (
+            <div className={classes.proxyItem}>
+              <h4 className={classes.name}>{selectedProxy?.owner}</h4>
+              <CloseButton
+                handleClick={resetSelectedProxies}
+                className={classes.closeButton}
+              />
+            </div>
+          )}
           <h4 className={classes.label}>Your FIO Handle(s)</h4>
           {!fioHandlesList.length ? (
             <NotUsingFioHandlesWarningBadge show />
@@ -102,34 +112,6 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
               />
             </>
           )}
-          <h4 className={classes.label}>Candidate Votes</h4>
-          {bpLoading ? (
-            <Loader />
-          ) : !selectedBlockProducers.length ? (
-            <NoCandidatesWarningBadge
-              show
-              returnLink={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-            />
-          ) : (
-            <div className={classes.candidatesListContainer}>
-              {selectedBlockProducers.map(
-                ({ logo, defaultDarkLogo, fioAddress, id }) => (
-                  <div className={classes.candidateItem} key={id}>
-                    <img
-                      src={logo || defaultDarkLogo}
-                      alt="Block Producer"
-                      className={classes.candidateImage}
-                    />
-                    <h4 className={classes.name}>{fioAddress}</h4>
-                    <CloseButton
-                      handleClick={() => onBlockProducerSelectChange(id)}
-                      className={classes.closeButton}
-                    />
-                  </div>
-                ),
-              )}
-            </div>
-          )}
           <p className={classes.label}>Transaction Details</p>
           <TransactionDetails
             {...transactionDetails}
@@ -138,12 +120,12 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           <SubmitButton
             text="Vote Now"
             disabled={
-              !selectedBlockProducers.length ||
-              bpLoading ||
+              !selectedProxy ||
+              proxiesLoading ||
               fioHandlesLoading ||
               new MathOp(selectedFioWallet?.available).eq(0)
             }
-            loading={bpLoading}
+            loading={proxiesLoading}
             withTopMargin={true}
             onClick={onActionClick}
           />
@@ -157,9 +139,9 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
         submitData={submitData}
         processing={processing}
         setProcessing={setProcessing}
-        FioActionWallet={VoteBlockProducerEdgeWallet}
-        LedgerActionWallet={VoteBlockProducerLedgerWallet}
-        MetamaskActionWallet={VoteBlockProducerMetamaskWallet}
+        FioActionWallet={VoteProxyEdgeWallet}
+        LedgerActionWallet={VoteProxyLedgerWallet}
+        MetamaskActionWallet={VoteProxyMetamaskWallet}
       />
     </>
   );

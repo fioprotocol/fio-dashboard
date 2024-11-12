@@ -31,6 +31,7 @@ export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 export enum AdditionalAction {
   addNft = 'addNft',
   voteProducer = 'voteproducer',
+  voteProxy = 'voteproxy',
   wrapFioTokens = 'wrapFioTokens',
   wrapFioDomain = 'wrapFioDomain',
 }
@@ -57,6 +58,7 @@ export const BUNDLES_TX_COUNT = {
   STAKE: 1,
   UNSTAKE: 1,
   VOTE_BLOCK_PRODUCER: 1,
+  VOTE_PROXY: 1,
 };
 
 const GENERIC_ACTIONS_ENDPOINTS = {
@@ -138,10 +140,12 @@ export const getEndPointByGenericAction = (genericAction: GenericAction) => {
 
 export const FIO_ENDPOINT_TAG_NAME = {
   voteProducer: 'voteproducer',
+  voteProxy: 'voteproxy',
 } as const;
 
 export const FIO_ENDPOINT_NAME = {
   [FIO_ENDPOINT_TAG_NAME.voteProducer]: 'vote_producer',
+  [FIO_ENDPOINT_TAG_NAME.voteProxy]: 'proxy_vote',
 } as const;
 
 export type FullEndPoint =
@@ -171,6 +175,7 @@ const FIO_ACCOUNT_NAMES = {
   [AdditionalAction.wrapFioTokens]: Account.oracle,
   [AdditionalAction.wrapFioDomain]: Account.oracle,
   [AdditionalAction.voteProducer]: Account.eosio,
+  [AdditionalAction.voteProxy]: Account.eosio,
 };
 
 export const getAccountByDashboardAction = (
@@ -207,6 +212,7 @@ const FIO_ACTION_NAMES = {
   [GenericAction.removeAllPublicAddresses]: Action.removeAllAddresses,
   [GenericAction.removePublicAddresses]: Action.removeAddress,
   [AdditionalAction.voteProducer]: Action.voteProducer,
+  [AdditionalAction.voteProxy]: FIO_ENDPOINT_TAG_NAME.voteProxy,
   [AdditionalAction.wrapFioTokens]: Action.wrapTokens,
   [AdditionalAction.wrapFioDomain]: Action.wrapDomain,
 };

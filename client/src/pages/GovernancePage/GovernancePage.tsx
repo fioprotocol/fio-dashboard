@@ -52,6 +52,12 @@ const CastBlockProducerVotePage = React.lazy(() =>
   ),
 );
 
+const ProxiesVotePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'ProxiesVotePage' */ './components/ProxiesVotePage'
+  ),
+);
+
 const GovernancePage: FC = () => {
   const containerProps = useContext();
 
@@ -100,7 +106,9 @@ const GovernancePage: FC = () => {
               />
               <SentryRoute
                 path={ROUTES.GOVERNANCE_PROXIES}
-                component={GovernanceProxiesTab}
+                render={props => (
+                  <GovernanceProxiesTab {...props} {...containerProps} />
+                )}
                 exact
               />
               <SentryRoute
@@ -124,6 +132,12 @@ const GovernancePage: FC = () => {
             render={props => (
               <CastBlockProducerVotePage {...props} {...containerProps} />
             )}
+            exact
+          />
+
+          <SentryRoute
+            path={ROUTES.GOVERNANCE_PROXIES_VOTE}
+            render={props => <ProxiesVotePage {...props} {...containerProps} />}
             exact
           />
         </Switch>

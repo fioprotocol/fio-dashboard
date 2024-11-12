@@ -43,6 +43,7 @@ const ROUTES: { [route: string]: string } = {
     '/governance/fio-foundation-board-of-directors',
   GOVERNANCE_BLOCK_PRODUCERS: '/governance/block-producers',
   GOVERNANCE_PROXIES: '/governance/proxies',
+  GOVERNANCE_PROXIES_VOTE: '/governance/proxies-vote',
   GOVERNANCE_VOTING_HELP: '/governance/voting-help',
   GOVERNANCE_CAST_BOARD_VOTE: '/governance/cast-board-vote',
   GOVERNANCE_CAST_BLOCK_PRODUCER_VOTE: '/governance/cast-block-producer-vote',
