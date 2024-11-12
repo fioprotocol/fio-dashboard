@@ -1,38 +1,41 @@
-import { FC, useState } from 'react';
-
+import { FC } from 'react';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-
 import { Link } from 'react-router-dom';
 
-import classes from './GovernanceProxiesTab.module.scss';
 import ActionButton from '../../../SettingsPage/components/ActionButton';
-import { ProxyDetailsModal } from '../ProxyDetailsModal';
+import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import Loader from '../../../../components/Loader/Loader';
-import { DetailedProxy } from '../../../../types';
-import {
-  useDetailedProxies,
-  useModalState,
-} from '../../../../hooks/governance';
+
+import { useModalState } from '../../../../hooks/governance';
 import { ROUTES } from '../../../../constants/routes';
 
-export const GovernanceProxiesTab: FC = () => {
+import { useIsMetaMaskUser } from '../../../../hooks/user';
+
+import { ProxyDetailsModal } from '../ProxyDetailsModal';
+import { WarningNotificationBadge } from '../WarningNotificationBadge/WarningNotificationBadge';
+import { MyCurrentVotes } from '../MyCurrentVotes';
+
+import { useContext } from './GovernanceProxiesTabContext';
+
+import { GovernancePageContextProps } from '../../types';
+import { DetailedProxy } from '../../../../types';
+
+import classes from './GovernanceProxiesTab.module.scss';
+
+export const GovernanceProxiesTab: FC<GovernancePageContextProps> = props => {
+  const { proxiesLoading, listOfProxies, onProxySelectChange } = props;
+
+  const { handleProxyVote } = useContext({ listOfProxies });
+
+  const isMetaMaskUser = useIsMetaMaskUser();
+
   const modalState = useModalState<DetailedProxy>();
-
-  const [selectedProxy, setSelectedProxy] = useState<DetailedProxy>();
-
-  const { loading, proxyList } = useDetailedProxies();
 
   return (
     <>
       <div className={classes.myVotes}>
-        <h4 className={classes.myVotesTitle}>My Current Votes</h4>
-        <ActionButton
-          className={classes.myVotesActionButton}
-          title="View"
-          isIndigo
-          onClick={() => {}}
-        />
+        <MyCurrentVotes />
       </div>
       <div className={classes.info}>
         <div className={classes.infoContent}>
@@ -52,41 +55,45 @@ export const GovernanceProxiesTab: FC = () => {
           className={classes.infoActionButton}
           title="Proxy Now"
           isIndigo
-          disabled={loading}
-          onClick={() => {}}
+          disabled={proxiesLoading || isMetaMaskUser}
+          onClick={handleProxyVote}
         />
       </div>
+      <WarningNotificationBadge
+        show={isMetaMaskUser}
+        title="Warning"
+        type={BADGE_TYPES.ERROR}
+        message="Voting via MetaMask is not supported at this time."
+      />
       <div className={classes.proxiesList}>
-        {loading ? (
+        {proxiesLoading ? (
           <Loader />
-        ) : proxyList.length === 0 ? null : (
-          proxyList.map(proxy => (
-            <div key={proxy.id} className={classes.proxyBlock}>
+        ) : listOfProxies.length === 0 ? null : (
+          listOfProxies.map(proxyItem => (
+            <div key={proxyItem.id} className={classes.proxyBlock}>
               <div className={classes.proxyBlockContent}>
                 <div
                   className={classes.proxyBlockRadio}
-                  onClick={() =>
-                    proxy !== selectedProxy
-                      ? setSelectedProxy(proxy)
-                      : setSelectedProxy(undefined)
-                  }
+                  onClick={() => onProxySelectChange(proxyItem.id)}
                 >
-                  {selectedProxy === proxy ? (
+                  {proxyItem.checked ? (
                     <RadioButtonCheckedIcon />
                   ) : (
                     <RadioButtonUncheckedIcon />
                   )}
                 </div>
-                <p className={classes.proxyBlockData}>
-                  <span>{proxy.owner}</span>
-                  <span>FIO Handle: {proxy.fioAddress}</span>
-                </p>
+                <div className={classes.proxyBlockData}>
+                  <p className={classes.proxyDataItem}>{proxyItem.owner}</p>
+                  <p className={classes.proxyDataItem}>
+                    FIO Handle: {proxyItem.fioAddress}
+                  </p>
+                </div>
               </div>
               <ActionButton
                 className={classes.proxyBlockActionButton}
                 title="View"
                 isIndigo
-                onClick={() => modalState.open(proxy)}
+                onClick={() => modalState.open(proxyItem)}
               />
             </div>
           ))
@@ -96,8 +103,8 @@ export const GovernanceProxiesTab: FC = () => {
         className={classes.proxyNowActionButton}
         title="Proxy Now"
         isIndigo
-        disabled={!selectedProxy}
-        onClick={() => {}}
+        disabled={proxiesLoading || isMetaMaskUser}
+        onClick={handleProxyVote}
       />
       {modalState.data && (
         <ProxyDetailsModal

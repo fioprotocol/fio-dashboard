@@ -592,6 +592,7 @@ export type DetailedProxy = {
   proxiedVoteWeight: number;
   fioAddress: string;
   producers: string[];
+  checked?: boolean;
 };
 
 export type FioHistoryNodeAction = {

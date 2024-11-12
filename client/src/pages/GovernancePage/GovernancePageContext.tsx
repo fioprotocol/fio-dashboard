@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useGetBlockProducers, useGetCandidates } from '../../hooks/governance';
+import {
+  useDetailedProxies,
+  useGetBlockProducers,
+  useGetCandidates,
+} from '../../hooks/governance';
 
 import {
   BlockProducersItemProps,
   CandidateProps,
 } from '../../types/governance';
 import { GovernancePageContextProps } from './types';
+import { DetailedProxy } from '../../types';
 
 export const useContext = (): GovernancePageContextProps => {
   const [listOfCandidates, setListOfCandidates] = useState<CandidateProps[]>(
@@ -15,9 +20,11 @@ export const useContext = (): GovernancePageContextProps => {
   const [listOfBlockProducers, setListOfBlockProducers] = useState<
     BlockProducersItemProps[]
   >([]);
+  const [listOfProxies, setListOfProxies] = useState<DetailedProxy[]>([]);
 
   const { loading, candidatesList } = useGetCandidates();
   const { loading: bpLoading, blockProducersList } = useGetBlockProducers();
+  const { loading: proxiesLoading, proxyList } = useDetailedProxies();
 
   const onCandidateSelectChange = useCallback((id: string) => {
     setListOfCandidates(prevCandidates =>
@@ -49,6 +56,21 @@ export const useContext = (): GovernancePageContextProps => {
     );
   }, [listOfBlockProducers]);
 
+  const onProxySelectChange = useCallback((id: number) => {
+    setListOfProxies(prevProxies =>
+      prevProxies.map(proxyItem => ({
+        ...proxyItem,
+        checked: proxyItem.id === id,
+      })),
+    );
+  }, []);
+
+  const resetSelectedProxies = useCallback(() => {
+    setListOfProxies(
+      proxyList.map(proxyItem => ({ ...proxyItem, checked: false })),
+    );
+  }, [proxyList]);
+
   useEffect(() => {
     if (candidatesList?.length) {
       setListOfCandidates(
@@ -71,14 +93,26 @@ export const useContext = (): GovernancePageContextProps => {
     }
   }, [blockProducersList]);
 
+  useEffect(() => {
+    if (proxyList?.length) {
+      setListOfProxies(
+        proxyList.map(proxyItem => ({ ...proxyItem, checked: false })),
+      );
+    }
+  }, [proxyList]);
+
   return {
     bpLoading,
     listOfBlockProducers,
     listOfCandidates,
+    listOfProxies,
     loading,
+    proxiesLoading,
     onBlockProducerSelectChange,
     onCandidateSelectChange,
+    onProxySelectChange,
     resetSelectedBlockProducers,
     resetSelectedCandidates,
+    resetSelectedProxies,
   };
 };

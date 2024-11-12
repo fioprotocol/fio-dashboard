@@ -7,7 +7,6 @@ import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { WarningNotificationBadge } from '../WarningNotificationBadge/WarningNotificationBadge';
 
 type Props = {
-  customMessage?: string;
   show: boolean;
 };
 
@@ -17,13 +16,11 @@ export const NoAssociatedFioHandlesWarningBadge: React.FC<Props> = props => (
     title="No Associated FIO Handles"
     type={BADGE_TYPES.ERROR}
     message={
-      props.customMessage || (
-        <>
-          You must have an associated FIO Handle in order to be able to send
-          this request.{' '}
-          <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>Please add one.</Link>
-        </>
-      )
+      <>
+        You must have an associated FIO Handle in order to be able to send this
+        request.{' '}
+        <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>Please add one.</Link>
+      </>
     }
   />
 );

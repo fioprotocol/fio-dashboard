@@ -24,9 +24,7 @@
 }
 
 .myVotes {
-  @extend .elementRowContainer;
   margin-top: 30px;
-  justify-content: space-between;
 }
 
 .myVotesTitle {
@@ -103,11 +101,17 @@
 }
 
 .proxyBlockData {
+  display: grid;
+  grid-template-columns: 130px auto;
   margin: 0;
-  display: flex;
   align-items: center;
-  gap: 20px;
-  @include inter-semibold
+  gap: 10px;
+  @include inter-semibold;
+
+  p {
+    margin: 0;
+    word-break: break-all;
+  }
 }
 
 .proxyBlockActionButton {
@@ -122,6 +126,7 @@
 @include tablet {
   .proxyBlockData {
     font-size: 0.875em;
+    grid-template-columns: 100px auto;
   }
 }
 
@@ -145,6 +150,7 @@
 
   .proxyBlockData {
     gap: 10px;
+    display: flex;
     align-items: start;
     flex-direction: column;
   }

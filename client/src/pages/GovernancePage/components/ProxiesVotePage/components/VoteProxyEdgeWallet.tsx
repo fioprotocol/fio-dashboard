@@ -14,21 +14,21 @@ import { SubmitData } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  processing: boolean;
+  submitData: SubmitData | null;
   onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  submitData: SubmitData | null;
-  processing: boolean;
 };
 
-export const VoteBlockProducerEdgeWallet: React.FC<Props> = props => {
+export const VoteProxyEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
-    setProcessing,
-    onSuccess,
-    onCancel,
-    submitData,
     processing,
+    submitData,
+    onCancel,
+    onSuccess,
+    setProcessing,
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
@@ -50,7 +50,7 @@ export const VoteBlockProducerEdgeWallet: React.FC<Props> = props => {
 
   return (
     <EdgeConfirmAction
-      action={CONFIRM_PIN_ACTIONS.VOTE_PRODUCER}
+      action={CONFIRM_PIN_ACTIONS.VOTE_PROXY}
       setProcessing={setProcessing}
       onSuccess={onSuccess}
       onCancel={onCancel}

@@ -24,29 +24,29 @@ import { SubmitData } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: TrxResponsePaidBundles) => void;
-  onCancel: () => void;
-  setProcessing: (processing: boolean) => void;
-  submitData: SubmitData | null;
-  processing: boolean;
   fee: number;
+  processing: boolean;
+  submitData: SubmitData | null;
+  onCancel: () => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
+  setProcessing: (processing: boolean) => void;
 };
 
-export const VoteBlockProducerLedgerWallet: React.FC<Props> = props => {
+export const VoteProxyLedgerWallet: React.FC<Props> = props => {
   const {
     fioWallet,
     fee,
-    setProcessing,
-    onSuccess,
-    onCancel,
-    submitData,
     processing,
+    submitData,
+    onCancel,
+    onSuccess,
+    setProcessing,
   } = props;
 
   const submit = async (appFio: LedgerFioApp) => {
     const { chainId, transaction } = await prepareChainTransaction(
       fioWallet.publicKey,
-      AdditionalAction.voteProducer,
+      AdditionalAction.voteProxy,
       submitData.data,
     );
 
@@ -68,7 +68,7 @@ export const VoteBlockProducerLedgerWallet: React.FC<Props> = props => {
     });
 
     const result = await apis.fio.publicFioSDK.executePreparedTrx(
-      FIO_ENDPOINT_NAME[FIO_ENDPOINT_TAG_NAME.voteProducer] as EndPoint, // TODO: Remove as EndPoint after adding to FIO SDK
+      FIO_ENDPOINT_NAME[FIO_ENDPOINT_TAG_NAME.voteProxy] as EndPoint, // TODO: Remove as EndPoint after adding to FIO SDK
       {
         compression: 0,
         packed_context_free_data: arrayToHex(
@@ -86,7 +86,7 @@ export const VoteBlockProducerLedgerWallet: React.FC<Props> = props => {
 
   return (
     <LedgerConnect
-      action={CONFIRM_LEDGER_ACTIONS.VOTE_PRODUCER}
+      action={CONFIRM_LEDGER_ACTIONS.VOTE_PROXY}
       data={submitData}
       fee={fee}
       fioWallet={fioWallet}
