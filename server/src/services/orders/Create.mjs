@@ -224,7 +224,10 @@ export default class OrdersCreate extends Base {
 
         await order.save({ transaction: t });
       } else {
-        await Order.update({ publicKey }, { where: { id: order.id }, transaction: t });
+        await Order.update(
+          { publicKey, total: totalCostUsdc },
+          { where: { id: order.id }, transaction: t },
+        );
         await OrderItem.destroy({
           where: { orderId: order.id },
         });
