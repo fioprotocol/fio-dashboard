@@ -119,6 +119,10 @@ export default class AuthAlternateAuthenticate extends Base {
 
     const responseData = generateJwt(user.id);
 
+    if (this.context.guestId) {
+      await Cart.updateGuestCartUser(user.id, this.context.guestId);
+    }
+
     return {
       data: { ...responseData, isSignUp: true },
     };
