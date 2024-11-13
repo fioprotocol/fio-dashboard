@@ -7,9 +7,9 @@ import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import CustomDropdown from '../../../../components/CustomDropdown';
-import CloseButton from '../../../../components/CloseButton/CloseButton';
 import Loader from '../../../../components/Loader/Loader';
 import WalletAction from '../../../../components/WalletAction/WalletAction';
+import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { ROUTES } from '../../../../constants/routes';
@@ -21,6 +21,8 @@ import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadg
 import { VoteBlockProducerEdgeWallet } from './components/VoteBlockProducerEdgeWallet';
 import { VoteBlockProducerLedgerWallet } from './components/VoteBlockProducerLedgerWallet';
 import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerMetamaskWallet';
+import { CandidateItem } from './components/CandidateItem/CandidateItem';
+
 import { useContext } from './CastBlockProducerVotePageContext';
 
 import classes from './CastBlockProducerVotePage.module.scss';
@@ -43,12 +45,14 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     fioWallets,
     loading,
     processing,
+    resultsData,
     submitData,
     selectedFioHandle,
     selectedFioWallet,
     transactionDetails,
     onActionClick,
     onCancel,
+    onResultsClose,
     onSuccess,
     onFioHandleChange,
     onWalletChange,
@@ -60,10 +64,47 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     ),
   });
 
+  if (resultsData) {
+    return (
+      <PseudoModalContainer
+        title={
+          <span className={classes.title}>
+            Block Producer Vote Confirmation
+          </span>
+        }
+        onClose={onResultsClose}
+      >
+        <div className={classes.container}>
+          <ResultDetails
+            label="Your FIO Wallet"
+            value={selectedFioWallet?.name}
+          />
+          <h4 className={classes.label}>Candidate votes</h4>
+          <CandidateItem
+            hideCloseButton
+            selectedBlockProducers={selectedBlockProducers}
+          />
+          <p className={classes.label}>Transaction Details</p>
+          <TransactionDetails
+            {...resultsData}
+            className={classes.transactionDetails}
+          />
+          <SubmitButton
+            text="Close"
+            onClick={onResultsClose}
+            withTopMargin={true}
+          />
+        </div>
+      </PseudoModalContainer>
+    );
+  }
+
   return (
     <>
       <PseudoModalContainer
-        title="Block Producer Vote Request"
+        title={
+          <span className={classes.title}>Block Producer Vote Request</span>
+        }
         link={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
       >
         <div className={classes.container}>
@@ -111,24 +152,10 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
               returnLink={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
             />
           ) : (
-            <div className={classes.candidatesListContainer}>
-              {selectedBlockProducers.map(
-                ({ logo, defaultDarkLogo, fioAddress, id }) => (
-                  <div className={classes.candidateItem} key={id}>
-                    <img
-                      src={logo || defaultDarkLogo}
-                      alt="Block Producer"
-                      className={classes.candidateImage}
-                    />
-                    <h4 className={classes.name}>{fioAddress}</h4>
-                    <CloseButton
-                      handleClick={() => onBlockProducerSelectChange(id)}
-                      className={classes.closeButton}
-                    />
-                  </div>
-                ),
-              )}
-            </div>
+            <CandidateItem
+              selectedBlockProducers={selectedBlockProducers}
+              onBlockProducerSelectChange={onBlockProducerSelectChange}
+            />
           )}
           <p className={classes.label}>Transaction Details</p>
           <TransactionDetails

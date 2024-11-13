@@ -26,6 +26,7 @@ import {
 import { DEFAULT_FEE_PRICES } from '../../../../util/prices';
 import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../../../api/fio';
 import api from '../../../../api';
+import MathOp from '../../../../util/math';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 
@@ -45,6 +46,7 @@ type UseContextProps = {
   fioWallets: FioWalletDoublet[];
   prices: FeePrice;
   processing: boolean;
+  resultsData: TransactionDetailsProps;
   selectedFioHandle: FioHandleItem;
   selectedFioWallet: FioWalletDoublet;
   submitData: SubmitData;
@@ -52,6 +54,7 @@ type UseContextProps = {
   onActionClick: () => void;
   onCancel: () => void;
   onFioHandleChange: (id: string) => void;
+  onResultsClose: () => void;
   onSuccess: (results: TrxResponse) => void;
   onWalletChange: (id: string) => void;
   setProcessing: (processing: boolean) => void;
@@ -79,6 +82,7 @@ export const useContext = (props: Props): UseContextProps => {
   const [selectedFioHandleId, setSelectedFioHandleId] = useState<string | null>(
     null,
   );
+  const [resultsData, setResulstData] = useState<TransactionDetailsProps>(null);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -130,13 +134,69 @@ export const useContext = (props: Props): UseContextProps => {
     setProcessing(false);
   };
 
-  const onSuccess = (results: TrxResponse) => {
-    setProcessing(false);
+  const onSuccess = useCallback(
+    async (results: TrxResponse) => {
+      if (results?.transaction_id) {
+        const resultsDataObj: TransactionDetailsProps = {
+          payWith: {
+            walletName: selectedFioWallet?.name,
+            walletBalances: {
+              nativeFio: selectedFioWallet?.available,
+              fio: FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2),
+              usdc: api.fio
+                .convertFioToUsdc(selectedFioWallet?.available, roe)
+                ?.toString(),
+            },
+          },
+          additional: [
+            {
+              label: 'ID',
+              value: results.transaction_id,
+              link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${results.transaction_id}`,
+              wrap: true,
+            },
+          ],
+        };
 
-    if (results?.transaction_id) {
-      resetSelectedBlockProducers();
-      history.push(ROUTES.GOVERNANCE_BLOCK_PRODUCERS);
-    }
+        if (results.fee_collected) {
+          resultsDataObj.feeInFio = results.fee_collected;
+          const freshWalletBalance = await api.fio.getBalance(
+            selectedFioWallet?.publicKey,
+          );
+          resultsDataObj.payWith.walletBalances = {
+            nativeFio: freshWalletBalance?.available,
+            fio: FIOSDK.SUFToAmount(freshWalletBalance?.available).toFixed(2),
+            usdc: api.fio
+              .convertFioToUsdc(freshWalletBalance?.available, roe)
+              ?.toString(),
+          };
+        } else {
+          resultsDataObj.bundles = {
+            remaining: new MathOp(selectedFioHandle?.remaining)
+              .sub(BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER)
+              .toNumber(),
+            fee: BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER,
+          };
+        }
+
+        setProcessing(false);
+
+        setResulstData(resultsDataObj);
+      }
+    },
+    [
+      roe,
+      selectedFioHandle?.remaining,
+      selectedFioWallet?.available,
+      selectedFioWallet?.name,
+      selectedFioWallet?.publicKey,
+    ],
+  );
+
+  const onResultsClose = () => {
+    resetSelectedBlockProducers();
+    history.push(ROUTES.GOVERNANCE_BLOCK_PRODUCERS);
+    setResulstData(null);
   };
 
   const onActionClick = () => {
@@ -173,6 +233,7 @@ export const useContext = (props: Props): UseContextProps => {
     fioWallets,
     prices,
     processing,
+    resultsData,
     selectedFioHandle,
     selectedFioWallet,
     submitData,
@@ -181,6 +242,7 @@ export const useContext = (props: Props): UseContextProps => {
     onCancel,
     onFioHandleChange,
     onSuccess,
+    onResultsClose,
     onWalletChange,
     setProcessing,
   };
