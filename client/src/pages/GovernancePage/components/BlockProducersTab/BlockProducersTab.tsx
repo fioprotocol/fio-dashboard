@@ -95,6 +95,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         ) : (
           listOfBlockProducers.map(
             ({
+              checked,
               defaultLogo,
               fioAddress,
               flagIconUrl,
@@ -112,6 +113,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                 <div className={classes.bpItem}>
                   <CheckBox
                     disabled={!isValidFioHandle}
+                    checked={checked}
                     onChange={() => onBlockProducerSelectChange(id)}
                     className={classes.checkbox}
                   />
