@@ -28,6 +28,7 @@ import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 import api from '../../../../api';
+import MathOp from '../../../../util/math';
 
 import { DetailedProxy, FeePrice, FioWalletDoublet } from '../../../../types';
 import { SubmitData } from './types';
@@ -45,6 +46,7 @@ type UseContextProps = {
   fioWallets: FioWalletDoublet[];
   prices: FeePrice;
   processing: boolean;
+  resultsData: TransactionDetailsProps;
   selectedFioHandle: FioHandleItem;
   selectedFioWallet: FioWalletDoublet;
   submitData: SubmitData;
@@ -52,6 +54,7 @@ type UseContextProps = {
   onActionClick: () => void;
   onCancel: () => void;
   onFioHandleChange: (id: string) => void;
+  onResultsClose: () => void;
   onSuccess: (results: TrxResponse) => void;
   onWalletChange: (id: string) => void;
   setProcessing: (processing: boolean) => void;
@@ -69,6 +72,7 @@ export const useContext = (props: Props): UseContextProps => {
 
   const [processing, setProcessing] = useState<boolean>(false);
   const [submitData, setSubmitData] = useState<SubmitData | null>(null);
+  const [resultsData, setResulstData] = useState<TransactionDetailsProps>(null);
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
     fioWallets[0]?.id || null,
@@ -127,13 +131,69 @@ export const useContext = (props: Props): UseContextProps => {
     setProcessing(false);
   };
 
-  const onSuccess = (results: TrxResponse) => {
-    setProcessing(false);
+  const onSuccess = useCallback(
+    async (results: TrxResponse) => {
+      if (results?.transaction_id) {
+        const resultsDataObj: TransactionDetailsProps = {
+          payWith: {
+            walletName: selectedFioWallet?.name,
+            walletBalances: {
+              nativeFio: selectedFioWallet?.available,
+              fio: FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2),
+              usdc: api.fio
+                .convertFioToUsdc(selectedFioWallet?.available, roe)
+                ?.toString(),
+            },
+          },
+          additional: [
+            {
+              label: 'ID',
+              value: results.transaction_id,
+              link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${results.transaction_id}`,
+              wrap: true,
+            },
+          ],
+        };
 
-    if (results?.transaction_id) {
-      resetSelectedProxies();
-      history.push(ROUTES.GOVERNANCE_PROXIES);
-    }
+        if (results.fee_collected) {
+          resultsDataObj.feeInFio = results.fee_collected;
+          const freshWalletBalance = await api.fio.getBalance(
+            selectedFioWallet?.publicKey,
+          );
+          resultsDataObj.payWith.walletBalances = {
+            nativeFio: freshWalletBalance?.available,
+            fio: FIOSDK.SUFToAmount(freshWalletBalance?.available).toFixed(2),
+            usdc: api.fio
+              .convertFioToUsdc(freshWalletBalance?.available, roe)
+              ?.toString(),
+          };
+        } else {
+          resultsDataObj.bundles = {
+            remaining: new MathOp(selectedFioHandle?.remaining)
+              .sub(BUNDLES_TX_COUNT.VOTE_PROXY)
+              .toNumber(),
+            fee: BUNDLES_TX_COUNT.VOTE_PROXY,
+          };
+        }
+
+        setResulstData(resultsDataObj);
+      }
+
+      setProcessing(false);
+    },
+    [
+      roe,
+      selectedFioHandle?.remaining,
+      selectedFioWallet?.available,
+      selectedFioWallet?.name,
+      selectedFioWallet?.publicKey,
+    ],
+  );
+
+  const onResultsClose = () => {
+    resetSelectedProxies();
+    history.push(ROUTES.GOVERNANCE_PROXIES);
+    setResulstData(null);
   };
 
   const onActionClick = () => {
@@ -168,6 +228,7 @@ export const useContext = (props: Props): UseContextProps => {
     loading,
     prices,
     processing,
+    resultsData,
     selectedFioHandle,
     selectedFioWallet,
     submitData,
@@ -175,6 +236,7 @@ export const useContext = (props: Props): UseContextProps => {
     onActionClick,
     onCancel,
     onFioHandleChange,
+    onResultsClose,
     onSuccess,
     onWalletChange,
     setProcessing,

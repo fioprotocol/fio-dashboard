@@ -9,6 +9,7 @@ import CloseButton from '../../../../components/CloseButton/CloseButton';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import WalletAction from '../../../../components/WalletAction/WalletAction';
+import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
 
 import { VoteProxyEdgeWallet } from './components/VoteProxyEdgeWallet';
 import { VoteProxyLedgerWallet } from './components/VoteProxyLedgerWallet';
@@ -38,22 +39,56 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     fioWallets,
     loading,
     processing,
+    resultsData,
     submitData,
     selectedFioHandle,
     selectedFioWallet,
     transactionDetails,
     onActionClick,
     onCancel,
+    onResultsClose,
     onSuccess,
     onFioHandleChange,
     onWalletChange,
     setProcessing,
   } = useContext({ selectedProxy, resetSelectedProxies });
 
+  if (resultsData) {
+    return (
+      <PseudoModalContainer
+        title={<span className={classes.title}>Proxy Account</span>}
+        onClose={onResultsClose}
+      >
+        <div className={classes.container}>
+          <ResultDetails
+            label="Account Proxied To"
+            value={selectedProxy?.fioAddress}
+          />
+          <ResultDetails label="Proxy Wallet" value={selectedFioWallet?.name} />
+          <h4 className={classes.label}>Proxy</h4>
+          <div className={classes.proxyItem}>
+            <h4 className={classes.name}>{selectedProxy?.owner}</h4>
+          </div>
+
+          <p className={classes.label}>Transaction Details</p>
+          <TransactionDetails
+            {...resultsData}
+            className={classes.transactionDetails}
+          />
+          <SubmitButton
+            text="Close"
+            onClick={onResultsClose}
+            withTopMargin={true}
+          />
+        </div>
+      </PseudoModalContainer>
+    );
+  }
+
   return (
     <>
       <PseudoModalContainer
-        title="Proxy Your Account"
+        title={<span className={classes.title}>Proxy Your Account</span>}
         link={ROUTES.GOVERNANCE_PROXIES}
       >
         <div className={classes.container}>
