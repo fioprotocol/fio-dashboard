@@ -84,7 +84,7 @@ export const useContext = (props: Props): UseContextProps => {
   );
   const [
     resultsData,
-    setResulstData,
+    setResultsData,
   ] = useState<TransactionDetailsProps | null>(null);
 
   const dispatch = useDispatch();
@@ -147,7 +147,7 @@ export const useContext = (props: Props): UseContextProps => {
           transactionDetailsParams,
         );
 
-        setResulstData(resultsDataObj);
+        setResultsData(resultsDataObj);
       }
 
       setProcessing(false);
@@ -158,7 +158,6 @@ export const useContext = (props: Props): UseContextProps => {
   const onResultsClose = () => {
     resetSelectedBlockProducers();
     history.push(ROUTES.GOVERNANCE_BLOCK_PRODUCERS);
-    setResulstData(null);
   };
 
   const onActionClick = () => {
@@ -187,6 +186,8 @@ export const useContext = (props: Props): UseContextProps => {
       getFee(FIO_ENDPOINT_NAME[FIO_ENDPOINT_TAG_NAME.voteProducer]),
     );
   }, [dispatch]);
+
+  useEffect(() => () => setResultsData(null), []);
 
   return {
     fioHandlesList,
