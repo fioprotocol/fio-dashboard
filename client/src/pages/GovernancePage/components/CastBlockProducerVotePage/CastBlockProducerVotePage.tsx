@@ -126,6 +126,20 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
             </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          <h4 className={classes.label}>Candidate Votes</h4>
+          {bpLoading ? (
+            <Loader />
+          ) : !selectedBlockProducers.length ? (
+            <NoCandidatesWarningBadge
+              show
+              returnLink={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+            />
+          ) : (
+            <CandidateItem
+              selectedBlockProducers={selectedBlockProducers}
+              onBlockProducerSelectChange={onBlockProducerSelectChange}
+            />
+          )}
           <h4 className={classes.label}>Your FIO Handle(s)</h4>
           {!fioHandlesList.length ? (
             <NotUsingFioHandlesWarningBadge show />
@@ -142,20 +156,6 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
                 withoutMarginBottom
               />
             </>
-          )}
-          <h4 className={classes.label}>Candidate Votes</h4>
-          {bpLoading ? (
-            <Loader />
-          ) : !selectedBlockProducers.length ? (
-            <NoCandidatesWarningBadge
-              show
-              returnLink={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-            />
-          ) : (
-            <CandidateItem
-              selectedBlockProducers={selectedBlockProducers}
-              onBlockProducerSelectChange={onBlockProducerSelectChange}
-            />
           )}
           <p className={classes.label}>Transaction Details</p>
           <TransactionDetails
