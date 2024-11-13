@@ -77,11 +77,21 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
       <div className={classes.listContainer}>
         {!loading ? (
           listOfCandidates.map(candidateItem => {
-            const { id, image, lastVoteCount, name, status } = candidateItem;
+            const {
+              checked,
+              id,
+              image,
+              lastVoteCount,
+              name,
+              status,
+            } = candidateItem;
 
             return (
               <div className={classes.itemContainer} key={id}>
-                <CheckBox onChange={() => onCandidateSelectChange(id)} />
+                <CheckBox
+                  onChange={() => onCandidateSelectChange(id)}
+                  checked={checked}
+                />
                 <div className={classes.contentContainer}>
                   <div className={classes.dataContainer}>
                     <img
