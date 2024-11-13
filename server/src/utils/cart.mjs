@@ -18,38 +18,6 @@ import { getROE } from '../external/roe.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
-export const handlePrices = async ({ prices, roe }) => {
-  const dbPrices = await fioApi.getPrices();
-  const dbRoe = await getROE();
-
-  const {
-    addBundles: addBundlesPrice,
-    address: addressPrice,
-    domain: domainPrice,
-    combo: comboPrice,
-    renewDomain: renewDomainPrice,
-  } = prices;
-
-  const {
-    addBundles: addBundlesDbPrice,
-    address: addressDbPrice,
-    domain: domainDbPrice,
-    combo: comboDbPrice,
-    renewDomain: renewDomainDbPrice,
-  } = dbPrices;
-
-  return {
-    handledPrices: {
-      addBundles: Number(addBundlesPrice || addBundlesDbPrice),
-      address: Number(addressPrice || addressDbPrice),
-      domain: Number(domainPrice || domainDbPrice),
-      combo: Number(comboPrice || comboDbPrice),
-      renewDomain: Number(renewDomainPrice || renewDomainDbPrice),
-    },
-    handledRoe: roe || dbRoe,
-  };
-};
-
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
 
