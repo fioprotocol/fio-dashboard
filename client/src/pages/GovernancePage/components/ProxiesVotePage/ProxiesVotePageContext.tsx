@@ -74,7 +74,7 @@ export const useContext = (props: Props): UseContextProps => {
   const [submitData, setSubmitData] = useState<SubmitData | null>(null);
   const [
     resultsData,
-    setResulstData,
+    setResultsData,
   ] = useState<TransactionDetailsProps | null>(null);
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
@@ -142,7 +142,7 @@ export const useContext = (props: Props): UseContextProps => {
           transactionDetailsParams,
         );
 
-        setResulstData(resultsDataObj);
+        setResultsData(resultsDataObj);
       }
 
       setProcessing(false);
@@ -153,7 +153,6 @@ export const useContext = (props: Props): UseContextProps => {
   const onResultsClose = () => {
     resetSelectedProxies();
     history.push(ROUTES.GOVERNANCE_PROXIES);
-    setResulstData(null);
   };
 
   const onActionClick = () => {
@@ -180,6 +179,8 @@ export const useContext = (props: Props): UseContextProps => {
   useEffect(() => {
     return dispatch(getFee(FIO_ENDPOINT_NAME[FIO_ENDPOINT_TAG_NAME.voteProxy]));
   }, [dispatch]);
+
+  useEffect(() => () => setResultsData(null), []);
 
   return {
     fioHandlesList,

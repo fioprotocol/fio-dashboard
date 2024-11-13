@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -68,7 +68,7 @@ export const useContext = (props: Props): UseContextProps => {
   );
   const [
     resultsData,
-    setResulstData,
+    setResultsData,
   ] = useState<TransactionDetailsProps | null>(null);
 
   const selectedFioWallet = fioWallets.find(
@@ -123,7 +123,7 @@ export const useContext = (props: Props): UseContextProps => {
           transactionDetailsParams,
         );
 
-        setResulstData(resultsDataObj);
+        setResultsData(resultsDataObj);
       }
 
       setProcessing(false);
@@ -134,7 +134,6 @@ export const useContext = (props: Props): UseContextProps => {
   const onResultsClose = () => {
     resetSelectedCandidates();
     history.push(ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS);
-    setResulstData(null);
   };
 
   const onActionClick = () => {
@@ -148,6 +147,8 @@ export const useContext = (props: Props): UseContextProps => {
       memo: selectedCandidates.map(({ id }) => id).join(','),
     });
   };
+
+  useEffect(() => () => setResultsData(null), []);
 
   return {
     fioHandlesList,
