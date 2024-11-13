@@ -17,7 +17,12 @@ import classes from './BoardOfDirectorsTab.module.scss';
 import { GovernancePageContextProps } from '../../types';
 
 export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
-  const { listOfCandidates, loading, onCandidateSelectChange } = props;
+  const {
+    listOfCandidates,
+    loading,
+    onCandidateSelectChange,
+    resetSelectedCandidates,
+  } = props;
 
   const {
     activeCandidate,
@@ -27,7 +32,7 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
     onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,
-  } = useContext({ listOfCandidates });
+  } = useContext({ listOfCandidates, resetSelectedCandidates });
 
   return (
     <div className={classes.container}>

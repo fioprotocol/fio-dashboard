@@ -24,9 +24,17 @@ import { DetailedProxy } from '../../../../types';
 import classes from './GovernanceProxiesTab.module.scss';
 
 export const GovernanceProxiesTab: FC<GovernancePageContextProps> = props => {
-  const { proxiesLoading, listOfProxies, onProxySelectChange } = props;
+  const {
+    proxiesLoading,
+    listOfProxies,
+    onProxySelectChange,
+    resetSelectedProxies,
+  } = props;
 
-  const { handleProxyVote } = useContext({ listOfProxies });
+  const { handleProxyVote } = useContext({
+    listOfProxies,
+    resetSelectedProxies,
+  });
 
   const isMetaMaskUser = useIsMetaMaskUser();
 
