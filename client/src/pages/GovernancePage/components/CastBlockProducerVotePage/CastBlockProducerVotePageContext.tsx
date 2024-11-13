@@ -25,14 +25,14 @@ import {
 } from '../../../../constants/fio';
 import { DEFAULT_FEE_PRICES } from '../../../../util/prices';
 import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../../../api/fio';
-import api from '../../../../api';
-import MathOp from '../../../../util/math';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
+import { handleTransactionDetails } from '../../../../util/transactions';
 
 import { FioHandleItem } from '../../../../types/governance';
 import { FeePrice, FioWalletDoublet } from '../../../../types';
 import { SubmitData } from './types';
+import { HandleTransactionDetailsProps } from '../../../../types/transactions';
 
 type Props = {
   selectedBlockProducersFioHandles: string[];
@@ -108,26 +108,15 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesList?.find(({ id }) => id === selectedFioHandleId) ||
     fioHandlesList[0];
 
-  const transactionDetails: TransactionDetailsProps = {};
+  const transactionDetailsParams: HandleTransactionDetailsProps = {
+    bundles: BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER,
+    feeCollected: selectedFioHandle?.remaining ? null : prices.nativeFio,
+    fioWallet: selectedFioHandle?.remaining ? null : selectedFioWallet,
+    remaningBundles: selectedFioHandle?.remaining,
+    roe,
+  };
 
-  if (selectedFioHandle && selectedFioHandle?.remaining) {
-    transactionDetails.bundles = {
-      remaining: selectedFioHandle?.remaining,
-      fee: BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER,
-    };
-  } else {
-    transactionDetails.feeInFio = prices.nativeFio;
-    transactionDetails.payWith = {
-      walletBalances: {
-        nativeFio: selectedFioWallet?.available,
-        fio: FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2),
-        usdc: api.fio
-          .convertFioToUsdc(selectedFioWallet?.available, roe)
-          ?.toString(),
-      },
-      walletName: selectedFioWallet?.name,
-    };
-  }
+  const transactionDetails = handleTransactionDetails(transactionDetailsParams);
 
   const onCancel = () => {
     setSubmitData(null);
@@ -137,60 +126,30 @@ export const useContext = (props: Props): UseContextProps => {
   const onSuccess = useCallback(
     async (results: TrxResponse) => {
       if (results?.transaction_id) {
-        const resultsDataObj: TransactionDetailsProps = {
-          payWith: {
-            walletName: selectedFioWallet?.name,
-            walletBalances: {
-              nativeFio: selectedFioWallet?.available,
-              fio: FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2),
-              usdc: api.fio
-                .convertFioToUsdc(selectedFioWallet?.available, roe)
-                ?.toString(),
-            },
-          },
-          additional: [
-            {
-              label: 'ID',
-              value: results.transaction_id,
-              link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${results.transaction_id}`,
-              wrap: true,
-            },
-          ],
+        const transactionDetailsParams: HandleTransactionDetailsProps = {
+          bundles: results?.fee_collected
+            ? null
+            : BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER,
+          feeCollected: results?.fee_collected,
+          fioWallet: results?.fee_collected ? selectedFioWallet : null,
+          remaningBundles: results?.fee_collected
+            ? null
+            : selectedFioHandle?.remaining,
+          roe,
+          shouldSubBundlesFromRemaining: true,
+          transactionId: results.transaction_id,
         };
 
-        if (results.fee_collected) {
-          resultsDataObj.feeInFio = results.fee_collected;
-          const freshWalletBalance = await api.fio.getBalance(
-            selectedFioWallet?.publicKey,
-          );
-          resultsDataObj.payWith.walletBalances = {
-            nativeFio: freshWalletBalance?.available,
-            fio: FIOSDK.SUFToAmount(freshWalletBalance?.available).toFixed(2),
-            usdc: api.fio
-              .convertFioToUsdc(freshWalletBalance?.available, roe)
-              ?.toString(),
-          };
-        } else {
-          resultsDataObj.bundles = {
-            remaining: new MathOp(selectedFioHandle?.remaining)
-              .sub(BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER)
-              .toNumber(),
-            fee: BUNDLES_TX_COUNT.VOTE_BLOCK_PRODUCER,
-          };
-        }
+        const resultsDataObj = handleTransactionDetails(
+          transactionDetailsParams,
+        );
 
         setResulstData(resultsDataObj);
       }
 
       setProcessing(false);
     },
-    [
-      roe,
-      selectedFioHandle?.remaining,
-      selectedFioWallet?.available,
-      selectedFioWallet?.name,
-      selectedFioWallet?.publicKey,
-    ],
+    [roe, selectedFioHandle?.remaining, selectedFioWallet],
   );
 
   const onResultsClose = () => {
