@@ -26,6 +26,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
     bpLoading,
     listOfBlockProducers,
     onBlockProducerSelectChange,
+    resetSelectedBlockProducers,
   } = props;
 
   const {
@@ -35,6 +36,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
     handleCastVote,
   } = useContext({
     listOfBlockProducers,
+    resetSelectedBlockProducers,
   });
 
   return (

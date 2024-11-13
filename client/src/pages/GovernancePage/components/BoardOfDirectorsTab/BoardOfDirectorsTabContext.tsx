@@ -11,10 +11,13 @@ import {
   loading as fioHandlesLoadingSelector,
 } from '../../../../redux/fio/selectors';
 
+import { useMakeActionOnPathChange } from '../../../../hooks/general';
+
 import { CandidateProps } from '../../../../types/governance';
 
 type Props = {
   listOfCandidates: CandidateProps[];
+  resetSelectedCandidates: () => void;
 };
 
 type UseContextProps = {
@@ -28,7 +31,7 @@ type UseContextProps = {
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { listOfCandidates } = props;
+  const { listOfCandidates, resetSelectedCandidates } = props;
 
   const fioHandles = useSelector(fioAddresses);
   const fioHandlesLoading = useSelector(fioHandlesLoadingSelector);
@@ -44,6 +47,11 @@ export const useContext = (props: Props): UseContextProps => {
   const history = useHistory();
 
   const nextDate = getNextGovernanceDate();
+
+  useMakeActionOnPathChange({
+    action: resetSelectedCandidates,
+    route: ROUTES.GOVERNANCE_CAST_BOARD_VOTE,
+  });
 
   const handleCandidateDetailsModalOpen = useCallback(
     (candidate: CandidateProps) => {

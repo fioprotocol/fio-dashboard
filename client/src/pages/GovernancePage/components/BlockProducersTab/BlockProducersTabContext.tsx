@@ -6,6 +6,7 @@ import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
 import { getNextGovernanceDate } from '../../../../util/general';
 import { useIsMetaMaskUser } from '../../../../hooks/user';
+import { useMakeActionOnPathChange } from '../../../../hooks/general';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -13,6 +14,7 @@ import { BlockProducersItemProps } from '../../../../types/governance';
 
 type Props = {
   listOfBlockProducers: BlockProducersItemProps[];
+  resetSelectedBlockProducers: () => void;
 };
 
 type UseContextProps = {
@@ -23,11 +25,16 @@ type UseContextProps = {
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { listOfBlockProducers } = props;
+  const { listOfBlockProducers, resetSelectedBlockProducers } = props;
 
   const isMetaMaskUser = useIsMetaMaskUser();
 
   const nextDate = getNextGovernanceDate();
+
+  useMakeActionOnPathChange({
+    action: resetSelectedBlockProducers,
+    route: ROUTES.GOVERNANCE_CAST_BLOCK_PRODUCER_VOTE,
+  });
 
   const dispatch = useDispatch();
   const history = useHistory();

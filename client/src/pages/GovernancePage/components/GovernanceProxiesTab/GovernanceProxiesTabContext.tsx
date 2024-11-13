@@ -5,12 +5,15 @@ import { useHistory } from 'react-router';
 
 import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
+import { useMakeActionOnPathChange } from '../../../../hooks/general';
+
 import { ROUTES } from '../../../../constants/routes';
 
 import { DetailedProxy } from '../../../../types';
 
 type Props = {
   listOfProxies: DetailedProxy[];
+  resetSelectedProxies: () => void;
 };
 
 type UseContextProps = {
@@ -18,10 +21,15 @@ type UseContextProps = {
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { listOfProxies } = props;
+  const { listOfProxies, resetSelectedProxies } = props;
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  useMakeActionOnPathChange({
+    action: resetSelectedProxies,
+    route: ROUTES.GOVERNANCE_PROXIES_VOTE,
+  });
 
   const handleProxyVote = useCallback(() => {
     if (listOfProxies.every(({ checked }) => !checked)) {
