@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import Base from './Base.mjs';
 
 import { User } from './User';
+import logger from '../logger.mjs';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -49,6 +50,14 @@ export class Cart extends Base {
       foreignKey: 'userId',
       targetKey: 'id',
     });
+  }
+
+  static async updateGuestCartUser(userId, guestId) {
+    try {
+      await this.update({ userId, guestId: null }, { where: { guestId } });
+    } catch (e) {
+      logger.error(e);
+    }
   }
 
   static attrs(type = 'default') {
