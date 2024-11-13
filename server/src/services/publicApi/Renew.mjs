@@ -150,7 +150,7 @@ export default class Renew extends Base {
 
   async createRenewOrder({ publicKey, refProfileId, address, domain, userId }) {
     const roe = await getROE();
-    const prices = await fioApi.getPrices(true);
+    const prices = await fioApi.getPrices();
     const nativeFio = address ? prices.addBundles : prices.renewDomain;
     const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
     const normalizedPriceUsdc = normalizePriceForBitPayInTestNet(priceUsdc);

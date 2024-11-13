@@ -171,13 +171,11 @@ export const useContext = () => {
       dispatch(
         addItemToCart({
           item: selectedItem,
-          prices: prices?.nativeFio,
           refCode,
-          roe,
         }),
       );
     },
-    [dispatch, prices?.nativeFio, refCode, roe],
+    [dispatch, refCode],
   );
 
   const onPeriodChange = (period: string, id: string) => {
@@ -241,8 +239,6 @@ export const useContext = () => {
           itemId: existingCartItem.id,
           item: existingCartItem,
           period: Number(period),
-          prices: prices?.nativeFio,
-          roe,
         }),
       );
     }

@@ -8,11 +8,7 @@ import { clearCart, createCartFromOrder } from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
 
-import {
-  isProcessing as isProcessingSelector,
-  roe as roeSelector,
-  prices as pricesSelector,
-} from '../../redux/registrations/selectors';
+import { isProcessing as isProcessingSelector } from '../../redux/registrations/selectors';
 import { noProfileLoaded } from '../../redux/profile/selectors';
 import {
   containedFlowQueryParams,
@@ -67,11 +63,9 @@ export const useContext = (
   }>();
   const cartId = useSelector(cartIdSelector);
   const noProfile = useSelector(noProfileLoaded);
-  const roe = useSelector(roeSelector);
   const containedFlowParams = useSelector(containedFlowQueryParams);
   const isProcessing = useSelector(isProcessingSelector);
 
-  const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
   const isContainedFlow = useSelector(isContainedFlowSelector);
@@ -156,10 +150,8 @@ export const useContext = (
       state: {
         orderParams: {
           cartId,
-          roe,
           publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
           paymentProcessor: payment?.paymentProcessor,
-          prices: prices?.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),

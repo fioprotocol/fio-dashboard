@@ -237,9 +237,7 @@ export const useRefProfileAddressWidget = ({
         dispatch(
           addItemToCart({
             item: cartItem,
-            prices: prices?.nativeFio,
             refCode,
-            roe,
           }),
         );
 

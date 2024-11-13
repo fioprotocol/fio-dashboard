@@ -18,10 +18,6 @@ import {
   feesLoading as feeLoadingSelector,
 } from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
-import {
-  prices as pricesSelector,
-  roe as roeSelector,
-} from '../../redux/registrations/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -39,9 +35,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
-  const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
-  const roe = useSelector(roeSelector);
 
   const [feeLoadingFinished, toggleFeeLoadingFinished] = useState<boolean>(
     false,
@@ -93,8 +87,6 @@ const FioAddressAddBundlesPage: React.FC = () => {
     dispatch(
       addItemToCart({
         item: newCartItem,
-        prices: prices?.nativeFio,
-        roe,
         refCode,
       }),
     );
@@ -116,9 +108,7 @@ const FioAddressAddBundlesPage: React.FC = () => {
     feeLoading,
     feeLoadingFinished,
     history,
-    prices?.nativeFio,
     refCode,
-    roe,
   ]);
 
   return (

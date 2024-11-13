@@ -8,7 +8,7 @@ import logger from '../../logger.mjs';
 import {
   handlePriceForMultiYearItems,
   convertFioPrices,
-  handlePrices,
+  getCartOptions,
 } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE } from '../../config/constants';
@@ -18,22 +18,10 @@ export default class UpdateItemPeriod extends Base {
     return {
       itemId: ['required', 'string'],
       period: ['required', 'string'],
-      prices: [
-        {
-          nested_object: {
-            addBundles: ['string'],
-            address: ['string'],
-            domain: ['string'],
-            renewDomain: ['string'],
-            combo: ['string'],
-          },
-        },
-      ],
-      roe: ['string'],
     };
   }
 
-  async execute({ itemId, period, prices, roe }) {
+  async execute({ itemId, period }) {
     try {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
@@ -55,10 +43,7 @@ export default class UpdateItemPeriod extends Base {
         });
       }
 
-      const { handledPrices, handledRoe } = await handlePrices({
-        prices,
-        roe,
-      });
+      const { prices, roe } = await getCartOptions(cart);
 
       const {
         addBundles: addBundlesPrice,
@@ -66,7 +51,7 @@ export default class UpdateItemPeriod extends Base {
         domain: domainPrice,
         combo: comboPrice,
         renewDomain: renewDomainPrice,
-      } = handledPrices;
+      } = prices;
 
       const isEmptyPrices =
         !addBundlesPrice ||
@@ -84,7 +69,7 @@ export default class UpdateItemPeriod extends Base {
         });
       }
 
-      if (!handledRoe) {
+      if (!roe) {
         throw new X({
           code: 'ERROR',
           fields: {
@@ -97,8 +82,8 @@ export default class UpdateItemPeriod extends Base {
         includeAddress:
           existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
         period,
-        prices: handledPrices,
-        roe: handledRoe,
+        prices,
+        roe,
       });
 
       const { fio, usdc } = convertFioPrices(updatedMultiYearPrice, roe);

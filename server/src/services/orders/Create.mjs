@@ -22,7 +22,7 @@ import X from '../Exception.mjs';
 import {
   calculateCartTotalCost,
   cartItemsToOrderItems,
-  handlePrices,
+  getCartOptions,
 } from '../../utils/cart.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
@@ -34,21 +34,9 @@ export default class OrdersCreate extends Base {
         {
           nested_object: {
             cartId: ['required', 'string'],
-            roe: 'string',
             publicKey: 'string',
             paymentProcessor: 'string',
             refProfileId: 'string',
-            prices: [
-              {
-                nested_object: {
-                  addBundles: ['string'],
-                  address: ['string'],
-                  domain: ['string'],
-                  combo: ['string'],
-                  renewDomain: ['string'],
-                },
-              },
-            ],
             refCode: ['string'],
             data: {
               nested_object: {
@@ -64,16 +52,7 @@ export default class OrdersCreate extends Base {
   }
 
   async execute({
-    data: {
-      cartId,
-      roe,
-      publicKey,
-      paymentProcessor,
-      prices,
-      refProfileId,
-      data,
-      refCode,
-    },
+    data: { cartId, publicKey, paymentProcessor, refProfileId, data, refCode },
   }) {
     let user;
 
@@ -133,6 +112,7 @@ export default class OrdersCreate extends Base {
 
     let payment = null;
     const orderItems = [];
+    const { prices, roe } = await getCartOptions(cart);
 
     const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
       cartItems: cart.items,
@@ -140,8 +120,6 @@ export default class OrdersCreate extends Base {
     });
 
     const cartPublicKey = cart.publicKey;
-
-    const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
 
     const dashboardDomains = await Domain.getDashboardDomains();
     const allRefProfileDomains = refCode
@@ -162,7 +140,7 @@ export default class OrdersCreate extends Base {
       domain: domainPrice,
       combo: comboPrice,
       renewDomain: renewDomainPrice,
-    } = handledPrices;
+    } = prices;
 
     const isEmptyPrices =
       !addBundlesPrice ||
@@ -180,7 +158,7 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    if (!handledRoe) {
+    if (!roe) {
       throw new X({
         code: 'ERROR',
         fields: {
@@ -196,8 +174,8 @@ export default class OrdersCreate extends Base {
       cartItems: cart.items,
       dashboardDomains,
       FioAccountProfile,
-      prices: handledPrices,
-      roe: handledRoe,
+      prices,
+      roe,
       userHasFreeAddress,
       walletType: wallet && wallet.from,
       refCode,

@@ -17,8 +17,6 @@ import {
 import {
   allDomains as allDomainsSelector,
   loading as publicDomainsLoadingSelector,
-  prices as pricesSelector,
-  roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import {
   fioWallets as fioWalletsSelector,
@@ -65,10 +63,8 @@ export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
   const lastAuthData = useSelector(lastAuthDataSelector);
-  const prices = useSelector(pricesSelector);
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
   const refCode = useSelector(refProfileCode);
-  const roe = useSelector(roeSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
   const cartItems = useSelector(cartItemsSelector);
@@ -134,15 +130,13 @@ export const useContext = (): UseContextProps => {
         addItemToCart({
           item: newItem,
           publicKey: metamaskUserPublicKey,
-          prices: prices?.nativeFio,
           refCode,
-          roe,
         }),
       );
 
       toggleHasItemAddedToCart(true);
     },
-    [dispatch, prices?.nativeFio, refCode, roe, user?.userProfileType],
+    [dispatch, refCode, user?.userProfileType],
   );
 
   const onFieldChange = (value: string) => {

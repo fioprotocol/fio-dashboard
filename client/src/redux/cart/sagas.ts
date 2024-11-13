@@ -148,9 +148,7 @@ export function* onDomainRenew(history: History): Generator {
   yield takeEvery(HANDLE_DOMAIN_RENEW, function*(action: Action) {
     const { data: domain } = action;
 
-    const prices: Prices = yield select(pricesSelector);
     const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
-    const roe: number = yield select(roeSelector);
     const refCode: string = yield select(refProfileCode);
     const cartItems: CartItem[] = yield select(cartItemsSelector);
 
@@ -170,9 +168,7 @@ export function* onDomainRenew(history: History): Generator {
     yield put<Action>(
       addItemToCart({
         item: newCartItem,
-        prices: prices?.nativeFio,
         refCode,
-        roe,
       }),
     );
     fireAnalyticsEvent(

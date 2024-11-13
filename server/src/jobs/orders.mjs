@@ -858,7 +858,7 @@ class OrdersJob extends CommonJob {
     await fioApi.getRawAbi();
     const roe = await getROE();
     const feesVar = await Var.getByKey(FEES_VAR_KEY);
-    const prices = await fioApi.getPrices(true);
+    const prices = await fioApi.getPrices();
     const dashboardDomains = await Domain.getDashboardDomains();
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 

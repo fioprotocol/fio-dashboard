@@ -11,29 +11,18 @@ import logger from '../../logger.mjs';
 import {
   handleFreeCartDeleteItem,
   handleFioHandleCartItemsWithCustomDomain,
-  handlePrices,
+  getCartOptions,
 } from '../../utils/cart.mjs';
 
 export default class DeleteItem extends Base {
   static get validationRules() {
     return {
       itemId: ['required', 'string'],
-      prices: [
-        {
-          nested_object: {
-            addBundles: ['string'],
-            address: ['string'],
-            domain: ['string'],
-            renewDomain: ['string'],
-          },
-        },
-      ],
-      roe: ['string'],
       refCode: ['string'],
     };
   }
 
-  async execute({ itemId, prices, roe, refCode }) {
+  async execute({ itemId, refCode }) {
     const userId = this.context.id || null;
     const guestId = this.context.guestId || null;
 
@@ -47,6 +36,8 @@ export default class DeleteItem extends Base {
       if (!cart) {
         return { data: { items: [] } };
       }
+
+      const { prices, roe } = await getCartOptions(cart);
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
@@ -65,17 +56,12 @@ export default class DeleteItem extends Base {
               userId,
             });
 
-      const { handledPrices, handledRoe } = await handlePrices({
-        prices,
-        roe,
-      });
-
       const {
         addBundles: addBundlesPrice,
         address: addressPrice,
         domain: domainPrice,
         renewDomain: renewDomainPrice,
-      } = handledPrices;
+      } = prices;
 
       const isEmptyPrices =
         !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
@@ -89,7 +75,7 @@ export default class DeleteItem extends Base {
         });
       }
 
-      if (!handledRoe) {
+      if (!roe) {
         throw new X({
           code: 'ERROR',
           fields: {
@@ -115,8 +101,8 @@ export default class DeleteItem extends Base {
         {
           cartItems: updatedItems,
           item: existingItem,
-          prices: handledPrices,
-          roe: handledRoe,
+          prices,
+          roe,
         },
       );
 
