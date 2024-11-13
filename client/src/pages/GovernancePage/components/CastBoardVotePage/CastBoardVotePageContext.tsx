@@ -13,14 +13,15 @@ import config from '../../../../config';
 import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
 import { TrxResponse, TrxResponsePaidBundles } from '../../../../api/fio';
-import MathOp from '../../../../util/math';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
+import { handleTransactionDetails } from '../../../../util/transactions';
 
 import { FioWalletDoublet } from '../../../../types';
 import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
 import { CandidateProps, FioHandleItem } from '../../../../types/governance';
 import { TransactionDetailsProps } from '../../../../components/TransactionDetails/TransactionDetails';
+import { HandleTransactionDetailsProps } from '../../../../types/transactions';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
@@ -108,22 +109,16 @@ export const useContext = (props: Props): UseContextProps => {
   const onSuccess = useCallback(
     (results: TrxResponse) => {
       if (results?.transaction_id) {
-        const resultsDataObj: TransactionDetailsProps = {
-          additional: [
-            {
-              label: 'ID',
-              value: results.transaction_id,
-              link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${results.transaction_id}`,
-              wrap: true,
-            },
-          ],
+        const transactionDetailsParams: HandleTransactionDetailsProps = {
+          bundles: BUNDLES_TX_COUNT.NEW_FIO_REQUEST,
+          remaningBundles: selectedFioHandle?.remaining,
+          shouldSubBundlesFromRemaining: true,
+          transactionId: results.transaction_id,
         };
-        resultsDataObj.bundles = {
-          remaining: new MathOp(selectedFioHandle?.remaining)
-            .sub(BUNDLES_TX_COUNT.NEW_FIO_REQUEST)
-            .toNumber(),
-          fee: BUNDLES_TX_COUNT.NEW_FIO_REQUEST,
-        };
+
+        const resultsDataObj = handleTransactionDetails(
+          transactionDetailsParams,
+        );
 
         setResulstData(resultsDataObj);
       }

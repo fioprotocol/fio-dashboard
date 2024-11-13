@@ -12,6 +12,8 @@ import {
   FioWalletTxHistory,
   TransactionItemProps,
 } from '../types';
+import { TransactionDetailsProps } from '../components/TransactionDetails/TransactionDetails';
+import { HandleTransactionDetailsProps } from '../types/transactions';
 
 const HISTORY_NODE_OFFSET = 20;
 const HISTORY_TX_NAMES = {
@@ -335,4 +337,63 @@ export const checkTransactions = async (
   }
 
   return transactions;
+};
+
+export const handleTransactionDetails = ({
+  bundles,
+  feeCollected,
+  fioWallet,
+  roe,
+  remaningBundles,
+  shouldSubBundlesFromRemaining,
+  transactionId,
+}: HandleTransactionDetailsProps): TransactionDetailsProps => {
+  const transactionDetails: TransactionDetailsProps = {};
+
+  if (transactionId) {
+    transactionDetails.additional = [
+      {
+        label: 'ID',
+        value: transactionId,
+        link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transactionId}`,
+        wrap: true,
+      },
+    ];
+  }
+
+  if (fioWallet) {
+    transactionDetails.payWith = {
+      walletName: fioWallet?.name,
+      walletBalances: {
+        nativeFio: fioWallet?.available,
+        fio: FIOSDK.SUFToAmount(fioWallet?.available).toFixed(2),
+        usdc: apis.fio.convertFioToUsdc(fioWallet?.available, roe)?.toString(),
+      },
+    };
+  }
+
+  if (feeCollected) {
+    transactionDetails.feeInFio = feeCollected;
+
+    const updatedBalance = new MathOp(fioWallet?.available)
+      .sub(feeCollected)
+      .toNumber();
+
+    transactionDetails.payWith.walletBalances = {
+      nativeFio: updatedBalance,
+      fio: FIOSDK.SUFToAmount(updatedBalance).toFixed(2),
+      usdc: apis.fio.convertFioToUsdc(updatedBalance, roe)?.toString(),
+    };
+  }
+
+  if (remaningBundles && bundles) {
+    transactionDetails.bundles = {
+      remaining: shouldSubBundlesFromRemaining
+        ? new MathOp(remaningBundles).sub(bundles).toNumber()
+        : remaningBundles,
+      fee: bundles,
+    };
+  }
+
+  return transactionDetails;
 };
