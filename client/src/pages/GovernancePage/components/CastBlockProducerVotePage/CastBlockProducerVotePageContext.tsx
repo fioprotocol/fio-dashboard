@@ -82,7 +82,10 @@ export const useContext = (props: Props): UseContextProps => {
   const [selectedFioHandleId, setSelectedFioHandleId] = useState<string | null>(
     null,
   );
-  const [resultsData, setResulstData] = useState<TransactionDetailsProps>(null);
+  const [
+    resultsData,
+    setResulstData,
+  ] = useState<TransactionDetailsProps | null>(null);
 
   const dispatch = useDispatch();
   const history = useHistory();

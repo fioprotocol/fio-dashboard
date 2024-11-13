@@ -66,7 +66,10 @@ export const useContext = (props: Props): UseContextProps => {
   const [submitData, setSubmitData] = useState<RequestTokensValues | null>(
     null,
   );
-  const [resultsData, setResulstData] = useState<TransactionDetailsProps>(null);
+  const [
+    resultsData,
+    setResulstData,
+  ] = useState<TransactionDetailsProps | null>(null);
 
   const selectedFioWallet = fioWallets.find(
     ({ id }) => id === selectedFioWalletId,
