@@ -5,34 +5,17 @@ import X from '../Exception';
 
 import { Cart } from '../../models/Cart.mjs';
 
+import { fioApi } from '../../external/fio.mjs';
+import { getROE } from '../../external/roe.mjs';
+
 import logger from '../../logger.mjs';
 
-import {
-  convertFioPrices,
-  handlePriceForMultiYearItems,
-  handlePrices,
-} from '../../utils/cart.mjs';
+import { convertFioPrices, handlePriceForMultiYearItems } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE } from '../../config/constants';
 
 export default class RecalculateOnPriceUpdate extends Base {
-  static get validationRules() {
-    return {
-      prices: [
-        {
-          nested_object: {
-            addBundles: ['string'],
-            address: ['string'],
-            domain: ['string'],
-            renewDomain: ['string'],
-          },
-        },
-      ],
-      roe: ['string'],
-    };
-  }
-
-  async execute({ prices, roe }) {
+  async execute() {
     try {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
@@ -51,11 +34,8 @@ export default class RecalculateOnPriceUpdate extends Base {
           },
         });
       }
-
-      const { handledPrices, handledRoe } = await handlePrices({
-        prices,
-        roe,
-      });
+      const prices = await fioApi.getPrices();
+      const roe = await getROE();
 
       const {
         addBundles: addBundlesPrice,
@@ -63,7 +43,7 @@ export default class RecalculateOnPriceUpdate extends Base {
         domain: domainPrice,
         combo: comboPrice,
         renewDomain: renewDomainPrice,
-      } = handledPrices;
+      } = prices;
 
       const isEmptyPrices =
         !addBundlesPrice ||
@@ -81,7 +61,7 @@ export default class RecalculateOnPriceUpdate extends Base {
         });
       }
 
-      if (!handledRoe) {
+      if (!roe) {
         throw new X({
           code: 'ERROR',
           fields: {
@@ -92,7 +72,7 @@ export default class RecalculateOnPriceUpdate extends Base {
 
       const cartItemsWithRecalculatedPrices = cart.items.map(cartItem => {
         const { hasCustomDomainInCart, type, period } = cartItem;
-        const { addBundles, address, renewDomain } = handledPrices;
+        const { addBundles, address, renewDomain } = prices;
 
         let nativeFioAmount = null;
 
@@ -110,7 +90,7 @@ export default class RecalculateOnPriceUpdate extends Base {
               } else {
                 nativeFioAmount = handlePriceForMultiYearItems({
                   includeAddress: true,
-                  prices: handledPrices,
+                  prices,
                   period,
                 });
               }
@@ -119,7 +99,7 @@ export default class RecalculateOnPriceUpdate extends Base {
           case CART_ITEM_TYPE.DOMAIN:
             nativeFioAmount = handlePriceForMultiYearItems({
               includeAddress: false,
-              prices: handledPrices,
+              prices,
               period,
             });
             break;
@@ -149,7 +129,10 @@ export default class RecalculateOnPriceUpdate extends Base {
         };
       });
 
-      await cart.update({ items: cartItemsWithRecalculatedPrices });
+      await cart.update({
+        items: cartItemsWithRecalculatedPrices,
+        options: { prices, roe },
+      });
 
       return {
         data: Cart.format(cart.get({ plain: true })),

@@ -256,10 +256,8 @@ export const useContext = (): {
     apis.orders
       .create({
         cartId,
-        roe,
         publicKey: paymentWalletPublicKey,
         paymentProcessor: paymentProvider,
-        prices: prices?.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
@@ -275,8 +273,6 @@ export const useContext = (): {
     order,
     paymentProvider,
     paymentWalletPublicKey,
-    prices?.nativeFio,
-    roe,
   ]);
 
   const createOrder = useCallback(
@@ -297,10 +293,8 @@ export const useContext = (): {
       if (!orderParamsFromLocation && isFree) {
         orderParams = {
           cartId,
-          roe,
           publicKey: paymentWalletPublicKey,
           paymentProcessor: PAYMENT_PROVIDER.FIO,
-          prices: prices?.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),

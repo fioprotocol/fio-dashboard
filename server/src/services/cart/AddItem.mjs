@@ -16,7 +16,7 @@ import {
   handleFioHandleOnExistingCustomDomain,
   handleFreeCartAddItem,
   handleFioHandleCartItemsWithCustomDomain,
-  handlePrices,
+  getCartOptions,
 } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE } from '../../config/constants';
@@ -44,24 +44,12 @@ export default class AddItem extends Base {
         },
       ],
       publicKey: ['string'],
-      prices: [
-        {
-          nested_object: {
-            addBundles: ['string'],
-            address: ['string'],
-            domain: ['string'],
-            combo: ['string'],
-            renewDomain: ['string'],
-          },
-        },
-      ],
-      roe: ['string'],
       token: ['string'],
       refCode: ['string'],
     };
   }
 
-  async execute({ item, publicKey, prices, roe, token, refCode }) {
+  async execute({ item, publicKey, token, refCode }) {
     try {
       const { domain, type } = item;
 
@@ -73,6 +61,8 @@ export default class AddItem extends Base {
       if (guestId) where.guestId = guestId;
 
       const existingCart = await Cart.findOne({ where });
+
+      const { prices, roe } = await getCartOptions(existingCart || { options: {} });
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
@@ -108,14 +98,14 @@ export default class AddItem extends Base {
         refProfile.settings.domains &&
         !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
 
-      const isRefCodeEqualGatedRefprofile =
+      const isRefCodeEqualGatedRefProfile =
         refCode &&
         gatedRefProfiles.length &&
         !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
 
       if (
         ((gatedRefProfiles.length &&
-          (isRefCodeEqualGatedRefprofile ||
+          (isRefCodeEqualGatedRefProfile ||
             (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
           freeDomainOwner) &&
         type === CART_ITEM_TYPE.ADDRESS
@@ -136,15 +126,13 @@ export default class AddItem extends Base {
         await gatedRegistrationToken.destroy({ force: true });
       }
 
-      const { handledPrices, handledRoe } = await handlePrices({ prices, roe });
-
       const {
         addBundles: addBundlesPrice,
         address: addressPrice,
         domain: domainPrice,
         combo: comboPrice,
         renewDomain: renewDomainPrice,
-      } = handledPrices;
+      } = prices;
 
       const isEmptyPrices =
         !addBundlesPrice ||
@@ -162,7 +150,7 @@ export default class AddItem extends Base {
         });
       }
 
-      if (!handledRoe) {
+      if (!roe) {
         throw new X({
           code: 'ERROR',
           fields: {
@@ -185,6 +173,10 @@ export default class AddItem extends Base {
         const cartFields = {
           items: [handledFreeCartItem],
           publicKey,
+          options: {
+            prices,
+            roe,
+          },
         };
 
         if (userId) cartFields.userId = userId;
@@ -201,8 +193,8 @@ export default class AddItem extends Base {
         {
           cartItems: items,
           newItem: handledFreeCartItem,
-          prices: handledPrices,
-          roe: handledRoe,
+          prices,
+          roe,
         },
       );
 
@@ -210,8 +202,8 @@ export default class AddItem extends Base {
         {
           cartItems: handledCartItemsWithExistingCustomDomain,
           item,
-          prices: handledPrices,
-          roe: handledRoe,
+          prices,
+          roe,
         },
       );
 

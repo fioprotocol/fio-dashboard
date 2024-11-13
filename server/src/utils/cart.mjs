@@ -2,6 +2,8 @@ import MathOp from 'big.js';
 
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
+import { Cart } from '../models/Cart.mjs';
+
 import {
   CART_ITEM_TYPE,
   FIO_ADDRESS_DELIMITER,
@@ -17,7 +19,7 @@ import { getROE } from '../external/roe.mjs';
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
 export const handlePrices = async ({ prices, roe }) => {
-  const dbPrices = await fioApi.getPrices(true);
+  const dbPrices = await fioApi.getPrices();
   const dbRoe = await getROE();
 
   const {
@@ -709,4 +711,16 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
     delete cartItem.orderItemId;
     return cartItem;
   });
+};
+
+export const getCartOptions = async cart => {
+  let { prices, roe } = cart.options || {};
+  if (!prices || !roe) {
+    prices = await fioApi.getPrices();
+    roe = await getROE();
+    if (cart.id)
+      await Cart.update({ options: { prices, roe } }, { where: { id: cart.id } });
+  }
+
+  return { prices, roe };
 };

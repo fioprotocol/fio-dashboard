@@ -269,10 +269,6 @@ export const useContext = (): UseContextReturnType => {
       try {
         const updatedPrices = await getFreshPrices();
 
-        const {
-          pricing: { usdtRoe: updatedRoe },
-        } = updatedPrices || {};
-
         const { updatedTotalPrice, updatedCostUsdc } = recalculateBalance(
           updatedPrices,
         );
@@ -286,12 +282,7 @@ export const useContext = (): UseContextReturnType => {
         if (isEqualPrice) return true;
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PRICE_CHANGE);
 
-        dispatch(
-          recalculateOnPriceUpdate({
-            prices: updatedPrices?.pricing?.nativeFio,
-            roe: updatedRoe,
-          }),
-        );
+        dispatch(recalculateOnPriceUpdate());
         dispatch(getPrices());
 
         return false;
@@ -310,10 +301,8 @@ export const useContext = (): UseContextReturnType => {
 
       const orderParams: CreateOrderActionData = {
         cartId,
-        roe,
         publicKey,
         paymentProcessor: paymentProvider,
-        prices: prices?.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),

@@ -239,7 +239,7 @@ export default class BuyAddress extends Base {
     isDomainExist,
   }) {
     const roe = await getROE();
-    const prices = await fioApi.getPrices(true);
+    const prices = await fioApi.getPrices();
     const nativeFio = address
       ? isDomainExist
         ? prices.address

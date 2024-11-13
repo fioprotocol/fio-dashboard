@@ -770,13 +770,11 @@ export const useContext = (): UseContextProps => {
         addItemToCart({
           item: selectedItem,
           publicKey: metamaskUserPublicKey,
-          prices: prices?.nativeFio,
           refCode,
-          roe,
         }),
       );
     },
-    [dispatch, prices?.nativeFio, refCode, roe, user?.userProfileType],
+    [dispatch, refCode, user?.userProfileType],
   );
 
   const getFioRawAbis = useCallback(async () => {

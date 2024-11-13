@@ -221,7 +221,7 @@ router.patch(
   checkGuestOrUserAuth,
   routes.cart.handleUsersFreeCartItems,
 );
-router.put(
+router.patch(
   '/cart-recalculate-updated-prices',
   checkGuestOrUserAuth,
   routes.cart.recalculateOnPriceUpdate,

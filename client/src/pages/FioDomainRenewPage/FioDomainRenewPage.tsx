@@ -22,10 +22,6 @@ import {
   cartItems as cartItemsSelector,
 } from '../../redux/cart/selectors';
 import { userId as userIdSelector } from '../../redux/profile/selectors';
-import {
-  prices as pricesSelector,
-  roe as roeSelector,
-} from '../../redux/registrations/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -44,9 +40,7 @@ const FioDomainRenewPage: React.FC = () => {
   const cartItems = useSelector(cartItemsSelector);
   const fees = useSelector(feesSelector);
   const feeLoading = useSelector(feeLoadingSelector);
-  const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
-  const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
 
   const [feeLoadingFinished, toggleFeeLoadingFinished] = useState<boolean>(
@@ -97,9 +91,7 @@ const FioDomainRenewPage: React.FC = () => {
     dispatch(
       addItemToCart({
         item: newCartItem,
-        prices: prices?.nativeFio,
         refCode,
-        roe,
       }),
     );
     fireAnalyticsEvent(
@@ -119,11 +111,9 @@ const FioDomainRenewPage: React.FC = () => {
     feeLoading,
     feeLoadingFinished,
     history,
-    prices?.nativeFio,
     renewDomainFeePrice,
     renewFioDomain,
     refCode,
-    roe,
     userId,
   ]);
 
