@@ -12,13 +12,15 @@ import {
 import config from '../../../../config';
 import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
-import { TrxResponsePaidBundles } from '../../../../api/fio';
+import { TrxResponse, TrxResponsePaidBundles } from '../../../../api/fio';
+import MathOp from '../../../../util/math';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 
 import { FioWalletDoublet } from '../../../../types';
 import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
 import { CandidateProps, FioHandleItem } from '../../../../types/governance';
+import { TransactionDetailsProps } from '../../../../components/TransactionDetails/TransactionDetails';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
@@ -26,12 +28,14 @@ type UseContextProps = {
   loading: boolean;
   notEnoughBundles: boolean;
   processing: boolean;
+  resultsData: TransactionDetailsProps;
   submitData: RequestTokensValues;
   selectedFioHandle: FioHandleItem;
   selectedFioWallet: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
   onActionClick: () => void;
   onCancel: () => void;
+  onResultsClose: () => void;
   onSuccess: (results: TrxResponsePaidBundles) => void;
   onFioHandleChange: (id: string) => void;
   onWalletChange: (id: string) => void;
@@ -61,6 +65,7 @@ export const useContext = (props: Props): UseContextProps => {
   const [submitData, setSubmitData] = useState<RequestTokensValues | null>(
     null,
   );
+  const [resultsData, setResulstData] = useState<TransactionDetailsProps>(null);
 
   const selectedFioWallet = fioWallets.find(
     ({ id }) => id === selectedFioWalletId,
@@ -100,14 +105,38 @@ export const useContext = (props: Props): UseContextProps => {
     setSubmitData(null);
     setProcessing(false);
   };
+  const onSuccess = useCallback(
+    (results: TrxResponse) => {
+      if (results?.transaction_id) {
+        const resultsDataObj: TransactionDetailsProps = {
+          additional: [
+            {
+              label: 'ID',
+              value: results.transaction_id,
+              link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${results.transaction_id}`,
+              wrap: true,
+            },
+          ],
+        };
+        resultsDataObj.bundles = {
+          remaining: new MathOp(selectedFioHandle?.remaining)
+            .sub(BUNDLES_TX_COUNT.NEW_FIO_REQUEST)
+            .toNumber(),
+          fee: BUNDLES_TX_COUNT.NEW_FIO_REQUEST,
+        };
 
-  const onSuccess = (results: TrxResponsePaidBundles) => {
-    setProcessing(false);
+        setResulstData(resultsDataObj);
+      }
 
-    if (results?.transaction_id) {
-      resetSelectedCandidates();
-      history.push(ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS);
-    }
+      setProcessing(false);
+    },
+    [selectedFioHandle?.remaining],
+  );
+
+  const onResultsClose = () => {
+    resetSelectedCandidates();
+    history.push(ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS);
+    setResulstData(null);
   };
 
   const onActionClick = () => {
@@ -128,6 +157,7 @@ export const useContext = (props: Props): UseContextProps => {
     loading,
     notEnoughBundles,
     processing,
+    resultsData,
     submitData,
     selectedFioHandle,
     selectedFioWallet,
@@ -135,6 +165,7 @@ export const useContext = (props: Props): UseContextProps => {
     onActionClick,
     onCancel,
     onSuccess,
+    onResultsClose,
     onFioHandleChange,
     onWalletChange,
     setProcessing,

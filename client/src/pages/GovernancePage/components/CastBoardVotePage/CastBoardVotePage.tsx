@@ -3,7 +3,6 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import Loader from '../../../../components/Loader/Loader';
-import CloseButton from '../../../../components/CloseButton/CloseButton';
 import CustomDropdown from '../../../../components/CustomDropdown';
 import RequestTokensEdgeWallet from '../../../FioTokensRequestPage/components/RequestTokensEdgeWallet';
 import { RequestTokensMetamaskWallet } from '../../../FioTokensRequestPage/components/RequestTokensMetamaskWallet';
@@ -11,10 +10,11 @@ import RequestTokensLedgerWallet from '../../../FioTokensRequestPage/components/
 import WalletAction from '../../../../components/WalletAction/WalletAction';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
+import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
 
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
-import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
+import { CandidateBoardItems } from './components/CandidateBoardItems/CandidateBoardItems';
 
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
@@ -45,22 +45,67 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     loading,
     notEnoughBundles,
     processing,
+    resultsData,
     submitData,
     selectedFioHandle,
     selectedFioWallet,
     fioWallets,
     onActionClick,
     onCancel,
+    onResultsClose,
     onSuccess,
     onFioHandleChange,
     onWalletChange,
     setProcessing,
   } = useContext({ resetSelectedCandidates, selectedCandidates });
 
+  if (resultsData) {
+    return (
+      <PseudoModalContainer
+        title={<span className={classes.title}>Board Vote Confirmation</span>}
+        onClose={onResultsClose}
+      >
+        <div className={classes.container}>
+          <ResultDetails
+            label="Receiving Vote Handle"
+            value={config.voteFioHandle}
+          />
+          <ResultDetails
+            label="Voting Wallet"
+            value={selectedFioWallet?.name}
+          />
+          <h4 className={classes.label}>Candidate votes</h4>
+          <CandidateBoardItems
+            hideCloseButton
+            selectedCandidates={selectedCandidates}
+          />
+          <ResultDetails
+            label="Voting Handle"
+            value={selectedFioHandle?.name}
+          />
+          <p className={classes.label}>Transaction Details</p>
+          <TransactionDetails
+            {...resultsData}
+            className={classes.transactionDetails}
+          />
+          <SubmitButton
+            text="Close"
+            onClick={onResultsClose}
+            withTopMargin={true}
+          />
+        </div>
+      </PseudoModalContainer>
+    );
+  }
+
   return (
     <>
       <PseudoModalContainer
-        title="FIO Foundation Board Vote Request"
+        title={
+          <span className={classes.title}>
+            FIO Foundation Board Vote Request
+          </span>
+        }
         link={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
       >
         <div className={classes.container}>
@@ -85,6 +130,22 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
             </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          <h4 className={classes.label}>
+            Candidate Votes <span className={classes.regularText}>(max 8)</span>
+          </h4>
+          {candidatesListLoading ? (
+            <Loader />
+          ) : !selectedCandidates.length ? (
+            <NoCandidatesWarningBadge
+              show
+              returnLink={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
+            />
+          ) : (
+            <CandidateBoardItems
+              selectedCandidates={selectedCandidates}
+              onCandidateSelectChange={onCandidateSelectChange}
+            />
+          )}
           <h4 className={classes.label}>Your FIO Handle(s)</h4>
           {!fioHandlesList.length ? (
             <NoAssociatedFioHandlesWarningBadge show />
@@ -106,40 +167,6 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
                 <span className={classes.violet}>Bundles</span>
               </p>
             </>
-          )}
-          <h4 className={classes.label}>
-            Candidate Votes <span className={classes.regularText}>(max 8)</span>
-          </h4>
-          {candidatesListLoading ? (
-            <Loader />
-          ) : !selectedCandidates.length ? (
-            <NoCandidatesWarningBadge
-              show
-              returnLink={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
-            />
-          ) : (
-            <div className={classes.candidatesListContainer}>
-              {selectedCandidates.map(({ image, name, id }) => (
-                <div className={classes.candidateItem} key={id}>
-                  <img
-                    src={image}
-                    alt="Candidate"
-                    className={classes.candidateImage}
-                  />
-                  <div className={classes.nameContainer}>
-                    <h4 className={classes.name}>{name}</h4>
-                    <CandidateIdBadge
-                      id={id}
-                      className={classes.candidateBadge}
-                    />
-                  </div>
-                  <CloseButton
-                    handleClick={() => onCandidateSelectChange(id)}
-                    className={classes.closeButton}
-                  />
-                </div>
-              ))}
-            </div>
           )}
           <p className={classes.label}>Transaction Details</p>
           <TransactionDetails
