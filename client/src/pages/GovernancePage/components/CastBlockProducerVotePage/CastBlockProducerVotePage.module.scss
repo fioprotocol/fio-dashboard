@@ -2,10 +2,6 @@
 @import '../../../../assets/styles/fontMixins.scss';
 @import '../../../../assets/styles/mediaQueriesMixings.scss';
 
-.title {
-  font-size: 26px;
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -24,6 +20,7 @@
 
   .dropdown {
     margin-top: 15px;
+    min-width: auto;
   }
 
   .votingPower {
@@ -43,5 +40,11 @@
 
   .transactionDetails {
     margin-top: 20px;
+  }
+}
+
+@include lg {
+  .title {
+    font-size: 26px;
   }
 }

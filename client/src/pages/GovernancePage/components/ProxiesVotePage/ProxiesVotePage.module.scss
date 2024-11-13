@@ -28,6 +28,7 @@
 
   .dropdown {
     margin-top: 15px;
+    min-width: auto;
   }
 
   .votingPower {
@@ -92,5 +93,11 @@
 
   .transactionDetails {
     margin-top: 20px;
+  }
+}
+
+@include lg {
+  .title {
+    font-size: 26px;
   }
 }

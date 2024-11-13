@@ -179,10 +179,10 @@ export const useContext = (props: Props): UseContextProps => {
           };
         }
 
-        setProcessing(false);
-
         setResulstData(resultsDataObj);
       }
+
+      setProcessing(false);
     },
     [
       roe,
