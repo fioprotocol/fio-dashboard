@@ -72,7 +72,10 @@ export const useContext = (props: Props): UseContextProps => {
 
   const [processing, setProcessing] = useState<boolean>(false);
   const [submitData, setSubmitData] = useState<SubmitData | null>(null);
-  const [resultsData, setResulstData] = useState<TransactionDetailsProps>(null);
+  const [
+    resultsData,
+    setResulstData,
+  ] = useState<TransactionDetailsProps | null>(null);
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
     fioWallets[0]?.id || null,
