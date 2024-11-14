@@ -3,6 +3,7 @@ import { all } from 'redux-saga/effects';
 
 import {
   loginSuccess,
+  logoutRequest,
   logoutSuccess,
   nonceSuccess,
   profileSuccess,
@@ -45,6 +46,7 @@ export default function* rootSaga(history: History, api: Api) {
     guestLoginSuccess(api),
     alternateLoginSuccess(history, api),
     loginSuccess(history, api),
+    logoutRequest(),
     logoutSuccess(history),
     profileSuccess(),
     nonceSuccess(),

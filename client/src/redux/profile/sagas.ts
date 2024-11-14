@@ -15,6 +15,7 @@ import {
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
   LOGIN_SUCCESS,
+  LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   PROFILE_SUCCESS,
@@ -256,6 +257,15 @@ export function* profileSuccess(): Generator {
           }),
         );
       }
+    }
+  });
+}
+
+export function* logoutRequest(): Generator {
+  yield takeEvery(LOGOUT_REQUEST, function*() {
+    const cartId: string | null = yield select(cartIdSelector);
+    if (cartId) {
+      yield put<Action>(clearCart());
     }
   });
 }
