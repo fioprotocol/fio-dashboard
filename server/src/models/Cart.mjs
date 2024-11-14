@@ -19,6 +19,10 @@ export class Cart extends Base {
         items: {
           type: DT.JSON,
         },
+        options: {
+          type: DT.JSON,
+          allowNull: true,
+        },
         userId: {
           type: DT.UUID,
           references: {
