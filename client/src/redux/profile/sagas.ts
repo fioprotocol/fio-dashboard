@@ -272,11 +272,6 @@ export function* logoutRequest(): Generator {
 
 export function* logoutSuccess(history: History): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
-    const cartId: string | null = yield select(cartIdSelector);
-    if (cartId) {
-      yield put<Action>(clearCart());
-    }
-
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);
 
