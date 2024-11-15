@@ -162,6 +162,7 @@ router.post(
   routes.account.importValidateWallet,
 );
 router.post('/account/add-missing-wallet', routes.account.addMissingWallet);
+router.get('/account/wallet/fio-requests', checkUserAuth, routes.account.fioRequests);
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 router.get('/ref-profile/settings/:code?', routes.refProfiles.settings);

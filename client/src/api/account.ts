@@ -1,3 +1,5 @@
+import { FioSentItem } from '@fioprotocol/fiosdk';
+
 import Base from './base';
 import { FioWalletDoublet, NewFioWalletDoublet } from '../types';
 import {
@@ -50,5 +52,14 @@ export default class Account extends Base {
       `account/wallet/import/validate/${publicKey}`,
       {},
     );
+  }
+
+  getFioRequests(): Promise<{
+    [key: string]: {
+      sent: FioSentItem[];
+      received: FioSentItem[];
+    };
+  }> {
+    return this.apiClient.get('account/wallet/fio-requests');
   }
 }

@@ -119,8 +119,14 @@ class WalletDataJob extends CommonJob {
     }
 
     try {
+      const sentRequestsOffset = sent.length > 1 ? sent.length - 1 : 0;
       try {
-        const requestsResponse = await walletSdk.getSentFioRequests(0, 0, true);
+        const requestsResponse = await walletSdk.getSentFioRequests({
+          limit: 0,
+          offset: sentRequestsOffset,
+          includeEncrypted: true,
+        });
+
         sentRequests = requestsResponse.requests;
       } catch (e) {
         sentRequests = [...sent];
@@ -209,11 +215,11 @@ class WalletDataJob extends CommonJob {
       const receivedRequestsOffset = received.length > 1 ? received.length - 1 : 0;
 
       try {
-        const requestsResponse = await walletSdk.getReceivedFioRequests(
-          0,
-          receivedRequestsOffset,
-          true,
-        );
+        const requestsResponse = await walletSdk.getReceivedFioRequests({
+          limit: 0,
+          offset: receivedRequestsOffset,
+          includeEncrypted: true,
+        });
         receivedRequests = requestsResponse.requests;
       } catch (e) {
         receivedRequests = [...received];
@@ -276,10 +282,14 @@ class WalletDataJob extends CommonJob {
       await PublicWalletData.update(
         {
           requests: {
-            sent: sentRequests.map(({ fio_request_id, status }) => ({
-              fio_request_id,
-              status,
-            })),
+            sent: sentRequests.map(
+              ({ fio_request_id, status, time_stamp, payer_fio_address }) => ({
+                fio_request_id,
+                status,
+                time_stamp,
+                payer_fio_address,
+              }),
+            ),
             received,
           },
           meta,
