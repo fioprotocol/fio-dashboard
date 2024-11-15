@@ -35,7 +35,7 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
             <img src={WalletIcon} alt="wallet" loading="lazy" />
             <h5 className={classes.title}>{overviewWalletItem.name}</h5>
           </div>
-          <div className={classes.gridItem}>
+          <div className={classnames(classes.gridItem, classes.toright)}>
             <WalletPower
               power={apis.fio.sufToAmount(overviewWalletItem?.available)}
             />

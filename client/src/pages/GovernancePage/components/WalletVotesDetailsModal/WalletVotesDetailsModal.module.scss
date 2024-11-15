@@ -2,6 +2,11 @@
 @import '../../../../assets/styles/fontMixins';
 @import '../../../../assets/styles/mediaQueriesMixings';
 
+.modalContainer {
+  max-width: 825px;
+  width: auto;
+}
+
 .header {
   display: block;
   text-align: start;
@@ -11,7 +16,6 @@
 
 .container {
   width: 100%;
-  overflow: auto;
 }
 
 .dropdownContainer {

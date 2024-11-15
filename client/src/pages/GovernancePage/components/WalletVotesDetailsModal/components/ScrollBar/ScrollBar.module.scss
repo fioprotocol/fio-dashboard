@@ -1,0 +1,12 @@
+@import '../../../../../../assets/styles/colors.scss';
+
+.scrollThumbY {
+  background: $light-indigo !important;
+}
+
+.scrollTrackY {
+  background: white !important;
+  width: 8px !important;
+  top: 0 !important;
+  height: 100% !important;
+}

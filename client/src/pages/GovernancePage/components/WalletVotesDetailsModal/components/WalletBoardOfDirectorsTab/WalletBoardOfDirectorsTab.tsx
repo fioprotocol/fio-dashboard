@@ -14,6 +14,7 @@ import { MemberBadge } from '../../../MemberBadge/MemberBadge';
 import { CandidateIdBadge } from '../../../CandidateIdBadge/CandidateIdBadge';
 import { MyVoteDetails } from '../MyVoteDetails';
 import { InfoBadgeComponent } from '../../../InfoBadgeComponent/InfoBadgeComponent';
+import { ScrollBar } from '../ScrollBar/ScrollBar';
 
 import {
   getNextGovernanceDate,
@@ -67,48 +68,62 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
           message="If you have vote recently, please note that your vote will show up after the next count date."
         />
       )}
-      {activeWallet?.available > 0 && (
-        <div className={classes.tabsScrollContainer}>
-          {listOfCandidates
-            .filter(candidateItem =>
-              candidatesVotes?.candidatesIdsList?.includes(candidateItem.id),
-            )
-            .map(
-              ({ id, image, name, lastVoteCount, lastVoteUpdate, status }) => (
-                <div className={classes.directorContainer} key={id}>
-                  <div className={classes.contentContainer}>
-                    <div className={classes.dataContainer}>
-                      <img
-                        src={image}
-                        alt={`candidate ${id}`}
-                        className={classes.img}
-                      />
-                      <div className={classes.nameContainer}>
-                        <p className={classes.name}>{name}</p>
-                        <p className={classes.lastVoted}>
-                          Last Vote Count:
-                          <span>
-                            {voteFormatDate(new Date(lastVoteUpdate))}
-                          </span>
-                        </p>
-                        <p className={classes.lastVoted}>
-                          Last Vote Count Power: <span>{lastVoteCount}</span>
-                        </p>
+      <div className={classes.scrollArea}>
+        <ScrollBar>
+          {activeWallet?.available > 0 && (
+            <div className={classes.tabsScrollContainer}>
+              {listOfCandidates
+                .filter(candidateItem =>
+                  candidatesVotes?.candidatesIdsList?.includes(
+                    candidateItem.id,
+                  ),
+                )
+                .map(
+                  ({
+                    id,
+                    image,
+                    name,
+                    lastVoteCount,
+                    lastVoteUpdate,
+                    status,
+                  }) => (
+                    <div className={classes.directorContainer} key={id}>
+                      <div className={classes.contentContainer}>
+                        <div className={classes.dataContainer}>
+                          <img
+                            src={image}
+                            alt={`candidate ${id}`}
+                            className={classes.img}
+                          />
+                          <div className={classes.nameContainer}>
+                            <p className={classes.name}>{name}</p>
+                            <p className={classes.lastVoted}>
+                              Last Vote Count:
+                              <span>
+                                {voteFormatDate(new Date(lastVoteUpdate))}
+                              </span>
+                            </p>
+                            <p className={classes.lastVoted}>
+                              Last Vote Count Power:{' '}
+                              <span>{lastVoteCount}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className={classes.itemActionContainer}>
+                          <MemberBadge status={status} />
+                          <CandidateIdBadge
+                            id={id}
+                            className={classes.candidateBadge}
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className={classes.itemActionContainer}>
-                      <MemberBadge status={status} />
-                      <CandidateIdBadge
-                        id={id}
-                        className={classes.candidateBadge}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ),
-            )}
-        </div>
-      )}
+                  ),
+                )}
+            </div>
+          )}
+        </ScrollBar>
+      </div>
     </>
   );
 };

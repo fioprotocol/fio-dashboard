@@ -76,7 +76,7 @@ export const WalletVotesDetailsModal: FC<Props> = ({
       closeButton={true}
       isSimple={true}
       hasDefaultCloseColor={true}
-      isWide={true}
+      classNames={{ dialog: classes.modalContainer }}
     >
       <div className={classes.container}>
         <CustomDropdown
