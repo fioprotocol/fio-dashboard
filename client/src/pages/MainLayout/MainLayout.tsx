@@ -61,6 +61,7 @@ type Props = {
   getCart: () => void;
   logout: () => void;
   loginGuest: () => void;
+  getSiteSettings: () => void;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -85,6 +86,7 @@ const MainLayout: React.FC<Props> = props => {
     getCart,
     logout,
     loginGuest,
+    getSiteSettings,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -100,6 +102,7 @@ const MainLayout: React.FC<Props> = props => {
   useEffectOnce(
     () => {
       edgeContextInit();
+      getSiteSettings();
       loadProfile({ shouldHandleUsersFreeCart: true });
       getApiUrls();
     },
