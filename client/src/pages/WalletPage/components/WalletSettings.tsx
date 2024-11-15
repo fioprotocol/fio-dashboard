@@ -389,8 +389,8 @@ const WalletSettings: React.FC<Props> = props => {
               Wallet Balance:&nbsp;
               <PriceComponent
                 className={classes.balanceValue}
-                costFio={balance.fio}
-                costUsdc={balance.usdc}
+                costFio={balance?.fio}
+                costUsdc={balance?.usdc}
               />
             </span>
             {walletFioDomainsCount + walletFioAddressesCount > 0 && (
