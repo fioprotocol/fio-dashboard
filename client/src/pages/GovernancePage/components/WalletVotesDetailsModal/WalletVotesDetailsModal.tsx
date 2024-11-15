@@ -42,7 +42,7 @@ export const WalletVotesDetailsModal: FC<Props> = ({
       eventKey: 'board',
       title: (
         <>
-          <span className={classes.tabsLargeTitle}>FIO Foundation&nbsp;</span>
+          <span className={classes.tabsLargeTitle}>FIO Foundation </span>
           Board of Directors
         </>
       ),
@@ -76,7 +76,7 @@ export const WalletVotesDetailsModal: FC<Props> = ({
       closeButton={true}
       isSimple={true}
       hasDefaultCloseColor={true}
-      isWide={true}
+      classNames={{ dialog: classes.modalContainer }}
     >
       <div className={classes.container}>
         <CustomDropdown

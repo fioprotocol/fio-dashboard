@@ -8,6 +8,7 @@ import { edgeContextInit } from '../../redux/edge/actions';
 import { loadProfile, logout, loginGuest } from '../../redux/profile/actions';
 import { getApiUrls } from '../../redux/registrations/actions';
 import { showRecoveryModal } from '../../redux/modal/actions';
+import { getSiteSettings } from '../../redux/settings/actions';
 import { pathname } from '../../redux/navigation/selectors';
 
 import { cartId } from '../../redux/cart/selectors';
@@ -46,6 +47,7 @@ const reduxConnect = connect(
     getApiUrls,
     logout,
     loginGuest,
+    getSiteSettings,
   },
 );
 

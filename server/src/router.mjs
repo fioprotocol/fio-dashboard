@@ -254,6 +254,8 @@ router.get('/gas-oracle', routes.external.getGasOracle);
 
 router.get('/edge-cr', routes.external.getEdgeApiCreds);
 
+router.get('/site-settings', routes.general.getSiteSettings);
+
 // TODO: commented due to DASH-711 task. We hide it until figure out with hash
 // router.get('/fetch-image-hash', routes.general.imageToHash);
 

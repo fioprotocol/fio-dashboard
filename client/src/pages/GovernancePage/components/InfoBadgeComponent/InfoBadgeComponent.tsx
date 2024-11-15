@@ -14,14 +14,12 @@ export const InfoBadgeComponent: React.FC<Props> = ({
   message,
   title,
   type,
-}) => {
-  return (
-    <InfoBadge
-      className={classes.infoBadge}
-      type={type}
-      show
-      title={title}
-      message={message}
-    />
-  );
-};
+}) => (
+  <InfoBadge
+    className={classes.infoBadge}
+    type={type}
+    show
+    title={title}
+    message={message}
+  />
+);

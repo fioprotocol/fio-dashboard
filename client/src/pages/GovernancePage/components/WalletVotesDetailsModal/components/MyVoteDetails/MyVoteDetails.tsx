@@ -24,57 +24,55 @@ export const MyVoteDetails: FC<Props> = ({
   power,
   lastVote,
   lastUpdated,
-}) => {
-  return (
-    <>
-      <div className={classes.detailsContainer}>
-        {lastVote && (
-          <p className={classes.detailsItem}>
-            <span className={classes.detailsLabel}>Last Board Vote:</span>
-            <span className={classes.detailsValue}>
-              {voteFormatDate(new Date(lastVote))}
-            </span>
-          </p>
-        )}
+}) => (
+  <>
+    <div className={classes.detailsContainer}>
+      {lastVote && (
         <p className={classes.detailsItem}>
-          <span className={classes.detailsLabel}>
-            Current&nbsp;{powerLabelSuffix ? <>Board&nbsp;</> : ''}Voting Power:
-          </span>
+          <span className={classes.detailsLabel}>Last Board Vote:</span>
           <span className={classes.detailsValue}>
-            {power?.toLocaleString('en', {
-              minimumFractionDigits: 4,
-            }) || 0}
-            &nbsp;FIO
+            {voteFormatDate(new Date(lastVote))}
           </span>
         </p>
-        {lastUpdated && (
-          <p className={classes.detailsItem}>
-            <span className={classes.detailsLabel}>
-              Board Voting Power Last Updated:
-            </span>
-            <span className={classes.detailsValue}>
-              {voteFormatDate(new Date(lastUpdated))}
-            </span>
-          </p>
-        )}
-      </div>
-      {power === 0 && (
-        <InfoBadgeComponent
-          type={BADGE_TYPES.ERROR}
-          title="Not Voting Tokens "
-          message={
-            <>
-              You are not voting the tokens in this wallet.&nbsp;
-              <Link
-                to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-                className={classes.infoBadgeLink}
-              >
-                Go Vote Your Tokens
-              </Link>
-            </>
-          }
-        />
       )}
-    </>
-  );
-};
+      <p className={classes.detailsItem}>
+        <span className={classes.detailsLabel}>
+          Current {powerLabelSuffix ? <>Board </> : ''}Voting Power:
+        </span>
+        <span className={classes.detailsValue}>
+          {power?.toLocaleString('en', {
+            minimumFractionDigits: 4,
+          }) || 0}{' '}
+          FIO
+        </span>
+      </p>
+      {lastUpdated && (
+        <p className={classes.detailsItem}>
+          <span className={classes.detailsLabel}>
+            Board Voting Power Last Updated:
+          </span>
+          <span className={classes.detailsValue}>
+            {voteFormatDate(new Date(lastUpdated))}
+          </span>
+        </p>
+      )}
+    </div>
+    {power === 0 && (
+      <InfoBadgeComponent
+        type={BADGE_TYPES.ERROR}
+        title="Not Voting Tokens "
+        message={
+          <>
+            You are not voting the tokens in this wallet.{' '}
+            <Link
+              to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+              className={classes.infoBadgeLink}
+            >
+              Go Vote Your Tokens
+            </Link>
+          </>
+        }
+      />
+    )}
+  </>
+);

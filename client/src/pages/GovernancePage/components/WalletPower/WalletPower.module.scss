@@ -8,13 +8,13 @@
   flex-wrap: wrap;
   font-size: 0.875em;
   margin: 0;
-  @include proxima-nova-semibold
-}
+  @include proxima-nova-semibold;
 
-.powerValueLabel {
-  text-wrap: nowrap;
-}
-
-.powerValueCurrency {
-  color: $light-indigo;
+  .powerValueLabel {
+      text-wrap: nowrap;
+    }
+  
+    .powerValueCurrency {
+      color: $light-indigo;
+    }
 }

@@ -8,8 +8,8 @@ import {
   fioWallets as fioWalletsSelector,
   loading as loadingSelector,
 } from '../../../../redux/fio/selectors';
+import { siteSetings } from '../../../../redux/settings/selectors';
 
-import config from '../../../../config';
 import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
 import { TrxResponse, TrxResponsePaidBundles } from '../../../../api/fio';
@@ -22,6 +22,7 @@ import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
 import { CandidateProps, FioHandleItem } from '../../../../types/governance';
 import { TransactionDetailsProps } from '../../../../components/TransactionDetails/TransactionDetails';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
+import { VARS_KEYS } from '../../../../constants/vars';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
@@ -34,6 +35,7 @@ type UseContextProps = {
   selectedFioHandle: FioHandleItem;
   selectedFioWallet: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
+  voteFioHandle: string;
   onActionClick: () => void;
   onCancel: () => void;
   onResultsClose: () => void;
@@ -55,6 +57,9 @@ export const useContext = (props: Props): UseContextProps => {
   const fioHandles = useSelector(fioAddressesSelector);
   const fioHandlesLoading = useSelector(fioAddressesLoadingSelector);
   const loading = useSelector(loadingSelector);
+  const settings = useSelector(siteSetings);
+
+  const voteFioHandle = settings[VARS_KEYS.VOTE_FIO_HANDLE];
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
     fioWallets[0]?.id || null,
@@ -139,7 +144,7 @@ export const useContext = (props: Props): UseContextProps => {
   const onActionClick = () => {
     setSubmitData({
       payeeFioAddress: selectedFioHandle.name,
-      payerFioAddress: config.voteFioHandle,
+      payerFioAddress: voteFioHandle,
       chainCode: FIO_CHAIN_CODE,
       tokenCode: FIO_CHAIN_CODE,
       payeeTokenPublicAddress: selectedFioHandle.walletPublicKey,
@@ -161,6 +166,7 @@ export const useContext = (props: Props): UseContextProps => {
     selectedFioHandle,
     selectedFioWallet,
     fioWallets,
+    voteFioHandle,
     onActionClick,
     onCancel,
     onSuccess,

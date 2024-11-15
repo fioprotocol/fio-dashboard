@@ -18,7 +18,6 @@ import { CandidateBoardItems } from './components/CandidateBoardItems/CandidateB
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
-import config from '../../../../config';
 
 import MathOp from '../../../../util/math';
 import apis from '../../../../api';
@@ -42,6 +41,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
   const {
     fioHandlesList,
     fioHandlesLoading,
+    fioWallets,
     loading,
     notEnoughBundles,
     processing,
@@ -49,7 +49,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     submitData,
     selectedFioHandle,
     selectedFioWallet,
-    fioWallets,
+    voteFioHandle,
     onActionClick,
     onCancel,
     onResultsClose,
@@ -66,10 +66,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
         onClose={onResultsClose}
       >
         <div className={classes.container}>
-          <ResultDetails
-            label="Receiving Vote Handle"
-            value={config.voteFioHandle}
-          />
+          <ResultDetails label="Receiving Vote Handle" value={voteFioHandle} />
           <ResultDetails
             label="Voting Wallet"
             value={selectedFioWallet?.name}
@@ -110,7 +107,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
       >
         <div className={classes.container}>
           <p className={classes.sendTo}>
-            Send to: <span>{config.voteFioHandle}</span>
+            Send to: <span>{voteFioHandle}</span>
           </p>
           <h4 className={classes.label}>Your FIO Wallet</h4>
           <CustomDropdown
