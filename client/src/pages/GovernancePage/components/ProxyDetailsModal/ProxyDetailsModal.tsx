@@ -55,7 +55,7 @@ export const ProxyDetailsModal: FC<ProxyDetailsModalProps> = props => {
         <div className={classes.producers}>
           <h5 className={classes.producersTitle}>Producer Voting</h5>
           <p className={classes.producersDescription}>
-            This proxy is voting for the following {data.producers.length}&nbsp;
+            This proxy is voting for the following {data.producers.length}{' '}
             producers
           </p>
           <div className={classes.producersGrid}>
