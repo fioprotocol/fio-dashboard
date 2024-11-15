@@ -18,7 +18,7 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
     disablePdfButton,
     number,
     roe,
-    payment: { paidWith },
+    payment: { paidWith } = {},
     statusTitle,
     statusColor,
     total,
@@ -35,7 +35,7 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
       <div className={classes.tableCol}>
         <OrderItemAmount total={total} roe={roe} />
       </div>
-      <div className={classes.tableCol}>{paidWith}</div>
+      <div className={classes.tableCol}>{paidWith ?? 'N/A'}</div>
       <div className={classes.tableCol}>
         <CommonBadge {...statusColor} hasRoundBorders>
           <span className={classes.status}>{statusTitle}</span>

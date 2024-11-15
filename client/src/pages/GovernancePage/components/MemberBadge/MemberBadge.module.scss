@@ -1,0 +1,30 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: fit-content;
+  height: 24px;
+  border-radius: 5px;
+  font-size: 0.625em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  background-color: $crocus-purple;
+  color: $white;
+  @include inter-semibold;
+
+  &.candidate {
+    background-color: $megaman;
+  }
+
+  &.inactive {
+    background-color: $dull-orange;
+  }
+
+  @include lg {
+    font-size: 0.6875em;
+  }
+}

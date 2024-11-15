@@ -15,6 +15,7 @@ import {
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
   LOGIN_SUCCESS,
+  LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   PROFILE_SUCCESS,
@@ -44,10 +45,6 @@ import {
   cartItems as cartItemsSelector,
 } from '../cart/selectors';
 import {
-  roe as roeSelector,
-  prices as pricesSelector,
-} from '../registrations/selectors';
-import {
   isNoProfileFlow as isNoProfileFlowSelector,
   refProfileCode as refProfileCodeSelector,
 } from '../refProfile/selectors';
@@ -73,7 +70,6 @@ import { Api as AdminApi } from '../../admin/api';
 import {
   CartItem,
   FioWalletDoublet,
-  Prices,
   PrivateRedirectLocationState,
   User,
 } from '../../types';
@@ -227,8 +223,6 @@ export function* profileSuccess(): Generator {
     const user: User = yield select(userSelector);
     const cartId: string | null = yield select(cartIdSelector);
     const cartItems: CartItem[] = yield select(cartItemsSelector);
-    const roe: number = yield select(roeSelector);
-    const prices: Prices = yield select(pricesSelector);
 
     const metamaskUserPublicKey: string | null = yield getZeroIndexPublicKey(
       user?.userProfileType,
@@ -260,8 +254,6 @@ export function* profileSuccess(): Generator {
             itemId: cartItemOnMetamaskDomain.id,
             item: cartItemOnMetamaskDomain,
             refCode: user.refProfile?.code,
-            roe,
-            prices: prices?.nativeFio,
           }),
         );
       }
@@ -269,13 +261,17 @@ export function* profileSuccess(): Generator {
   });
 }
 
-export function* logoutSuccess(history: History): Generator {
-  yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
+export function* logoutRequest(): Generator {
+  yield takeEvery(LOGOUT_REQUEST, function*() {
     const cartId: string | null = yield select(cartIdSelector);
     if (cartId) {
       yield put<Action>(clearCart());
     }
+  });
+}
 
+export function* logoutSuccess(history: History): Generator {
+  yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);
 

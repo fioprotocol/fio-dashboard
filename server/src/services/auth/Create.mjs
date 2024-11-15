@@ -60,10 +60,6 @@ export default class AuthCreate extends Base {
 
     let user;
 
-    const changeGuestCartOwner = async (guestId, userId) => {
-      await Cart.update({ userId, guestId: null }, { where: { guestId } });
-    };
-
     if (userByEmail && userByUsername && userByEmail.id === userByUsername.id) {
       user = userByEmail;
     } else if (!userByEmail && !userByUsername) {
@@ -210,7 +206,7 @@ export default class AuthCreate extends Base {
     }
 
     if (this.context.guestId) {
-      await changeGuestCartOwner(this.context.guestId, user.id);
+      await Cart.updateGuestCartUser(user.id, this.context.guestId);
     }
 
     return {

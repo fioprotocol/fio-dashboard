@@ -3,6 +3,7 @@ import { all } from 'redux-saga/effects';
 
 import {
   loginSuccess,
+  logoutRequest,
   logoutSuccess,
   nonceSuccess,
   profileSuccess,
@@ -17,6 +18,7 @@ import {
   cartWasCleared,
   deleteItem,
   updatePeriodItem,
+  onDomainRenew,
 } from './cart/sagas';
 import {
   containedFlowActionSuccess,
@@ -44,6 +46,7 @@ export default function* rootSaga(history: History, api: Api) {
     guestLoginSuccess(api),
     alternateLoginSuccess(history, api),
     loginSuccess(history, api),
+    logoutRequest(),
     logoutSuccess(history),
     profileSuccess(),
     nonceSuccess(),
@@ -66,5 +69,6 @@ export default function* rootSaga(history: History, api: Api) {
     addItem(),
     deleteItem(),
     updatePeriodItem(),
+    onDomainRenew(history),
   ]);
 }

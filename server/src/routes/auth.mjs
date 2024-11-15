@@ -53,6 +53,16 @@ export default {
       resolver: AuthCheckResolver,
     });
   },
+  async checkUserOrGuestOptional(req, res, next) {
+    return await authCheck(req, res, next, {
+      services: {
+        [AUTH_TYPE.USER]: AuthCheck,
+        [AUTH_TYPE.GUEST]: AuthCheckGuest,
+      },
+      resolver: AuthCheckResolver,
+      isOptional: true,
+    });
+  },
   async checkSimple(req, res, next) {
     return await authCheckSimple(req, res, next, AuthCheckSimple);
   },

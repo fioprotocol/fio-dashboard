@@ -20,6 +20,9 @@ $midnight: #042237;
 $oil: #1E1E1E;
 $dark-baltic-sea: #252525;
 $dark-blue-grey: #283d4f;
+$cynical-black: #171717;
+$dark-tone-ink: #121212;
+$black-oak: #4f4f4f;
 $bianca: #fafbfb;
 $beige: #faf5f5;
 $milk: #eeeeee;
@@ -38,6 +41,7 @@ $royal-blue: #2d63d5;
 $cyan-blue: #0f6fb8;
 $sky-blue: #07aeff;
 $dodger-blue: #4786ff;
+$megaman: #31B9FF;
 $jordy-blue: #97aaff;
 $fog: #dfd6ff;
 $pile-violet: #c3acff;
@@ -45,9 +49,12 @@ $medium-purple: #937ce0;
 $bright-violet: #9f3ee3;
 $light-indigo: #765cd6;
 $purple-pink: #df3cee;
+$bright-pink: #F502B1;
 $purple-magenta: #B65CD6;
 $light-lavender: #e9c0e9;
 $iris: #6b53c1;
+$crocus-purple: #8b73e2;
+$perrywinkle: #A08AEE;
 $carousel-pink: #fbebfb;
 $dark-slate-blue: #4b398d;
 $purple-iris: #502274;
@@ -57,17 +64,22 @@ $warn-red: #d40000;
 $simple-red: #e33e3e;
 $crimson: #ff0787;
 $red: #eb0000;
+$blood-burst: #FF4B4B;
 $simple-orange: #ff7500;
 $bright-orange: #ff5e00;
 $blaze-orange: #ff6d07;
+$red-orange-juice: #FF5647;
 $gadabout: #FFC6AD;
 $coral-bisque: #F5C4B0;
 $web-orange: #f2a900;
+$dull-orange: #E17E36;
+$saffron-gold: #EF9103;
 $saffron: #f3ba2f;
 $buried-gold: #DEDFE1;
 $supernova: #ffce00;
 $twine: #c99d66;
 $rio-grande: #cfc606;
+$golden-foil: #CCD000;
 $green: #74f87f;
 $tradewind: #50af95;
 $green-main: #00ab59;
@@ -75,6 +87,7 @@ $irish-green: #03b12d;
 $green-teal: #0fb871;
 $green-cyan: #00c366;
 $green-shell:#5CD551;
+$benzol-green: #00D26D;
 $green-tea: #c2f5bb;
 $light-seafoam: #9bffca;
 $humming-bird: #d3faea;
@@ -90,10 +103,12 @@ $gray-main: #484848;
 $cod-gray: #1c1c1c;
 $black-cow: #474747;
 $bauhaus: #3F3F3F;
+$briquette-grey: #515151;
 $onyx: #0f0f0f;
 $light-gray: #ececec;
 $mine-shaft: #353535;
 $baltic-sea: #2b2b2e;
+$black-olive: #3C3D3F;
 $gainsboro: #dbdbdb;
 $manatee: #90949c;
 $silver-chalice: #afafaf;
@@ -101,6 +116,8 @@ $silver: #c9c9c9;
 $gallery: #ededed;
 $iron: #d7d7d7;
 $vista-white: #fef7f7;
+$ghost-white: #f7f7ff;
+$showflake: #f0f0f0;
 $mountain-mist: #979797;
 $tundora: #444444;
 $lucky-gray: #767676;
@@ -119,6 +136,11 @@ $black-gradient: linear-gradient(
   270deg,
   rgba(43, 43, 46, 1) 0%,
   rgba(39, 39, 39, 1) 100%
+);
+$indigo-gradient: linear-gradient(
+  270deg,
+  $light-indigo 0%,
+  #22a2ff 100%
 );
 $violet-gradient: linear-gradient(
   270deg,

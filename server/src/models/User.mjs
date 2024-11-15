@@ -149,7 +149,7 @@ export class User extends Base {
   }
 
   static async findActive(id) {
-    const user = await this.findById(id, {
+    const user = await this.findByPk(id, {
       where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
       include: [
         { model: FreeAddress, as: 'freeAddresses' },
@@ -160,7 +160,11 @@ export class User extends Base {
           attributes: ['id', 'voucherId', 'deviceDescription', 'createdAt', 'status'],
         },
         { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
-        { model: ReferrerProfile, as: 'affiliateProfile', attributes: ['code', 'tpid'] },
+        {
+          model: ReferrerProfile,
+          as: 'affiliateProfile',
+          attributes: ['code', 'tpid', 'settings'],
+        },
       ],
     });
 
@@ -189,7 +193,7 @@ export class User extends Base {
   }
 
   static async findUser(id) {
-    const user = await this.findById(id, {
+    const user = await this.findByPk(id, {
       include: [
         { model: FreeAddress, as: 'freeAddresses' },
         { model: Wallet, as: 'fioWallets' },
@@ -228,7 +232,7 @@ export class User extends Base {
   }
 
   static info(id) {
-    return this.findById(id);
+    return this.findByPk(id);
   }
 
   static usersCount({ where, include }) {
@@ -249,7 +253,7 @@ export class User extends Base {
   }
 
   static async formatDateWithTimeZone(id, date = undefined) {
-    const user = await this.findById(id);
+    const user = await this.findByPk(id);
 
     const currentDate = date ? convertToNewDate(date) : new Date();
 

@@ -1,5 +1,9 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 
+import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+
+import { History } from 'history';
+
 import { addManual as createNotification } from '../notifications/actions';
 import {
   containedFlowQueryParams as getContainedFlowQueryParams,
@@ -13,8 +17,10 @@ import {
 
 import {
   ADD_ITEM_SUCCESS,
+  addItem as addItemToCart,
   CLEAR_CART_SUCCESS,
   DELETE_ITEM_SUCCESS,
+  HANDLE_DOMAIN_RENEW,
   UPDATE_CART_ITEM_PERIOD_SUCCESS,
 } from './actions';
 import { ACTIONS } from '../../components/Notifications/Notifications';
@@ -36,10 +42,18 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 
-import { convertFioPrices } from '../../util/prices';
+import { convertFioPrices, DEFAULT_FEE_PRICES } from '../../util/prices';
 
 import { Action } from '../types';
-import { ContainedFlowQueryParams, Prices } from '../../types';
+import {
+  CartItem,
+  ContainedFlowQueryParams,
+  FeePrice,
+  Prices,
+} from '../../types';
+import { refProfileCode } from '../refProfile/selectors';
+import { fees as feesSelector } from '../fio/selectors';
+import { cartItems as cartItemsSelector } from './selectors';
 
 export function* cartWasCleared(): Generator {
   yield takeEvery(CLEAR_CART_SUCCESS, function*(action: Action) {
@@ -126,5 +140,45 @@ export function* updatePeriodItem(): Generator {
         ]),
       );
     }
+  });
+}
+
+// todo: use in Domain manage page and renew page
+export function* onDomainRenew(history: History): Generator {
+  yield takeEvery(HANDLE_DOMAIN_RENEW, function*(action: Action) {
+    const { data: domain } = action;
+
+    const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
+    const refCode: string = yield select(refProfileCode);
+    const cartItems: CartItem[] = yield select(cartItemsSelector);
+
+    const renewDomainFeePrice =
+      fees[EndPoint.renewFioDomain] || DEFAULT_FEE_PRICES;
+
+    const newCartItem: CartItem = {
+      domain,
+      type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+      id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
+      period: 1,
+      costNativeFio: renewDomainFeePrice?.nativeFio,
+      costFio: renewDomainFeePrice?.fio,
+      costUsdc: renewDomainFeePrice?.usdc,
+    };
+
+    yield put<Action>(
+      addItemToCart({
+        item: newCartItem,
+        refCode,
+      }),
+    );
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+      getCartItemsDataForAnalytics([newCartItem]),
+    );
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
+    );
+    history.push(ROUTES.CART);
   });
 }

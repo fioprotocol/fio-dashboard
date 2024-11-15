@@ -57,6 +57,7 @@ export const BUTTONS_TITLE = {
   register: 'Register FIO Handle',
   request: 'Request Funds',
   socialLinks: 'Socials',
+  makePublic: 'Make Public',
 };
 
 export const TABLE_HEADERS_LIST = {

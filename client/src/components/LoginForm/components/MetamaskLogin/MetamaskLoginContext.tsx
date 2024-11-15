@@ -11,6 +11,7 @@ import { WALLET_TYPES } from '../../../../constants/wallets';
 import { log } from '../../../../util/general';
 import useEffectOnce from '../../../../hooks/general';
 
+import { isAuthenticated } from '../../../../redux/profile/selectors';
 import { refProfileCode } from '../../../../redux/refProfile/selectors';
 
 const DEFAULT_METAMASK_ERROR =
@@ -51,6 +52,7 @@ export const useContext = (props?: Props): UseContextProps => {
   >(null);
 
   const referrerCode = useSelector(refProfileCode);
+  const isAuth = useSelector(isAuthenticated);
 
   const dispatch = useDispatch();
 
@@ -107,10 +109,10 @@ export const useContext = (props?: Props): UseContextProps => {
   }, [derivationIndex, dispatch, publicKey, referrerCode]);
 
   useEffect(() => {
-    if (publicKey && !alternativeLoginError) {
+    if (publicKey && !alternativeLoginError && !isAuth) {
       metamaskLogin();
     }
-  }, [metamaskLogin, publicKey, alternativeLoginError]);
+  }, [metamaskLogin, publicKey, alternativeLoginError, isAuth]);
 
   useEffect(() => {
     if (alternativeLoginError) {

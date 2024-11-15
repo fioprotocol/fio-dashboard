@@ -10,6 +10,7 @@ const router = express.Router();
 const checkUserAuth = routes.auth.checkUser;
 const checkUserOptionalAuth = routes.auth.checkUserOptional;
 const checkGuestOptionalAuth = routes.auth.checkGuestOptional;
+const checkUserOrGuestOptionalAuth = routes.auth.checkUserOrGuestOptional;
 const checkGuestOrUserAuth = routes.auth.checkUserOrGuest;
 const checkAdminAuth = routes.auth.checkAdmin;
 const checkSimpleAuth = routes.auth.checkSimple;
@@ -35,7 +36,7 @@ router.get(
   '/auth/new-device-two-factor/check-rejected',
   routes.newDeviceTwoFactor.checkRejected,
 );
-router.post('/alternate-auth', routes.auth.alternateAuth);
+router.post('/alternate-auth', checkGuestOptionalAuth, routes.auth.alternateAuth);
 router.post('/guest-auth', checkGuestOptionalAuth, routes.auth.guestAuth);
 router.post('/admin-auth', routes.auth.adminLogin);
 router.post('/admin-auth/create', routes.auth.adminCreate);
@@ -161,8 +162,10 @@ router.post(
   routes.account.importValidateWallet,
 );
 router.post('/account/add-missing-wallet', routes.account.addMissingWallet);
+router.get('/account/wallet/fio-requests', checkUserAuth, routes.account.fioRequests);
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
+router.get('/ref-profile/settings/:code?', routes.refProfiles.settings);
 
 router.post('/fio-api/chain/get_table_rows', async (req, res) => {
   const sReq = superagent.post(`${process.env.FIO_BASE_URL}chain/get_table_rows`);
@@ -182,11 +185,15 @@ router.get('/contacts', checkUserAuth, routes.contacts.list);
 
 router.get('/check-pub-address', checkUserAuth, routes.external.validatePubAddress);
 
-router.get('/orders', checkUserOptionalAuth, routes.orders.list);
+router.get('/orders', checkUserOrGuestOptionalAuth, routes.orders.list);
 router.get('/orders/active', checkGuestOrUserAuth, routes.orders.getActive);
 router.post('/orders', checkGuestOrUserAuth, routes.orders.create);
 router.post('/orders/update/:id', checkGuestOrUserAuth, routes.orders.update);
-router.get('/orders/item/:id/:publicKey', checkUserOptionalAuth, routes.orders.get);
+router.get(
+  '/orders/item/:id/:publicKey',
+  checkUserOrGuestOptionalAuth,
+  routes.orders.get,
+);
 
 router.post('/payments', checkUserAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
@@ -215,7 +222,7 @@ router.patch(
   checkGuestOrUserAuth,
   routes.cart.handleUsersFreeCartItems,
 );
-router.put(
+router.patch(
   '/cart-recalculate-updated-prices',
   checkGuestOrUserAuth,
   routes.cart.recalculateOnPriceUpdate,

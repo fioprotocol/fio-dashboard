@@ -12,6 +12,20 @@ export default class UpdateAffiliate extends Base {
         {
           nested_object: {
             fch: 'string',
+            domains: {
+              list_of_objects: [
+                {
+                  name: ['required', 'string'],
+                  isPremium: 'boolean',
+                  rank: { min_number: 0 },
+                  isFirstRegFree: 'boolean',
+                  expirationDate: ['string'],
+                  domainType: 'string',
+                  allowFree: 'boolean',
+                  hasGatedRegistration: 'boolean',
+                },
+              ],
+            },
           },
         },
       ],
@@ -30,16 +44,20 @@ export default class UpdateAffiliate extends Base {
       });
     }
 
-    await ReferrerProfile.update(
-      {
-        tpid: data.fch,
+    const fields = {
+      tpid: data.fch,
+    };
+    if (data.domains) {
+      fields.settings = {
+        domains: data.domains,
+      };
+    }
+
+    await ReferrerProfile.update(fields, {
+      where: {
+        id: user.affiliateProfileId,
       },
-      {
-        where: {
-          id: user.affiliateProfileId,
-        },
-      },
-    );
+    });
 
     return await runService(UsersInfo, { context: this.context, params: {} });
   }

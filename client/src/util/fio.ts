@@ -4,6 +4,7 @@ import {
   validate,
   RawRequest,
   RequestStatus,
+  Action,
 } from '@fioprotocol/fiosdk';
 
 import apis from '../api';
@@ -308,7 +309,7 @@ export const prepareChainTransaction = async (
   const transaction = await apis.fio.publicFioSDK.transactions.createRawTransaction(
     {
       account: getAccountByDashboardAction(action),
-      action: getActionByDashboardAction(action),
+      action: getActionByDashboardAction(action) as Action,
       data: data,
       publicKey: walletPublicKey,
       chainData,

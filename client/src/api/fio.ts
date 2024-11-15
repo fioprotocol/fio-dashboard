@@ -36,6 +36,7 @@ import {
 
 import {
   AnyObject,
+  DetailedProxy,
   FioBalanceRes,
   FioRecord,
   NFTTokenDoublet,
@@ -93,12 +94,34 @@ const fioLogger: FioLogger = message => {
   }
 };
 
+export const proxyToDetailedProxy = ({
+  fioaddress,
+  id,
+  is_auto_proxy,
+  is_proxy,
+  last_vote_weight,
+  owner,
+  producers,
+  proxy,
+  proxied_vote_weight,
+}: Proxy): DetailedProxy => ({
+  id,
+  isAutoProxy: is_auto_proxy,
+  isProxy: is_proxy,
+  proxy,
+  owner,
+  lastVoteWeight: parseFloat(last_vote_weight),
+  proxiedVoteWeight: parseFloat(proxied_vote_weight),
+  fioAddress: fioaddress,
+  producers,
+});
+
 export default class Fio {
   baseurls: string[] = [];
   publicFioSDK: FIOSDK | null = null;
   walletFioSDK: FIOSDK | null = null;
   tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
-  domainTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
+  affiliateTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   fioChainIdEnvironment: string = process.env.REACT_APP_FIO_CHAIN_ID || '';
 
   constructor() {
@@ -110,9 +133,9 @@ export default class Fio {
     });
   }
 
-  setTpid = (tpid: string | null, domainTpid?: string): void => {
+  setTpid = (tpid: string | null, affiliateTpid?: string): void => {
     this.tpid = tpid;
-    this.domainTpid = domainTpid || tpid;
+    this.affiliateTpid = affiliateTpid || tpid;
     this.publicFioSDK.technologyProviderId = tpid;
   };
 
@@ -140,6 +163,9 @@ export default class Fio {
     // add integer and remainder
     return new MathOp(tempResult).add(floorRemainder).toNumber();
   };
+
+  sufToAmount = (suf: number): number =>
+    Number(FIOSDK.SUFToAmount(suf).toFixed(2));
 
   createPrivateKeyMnemonic = async (mnemonic: string): Promise<string> => {
     const { fioKey } = await FIOSDK.createPrivateKeyMnemonic(mnemonic);
@@ -600,47 +626,7 @@ export default class Fio {
   getProxies = async () => {
     let proxies;
     try {
-      let rows: Proxy[] = [];
-
-      const getRows = async ({
-        limit = DEFAULT_TABLE_RAWS_LIMIT,
-        offset = 0,
-      }: {
-        limit: number;
-        offset: number;
-      }) =>
-        await this.getTableRows({
-          code: Account.eosio,
-          scope: Account.eosio,
-          table: 'voters',
-          limit,
-          lower_bound: offset?.toString() || '0',
-          reverse: false,
-          json: true,
-        });
-
-      const getAllRows = async ({
-        limit = DEFAULT_TABLE_RAWS_LIMIT,
-        offset = 0,
-      }: {
-        limit?: number;
-        offset?: number;
-      }) => {
-        const rowsResponse = await getRows({
-          limit,
-          offset,
-        });
-
-        rows = [...rows, ...rowsResponse.rows];
-
-        const updatedLimit = rowsResponse.rows?.length || limit;
-
-        if (rowsResponse.more) {
-          await getAllRows({ offset: offset + updatedLimit });
-        }
-      };
-
-      await getAllRows({});
+      const rows: Proxy[] = await this.getProxyRows();
 
       const rowsProxies = rows
         .filter(row => row.is_proxy && row.fioaddress)
@@ -664,6 +650,107 @@ export default class Fio {
         `${process.env.REACT_APP_FIO_DEFAULT_PROXY}`,
       ]
     );
+  };
+
+  getDetailedProxies = async (): Promise<DetailedProxy[]> => {
+    let proxies;
+    try {
+      const rows: Proxy[] = await this.getProxyRows();
+
+      proxies = rows
+        .filter(row => row.is_proxy && row.fioaddress)
+        .map(proxyToDetailedProxy);
+    } catch (err) {
+      this.logError(err);
+    }
+
+    return proxies;
+  };
+
+  getWalletVotes = async (publicKey: string): Promise<DetailedProxy[]> => {
+    const accountHash = FIOSDK.accountHash(publicKey).accountnm;
+
+    const getRows = async () =>
+      await this.getTableRows({
+        json: true,
+        code: Account.eosio,
+        scope: Account.eosio,
+        table: 'voters',
+        lower_bound: accountHash,
+        upper_bound: accountHash,
+        index_position: '3',
+        key_type: 'i64',
+      });
+
+    return ((await getRows()).rows as Proxy[]).map(
+      ({
+        fioaddress,
+        id,
+        is_auto_proxy,
+        is_proxy,
+        last_vote_weight,
+        owner,
+        producers,
+        proxy,
+        proxied_vote_weight,
+      }) => ({
+        id,
+        isAutoProxy: is_auto_proxy,
+        isProxy: is_proxy,
+        proxy: proxy,
+        owner: owner,
+        lastVoteWeight: parseFloat(last_vote_weight),
+        proxiedVoteWeight: parseFloat(proxied_vote_weight),
+        fioAddress: fioaddress,
+        producers: producers,
+      }),
+    );
+  };
+
+  getProxyRows = async () => {
+    let rows: Proxy[] = [];
+
+    const getRows = async ({
+      limit = DEFAULT_TABLE_RAWS_LIMIT,
+      offset = 0,
+    }: {
+      limit: number;
+      offset: number;
+    }) =>
+      await this.getTableRows({
+        code: Account.eosio,
+        scope: Account.eosio,
+        table: 'voters',
+        limit,
+        lower_bound: offset?.toString() || '0',
+        reverse: false,
+        json: true,
+      });
+
+    const getAllRows = async ({
+      limit = DEFAULT_TABLE_RAWS_LIMIT,
+      offset = 0,
+    }: {
+      limit?: number;
+      offset?: number;
+    }) => {
+      const rowsResponse = await getRows({
+        limit,
+        offset,
+      });
+
+      rows = [...rows, ...rowsResponse.rows];
+
+      const updatedLimit = rowsResponse.rows?.length || limit;
+
+      if (rowsResponse.more) {
+        await getAllRows({ offset: offset + updatedLimit });
+      }
+    };
+
+    await getAllRows({});
+
+    return rows;
   };
 
   getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {

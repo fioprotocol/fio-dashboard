@@ -132,9 +132,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           addItemToCart({
             item: cartItem,
             publicKey,
-            prices: prices?.nativeFio,
             refCode,
-            roe,
           }),
         );
 
@@ -143,7 +141,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         log.error(error);
       }
     },
-    [fio, usdc, prices.nativeFio, dispatch, publicKey, refCode, roe, history],
+    [fio, usdc, prices.nativeFio, dispatch, publicKey, refCode, history],
   );
 
   const addressWidgetContent = {

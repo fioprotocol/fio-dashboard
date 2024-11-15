@@ -128,7 +128,9 @@ export const combinePriceWithDivider = ({
 }) => {
   const { freeTotalPrice, fioTotalPrice, usdcTotalPrice } =
     totalCostPrice || {};
+
   if (freeTotalPrice) return freeTotalPrice;
+  if (!fioTotalPrice && !usdcTotalPrice) return 'N/A';
 
   return `${usdcTotalPrice} (${fioTotalPrice})`;
 };

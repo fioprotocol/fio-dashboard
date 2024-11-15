@@ -1,0 +1,58 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .sendTo {
+    font-size: 0.875em;
+    margin-bottom: 0;
+    margin-top: 15px;
+
+    span {
+      @include proxima-nova-semibold;
+    }
+  }
+
+  .label {
+    font-size: 0.875em;
+    margin-top: 20px;
+    margin-bottom: 0;
+    @include proxima-nova-semibold;
+
+    .regularText {
+      @include proxima-nova-regular;
+    }
+  }
+
+  .dropdown {
+    margin-top: 15px;
+  }
+
+  .votingPower {
+    margin-top: 15px;
+    margin-left: 20px;
+    margin-bottom: 0;
+    font-size: 0.6875em;
+
+    span {
+      @include proxima-nova-semibold;
+    }
+
+    .violet {
+      color: $light-indigo;
+    }
+  }
+
+  .transactionDetails {
+    margin-top: 20px;
+  }
+}
+
+@include lg {
+  .title {
+    font-size: 26px;
+  }
+}

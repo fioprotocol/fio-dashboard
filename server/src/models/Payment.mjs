@@ -195,7 +195,7 @@ export class Payment extends Base {
           );
 
           if (paymentProcessor) {
-            const user = await User.findById(order.userId);
+            const user = await User.findByPk(order.userId);
 
             extPaymentParams = await paymentProcessor.create({
               amount: order.total,

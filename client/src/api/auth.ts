@@ -1,6 +1,6 @@
 import Base from './base';
 
-import { FioWalletDoublet } from '../types';
+import { FioWalletDoublet, RefProfileDomain } from '../types';
 import {
   AuthCheckRejectedResponse,
   AuthCreateNewDeviceRequestResponse,
@@ -194,9 +194,12 @@ export default class Auth extends Base {
     });
   }
 
-  updateAffiliate(fch: string): Promise<AuthProfileResponse> {
+  updateAffiliate(
+    fch: string,
+    domains: RefProfileDomain[],
+  ): Promise<AuthProfileResponse> {
     return this.apiClient.patch('users/affiliate', {
-      data: { fch },
+      data: { fch, domains },
     });
   }
 

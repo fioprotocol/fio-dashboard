@@ -14,7 +14,7 @@ export default class UsersUpdateEmailNotificationParams extends Base {
   }
 
   async execute(data) {
-    const user = await User.findById(this.context.id, {
+    const user = await User.findByPk(this.context.id, {
       where: { status: User.STATUS.ACTIVE },
     });
 

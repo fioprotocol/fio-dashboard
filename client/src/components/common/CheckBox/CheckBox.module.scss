@@ -1,0 +1,35 @@
+@import '../../../assets/styles/colors.scss';
+
+.checkbox {
+  &:hover {
+    background: none;
+  }
+
+  svg[data-testid='CheckBoxOutlineBlankIcon'],
+  svg[data-testid='CheckBoxIcon'] {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+  }
+
+  svg[data-testid='CheckBoxOutlineBlankIcon'] {
+    box-shadow: inset 0 0 0 1px $black-oak;
+
+    path {
+      display: none;
+    }
+  }
+
+  svg[data-testid='CheckBoxIcon'] {
+    color: $light-indigo;
+    box-shadow: inset 0 0 0 4px $light-indigo;
+
+    path {
+      display: block;
+    }
+  }
+
+  & input[disabled] + svg {
+    opacity: 0.5;
+  }
+}

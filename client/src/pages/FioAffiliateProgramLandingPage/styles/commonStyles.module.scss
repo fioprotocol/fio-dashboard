@@ -3,7 +3,11 @@
 .sectionLayout {
   padding: 100px 120px;
 
-  @include sm {
+  @include md {
+    padding: 80px 50px;
+  }
+
+  @include tablet {
     padding: 50px 25px;
   }
 }
@@ -17,7 +21,11 @@
 
   .title {
     font-size: 3rem;
-    @include comfortaa-bold;
+    @include inter-bold;
+  }
+
+  &.containerDark {
+    background: $onyx;
   }
 }
 

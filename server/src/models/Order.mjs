@@ -276,7 +276,7 @@ export class Order extends Base {
   }
 
   static async orderInfo(id, useFormatDetailed) {
-    const orderObj = await this.findById(id, {
+    const orderObj = await this.findByPk(id, {
       include: [
         {
           model: OrderItem,

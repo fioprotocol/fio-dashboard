@@ -3,7 +3,7 @@ import { generate } from './authToken';
 import Base from '../Base';
 import X from '../Exception';
 
-import { User, Notification, ReferrerProfile, Wallet } from '../../models';
+import { User, Notification, ReferrerProfile, Wallet, Cart } from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
 import { AUTH_TYPE } from '../../tools.mjs';
@@ -73,13 +73,17 @@ export default class AuthAlternateAuthenticate extends Base {
         await user.update({ timeZone });
       }
 
+      if (this.context.guestId) {
+        await Cart.updateGuestCartUser(user.id, this.context.guestId);
+      }
+
       return {
         data: responseData,
       };
     }
 
     const refProfile = await ReferrerProfile.findOneWhere({
-      code: referrerCode,
+      code: referrerCode || '',
     });
 
     const refProfileId = refProfile ? refProfile.id : null;
@@ -114,6 +118,10 @@ export default class AuthAlternateAuthenticate extends Base {
     await newWallet.save();
 
     const responseData = generateJwt(user.id);
+
+    if (this.context.guestId) {
+      await Cart.updateGuestCartUser(user.id, this.context.guestId);
+    }
 
     return {
       data: { ...responseData, isSignUp: true },

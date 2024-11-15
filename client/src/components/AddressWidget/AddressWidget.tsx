@@ -8,7 +8,7 @@ import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
 import { FormComponent } from './components/FormComponent';
 
-import { AddressWidgetNotification } from '../../types';
+import { AddressWidgetDomain, AddressWidgetNotification } from '../../types';
 
 import classes from './AddressWidget.module.scss';
 
@@ -33,7 +33,7 @@ export type AddressWidgetProps = {
   optionButtonClassNames?: string;
   inputCustomDomainClassNames?: string;
   regInputCustomDomainClassNames?: string;
-  defaultValue?: { id: string; name: string };
+  defaultValue?: AddressWidgetDomain;
   links?: {
     getCryptoHandle: ReactNode;
   };
@@ -50,7 +50,7 @@ export type AddressWidgetProps = {
   isValidating?: boolean;
   isDarkWhite?: boolean;
   lowerCased?: boolean;
-  options?: Array<{ id: string; name: string }>;
+  options?: Array<AddressWidgetDomain>;
   prefix?: string;
   showCustomDomainInput?: boolean;
   suffixText?: string;
@@ -73,6 +73,7 @@ export type AddressWidgetProps = {
   inputClassNames?: string;
   isBlueButton?: boolean;
   toggleShowCustomDomain?: (isCustomDomain: boolean) => void;
+  onFocus?: () => void;
 };
 
 const AddressWidget: React.FC<AddressWidgetProps> = props => {
@@ -132,6 +133,7 @@ const AddressWidget: React.FC<AddressWidgetProps> = props => {
     isBlueButton,
     prefix,
     toggleShowCustomDomain,
+    onFocus,
   } = props;
 
   return (
@@ -204,6 +206,7 @@ const AddressWidget: React.FC<AddressWidgetProps> = props => {
         regInputCustomDomainClassNames={regInputCustomDomainClassNames}
         prefix={prefix}
         toggleShowCustomDomain={toggleShowCustomDomain}
+        onFocus={onFocus}
       />
 
       {children}

@@ -9,6 +9,7 @@ import AddressWidget from '../../components/AddressWidget';
 import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
+import { RefAddressWidget } from '../../components/RefAddressWidget';
 
 import { ROUTES } from '../../constants/routes';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
@@ -19,7 +20,7 @@ import useQuery from '../../hooks/useQuery';
 
 import { RefProfile, ContainedFlowQueryParams } from '../../types';
 
-import classnames from './HomePage.module.scss';
+import classes from './HomePage.module.scss';
 
 type Props = {
   isAuthenticated: boolean;
@@ -74,12 +75,18 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
     );
   }
 
-  if (isContainedFlow)
-    return <AddressWidget isDarkWhite {...addressWidgetContent} />;
+  if (isContainedFlow) return <AddressWidget {...addressWidgetContent} />;
 
   return (
-    <div className={classnames.container}>
-      <AddressWidget isDarkWhite={!!refProfileInfo} {...addressWidgetContent} />
+    <div className={classes.container}>
+      {addressWidgetContent.isAffiliate ? (
+        <RefAddressWidget
+          refProfileInfo={refProfileInfo}
+          addressWidgetContent={addressWidgetContent}
+        />
+      ) : (
+        <AddressWidget {...addressWidgetContent} />
+      )}
       <FCHBanner fch="bob@rulez" />
       <FCHSpecialsBanner />
       <WidelyAdoptedSection />

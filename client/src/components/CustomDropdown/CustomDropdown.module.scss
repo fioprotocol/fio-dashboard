@@ -68,8 +68,20 @@
     background-color: $white;
   }
 
-  &.isVoilet {
+  &.isViolet {
     background-color: $bright-violet;
+  }
+
+  &.isIndigo {
+    background-color: $light-indigo;
+    .placeholder {
+      color: $white;
+      white-space: nowrap;
+    }
+
+    svg {
+      color: $white;
+    }
   }
 
   &.isDark {

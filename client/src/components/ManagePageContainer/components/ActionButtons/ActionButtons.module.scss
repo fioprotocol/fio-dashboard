@@ -94,6 +94,10 @@
       margin-right: 10px;
     }
   }
+
+  &.leftAlign {
+    justify-content: flex-start;
+  }
 }
 
 @include lg {

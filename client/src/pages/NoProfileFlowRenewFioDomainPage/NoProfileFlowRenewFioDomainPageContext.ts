@@ -121,9 +121,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           addItemToCart({
             item: cartItem,
             publicKey,
-            prices: prices?.nativeFio,
             refCode,
-            roe,
           }),
         );
 

@@ -1,6 +1,6 @@
 import Base from './base';
 
-import { CartItem, NativePrices } from '../types';
+import { CartItem } from '../types';
 import { DefaultSuccessResponse } from './responses';
 
 type CartResponseType = {
@@ -11,8 +11,6 @@ export default class Cart extends Base {
   addItem(data: {
     item: CartItem;
     publicKey?: string;
-    prices?: NativePrices;
-    roe?: number;
     refCode?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.post('cart-add-item', data);
@@ -22,8 +20,6 @@ export default class Cart extends Base {
   }
   deleteItem(data: {
     itemId: string;
-    prices: NativePrices;
-    roe: number;
     refCode?: string;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-delete-item', data);
@@ -37,17 +33,12 @@ export default class Cart extends Base {
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-handle-free-items', data);
   }
-  recalculateOnPriceUpdate(data: {
-    prices: NativePrices;
-    roe: number;
-  }): Promise<CartResponseType> {
-    return this.apiClient.put('cart-recalculate-updated-prices', data);
+  recalculateOnPriceUpdate(): Promise<CartResponseType> {
+    return this.apiClient.patch('cart-recalculate-updated-prices', {});
   }
   updateItemPeriod(data: {
     itemId: string;
     period: number;
-    prices: NativePrices;
-    roe: number;
   }): Promise<CartResponseType> {
     return this.apiClient.patch('cart-update-item-period', data);
   }

@@ -19,7 +19,7 @@ export default class SendResetPassword extends Base {
   }
 
   async execute({ id }) {
-    const adminUser = await AdminUser.findById(id);
+    const adminUser = await AdminUser.findByPk(id);
 
     if (!adminUser.id) {
       throw new X({

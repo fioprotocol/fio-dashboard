@@ -73,7 +73,7 @@ export const RefHomePage: React.FC<Props &
     connectButtonDisabled,
     disabled,
     gatedChainName,
-    hasFioVerificactionError,
+    hasFioVerificationError,
     hasVerifiedError,
     infoMessage,
     isGatedFlow,
@@ -106,6 +106,7 @@ export const RefHomePage: React.FC<Props &
 
   useEffect(() => {
     if (refProfileInfo?.code) {
+      // todo: /ref/handle
       firePageViewAnalyticsEvent(
         `${APP_TITLE} - ${refProfileInfo.label}`,
         `${window.location.origin}/ref/${refProfileInfo.code}`,
@@ -251,12 +252,12 @@ export const RefHomePage: React.FC<Props &
             <GateVerificationComponent
               connectButtonDisabled={connectButtonDisabled}
               gatedChainName={gatedChainName}
-              hasFioVerificactionError={hasFioVerificactionError}
+              hasFioVerificationError={hasFioVerificationError}
               hasVerifiedError={hasVerifiedError}
               isVerified={isVerified}
               infoMessage={infoMessage}
               loaderText={loaderText}
-              parnterName={refProfileInfo?.label}
+              partnerName={refProfileInfo?.label}
               refDomain={refDomain}
               showBrowserExtensionErrorModal={showBrowserExtensionErrorModal}
               showProviderWindowError={showProviderWindowError}

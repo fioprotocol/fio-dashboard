@@ -1,0 +1,26 @@
+@import '../../../../../../assets/styles/colors.scss';
+@import '../../../../../../assets/styles/fontMixins.scss';
+
+.detailsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  .detailsItem {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: $dark-jungle-green;
+    font-size: 0.675em;
+    margin-bottom: 0;
+
+    .detailsLabel {
+      @include proxima-nova-medium;
+    }
+
+    .detailsValue {
+      @include proxima-nova-semibold;
+    }
+  }
+}

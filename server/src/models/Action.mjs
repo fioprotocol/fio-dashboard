@@ -36,7 +36,7 @@ export class Action extends Base {
   }
 
   async confirmAdminEmail() {
-    const adminUser = await AdminUser.findById(this.data.adminId);
+    const adminUser = await AdminUser.findByPk(this.data.adminId);
 
     return adminUser.update({ statusType: 2 });
   }

@@ -17,7 +17,7 @@ export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
     disablePdfButton,
     number,
     roe,
-    payment: { paidWith },
+    payment: { paidWith } = {},
     statusTitle,
     statusColor,
     total,
@@ -32,7 +32,7 @@ export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
       <div className={classes.defaultItem}>
         <OrderItemAmount total={total} roe={roe} />
       </div>
-      <div className={classes.defaultItem}>{paidWith}</div>
+      <div className={classes.defaultItem}>{paidWith ?? 'N/A'}</div>
       <div className={classes.status}>
         <CommonBadge {...statusColor}>
           <div className={classes.statusTitle}>{statusTitle}</div>

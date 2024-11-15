@@ -105,9 +105,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
-              technologyProviderId: registration.isCombo
-                ? apis.fio.domainTpid
-                : apis.fio.tpid,
+              technologyProviderId: apis.fio.affiliateTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           )) as unknown) as SignedTxArgs;
@@ -156,7 +154,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
-              technologyProviderId: apis.fio.domainTpid,
+              technologyProviderId: apis.fio.affiliateTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
               ownerPublicKey: ownerFioPublicKey,
             },
@@ -194,7 +192,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
                 .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
                 .round(0)
                 .toNumber(),
-              technologyProviderId: apis.fio.tpid,
+              technologyProviderId: apis.fio.affiliateTpid,
               ownerPublicKey: ownerFioPublicKey,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },

@@ -7,6 +7,7 @@ const config = {
   apiPrefix: 'api/v1/',
   apiBaseUrl: process.env.REACT_APP_API_BASE_URL,
   baseUrl: process.env.REACT_APP_BASE_URL,
+  fioChainId: process.env.REACT_APP_FIO_CHAIN_ID,
   wsBaseUrl: process.env.REACT_APP_WS_BASE_URL,
   supportUrl:
     process.env.REACT_APP_FIOPROTOCOL_SUPPORT_URL || defaultSupportUrl,
@@ -24,6 +25,8 @@ const config = {
   sentryReplaysOnErrorSampleRate: Number(
     process.env.REACT_APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1,
   ),
+  exportOrdersCSVLimit: Number(process.env.REACT_APP_EXPORT_ORDERS_CSV_LIMIT),
+  voteFioHandle: process.env.REACT_APP_VOTE_FIO_HANDLE,
 };
 
 export default config;

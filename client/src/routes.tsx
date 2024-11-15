@@ -293,6 +293,9 @@ const NoProfileFlowRenewFioHandlePage = lazy(() =>
     /* webpackChunkName: 'NoProfileFlowRenewFioHandlePage' */ './pages/NoProfileFlowRenewFioHandlePage'
   ),
 );
+const GovernancePage = lazy(() =>
+  import(/* webpackChunkName: 'GovernancePage' */ './pages/GovernancePage'),
+);
 const Routes = (): React.ReactElement => {
   const [isMaintenance, isLoading] = useMaintenance();
   useGTMGlobalTags();
@@ -365,6 +368,11 @@ const Routes = (): React.ReactElement => {
               />
               <SentryRoute
                 path={ROUTES.REF_PROFILE_HOME}
+                component={RefHomePage}
+                exact
+              />
+              <SentryRoute
+                path={ROUTES.REF_PROFILE_HOME_FCH}
                 component={RefHomePage}
                 exact
               />
@@ -674,6 +682,10 @@ const Routes = (): React.ReactElement => {
                 path={ROUTES.NO_PROFILE_ADD_BUNDLES}
                 component={NoProfileFlowRenewFioHandlePage}
                 exact
+              />
+              <SentryRoute
+                path={ROUTES.GOVERNANCE}
+                component={GovernancePage}
               />
 
               <SentryRoute path={ROUTES.NOT_FOUND} component={NotFoundPage} />

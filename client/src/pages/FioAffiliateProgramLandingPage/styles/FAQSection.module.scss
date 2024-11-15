@@ -6,18 +6,19 @@
 
 .container {
   .accordion {
-    margin: 40px 0 100px;
+    margin: 40px 0 0;
+    padding: 0 100px;
     width: 100%;
 
     .accordionItem {
       border-top: 1px solid $mountain-mist;
-      padding: 20px;
+      padding: 20px 0;
 
       & a {
         color: $white;
-       text-decoration: underline;
-       text-underline-offset: 3px;
-       text-decoration-thickness: 0.5px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 0.5px;
       }
 
       &:last-child {
@@ -33,12 +34,12 @@
         .accordionItemTitle {
           margin: 0;
           width: fit-content;
-          @include proxima-nova-thin;
+          @include inter-thin;
           cursor: pointer;
           font-size: 1.125em;
 
           &.isActive {
-            @include proxima-nova-semibold;
+            @include inter-semibold;
           }
         }
 
@@ -62,13 +63,35 @@
       .accordionItemSubtitle {
         padding-top: 30px;
         margin-bottom: 0;
-        @include proxima-nova-thin-it;
+        @include inter-thin-it;
       }
 
       .accordionItemText {
-        padding: 20px 20px 0 0;
-        @include proxima-nova-thin;
+        padding: 20px 0 0 0;
+        max-width: 845px;
+        @include inter-thin;
       }
+    }
+  }
+}
+
+@include md {
+  .container {
+    .accordion {
+
+      .accordionItem {
+        .accordionItemText {
+          max-width: initial;
+        }
+      }
+    }
+  }
+}
+
+@include tablet {
+  .container {
+    .accordion {
+      padding: 0;
     }
   }
 }

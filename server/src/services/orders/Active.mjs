@@ -73,7 +73,7 @@ export default class OrdersActive extends Base {
           orderItemStatus: {},
         })),
         payment:
-          (payment && userId === order.userId) || guestId === order.guestId
+          payment && (userId === order.userId || guestId === order.guestId)
             ? {
                 id: payment.id,
                 processor: payment.processor,

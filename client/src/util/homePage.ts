@@ -14,6 +14,7 @@ import {
   RefProfile,
   ContainedFlowActionSettingsKey,
 } from '../types';
+import { REF_PROFILE_TYPE } from '../constants/common';
 
 type DefaultContentProps = string | null;
 
@@ -33,12 +34,15 @@ export const handleHomePageContent = ({
   hasMinHeight: boolean;
   showSignInWidget: boolean;
   initialValues: { domain?: string };
+  isDarkWhite?: boolean;
+  isAffiliate?: boolean;
 } => {
   let title = null;
   let subtitle = null;
   let logoSrc = null;
   let actionText = null;
   let initialValues = null;
+  let isDarkWhite = false;
   const actionName = removeExtraCharactersFromString(
     containedFlowQueryParams?.action,
   )?.toUpperCase();
@@ -82,12 +86,16 @@ export const handleHomePageContent = ({
     actionText = CONTAINED_FLOW_ACTION_TEXT[actionName];
   }
 
-  if (refProfileInfo) {
+  if (refProfileInfo && refProfileInfo.type === REF_PROFILE_TYPE.REF) {
     title = title ? title : `Claim your @${DEFAULT_DOMAIN_NAME} web3 name!`;
     subtitle = subtitle
       ? subtitle
       : 'Replace all of your public wallet addresses with a single, secure, customizable handle.';
   }
+
+  isDarkWhite =
+    (!!refProfileInfo && refProfileInfo.type === REF_PROFILE_TYPE.REF) ||
+    isContainedFlow;
 
   return {
     logoSrc,
@@ -97,5 +105,8 @@ export const handleHomePageContent = ({
     hasMinHeight: isContainedFlow,
     showSignInWidget: isContainedFlow,
     initialValues,
+    isDarkWhite,
+    isAffiliate:
+      !!refProfileInfo && refProfileInfo.type === REF_PROFILE_TYPE.AFFILIATE,
   };
 };

@@ -67,7 +67,7 @@ export default class CreateCartFromOrder extends Base {
 
       const detailedOrder = await Order.formatDetailed(order.get({ plain: true }));
 
-      const prices = await fioApi.getPrices(true);
+      const prices = await fioApi.getPrices();
       const roe = await getROE();
 
       if (!prices) {
@@ -101,6 +101,10 @@ export default class CreateCartFromOrder extends Base {
         const cart = await Cart.create({
           items: cartItems,
           userId,
+          options: {
+            prices,
+            roe,
+          },
         });
 
         return { data: Cart.format(cart.get({ plain: true })) };

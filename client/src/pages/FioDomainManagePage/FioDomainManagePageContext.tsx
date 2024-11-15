@@ -184,9 +184,7 @@ export const useContext = (): UseContextProps => {
       dispatch(
         addItemToCart({
           item: newCartItem,
-          prices: prices?.nativeFio,
           refCode,
-          roe,
         }),
       );
       fireAnalyticsEvent(
@@ -203,12 +201,10 @@ export const useContext = (): UseContextProps => {
       cartItems,
       dispatch,
       history,
-      prices?.nativeFio,
       renewDomainFeePrice.fio,
       renewDomainFeePrice?.nativeFio,
       renewDomainFeePrice.usdc,
       refCode,
-      roe,
     ],
   );
 
@@ -279,9 +275,7 @@ export const useContext = (): UseContextProps => {
       dispatch(
         addItemToCart({
           item: newCartItem,
-          prices: prices?.nativeFio,
           refCode,
-          roe,
         }),
       );
       return history.push(ROUTES.CART);
@@ -292,9 +286,7 @@ export const useContext = (): UseContextProps => {
       fio,
       history,
       nativeFioDomainPrice,
-      prices?.nativeFio,
       refCode,
-      roe,
       usdc,
     ],
   );
