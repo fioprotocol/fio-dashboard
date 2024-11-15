@@ -26,6 +26,12 @@
   padding-right: 12px;
   padding-bottom: 12px;
   background: #F8F7F7;
+
+  &.toright {
+    justify-content: flex-end;
+    padding-right: 30%;
+  }
+  
   &:nth-child(5n+1) {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;

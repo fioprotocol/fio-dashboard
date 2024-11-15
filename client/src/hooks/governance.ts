@@ -23,6 +23,8 @@ import {
   isFioWalletsBalanceLoading,
 } from '../redux/fio/selectors';
 
+import { siteSetings } from '../redux/settings/selectors';
+
 import telegramLogo from '../assets/images/social-network-governance/telegram.svg';
 import twitterLogo from '../assets/images/social-network-governance/twitter.svg';
 import linkedinLogo from '../assets/images/social-network-governance/linkedin.svg';
@@ -41,6 +43,7 @@ import {
   WalletsFioRequest,
 } from '../types/governance';
 import { DetailedProxy } from '../types';
+import { VARS_KEYS } from '../constants/vars';
 
 const getJiraCandidatesUrl = (publicKey?: string) => {
   if (!publicKey) {
@@ -142,30 +145,43 @@ export const useGetPublicKeyCandidatesVotes = (
     setCandidatesVotes,
   ] = useState<CandidatesVotes | null>(null);
 
-  const getCandidates = useCallback(async (publicKey?: string) => {
-    try {
-      toggleLoading(true);
-      const results = await superagent.get(getJiraCandidatesUrl(publicKey));
+  const settings = useSelector(siteSetings);
 
-      const jiraCandidatesResults: JiraCandidates = results.body?.issues;
+  const getCandidates = useCallback(
+    async (publicKey?: string) => {
+      try {
+        toggleLoading(true);
+        const boardPublicKey =
+          settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] &&
+          config.fioChainId === FIO_CHAIN_ID.TESTNET
+            ? settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE]
+            : publicKey;
 
-      const { fields } = jiraCandidatesResults[0] || {};
+        const results = await superagent.get(
+          getJiraCandidatesUrl(boardPublicKey),
+        );
 
-      const candidatesVotesRersults = {
-        currentBoardVotingPower: fields?.customfield_10183,
-        boardVotingPowerLastUpdate: fields?.customfield_10184,
-        candidatesIdsList: fields?.issuelinks
-          .filter(issueLink => issueLink?.type?.outward === 'votes on')
-          .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
-      };
+        const jiraCandidatesResults: JiraCandidates = results.body?.issues;
 
-      setCandidatesVotes(candidatesVotesRersults);
-    } catch (error) {
-      log.error(error);
-    } finally {
-      toggleLoading(false);
-    }
-  }, []);
+        const { fields } = jiraCandidatesResults[0] || {};
+
+        const candidatesVotesRersults = {
+          currentBoardVotingPower: fields?.customfield_10183,
+          boardVotingPowerLastUpdate: fields?.customfield_10184,
+          candidatesIdsList: fields?.issuelinks
+            .filter(issueLink => issueLink?.type?.outward === 'votes on')
+            .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
+        };
+
+        setCandidatesVotes(candidatesVotesRersults);
+      } catch (error) {
+        log.error(error);
+      } finally {
+        toggleLoading(false);
+      }
+    },
+    [settings],
+  );
 
   useEffectOnce(() => {
     void getCandidates(publicKey);
@@ -203,6 +219,7 @@ export const useOveriewWallets = (): {
 } => {
   const fioWallets = useSelector(fioWalletsSelector);
   const walletsLoading = useSelector(isFioWalletsBalanceLoading);
+  const settings = useSelector(siteSetings);
 
   const [walletVotes, setwalletVotes] = useState<{
     [key: string]: DetailedProxy[];
@@ -278,7 +295,8 @@ export const useOveriewWallets = (): {
     hasVotedForBoardOfDirectors:
       walletsFioRequests &&
       walletsFioRequests[fioWallet?.publicKey]?.sent.some(
-        ({ payer_fio_address }) => payer_fio_address === config.voteFioHandle,
+        ({ payer_fio_address }) =>
+          payer_fio_address === settings[VARS_KEYS.VOTE_FIO_HANDLE],
       ),
   }));
 
