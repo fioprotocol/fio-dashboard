@@ -84,7 +84,9 @@ const GovernancePage: FC = () => {
               />
               <SentryRoute
                 path={ROUTES.GOVERNANCE_OVERVIEW}
-                component={GovernanceOverviewTab}
+                render={props => (
+                  <GovernanceOverviewTab {...props} {...containerProps} />
+                )}
                 exact
               />
               <SentryRoute

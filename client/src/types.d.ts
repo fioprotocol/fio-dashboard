@@ -586,6 +586,8 @@ export type Proxy = {
 
 export type DetailedProxy = {
   id: number;
+  isAutoProxy: number;
+  isProxy: number;
   proxy: string;
   owner: string;
   lastVoteWeight: number;

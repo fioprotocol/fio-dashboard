@@ -94,14 +94,26 @@ const fioLogger: FioLogger = message => {
   }
 };
 
-export const proxyToDetailedProxy = (row: Proxy): DetailedProxy => ({
-  id: row.id,
-  proxy: row.proxy,
-  owner: row.owner,
-  lastVoteWeight: parseFloat(row.last_vote_weight),
-  proxiedVoteWeight: parseFloat(row.proxied_vote_weight),
-  fioAddress: row.fioaddress,
-  producers: row.producers,
+export const proxyToDetailedProxy = ({
+  fioaddress,
+  id,
+  is_auto_proxy,
+  is_proxy,
+  last_vote_weight,
+  owner,
+  producers,
+  proxy,
+  proxied_vote_weight,
+}: Proxy): DetailedProxy => ({
+  id,
+  isAutoProxy: is_auto_proxy,
+  isProxy: is_proxy,
+  proxy,
+  owner,
+  lastVoteWeight: parseFloat(last_vote_weight),
+  proxiedVoteWeight: parseFloat(proxied_vote_weight),
+  fioAddress: fioaddress,
+  producers,
 });
 
 export default class Fio {
@@ -151,6 +163,9 @@ export default class Fio {
     // add integer and remainder
     return new MathOp(tempResult).add(floorRemainder).toNumber();
   };
+
+  sufToAmount = (suf: number): number =>
+    Number(FIOSDK.SUFToAmount(suf).toFixed(2));
 
   createPrivateKeyMnemonic = async (mnemonic: string): Promise<string> => {
     const { fioKey } = await FIOSDK.createPrivateKeyMnemonic(mnemonic);
@@ -652,9 +667,7 @@ export default class Fio {
     return proxies;
   };
 
-  getBlockProducersVote = async (
-    publicKey: string,
-  ): Promise<DetailedProxy[]> => {
+  getWalletVotes = async (publicKey: string): Promise<DetailedProxy[]> => {
     const accountHash = FIOSDK.accountHash(publicKey).accountnm;
 
     const getRows = async () =>
@@ -669,17 +682,29 @@ export default class Fio {
         key_type: 'i64',
       });
 
-    return ((await getRows()).rows as Proxy[])
-      .filter(it => it.is_proxy || it.is_auto_proxy)
-      .map(row => ({
-        id: row.id,
-        proxy: row.proxy,
-        owner: row.owner,
-        lastVoteWeight: parseFloat(row.last_vote_weight),
-        proxiedVoteWeight: parseFloat(row.proxied_vote_weight),
-        fioAddress: row.fioaddress,
-        producers: row.producers,
-      }));
+    return ((await getRows()).rows as Proxy[]).map(
+      ({
+        fioaddress,
+        id,
+        is_auto_proxy,
+        is_proxy,
+        last_vote_weight,
+        owner,
+        producers,
+        proxy,
+        proxied_vote_weight,
+      }) => ({
+        id,
+        isAutoProxy: is_auto_proxy,
+        isProxy: is_proxy,
+        proxy: proxy,
+        owner: owner,
+        lastVoteWeight: parseFloat(last_vote_weight),
+        proxiedVoteWeight: parseFloat(proxied_vote_weight),
+        fioAddress: fioaddress,
+        producers: producers,
+      }),
+    );
   };
 
   getProxyRows = async () => {

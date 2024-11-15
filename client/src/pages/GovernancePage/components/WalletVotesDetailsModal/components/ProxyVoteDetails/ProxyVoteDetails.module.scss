@@ -1,0 +1,28 @@
+@import '../../../../../../assets/styles/colors.scss';
+@import '../../../../../../assets/styles/fontMixins.scss';
+
+.proxyDetailsTitle {
+  margin-top: 8px;
+  font-size: 0.875em;
+  color: $cynical-black;
+  @include proxima-nova-semibold;
+}
+
+.detailsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-top: 15px;
+
+  .detailsItem {
+    font-size: 0.6875em;
+    @include inter-semibold;
+  }
+}
+
+.proxyDetailsSubTitle {
+  margin-bottom: 20px;
+  font-size: 0.875em;
+  color: $cynical-black;
+  @include proxima-nova-semibold;
+}

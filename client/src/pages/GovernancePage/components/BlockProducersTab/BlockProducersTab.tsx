@@ -29,12 +29,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
     resetSelectedBlockProducers,
   } = props;
 
-  const {
-    disabledCastBPVote,
-    isMetaMaskUser,
-    nextDate,
-    handleCastVote,
-  } = useContext({
+  const { disabledCastBPVote, isMetaMaskUser, handleCastVote } = useContext({
     listOfBlockProducers,
     resetSelectedBlockProducers,
   });
@@ -43,7 +38,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
     <div className={classes.container}>
       <div className={classes.headerContainer}>
         <h5 className={classes.title}>Next Election Date</h5>
-        <h5 className={classes.date}>{nextDate}</h5>
+        <h5 className={classes.date}>Ongoing Vote or Vote Update</h5>
       </div>
       <div className={classes.tileContainer}>
         <MyCurrentVotes />

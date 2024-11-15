@@ -316,36 +316,69 @@ export const convertToNewDate = (
   throw new Error('Invalid input: Unable to convert to Date.');
 };
 
-export const getNextGovernanceDate = (): string => {
-  const dates = [
-    new Date(Date.UTC(new Date().getUTCFullYear(), 3, 15, 19)), // April 15th 2PM (UTC-5)
-    new Date(Date.UTC(new Date().getUTCFullYear(), 7, 16, 19)), // August 16th 2PM (UTC-5)
-    new Date(Date.UTC(new Date().getUTCFullYear(), 11, 15, 19)), // December 15th 2PM (UTC-5)
+export const getNextGovernanceDate = ({
+  returnLastVoteDate,
+  returnDefaultFormat,
+}: {
+  returnLastVoteDate?: boolean;
+  returnDefaultFormat?: boolean;
+} = {}): string => {
+  const createDates = (year: number) => [
+    new Date(Date.UTC(year, 3, 15, 19)), // April 15th 2PM (UTC-5)
+    new Date(Date.UTC(year, 7, 16, 19)), // August 16th 2PM (UTC-5)
+    new Date(Date.UTC(year, 11, 15, 19)), // December 15th 2PM (UTC-5)
   ];
 
   const now = new Date();
+  const dates = createDates(now.getUTCFullYear());
 
-  const nextDate =
-    dates.find(date => date > now) ||
-    new Date(dates[0].setFullYear(dates[0].getFullYear() + 1));
+  let voteDate;
+  if (returnLastVoteDate) {
+    // Find the last past date
+    const pastDates = dates.filter(date => date < now);
+    voteDate =
+      pastDates.length > 0
+        ? pastDates[pastDates.length - 1]
+        : createDates(now.getUTCFullYear() - 1)[2]; // Last date of previous year
+  } else {
+    // Find next future date or first date of next year
+    voteDate =
+      dates.find(date => date > now) ||
+      new Date(dates[0].setFullYear(dates[0].getFullYear() + 1));
+  }
 
-  const month = nextDate.toLocaleString('en-US', {
+  if (returnDefaultFormat)
+    return voteDate.toLocaleString('en-US', { timeZone: 'America/New_York' });
+
+  const month = voteDate.toLocaleString('en-US', {
     month: 'long',
     timeZone: 'America/New_York',
   });
-  const day = nextDate.toLocaleString('en-US', {
+  const day = voteDate.toLocaleString('en-US', {
     day: 'numeric',
     timeZone: 'America/New_York',
   });
-  const time = nextDate.toLocaleString('en-US', {
+  const time = voteDate.toLocaleString('en-US', {
     hour: 'numeric',
     hour12: true,
     timeZone: 'America/New_York',
   });
-  const year = nextDate.toLocaleString('en-US', {
+  const year = voteDate.toLocaleString('en-US', {
     year: 'numeric',
     timeZone: 'America/New_York',
   });
 
   return `${month} ${day}th ${time} (UTC-5), ${year}`;
 };
+
+export const voteFormatDate = (date: Date) =>
+  date
+    .toLocaleDateString('en', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    })
+    .replace('at', '@');

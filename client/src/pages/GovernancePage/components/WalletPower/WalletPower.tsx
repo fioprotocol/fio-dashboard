@@ -16,19 +16,15 @@ export const WalletPower: FC<WalletPowerProps> = ({
   power,
   label = 'Current Voting Power',
   withLabel,
-}) => {
-  return (
-    <p className={classnames(classes.powerValue, className)}>
-      {withLabel && (
-        <span className={classes.powerValueLabel}>{label}:&nbsp;</span>
-      )}
-      <span>
-        {power.toLocaleString('en', {
-          minimumFractionDigits: 4,
-        })}
-        &nbsp;
-        <span className={classes.powerValueCurrency}>FIO</span>
-      </span>
-    </p>
-  );
-};
+}) => (
+  <p className={classnames(classes.powerValue, className)}>
+    {withLabel && (
+      <span className={classes.powerValueLabel}>{label}:&nbsp;</span>
+    )}
+    <span>
+      {power?.toString()}
+      &nbsp;
+      <span className={classes.powerValueCurrency}>FIO</span>
+    </span>
+  </p>
+);

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import superagent from 'superagent';
+import { useHistory } from 'react-router';
 
 import shuffle from 'lodash/shuffle';
 
@@ -10,13 +11,17 @@ import {
   GET_BLOCK_PRODUCERS_URL,
 } from '../constants/governance';
 import { FIO_CHAIN_ID } from '../constants/fio';
+import { ROUTES } from '../constants/routes';
 
 import apis from '../api';
 import config from '../config';
 import useEffectOnce from './general';
 import { log } from '../util/general';
 
-import { fioWallets, isFioWalletsBalanceLoading } from '../redux/fio/selectors';
+import {
+  fioWallets as fioWalletsSelector,
+  isFioWalletsBalanceLoading,
+} from '../redux/fio/selectors';
 
 import telegramLogo from '../assets/images/social-network-governance/telegram.svg';
 import twitterLogo from '../assets/images/social-network-governance/twitter.svg';
@@ -30,7 +35,10 @@ import {
   BlockProducersItemProps,
   BlockProducersResult,
   CandidateProps,
+  CandidatesVotes,
   JiraCandidates,
+  OverviewWallet,
+  WalletsFioRequest,
 } from '../types/governance';
 import { DetailedProxy } from '../types';
 
@@ -42,19 +50,17 @@ const getJiraCandidatesUrl = (publicKey?: string) => {
   return `https://jira.fio.net/search?jql=filter=10081 AND summary ~ "${publicKey}"&maxResults=1000`;
 };
 
-export const useGetCandidates = (
-  publicKey?: string,
-): {
+export const useGetCandidates = (): {
   loading: boolean;
   candidatesList: CandidateProps[];
 } => {
   const [loading, toggleLoading] = useState<boolean>(false);
   const [candidatesList, setCandidatesList] = useState<CandidateProps[]>([]);
 
-  const getCandidates = useCallback(async (publicKey?: string) => {
+  const getCandidates = useCallback(async () => {
     try {
       toggleLoading(true);
-      const results = await superagent.get(getJiraCandidatesUrl(publicKey));
+      const results = await superagent.get(getJiraCandidatesUrl());
 
       const jiraCandidates: JiraCandidates = results.body?.issues;
 
@@ -68,6 +74,7 @@ export const useGetCandidates = (
           customfield_10180,
           customfield_10181,
           customfield_10183,
+          customfield_10184,
           status,
           summary,
         } = candidate.fields || {};
@@ -100,8 +107,9 @@ export const useGetCandidates = (
           image: customfield_10178 || noImageIconSrc,
           links,
           lastVoteCount: customfield_10183,
+          lastVoteUpdate: customfield_10184,
           name: summary,
-          status: status.name,
+          status: status?.name,
           text: customfield_10180?.content[0]?.content[0]?.text,
           url: customfield_10181,
         };
@@ -116,10 +124,54 @@ export const useGetCandidates = (
   }, []);
 
   useEffectOnce(() => {
+    void getCandidates();
+  }, []);
+
+  return { loading, candidatesList };
+};
+
+export const useGetPublicKeyCandidatesVotes = (
+  publicKey: string,
+): {
+  candidatesVotes: CandidatesVotes;
+  loading: boolean;
+} => {
+  const [loading, toggleLoading] = useState<boolean>(false);
+  const [
+    candidatesVotes,
+    setCandidatesVotes,
+  ] = useState<CandidatesVotes | null>(null);
+
+  const getCandidates = useCallback(async (publicKey?: string) => {
+    try {
+      toggleLoading(true);
+      const results = await superagent.get(getJiraCandidatesUrl(publicKey));
+
+      const jiraCandidatesResults: JiraCandidates = results.body?.issues;
+
+      const { fields } = jiraCandidatesResults[0] || {};
+
+      const candidatesVotesRersults = {
+        currentBoardVotingPower: fields?.customfield_10183,
+        boardVotingPowerLastUpdate: fields?.customfield_10184,
+        candidatesIdsList: fields?.issuelinks
+          .filter(issueLink => issueLink?.type?.outward === 'votes on')
+          .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
+      };
+
+      setCandidatesVotes(candidatesVotesRersults);
+    } catch (error) {
+      log.error(error);
+    } finally {
+      toggleLoading(false);
+    }
+  }, []);
+
+  useEffectOnce(() => {
     void getCandidates(publicKey);
   }, [publicKey]);
 
-  return { loading, candidatesList };
+  return { loading, candidatesVotes };
 };
 
 export const useDetailedProxies = () => {
@@ -138,127 +190,103 @@ export const useDetailedProxies = () => {
     }
   };
 
-  useEffect(() => {
+  useEffectOnce(() => {
     void getProxyList();
   }, []);
 
   return { loading, proxyList };
 };
 
-export type OverviewWallet = {
-  name: string;
-  publicKey: string;
-  votingPower: number;
-  boardVote: boolean;
-  blockProducerVote: boolean;
-  proxy?: DetailedProxy;
-};
+export const useOveriewWallets = (): {
+  overviewWallets: OverviewWallet[];
+  loading: boolean;
+} => {
+  const fioWallets = useSelector(fioWalletsSelector);
+  const walletsLoading = useSelector(isFioWalletsBalanceLoading);
 
-export const useWalletsOverview = () => {
-  const wallets = useSelector(fioWallets);
-  const balancesLoading = useSelector(isFioWalletsBalanceLoading);
-  const [boardVotedLoading, setBoardVotedLoading] = useState<boolean>(false);
-  const [boardVotedWallets, setBoardVotedWallets] = useState<string[]>([]);
-  const [blockProducersVotedLoading, setBlockProducersVotedLoading] = useState<
-    boolean
-  >(false);
-  const [blockProducersVotedWallets, setBlockProducersVotedWallets] = useState<
-    {
-      publicKey: string;
-      proxy: DetailedProxy;
-    }[]
-  >([]);
+  const [walletVotes, setwalletVotes] = useState<{
+    [key: string]: DetailedProxy[];
+  }>({});
+  const [isWalletVotesLoading, toggleIsWalletVotesLoading] = useState<boolean>(
+    false,
+  );
+  const [
+    walletsFioRequests,
+    setWalletsFioRequests,
+  ] = useState<WalletsFioRequest | null>(null);
+  const [
+    isWalletsFioRequestsLoading,
+    toggleIsWalletsFioRequestsLoading,
+  ] = useState<boolean>(false);
 
-  const walletsKeysToken = wallets
-    .map(it => it.publicKey)
-    .sort()
-    .join(';');
+  const history = useHistory();
 
-  useEffect(() => {
-    const getSentFioRequests = async () => {
-      try {
-        setBoardVotedLoading(true);
+  const isGovernanceTab =
+    history.location?.pathname === ROUTES.GOVERNANCE_OVERVIEW;
 
-        const walletsToRecords = await Promise.all(
-          wallets.map(it =>
-            apis.fio.getSentFioRequests(it.publicKey).then(records => ({
-              publicKey: it.publicKey,
-              records: records,
-            })),
-          ),
-        );
+  const getCurrentWalletVotes = useCallback(async (publicKey: string) => {
+    try {
+      const currentWalletVotes = await apis.fio.getWalletVotes(publicKey);
 
-        const votedWallets = walletsToRecords
-          .filter(
-            ({ records }) =>
-              !!records.find(it => it.payeeFioAddress === config.voteFioHandle),
-          )
-          .map(({ publicKey }) => publicKey);
+      setwalletVotes(prevVotes => ({
+        ...prevVotes,
+        [publicKey]: currentWalletVotes,
+      }));
+    } catch (error) {
+      log.error(error);
+    }
+  }, []);
 
-        setBoardVotedWallets(votedWallets);
-      } catch (err) {
-        log.error(err);
-      } finally {
-        setBoardVotedLoading(false);
-      }
-    };
+  const getCurrentWalletFioRequests = useCallback(async () => {
+    toggleIsWalletsFioRequestsLoading(true);
 
-    void getSentFioRequests();
-  }, [wallets, walletsKeysToken]);
+    try {
+      const fioRequests = await apis.account.getFioRequests();
+
+      setWalletsFioRequests(fioRequests);
+    } catch (error) {
+      log.error(error);
+    } finally {
+      toggleIsWalletsFioRequestsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const getSentFioRequests = async () => {
-      try {
-        setBlockProducersVotedLoading(true);
+    if (isGovernanceTab) {
+      toggleIsWalletVotesLoading(true);
+      Promise.all(
+        fioWallets.map(fioWallet => getCurrentWalletVotes(fioWallet.publicKey)),
+      ).finally(() => {
+        toggleIsWalletVotesLoading(false);
+      });
 
-        const walletsToRecords = await Promise.all(
-          wallets.map(it =>
-            apis.fio.getBlockProducersVote(it.publicKey).then(records => ({
-              publicKey: it.publicKey,
-              records: records,
-            })),
-          ),
-        );
+      getCurrentWalletFioRequests();
+    }
+  }, [
+    fioWallets,
+    getCurrentWalletFioRequests,
+    getCurrentWalletVotes,
+    isGovernanceTab,
+  ]);
 
-        const votedWallets = walletsToRecords
-          .filter(({ records }) => records.length > 0)
-          .map(({ publicKey, records: [proxy] }) => ({
-            publicKey,
-            proxy,
-          }));
-
-        setBlockProducersVotedWallets(votedWallets);
-      } catch (err) {
-        log.error(err);
-      } finally {
-        setBlockProducersVotedLoading(false);
-      }
-    };
-
-    void getSentFioRequests();
-  }, [wallets, walletsKeysToken]);
-
-  if (balancesLoading || boardVotedLoading || blockProducersVotedLoading) {
-    return {
-      overviewWallets: [] as OverviewWallet[],
-      loading: balancesLoading,
-    };
-  }
-
-  const proxiesWallets = blockProducersVotedWallets.map(it => it.publicKey);
-
-  const overviewWallets: OverviewWallet[] = wallets.map(wallet => ({
-    name: wallet.name,
-    publicKey: wallet.publicKey,
-    votingPower: wallet.balance ? wallet.balance / 1000000000 : 0,
-    boardVote: boardVotedWallets.includes(wallet.publicKey),
-    blockProducerVote: proxiesWallets.includes(wallet.publicKey),
-    proxy: blockProducersVotedWallets.find(
-      it => it.publicKey === wallet.publicKey,
-    )?.proxy,
+  const overviewWallets = fioWallets?.map(fioWallet => ({
+    ...fioWallet,
+    votes: walletVotes[fioWallet?.publicKey] || [],
+    hasProxy: walletVotes[fioWallet?.publicKey]?.some(
+      walletVote => walletVote.isAutoProxy || !!walletVote.proxy,
+    ),
+    hasVotedForBoardOfDirectors:
+      walletsFioRequests &&
+      walletsFioRequests[fioWallet?.publicKey]?.sent.some(
+        ({ payer_fio_address }) => payer_fio_address === config.voteFioHandle,
+      ),
   }));
 
-  return { overviewWallets, loading: false };
+  return {
+    overviewWallets,
+    loading:
+      walletsLoading || isWalletVotesLoading || isWalletsFioRequestsLoading,
+  };
 };
 
 export const useModalState = <T>() => {

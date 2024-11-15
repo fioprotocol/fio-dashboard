@@ -22,16 +22,6 @@
   color: $cod-gray;
 }
 
-.infoBadge {
-  margin-top: 0 !important;
-  margin-bottom: 12px !important;
-  .infoBadgeLink {
-    font-family: inherit;
-    color: inherit;
-    text-decoration: underline;
-  }
-}
-
 .subtitle {
   @include proxima-nova-medium;
   margin-top: 20px;

@@ -4,7 +4,6 @@ import { useHistory } from 'react-router';
 
 import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
-import { getNextGovernanceDate } from '../../../../util/general';
 import { useIsMetaMaskUser } from '../../../../hooks/user';
 import { useMakeActionOnPathChange } from '../../../../hooks/general';
 
@@ -20,7 +19,6 @@ type Props = {
 type UseContextProps = {
   disabledCastBPVote: boolean;
   isMetaMaskUser: boolean;
-  nextDate: string;
   handleCastVote: () => void;
 };
 
@@ -28,8 +26,6 @@ export const useContext = (props: Props): UseContextProps => {
   const { listOfBlockProducers, resetSelectedBlockProducers } = props;
 
   const isMetaMaskUser = useIsMetaMaskUser();
-
-  const nextDate = getNextGovernanceDate();
 
   useMakeActionOnPathChange({
     action: resetSelectedBlockProducers,
@@ -55,7 +51,6 @@ export const useContext = (props: Props): UseContextProps => {
   return {
     disabledCastBPVote: listOfBlockProducers.every(({ checked }) => !checked),
     isMetaMaskUser,
-    nextDate,
     handleCastVote,
   };
 };

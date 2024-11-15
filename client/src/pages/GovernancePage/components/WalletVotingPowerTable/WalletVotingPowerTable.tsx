@@ -7,18 +7,20 @@ import WalletIcon from '../../../../assets/images/wallet.svg';
 import ActionButton from '../../../SettingsPage/components/ActionButton';
 import { WalletPower } from '../WalletPower';
 import { WalletVoteStatus } from '../WalletVoteStatus';
-import { OverviewWallet } from '../../../../hooks/governance';
+import apis from '../../../../api';
+
+import { OverviewWallet } from '../../../../types/governance';
 
 export type WalletVotingPowerTableProps = {
   className: string;
-  data: OverviewWallet[];
-  onAction?: (publicKey: string) => void;
+  overviewWallets: OverviewWallet[];
+  openWalletDetailsModal: (publicKey: string) => void;
 };
 
 export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
   className,
-  data,
-  onAction,
+  overviewWallets,
+  openWalletDetailsModal,
 }) => {
   return (
     <div className={classnames(classes.grid, className)}>
@@ -27,20 +29,28 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
       <div className={classes.gridTitleItem}>FIO Board Vote</div>
       <div className={classes.gridTitleItem}>Block Producer Vote</div>
       <div className={classes.gridTitleItem}>Voting Details</div>
-      {data.map(it => (
-        <Fragment key={it.publicKey}>
+      {overviewWallets.map(overviewWalletItem => (
+        <Fragment key={overviewWalletItem.publicKey}>
           <div className={classes.gridItem}>
             <img src={WalletIcon} alt="wallet" loading="lazy" />
-            <h5 className={classes.title}>{it.name}</h5>
+            <h5 className={classes.title}>{overviewWalletItem.name}</h5>
           </div>
           <div className={classes.gridItem}>
-            <WalletPower power={it.votingPower} />
+            <WalletPower
+              power={apis.fio.sufToAmount(overviewWalletItem?.available)}
+            />
           </div>
           <div className={classes.gridItem}>
-            <WalletVoteStatus vote={it.boardVote} />
+            <WalletVoteStatus
+              hasProxy={overviewWalletItem?.hasProxy}
+              vote={overviewWalletItem?.hasVotedForBoardOfDirectors}
+            />
           </div>
           <div className={classes.gridItem}>
-            <WalletVoteStatus vote={it.blockProducerVote} />
+            <WalletVoteStatus
+              hasProxy={overviewWalletItem?.hasProxy}
+              vote={!!overviewWalletItem?.votes?.length}
+            />
           </div>
           <div className={classes.gridItem}>
             <ActionButton
@@ -48,7 +58,9 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
               title="View"
               isIndigo
               isSmall
-              onClick={() => onAction?.(it.publicKey)}
+              onClick={() =>
+                openWalletDetailsModal(overviewWalletItem?.publicKey)
+              }
             />
           </div>
         </Fragment>

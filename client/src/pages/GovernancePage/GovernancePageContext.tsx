@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 
 import {
   useDetailedProxies,
   useGetBlockProducers,
   useGetCandidates,
+  useOveriewWallets,
 } from '../../hooks/governance';
 
 import {
@@ -21,10 +23,35 @@ export const useContext = (): GovernancePageContextProps => {
     BlockProducersItemProps[]
   >([]);
   const [listOfProxies, setListOfProxies] = useState<DetailedProxy[]>([]);
+  const [activeWalletPublicKey, setActiveWalletPublicKey] = useState<
+    string | null
+  >(null);
+  const [isWalletDetailsModalOpen, toggleIsWalletDetailsModalOpen] = useState<
+    boolean
+  >(false);
 
   const { loading, candidatesList } = useGetCandidates();
   const { loading: bpLoading, blockProducersList } = useGetBlockProducers();
   const { loading: proxiesLoading, proxyList } = useDetailedProxies();
+  const {
+    loading: overviewWalletsLoading,
+    overviewWallets,
+  } = useOveriewWallets();
+
+  const history = useHistory<{ shouldOpenFirstWallet: boolean }>();
+
+  const historyState = history.location?.state;
+  const { shouldOpenFirstWallet } = historyState || {};
+
+  const clearRouterState = useCallback(() => {
+    const state = history.location?.state;
+
+    if (state) {
+      delete state.shouldOpenFirstWallet;
+    }
+
+    history.replace({ ...history.location, state });
+  }, [history]);
 
   const onCandidateSelectChange = useCallback((id: string) => {
     setListOfCandidates(prevCandidates =>
@@ -71,6 +98,16 @@ export const useContext = (): GovernancePageContextProps => {
     );
   }, [proxyList]);
 
+  const openWalletDetailsModal = useCallback((publicKey: string) => {
+    setActiveWalletPublicKey(publicKey);
+    toggleIsWalletDetailsModalOpen(true);
+  }, []);
+
+  const closWalletDetailsModal = useCallback(() => {
+    toggleIsWalletDetailsModalOpen(false);
+    setActiveWalletPublicKey(null);
+  }, []);
+
   useEffect(() => {
     if (candidatesList?.length) {
       setListOfCandidates(
@@ -101,18 +138,37 @@ export const useContext = (): GovernancePageContextProps => {
     }
   }, [proxyList]);
 
+  useEffect(() => {
+    if (shouldOpenFirstWallet && overviewWallets?.length) {
+      openWalletDetailsModal(overviewWallets[0].publicKey);
+      clearRouterState();
+    }
+  }, [
+    clearRouterState,
+    openWalletDetailsModal,
+    overviewWallets,
+    shouldOpenFirstWallet,
+  ]);
+
   return {
+    activeWalletPublicKey,
     bpLoading,
+    isWalletDetailsModalOpen,
     listOfBlockProducers,
     listOfCandidates,
     listOfProxies,
     loading,
+    overviewWallets,
+    overviewWalletsLoading,
     proxiesLoading,
+    closWalletDetailsModal,
     onBlockProducerSelectChange,
     onCandidateSelectChange,
     onProxySelectChange,
+    openWalletDetailsModal,
     resetSelectedBlockProducers,
     resetSelectedCandidates,
     resetSelectedProxies,
+    setActiveWalletPublicKey,
   };
 };

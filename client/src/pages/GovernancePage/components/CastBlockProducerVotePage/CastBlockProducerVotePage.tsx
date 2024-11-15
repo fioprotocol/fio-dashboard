@@ -1,7 +1,4 @@
 import React from 'react';
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
-import { GovernancePageContextProps } from '../../types';
 
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
@@ -15,6 +12,7 @@ import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { ROUTES } from '../../../../constants/routes';
 
 import MathOp from '../../../../util/math';
+import apis from '../../../../api';
 
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
@@ -24,6 +22,8 @@ import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerM
 import { CandidateItem } from './components/CandidateItem/CandidateItem';
 
 import { useContext } from './CastBlockProducerVotePageContext';
+
+import { GovernancePageContextProps } from '../../types';
 
 import classes from './CastBlockProducerVotePage.module.scss';
 
@@ -121,9 +121,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>
-              {FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2)}
-            </span>{' '}
+            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
           <h4 className={classes.label}>Candidate Votes</h4>
