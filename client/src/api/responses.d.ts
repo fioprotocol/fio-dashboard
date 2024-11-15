@@ -327,6 +327,8 @@ export type AdminDefaultsRequest = AdminDefaults & {
   searchPostfixesToDelete?: string[];
   searchPrefixesToDelete?: string[];
   usernamesOnCustomDomainsToDelete?: string[];
+  voteFioHandles?: string;
+  mockedPublicKey?: string;
 };
 
 export type DefaultsAvailableDomainsResponse = AdminDomain[];

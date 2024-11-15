@@ -11,21 +11,36 @@ import SearchPostfixes from './components/SearchPostfixes';
 import MaintenanceSwitch from './components/MaintenanceSwitch';
 import OutboundSwitch from './components/OutboundSwitch';
 import { FormsOfPayment } from './components/FormsOfPayment';
+import { MockedPublicKeyForBoardOfDirectors } from './components/MockedPublicKeyForBoardOfDirectors';
+import { VoteFioHandle } from './components/VoteFioHandle';
 
 import api from '../../admin/api';
+import apis from '../../api';
+
+import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
 
-import { AdminDefaults, AdminDomain } from '../../api/responses';
+import { AdminDefaults, AdminDomain, VarsResponse } from '../../api/responses';
 
 import classes from './styles/AdminDefaultsPage.module.scss';
 
 const AdminDefaultsPage: React.FC = () => {
   const [defaults, setDefaults] = useState<AdminDefaults>();
+  const [voteFioHandle, setVoteFioHandle] = useState<string>('');
+  const [mockedPublicKey, setMockedPublicKey] = useState<string>('');
 
   const fetchDefaults = useCallback(async () => {
     const response = await api.admin.getDefaults();
     setDefaults(response);
+    apis.vars.getVar(VARS_KEYS.VOTE_FIO_HANDLE).then((data: VarsResponse) => {
+      setVoteFioHandle(data.value);
+    });
+    apis.vars
+      .getVar(VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE)
+      .then((data: VarsResponse) => {
+        setMockedPublicKey(data.value);
+      });
   }, []);
 
   useEffect(() => {
@@ -66,6 +81,8 @@ const AdminDefaultsPage: React.FC = () => {
           usernamesOnCustomDomains: defaults?.usernamesOnCustomDomains || [],
           searchPrefixes: defaults?.searchPrefixes || [],
           searchPostfixes: defaults?.searchPostfixes || [],
+          voteFioHandle: voteFioHandle || '',
+          mockedPublicKey: mockedPublicKey || '',
         }}
         onSubmit={handleSubmit}
       >
@@ -74,6 +91,8 @@ const AdminDefaultsPage: React.FC = () => {
             <MaintenanceSwitch />
             <OutboundSwitch />
             <FormsOfPayment />
+            <VoteFioHandle />
+            <MockedPublicKeyForBoardOfDirectors />
             <AvailableDomains form={form} />
             <DashboardDomains form={form} />
             <UsernamesOnCustomDomains form={form} />
