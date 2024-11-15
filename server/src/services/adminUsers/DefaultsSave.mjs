@@ -1,7 +1,7 @@
 import Base from '../Base';
-import { Domain, Username, SearchTerm } from '../../models';
+import { Domain, Username, SearchTerm, Var } from '../../models';
 
-import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { ADMIN_ROLES_IDS, VARS_KEYS } from '../../config/constants.js';
 
 export default class DefaultsSave extends Base {
   static get requiredPermissions() {
@@ -71,6 +71,8 @@ export default class DefaultsSave extends Base {
             searchPostfixesToDelete: { list_of: 'string' },
             searchPrefixesToDelete: { list_of: 'string' },
             usernamesOnCustomDomainsToDelete: { list_of: 'string' },
+            voteFioHandle: ['string'],
+            mockedPublicKey: ['string'],
           },
         },
       ],
@@ -91,6 +93,9 @@ export default class DefaultsSave extends Base {
       searchPostfixesToDelete = [],
       searchPrefixesToDelete = [],
       usernamesOnCustomDomainsToDelete = [],
+
+      voteFioHandle,
+      mockedPublicKey,
     } = data;
 
     await Domain.destroy({
@@ -135,6 +140,10 @@ export default class DefaultsSave extends Base {
         await Username.create({ username, rank });
       }
     }
+
+    await Var.setValue(VARS_KEYS.VOTE_FIO_HANDLE, voteFioHandle);
+
+    await Var.setValue(VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE, mockedPublicKey);
 
     return {
       data: { success: true },
