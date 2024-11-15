@@ -26,7 +26,6 @@ const config = {
     process.env.REACT_APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1,
   ),
   exportOrdersCSVLimit: Number(process.env.REACT_APP_EXPORT_ORDERS_CSV_LIMIT),
-  voteFioHandle: process.env.REACT_APP_VOTE_FIO_HANDLE,
 };
 
 export default config;

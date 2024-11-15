@@ -2,6 +2,8 @@ import Base from './base';
 
 import { AbstractEmailVerificationResponse } from './responses';
 
+import { SiteSetting } from '../types/settings';
+
 export default class General extends Base {
   // TODO: commented due to DASH-711 task. We hide it until figure out with hash
   // getImageHash(imageUrl: string): Promise<string> {
@@ -14,5 +16,8 @@ export default class General extends Base {
     email: string,
   ): Promise<AbstractEmailVerificationResponse> {
     return this.apiClient.get('verify-abstract-email', { email });
+  }
+  getSiteSettings(): Promise<SiteSetting> {
+    return this.apiClient.get('site-settings');
   }
 }

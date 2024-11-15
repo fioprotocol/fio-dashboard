@@ -16,6 +16,7 @@ import refProfile from './refProfile/reducer';
 import account from './account/reducer';
 import containedFlow from './containedFlow/reducer';
 import orders from './orders/reducer';
+import settings from './settings/reducer';
 import wrapStatus from './wrapStatus/reducer';
 
 const createReducer = (history: History): Reducer =>
@@ -36,6 +37,7 @@ const createReducer = (history: History): Reducer =>
     containedFlow,
     wrapStatus,
     orders,
+    settings,
   });
 
 export default createReducer;
