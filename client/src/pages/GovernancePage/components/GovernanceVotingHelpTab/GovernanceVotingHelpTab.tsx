@@ -26,7 +26,7 @@ export const GovernanceVotingHelpTab: FC = () => {
         <p className={classes.content}>
           Once you’ve had the opportunity to do your own research on the FIO
           Block producers, you simply select up to 30 Block producers to cast
-          your vote for.&nbsp;
+          your vote for.{' '}
           <a
             href="https://fio.net/fio-chain/block-producers"
             target="_blank"
@@ -67,7 +67,7 @@ export const GovernanceVotingHelpTab: FC = () => {
                 If you are proxying your tokens they will be counted towards
                 your proxies vote weight and your direct Board vote will be
                 ignored! Remember that if you staked your tokens they may have
-                been automatically proxied. To stop proxying, you must&nbsp;
+                been automatically proxied. To stop proxying, you must{' '}
                 <Link
                   className={classes.infoBadgeLink}
                   to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
@@ -93,16 +93,16 @@ export const GovernanceVotingHelpTab: FC = () => {
         <p className={classes.content}>
           <ul>
             <li>
-              Your vote issue will be manually created and will show up in&nbsp;
+              Your vote issue will be manually created and will show up in{' '}
               <a
                 href="https://fioprotocol.atlassian.net/wiki/spaces/DAO/pages/521076846/Board+Vote+Tracking#Raw-Votes/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Board Vote Tracking | Raw Votes
-              </a>
-              &nbsp;including the voting power (Current weight in FIO). The
-              issue may not be created until after the election day.
+              </a>{' '}
+              including the voting power (Current weight in FIO). The issue may
+              not be created until after the election day.
             </li>
             <li>
               Your voting power will be counted based on the number of FIO
@@ -146,7 +146,7 @@ export const GovernanceVotingHelpTab: FC = () => {
               field.
             </li>
             <li>
-              Results of elections will be posted here:&nbsp;
+              Results of elections will be posted here:{' '}
               <a
                 href="https://fioprotocol.atlassian.net/wiki/spaces/DAO/pages/521076846/Board+Vote+Tracking"
                 target="_blank"

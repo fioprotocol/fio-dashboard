@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react';
 
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
+import { AMERICA_NEW_YORK_TIMEZONE } from '../constants/time';
 
 import config from '../config';
 
@@ -348,7 +349,9 @@ export const getNextGovernanceDate = ({
   }
 
   if (returnDefaultFormat)
-    return voteDate.toLocaleString('en-US', { timeZone: 'America/New_York' });
+    return voteDate.toLocaleString('en-US', {
+      timeZone: AMERICA_NEW_YORK_TIMEZONE,
+    });
 
   const month = voteDate.toLocaleString('en-US', {
     month: 'long',

@@ -42,7 +42,7 @@ export const WalletVotesDetailsModal: FC<Props> = ({
       eventKey: 'board',
       title: (
         <>
-          <span className={classes.tabsLargeTitle}>FIO Foundation&nbsp;</span>
+          <span className={classes.tabsLargeTitle}>FIO Foundation </span>
           Board of Directors
         </>
       ),

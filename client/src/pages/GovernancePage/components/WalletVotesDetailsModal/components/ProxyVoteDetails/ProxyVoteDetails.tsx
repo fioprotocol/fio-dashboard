@@ -30,7 +30,7 @@ export const ProxyVoteDetails: FC<Props> = ({
         message={
           <>
             Your tokens for this wallet are proxied. They count towards your
-            proxy's vote, not your own. To stop proxying,&nbsp;
+            proxy's vote, not your own. To stop proxying,{' '}
             <Link
               to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
               className={classes.infoBadgeLink}

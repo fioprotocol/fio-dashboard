@@ -18,13 +18,9 @@ export const WalletPower: FC<WalletPowerProps> = ({
   withLabel,
 }) => (
   <p className={classnames(classes.powerValue, className)}>
-    {withLabel && (
-      <span className={classes.powerValueLabel}>{label}:&nbsp;</span>
-    )}
+    {withLabel && <span className={classes.powerValueLabel}>{label}: </span>}
     <span>
-      {power?.toString()}
-      &nbsp;
-      <span className={classes.powerValueCurrency}>FIO</span>
+      {power} <span className={classes.powerValueCurrency}>FIO</span>
     </span>
   </p>
 );

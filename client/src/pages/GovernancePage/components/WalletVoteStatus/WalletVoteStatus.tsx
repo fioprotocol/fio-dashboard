@@ -43,7 +43,7 @@ export const WalletVoteStatus: FC<WalletVoteStatusProps> = ({
               <span>
                 If you proxy your tokens, they count towards your proxy's vote,
                 not your own. Staked tokens may be automatically proxied. To
-                stop proxying,&nbsp;
+                stop proxying,{' '}
                 <Link
                   className={classes.questionLink}
                   to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
