@@ -1,40 +1,64 @@
 import { FC } from 'react';
-
+import { Link } from 'react-router-dom';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import classnames from 'classnames';
 
+import { ROUTES } from '../../../../constants/routes';
+
+import QuestionSvg from '../../../../assets/images/question.svg';
+
 import classes from './WalletVoteStatus.module.scss';
-import { QuestionTooltip } from '../../../../components/QuestionTooltip';
 
 export type WalletVoteStatusProps = {
+  hasProxy: boolean;
   name?: string;
-  vote: boolean | 'proxied';
+  vote: boolean;
 };
 
-export const WalletVoteStatus: FC<WalletVoteStatusProps> = ({ name, vote }) => {
+export const WalletVoteStatus: FC<WalletVoteStatusProps> = ({
+  name,
+  hasProxy,
+  vote,
+}) => {
   return (
     <div className={classes.vote}>
       {name && <p className={classes.voteName}>{name}</p>}
       <p
         className={classnames(classes.voteStatus, {
           [classes.voteStatusVoted]: vote === true,
-          [classes.voteStatusNotVoted]: vote === false,
-          [classes.voteStatusProxied]: vote === 'proxied',
+          [classes.voteStatusProxied]: hasProxy,
         })}
       >
-        {vote === 'proxied' ? 'PROXIED' : vote ? 'VOTED' : 'NOT VOTED'}
+        {hasProxy ? 'PROXIED' : vote ? 'VOTED' : 'NOT VOTED'}
       </p>
-      {vote === 'proxied' && (
-        <QuestionTooltip placement="top-end">
-          <span>
-            If you proxy your tokens, they count towards your proxy's vote, not
-            your own. Staked tokens may be automatically proxied. To stop
-            proxying,&nbsp;
-            <a className={classes.questionLink} href="https://">
-              vote for block producers
-            </a>
-            .
-          </span>
-        </QuestionTooltip>
+      {hasProxy && (
+        <OverlayTrigger
+          trigger={['hover', 'click']}
+          placement="top-end"
+          delay={1000}
+          rootClose={false}
+          defaultShow={false}
+          overlay={
+            <Tooltip id="question" className={classes.infoTooltip}>
+              <span>
+                If you proxy your tokens, they count towards your proxy's vote,
+                not your own. Staked tokens may be automatically proxied. To
+                stop proxying,&nbsp;
+                <Link
+                  className={classes.questionLink}
+                  to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
+                >
+                  vote for block producers
+                </Link>
+                .
+              </span>
+            </Tooltip>
+          }
+        >
+          <div className="d-flex">
+            <img src={QuestionSvg} alt="question" className={classes.img} />
+          </div>
+        </OverlayTrigger>
       )}
     </div>
   );

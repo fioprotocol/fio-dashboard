@@ -1,5 +1,4 @@
 import React from 'react';
-import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import Loader from '../../../../components/Loader/Loader';
@@ -22,6 +21,7 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 import config from '../../../../config';
 
 import MathOp from '../../../../util/math';
+import apis from '../../../../api';
 
 import { useContext } from './CastBoardVotePageContext';
 
@@ -125,9 +125,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>
-              {FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2)}
-            </span>{' '}
+            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
           <h4 className={classes.label}>

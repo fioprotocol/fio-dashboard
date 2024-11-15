@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Link } from 'react-router-dom';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
-import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
+import { InfoBadgeComponent } from '../InfoBadgeComponent/InfoBadgeComponent';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -59,10 +59,8 @@ export const GovernanceVotingHelpTab: FC = () => {
       <div className={classes.block}>
         <h4 className={classes.subtitle}>Vote Directly</h4>
         <p className={classes.content}>
-          <InfoBadge
-            className={classes.infoBadge}
+          <InfoBadgeComponent
             type={BADGE_TYPES.INFO}
-            show={true}
             title="Proxied Tokens"
             message={
               <>

@@ -1,4 +1,6 @@
-import { FioAddressDoublet } from '../types';
+import { FioSentItem } from '@fioprotocol/fiosdk';
+
+import { FioAddressDoublet, DetailedProxy, FioWalletDoublet } from '../types';
 
 type LinkItemProps = {
   name: string;
@@ -12,6 +14,7 @@ export type CandidateProps = {
   id: string;
   image: string;
   lastVoteCount: number;
+  lastVoteUpdate: string;
   links: LinkItemProps[];
   name: string;
   status: string;
@@ -34,6 +37,15 @@ export type JiraCandidates = {
     };
     customfield_10181: string;
     customfield_10183: number;
+    customfield_10184: string;
+    issuelinks: {
+      outwardIssue: {
+        key: string;
+      };
+      type: {
+        outward: string;
+      };
+    }[];
     status: {
       name: string;
     };
@@ -41,6 +53,12 @@ export type JiraCandidates = {
   };
   key: string;
 }[];
+
+export type CandidatesVotes = {
+  boardVotingPowerLastUpdate: string;
+  candidatesIdsList: string[];
+  currentBoardVotingPower: number;
+};
 
 export type BlockProducersResult = {
   branding: {
@@ -86,3 +104,16 @@ export type BlockProducersItemProps = {
 };
 
 export type FioHandleItem = FioAddressDoublet & { id: string };
+
+export type WalletsFioRequest = {
+  [key: string]: {
+    sent: FioSentItem[];
+    received: FioSentItem[];
+  };
+};
+
+export type OverviewWallet = FioWalletDoublet & {
+  hasProxy: boolean;
+  hasVotedForBoardOfDirectors: boolean;
+  votes: DetailedProxy[];
+};

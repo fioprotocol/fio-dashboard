@@ -1,5 +1,4 @@
 import React from 'react';
-import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 
@@ -19,6 +18,7 @@ import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
 import MathOp from '../../../../util/math';
+import apis from '../../../../api';
 
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
@@ -108,9 +108,7 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>
-              {FIOSDK.SUFToAmount(selectedFioWallet?.available).toFixed(2)}
-            </span>{' '}
+            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
           <h4 className={classes.label}>Proxy</h4>

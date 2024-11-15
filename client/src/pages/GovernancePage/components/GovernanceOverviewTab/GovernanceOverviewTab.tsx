@@ -1,21 +1,31 @@
 import { FC } from 'react';
 
-import classes from './GovernanceOverviewTab.module.scss';
+import Loader from '../../../../components/Loader/Loader';
+
 import { OverviewInfoBlock } from '../OverviewInfoBlock';
 import { WalletVotingPowerBlock } from '../WalletVotingPowerBlock';
 import { WalletVotingPowerTable } from '../WalletVotingPowerTable';
 import { WalletVotesDetailsModal } from '../WalletVotesDetailsModal';
-import {
-  useModalState,
-  useWalletsOverview,
-} from '../../../../hooks/governance';
-import Loader from '../../../../components/Loader/Loader';
+
 import { ROUTES } from '../../../../constants/routes';
 
-export const GovernanceOverviewTab: FC = () => {
-  const modalState = useModalState<string>();
+import { getNextGovernanceDate } from '../../../../util/general';
 
-  const { overviewWallets, loading } = useWalletsOverview();
+import { GovernancePageContextProps } from '../../types';
+
+import classes from './GovernanceOverviewTab.module.scss';
+
+export const GovernanceOverviewTab: FC<GovernancePageContextProps> = props => {
+  const {
+    activeWalletPublicKey,
+    isWalletDetailsModalOpen,
+    overviewWalletsLoading,
+    overviewWallets,
+    closWalletDetailsModal,
+    openWalletDetailsModal,
+  } = props;
+
+  const nextDate = getNextGovernanceDate();
 
   return (
     <>
@@ -24,7 +34,7 @@ export const GovernanceOverviewTab: FC = () => {
           title="FIO Foundation Board of Directors"
           description="The FIO Foundation facilitates the growth and adoption of the FIO Protocol, the Board of Directors set the Foundation’s strategy."
           infoLabel="Next Vote Count"
-          infoContent="August 15th 2PM (UTC-5) , 2024"
+          infoContent={nextDate}
           actionLabel="View Foundation Board of Directors"
           actionHref={ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}
         />
@@ -38,32 +48,32 @@ export const GovernanceOverviewTab: FC = () => {
         />
       </div>
       <h4 className={classes.walletsTitle}>Your Wallets & Voting Power</h4>
-      {loading ? (
+      {overviewWalletsLoading ? (
         <Loader />
       ) : (
         <>
           <div className={classes.walletsList}>
-            {overviewWallets.map(it => (
+            {overviewWallets.map(overviewWallet => (
               <WalletVotingPowerBlock
-                key={it.publicKey}
-                data={it}
-                onAction={modalState.open}
+                key={overviewWallet.publicKey}
+                overviewWallet={overviewWallet}
+                openWalletDetailsModal={openWalletDetailsModal}
               />
             ))}
           </div>
           <WalletVotingPowerTable
             className={classes.walletsTable}
-            data={overviewWallets}
-            onAction={modalState.open}
+            overviewWallets={overviewWallets}
+            openWalletDetailsModal={openWalletDetailsModal}
           />
         </>
       )}
-      {overviewWallets.length > 0 && modalState.data && (
+      {overviewWallets.length > 0 && activeWalletPublicKey && (
         <WalletVotesDetailsModal
           overviewWallets={overviewWallets}
-          selectedPublicKey={modalState.data}
-          show={modalState.isOpen}
-          onClose={modalState.close}
+          show={isWalletDetailsModalOpen}
+          onClose={closWalletDetailsModal}
+          {...props}
         />
       )}
     </>
