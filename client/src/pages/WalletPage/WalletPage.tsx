@@ -127,6 +127,7 @@ const WalletPage: React.FC = () => {
     showWalletSettings,
     showWalletNameEdit,
     receivedFioRequests,
+    siteSettings,
     sentFioRequests,
     obtData,
     obtDataLoading,
@@ -195,6 +196,7 @@ const WalletPage: React.FC = () => {
           sentFioRequests={sentFioRequests}
           obtData={obtData}
           obtDataLoading={obtDataLoading}
+          siteSetings={siteSettings}
           sentFioRequestsLoading={sentFioRequestsLoading}
           receivedFioRequestsLoading={receivedFioRequestsLoading}
           tabAction={tabAction}

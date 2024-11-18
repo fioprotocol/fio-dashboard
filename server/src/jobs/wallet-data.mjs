@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
+import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import '../db';
-import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import {
   DomainsWatchlist,
@@ -21,7 +21,13 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
+import {
+  HOUR_MS,
+  DAY_MS,
+  DOMAIN_EXP_PERIOD,
+  ERROR_CODES,
+  VARS_KEYS,
+} from '../config/constants.js';
 import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/fio.mjs';
 
 const { Op } = Sequelize;
@@ -108,6 +114,10 @@ class WalletDataJob extends CommonJob {
       },
     } = wallet;
 
+    const voteFioHandleVar = await Var.getByKey(VARS_KEYS.VOTE_FIO_HANDLE);
+
+    const voteFioHandle = voteFioHandleVar ? voteFioHandleVar.value : null;
+
     let sentRequests = [];
     let receivedRequests = [];
     let changed = false;
@@ -164,7 +174,8 @@ class WalletDataJob extends CommonJob {
               Number(sentItem.fio_request_id) === Number(sentRequest.fio_request_id),
           ) &&
           (sentRequest.status === FIO_REQUEST_STATUSES.REJECTED ||
-            sentRequest.status === FIO_REQUEST_STATUSES.PAID),
+            sentRequest.status === FIO_REQUEST_STATUSES.PAID) &&
+          sentRequest.payer_fio_address !== voteFioHandle,
       );
 
       for (const newRequest of newRequests) {
@@ -198,7 +209,8 @@ class WalletDataJob extends CommonJob {
         if (
           !existingNotification &&
           wallet.User.emailNotificationParams.fioRequest &&
-          !fioRequestOlderThanPublicDataWalletCreated
+          !fioRequestOlderThanPublicDataWalletCreated &&
+          newRequest.payer_fio_address !== voteFioHandle
         ) {
           changed = true;
           await this.createSentFioRequestNotification({
