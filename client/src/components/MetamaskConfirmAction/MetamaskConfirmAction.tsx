@@ -27,6 +27,7 @@ import { ROUTES } from '../../constants/routes';
 import {
   ActionParams,
   DecryptActionParams,
+  DecryptedItem,
   FioServerResponse,
 } from '../../types/fio';
 import { SignedTxArgs } from '../../api/fio';
@@ -38,10 +39,16 @@ export type OnSuccessResponseResult =
   | FioServerResponse
   | FioServerResponse[]
   | SignedTxArgs
-  | SignedTxArgs[];
+  | SignedTxArgs[]
+  | DecryptedItem
+  | DecryptedItem[];
 
 type Props = {
-  actionParams: ActionParams | ActionParams[] | DecryptActionParams;
+  actionParams:
+    | ActionParams
+    | ActionParams[]
+    | DecryptActionParams
+    | DecryptActionParams[];
   analyticAction: string;
   analyticsData: AnyType | null;
   callSubmitAction?: boolean;
@@ -83,10 +90,30 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     try {
       setProcessing(true);
 
-      if (isDecryptContent && 'content' in actionParams) {
-        const decryptedContent = await decryptContent(actionParams);
-        onSuccess(decryptedContent);
-        return;
+      if (isDecryptContent) {
+        if (Array.isArray(actionParams)) {
+          const decryptedContents = [];
+          for (const actionParamsItem of actionParams) {
+            if ('content' in actionParamsItem) {
+              const decryptedData = await decryptContent(actionParamsItem);
+              decryptedContents.push({
+                decryptedData,
+                contentType: actionParamsItem.contentType,
+              });
+            }
+          }
+          onSuccess(decryptedContents);
+          return;
+        }
+
+        if ('content' in actionParams) {
+          const decryptedContent = await decryptContent(actionParams);
+          onSuccess({
+            decryptedData: decryptedContent,
+            contentType: actionParams.contentType,
+          });
+          return;
+        }
       }
 
       const sendActionParams = Array.isArray(actionParams)

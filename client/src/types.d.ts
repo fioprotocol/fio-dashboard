@@ -505,9 +505,11 @@ export type DecryptedFioRecordContent = {
   payeePublicAddress: string;
   amount: string;
   memo: string;
-  obtId?: string;
   chainCode: string;
   tokenCode: string;
+  obtId?: string;
+  chain?: string;
+  token?: string;
 };
 
 // FioRecord type represents FioRequest and FioObtData

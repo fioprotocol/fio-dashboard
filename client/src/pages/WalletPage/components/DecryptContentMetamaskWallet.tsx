@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ContentType, RequestStatus } from '@fioprotocol/fiosdk';
+import { ContentType } from '@fioprotocol/fiosdk';
 
 import {
   MetamaskConfirmAction,
@@ -17,7 +17,7 @@ import {
 } from '../../../types';
 import { FIO_RECORD_TYPES } from '../constants';
 import { camelizeObjKeys } from '../../../utils';
-import { ActionDataParams } from '../../../types/fio';
+import { DecryptedItem } from '../../../types/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -57,46 +57,62 @@ export const DecryptContentMetamaskWallet: React.FC<Props> = props => {
   const encryptionPublicKey =
     payerFioPublicKey === publicKey ? payeeFioPublicKey : payerFioPublicKey;
 
-  const actionParams = {
-    content,
-    encryptionPublicKey,
-    contentType,
-    derivationIndex: fioWallet.data?.derivationIndex,
-  };
+  const actionParams = [
+    {
+      content,
+      encryptionPublicKey,
+      contentType,
+      derivationIndex: fioWallet.data?.derivationIndex,
+    },
+  ];
+  if (paymentOtbData && paymentOtbData.content) {
+    actionParams.push({
+      content: paymentOtbData.content,
+      encryptionPublicKey,
+      contentType: ContentType.recordObtDataContent,
+      derivationIndex: fioWallet.data?.derivationIndex,
+    });
+  }
 
-  const handleDecryptResults = (
-    result: OnSuccessResponseResult | ActionDataParams['content'],
-  ) => {
+  const handleDecryptResults = (result: OnSuccessResponseResult) => {
     if (!result) return;
 
-    const decryptedContent: DecryptedFioRecordContent = camelizeObjKeys(result);
-
-    let paymentData;
-
-    if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
-      paymentData = {
-        fioRecord: paymentOtbData,
-        fioDecryptedContent: {
-          ...decryptedContent,
-          obtId: decryptedContent.obtId,
-          chain: decryptedContent.chainCode,
-          token: decryptedContent.tokenCode,
-        },
-      };
+    if (!Array.isArray(result)) {
+      result = [result as DecryptedItem];
     }
 
-    const decryptResult = {
-      itemData: {
-        fioRecord: itemData,
-        fioDecryptedContent: {
-          ...decryptedContent,
-          obtId: decryptedContent.obtId,
-          chain: decryptedContent.chainCode,
-          token: decryptedContent.tokenCode,
-        },
-      },
-      paymentOtbData: paymentData,
+    const decryptResult: FioDecryptedRecordData = {
+      itemData: undefined,
+      paymentOtbData: undefined,
     };
+
+    for (const decryptedRes of result as DecryptedItem[]) {
+      if (!decryptedRes.contentType) continue;
+      const decryptedContent: DecryptedFioRecordContent = camelizeObjKeys(
+        decryptedRes.decryptedData,
+      );
+      const fioDecryptedContent = {
+        ...decryptedContent,
+        obtId: decryptedContent.obtId,
+        chain: decryptedContent.chainCode,
+        token: decryptedContent.tokenCode,
+      };
+
+      if (
+        paymentOtbData &&
+        decryptedRes.contentType === ContentType.recordObtDataContent
+      ) {
+        decryptResult.paymentOtbData = {
+          fioRecord: paymentOtbData,
+          fioDecryptedContent,
+        };
+      } else {
+        decryptResult.itemData = {
+          fioRecord: itemData,
+          fioDecryptedContent,
+        };
+      }
+    }
 
     onSuccess(decryptResult);
   };
