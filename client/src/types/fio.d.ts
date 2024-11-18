@@ -45,6 +45,12 @@ export type ActionDataParams = {
   tpid?: string;
 };
 
+export type DecryptedContent = Pick<ActionDataParams, 'content'>;
+export type DecryptedItem = {
+  contentType: string;
+  decryptedData: DecryptedContent;
+};
+
 export type ActionParams = {
   account: string;
   action: string;
