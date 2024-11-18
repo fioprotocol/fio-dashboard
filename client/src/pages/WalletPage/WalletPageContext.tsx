@@ -11,6 +11,7 @@ import {
   fioWalletsData as fioWalletsDataSelector,
   fioWalletsTxHistory as fioWalletsTxHistorySelector,
 } from '../../redux/fioWalletsData/selectors';
+import { siteSetings as siteSetingsSelector } from '../../redux/settings/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
@@ -39,6 +40,7 @@ import {
   FioWalletTxHistory,
   WalletBalances,
 } from '../../types';
+import { SiteSetting } from '../../types/settings';
 
 type UseContextProps = {
   error: string;
@@ -54,6 +56,7 @@ type UseContextProps = {
   showWalletNameEdit: boolean;
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
+  siteSettings: SiteSetting;
   obtData: FioRecord[];
   obtDataLoading: boolean;
   sentFioRequestsLoading: boolean;
@@ -75,6 +78,7 @@ export const useContext = (): UseContextProps => {
   const fioWalletsData = useSelector(fioWalletsDataSelector);
   const fioWalletsTxHistory = useSelector(fioWalletsTxHistorySelector);
   const profileRefreshed = useSelector(profileRefreshedSelector);
+  const siteSettings = useSelector(siteSetingsSelector);
   const user = useSelector(userSelector);
 
   const [showWalletSettings, toggleShowWalletSettings] = useState(false);
@@ -248,6 +252,7 @@ export const useContext = (): UseContextProps => {
     isOpenLockedList,
     showWalletSettings,
     showWalletNameEdit,
+    siteSettings,
     receivedFioRequests,
     sentFioRequests,
     obtData,

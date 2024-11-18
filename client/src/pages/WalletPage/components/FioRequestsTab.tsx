@@ -6,6 +6,7 @@ import Tabs from '../../../components/Tabs/Tabs';
 import FioRecordsList from './FioRecordsList';
 
 import { FIO_RECORD_TYPES } from '../constants';
+import { VARS_KEYS } from '../../../constants/vars';
 
 import {
   FioAddressDoublet,
@@ -13,6 +14,7 @@ import {
   FioWalletData,
   FioWalletDoublet,
 } from '../../../types';
+import { SiteSetting } from '../../../types/settings';
 
 import classes from '../styles/FioRequestsTab.module.scss';
 
@@ -23,6 +25,7 @@ type Props = {
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
   obtData: FioRecord[];
+  siteSetings: SiteSetting;
   sentFioRequestsLoading?: boolean;
   receivedFioRequestsLoading?: boolean;
   tabAction: (tabKey: string) => void;
@@ -42,7 +45,10 @@ const FIO_REQUEST_TABS = [
     title: 'Sent',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.sentFioRequests}
+        fioDataList={props.sentFioRequests?.filter(
+          ({ payerFioAddress }) =>
+            payerFioAddress !== props.siteSetings[VARS_KEYS.VOTE_FIO_HANDLE],
+        )}
         paymentDataList={props.obtData?.sort(
           (a: FioRecord, b: FioRecord) =>
             new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime(),
