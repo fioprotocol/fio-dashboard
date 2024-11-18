@@ -12,16 +12,10 @@ import {
   roe as roeSelector,
 } from '../redux/registrations/selectors';
 import { cartItems as cartItemsSelector } from '../redux/cart/selectors';
-import {
-  isAuthenticated as isAuthenticatedSelector,
-  lastAuthData as lastAuthDataSelector,
-} from '../redux/profile/selectors';
 
 import { setSettings } from '../redux/refProfile/actions';
 import { getDomains } from '../redux/registrations/actions';
 import { addItem as addItemToCart } from '../redux/cart/actions';
-import { setRedirectPath } from '../redux/navigation/actions';
-import { showLoginModal } from '../redux/modal/actions';
 
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../utils';
 import { convertFioPrices } from '../util/prices';
@@ -42,6 +36,7 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../util/analytics';
+import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
 
 type RefProfileAddressWidget = {
   options?: AddressWidgetDomain[];
@@ -84,8 +79,6 @@ export const useRefProfileAddressWidget = ({
 }: {
   refProfileInfo: RefProfile;
 }): RefProfileAddressWidget => {
-  const isAuthenticated = useSelector(isAuthenticatedSelector);
-  const lastAuthData = useSelector(lastAuthDataSelector);
   const allDomains = useSelector(allDomainsSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
@@ -130,23 +123,6 @@ export const useRefProfileAddressWidget = ({
     },
     [dispatch],
   );
-
-  const handleRedirect = useCallback(() => {
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
-      getCartItemsDataForAnalytics(cartItems),
-    );
-    const route = ROUTES.CART;
-    if (!isAuthenticated) {
-      dispatch(setRedirectPath({ pathname: route }));
-      return lastAuthData ||
-        window.ethereum?.isMetaMask ||
-        window.ethereum?.isOpera
-        ? dispatch(showLoginModal(route))
-        : history.push(ROUTES.CREATE_ACCOUNT);
-    }
-    history.push(route);
-  }, [cartItems, history, isAuthenticated, lastAuthData, dispatch]);
 
   // domains that should be shown to the user - either those which set from affiliate settings or fio app premium
   const refDomainObjs: { name: string; isPremium?: boolean }[] = useMemo(() => {
@@ -241,7 +217,14 @@ export const useRefProfileAddressWidget = ({
           }),
         );
 
-        handleRedirect();
+        fireAnalyticsEvent(
+          ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+          getCartItemsDataForAnalytics([...cartItems, cartItem]),
+        );
+        history.push({
+          pathname: ROUTES.FIO_ADDRESSES_SELECTION,
+          search: `${QUERY_PARAMS_NAMES.ADDRESS}=${fch}`,
+        });
       } catch (error) {
         log.error(error);
       } finally {
@@ -249,13 +232,14 @@ export const useRefProfileAddressWidget = ({
       }
     },
     [
-      handleRedirect,
       refDomainObjs,
       cartItems,
-      prices.nativeFio,
+      prices.nativeFio.address,
+      prices.nativeFio.combo,
       roe,
       dispatch,
       refCode,
+      history,
     ],
   );
 
