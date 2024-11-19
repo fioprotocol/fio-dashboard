@@ -81,7 +81,7 @@ class MissedTransactions extends CommonJob {
         const {
           block_num,
           block_time,
-          action_trace: { trx_id, act: { data: { max_fee } } = {} } = {},
+          action_trace: { trx_id, act: { data: { max_fee } = {} } = {} } = {},
         } = addressTransactionHistory || {};
 
         await BlockchainTransaction.sequelize.transaction(async t => {
