@@ -16,12 +16,14 @@ import { VoteProxyMetamaskWallet } from './components/VoteProxyMetamaskWallet';
 
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+import { LOW_BALANCE_AND_BUNDLES_TEXT } from '../../../../constants/errors';
 
 import MathOp from '../../../../util/math';
 import apis from '../../../../api';
 
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
+import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
 import { useContext } from './ProxiesVotePageContext';
 
 import { GovernancePageContextProps } from '../../types';
@@ -37,6 +39,7 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
+    hasLowBalance,
     loading,
     processing,
     resultsData,
@@ -46,6 +49,7 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     transactionDetails,
     onActionClick,
     onCancel,
+    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onFioHandleChange,
@@ -149,6 +153,11 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
           <TransactionDetails
             {...transactionDetails}
             className={classes.transactionDetails}
+          />
+          <LowBalanceComponent
+            hasLowBalance={hasLowBalance}
+            onActionClick={onLowBalanceClick}
+            {...LOW_BALANCE_AND_BUNDLES_TEXT}
           />
           <SubmitButton
             text="Vote Now"

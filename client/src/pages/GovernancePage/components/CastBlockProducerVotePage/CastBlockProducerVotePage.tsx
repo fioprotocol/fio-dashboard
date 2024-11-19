@@ -20,12 +20,14 @@ import { VoteBlockProducerEdgeWallet } from './components/VoteBlockProducerEdgeW
 import { VoteBlockProducerLedgerWallet } from './components/VoteBlockProducerLedgerWallet';
 import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerMetamaskWallet';
 import { CandidateItem } from './components/CandidateItem/CandidateItem';
+import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
 
 import { useContext } from './CastBlockProducerVotePageContext';
 
 import { GovernancePageContextProps } from '../../types';
 
 import classes from './CastBlockProducerVotePage.module.scss';
+import { LOW_BALANCE_AND_BUNDLES_TEXT } from '../../../../constants/errors';
 
 export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = props => {
   const {
@@ -43,6 +45,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
+    hasLowBalance,
     loading,
     processing,
     resultsData,
@@ -52,6 +55,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     transactionDetails,
     onActionClick,
     onCancel,
+    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onFioHandleChange,
@@ -159,6 +163,11 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           <TransactionDetails
             {...transactionDetails}
             className={classes.transactionDetails}
+          />
+          <LowBalanceComponent
+            hasLowBalance={hasLowBalance}
+            onActionClick={onLowBalanceClick}
+            {...LOW_BALANCE_AND_BUNDLES_TEXT}
           />
           <SubmitButton
             text="Vote Now"

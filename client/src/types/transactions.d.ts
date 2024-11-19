@@ -6,6 +6,7 @@ export type HandleTransactionDetailsProps = {
   remaningBundles?: number;
   roe?: number;
   shouldSubBundlesFromRemaining?: boolean;
+  shouldSubFeesFromBalance?: boolean;
   transactionId?: string;
   fioWallet?: FioWalletDoublet;
 };

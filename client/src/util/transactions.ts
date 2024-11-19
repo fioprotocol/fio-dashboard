@@ -6,6 +6,7 @@ import { FIO_CHAIN_CODE } from '../constants/fio';
 
 import MathOp from './math';
 import { getUTCDate, log } from './general';
+import config from '../config';
 
 import {
   FioHistoryNodeAction,
@@ -346,6 +347,7 @@ export const handleTransactionDetails = ({
   roe,
   remaningBundles,
   shouldSubBundlesFromRemaining,
+  shouldSubFeesFromBalance,
   transactionId,
 }: HandleTransactionDetailsProps): TransactionDetailsProps => {
   const transactionDetails: TransactionDetailsProps = {};
@@ -375,14 +377,14 @@ export const handleTransactionDetails = ({
   if (feeCollected) {
     transactionDetails.feeInFio = feeCollected;
 
-    const updatedBalance = new MathOp(fioWallet?.available)
-      .sub(feeCollected)
-      .toNumber();
+    const walletBalance = shouldSubFeesFromBalance
+      ? new MathOp(fioWallet?.available).sub(feeCollected).toNumber()
+      : fioWallet?.available;
 
     transactionDetails.payWith.walletBalances = {
-      nativeFio: updatedBalance,
-      fio: FIOSDK.SUFToAmount(updatedBalance).toFixed(2),
-      usdc: apis.fio.convertFioToUsdc(updatedBalance, roe)?.toString(),
+      nativeFio: walletBalance,
+      fio: FIOSDK.SUFToAmount(walletBalance).toFixed(2),
+      usdc: apis.fio.convertFioToUsdc(walletBalance, roe)?.toString(),
     };
   }
 
@@ -396,4 +398,13 @@ export const handleTransactionDetails = ({
   }
 
   return transactionDetails;
+};
+
+export const lowBalanceAction = () => {
+  const url = config.getTokensUrl;
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.click();
 };
