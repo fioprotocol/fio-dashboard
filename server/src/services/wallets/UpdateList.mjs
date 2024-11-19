@@ -21,7 +21,7 @@ export default class WalletsUpdateList extends Base {
   }
 
   async execute({ data: fioWallets, archivedWalletIds = [] }) {
-    const wallets = await Wallet.list({ userId: this.context.id });
+    const wallets = await Wallet.list({ userId: this.context.id }, false);
 
     for (const { edgeId, name, publicKey } of fioWallets) {
       if (!edgeId) continue;
@@ -29,6 +29,7 @@ export default class WalletsUpdateList extends Base {
       const wallet = wallets.find(({ edgeId: itemEdgeId }) => edgeId === itemEdgeId);
       if (wallet) {
         if (publicKey !== wallet.publicKey) await wallet.update({ publicKey });
+        if (wallet.deletedAt) await wallet.restore();
 
         continue;
       }
@@ -61,7 +62,7 @@ export default class WalletsUpdateList extends Base {
         const wallet = wallets.find(
           ({ edgeId: itemEdgeId }) => edgeWalletId === itemEdgeId,
         );
-        if (wallet) {
+        if (wallet && !wallet.deletedAt) {
           await wallet.destroy();
         }
       }
