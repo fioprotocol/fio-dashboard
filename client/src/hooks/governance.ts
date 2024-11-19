@@ -44,6 +44,10 @@ import {
 } from '../types/governance';
 import { DetailedProxy } from '../types';
 import { VARS_KEYS } from '../constants/vars';
+import {
+  SOCIAL_MEDIA_IDS,
+  SOCIAL_MEDIA_URLS,
+} from '../constants/socialMediaLinks';
 
 const getJiraCandidatesUrl = (publicKey?: string) => {
   if (!publicKey) {
@@ -371,7 +375,7 @@ export const useGetBlockProducers = (): {
             if (twitter) {
               links.push({
                 name: 'Twitter',
-                url: twitter,
+                url: `${SOCIAL_MEDIA_URLS[SOCIAL_MEDIA_IDS.TWITTER]}${twitter}`,
                 logo: twitterLogo,
               });
             }
@@ -379,7 +383,9 @@ export const useGetBlockProducers = (): {
             if (telegram) {
               links.push({
                 name: 'Telegram',
-                url: telegram,
+                url: `${
+                  SOCIAL_MEDIA_URLS[SOCIAL_MEDIA_IDS.TELEGRAM]
+                }${telegram}`,
                 logo: telegramLogo,
               });
             }
