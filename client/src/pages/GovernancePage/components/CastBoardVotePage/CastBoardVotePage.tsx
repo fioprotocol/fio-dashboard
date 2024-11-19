@@ -10,6 +10,7 @@ import WalletAction from '../../../../components/WalletAction/WalletAction';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
+import Amount from '../../../../components/common/Amount';
 
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
@@ -125,7 +126,11 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
+            <span>
+              <Amount>
+                {apis.fio.sufToAmount(selectedFioWallet?.balance)}
+              </Amount>
+            </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
           <h4 className={classes.label}>
@@ -188,7 +193,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               fioHandlesLoading ||
               candidatesListLoading ||
               notEnoughBundles ||
-              new MathOp(selectedFioWallet?.available).eq(0)
+              new MathOp(selectedFioWallet?.balance).eq(0)
             }
             loading={loading}
             withTopMargin={true}

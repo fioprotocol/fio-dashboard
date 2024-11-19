@@ -367,9 +367,9 @@ export const handleTransactionDetails = ({
     transactionDetails.payWith = {
       walletName: fioWallet?.name,
       walletBalances: {
-        nativeFio: fioWallet?.available,
-        fio: FIOSDK.SUFToAmount(fioWallet?.available).toFixed(2),
-        usdc: apis.fio.convertFioToUsdc(fioWallet?.available, roe)?.toString(),
+        nativeFio: fioWallet?.balance,
+        fio: FIOSDK.SUFToAmount(fioWallet?.balance).toFixed(2),
+        usdc: apis.fio.convertFioToUsdc(fioWallet?.balance, roe)?.toString(),
       },
     };
   }
@@ -378,8 +378,8 @@ export const handleTransactionDetails = ({
     transactionDetails.feeInFio = feeCollected;
 
     const walletBalance = shouldSubFeesFromBalance
-      ? new MathOp(fioWallet?.available).sub(feeCollected).toNumber()
-      : fioWallet?.available;
+      ? new MathOp(fioWallet?.balance).sub(feeCollected).toNumber()
+      : fioWallet?.balance;
 
     transactionDetails.payWith.walletBalances = {
       nativeFio: walletBalance,

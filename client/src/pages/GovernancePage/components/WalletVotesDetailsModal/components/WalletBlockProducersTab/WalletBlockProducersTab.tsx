@@ -25,7 +25,7 @@ type Props = {
 export const WalletBlockProducersTab: React.FC<Props> = props => {
   const { activeWallet, listOfBlockProducers, proxy } = props;
 
-  const votingPower = apis.fio.sufToAmount(activeWallet?.available);
+  const votingPower = apis.fio.sufToAmount(activeWallet?.balance);
 
   const producers = [
     ...new Set(activeWallet?.votes.map(vote => vote.producers).flat()),

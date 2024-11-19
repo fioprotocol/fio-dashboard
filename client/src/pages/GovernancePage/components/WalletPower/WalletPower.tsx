@@ -2,6 +2,8 @@ import { FC } from 'react';
 
 import classnames from 'classnames';
 
+import Amount from '../../../../components/common/Amount';
+
 import classes from './WalletPower.module.scss';
 
 export type WalletPowerProps = {
@@ -20,7 +22,8 @@ export const WalletPower: FC<WalletPowerProps> = ({
   <p className={classnames(classes.powerValue, className)}>
     {withLabel && <span className={classes.powerValueLabel}>{label}: </span>}
     <span>
-      {power} <span className={classes.powerValueCurrency}>FIO</span>
+      <Amount>{power}</Amount>{' '}
+      <span className={classes.powerValueCurrency}>FIO</span>
     </span>
   </p>
 );
