@@ -48,7 +48,7 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
     <>
       {activeWallet?.hasProxy ? (
         <ProxyVoteDetails
-          power={apis.fio.sufToAmount(activeWallet?.available)}
+          power={apis.fio.sufToAmount(activeWallet?.balance)}
           name={proxy?.owner}
           handle={proxy?.fioAddress}
           hasDetails
@@ -70,7 +70,7 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
       )}
       <div className={classes.scrollArea}>
         <ScrollBar>
-          {activeWallet?.available > 0 && (
+          {activeWallet?.balance > 0 && (
             <div className={classes.tabsScrollContainer}>
               {listOfCandidates
                 .filter(candidateItem =>
