@@ -7,6 +7,7 @@ import {
   OverviewWallet,
 } from '../../../../../../types/governance';
 import { BADGE_TYPES } from '../../../../../../components/Badge/Badge';
+import Amount from '../../../../../../components/common/Amount';
 
 import classes from './WalletBoardOfDirectorsTab.module.scss';
 import { ProxyVoteDetails } from '../ProxyVoteDetails';
@@ -105,7 +106,9 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
                             </p>
                             <p className={classes.lastVoted}>
                               Last Vote Count Power:{' '}
-                              <span>{lastVoteCount}</span>
+                              <span>
+                                <Amount>{lastVoteCount}</Amount>
+                              </span>
                             </p>
                           </div>
                         </div>

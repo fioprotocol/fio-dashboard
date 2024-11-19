@@ -8,6 +8,7 @@ import { CheckBox } from '../../../../components/common/CheckBox/CheckBox';
 import NotificationBadge from '../../../../components/NotificationBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import Amount from '../../../../components/common/Amount';
 
 import { GradeBadge } from '../GradeBadge/GradeBadge';
 import { MyCurrentVotes } from '../MyCurrentVotes';
@@ -135,7 +136,9 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                         </p>
                         <p className={classes.totalVotes}>
                           Total Votes:{' '}
-                          <span className={classes.count}>{totalVotes}</span>
+                          <span className={classes.count}>
+                            <Amount>{totalVotes}</Amount>
+                          </span>
                         </p>
                       </div>
                     </div>
