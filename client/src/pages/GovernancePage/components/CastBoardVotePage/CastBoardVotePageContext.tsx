@@ -23,6 +23,7 @@ import { CandidateProps, FioHandleItem } from '../../../../types/governance';
 import { TransactionDetailsProps } from '../../../../components/TransactionDetails/TransactionDetails';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
 import { VARS_KEYS } from '../../../../constants/vars';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
@@ -38,6 +39,7 @@ type UseContextProps = {
   voteFioHandle: string;
   onActionClick: () => void;
   onCancel: () => void;
+  onLowBalanceClick: () => void;
   onResultsClose: () => void;
   onSuccess: (results: TrxResponsePaidBundles) => void;
   onFioHandleChange: (id: string) => void;
@@ -110,6 +112,15 @@ export const useContext = (props: Props): UseContextProps => {
     setSelectedFioHandleId(fioHandleId);
   }, []);
 
+  const onLowBalanceClick = useCallback(() => {
+    history.push(
+      `${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${selectedFioHandle?.name}`,
+      {
+        backUrl: `${ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}`,
+      },
+    );
+  }, [history, selectedFioHandle?.name]);
+
   const onCancel = () => {
     setSubmitData(null);
     setProcessing(false);
@@ -169,6 +180,7 @@ export const useContext = (props: Props): UseContextProps => {
     voteFioHandle,
     onActionClick,
     onCancel,
+    onLowBalanceClick,
     onSuccess,
     onResultsClose,
     onFioHandleChange,

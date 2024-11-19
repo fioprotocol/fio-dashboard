@@ -14,6 +14,7 @@ import { ResultDetails } from '../../../../components/ResultDetails/ResultDetail
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { CandidateBoardItems } from './components/CandidateBoardItems/CandidateBoardItems';
+import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
 
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
@@ -27,6 +28,7 @@ import { useContext } from './CastBoardVotePageContext';
 import { GovernancePageContextProps } from '../../types';
 
 import classes from './CastBoardVotePage.module.scss';
+import { LOW_BUNDLES_TEXT } from '../../../../constants/errors';
 
 export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => {
   const {
@@ -52,6 +54,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     voteFioHandle,
     onActionClick,
     onCancel,
+    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onFioHandleChange,
@@ -170,6 +173,11 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               fee: BUNDLES_TX_COUNT.NEW_FIO_REQUEST,
             }}
             className={classes.transactionDetails}
+          />
+          <LowBalanceComponent
+            hasLowBalance={notEnoughBundles}
+            onActionClick={onLowBalanceClick}
+            {...LOW_BUNDLES_TEXT}
           />
           <SubmitButton
             text="Vote Now"

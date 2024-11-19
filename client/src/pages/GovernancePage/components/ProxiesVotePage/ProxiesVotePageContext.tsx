@@ -27,12 +27,16 @@ import { DEFAULT_FEE_PRICES } from '../../../../util/prices';
 import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
-import { handleTransactionDetails } from '../../../../util/transactions';
+import {
+  handleTransactionDetails,
+  lowBalanceAction,
+} from '../../../../util/transactions';
 
 import { DetailedProxy, FeePrice, FioWalletDoublet } from '../../../../types';
 import { SubmitData } from './types';
 import { FioHandleItem } from '../../../../types/governance';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
+import MathOp from '../../../../util/math';
 
 type Props = {
   selectedProxy: DetailedProxy;
@@ -42,6 +46,7 @@ type Props = {
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
   fioHandlesLoading: boolean;
+  hasLowBalance: boolean;
   loading: boolean;
   fioWallets: FioWalletDoublet[];
   prices: FeePrice;
@@ -54,6 +59,7 @@ type UseContextProps = {
   onActionClick: () => void;
   onCancel: () => void;
   onFioHandleChange: (id: string) => void;
+  onLowBalanceClick: () => void;
   onResultsClose: () => void;
   onSuccess: (results: TrxResponse) => void;
   onWalletChange: (id: string) => void;
@@ -118,6 +124,12 @@ export const useContext = (props: Props): UseContextProps => {
 
   const transactionDetails = handleTransactionDetails(transactionDetailsParams);
 
+  const hasLowBalance =
+    !selectedFioHandle?.remaining &&
+    new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio);
+
+  const onLowBalanceClick = useCallback(() => lowBalanceAction(), []);
+
   const onCancel = () => {
     setSubmitData(null);
     setProcessing(false);
@@ -135,6 +147,7 @@ export const useContext = (props: Props): UseContextProps => {
             : selectedFioHandle?.remaining,
           roe,
           shouldSubBundlesFromRemaining: true,
+          shouldSubFeesFromBalance: !!results?.fee_collected,
           transactionId: results.transaction_id,
         };
 
@@ -186,6 +199,7 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
+    hasLowBalance,
     loading,
     prices,
     processing,
@@ -197,6 +211,7 @@ export const useContext = (props: Props): UseContextProps => {
     onActionClick,
     onCancel,
     onFioHandleChange,
+    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onWalletChange,

@@ -13,16 +13,18 @@ const DEFAULT_TEXT = {
     'Unfortunately there is not enough FIO available to complete your purchase. Please purchase or deposit additional FIO',
 };
 
-type Props = {
+export type LowBalanceProps = {
+  className?: string;
   hasLowBalance: boolean;
   onActionClick?: () => void;
   buttonText?: string;
   messageText?: string;
 };
 
-const LowBalanceBadge: React.FC<Props> = props => {
+const LowBalanceBadge: React.FC<LowBalanceProps> = props => {
   const {
     buttonText = DEFAULT_TEXT.buttonText,
+    className,
     messageText = DEFAULT_TEXT.messageText,
     onActionClick,
     hasLowBalance,
@@ -39,7 +41,7 @@ const LowBalanceBadge: React.FC<Props> = props => {
   };
 
   return (
-    <Badge type={BADGE_TYPES.ERROR} show={hasLowBalance}>
+    <Badge type={BADGE_TYPES.ERROR} show={hasLowBalance} className={className}>
       <div className={classes.errorContainer}>
         <div className={classes.textContainer}>
           <InfoIcon className={classes.icon} />
