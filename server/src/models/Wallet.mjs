@@ -32,7 +32,7 @@ export class Wallet extends Base {
         sequelize,
         tableName: 'wallets',
         paranoid: true,
-        timestamps: false,
+        timestamps: true,
         indexes: [
           {
             unique: true,
