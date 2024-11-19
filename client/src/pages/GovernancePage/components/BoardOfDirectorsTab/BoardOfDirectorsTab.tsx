@@ -4,6 +4,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 import Loader from '../../../../components/Loader/Loader';
 import ModalComponent from '../../../../components/Modal/Modal';
 import { CheckBox } from '../../../../components/common/CheckBox/CheckBox';
+import Amount from '../../../../components/common/Amount';
 
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { BoardOfDirectorsDetails } from '../BoardOfDirectorsDetails';
@@ -107,7 +108,10 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
                     <div className={classes.nameContainer}>
                       <p className={classes.name}>{name}</p>
                       <p className={classes.lastVotedCount}>
-                        Last Vote Count: <span>{lastVoteCount}</span>
+                        Last Vote Count:{' '}
+                        <span>
+                          <Amount>{lastVoteCount}</Amount>
+                        </span>
                       </p>
                     </div>
                   </div>
