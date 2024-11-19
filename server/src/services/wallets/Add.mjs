@@ -31,6 +31,19 @@ export default class WalletsAdd extends Base {
       });
     }
 
+    const deletedWallet = await Wallet.findOne({
+      where: { userId: this.context.id, edgeId, publicKey },
+      paranoid: false,
+    });
+
+    if (deletedWallet) {
+      await deletedWallet.restore();
+
+      return {
+        data: Wallet.format(deletedWallet.get({ plain: true })),
+      };
+    }
+
     const newWallet = new Wallet({
       edgeId: edgeId || null,
       name,

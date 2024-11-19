@@ -48,6 +48,19 @@ export default class WalletsAddMissing extends Base {
       });
     }
 
+    const deletedWallet = await Wallet.findOne({
+      where: { userId: user.id, edgeId, publicKey },
+      paranoid: false,
+    });
+
+    if (deletedWallet) {
+      await deletedWallet.restore();
+
+      return {
+        data: { success: true },
+      };
+    }
+
     const newWallet = new Wallet({
       edgeId,
       name,

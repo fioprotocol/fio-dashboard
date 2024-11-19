@@ -31,7 +31,7 @@ export default class WalletsDelete extends Base {
       },
     });
 
-    await wallet.destroy({ force: true });
+    await wallet.destroy();
 
     if (publicWalletData) {
       await publicWalletData.destroy({ force: true });
