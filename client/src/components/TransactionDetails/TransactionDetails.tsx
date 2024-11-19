@@ -111,9 +111,11 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
             <span className={classnames(classes.value)}>
               {bundles.fee} Bundle{bundles.fee > 1 ? 's' : ''}&nbsp;
             </span>
-            <span className={classes.remaining}>
-              ({bundles.remaining} Remaining)
-            </span>
+            {typeof bundles?.remaining !== 'undefined' && (
+              <span className={classes.remaining}>
+                ({bundles.remaining} Remaining)
+              </span>
+            )}
           </>
         }
       />
