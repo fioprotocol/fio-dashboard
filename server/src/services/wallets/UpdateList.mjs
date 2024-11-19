@@ -16,10 +16,11 @@ export default class WalletsUpdateList extends Base {
           },
         },
       ],
+      archivedWalletIds: { list_of: 'string' },
     };
   }
 
-  async execute({ data: fioWallets }) {
+  async execute({ data: fioWallets, archivedWalletIds = [] }) {
     const wallets = await Wallet.list({ userId: this.context.id });
 
     for (const { edgeId, name, publicKey } of fioWallets) {
@@ -52,6 +53,17 @@ export default class WalletsUpdateList extends Base {
           userId: this.context.id,
         });
         await newWallet.save();
+      }
+    }
+
+    if (archivedWalletIds.length > 0) {
+      for (const edgeWalletId of archivedWalletIds) {
+        const wallet = wallets.find(
+          ({ edgeId: itemEdgeId }) => edgeWalletId === itemEdgeId,
+        );
+        if (wallet) {
+          await wallet.destroy();
+        }
       }
     }
 

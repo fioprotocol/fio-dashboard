@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { EdgeAccount } from 'edge-core-js';
 
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
@@ -41,12 +40,10 @@ export default combineReducers({
         return state;
     }
   },
-  account(state: EdgeAccount | null = null, action) {
+  archivedWalletIds(state: string[] | null = null, action) {
     switch (action.type) {
       case actions.LOGIN_SUCCESS:
-      case actions.SET_ACCOUNT:
-        return action.data;
-      case actions.LOGOUT_SUCCESS:
+        return action.data.archivedWalletIds;
       case LOGOUT_SUCCESS:
         return null;
       default:

@@ -10,9 +10,10 @@ export const SET_WALLETS_FAILURE = `${prefix}/SET_WALLETS_FAILURE`;
 
 export const setWallets = (
   fioWallets: FioWalletDoublet[],
+  archivedWalletIds?: string[],
 ): CommonPromiseAction => ({
   types: [SET_WALLETS_REQUEST, SET_WALLETS_SUCCESS, SET_WALLETS_FAILURE],
-  promise: (api: Api) => api.account.setWallets(fioWallets),
+  promise: (api: Api) => api.account.setWallets(fioWallets, archivedWalletIds),
 });
 
 export const ADD_WALLET_REQUEST = `${prefix}/ADD_WALLET_REQUEST`;

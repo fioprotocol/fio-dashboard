@@ -122,6 +122,7 @@ export const login = ({
       account,
       email,
       fioWallets,
+      archivedWalletIds: account.archivedWalletIds,
       options,
       voucherId,
       isPinLogin: !!pin,
