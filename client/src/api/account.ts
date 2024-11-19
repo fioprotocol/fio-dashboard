@@ -19,8 +19,12 @@ export default class Account extends Base {
 
   setWallets(
     fioWallets: FioWalletDoublet[],
+    archivedWalletIds?: string[],
   ): Promise<AccountSetWalletsResponse> {
-    return this.apiClient.post('account/wallets', { data: fioWallets });
+    return this.apiClient.post('account/wallets', {
+      data: fioWallets,
+      archivedWalletIds,
+    });
   }
 
   addWallet(data: NewFioWalletDoublet): Promise<AccountAddWalletsResponse> {
