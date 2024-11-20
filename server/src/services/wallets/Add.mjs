@@ -32,12 +32,15 @@ export default class WalletsAdd extends Base {
     }
 
     const deletedWallet = await Wallet.findOne({
-      where: { userId: this.context.id, edgeId, publicKey },
+      where: { userId: this.context.id, edgeId: edgeId || null, publicKey },
       paranoid: false,
     });
 
     if (deletedWallet) {
       await deletedWallet.restore();
+      deletedWallet.data = data;
+      deletedWallet.name = name;
+      await deletedWallet.save();
 
       return {
         data: Wallet.format(deletedWallet.get({ plain: true })),
