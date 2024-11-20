@@ -115,7 +115,6 @@ const LoginForm: React.FC<Props> = props => {
 
   useEffect(() => {
     const isOtpError =
-      edgeLoginFailure &&
       edgeLoginFailure.reason === 'otp' &&
       edgeLoginFailure.voucherId &&
       edgeLoginFailure.voucherActivates;
@@ -126,7 +125,7 @@ const LoginForm: React.FC<Props> = props => {
       const deviceDescription = `${osName} ${osVersion}`;
       const voucherId = edgeLoginFailure.voucherId;
 
-      if (voucherId && loginParams?.email) {
+      if (voucherId && loginParams?.email && !showCodeModal) {
         apis.auth.createNewDeviceRequest({
           email: loginParams.email,
           deviceDescription,
@@ -142,8 +141,9 @@ const LoginForm: React.FC<Props> = props => {
       }
     }
   }, [
-    edgeLoginFailure,
     edgeLoginFailure.reason,
+    edgeLoginFailure.voucherId,
+    edgeLoginFailure.voucherActivates,
     loginParams,
     onSubmit,
     showCodeModal,
