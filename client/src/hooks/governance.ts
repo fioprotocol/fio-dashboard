@@ -169,7 +169,7 @@ export const useGetPublicKeyCandidatesVotes = (
 
         const { fields } = jiraCandidatesResults[0] || {};
 
-        const candidatesVotesRersults = {
+        const candidatesVotesResults = {
           currentBoardVotingPower: fields?.customfield_10183,
           boardVotingPowerLastUpdate: fields?.customfield_10184,
           candidatesIdsList: fields?.issuelinks
@@ -177,7 +177,7 @@ export const useGetPublicKeyCandidatesVotes = (
             .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
         };
 
-        setCandidatesVotes(candidatesVotesRersults);
+        setCandidatesVotes(candidatesVotesResults);
       } catch (error) {
         log.error(error);
       } finally {
