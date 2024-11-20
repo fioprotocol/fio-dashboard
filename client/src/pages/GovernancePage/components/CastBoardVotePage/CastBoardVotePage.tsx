@@ -20,8 +20,8 @@ import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent'
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
+import { LOW_BUNDLES_TEXT } from '../../../../constants/errors';
 
-import MathOp from '../../../../util/math';
 import apis from '../../../../api';
 
 import { useContext } from './CastBoardVotePageContext';
@@ -29,7 +29,6 @@ import { useContext } from './CastBoardVotePageContext';
 import { GovernancePageContextProps } from '../../types';
 
 import classes from './CastBoardVotePage.module.scss';
-import { LOW_BUNDLES_TEXT } from '../../../../constants/errors';
 
 export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => {
   const {
@@ -192,8 +191,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               loading ||
               fioHandlesLoading ||
               candidatesListLoading ||
-              notEnoughBundles ||
-              new MathOp(selectedFioWallet?.balance).eq(0)
+              notEnoughBundles
             }
             loading={loading}
             withTopMargin={true}

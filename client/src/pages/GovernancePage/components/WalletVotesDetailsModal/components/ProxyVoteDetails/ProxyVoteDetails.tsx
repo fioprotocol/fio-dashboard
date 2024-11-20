@@ -31,10 +31,7 @@ export const ProxyVoteDetails: FC<Props> = ({
           <>
             Your tokens for this wallet are proxied. They count towards your
             proxy's vote, not your own. To stop proxying,{' '}
-            <Link
-              to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-              className={classes.infoBadgeLink}
-            >
+            <Link to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}>
               vote for block producers
             </Link>
             .
@@ -55,13 +52,6 @@ export const ProxyVoteDetails: FC<Props> = ({
       )}
       {hasDetails && (
         <h5 className={classes.proxyDetailsSubTitle}>Proxy Vote Details</h5>
-      )}
-      {power === 0 && (
-        <InfoBadgeComponent
-          type={BADGE_TYPES.ERROR}
-          title="Not Voting Tokens"
-          message="This proxy is voting for 0 FIO Foundation Board of Directors"
-        />
       )}
     </>
   );

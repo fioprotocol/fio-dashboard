@@ -68,10 +68,7 @@ export const GovernanceVotingHelpTab: FC = () => {
                 your proxies vote weight and your direct Board vote will be
                 ignored! Remember that if you staked your tokens they may have
                 been automatically proxied. To stop proxying, you must{' '}
-                <Link
-                  className={classes.infoBadgeLink}
-                  to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}
-                >
+                <Link to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}>
                   vote for Block Producers
                 </Link>
                 .
