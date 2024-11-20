@@ -79,11 +79,13 @@ class MissedTransactions extends CommonJob {
             : null;
 
         if (!addressTransactionHistory) {
-          return logger.error(
+          logger.error(
             `BC TX Update: no data returned from tx history, res - ${JSON.stringify(
               res,
             )}`,
           );
+
+          return this.finish();
         }
 
         const {
