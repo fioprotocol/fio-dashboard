@@ -9,18 +9,25 @@ export default class WalletsUpdateList extends Base {
       data: [
         'required',
         {
-          list_of_objects: {
-            edgeId: 'string',
-            name: 'string',
-            publicKey: 'string',
+          nested_object: {
+            fioWallets: [
+              'required',
+              {
+                list_of_objects: {
+                  edgeId: 'string',
+                  name: 'string',
+                  publicKey: 'string',
+                },
+              },
+            ],
+            archivedWalletIds: { list_of: 'string' },
           },
         },
       ],
-      archivedWalletIds: { list_of: 'string' },
     };
   }
 
-  async execute({ data: fioWallets, archivedWalletIds = [] }) {
+  async execute({ data: { fioWallets, archivedWalletIds = [] } }) {
     const wallets = await Wallet.list({ userId: this.context.id }, false);
 
     for (const { edgeId, name, publicKey } of fioWallets) {
@@ -39,7 +46,9 @@ export default class WalletsUpdateList extends Base {
       );
 
       if (walletWithExistingPublicKey) {
-        await walletWithExistingPublicKey.update({ failedSyncedWithEdge: true });
+        await walletWithExistingPublicKey.update({
+          failedSyncedWithEdge: true,
+        });
         throw new X({
           code: 'NOT_UNIQUE',
           fields: {

@@ -17,13 +17,12 @@ export default class Account extends Base {
     return this.apiClient.get('account/wallets');
   }
 
-  setWallets(
-    fioWallets: FioWalletDoublet[],
-    archivedWalletIds?: string[],
-  ): Promise<AccountSetWalletsResponse> {
+  setWallets(data: {
+    fioWallets: FioWalletDoublet[];
+    archivedWalletIds?: string[];
+  }): Promise<AccountSetWalletsResponse> {
     return this.apiClient.post('account/wallets', {
-      data: fioWallets,
-      archivedWalletIds,
+      data,
     });
   }
 

@@ -99,7 +99,12 @@ export function* loginSuccess(history: History, api: Api): Generator {
       archivedWalletIds,
     );
     if (wallets && wallets.length)
-      yield put<Action>(setWallets(wallets, edgeArchivedWalletIds));
+      yield put<Action>(
+        setWallets({
+          fioWallets: wallets,
+          archivedWalletIds: edgeArchivedWalletIds,
+        }),
+      );
     if ((action.otpKey && action.voucherId) || action.voucherId)
       try {
         // We have to wait delete voucher call from server to get updated profile then.
