@@ -62,7 +62,7 @@ export const useContext = (props: Props): UseContextProps => {
   const { hasLowBalance, hasProxy } =
     !overviewWalletsLoading &&
     overviewWalletHasLowBalanceAndHasProxy(overviewWallets);
-  console.log(hasProxy);
+
   useMakeActionOnPathChange({
     action: resetSelectedCandidates,
     route: ROUTES.GOVERNANCE_CAST_BOARD_VOTE,
