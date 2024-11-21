@@ -43,7 +43,6 @@ type Props = {
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
   fioHandlesLoading: boolean;
-  hasLowBundleBalance: boolean;
   hasLowTokenBalance: boolean;
   loading: boolean;
   fioWallets: FioWalletDoublet[];
@@ -121,8 +120,6 @@ export const useContext = (props: Props): UseContextProps => {
 
   const transactionDetails = handleTransactionDetails(transactionDetailsParams);
 
-  const hasLowBundleBalance = !selectedFioHandle?.remaining;
-
   const hasLowTokenBalance =
     new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio) ||
     !selectedFioWallet?.balance;
@@ -162,7 +159,12 @@ export const useContext = (props: Props): UseContextProps => {
 
   const onResultsClose = () => {
     resetSelectedProxies();
-    history.push(ROUTES.GOVERNANCE_PROXIES);
+    history.push({
+      pathname: ROUTES.GOVERNANCE_PROXIES,
+      state: {
+        updateOverview: true,
+      },
+    });
   };
 
   const onActionClick = () => {
@@ -196,7 +198,6 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
-    hasLowBundleBalance,
     hasLowTokenBalance,
     loading,
     prices,

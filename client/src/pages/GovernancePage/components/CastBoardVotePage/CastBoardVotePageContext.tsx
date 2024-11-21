@@ -15,6 +15,7 @@ import { TrxResponse, TrxResponsePaidBundles } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 import { handleTransactionDetails } from '../../../../util/transactions';
+import { useMakeActionOnPathChange } from '../../../../hooks/general';
 
 import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
 import {
@@ -83,6 +84,11 @@ export const useContext = (props: Props): UseContextProps => {
     resultsData,
     setResultsData,
   ] = useState<TransactionDetailsProps | null>(null);
+
+  useMakeActionOnPathChange({
+    action: resetSelectedCandidates,
+    route: ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS,
+  });
 
   const selectedFioWallet = overviewWallets.find(
     ({ id }) => id === selectedFioWalletId,
