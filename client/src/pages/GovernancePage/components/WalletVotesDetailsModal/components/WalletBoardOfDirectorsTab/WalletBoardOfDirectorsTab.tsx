@@ -35,9 +35,11 @@ type Props = {
 
 export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
   const { activeWallet, listOfCandidates, proxy } = props;
-  const { loading, candidatesVotes } = useGetPublicKeyCandidatesVotes(
-    activeWallet?.publicKey,
-  );
+
+  const { loading, candidatesVotes } = useGetPublicKeyCandidatesVotes({
+    proxyPublicKey: activeWallet.proxyVotes?.publicKey,
+    publicKey: activeWallet?.publicKey,
+  });
 
   if (loading) {
     return <Loader />;
