@@ -29,11 +29,7 @@ export const TabsSelector: React.FC<TabsSelectorProps> = ({
       <TabsContainer defaultActiveKey={defaultActiveKey} activeKey={activeKey}>
         <Tabs
           list={list}
-          containerClass={classnames(
-            tabsClasses.container,
-            classes.tabsContainer,
-            className,
-          )}
+          containerClass={classnames(tabsClasses.container, className)}
           tabItemClass={classnames(tabsClasses.tabItem, classes.tabItem)}
           tabItemContainerClass={tabsClasses.tabItem}
           tabAction={tabAction}
