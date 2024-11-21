@@ -2,11 +2,16 @@
 
 .infoBadge {
   margin-top: 0 !important;
-  margin-bottom: 12px !important;
-  gap: 15px;
+  margin-bottom: 20px !important;
+  gap: 10px;
+  padding: 11px !important;
+  border-radius: 12px;
+  font-size: 0.75em;
 
   @include lg {
-    gap: 0;
+    & > div {
+      margin-left: 0;
+    }
   }
 
   svg {

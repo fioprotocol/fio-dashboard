@@ -4,22 +4,28 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 import Loader from '../../../../components/Loader/Loader';
 import ModalComponent from '../../../../components/Modal/Modal';
 import { CheckBox } from '../../../../components/common/CheckBox/CheckBox';
+import Amount from '../../../../components/common/Amount';
 
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { BoardOfDirectorsDetails } from '../BoardOfDirectorsDetails';
 import { MemberBadge } from '../MemberBadge/MemberBadge';
 import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
+import { ProxiedWalletWarningBadge } from '../ProxiedWalletWarningBadge/ProxiedWalletWarningBadge';
 
 import { useContext } from './BoardOfDirectorsTabContext';
 
-import classes from './BoardOfDirectorsTab.module.scss';
 import { GovernancePageContextProps } from '../../types';
+
+import classes from './BoardOfDirectorsTab.module.scss';
 
 export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
   const {
     listOfCandidates,
     loading,
+    overviewWallets,
+    overviewWalletsLoading,
     onCandidateSelectChange,
     resetSelectedCandidates,
   } = props;
@@ -27,12 +33,20 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
   const {
     activeCandidate,
     disabledCastBoardVote,
+    hasLowBalance,
+    hasProxy,
     nextDate,
     showCandidateDetailsModal,
+    showNoAssociatedFioHandlesWarning,
     onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,
-  } = useContext({ listOfCandidates, resetSelectedCandidates });
+  } = useContext({
+    listOfCandidates,
+    overviewWallets,
+    overviewWalletsLoading,
+    resetSelectedCandidates,
+  });
 
   return (
     <div className={classes.container}>
@@ -78,7 +92,16 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
           className={classes.actionButton}
         />
       </div>
-      <NoAssociatedFioHandlesWarningBadge show={disabledCastBoardVote} />
+      {!overviewWalletsLoading ? (
+        hasProxy ? (
+          <ProxiedWalletWarningBadge />
+        ) : (
+          <LowBalanceTokens hasLowBalance={hasLowBalance} />
+        )
+      ) : null}
+      <NoAssociatedFioHandlesWarningBadge
+        show={showNoAssociatedFioHandlesWarning}
+      />
       <div className={classes.listContainer}>
         {!loading ? (
           listOfCandidates.map(candidateItem => {
@@ -107,7 +130,10 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
                     <div className={classes.nameContainer}>
                       <p className={classes.name}>{name}</p>
                       <p className={classes.lastVotedCount}>
-                        Last Vote Count: <span>{lastVoteCount}</span>
+                        Last Vote Count:{' '}
+                        <span>
+                          <Amount>{lastVoteCount}</Amount>
+                        </span>
                       </p>
                     </div>
                   </div>

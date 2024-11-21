@@ -10,17 +10,22 @@ import WalletAction from '../../../../components/WalletAction/WalletAction';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
+import Amount from '../../../../components/common/Amount';
 
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { CandidateBoardItems } from './components/CandidateBoardItems/CandidateBoardItems';
+import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
+import { ProxiedWalletWarningBadge } from '../ProxiedWalletWarningBadge/ProxiedWalletWarningBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
+import { LOW_BUNDLES_TEXT } from '../../../../constants/errors';
 
-import MathOp from '../../../../util/math';
 import apis from '../../../../api';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { useContext } from './CastBoardVotePageContext';
 
@@ -32,6 +37,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
   const {
     listOfCandidates,
     loading: candidatesListLoading,
+    overviewWallets,
     onCandidateSelectChange,
     resetSelectedCandidates,
   } = props;
@@ -41,9 +47,9 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
   const {
     fioHandlesList,
     fioHandlesLoading,
-    fioWallets,
     loading,
     notEnoughBundles,
+    notEnoughTokens,
     processing,
     resultsData,
     submitData,
@@ -52,12 +58,17 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     voteFioHandle,
     onActionClick,
     onCancel,
+    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onFioHandleChange,
     onWalletChange,
     setProcessing,
-  } = useContext({ resetSelectedCandidates, selectedCandidates });
+  } = useContext({
+    resetSelectedCandidates,
+    selectedCandidates,
+    overviewWallets,
+  });
 
   if (resultsData) {
     return (
@@ -111,7 +122,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
           </p>
           <h4 className={classes.label}>Your FIO Wallet</h4>
           <CustomDropdown
-            options={fioWallets}
+            options={overviewWallets}
             onChange={onWalletChange}
             defaultOptionValue={selectedFioWallet}
             loading={loading}
@@ -122,9 +133,18 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
+            <span>
+              <Amount>
+                {apis.fio.sufToAmount(selectedFioWallet?.balance)}
+              </Amount>
+            </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          {selectedFioWallet?.hasProxy && <ProxiedWalletWarningBadge />}
+          <LowBalanceTokens
+            hasLowBalance={notEnoughTokens}
+            onActionClick={lowBalanceAction}
+          />
           <h4 className={classes.label}>
             Candidate Votes <span className={classes.regularText}>(max 8)</span>
           </h4>
@@ -171,6 +191,11 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
             }}
             className={classes.transactionDetails}
           />
+          <LowBalanceComponent
+            hasLowBalance={notEnoughBundles}
+            onActionClick={onLowBalanceClick}
+            {...LOW_BUNDLES_TEXT}
+          />
           <SubmitButton
             text="Vote Now"
             disabled={
@@ -180,7 +205,8 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               fioHandlesLoading ||
               candidatesListLoading ||
               notEnoughBundles ||
-              new MathOp(selectedFioWallet?.available).eq(0)
+              notEnoughTokens ||
+              selectedFioWallet?.hasProxy
             }
             loading={loading}
             withTopMargin={true}

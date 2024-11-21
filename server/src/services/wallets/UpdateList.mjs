@@ -9,18 +9,26 @@ export default class WalletsUpdateList extends Base {
       data: [
         'required',
         {
-          list_of_objects: {
-            edgeId: 'string',
-            name: 'string',
-            publicKey: 'string',
+          nested_object: {
+            fioWallets: [
+              'required',
+              {
+                list_of_objects: {
+                  edgeId: 'string',
+                  name: 'string',
+                  publicKey: 'string',
+                },
+              },
+            ],
+            archivedWalletIds: { list_of: 'string' },
           },
         },
       ],
     };
   }
 
-  async execute({ data: fioWallets }) {
-    const wallets = await Wallet.list({ userId: this.context.id });
+  async execute({ data: { fioWallets, archivedWalletIds = [] } }) {
+    const wallets = await Wallet.list({ userId: this.context.id }, false);
 
     for (const { edgeId, name, publicKey } of fioWallets) {
       if (!edgeId) continue;
@@ -28,6 +36,7 @@ export default class WalletsUpdateList extends Base {
       const wallet = wallets.find(({ edgeId: itemEdgeId }) => edgeId === itemEdgeId);
       if (wallet) {
         if (publicKey !== wallet.publicKey) await wallet.update({ publicKey });
+        if (wallet.deletedAt) await wallet.restore();
 
         continue;
       }
@@ -37,7 +46,9 @@ export default class WalletsUpdateList extends Base {
       );
 
       if (walletWithExistingPublicKey) {
-        await walletWithExistingPublicKey.update({ failedSyncedWithEdge: true });
+        await walletWithExistingPublicKey.update({
+          failedSyncedWithEdge: true,
+        });
         throw new X({
           code: 'NOT_UNIQUE',
           fields: {
@@ -52,6 +63,17 @@ export default class WalletsUpdateList extends Base {
           userId: this.context.id,
         });
         await newWallet.save();
+      }
+    }
+
+    if (archivedWalletIds.length > 0) {
+      for (const edgeWalletId of archivedWalletIds) {
+        const wallet = wallets.find(
+          ({ edgeId: itemEdgeId }) => edgeWalletId === itemEdgeId,
+        );
+        if (wallet && !wallet.deletedAt) {
+          await wallet.destroy();
+        }
       }
     }
 

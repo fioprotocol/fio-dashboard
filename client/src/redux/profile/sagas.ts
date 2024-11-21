@@ -40,6 +40,7 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
+import { archivedWalletIds } from '../edge/selectors';
 import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
@@ -94,7 +95,16 @@ export function* loginSuccess(history: History, api: Api): Generator {
         ? ANALYTICS_LOGIN_METHOD.PIN
         : ANALYTICS_LOGIN_METHOD.PASSWORD,
     });
-    if (wallets && wallets.length) yield put<Action>(setWallets(wallets));
+    const edgeArchivedWalletIds: string[] | null = yield select(
+      archivedWalletIds,
+    );
+    if (wallets && wallets.length)
+      yield put<Action>(
+        setWallets({
+          fioWallets: wallets,
+          archivedWalletIds: edgeArchivedWalletIds,
+        }),
+      );
     if ((action.otpKey && action.voucherId) || action.voucherId)
       try {
         // We have to wait delete voucher call from server to get updated profile then.

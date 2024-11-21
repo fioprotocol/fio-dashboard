@@ -5,7 +5,6 @@ import { useHistory } from 'react-router';
 import {
   fioAddresses as fioAddressesSelector,
   fioAddressesLoading as fioAddressesLoadingSelector,
-  fioWallets as fioWalletsSelector,
   loading as loadingSelector,
 } from '../../../../redux/fio/selectors';
 import { siteSetings } from '../../../../redux/settings/selectors';
@@ -16,28 +15,34 @@ import { TrxResponse, TrxResponsePaidBundles } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 import { handleTransactionDetails } from '../../../../util/transactions';
+import { useMakeActionOnPathChange } from '../../../../hooks/general';
 
-import { FioWalletDoublet } from '../../../../types';
 import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
-import { CandidateProps, FioHandleItem } from '../../../../types/governance';
+import {
+  CandidateProps,
+  FioHandleItem,
+  OverviewWallet,
+} from '../../../../types/governance';
 import { TransactionDetailsProps } from '../../../../components/TransactionDetails/TransactionDetails';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
 import { VARS_KEYS } from '../../../../constants/vars';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
   fioHandlesLoading: boolean;
   loading: boolean;
   notEnoughBundles: boolean;
+  notEnoughTokens: boolean;
   processing: boolean;
   resultsData: TransactionDetailsProps;
   submitData: RequestTokensValues;
   selectedFioHandle: FioHandleItem;
-  selectedFioWallet: FioWalletDoublet;
-  fioWallets: FioWalletDoublet[];
+  selectedFioWallet: OverviewWallet;
   voteFioHandle: string;
   onActionClick: () => void;
   onCancel: () => void;
+  onLowBalanceClick: () => void;
   onResultsClose: () => void;
   onSuccess: (results: TrxResponsePaidBundles) => void;
   onFioHandleChange: (id: string) => void;
@@ -46,14 +51,18 @@ type UseContextProps = {
 };
 
 type Props = {
+  overviewWallets: OverviewWallet[];
   selectedCandidates: CandidateProps[];
   resetSelectedCandidates: () => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { selectedCandidates, resetSelectedCandidates } = props;
+  const {
+    overviewWallets,
+    selectedCandidates,
+    resetSelectedCandidates,
+  } = props;
 
-  const fioWallets = useSelector(fioWalletsSelector);
   const fioHandles = useSelector(fioAddressesSelector);
   const fioHandlesLoading = useSelector(fioAddressesLoadingSelector);
   const loading = useSelector(loadingSelector);
@@ -62,7 +71,7 @@ export const useContext = (props: Props): UseContextProps => {
   const voteFioHandle = settings[VARS_KEYS.VOTE_FIO_HANDLE];
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
-    fioWallets[0]?.id || null,
+    overviewWallets[0]?.id || null,
   );
   const [selectedFioHandleId, setSelectedFioHandleId] = useState<string | null>(
     null,
@@ -76,7 +85,12 @@ export const useContext = (props: Props): UseContextProps => {
     setResultsData,
   ] = useState<TransactionDetailsProps | null>(null);
 
-  const selectedFioWallet = fioWallets.find(
+  useMakeActionOnPathChange({
+    action: resetSelectedCandidates,
+    route: ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS,
+  });
+
+  const selectedFioWallet = overviewWallets.find(
     ({ id }) => id === selectedFioWalletId,
   );
 
@@ -98,6 +112,8 @@ export const useContext = (props: Props): UseContextProps => {
       ? selectedFioHandle.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
       : false;
 
+  const notEnoughTokens = !selectedFioWallet?.balance;
+
   const history = useHistory();
 
   useRefreshBalancesAndFioNames();
@@ -109,6 +125,15 @@ export const useContext = (props: Props): UseContextProps => {
   const onFioHandleChange = useCallback((fioHandleId: string) => {
     setSelectedFioHandleId(fioHandleId);
   }, []);
+
+  const onLowBalanceClick = useCallback(() => {
+    history.push(
+      `${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${selectedFioHandle?.name}`,
+      {
+        backUrl: `${ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS}`,
+      },
+    );
+  }, [history, selectedFioHandle?.name]);
 
   const onCancel = () => {
     setSubmitData(null);
@@ -160,15 +185,16 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesLoading,
     loading,
     notEnoughBundles,
+    notEnoughTokens,
     processing,
     resultsData,
     submitData,
     selectedFioHandle,
     selectedFioWallet,
-    fioWallets,
     voteFioHandle,
     onActionClick,
     onCancel,
+    onLowBalanceClick,
     onSuccess,
     onResultsClose,
     onFioHandleChange,

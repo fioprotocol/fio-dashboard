@@ -7,12 +7,14 @@ import CustomDropdown from '../../../../components/CustomDropdown';
 import Loader from '../../../../components/Loader/Loader';
 import WalletAction from '../../../../components/WalletAction/WalletAction';
 import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
+import Amount from '../../../../components/common/Amount';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { ROUTES } from '../../../../constants/routes';
 
 import MathOp from '../../../../util/math';
 import apis from '../../../../api';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
@@ -20,6 +22,7 @@ import { VoteBlockProducerEdgeWallet } from './components/VoteBlockProducerEdgeW
 import { VoteBlockProducerLedgerWallet } from './components/VoteBlockProducerLedgerWallet';
 import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerMetamaskWallet';
 import { CandidateItem } from './components/CandidateItem/CandidateItem';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 
 import { useContext } from './CastBlockProducerVotePageContext';
 
@@ -43,6 +46,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
+    hasLowBalance,
     loading,
     processing,
     resultsData,
@@ -121,9 +125,17 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
+            <span>
+              <Amount>
+                {apis.fio.sufToAmount(selectedFioWallet?.balance)}
+              </Amount>
+            </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          <LowBalanceTokens
+            hasLowBalance={hasLowBalance}
+            onActionClick={lowBalanceAction}
+          />
           <h4 className={classes.label}>Candidate Votes</h4>
           {bpLoading ? (
             <Loader />
@@ -166,7 +178,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
               !selectedBlockProducers.length ||
               bpLoading ||
               fioHandlesLoading ||
-              new MathOp(selectedFioWallet?.available).eq(0)
+              new MathOp(selectedFioWallet?.balance).eq(0)
             }
             loading={bpLoading}
             withTopMargin={true}

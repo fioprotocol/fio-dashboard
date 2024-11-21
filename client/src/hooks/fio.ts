@@ -30,6 +30,7 @@ import { user as userSelector } from '../redux/profile/selectors';
 import useEffectOnce from './general';
 import { isDomainExpired } from '../util/fio';
 import apis from '../api';
+import { log } from '../util/general';
 
 import { NOT_FOUND } from '../constants/errors';
 import { ROUTES } from '../constants/routes';
@@ -185,4 +186,31 @@ export const useRefreshBalancesAndFioNames = () => {
     [],
     !!fioWallets?.length,
   );
+};
+
+export const useGetAccountPublicKey = (
+  account: string,
+): { loading: boolean; accountPublicKey: string } => {
+  const [loading, toggleLoading] = useState<boolean>(false);
+  const [accountPublicKey, setAccountPublicKey] = useState<string | null>(null);
+
+  const getAccountPubKey = useCallback(async (account: string) => {
+    try {
+      toggleLoading(true);
+      const publicKey = await apis.fio.getAccountPubKey(account);
+      setAccountPublicKey(publicKey);
+    } catch (error) {
+      log.error(error);
+    } finally {
+      toggleLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (account) {
+      getAccountPubKey(account);
+    }
+  }, [account, getAccountPubKey]);
+
+  return { loading, accountPublicKey };
 };

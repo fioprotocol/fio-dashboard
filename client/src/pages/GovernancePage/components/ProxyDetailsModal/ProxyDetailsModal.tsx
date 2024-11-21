@@ -2,9 +2,13 @@ import { FC } from 'react';
 
 import Modal from '../../../../components/Modal/Modal';
 
-import classes from './ProxyDetailsModal.module.scss';
+import apis from '../../../../api';
+
 import { WalletPower } from '../WalletPower';
+
 import { DetailedProxy } from '../../../../types';
+
+import classes from './ProxyDetailsModal.module.scss';
 
 export type ProxyDetailsModalProps = {
   data: DetailedProxy;
@@ -37,7 +41,7 @@ export const ProxyDetailsModal: FC<ProxyDetailsModalProps> = props => {
             <li>
               <WalletPower
                 className={classes.detailsPower}
-                power={data.proxiedVoteWeight}
+                power={apis.fio.sufToAmount(data.proxiedVoteWeight)}
                 label="Proxied Vote Weight"
                 withLabel={true}
               />
@@ -45,7 +49,7 @@ export const ProxyDetailsModal: FC<ProxyDetailsModalProps> = props => {
             <li>
               <WalletPower
                 className={classes.detailsPower}
-                power={data.lastVoteWeight}
+                power={apis.fio.sufToAmount(data.lastVoteWeight)}
                 label="Last Vote Weight"
                 withLabel={true}
               />

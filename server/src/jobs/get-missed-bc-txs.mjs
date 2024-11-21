@@ -78,10 +78,20 @@ class MissedTransactions extends CommonJob {
                 )
             : null;
 
+        if (!addressTransactionHistory) {
+          logger.error(
+            `BC TX Update: no data returned from tx history, res - ${JSON.stringify(
+              res,
+            )}`,
+          );
+
+          return this.finish();
+        }
+
         const {
           block_num,
           block_time,
-          action_trace: { trx_id, act: { data: { max_fee } } = {} } = {},
+          action_trace: { trx_id, act: { data: { max_fee } = {} } = {} } = {},
         } = addressTransactionHistory || {};
 
         await BlockchainTransaction.sequelize.transaction(async t => {

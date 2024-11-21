@@ -33,6 +33,7 @@ import { DetailedProxy, FeePrice, FioWalletDoublet } from '../../../../types';
 import { SubmitData } from './types';
 import { FioHandleItem } from '../../../../types/governance';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
+import MathOp from '../../../../util/math';
 
 type Props = {
   selectedProxy: DetailedProxy;
@@ -42,6 +43,7 @@ type Props = {
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
   fioHandlesLoading: boolean;
+  hasLowTokenBalance: boolean;
   loading: boolean;
   fioWallets: FioWalletDoublet[];
   prices: FeePrice;
@@ -118,6 +120,10 @@ export const useContext = (props: Props): UseContextProps => {
 
   const transactionDetails = handleTransactionDetails(transactionDetailsParams);
 
+  const hasLowTokenBalance =
+    new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio) ||
+    !selectedFioWallet?.balance;
+
   const onCancel = () => {
     setSubmitData(null);
     setProcessing(false);
@@ -135,6 +141,7 @@ export const useContext = (props: Props): UseContextProps => {
             : selectedFioHandle?.remaining,
           roe,
           shouldSubBundlesFromRemaining: true,
+          shouldSubFeesFromBalance: !!results?.fee_collected,
           transactionId: results.transaction_id,
         };
 
@@ -152,7 +159,12 @@ export const useContext = (props: Props): UseContextProps => {
 
   const onResultsClose = () => {
     resetSelectedProxies();
-    history.push(ROUTES.GOVERNANCE_PROXIES);
+    history.push({
+      pathname: ROUTES.GOVERNANCE_PROXIES,
+      state: {
+        updateOverview: true,
+      },
+    });
   };
 
   const onActionClick = () => {
@@ -186,6 +198,7 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
+    hasLowTokenBalance,
     loading,
     prices,
     processing,

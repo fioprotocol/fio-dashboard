@@ -43,12 +43,12 @@ const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
   } = props;
 
   useEffect(() => {
-    if (otpError && (submitFailed || submitSucceeded)) {
+    if (otpError && (submitFailed || submitSucceeded) && !loading) {
       mutators.setDataMutator('backupCode', {
         error: otpError,
       });
     }
-  }, [otpError, submitSucceeded, submitFailed, mutators]);
+  }, [otpError, loading, submitSucceeded, submitFailed, mutators]);
 
   const handleError = () => {
     mutators.setDataMutator('backupCode', {
@@ -67,7 +67,6 @@ const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
         lowerCased={false}
         component={Input}
         type="text"
-        showClearInput={true}
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorColor={COLOR_TYPE.WARN}
         loading={loading}

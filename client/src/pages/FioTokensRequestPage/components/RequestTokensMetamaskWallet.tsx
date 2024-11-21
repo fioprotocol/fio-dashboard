@@ -17,7 +17,6 @@ import { RequestTokensValues } from '../types';
 import { FioWalletDoublet } from '../../../types';
 import { handleFioServerResponse } from '../../../util/fio';
 import { log } from '../../../util/general';
-import useEffectOnce from '../../../hooks/general';
 
 type Result = FioServerResponse & {
   block_time: string;
@@ -62,28 +61,43 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
     mapPubAddress,
   } = submitData || {};
 
-  const requestActionParams: ActionParams = {
-    action: Action.newFundsRequest,
-    account: Account.reqObt,
-    data: {
-      payer_fio_address: payerFioAddress,
-      payee_fio_address: payeeFioAddress,
-      content: {
-        amount,
-        payee_public_address: payeeTokenPublicAddress,
-        chain_code: chainCode,
-        token_code: tokenCode,
-        memo: memo || null,
-        hash: null,
-        offline_url: null,
+  const submitDataSet = !!submitData;
+
+  const requestActionParams = useMemo<ActionParams>(
+    () => ({
+      action: Action.newFundsRequest,
+      account: Account.reqObt,
+      data: {
+        payer_fio_address: payerFioAddress,
+        payee_fio_address: payeeFioAddress,
+        content: {
+          amount,
+          payee_public_address: payeeTokenPublicAddress,
+          chain_code: chainCode,
+          token_code: tokenCode,
+          memo: memo || null,
+          hash: null,
+          offline_url: null,
+        },
+        tpid: apis.fio.tpid,
+        max_fee: DEFAULT_ACTION_FEE_AMOUNT,
       },
-      tpid: apis.fio.tpid,
-      max_fee: DEFAULT_ACTION_FEE_AMOUNT,
-    },
-    contentType: ContentType.newFundsContent,
-    payerFioPublicKey,
-    derivationIndex: fioWallet.data?.derivationIndex,
-  };
+      contentType: ContentType.newFundsContent,
+      payerFioPublicKey,
+      derivationIndex: fioWallet.data?.derivationIndex,
+    }),
+    [
+      amount,
+      chainCode,
+      fioWallet.data?.derivationIndex,
+      memo,
+      payeeFioAddress,
+      payeeTokenPublicAddress,
+      payerFioAddress,
+      payerFioPublicKey,
+      tokenCode,
+    ],
+  );
 
   const mapAddressActionParams = useMemo(
     () => ({
@@ -112,28 +126,25 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
     ],
   );
 
-  const handleRequestResults = (result: FioServerResponse) => {
+  const handleRequestResults = (result: OnSuccessResponseResult) => {
     if (!result) return;
 
-    const { fio_request_id } = handleFioServerResponse(result) || {};
+    const { fio_request_id } =
+      handleFioServerResponse(result as FioServerResponse) || {};
 
     setRequestResult({
-      ...result,
-      block_time: result.processed?.action_traces[0]?.block_time,
+      ...(result as FioServerResponse),
+      block_time: (result as FioServerResponse).processed?.action_traces[0]
+        ?.block_time,
       bundlesCollected: BUNDLES_TX_COUNT.NEW_FIO_REQUEST,
       fio_request_id,
-      transaction_id: result.transaction_id,
+      transaction_id: (result as FioServerResponse).transaction_id,
     });
   };
 
   const [actionParams, setActionParams] = useState<ActionParams | null>(null);
   const [requestResult, setRequestResult] = useState<Result | null>(null);
-  const [actionFunction, setActionFunction] = useState<
-    (res: OnSuccessResponseResult) => void
-  >(null);
-  const [cancelActionFunction, setCancelActionFunction] = useState<() => void>(
-    () => onCancel,
-  );
+  const [isSecondAction, setIsSecondAction] = useState<boolean>(false);
   const [callSubmitAction, toggleCallSubmitAction] = useState<boolean>(false);
   const [
     isPublicAddressMappedFinished,
@@ -188,9 +199,8 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
       chainCode !== FIO_CHAIN_CODE &&
       !isPublicAddressMappedFinished
     ) {
-      setCancelActionFunction(() => onCancelForSecondAction);
+      setIsSecondAction(true);
       setActionParams(mapAddressActionParams);
-      setActionFunction(() => handleMapPublicAddressResults);
       toggleCallSubmitAction(true);
     }
   }, [
@@ -207,20 +217,13 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
     handleMapPublicAddressResults,
   ]);
 
-  useEffectOnce(
-    () => {
-      if (submitData) {
-        setActionParams(requestActionParams);
-      }
-      if (handleRequestResults !== null && handleRequestResults !== undefined) {
-        setActionFunction(() => handleRequestResults);
-      }
-    },
-    [submitData],
-    !!submitData,
-  );
+  useEffect(() => {
+    if (submitDataSet) {
+      setActionParams(requestActionParams);
+    }
+  }, [requestActionParams, submitDataSet]);
 
-  if (!submitData || !actionFunction) return null;
+  if (!submitData || !actionParams) return null;
 
   return (
     <MetamaskConfirmAction
@@ -230,8 +233,10 @@ export const RequestTokensMetamaskWallet: React.FC<Props> = props => {
       callSubmitAction={callSubmitAction}
       processing={processing}
       setProcessing={setProcessing}
-      onCancel={cancelActionFunction}
-      onSuccess={actionFunction}
+      onCancel={isSecondAction ? onCancelForSecondAction : onCancel}
+      onSuccess={
+        isSecondAction ? handleMapPublicAddressResults : handleRequestResults
+      }
     />
   );
 };

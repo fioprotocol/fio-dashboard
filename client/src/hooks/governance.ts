@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import superagent from 'superagent';
 import { useHistory } from 'react-router';
 
@@ -40,10 +40,15 @@ import {
   CandidatesVotes,
   JiraCandidates,
   OverviewWallet,
+  ProxyDetailedProxy,
   WalletsFioRequest,
 } from '../types/governance';
 import { DetailedProxy } from '../types';
 import { VARS_KEYS } from '../constants/vars';
+import {
+  SOCIAL_MEDIA_IDS,
+  SOCIAL_MEDIA_URLS,
+} from '../constants/socialMediaLinks';
 
 const getJiraCandidatesUrl = (publicKey?: string) => {
   if (!publicKey) {
@@ -133,9 +138,13 @@ export const useGetCandidates = (): {
   return { loading, candidatesList };
 };
 
-export const useGetPublicKeyCandidatesVotes = (
-  publicKey: string,
-): {
+export const useGetPublicKeyCandidatesVotes = ({
+  proxyPublicKey,
+  publicKey,
+}: {
+  proxyPublicKey: string;
+  publicKey: string;
+}): {
   candidatesVotes: CandidatesVotes;
   loading: boolean;
 } => {
@@ -147,45 +156,43 @@ export const useGetPublicKeyCandidatesVotes = (
 
   const settings = useSelector(siteSetings);
 
-  const getCandidates = useCallback(
-    async (publicKey?: string) => {
-      try {
-        toggleLoading(true);
-        const boardPublicKey =
-          settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] &&
-          config.fioChainId === FIO_CHAIN_ID.TESTNET
-            ? settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE]
-            : publicKey;
+  const boardPublicKey =
+    proxyPublicKey != null
+      ? proxyPublicKey
+      : settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] &&
+        config.fioChainId === FIO_CHAIN_ID.TESTNET
+      ? settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE]
+      : publicKey;
 
-        const results = await superagent.get(
-          getJiraCandidatesUrl(boardPublicKey),
-        );
+  const getCandidates = useCallback(async (jiraPublicKey: string) => {
+    try {
+      toggleLoading(true);
 
-        const jiraCandidatesResults: JiraCandidates = results.body?.issues;
+      const results = await superagent.get(getJiraCandidatesUrl(jiraPublicKey));
 
-        const { fields } = jiraCandidatesResults[0] || {};
+      const jiraCandidatesResults: JiraCandidates = results.body?.issues;
 
-        const candidatesVotesRersults = {
-          currentBoardVotingPower: fields?.customfield_10183,
-          boardVotingPowerLastUpdate: fields?.customfield_10184,
-          candidatesIdsList: fields?.issuelinks
-            .filter(issueLink => issueLink?.type?.outward === 'votes on')
-            .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
-        };
+      const { fields } = jiraCandidatesResults[0] || {};
 
-        setCandidatesVotes(candidatesVotesRersults);
-      } catch (error) {
-        log.error(error);
-      } finally {
-        toggleLoading(false);
-      }
-    },
-    [settings],
-  );
+      const candidatesVotesResults = {
+        currentBoardVotingPower: fields?.customfield_10183,
+        boardVotingPowerLastUpdate: fields?.customfield_10184,
+        candidatesIdsList: fields?.issuelinks
+          .filter(issueLink => issueLink?.type?.outward === 'votes on')
+          .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
+      };
 
-  useEffectOnce(() => {
-    void getCandidates(publicKey);
-  }, [publicKey]);
+      setCandidatesVotes(candidatesVotesResults);
+    } catch (error) {
+      log.error(error);
+    } finally {
+      toggleLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void getCandidates(boardPublicKey);
+  }, [boardPublicKey, getCandidates]);
 
   return { loading, candidatesVotes };
 };
@@ -221,89 +228,168 @@ export const useOveriewWallets = (): {
   const walletsLoading = useSelector(isFioWalletsBalanceLoading);
   const settings = useSelector(siteSetings);
 
-  const [walletVotes, setwalletVotes] = useState<{
-    [key: string]: DetailedProxy[];
-  }>({});
-  const [isWalletVotesLoading, toggleIsWalletVotesLoading] = useState<boolean>(
-    false,
+  const history = useHistory<{
+    updateOverview: boolean;
+  }>();
+
+  const { location } = history;
+  const { pathname, state: locationState } = location;
+
+  const [state, setState] = useState({
+    walletVotes: {} as { [key: string]: DetailedProxy[] },
+    proxyVotes: {} as { [key: string]: ProxyDetailedProxy },
+    walletsFioRequests: null as WalletsFioRequest | null,
+    isLoading: false,
+    dataFetched: false,
+    firstLoad: true,
+  });
+
+  const memoizedWalletsPublicKeys = useMemo(
+    () => fioWallets.map(wallet => wallet.publicKey),
+    [fioWallets],
   );
-  const [
-    walletsFioRequests,
-    setWalletsFioRequests,
-  ] = useState<WalletsFioRequest | null>(null);
-  const [
-    isWalletsFioRequestsLoading,
-    toggleIsWalletsFioRequestsLoading,
-  ] = useState<boolean>(false);
 
-  const history = useHistory();
+  const isGovernanceTab = pathname === ROUTES.GOVERNANCE_OVERVIEW;
 
-  const isGovernanceTab =
-    history.location?.pathname === ROUTES.GOVERNANCE_OVERVIEW;
+  const clearRouterState = useCallback(() => {
+    const state = history.location?.state;
 
-  const getCurrentWalletVotes = useCallback(async (publicKey: string) => {
-    try {
-      const currentWalletVotes = await apis.fio.getWalletVotes(publicKey);
-
-      setwalletVotes(prevVotes => ({
-        ...prevVotes,
-        [publicKey]: currentWalletVotes,
-      }));
-    } catch (error) {
-      log.error(error);
+    if (state) {
+      delete state.updateOverview;
     }
-  }, []);
 
-  const getCurrentWalletFioRequests = useCallback(async () => {
-    toggleIsWalletsFioRequestsLoading(true);
+    history.replace({ ...history.location, state });
+  }, [history]);
+
+  // Combine data fetching into a single function
+  const fetchWalletData = useCallback(async () => {
+    if (
+      (!isGovernanceTab &&
+        !state.firstLoad &&
+        !locationState?.updateOverview) ||
+      state.dataFetched
+    )
+      return;
+
+    clearRouterState();
+    setState(prev => ({ ...prev, isLoading: true }));
 
     try {
+      // Fetch FIO requests
       const fioRequests = await apis.account.getFioRequests();
 
-      setWalletsFioRequests(fioRequests);
+      // Prepare votes data
+      const usersWalletsVotes: { [key: string]: DetailedProxy[] } = {};
+      const proxiesWalletsVotes: { [key: string]: ProxyDetailedProxy } = {};
+
+      // Fetch votes for all wallets in parallel
+      await Promise.all(
+        memoizedWalletsPublicKeys.map(async walletPublicKey => {
+          try {
+            const userWalletVotes = await apis.fio.getWalletVotes(
+              walletPublicKey,
+            );
+            usersWalletsVotes[walletPublicKey] = userWalletVotes;
+
+            const proxyAccount = userWalletVotes.find(vote => !!vote.proxy)
+              ?.proxy;
+
+            if (proxyAccount) {
+              const proxyPublicKey = await apis.fio.getAccountPubKey(
+                proxyAccount,
+              );
+              if (proxyPublicKey) {
+                const proxyWalletVotes = await apis.fio.getWalletVotes(
+                  proxyPublicKey,
+                );
+                proxiesWalletsVotes[walletPublicKey] = {
+                  publicKey: proxyPublicKey,
+                  votes: proxyWalletVotes,
+                };
+              }
+            }
+          } catch (error) {
+            log.error(
+              `Error fetching data for wallet ${walletPublicKey}:`,
+              error,
+            );
+          }
+        }),
+      );
+
+      setState(prev => ({
+        ...prev,
+        walletVotes: usersWalletsVotes,
+        proxyVotes: proxiesWalletsVotes,
+        walletsFioRequests: fioRequests,
+        isLoading: false,
+        dataFetched: true,
+        firstLoad: false,
+      }));
     } catch (error) {
-      log.error(error);
-    } finally {
-      toggleIsWalletsFioRequestsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isGovernanceTab) {
-      toggleIsWalletVotesLoading(true);
-      Promise.all(
-        fioWallets.map(fioWallet => getCurrentWalletVotes(fioWallet.publicKey)),
-      ).finally(() => {
-        toggleIsWalletVotesLoading(false);
-      });
-
-      getCurrentWalletFioRequests();
+      log.error('Error fetching wallet data:', error);
+      setState(prev => ({ ...prev, isLoading: false, firstLoad: false }));
     }
   }, [
-    fioWallets,
-    getCurrentWalletFioRequests,
-    getCurrentWalletVotes,
     isGovernanceTab,
+    state.firstLoad,
+    state.dataFetched,
+    locationState?.updateOverview,
+    clearRouterState,
+    memoizedWalletsPublicKeys,
   ]);
 
-  const overviewWallets = fioWallets?.map(fioWallet => ({
-    ...fioWallet,
-    votes: walletVotes[fioWallet?.publicKey] || [],
-    hasProxy: walletVotes[fioWallet?.publicKey]?.some(
-      walletVote => walletVote.isAutoProxy || !!walletVote.proxy,
-    ),
-    hasVotedForBoardOfDirectors:
-      walletsFioRequests &&
-      walletsFioRequests[fioWallet?.publicKey]?.sent.some(
-        ({ payer_fio_address }) =>
-          payer_fio_address === settings[VARS_KEYS.VOTE_FIO_HANDLE],
-      ),
-  }));
+  useEffect(() => {
+    if (
+      (isGovernanceTab || state.firstLoad || locationState?.updateOverview) &&
+      !state.dataFetched &&
+      !state.isLoading
+    ) {
+      fetchWalletData();
+    }
+  }, [
+    isGovernanceTab,
+    fetchWalletData,
+    state.dataFetched,
+    state.isLoading,
+    state.firstLoad,
+    locationState?.updateOverview,
+  ]);
+
+  useEffect(() => {
+    if (!isGovernanceTab) {
+      setState(prev => ({ ...prev, dataFetched: false }));
+    }
+  }, [isGovernanceTab, state.dataFetched]);
+
+  const overviewWallets = useMemo(
+    () =>
+      fioWallets?.map(fioWallet => ({
+        ...fioWallet,
+        votes: state.walletVotes[fioWallet?.publicKey] || [],
+        hasProxy: state.walletVotes[fioWallet?.publicKey]?.some(
+          walletVote => walletVote.isAutoProxy || !!walletVote.proxy,
+        ),
+        proxyVotes: state.proxyVotes[fioWallet?.publicKey],
+        hasVotedForBoardOfDirectors:
+          state.walletsFioRequests &&
+          state.walletsFioRequests[fioWallet?.publicKey]?.sent.some(
+            ({ payer_fio_address }) =>
+              payer_fio_address === settings[VARS_KEYS.VOTE_FIO_HANDLE],
+          ),
+      })),
+    [
+      fioWallets,
+      state.walletVotes,
+      state.proxyVotes,
+      state.walletsFioRequests,
+      settings,
+    ],
+  );
 
   return {
     overviewWallets,
-    loading:
-      walletsLoading || isWalletVotesLoading || isWalletsFioRequestsLoading,
+    loading: walletsLoading || state.isLoading,
   };
 };
 
@@ -371,7 +457,7 @@ export const useGetBlockProducers = (): {
             if (twitter) {
               links.push({
                 name: 'Twitter',
-                url: twitter,
+                url: `${SOCIAL_MEDIA_URLS[SOCIAL_MEDIA_IDS.TWITTER]}${twitter}`,
                 logo: twitterLogo,
               });
             }
@@ -379,7 +465,9 @@ export const useGetBlockProducers = (): {
             if (telegram) {
               links.push({
                 name: 'Telegram',
-                url: telegram,
+                url: `${
+                  SOCIAL_MEDIA_URLS[SOCIAL_MEDIA_IDS.TELEGRAM]
+                }${telegram}`,
                 logo: telegramLogo,
               });
             }

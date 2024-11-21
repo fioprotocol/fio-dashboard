@@ -1,0 +1,15 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.lowBalanceBadge {
+  border-radius: 20px;
+
+  & svg {
+    font-size: 24px !important;
+  }
+
+  @include lg {
+    & > div {
+      margin-left: 0;
+    }
+  }
+}

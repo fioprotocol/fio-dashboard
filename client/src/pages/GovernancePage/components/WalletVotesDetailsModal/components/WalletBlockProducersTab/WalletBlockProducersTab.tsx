@@ -1,18 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
+import { InfoBadgeComponent } from '../../../InfoBadgeComponent/InfoBadgeComponent';
+import { BADGE_TYPES } from '../../../../../../components/Badge/Badge';
 
 import { ProxyVoteDetails } from '../ProxyVoteDetails';
 import { MyVoteDetails } from '../MyVoteDetails';
-import {
-  BlockProducersItemProps,
-  OverviewWallet,
-} from '../../../../../../types/governance';
 
 import { GradeBadge } from '../../../GradeBadge/GradeBadge';
 import { ScrollBar } from '../ScrollBar/ScrollBar';
 
+import { ROUTES } from '../../../../../../constants/routes';
+
 import apis from '../../../../../../api';
 
 import { DetailedProxy } from '../../../../../../types';
+import {
+  BlockProducersItemProps,
+  OverviewWallet,
+} from '../../../../../../types/governance';
 
 import classes from './WalletBlockProducersTab.module.scss';
 
@@ -25,11 +31,11 @@ type Props = {
 export const WalletBlockProducersTab: React.FC<Props> = props => {
   const { activeWallet, listOfBlockProducers, proxy } = props;
 
-  const votingPower = apis.fio.sufToAmount(activeWallet?.available);
+  const votingPower = apis.fio.sufToAmount(activeWallet?.balance);
 
-  const producers = [
-    ...new Set(activeWallet?.votes.map(vote => vote.producers).flat()),
-  ];
+  const votes = activeWallet?.proxyVotes?.votes || activeWallet?.votes;
+
+  const producers = [...new Set(votes.map(vote => vote.producers).flat())];
 
   return (
     <div>
@@ -43,8 +49,8 @@ export const WalletBlockProducersTab: React.FC<Props> = props => {
       ) : (
         <MyVoteDetails power={votingPower} />
       )}
-      <div className={classes.scrollArea}>
-        {producers.length > 0 && (
+      {producers.length > 0 ? (
+        <div className={classes.scrollArea}>
           <ScrollBar>
             <div className={classes.tabsScrollContainer}>
               {listOfBlockProducers
@@ -108,8 +114,25 @@ export const WalletBlockProducersTab: React.FC<Props> = props => {
                 )}
             </div>
           </ScrollBar>
-        )}
-      </div>
+        </div>
+      ) : (
+        <InfoBadgeComponent
+          type={BADGE_TYPES.ERROR}
+          title="Not Voting Tokens "
+          message={
+            activeWallet?.hasProxy ? (
+              'This proxy is voting for the following 0 producers'
+            ) : (
+              <>
+                You are not voting the tokens in this wallet.{' '}
+                <Link to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}>
+                  Go Vote Your Tokens
+                </Link>
+              </>
+            )
+          }
+        />
+      )}
     </div>
   );
 };

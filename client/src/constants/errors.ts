@@ -78,3 +78,9 @@ export const CANNOT_UPDATE_FIO_HANDLE =
 
 export const CANNOT_TRANSFER_ERROR_TITLE = 'Cannot Transfer';
 export const CANNOT_UPDATE_FIO_HANDLE_TITLE = 'Cannot Update';
+
+export const LOW_BUNDLES_TEXT = {
+  buttonText: 'Add more',
+  messageText:
+    'Unfortunately there are not enough bundled transactions available to complete this transaction. Please add more to your FIO Handle now.',
+};

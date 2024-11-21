@@ -53,3 +53,5 @@ export const isPinEnabled = (state: ReduxState): boolean =>
   state[prefix].isPinEnabled;
 export const isPinSetupPostponed = (state: ReduxState): boolean =>
   state[prefix].isPinSetupPostponed;
+export const archivedWalletIds = (state: ReduxState): string[] | null =>
+  state[prefix].archivedWalletIds;

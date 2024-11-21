@@ -14,6 +14,7 @@ import {
   FioWalletDoublet,
   FioWalletTxHistory,
 } from '../../../types';
+import { SiteSetting } from '../../../types/settings';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -25,6 +26,7 @@ type Props = {
   sentFioRequests: FioRecord[];
   obtData: FioRecord[];
   obtDataLoading: boolean;
+  siteSetings: SiteSetting;
   sentFioRequestsLoading: boolean;
   receivedFioRequestsLoading: boolean;
   tabAction: (tabKey: string) => void;

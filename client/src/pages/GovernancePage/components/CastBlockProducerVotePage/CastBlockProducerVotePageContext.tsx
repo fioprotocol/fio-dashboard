@@ -33,6 +33,7 @@ import { FioHandleItem } from '../../../../types/governance';
 import { FeePrice, FioWalletDoublet } from '../../../../types';
 import { SubmitData } from './types';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
+import MathOp from '../../../../util/math';
 
 type Props = {
   selectedBlockProducersFioHandles: string[];
@@ -42,6 +43,7 @@ type Props = {
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
   fioHandlesLoading: boolean;
+  hasLowBalance: boolean;
   loading: boolean;
   fioWallets: FioWalletDoublet[];
   prices: FeePrice;
@@ -121,6 +123,11 @@ export const useContext = (props: Props): UseContextProps => {
 
   const transactionDetails = handleTransactionDetails(transactionDetailsParams);
 
+  const hasLowBalance =
+    (!selectedFioHandle?.remaining &&
+      new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio)) ||
+    !selectedFioWallet?.balance;
+
   const onCancel = () => {
     setSubmitData(null);
     setProcessing(false);
@@ -140,6 +147,7 @@ export const useContext = (props: Props): UseContextProps => {
             : selectedFioHandle?.remaining,
           roe,
           shouldSubBundlesFromRemaining: true,
+          shouldSubFeesFromBalance: !!results?.fee_collected,
           transactionId: results.transaction_id,
         };
 
@@ -157,7 +165,12 @@ export const useContext = (props: Props): UseContextProps => {
 
   const onResultsClose = () => {
     resetSelectedBlockProducers();
-    history.push(ROUTES.GOVERNANCE_BLOCK_PRODUCERS);
+    history.push({
+      pathname: ROUTES.GOVERNANCE_BLOCK_PRODUCERS,
+      state: {
+        updateOverview: true,
+      },
+    });
   };
 
   const onActionClick = () => {
@@ -192,6 +205,7 @@ export const useContext = (props: Props): UseContextProps => {
   return {
     fioHandlesList,
     fioHandlesLoading,
+    hasLowBalance,
     loading,
     fioWallets,
     prices,

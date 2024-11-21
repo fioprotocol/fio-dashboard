@@ -65,7 +65,11 @@ const AdminDefaultsPage: React.FC = () => {
         );
         values.dashboardDomains = await Promise.all(domainsPromises);
       }
-      await api.admin.saveDefaults(values);
+
+      await api.admin.saveDefaults({
+        ...values,
+        mockedPublicKey: values.mockedPublicKey || '',
+      });
       await fetchDefaults();
     },
     [fetchDefaults],

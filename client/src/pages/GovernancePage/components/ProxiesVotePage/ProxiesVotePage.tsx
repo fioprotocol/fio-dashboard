@@ -9,6 +9,7 @@ import { TransactionDetails } from '../../../../components/TransactionDetails/Tr
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import WalletAction from '../../../../components/WalletAction/WalletAction';
 import { ResultDetails } from '../../../../components/ResultDetails/ResultDetails';
+import Amount from '../../../../components/common/Amount';
 
 import { VoteProxyEdgeWallet } from './components/VoteProxyEdgeWallet';
 import { VoteProxyLedgerWallet } from './components/VoteProxyLedgerWallet';
@@ -17,11 +18,13 @@ import { VoteProxyMetamaskWallet } from './components/VoteProxyMetamaskWallet';
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
-import MathOp from '../../../../util/math';
 import apis from '../../../../api';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
+
 import { useContext } from './ProxiesVotePageContext';
 
 import { GovernancePageContextProps } from '../../types';
@@ -37,6 +40,7 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
+    hasLowTokenBalance,
     loading,
     processing,
     resultsData,
@@ -106,9 +110,17 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
             dropdownClassNames={classes.dropdown}
             withoutMarginBottom
           />
+          <LowBalanceTokens
+            hasLowBalance={hasLowTokenBalance}
+            onActionClick={lowBalanceAction}
+          />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
-            <span>{apis.fio.sufToAmount(selectedFioWallet?.available)}</span>{' '}
+            <span>
+              <Amount>
+                {apis.fio.sufToAmount(selectedFioWallet?.balance)}
+              </Amount>
+            </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
           <h4 className={classes.label}>Proxy</h4>
@@ -156,7 +168,7 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
               !selectedProxy ||
               proxiesLoading ||
               fioHandlesLoading ||
-              new MathOp(selectedFioWallet?.available).eq(0)
+              hasLowTokenBalance
             }
             loading={proxiesLoading}
             withTopMargin={true}

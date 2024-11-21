@@ -2,6 +2,7 @@ import React from 'react';
 
 import { MemberBadge } from '../MemberBadge/MemberBadge';
 import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
+import Amount from '../../../../components/common/Amount';
 
 import { CandidateProps } from '../../../../types/governance';
 
@@ -41,7 +42,9 @@ export const BoardOfDirectorsDetails: React.FC<Props> = props => {
         </div>
         <div className={classes.textContainer}>
           <h4 className={classes.name}>{name}</h4>
-          <p className={classes.count}>Last Vote Count: {lastVoteCount}</p>
+          <p className={classes.count}>
+            Last Vote Count: <Amount>{lastVoteCount}</Amount>
+          </p>
           {url ? (
             <div className={classes.url}>
               <a href={url} target="_blank" rel="noopener noreferrer">

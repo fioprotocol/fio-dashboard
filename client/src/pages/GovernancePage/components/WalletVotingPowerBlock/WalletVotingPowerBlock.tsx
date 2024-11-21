@@ -4,12 +4,13 @@ import WalletIcon from '../../../../assets/images/wallet.svg';
 
 import apis from '../../../../api';
 
-import classes from './WalletVotingPowerBlock.module.scss';
 import ActionButton from '../../../SettingsPage/components/ActionButton';
 import { WalletVoteStatus } from '../WalletVoteStatus';
 import { WalletPower } from '../WalletPower';
 
 import { OverviewWallet } from '../../../../types/governance';
+
+import classes from './WalletVotingPowerBlock.module.scss';
 
 export type WalletVotingPowerBlockProps = {
   overviewWallet: OverviewWallet;
@@ -21,7 +22,7 @@ export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
   openWalletDetailsModal,
 }) => {
   const {
-    available,
+    balance,
     hasProxy,
     hasVotedForBoardOfDirectors,
     name,
@@ -40,7 +41,11 @@ export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
         <img src={WalletIcon} alt="wallet" loading="lazy" />
         <h5 className={classes.title}>{name}</h5>
       </div>
-      <WalletPower power={apis.fio.sufToAmount(available)} withLabel={true} />
+      <WalletPower
+        power={apis.fio.sufToAmount(balance)}
+        withLabel={true}
+        hasVioletFio
+      />
       <div className={classes.votesContainer}>
         {votesInfo.map(({ name, vote }) => (
           <WalletVoteStatus

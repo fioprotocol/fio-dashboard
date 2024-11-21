@@ -8,10 +8,12 @@ import { CheckBox } from '../../../../components/common/CheckBox/CheckBox';
 import NotificationBadge from '../../../../components/NotificationBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import Amount from '../../../../components/common/Amount';
 
 import { GradeBadge } from '../GradeBadge/GradeBadge';
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { WarningNotificationBadge } from '../WarningNotificationBadge/WarningNotificationBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -25,12 +27,21 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
   const {
     bpLoading,
     listOfBlockProducers,
+    overviewWallets,
+    overviewWalletsLoading,
     onBlockProducerSelectChange,
     resetSelectedBlockProducers,
   } = props;
 
-  const { disabledCastBPVote, isMetaMaskUser, handleCastVote } = useContext({
+  const {
+    disabledCastBPVote,
+    isMetaMaskUser,
+    hasLowBalance,
+    handleCastVote,
+  } = useContext({
     listOfBlockProducers,
+    overviewWallets,
+    overviewWalletsLoading,
     resetSelectedBlockProducers,
   });
 
@@ -76,7 +87,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         <SubmitButton
           text="Cast Vote"
           onClick={handleCastVote}
-          disabled={disabledCastBPVote || isMetaMaskUser}
+          disabled={disabledCastBPVote}
           className={classes.actionButton}
         />
       </div>
@@ -86,6 +97,9 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         type={BADGE_TYPES.ERROR}
         message="Voting via MetaMask is not supported at this time."
       />
+      {!overviewWalletsLoading && (
+        <LowBalanceTokens hasLowBalance={hasLowBalance} />
+      )}
       <div className={classes.bpListContainer}>
         {bpLoading ? (
           <Loader />
@@ -135,7 +149,9 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                         </p>
                         <p className={classes.totalVotes}>
                           Total Votes:{' '}
-                          <span className={classes.count}>{totalVotes}</span>
+                          <span className={classes.count}>
+                            <Amount>{totalVotes}</Amount>
+                          </span>
                         </p>
                       </div>
                     </div>
@@ -159,12 +175,16 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                           alt="flag"
                           className={classes.flag}
                         />
-                      ) : null}
+                      ) : (
+                        <div></div>
+                      )}
                       <div className={classes.gradeContainer}>
                         <GradeBadge grade={grade} />
                         {isTop21 ? (
                           <div className={classes.topScore}>TOP 21</div>
-                        ) : null}
+                        ) : (
+                          <div></div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -188,7 +208,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
       <SubmitButton
         text="Cast Vote"
         onClick={handleCastVote}
-        disabled={disabledCastBPVote || isMetaMaskUser}
+        disabled={disabledCastBPVote}
         className={classes.actionButtonBottom}
         withTopMargin
       />
