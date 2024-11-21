@@ -5,7 +5,6 @@ import { useHistory } from 'react-router';
 import {
   fioAddresses as fioAddressesSelector,
   fioAddressesLoading as fioAddressesLoadingSelector,
-  fioWallets as fioWalletsSelector,
   loading as loadingSelector,
 } from '../../../../redux/fio/selectors';
 import { siteSetings } from '../../../../redux/settings/selectors';
@@ -17,9 +16,12 @@ import { TrxResponse, TrxResponsePaidBundles } from '../../../../api/fio';
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 import { handleTransactionDetails } from '../../../../util/transactions';
 
-import { FioWalletDoublet } from '../../../../types';
 import { RequestTokensValues } from '../../../FioTokensRequestPage/types';
-import { CandidateProps, FioHandleItem } from '../../../../types/governance';
+import {
+  CandidateProps,
+  FioHandleItem,
+  OverviewWallet,
+} from '../../../../types/governance';
 import { TransactionDetailsProps } from '../../../../components/TransactionDetails/TransactionDetails';
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
 import { VARS_KEYS } from '../../../../constants/vars';
@@ -34,8 +36,7 @@ type UseContextProps = {
   resultsData: TransactionDetailsProps;
   submitData: RequestTokensValues;
   selectedFioHandle: FioHandleItem;
-  selectedFioWallet: FioWalletDoublet;
-  fioWallets: FioWalletDoublet[];
+  selectedFioWallet: OverviewWallet;
   voteFioHandle: string;
   onActionClick: () => void;
   onCancel: () => void;
@@ -48,14 +49,18 @@ type UseContextProps = {
 };
 
 type Props = {
+  overviewWallets: OverviewWallet[];
   selectedCandidates: CandidateProps[];
   resetSelectedCandidates: () => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { selectedCandidates, resetSelectedCandidates } = props;
+  const {
+    overviewWallets,
+    selectedCandidates,
+    resetSelectedCandidates,
+  } = props;
 
-  const fioWallets = useSelector(fioWalletsSelector);
   const fioHandles = useSelector(fioAddressesSelector);
   const fioHandlesLoading = useSelector(fioAddressesLoadingSelector);
   const loading = useSelector(loadingSelector);
@@ -64,7 +69,7 @@ export const useContext = (props: Props): UseContextProps => {
   const voteFioHandle = settings[VARS_KEYS.VOTE_FIO_HANDLE];
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
-    fioWallets[0]?.id || null,
+    overviewWallets[0]?.id || null,
   );
   const [selectedFioHandleId, setSelectedFioHandleId] = useState<string | null>(
     null,
@@ -78,7 +83,7 @@ export const useContext = (props: Props): UseContextProps => {
     setResultsData,
   ] = useState<TransactionDetailsProps | null>(null);
 
-  const selectedFioWallet = fioWallets.find(
+  const selectedFioWallet = overviewWallets.find(
     ({ id }) => id === selectedFioWalletId,
   );
 
@@ -176,7 +181,6 @@ export const useContext = (props: Props): UseContextProps => {
     submitData,
     selectedFioHandle,
     selectedFioWallet,
-    fioWallets,
     voteFioHandle,
     onActionClick,
     onCancel,

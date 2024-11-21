@@ -16,6 +16,7 @@ import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWar
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { CandidateBoardItems } from './components/CandidateBoardItems/CandidateBoardItems';
 import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
+import { ProxiedWalletWarningBadge } from '../ProxiedWalletWarningBadge/ProxiedWalletWarningBadge';
 
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
@@ -34,6 +35,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
   const {
     listOfCandidates,
     loading: candidatesListLoading,
+    overviewWallets,
     onCandidateSelectChange,
     resetSelectedCandidates,
   } = props;
@@ -43,7 +45,6 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
   const {
     fioHandlesList,
     fioHandlesLoading,
-    fioWallets,
     loading,
     notEnoughBundles,
     processing,
@@ -60,7 +61,11 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     onFioHandleChange,
     onWalletChange,
     setProcessing,
-  } = useContext({ resetSelectedCandidates, selectedCandidates });
+  } = useContext({
+    resetSelectedCandidates,
+    selectedCandidates,
+    overviewWallets,
+  });
 
   if (resultsData) {
     return (
@@ -114,7 +119,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
           </p>
           <h4 className={classes.label}>Your FIO Wallet</h4>
           <CustomDropdown
-            options={fioWallets}
+            options={overviewWallets}
             onChange={onWalletChange}
             defaultOptionValue={selectedFioWallet}
             loading={loading}
@@ -132,6 +137,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
             </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          {selectedFioWallet?.hasProxy && <ProxiedWalletWarningBadge />}
           <h4 className={classes.label}>
             Candidate Votes <span className={classes.regularText}>(max 8)</span>
           </h4>
@@ -191,7 +197,8 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               loading ||
               fioHandlesLoading ||
               candidatesListLoading ||
-              notEnoughBundles
+              notEnoughBundles ||
+              selectedFioWallet?.hasProxy
             }
             loading={loading}
             withTopMargin={true}
