@@ -75,7 +75,7 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
         <InfoBadgeComponent
           type={BADGE_TYPES.INFO}
           title="Your Last Vote Count Power"
-          message="If you have vote recently, please note that your vote will show up after the next count date."
+          message=" If you have recently voted, your vote will show up after the next vote count date."
         />
       )}
 
