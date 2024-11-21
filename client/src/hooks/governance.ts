@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import superagent from 'superagent';
-import { useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 
 import shuffle from 'lodash/shuffle';
 
@@ -227,7 +227,13 @@ export const useOveriewWallets = (): {
   const fioWallets = useSelector(fioWalletsSelector);
   const walletsLoading = useSelector(isFioWalletsBalanceLoading);
   const settings = useSelector(siteSetings);
-  const { pathname } = useLocation();
+
+  const history = useHistory<{
+    updateOverview: boolean;
+  }>();
+
+  const { location } = history;
+  const { pathname, state: locationState } = location;
 
   const [state, setState] = useState({
     walletVotes: {} as { [key: string]: DetailedProxy[] },
@@ -245,10 +251,27 @@ export const useOveriewWallets = (): {
 
   const isGovernanceTab = pathname === ROUTES.GOVERNANCE_OVERVIEW;
 
+  const clearRouterState = useCallback(() => {
+    const state = history.location?.state;
+
+    if (state) {
+      delete state.updateOverview;
+    }
+
+    history.replace({ ...history.location, state });
+  }, [history]);
+
   // Combine data fetching into a single function
   const fetchWalletData = useCallback(async () => {
-    if ((!isGovernanceTab && !state.firstLoad) || state.dataFetched) return;
+    if (
+      (!isGovernanceTab &&
+        !state.firstLoad &&
+        !locationState?.updateOverview) ||
+      state.dataFetched
+    )
+      return;
 
+    clearRouterState();
     setState(prev => ({ ...prev, isLoading: true }));
 
     try {
@@ -311,12 +334,14 @@ export const useOveriewWallets = (): {
     isGovernanceTab,
     state.firstLoad,
     state.dataFetched,
+    locationState?.updateOverview,
+    clearRouterState,
     memoizedWalletsPublicKeys,
   ]);
 
   useEffect(() => {
     if (
-      (isGovernanceTab || state.firstLoad) &&
+      (isGovernanceTab || state.firstLoad || locationState?.updateOverview) &&
       !state.dataFetched &&
       !state.isLoading
     ) {
@@ -328,6 +353,7 @@ export const useOveriewWallets = (): {
     state.dataFetched,
     state.isLoading,
     state.firstLoad,
+    locationState?.updateOverview,
   ]);
 
   useEffect(() => {

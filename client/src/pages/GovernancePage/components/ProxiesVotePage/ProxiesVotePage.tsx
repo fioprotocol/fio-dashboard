@@ -40,7 +40,6 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
-    hasLowBundleBalance,
     hasLowTokenBalance,
     loading,
     processing,
@@ -169,7 +168,6 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
               !selectedProxy ||
               proxiesLoading ||
               fioHandlesLoading ||
-              hasLowBundleBalance ||
               hasLowTokenBalance
             }
             loading={proxiesLoading}

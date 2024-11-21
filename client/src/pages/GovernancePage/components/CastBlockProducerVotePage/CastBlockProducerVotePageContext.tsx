@@ -165,7 +165,12 @@ export const useContext = (props: Props): UseContextProps => {
 
   const onResultsClose = () => {
     resetSelectedBlockProducers();
-    history.push(ROUTES.GOVERNANCE_BLOCK_PRODUCERS);
+    history.push({
+      pathname: ROUTES.GOVERNANCE_BLOCK_PRODUCERS,
+      state: {
+        updateOverview: true,
+      },
+    });
   };
 
   const onActionClick = () => {
