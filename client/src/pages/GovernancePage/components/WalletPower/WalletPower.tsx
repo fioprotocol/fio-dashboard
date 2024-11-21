@@ -8,6 +8,7 @@ import classes from './WalletPower.module.scss';
 
 export type WalletPowerProps = {
   className?: string;
+  hasVioletFio?: boolean;
   power: number;
   label?: string;
   withLabel?: boolean;
@@ -15,6 +16,7 @@ export type WalletPowerProps = {
 
 export const WalletPower: FC<WalletPowerProps> = ({
   className,
+  hasVioletFio,
   power,
   label = 'Current Voting Power',
   withLabel,
@@ -23,7 +25,7 @@ export const WalletPower: FC<WalletPowerProps> = ({
     {withLabel && <span className={classes.powerValueLabel}>{label}: </span>}
     <span>
       <Amount>{power}</Amount>{' '}
-      <span className={classes.powerValueCurrency}>FIO</span>
+      <span className={hasVioletFio && classes.powerValueCurrency}>FIO</span>
     </span>
   </p>
 );
