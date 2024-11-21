@@ -38,6 +38,7 @@ export const WalletVotingPowerTable: FC<WalletVotingPowerTableProps> = ({
           <div className={classnames(classes.gridItem, classes.toright)}>
             <WalletPower
               power={apis.fio.sufToAmount(overviewWalletItem?.balance)}
+              hasVioletFio
             />
           </div>
           <div className={classes.gridItem}>

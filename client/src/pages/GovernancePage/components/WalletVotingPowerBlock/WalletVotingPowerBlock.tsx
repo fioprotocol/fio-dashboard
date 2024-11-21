@@ -41,7 +41,11 @@ export const WalletVotingPowerBlock: FC<WalletVotingPowerBlockProps> = ({
         <img src={WalletIcon} alt="wallet" loading="lazy" />
         <h5 className={classes.title}>{name}</h5>
       </div>
-      <WalletPower power={apis.fio.sufToAmount(balance)} withLabel={true} />
+      <WalletPower
+        power={apis.fio.sufToAmount(balance)}
+        withLabel={true}
+        hasVioletFio
+      />
       <div className={classes.votesContainer}>
         {votesInfo.map(({ name, vote }) => (
           <WalletVoteStatus
