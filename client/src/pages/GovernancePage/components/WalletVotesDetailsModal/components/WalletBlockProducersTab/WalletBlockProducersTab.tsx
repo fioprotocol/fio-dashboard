@@ -33,9 +33,9 @@ export const WalletBlockProducersTab: React.FC<Props> = props => {
 
   const votingPower = apis.fio.sufToAmount(activeWallet?.balance);
 
-  const producers = [
-    ...new Set(activeWallet?.votes.map(vote => vote.producers).flat()),
-  ];
+  const votes = activeWallet?.proxyVotes?.votes || activeWallet?.votes;
+
+  const producers = [...new Set(votes.map(vote => vote.producers).flat())];
 
   return (
     <div>

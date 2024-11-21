@@ -112,8 +112,14 @@ export type WalletsFioRequest = {
   };
 };
 
+export type ProxyDetailedProxy = {
+  publicKey: string;
+  votes: DetailedProxy[];
+};
+
 export type OverviewWallet = FioWalletDoublet & {
   hasProxy: boolean;
   hasVotedForBoardOfDirectors: boolean;
   votes: DetailedProxy[];
+  proxyVotes: ProxyDetailedProxy;
 };
