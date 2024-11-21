@@ -235,6 +235,7 @@ export const useOveriewWallets = (): {
     walletsFioRequests: null as WalletsFioRequest | null,
     isLoading: false,
     dataFetched: false,
+    firstLoad: true,
   });
 
   const memoizedWalletsPublicKeys = useMemo(
@@ -246,7 +247,7 @@ export const useOveriewWallets = (): {
 
   // Combine data fetching into a single function
   const fetchWalletData = useCallback(async () => {
-    if (!isGovernanceTab || state.dataFetched) return;
+    if ((!isGovernanceTab && !state.firstLoad) || state.dataFetched) return;
 
     setState(prev => ({ ...prev, isLoading: true }));
 
@@ -300,24 +301,40 @@ export const useOveriewWallets = (): {
         walletsFioRequests: fioRequests,
         isLoading: false,
         dataFetched: true,
+        firstLoad: false,
       }));
     } catch (error) {
       log.error('Error fetching wallet data:', error);
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState(prev => ({ ...prev, isLoading: false, firstLoad: false }));
     }
-  }, [isGovernanceTab, state.dataFetched, memoizedWalletsPublicKeys]);
+  }, [
+    isGovernanceTab,
+    state.firstLoad,
+    state.dataFetched,
+    memoizedWalletsPublicKeys,
+  ]);
 
   useEffect(() => {
-    if (isGovernanceTab && !state.dataFetched && !state.isLoading) {
+    if (
+      (isGovernanceTab || state.firstLoad) &&
+      !state.dataFetched &&
+      !state.isLoading
+    ) {
       fetchWalletData();
     }
-  }, [isGovernanceTab, fetchWalletData, state.dataFetched, state.isLoading]);
+  }, [
+    isGovernanceTab,
+    fetchWalletData,
+    state.dataFetched,
+    state.isLoading,
+    state.firstLoad,
+  ]);
 
   useEffect(() => {
     if (!isGovernanceTab) {
       setState(prev => ({ ...prev, dataFetched: false }));
     }
-  }, [isGovernanceTab]);
+  }, [isGovernanceTab, state.dataFetched]);
 
   const overviewWallets = useMemo(
     () =>
