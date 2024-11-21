@@ -16,7 +16,7 @@ export const ProxiedWalletWarningBadge: React.FC = () => {
       type={BADGE_TYPES.ERROR}
       message={
         <>
-          This wallet is currently proxying its votes.You must first{' '}
+          This wallet is currently proxying its votes. You must first{' '}
           <Link to={ROUTES.GOVERNANCE_BLOCK_PRODUCERS}>
             vote on block producers
           </Link>{' '}

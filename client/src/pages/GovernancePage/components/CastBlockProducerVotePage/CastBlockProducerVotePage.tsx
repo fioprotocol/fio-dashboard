@@ -14,6 +14,7 @@ import { ROUTES } from '../../../../constants/routes';
 
 import MathOp from '../../../../util/math';
 import apis from '../../../../api';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
@@ -55,7 +56,6 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
     transactionDetails,
     onActionClick,
     onCancel,
-    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onFioHandleChange,
@@ -134,7 +134,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           </p>
           <LowBalanceTokens
             hasLowBalance={hasLowBalance}
-            onActionClick={onLowBalanceClick}
+            onActionClick={lowBalanceAction}
           />
           <h4 className={classes.label}>Candidate Votes</h4>
           {bpLoading ? (

@@ -27,10 +27,7 @@ import { DEFAULT_FEE_PRICES } from '../../../../util/prices';
 import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
-import {
-  handleTransactionDetails,
-  lowBalanceAction,
-} from '../../../../util/transactions';
+import { handleTransactionDetails } from '../../../../util/transactions';
 
 import { FioHandleItem } from '../../../../types/governance';
 import { FeePrice, FioWalletDoublet } from '../../../../types';
@@ -59,7 +56,6 @@ type UseContextProps = {
   onActionClick: () => void;
   onCancel: () => void;
   onFioHandleChange: (id: string) => void;
-  onLowBalanceClick: () => void;
   onResultsClose: () => void;
   onSuccess: (results: TrxResponse) => void;
   onWalletChange: (id: string) => void;
@@ -128,10 +124,9 @@ export const useContext = (props: Props): UseContextProps => {
   const transactionDetails = handleTransactionDetails(transactionDetailsParams);
 
   const hasLowBalance =
-    !selectedFioHandle?.remaining &&
-    new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio);
-
-  const onLowBalanceClick = useCallback(() => lowBalanceAction(), []);
+    (!selectedFioHandle?.remaining &&
+      new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio)) ||
+    !selectedFioWallet?.balance;
 
   const onCancel = () => {
     setSubmitData(null);
@@ -218,7 +213,6 @@ export const useContext = (props: Props): UseContextProps => {
     onActionClick,
     onCancel,
     onFioHandleChange,
-    onLowBalanceClick,
     onSuccess,
     onResultsClose,
     onWalletChange,
