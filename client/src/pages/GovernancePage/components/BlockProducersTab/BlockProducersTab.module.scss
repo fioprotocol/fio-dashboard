@@ -186,15 +186,18 @@
           }
           
           .dataContainer {
-            display: flex;
+            display: grid;
+            grid-template-columns: 82px 80px 122px;
             gap: 20px;
             flex-direction: row;
             margin-left: auto;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
 
             @include sm {
               flex-flow: wrap;
+              display: flex;
+              justify-content: flex-end;
             }
 
             .linksContainer {
@@ -213,9 +216,14 @@
             }
 
             .gradeContainer {
-              display: flex;
+              display: grid;
+              grid-template-columns: 40px 69px;
               flex-direction: row;
               gap: 15px;
+
+              @include sm {
+                display: flex;
+              }
 
               .topScore {
                 display: flex;

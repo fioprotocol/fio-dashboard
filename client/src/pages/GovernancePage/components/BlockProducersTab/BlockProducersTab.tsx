@@ -175,12 +175,16 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
                           alt="flag"
                           className={classes.flag}
                         />
-                      ) : null}
+                      ) : (
+                        <div></div>
+                      )}
                       <div className={classes.gradeContainer}>
                         <GradeBadge grade={grade} />
                         {isTop21 ? (
                           <div className={classes.topScore}>TOP 21</div>
-                        ) : null}
+                        ) : (
+                          <div></div>
+                        )}
                       </div>
                     </div>
                   </div>
