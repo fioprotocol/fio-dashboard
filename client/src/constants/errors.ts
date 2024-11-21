@@ -84,8 +84,3 @@ export const LOW_BUNDLES_TEXT = {
   messageText:
     'Unfortunately there are not enough bundled transactions available to complete this transaction. Please add more to your FIO Handle now.',
 };
-
-export const LOW_BALANCE_AND_BUNDLES_TEXT = {
-  messageText:
-    'Unfortunately, there is not enough FIO available or not enough bundled transactions to complete your purchase. Please select a FIO Handle with sufficient bundled transactions or deposit additional FIO.',
-};

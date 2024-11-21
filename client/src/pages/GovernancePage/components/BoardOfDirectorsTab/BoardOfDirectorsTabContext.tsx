@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import { getNextGovernanceDate } from '../../../../util/general';
+import { overviewWalletHasLowBalanceAndHasProxy } from '../../../../util/governance';
 
 import { showGenericErrorModal } from '../../../../redux/modal/actions';
 import { ROUTES } from '../../../../constants/routes';
@@ -13,25 +14,35 @@ import {
 
 import { useMakeActionOnPathChange } from '../../../../hooks/general';
 
-import { CandidateProps } from '../../../../types/governance';
+import { CandidateProps, OverviewWallet } from '../../../../types/governance';
 
 type Props = {
   listOfCandidates: CandidateProps[];
+  overviewWallets: OverviewWallet[];
+  overviewWalletsLoading: boolean;
   resetSelectedCandidates: () => void;
 };
 
 type UseContextProps = {
   activeCandidate: CandidateProps;
   disabledCastBoardVote: boolean;
+  hasLowBalance: boolean;
+  hasProxy: boolean;
   nextDate: string;
   showCandidateDetailsModal: boolean;
+  showNoAssociatedFioHandlesWarning: boolean;
   onCloseModal: () => void;
   handleCandidateDetailsModalOpen: (candidate: CandidateProps) => void;
   handleCastVote: () => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { listOfCandidates, resetSelectedCandidates } = props;
+  const {
+    listOfCandidates,
+    overviewWallets,
+    overviewWalletsLoading,
+    resetSelectedCandidates,
+  } = props;
 
   const fioHandles = useSelector(fioAddresses);
   const fioHandlesLoading = useSelector(fioHandlesLoadingSelector);
@@ -48,6 +59,10 @@ export const useContext = (props: Props): UseContextProps => {
 
   const nextDate = getNextGovernanceDate();
 
+  const { hasLowBalance, hasProxy } =
+    !overviewWalletsLoading &&
+    overviewWalletHasLowBalanceAndHasProxy(overviewWallets);
+  console.log(hasProxy);
   useMakeActionOnPathChange({
     action: resetSelectedCandidates,
     route: ROUTES.GOVERNANCE_CAST_BOARD_VOTE,
@@ -81,9 +96,13 @@ export const useContext = (props: Props): UseContextProps => {
 
   return {
     activeCandidate,
-    disabledCastBoardVote: !fioHandlesLoading && !fioHandles.length,
+    disabledCastBoardVote:
+      (!fioHandlesLoading && !fioHandles.length) || hasLowBalance || hasProxy,
+    hasLowBalance,
+    hasProxy,
     nextDate,
     showCandidateDetailsModal,
+    showNoAssociatedFioHandlesWarning: !fioHandlesLoading && !fioHandles.length,
     onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,

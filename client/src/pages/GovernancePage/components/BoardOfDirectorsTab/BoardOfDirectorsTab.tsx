@@ -11,16 +11,21 @@ import { BoardOfDirectorsDetails } from '../BoardOfDirectorsDetails';
 import { MemberBadge } from '../MemberBadge/MemberBadge';
 import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
+import { ProxiedWalletWarningBadge } from '../ProxiedWalletWarningBadge/ProxiedWalletWarningBadge';
 
 import { useContext } from './BoardOfDirectorsTabContext';
 
-import classes from './BoardOfDirectorsTab.module.scss';
 import { GovernancePageContextProps } from '../../types';
+
+import classes from './BoardOfDirectorsTab.module.scss';
 
 export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
   const {
     listOfCandidates,
     loading,
+    overviewWallets,
+    overviewWalletsLoading,
     onCandidateSelectChange,
     resetSelectedCandidates,
   } = props;
@@ -28,12 +33,20 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
   const {
     activeCandidate,
     disabledCastBoardVote,
+    hasLowBalance,
+    hasProxy,
     nextDate,
     showCandidateDetailsModal,
+    showNoAssociatedFioHandlesWarning,
     onCloseModal,
     handleCandidateDetailsModalOpen,
     handleCastVote,
-  } = useContext({ listOfCandidates, resetSelectedCandidates });
+  } = useContext({
+    listOfCandidates,
+    overviewWallets,
+    overviewWalletsLoading,
+    resetSelectedCandidates,
+  });
 
   return (
     <div className={classes.container}>
@@ -79,7 +92,16 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
           className={classes.actionButton}
         />
       </div>
-      <NoAssociatedFioHandlesWarningBadge show={disabledCastBoardVote} />
+      {!overviewWalletsLoading ? (
+        hasProxy ? (
+          <ProxiedWalletWarningBadge />
+        ) : (
+          <LowBalanceTokens hasLowBalance={hasLowBalance} />
+        )
+      ) : null}
+      <NoAssociatedFioHandlesWarningBadge
+        show={showNoAssociatedFioHandlesWarning}
+      />
       <div className={classes.listContainer}>
         {!loading ? (
           listOfCandidates.map(candidateItem => {

@@ -19,6 +19,7 @@ export type LowBalanceProps = {
   onActionClick?: () => void;
   buttonText?: string;
   messageText?: string;
+  title?: string;
 };
 
 const LowBalanceBadge: React.FC<LowBalanceProps> = props => {
@@ -28,6 +29,7 @@ const LowBalanceBadge: React.FC<LowBalanceProps> = props => {
     messageText = DEFAULT_TEXT.messageText,
     onActionClick,
     hasLowBalance,
+    title = 'Low Balance!',
   } = props;
 
   const renderButton = () => {
@@ -46,7 +48,7 @@ const LowBalanceBadge: React.FC<LowBalanceProps> = props => {
         <div className={classes.textContainer}>
           <InfoIcon className={classes.icon} />
           <p className={classes.text}>
-            <span className="boldText">Low Balance!</span> - {messageText}
+            <span className="boldText">{title}</span> - {messageText}
           </p>
         </div>
         {renderButton()}
