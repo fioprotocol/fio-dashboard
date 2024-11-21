@@ -17,6 +17,7 @@ import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidat
 import { CandidateBoardItems } from './components/CandidateBoardItems/CandidateBoardItems';
 import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
 import { ProxiedWalletWarningBadge } from '../ProxiedWalletWarningBadge/ProxiedWalletWarningBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
@@ -24,6 +25,7 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 import { LOW_BUNDLES_TEXT } from '../../../../constants/errors';
 
 import apis from '../../../../api';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { useContext } from './CastBoardVotePageContext';
 
@@ -47,6 +49,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
     fioHandlesLoading,
     loading,
     notEnoughBundles,
+    notEnoughTokens,
     processing,
     resultsData,
     submitData,
@@ -138,6 +141,10 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
             <span className={classes.violet}>FIO</span>
           </p>
           {selectedFioWallet?.hasProxy && <ProxiedWalletWarningBadge />}
+          <LowBalanceTokens
+            hasLowBalance={notEnoughTokens}
+            onActionClick={lowBalanceAction}
+          />
           <h4 className={classes.label}>
             Candidate Votes <span className={classes.regularText}>(max 8)</span>
           </h4>

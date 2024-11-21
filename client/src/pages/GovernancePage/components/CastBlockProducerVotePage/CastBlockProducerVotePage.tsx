@@ -21,14 +21,13 @@ import { VoteBlockProducerEdgeWallet } from './components/VoteBlockProducerEdgeW
 import { VoteBlockProducerLedgerWallet } from './components/VoteBlockProducerLedgerWallet';
 import { VoteBlockProducerMetamaskWallet } from './components/VoteBlockProducerMetamaskWallet';
 import { CandidateItem } from './components/CandidateItem/CandidateItem';
-import { LowBalanceComponent } from '../LowBalanceComponent/LowBalanceComponent';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 
 import { useContext } from './CastBlockProducerVotePageContext';
 
 import { GovernancePageContextProps } from '../../types';
 
 import classes from './CastBlockProducerVotePage.module.scss';
-import { LOW_BALANCE_AND_BUNDLES_TEXT } from '../../../../constants/errors';
 
 export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = props => {
   const {
@@ -133,6 +132,10 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
             </span>{' '}
             <span className={classes.violet}>FIO</span>
           </p>
+          <LowBalanceTokens
+            hasLowBalance={hasLowBalance}
+            onActionClick={onLowBalanceClick}
+          />
           <h4 className={classes.label}>Candidate Votes</h4>
           {bpLoading ? (
             <Loader />
@@ -168,11 +171,6 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
           <TransactionDetails
             {...transactionDetails}
             className={classes.transactionDetails}
-          />
-          <LowBalanceComponent
-            hasLowBalance={hasLowBalance}
-            onActionClick={onLowBalanceClick}
-            {...LOW_BALANCE_AND_BUNDLES_TEXT}
           />
           <SubmitButton
             text="Vote Now"

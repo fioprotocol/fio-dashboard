@@ -32,6 +32,7 @@ type UseContextProps = {
   fioHandlesLoading: boolean;
   loading: boolean;
   notEnoughBundles: boolean;
+  notEnoughTokens: boolean;
   processing: boolean;
   resultsData: TransactionDetailsProps;
   submitData: RequestTokensValues;
@@ -105,6 +106,8 @@ export const useContext = (props: Props): UseContextProps => {
       ? selectedFioHandle.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
       : false;
 
+  const notEnoughTokens = !selectedFioWallet?.balance;
+
   const history = useHistory();
 
   useRefreshBalancesAndFioNames();
@@ -176,6 +179,7 @@ export const useContext = (props: Props): UseContextProps => {
     fioHandlesLoading,
     loading,
     notEnoughBundles,
+    notEnoughTokens,
     processing,
     resultsData,
     submitData,

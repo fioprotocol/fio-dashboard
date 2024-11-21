@@ -13,6 +13,7 @@ import Amount from '../../../../components/common/Amount';
 import { GradeBadge } from '../GradeBadge/GradeBadge';
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { WarningNotificationBadge } from '../WarningNotificationBadge/WarningNotificationBadge';
+import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -26,12 +27,21 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
   const {
     bpLoading,
     listOfBlockProducers,
+    overviewWallets,
+    overviewWalletsLoading,
     onBlockProducerSelectChange,
     resetSelectedBlockProducers,
   } = props;
 
-  const { disabledCastBPVote, isMetaMaskUser, handleCastVote } = useContext({
+  const {
+    disabledCastBPVote,
+    isMetaMaskUser,
+    hasLowBalance,
+    handleCastVote,
+  } = useContext({
     listOfBlockProducers,
+    overviewWallets,
+    overviewWalletsLoading,
     resetSelectedBlockProducers,
   });
 
@@ -77,7 +87,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         <SubmitButton
           text="Cast Vote"
           onClick={handleCastVote}
-          disabled={disabledCastBPVote || isMetaMaskUser}
+          disabled={disabledCastBPVote}
           className={classes.actionButton}
         />
       </div>
@@ -87,6 +97,9 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         type={BADGE_TYPES.ERROR}
         message="Voting via MetaMask is not supported at this time."
       />
+      {!overviewWalletsLoading && (
+        <LowBalanceTokens hasLowBalance={hasLowBalance} />
+      )}
       <div className={classes.bpListContainer}>
         {bpLoading ? (
           <Loader />
@@ -191,7 +204,7 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
       <SubmitButton
         text="Cast Vote"
         onClick={handleCastVote}
-        disabled={disabledCastBPVote || isMetaMaskUser}
+        disabled={disabledCastBPVote}
         className={classes.actionButtonBottom}
         withTopMargin
       />

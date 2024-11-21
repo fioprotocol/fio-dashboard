@@ -6,24 +6,36 @@ import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
 import { useIsMetaMaskUser } from '../../../../hooks/user';
 import { useMakeActionOnPathChange } from '../../../../hooks/general';
+import { overviewWalletHasLowBalanceAndHasProxy } from '../../../../util/governance';
 
 import { ROUTES } from '../../../../constants/routes';
 
-import { BlockProducersItemProps } from '../../../../types/governance';
+import {
+  BlockProducersItemProps,
+  OverviewWallet,
+} from '../../../../types/governance';
 
 type Props = {
   listOfBlockProducers: BlockProducersItemProps[];
+  overviewWallets: OverviewWallet[];
+  overviewWalletsLoading: boolean;
   resetSelectedBlockProducers: () => void;
 };
 
 type UseContextProps = {
   disabledCastBPVote: boolean;
   isMetaMaskUser: boolean;
+  hasLowBalance: boolean;
   handleCastVote: () => void;
 };
 
 export const useContext = (props: Props): UseContextProps => {
-  const { listOfBlockProducers, resetSelectedBlockProducers } = props;
+  const {
+    listOfBlockProducers,
+    overviewWallets,
+    overviewWalletsLoading,
+    resetSelectedBlockProducers,
+  } = props;
 
   const isMetaMaskUser = useIsMetaMaskUser();
 
@@ -34,6 +46,10 @@ export const useContext = (props: Props): UseContextProps => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const { hasLowBalance } =
+    !overviewWalletsLoading &&
+    overviewWalletHasLowBalanceAndHasProxy(overviewWallets);
 
   const handleCastVote = useCallback(() => {
     if (listOfBlockProducers.every(({ checked }) => !checked)) {
@@ -49,7 +65,11 @@ export const useContext = (props: Props): UseContextProps => {
   }, [dispatch, history, listOfBlockProducers]);
 
   return {
-    disabledCastBPVote: listOfBlockProducers.every(({ checked }) => !checked),
+    disabledCastBPVote:
+      listOfBlockProducers.every(({ checked }) => !checked) ||
+      hasLowBalance ||
+      isMetaMaskUser,
+    hasLowBalance,
     isMetaMaskUser,
     handleCastVote,
   };
