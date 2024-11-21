@@ -18,12 +18,13 @@ import { VoteProxyMetamaskWallet } from './components/VoteProxyMetamaskWallet';
 import { ROUTES } from '../../../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
-import MathOp from '../../../../util/math';
 import apis from '../../../../api';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { NotUsingFioHandlesWarningBadge } from '../NotUsingFioHandlesWarningBadge/NotUsingFioHandlesWarningBadge';
 import { NoCandidatesWarningBadge } from '../NoCandidatesWarningBadge/NoCandidatesWarningBadge';
 import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
+
 import { useContext } from './ProxiesVotePageContext';
 
 import { GovernancePageContextProps } from '../../types';
@@ -39,7 +40,8 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     fioHandlesList,
     fioHandlesLoading,
     fioWallets,
-    hasLowBalance,
+    hasLowBundleBalance,
+    hasLowTokenBalance,
     loading,
     processing,
     resultsData,
@@ -49,7 +51,6 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
     transactionDetails,
     onActionClick,
     onCancel,
-    onLowBalanceClick,
     onResultsClose,
     onSuccess,
     onFioHandleChange,
@@ -111,8 +112,8 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
             withoutMarginBottom
           />
           <LowBalanceTokens
-            hasLowBalance={hasLowBalance}
-            onActionClick={onLowBalanceClick}
+            hasLowBalance={hasLowTokenBalance}
+            onActionClick={lowBalanceAction}
           />
           <p className={classes.votingPower}>
             Current Voting Power:{' '}
@@ -168,7 +169,8 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
               !selectedProxy ||
               proxiesLoading ||
               fioHandlesLoading ||
-              new MathOp(selectedFioWallet?.balance).eq(0)
+              hasLowBundleBalance ||
+              hasLowTokenBalance
             }
             loading={proxiesLoading}
             withTopMargin={true}
