@@ -205,6 +205,7 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               fioHandlesLoading ||
               candidatesListLoading ||
               notEnoughBundles ||
+              notEnoughTokens ||
               selectedFioWallet?.hasProxy
             }
             loading={loading}
