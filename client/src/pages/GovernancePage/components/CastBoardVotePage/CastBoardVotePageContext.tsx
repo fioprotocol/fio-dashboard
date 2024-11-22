@@ -27,6 +27,7 @@ import { TransactionDetailsProps } from '../../../../components/TransactionDetai
 import { HandleTransactionDetailsProps } from '../../../../types/transactions';
 import { VARS_KEYS } from '../../../../constants/vars';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
+import apis from '../../../../api';
 
 type UseContextProps = {
   fioHandlesList: FioHandleItem[];
@@ -166,7 +167,8 @@ export const useContext = (props: Props): UseContextProps => {
     history.push(ROUTES.GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS);
   };
 
-  const onActionClick = () => {
+  const onActionClick = async () => {
+    const voteFioPublicKey = await apis.fio.getFioPublicAddress(voteFioHandle);
     setSubmitData({
       payeeFioAddress: selectedFioHandle.name,
       payerFioAddress: voteFioHandle,
@@ -175,6 +177,7 @@ export const useContext = (props: Props): UseContextProps => {
       payeeTokenPublicAddress: selectedFioHandle.walletPublicKey,
       amount: '1',
       memo: selectedCandidates.map(({ id }) => id).join(','),
+      payerFioPublicKey: voteFioPublicKey?.public_address,
     });
   };
 
