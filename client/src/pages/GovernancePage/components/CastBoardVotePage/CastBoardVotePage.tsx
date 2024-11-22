@@ -206,7 +206,8 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
               candidatesListLoading ||
               notEnoughBundles ||
               notEnoughTokens ||
-              selectedFioWallet?.hasProxy
+              selectedFioWallet?.hasProxy ||
+              !fioHandlesList.length
             }
             loading={loading}
             withTopMargin={true}

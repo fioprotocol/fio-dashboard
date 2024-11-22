@@ -13,6 +13,7 @@ import { CandidateIdBadge } from '../CandidateIdBadge/CandidateIdBadge';
 import { NoAssociatedFioHandlesWarningBadge } from '../NoAssociatedFioHandlesWarningBadge/NoAssociatedFioHandlesWarningBadge';
 import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
 import { ProxiedWalletWarningBadge } from '../ProxiedWalletWarningBadge/ProxiedWalletWarningBadge';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { useContext } from './BoardOfDirectorsTabContext';
 
@@ -96,7 +97,10 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
         hasProxy ? (
           <ProxiedWalletWarningBadge />
         ) : (
-          <LowBalanceTokens hasLowBalance={hasLowBalance} />
+          <LowBalanceTokens
+            hasLowBalance={hasLowBalance}
+            onActionClick={lowBalanceAction}
+          />
         )
       ) : null}
       <NoAssociatedFioHandlesWarningBadge
@@ -119,6 +123,7 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
                 <CheckBox
                   onChange={() => onCandidateSelectChange(id)}
                   checked={checked}
+                  className={classes.checkbox}
                 />
                 <div className={classes.contentContainer}>
                   <div className={classes.dataContainer}>

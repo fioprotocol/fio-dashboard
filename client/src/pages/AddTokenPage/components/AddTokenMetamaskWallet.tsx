@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import { Account, Action } from '@fioprotocol/fiosdk';
 
@@ -14,9 +14,7 @@ import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
 import apis from '../../../api';
 import { handleFioServerResponseActionData } from '../../../util/fio';
-import useEffectOnce from '../../../hooks/general';
 
-import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
 import { AddTokenValues } from '../types';
 
@@ -39,48 +37,48 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
     setProcessing,
   } = props;
 
-  const { name: fioHandle, tokens } = submitData || {};
+  const handleActionParams = useCallback(
+    (submitData, derivationIndex: number) => {
+      const { name: fioHandle, tokens } = submitData || {};
+      const actionParamsArr = [];
 
-  const [actionParams, setActionParams] = useState<ActionParams[] | null>(null);
+      const tokensChunks = [];
+      const chunkSize = ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION;
 
-  const handleActionParams = useCallback(() => {
-    const actionParamsArr = [];
-
-    const tokensChunks = [];
-    const chunkSize = ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION;
-
-    for (let i = 0; i < tokens.length; i += chunkSize) {
-      tokensChunks.push(tokens.slice(i, i + chunkSize));
-    }
-
-    for (const tokenChunkItem of tokensChunks) {
-      const public_addresses = [];
-
-      for (const tokenItem of tokenChunkItem) {
-        const { chainCode, tokenCode, publicAddress } = tokenItem;
-        public_addresses.push({
-          chain_code: chainCode,
-          token_code: tokenCode,
-          public_address: publicAddress,
-        });
+      for (let i = 0; i < tokens.length; i += chunkSize) {
+        tokensChunks.push(tokens.slice(i, i + chunkSize));
       }
 
-      const actionParam = {
-        action: Action.addPublicAddresses,
-        account: Account.address,
-        data: {
-          fio_address: fioHandle,
-          public_addresses,
-          tpid: apis.fio.tpid,
-          max_fee: DEFAULT_ACTION_FEE_AMOUNT,
-        },
-        derivationIndex: fioWallet.data?.derivationIndex,
-      };
-      actionParamsArr.push(actionParam);
-    }
+      for (const tokenChunkItem of tokensChunks) {
+        const public_addresses = [];
 
-    setActionParams(actionParamsArr);
-  }, [fioHandle, fioWallet?.data?.derivationIndex, tokens]);
+        for (const tokenItem of tokenChunkItem) {
+          const { chainCode, tokenCode, publicAddress } = tokenItem;
+          public_addresses.push({
+            chain_code: chainCode,
+            token_code: tokenCode,
+            public_address: publicAddress,
+          });
+        }
+
+        const actionParam = {
+          action: Action.addPublicAddresses,
+          account: Account.address,
+          data: {
+            fio_address: fioHandle,
+            public_addresses,
+            tpid: apis.fio.tpid,
+            max_fee: DEFAULT_ACTION_FEE_AMOUNT,
+          },
+          derivationIndex,
+        };
+        actionParamsArr.push(actionParam);
+      }
+
+      return actionParamsArr;
+    },
+    [],
+  );
 
   const handleMapPublicAddressResults = useCallback(
     (result: OnSuccessResponseResult) => {
@@ -142,23 +140,14 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
     [onSuccess],
   );
 
-  useEffectOnce(
-    () => {
-      if (submitData) {
-        handleActionParams();
-      }
-    },
-    [submitData],
-    !!submitData,
-  );
-
   if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.ADD_TOKEN}
       analyticsData={submitData}
-      actionParams={actionParams}
+      derivationIndex={fioWallet?.data?.derivationIndex}
+      handleActionParams={handleActionParams}
       processing={processing}
       setProcessing={setProcessing}
       onCancel={onCancel}

@@ -19,12 +19,13 @@ import { TransactionDetailsProps } from '../../../../components/TransactionDetai
 
 import {
   BUNDLES_TX_COUNT,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_ENDPOINT_NAME,
   FIO_ENDPOINT_TAG_NAME,
 } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
 import { DEFAULT_FEE_PRICES } from '../../../../util/prices';
-import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../../../api/fio';
+import { TrxResponse } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
 import { handleTransactionDetails } from '../../../../util/transactions';
@@ -175,7 +176,12 @@ export const useContext = (props: Props): UseContextProps => {
         actor: FIOSDK.accountHash(selectedFioWallet?.publicKey)?.accountnm,
         proxy: selectedProxy?.fioAddress,
         fio_address: selectedFioHandle?.name || '',
-        max_fee: DEFAULT_ACTION_FEE_AMOUNT,
+        max_fee: !transactionDetailsParams?.feeCollected
+          ? 0
+          : new MathOp(prices.nativeFio)
+              .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
+              .round(0)
+              .toNumber(),
       },
     });
   };

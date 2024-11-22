@@ -8,7 +8,7 @@ export const LowBalanceTokens: React.FC<LowBalanceProps> = props => {
     <LowBalanceComponent
       {...props}
       title="Cannot Cast Vote"
-      messageText="Your wallet has no voting power due to a token balance of zero. Please deposit tokens or add a wallet with a token balance to your account"
+      messageText="This wallet has no voting power due to a token balance of zero. Please deposit tokens or choose a different wallet in order to vote."
     />
   );
 };

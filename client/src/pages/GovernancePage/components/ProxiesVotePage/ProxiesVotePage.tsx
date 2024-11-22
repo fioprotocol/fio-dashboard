@@ -163,7 +163,7 @@ export const ProxiesVotePage: React.FC<GovernancePageContextProps> = props => {
             className={classes.transactionDetails}
           />
           <SubmitButton
-            text="Vote Now"
+            text="Proxy Now"
             disabled={
               !selectedProxy ||
               proxiesLoading ||

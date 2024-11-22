@@ -44,7 +44,7 @@ export type OnSuccessResponseResult =
   | DecryptedItem[];
 
 type Props = {
-  actionParams:
+  actionParams?:
     | ActionParams
     | ActionParams[]
     | DecryptActionParams
@@ -55,8 +55,17 @@ type Props = {
   isDecryptContent?: boolean;
   processing: boolean;
   returnOnlySignedTxn?: boolean;
+  derivationIndex?: number;
   onCancel: () => void;
   onSuccess: (result: OnSuccessResponseResult) => void;
+  handleActionParams?: (
+    submitData: AnyType | null,
+    derivationIndex?: number,
+  ) =>
+    | ActionParams
+    | ActionParams[]
+    | DecryptActionParams
+    | DecryptActionParams[];
   setProcessing: (processing: boolean) => void;
 };
 
@@ -69,9 +78,11 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     isDecryptContent,
     processing,
     returnOnlySignedTxn,
+    derivationIndex,
     onCancel,
     onSuccess,
     setProcessing,
+    handleActionParams,
   } = props;
 
   const { state, handleConnectClick } = MetamaskSnap();
@@ -90,10 +101,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     try {
       setProcessing(true);
 
+      let uActionParams = actionParams;
+      if (!uActionParams && handleActionParams) {
+        uActionParams = handleActionParams(analyticsData, derivationIndex);
+      }
       if (isDecryptContent) {
-        if (Array.isArray(actionParams)) {
+        if (Array.isArray(uActionParams)) {
           const decryptedContents = [];
-          for (const actionParamsItem of actionParams) {
+          for (const actionParamsItem of uActionParams) {
             if ('content' in actionParamsItem) {
               const decryptedData = await decryptContent(actionParamsItem);
               decryptedContents.push({
@@ -106,19 +121,19 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           return;
         }
 
-        if ('content' in actionParams) {
-          const decryptedContent = await decryptContent(actionParams);
+        if ('content' in uActionParams) {
+          const decryptedContent = await decryptContent(uActionParams);
           onSuccess({
             decryptedData: decryptedContent,
-            contentType: actionParams.contentType,
+            contentType: uActionParams.contentType,
           });
           return;
         }
       }
 
-      const sendActionParams = Array.isArray(actionParams)
-        ? actionParams
-        : [actionParams];
+      const sendActionParams = Array.isArray(uActionParams)
+        ? uActionParams
+        : [uActionParams];
 
       const signedTxnsResponse = await signTxn({
         actionParams: sendActionParams,
@@ -266,9 +281,11 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     analyticsData,
     apiUrl,
     returnOnlySignedTxn,
+    derivationIndex,
     onSuccess,
     onCancel,
     setProcessing,
+    handleActionParams,
   ]);
 
   useEffectOnce(

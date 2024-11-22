@@ -3,6 +3,29 @@
 .lowBalanceBadge {
   border-radius: 20px;
 
+  & > div {
+    flex-direction: column;
+    gap: 15px;
+
+    @include sm {
+      gap: 0;
+    }
+
+    & button {
+      align-self: flex-start !important;
+      margin-left: calc(20px + 0.625rem);
+      height: auto !important;
+      
+      & > p {
+        white-space: normal;
+      }
+
+      @include sm {
+        margin-left: 0;
+      }
+    }
+  }
+
   & svg {
     font-size: 24px !important;
   }

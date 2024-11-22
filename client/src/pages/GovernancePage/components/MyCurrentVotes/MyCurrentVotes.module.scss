@@ -1,5 +1,6 @@
 @import '../../../../assets/styles/colors.scss';
 @import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   width: 100%;
@@ -8,9 +9,13 @@
   gap: 20px;
   background-color: $ghost-white;
   border-radius: 12px;
-  padding: 28px 20px;
+  padding: 16px 28px;
   justify-content: space-between;
   align-items: center;
+
+  @include sm {
+    padding: 20px;
+  }
 
   .title {
     color: $dark-tone-ink;
