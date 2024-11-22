@@ -42,6 +42,8 @@ import { PaymentDetailsValues } from '../../../pages/TokensRequestPaymentPage/ty
 import { BeforeSubmitValues } from '../../../pages/CheckoutPage/types';
 import { PurchaseValues } from '../../PurchaseNow/types';
 import { TrxResponse } from '../../../api/fio';
+import { SubmitData as BlockProducerVoteValues } from '../../../pages/GovernancePage/components/CastBlockProducerVotePage/types';
+import { SubmitData as ProxyVoteValues } from '../../../pages/GovernancePage/components/ProxiesVotePage/types';
 
 type Props = {
   action: string;
@@ -884,6 +886,44 @@ const ConnectionModal: React.FC<Props> = props => {
               {fioWalletPublicKey}
             </TransactionInfoBadge>
           )}
+        </>
+      );
+    }
+
+    if (action === CONFIRM_LEDGER_ACTIONS.VOTE_PRODUCER) {
+      const { data: actionData } = data as BlockProducerVoteValues;
+      const { fio_address, max_fee, producers } = actionData;
+
+      return (
+        <>
+          {producers.map((producer, i) => (
+            <TransactionInfoBadge title={`Producer ${i + 1}`}>
+              {producer}
+            </TransactionInfoBadge>
+          ))}
+          <TransactionInfoBadge title="FIO Handle">
+            {fio_address}
+          </TransactionInfoBadge>
+          <TransactionInfoBadge title="Max Fee">
+            {FIOSDK.SUFToAmount(max_fee)} FIO
+          </TransactionInfoBadge>
+        </>
+      );
+    }
+
+    if (action === CONFIRM_LEDGER_ACTIONS.VOTE_PROXY) {
+      const { data: actionData } = data as ProxyVoteValues;
+      const { fio_address, max_fee, proxy } = actionData;
+
+      return (
+        <>
+          <TransactionInfoBadge title="Proxy">{proxy}</TransactionInfoBadge>
+          <TransactionInfoBadge title="FIO Handle">
+            {fio_address}
+          </TransactionInfoBadge>
+          <TransactionInfoBadge title="Max Fee">
+            {FIOSDK.SUFToAmount(max_fee)} FIO
+          </TransactionInfoBadge>
         </>
       );
     }
