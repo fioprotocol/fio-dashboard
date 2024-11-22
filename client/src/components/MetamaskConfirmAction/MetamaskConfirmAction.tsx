@@ -55,10 +55,12 @@ type Props = {
   isDecryptContent?: boolean;
   processing: boolean;
   returnOnlySignedTxn?: boolean;
+  derivationIndex?: number;
   onCancel: () => void;
   onSuccess: (result: OnSuccessResponseResult) => void;
   handleActionParams?: (
     submitData: AnyType | null,
+    derivationIndex?: number,
   ) =>
     | ActionParams
     | ActionParams[]
@@ -76,6 +78,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     isDecryptContent,
     processing,
     returnOnlySignedTxn,
+    derivationIndex,
     onCancel,
     onSuccess,
     setProcessing,
@@ -100,7 +103,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
 
       let uActionParams = actionParams;
       if (!uActionParams && handleActionParams) {
-        uActionParams = handleActionParams(analyticsData);
+        uActionParams = handleActionParams(analyticsData, derivationIndex);
       }
       if (isDecryptContent) {
         if (Array.isArray(uActionParams)) {
@@ -278,6 +281,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     analyticsData,
     apiUrl,
     returnOnlySignedTxn,
+    derivationIndex,
     onSuccess,
     onCancel,
     setProcessing,

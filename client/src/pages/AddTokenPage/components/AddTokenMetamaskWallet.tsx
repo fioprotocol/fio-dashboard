@@ -38,7 +38,7 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
   } = props;
 
   const handleActionParams = useCallback(
-    submitData => {
+    (submitData, derivationIndex: number) => {
       const { name: fioHandle, tokens } = submitData || {};
       const actionParamsArr = [];
 
@@ -70,14 +70,14 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
             tpid: apis.fio.tpid,
             max_fee: DEFAULT_ACTION_FEE_AMOUNT,
           },
-          derivationIndex: fioWallet.data?.derivationIndex,
+          derivationIndex,
         };
         actionParamsArr.push(actionParam);
       }
 
       return actionParamsArr;
     },
-    [fioWallet?.data?.derivationIndex],
+    [],
   );
 
   const handleMapPublicAddressResults = useCallback(
@@ -146,6 +146,7 @@ export const AddTokenMetamaskWallet: React.FC<Props> = props => {
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.ADD_TOKEN}
       analyticsData={submitData}
+      derivationIndex={fioWallet?.data?.derivationIndex}
       handleActionParams={handleActionParams}
       processing={processing}
       setProcessing={setProcessing}
