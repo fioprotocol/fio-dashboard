@@ -22,7 +22,6 @@ import {
   DEFAULT_ACTION_FEE_AMOUNT,
   TrxResponsePaidBundles,
 } from '../../../api/fio';
-import useEffectOnce from '../../../hooks/general';
 import { log } from '../../../util/general';
 import { handleFioServerResponse } from '../../../util/fio';
 
@@ -83,12 +82,8 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
   const [requestResult, setRequestResult] = useState<
     (TrxResponsePaidBundles & { obtError?: Error }) | null
   >(null);
-  const [actionFunction, setActionFunction] = useState<
-    (res: OnSuccessResponseResult) => void
-  >(null);
-  const [cancelActionFunction, setCancelActionFunction] = useState<() => void>(
-    () => onCancel,
-  );
+
+  const [isSecondAction, setIsSecondAction] = useState<boolean>(false);
   const [callSubmitAction, toggleCallSubmitAction] = useState<boolean>(false);
   const [isTransferTokensFinished, toggleIsTransferTokensFinished] = useState<
     boolean
@@ -108,20 +103,23 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
         log.error(error);
         setRequestResult({ ...requestResult, obtError: error });
       } finally {
+        setActionParams(null);
         toggleIsTransferTokensFinished(true);
       }
     },
     [fioRequestId, memo, requestResult],
   );
 
-  const handleSendTokensResult = (result: FioServerResponse) => {
+  const handleSendTokensResult = (result: OnSuccessResponseResult) => {
     if (!result) return;
 
-    const { fee_collected } = handleFioServerResponse(result);
+    const { fee_collected } = handleFioServerResponse(
+      result as FioServerResponse,
+    );
 
     setRequestResult({
       fee_collected,
-      transaction_id: result.transaction_id,
+      transaction_id: (result as FioServerResponse).transaction_id,
       bundlesCollected: 0,
     });
   };
@@ -137,13 +135,12 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
         createContact(to);
     }
 
-    if (requestResult && isTransferTokensFinished) {
+    if (
+      requestResult &&
+      (isTransferTokensFinished || (!fioRequestId && !memo))
+    ) {
       onSuccess(requestResult);
-      return;
-    }
-
-    if (requestResult && (!fioRequestId || !memo)) {
-      onSuccess(requestResult);
+      setRequestResult(null);
       return;
     }
 
@@ -173,9 +170,8 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
         },
         derivationIndex,
       };
-      setCancelActionFunction(() => onCancelForSecondAction);
       setActionParams(recordObtActionParams);
-      setActionFunction(() => handleRecordObtResult);
+      setIsSecondAction(true);
       toggleCallSubmitAction(true);
     }
   }, [
@@ -196,34 +192,20 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
     createContact,
   ]);
 
-  useEffectOnce(
-    () => {
-      if (submitData) {
-        setActionParams(transferTokensActionParams);
-      }
-      if (
-        handleSendTokensResult !== null &&
-        handleSendTokensResult !== undefined
-      ) {
-        setActionFunction(() => handleSendTokensResult);
-      }
-    },
-    [submitData],
-    !!submitData,
-  );
-
-  if (!submitData || !actionFunction) return null;
+  if (!submitData) return null;
 
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.SEND}
       analyticsData={submitData}
-      actionParams={actionParams}
+      actionParams={actionParams || transferTokensActionParams}
       callSubmitAction={callSubmitAction}
       processing={processing}
       setProcessing={setProcessing}
-      onCancel={cancelActionFunction}
-      onSuccess={actionFunction}
+      onCancel={isSecondAction ? onCancelForSecondAction : onCancel}
+      onSuccess={
+        isSecondAction ? handleRecordObtResult : handleSendTokensResult
+      }
       isDecryptContent={false}
     />
   );
