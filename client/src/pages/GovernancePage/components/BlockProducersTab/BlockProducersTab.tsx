@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, SyntheticEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -122,18 +122,23 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
             }) => (
               <div className={classes.bpItemContainer} key={id}>
                 <div className={classes.bpItem}>
-                  <CheckBox
-                    disabled={!isValidFioHandle}
-                    checked={checked}
-                    onChange={() => onBlockProducerSelectChange(id)}
-                    className={classes.checkbox}
-                  />
                   <div className={classes.container}>
                     <div className={classes.headerContainer}>
+                      <CheckBox
+                        disabled={!isValidFioHandle}
+                        checked={checked}
+                        onChange={() => onBlockProducerSelectChange(id)}
+                        className={classes.checkbox}
+                      />
                       <img
                         src={logo || defaultLogo}
                         alt="Block Producer"
                         className={classes.logo}
+                        onError={(
+                          e: SyntheticEvent<HTMLImageElement, Event>,
+                        ) => {
+                          (e.target as HTMLImageElement).src = defaultLogo;
+                        }}
                       />
                       <div className={classes.nameContainer}>
                         <h4 className={classes.name}>{name}</h4>

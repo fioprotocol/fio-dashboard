@@ -110,18 +110,18 @@
       flex-direction: column;
       background-color: $desert-storm;
       border-radius: 8px;
-      padding: 20px;
+      padding: 16px 28px;
       gap: 20px;
+
+      @include sm {
+        padding: 20px;
+      }
 
       .bpItem {
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
+        align-items: center;
         gap: 20px;
-
-        .checkbox {
-          margin-top: 5px;
-        }
 
         .container {
           display: flex;
@@ -140,6 +140,16 @@
             flex-wrap: nowrap;
             gap: 10px;
             flex-shrink: 0;
+            align-items: center;
+
+            .checkbox {
+              margin-right: 18px;
+              padding: 0;
+
+              @include sm {
+                margin-right: 10px;
+              }
+            }
 
             .logo {
               width: 44px;
@@ -171,9 +181,10 @@
               }
 
               .details {
-                span {
-                  margin-left: 5px;
-                }
+                display: flex;
+                flex-flow: row wrap;
+                gap: 5px;
+
                 .notValid {
                   color: $red-orange-juice;
                 }
@@ -252,7 +263,7 @@
       .notificationBadge {
         padding: 5px 11px !important;
         min-height: auto;
-        margin-left: 112px;
+        margin-left: 102px;
         width: fit-content;
         div > p {
           @include proxima-nova-semibold;
