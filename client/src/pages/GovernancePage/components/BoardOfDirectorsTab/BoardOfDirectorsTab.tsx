@@ -119,6 +119,7 @@ export const BoardOfDirectorsTab: FC<GovernancePageContextProps> = props => {
                 <CheckBox
                   onChange={() => onCandidateSelectChange(id)}
                   checked={checked}
+                  className={classes.checkbox}
                 />
                 <div className={classes.contentContainer}>
                   <div className={classes.dataContainer}>
