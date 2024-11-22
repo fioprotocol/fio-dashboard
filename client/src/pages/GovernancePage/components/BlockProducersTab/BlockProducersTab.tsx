@@ -14,6 +14,7 @@ import { GradeBadge } from '../GradeBadge/GradeBadge';
 import { MyCurrentVotes } from '../MyCurrentVotes';
 import { WarningNotificationBadge } from '../WarningNotificationBadge/WarningNotificationBadge';
 import { LowBalanceTokens } from '../LowBalanceComponent/LowBalanceTokens';
+import { lowBalanceAction } from '../../../../util/transactions';
 
 import { ROUTES } from '../../../../constants/routes';
 
@@ -98,7 +99,10 @@ export const BlockProducersTab: FC<GovernancePageContextProps> = props => {
         message="Voting via MetaMask is not supported at this time."
       />
       {!overviewWalletsLoading && (
-        <LowBalanceTokens hasLowBalance={hasLowBalance} />
+        <LowBalanceTokens
+          hasLowBalance={hasLowBalance}
+          onActionClick={lowBalanceAction}
+        />
       )}
       <div className={classes.bpListContainer}>
         {bpLoading ? (

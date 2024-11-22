@@ -1,3 +1,5 @@
+import { LOW_BALANCE_TEXT } from '../components/LinkTokenList/constants';
+
 export const ERROR_TYPES = {
   default: 'default',
   freeAddressError: 'freeAddressError',
@@ -80,7 +82,7 @@ export const CANNOT_TRANSFER_ERROR_TITLE = 'Cannot Transfer';
 export const CANNOT_UPDATE_FIO_HANDLE_TITLE = 'Cannot Update';
 
 export const LOW_BUNDLES_TEXT = {
-  buttonText: 'Add more',
+  buttonText: LOW_BALANCE_TEXT.buttonText,
   messageText:
     'Unfortunately there are not enough bundled transactions available to complete this transaction. Please add more to your FIO Handle now.',
 };
