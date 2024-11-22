@@ -36,7 +36,10 @@ class MissedTransactions extends CommonJob {
 	    INNER JOIN orders o ON o.id = oi."orderId" 
 	    LEFT JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
       LEFT JOIN "blockchain-transactions" bt ON bt."orderItemId" = oi.id
-      WHERE o.status = 7 AND (bt.id is NULL OR (bt."txId" is NULL AND ois."blockchainTransactionId" = bt.id))
+      WHERE o.status = 7 AND oi."deletedAt" IS NUll
+        AND o."deletedAt" IS NUll 
+        AND bt."deletedAt" IS NUll 
+        AND (bt.id is NULL OR (bt."txId" IS NULL AND ois."blockchainTransactionId" = bt.id))
       ORDER by o."createdAt" DESC
 `);
 
