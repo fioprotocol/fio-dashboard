@@ -162,7 +162,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
             offline_url: '',
             status: 'sent_to_blockchain',
           },
-          fio_request_id: fioRequestId,
+          fio_request_id: fioRequestId || '',
           payer_fio_address: from,
           payee_fio_address: to,
           tpid: apis.fio.tpid,
