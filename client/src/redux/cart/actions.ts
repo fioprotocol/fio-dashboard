@@ -1,4 +1,4 @@
-import { CartItem, NativePrices } from '../../types';
+import { CartItem } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 import { Api } from '../../api';
 
@@ -11,8 +11,6 @@ export const ADD_ITEM_FAILURE = `${prefix}/ADD_ITEM_FAILURE`;
 export const addItem = (data: {
   item: CartItem;
   publicKey?: string;
-  prices?: NativePrices;
-  roe?: number;
   token?: string;
   refCode?: string;
 }): CommonPromiseAction => ({
@@ -28,8 +26,6 @@ export const DELETE_ITEM_FAILURE = `${prefix}/DELETE_ITEM_FAILURE`;
 export const deleteItem = (data: {
   itemId: string;
   item: CartItem;
-  prices: NativePrices;
-  roe: number;
   refCode?: string;
 }): CommonPromiseAction => ({
   types: [DELETE_ITEM_REQUEST, DELETE_ITEM_SUCCESS, DELETE_ITEM_FAILURE],
@@ -45,8 +41,6 @@ export const updateCartItemPeriod = (data: {
   itemId: string;
   item: CartItem;
   period: number;
-  prices: NativePrices;
-  roe: number;
 }): CommonPromiseAction => ({
   types: [
     UPDATE_CART_ITEM_PERIOD_REQUEST,
@@ -78,16 +72,13 @@ export const RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST = `${prefix}/RECALC
 export const RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS = `${prefix}/RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS`;
 export const RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE = `${prefix}/RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE`;
 
-export const recalculateOnPriceUpdate = (data: {
-  prices: NativePrices;
-  roe: number;
-}): CommonPromiseAction => ({
+export const recalculateOnPriceUpdate = (): CommonPromiseAction => ({
   types: [
     RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_REQUEST,
     RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS,
     RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_FAILURE,
   ],
-  promise: (api: Api) => api.cart.recalculateOnPriceUpdate(data),
+  promise: (api: Api) => api.cart.recalculateOnPriceUpdate(),
 });
 
 export const CREATE_CART_FROM_ORDER_REQUEST = `${prefix}/CREATE_CART_FROM_ORDER_REQUEST`;
@@ -144,4 +135,10 @@ export const setWallet = (walletPublicKey: string): CommonAction => ({
 
 export const unsetWallet = (): CommonAction => ({
   type: UNSET_WALLET_FOR_PAYMENT,
+});
+
+export const HANDLE_DOMAIN_RENEW = `${prefix}/HANDLE_DOMAIN_RENEW`;
+export const onDomainRenew = (domain: string): CommonAction => ({
+  type: HANDLE_DOMAIN_RENEW,
+  data: domain,
 });

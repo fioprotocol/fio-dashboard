@@ -256,10 +256,8 @@ export const useContext = (): {
     apis.orders
       .create({
         cartId,
-        roe,
         publicKey: paymentWalletPublicKey,
         paymentProcessor: paymentProvider,
-        prices: prices?.nativeFio,
         data: {
           gaClientId: getGAClientId(),
           gaSessionId: getGASessionId(),
@@ -275,8 +273,6 @@ export const useContext = (): {
     order,
     paymentProvider,
     paymentWalletPublicKey,
-    prices?.nativeFio,
-    roe,
   ]);
 
   const createOrder = useCallback(
@@ -297,10 +293,8 @@ export const useContext = (): {
       if (!orderParamsFromLocation && isFree) {
         orderParams = {
           cartId,
-          roe,
           publicKey: paymentWalletPublicKey,
           paymentProcessor: PAYMENT_PROVIDER.FIO,
-          prices: prices?.nativeFio,
           data: {
             gaClientId: getGAClientId(),
             gaSessionId: getGASessionId(),
@@ -399,7 +393,7 @@ export const useContext = (): {
 
   const cancelOrder = useCallback(
     (event?: Event) => {
-      // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel oreder on close BitPay payment page
+      // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel order on close BitPay payment page
       if (!event && order?.id) {
         void apis.orders.update(order.id, {
           status: PURCHASE_RESULTS_STATUS.CANCELED,

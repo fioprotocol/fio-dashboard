@@ -32,15 +32,25 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
     <div className={classnames(classes.container, isBig && classes.isBig)}>
       {title && <h1 className={classes.title}>{title}</h1>}
       {showSubtitle && (
-        <p className={classes.subtitle}>
-          Invite friends to FIO Protocol.{' '}
-          <span className="boldText">For every domain registration</span> made
-          through your link, you{' '}
-          <span className="boldText">
-            earn <span className="throughText">10%</span> 50%
-          </span>{' '}
-          of that purchase value.
-        </p>
+        <>
+          {isBig && (
+            <p className={classes.subtitle}>
+              You have 2 ways to earn by inviting people to the FIO Protocol
+            </p>
+          )}
+          <p className={classnames(classes.subtitle, classes.text)}>
+            For every{' '}
+            <span className="boldText">initial domain registration</span> or{' '}
+            <span className="boldText">
+              FIO handle registration on domains you own
+            </span>
+            , you can{' '}
+            <span className="boldText">
+              earn <span className="throughText">10%</span> 50%
+            </span>{' '}
+            of that purchase value through your affiliate links.
+          </p>
+        </>
       )}
       <p className={classes.info}>
         Please see the FAQs {faqInfoPosition} for more information regarding
@@ -59,7 +69,7 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
         )}
         {!isAuthenticated && (
           <Link to={ROUTES.CREATE_ACCOUNT}>
-            <Button className={classnames(classes.button, 'mr-4')}>
+            <Button className={classes.button}>
               Create Account & Activate
             </Button>
           </Link>

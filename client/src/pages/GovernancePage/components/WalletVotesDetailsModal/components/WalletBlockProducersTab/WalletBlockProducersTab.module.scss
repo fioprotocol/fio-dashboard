@@ -1,0 +1,131 @@
+@import '../../../../../../assets/styles/colors.scss';
+@import '../../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../../assets/styles/mediaQueriesMixings.scss';
+
+
+.scrollArea {
+  display: flex;
+  height: 100%
+}
+
+.tabsScrollContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-right: 10px;
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    background-color: $white;
+    padding: 8px 10px;
+    border-radius: 12px;
+
+    @include sm {
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .headerContainer {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 10px;
+      flex-shrink: 0;
+
+      .logo {
+        width: 44px;
+        height: 44px;
+      }
+
+      .nameContainer {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+        align-items: center;
+
+        @include sm {
+          gap: 8px;
+          align-items: flex-start;
+          flex-direction: column;
+          word-break: break-all;
+        }
+
+        .name {
+          margin: 0;
+          font-size: 0.9375em;
+          @include inter-semibold;
+        }
+
+        .details {
+          margin: 0;
+          font-size: 0.9375em;
+          @include inter-regular;
+        }
+
+        .details {
+          .notValid {
+            color: $red-orange-juice;
+          }
+        }
+
+        .totalVotes {
+          @include proxima-nova-semibold;
+        }
+      }
+    }
+
+    .dataContainer {
+      display: flex;
+      gap: 20px;
+      flex-direction: row;
+      align-items: center;
+      margin-left: auto;
+
+      @include sm {
+        flex-flow: wrap;
+        justify-content: space-between;
+        margin-left: 0;
+      }
+
+      .linksContainer {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+      }
+
+      .flag {
+        height: 24px;
+      }
+
+      .gradeContainer {
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+
+        .topScore {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 34px;
+          padding: 8px 13px;
+          border-radius: 8px;
+          color: $white;
+          background-color: $baltic-sea;
+          font-size: 0.8125em;
+          white-space: nowrap;
+          @include proxima-nova-semibold;
+
+          @include sm {
+            height: 24px;
+            padding: 2px 8px;
+            font-size: 0.625em;
+          }
+        }
+      }
+    }
+  }
+}

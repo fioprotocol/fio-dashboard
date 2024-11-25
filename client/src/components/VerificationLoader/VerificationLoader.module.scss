@@ -1,0 +1,68 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  .loader {
+    opacity: 0.87;
+    width: 200%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -7%;
+    bottom: -7%;
+    line-height: 2.75rem;
+    @include comfortaa-bold;
+    color: $pile-violet;
+    z-index: 2;
+
+    &.overlay {
+      background: $mine-shaft;
+    }
+  }
+
+  .infoBadge {
+    width: auto;
+    background-color: $violet;
+    border-radius: 999em;
+    padding: 10px 30px 10px 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    &.isVerified, &.hasVerifiedError {
+      display: flex;
+      flex-direction: row;
+      height: auto;
+      margin-bottom: 30px;
+    }
+
+    &.isVerified {
+      background-color: $green-shell;
+    }
+
+    &.hasVerifiedError {
+      background-color: $warn-red;
+    }
+
+    &.hasFioVerificactionError {
+      margin-bottom: 30px;
+      margin-top: 30px;
+    }
+
+    .infoMessage {
+      margin: 0;
+      font-size: 0.8125em;
+    }
+  }
+}

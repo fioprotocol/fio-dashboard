@@ -139,7 +139,9 @@ export class ReferrerProfile extends Base {
       where.code = refCode;
     }
 
-    const refDomainsList = await this.findAll({ where })
+    const refProfiles = await this.findAll({ where });
+
+    const refDomainsList = refProfiles
       .map(refProfile =>
         refProfile.settings.domains.map(domain => ({
           ...domain,

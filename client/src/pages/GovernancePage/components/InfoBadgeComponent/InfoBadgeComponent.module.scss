@@ -1,0 +1,26 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.infoBadge {
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+  gap: 10px;
+  padding: 11px !important;
+  border-radius: 12px;
+  font-size: 0.75em;
+
+  @include lg {
+    & > div {
+      margin-left: 0;
+    }
+  }
+
+  svg {
+    align-self: flex-start;
+  }
+
+  a {
+    font-family: inherit;
+    color: inherit;
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,14 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.container {
+  border-radius: 20px;
+  font-size: 0.75em;
+  margin-top: 20px !important;
+
+  a {
+    color: $white;
+    text-decoration: underline;
+    @include proxima-nova-semibold;
+  }
+}

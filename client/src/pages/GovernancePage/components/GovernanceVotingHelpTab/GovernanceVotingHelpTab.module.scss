@@ -1,0 +1,66 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.title {
+  @include proxima-nova-semibold;
+  font-size: 1.125em;
+  line-height: 1.375;
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: $cod-gray;
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.description {
+  @include proxima-nova-regular;
+  margin-top: 12px;
+  font-size: 0.875em;
+  line-height: 1.5;
+  color: $cod-gray;
+}
+
+.subtitle {
+  @include proxima-nova-medium;
+  margin-top: 20px;
+  margin-bottom: 0;
+  font-size: 1em;
+  line-height: 1.5;
+  color: $cod-gray;
+}
+
+.content {
+  @include proxima-nova-thin;
+  margin-top: 12px;
+  font-size: 0.875em;
+  line-height: 1.5;
+  color: $cod-gray;
+  a {
+    @include proxima-nova-medium;
+  }
+  ul {
+    padding-left: 12px;
+    list-style-type: disc;
+    li {
+      line-height: 1.725;
+    }
+  }
+}
+
+.blockLink {
+  display: block;
+  margin-top: 12px;
+}
+
+@include lg {
+  .block {
+    padding-left: 30px;
+  }
+  .content {
+    ul ul {
+      padding-left: 20px;
+    }
+  }
+}

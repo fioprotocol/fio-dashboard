@@ -1,0 +1,73 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.infoTooltip {
+  @include inter-regular;
+
+  :global {
+    .arrow {
+      &::before {
+        border-top-color: $black-olive;
+      }
+    }
+
+    .tooltip-inner {
+      margin-right: -20px;
+      max-width: 290px;
+      text-align: left;
+      padding: 15px;
+      background-color: $black-olive;
+      border-radius: 15px;
+      font-size: 10px;
+      line-height: 16px;
+    }
+  }
+}
+
+.vote {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.voteName {
+  margin: 0;
+  flex: 1;
+  font-size: 0.75em;
+  @include proxima-nova-semibold
+}
+
+.voteStatus {
+  color: white;
+  margin: 0;
+  width: 65px;
+  height: 16px;
+  border-radius: 24px;
+  text-align: center;
+  font-size: 0.5em;
+  line-height: 2;
+  @include inter-regular;
+  background-color: #B80084;
+
+  &.voteStatusVoted {
+    background-color: #00a86c;
+  }
+  
+  &.voteStatusProxied {
+    background-color: $megaman;
+  }
+}
+
+.questionLink {
+  color: inherit;
+  text-decoration: underline;
+
+  &:hover {
+    color: inherit;
+  }
+}
+
+.img {
+  cursor: pointer;
+}

@@ -1,3 +1,5 @@
+import { FioSentItem } from '@fioprotocol/fiosdk';
+
 import Base from './base';
 import { FioWalletDoublet, NewFioWalletDoublet } from '../types';
 import {
@@ -15,10 +17,13 @@ export default class Account extends Base {
     return this.apiClient.get('account/wallets');
   }
 
-  setWallets(
-    fioWallets: FioWalletDoublet[],
-  ): Promise<AccountSetWalletsResponse> {
-    return this.apiClient.post('account/wallets', { data: fioWallets });
+  setWallets(data: {
+    fioWallets: FioWalletDoublet[];
+    archivedWalletIds?: string[];
+  }): Promise<AccountSetWalletsResponse> {
+    return this.apiClient.post('account/wallets', {
+      data,
+    });
   }
 
   addWallet(data: NewFioWalletDoublet): Promise<AccountAddWalletsResponse> {
@@ -50,5 +55,14 @@ export default class Account extends Base {
       `account/wallet/import/validate/${publicKey}`,
       {},
     );
+  }
+
+  getFioRequests(): Promise<{
+    [key: string]: {
+      sent: FioSentItem[];
+      received: FioSentItem[];
+    };
+  }> {
+    return this.apiClient.get('account/wallet/fio-requests');
   }
 }

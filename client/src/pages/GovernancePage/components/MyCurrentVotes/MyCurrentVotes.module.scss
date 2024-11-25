@@ -1,0 +1,32 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background-color: $ghost-white;
+  border-radius: 12px;
+  padding: 16px 28px;
+  justify-content: space-between;
+  align-items: center;
+
+  @include sm {
+    padding: 20px;
+  }
+
+  .title {
+    color: $dark-tone-ink;
+    font-size: 1.125em;
+    margin-bottom: 0;
+    @include proxima-nova-semibold;
+  }
+
+  .button {
+    height: 34px;
+    font-size: 0.8125em;
+    max-width: 128px;
+  }
+}

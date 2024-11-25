@@ -28,17 +28,19 @@ export const domains = createSelector(
   registrationDomains,
   refProfileInfo,
   (regDomainItems, refProfileInfo): PubilcDomainsType => {
-    if (
-      refProfileInfo != null &&
-      refProfileInfo.code &&
-      refProfileInfo.type === REF_PROFILE_TYPE.REF
-    ) {
+    if (refProfileInfo != null && refProfileInfo.code) {
       return {
         allRefProfileDomains: regDomainItems.allRefProfileDomains?.filter(
           regDomainItem => !regDomainItem.isExpired,
         ),
         dashboardDomains: regDomainItems.dashboardDomains?.filter(
-          dashboardDomainItem => !dashboardDomainItem.isExpired,
+          dashboardDomainItem => {
+            if (dashboardDomainItem.isExpired) return false;
+
+            return refProfileInfo.type === REF_PROFILE_TYPE.REF
+              ? true
+              : dashboardDomainItem.isPremium;
+          },
         ),
         refProfileDomains: refProfileInfo.settings.domains
           ?.filter(refDomain => !refDomain.isExpired)

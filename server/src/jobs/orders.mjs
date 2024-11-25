@@ -84,6 +84,7 @@ class OrdersJob extends CommonJob {
       fee = this.feesJson[action];
     } else {
       fee = await fioApi.getFee(action);
+      this.postMessage(`Fees: ${JSON.stringify({ action, fee })}`);
       this.feesJson[action] = fee;
       this.feesUpdatedAt = new Date();
       await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
@@ -730,7 +731,7 @@ class OrdersJob extends CommonJob {
             domain,
             publicKey: orderItem.publicKey,
             fee: await this.getFeeForAction(GenericAction.registerFioDomain),
-            tpid: orderItem.domainTpid,
+            tpid: orderItem.affiliateTpid,
           }),
           auth,
         );
@@ -809,9 +810,10 @@ class OrdersJob extends CommonJob {
         fioApi.getActionParams({
           ...orderItem,
           tpid:
+            action === GenericAction.registerFioAddress ||
             action === GenericAction.registerFioDomain ||
             action === GenericAction.registerFioDomainAddress
-              ? orderItem.domainTpid
+              ? orderItem.affiliateTpid
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
         }),
@@ -856,7 +858,7 @@ class OrdersJob extends CommonJob {
     await fioApi.getRawAbi();
     const roe = await getROE();
     const feesVar = await Var.getByKey(FEES_VAR_KEY);
-    const prices = await fioApi.getPrices(true);
+    const prices = await fioApi.getPrices();
     const dashboardDomains = await Domain.getDashboardDomains();
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 

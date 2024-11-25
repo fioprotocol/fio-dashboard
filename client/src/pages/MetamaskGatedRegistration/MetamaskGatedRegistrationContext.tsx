@@ -256,9 +256,7 @@ export const useContext = (): UseContext => {
           addItemToCart({
             item: cartItem,
             publicKey,
-            prices: prices?.nativeFio,
             refCode,
-            roe,
             token: gatedToken,
           }),
         );

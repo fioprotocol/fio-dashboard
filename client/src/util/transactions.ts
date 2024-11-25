@@ -6,12 +6,15 @@ import { FIO_CHAIN_CODE } from '../constants/fio';
 
 import MathOp from './math';
 import { getUTCDate, log } from './general';
+import config from '../config';
 
 import {
   FioHistoryNodeAction,
   FioWalletTxHistory,
   TransactionItemProps,
 } from '../types';
+import { TransactionDetailsProps } from '../components/TransactionDetails/TransactionDetails';
+import { HandleTransactionDetailsProps } from '../types/transactions';
 
 const HISTORY_NODE_OFFSET = 20;
 const HISTORY_TX_NAMES = {
@@ -335,4 +338,73 @@ export const checkTransactions = async (
   }
 
   return transactions;
+};
+
+export const handleTransactionDetails = ({
+  bundles,
+  feeCollected,
+  fioWallet,
+  roe,
+  remaningBundles,
+  shouldSubBundlesFromRemaining,
+  shouldSubFeesFromBalance,
+  transactionId,
+}: HandleTransactionDetailsProps): TransactionDetailsProps => {
+  const transactionDetails: TransactionDetailsProps = {};
+
+  if (transactionId) {
+    transactionDetails.additional = [
+      {
+        label: 'ID',
+        value: transactionId,
+        link: `${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transactionId}`,
+        wrap: true,
+      },
+    ];
+  }
+
+  if (fioWallet) {
+    transactionDetails.payWith = {
+      walletName: fioWallet?.name,
+      walletBalances: {
+        nativeFio: fioWallet?.balance,
+        fio: FIOSDK.SUFToAmount(fioWallet?.balance).toFixed(2),
+        usdc: apis.fio.convertFioToUsdc(fioWallet?.balance, roe)?.toString(),
+      },
+    };
+  }
+
+  if (feeCollected) {
+    transactionDetails.feeInFio = feeCollected;
+
+    const walletBalance = shouldSubFeesFromBalance
+      ? new MathOp(fioWallet?.balance).sub(feeCollected).toNumber()
+      : fioWallet?.balance;
+
+    transactionDetails.payWith.walletBalances = {
+      nativeFio: walletBalance,
+      fio: FIOSDK.SUFToAmount(walletBalance).toFixed(2),
+      usdc: apis.fio.convertFioToUsdc(walletBalance, roe)?.toString(),
+    };
+  }
+
+  if (remaningBundles && bundles) {
+    transactionDetails.bundles = {
+      remaining: shouldSubBundlesFromRemaining
+        ? new MathOp(remaningBundles).sub(bundles).toNumber()
+        : remaningBundles,
+      fee: bundles,
+    };
+  }
+
+  return transactionDetails;
+};
+
+export const lowBalanceAction = () => {
+  const url = config.getTokensUrl;
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.click();
 };

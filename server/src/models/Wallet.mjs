@@ -32,7 +32,7 @@ export class Wallet extends Base {
         sequelize,
         tableName: 'wallets',
         paranoid: true,
-        timestamps: false,
+        timestamps: true,
         indexes: [
           {
             unique: true,
@@ -55,9 +55,10 @@ export class Wallet extends Base {
     });
   }
 
-  static list(where) {
+  static list(where, paranoid = true) {
     return this.findAll({
       where,
+      paranoid,
       order: [['id', 'ASC']],
     });
   }

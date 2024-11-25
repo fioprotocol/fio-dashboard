@@ -38,6 +38,16 @@ const ROUTES: { [route: string]: string } = {
   FIO_AFFILIATE_PROGRAM_ENABLED: '/affiliate-program-enabled',
 
   GOVERNANCE: '/governance',
+  GOVERNANCE_OVERVIEW: '/governance/overview',
+  GOVERNANCE_FIO_FOUNDATION_BOARD_OF_DIRECTORS:
+    '/governance/fio-foundation-board-of-directors',
+  GOVERNANCE_BLOCK_PRODUCERS: '/governance/block-producers',
+  GOVERNANCE_PROXIES: '/governance/proxies',
+  GOVERNANCE_PROXIES_VOTE: '/governance/proxies-vote',
+  GOVERNANCE_VOTING_HELP: '/governance/voting-help',
+  GOVERNANCE_CAST_BOARD_VOTE: '/governance/cast-board-vote',
+  GOVERNANCE_CAST_BLOCK_PRODUCER_VOTE: '/governance/cast-block-producer-vote',
+
   PROTOCOL_UPDATES: '/protocol-updates',
 
   CART: '/cart',
@@ -101,6 +111,7 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: `/ref/${REF_PROFILE_SLUG_NAME}`,
+  REF_PROFILE_HOME_FCH: `/ref/handle/${REF_PROFILE_SLUG_NAME}`,
 
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',

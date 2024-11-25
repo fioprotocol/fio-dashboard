@@ -2,53 +2,46 @@ import React from 'react';
 
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import WarningIcon from '@mui/icons-material/Warning';
-import InfoIcon from '@mui/icons-material/Info';
-import { FadeLoader } from 'react-spinners';
-import classnames from 'classnames';
 
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { LoadingIcon } from '../Input/StaticInputParts';
 import ModalComponent from '../Modal/Modal';
 import DangerModal from '../Modal/DangerModal';
+import {
+  VerificationLoader,
+  VerificationLoaderProps,
+} from '../VerificationLoader';
 
 import MetamaskImgSrc from '../../assets/images/metamask.svg';
 
 import classes from './GateVerificationComponent.module.scss';
 
 type Props = {
-  connectButtonDisabled?: boolean;
-  hasFioVerificactionError: boolean;
-  hasVerifiedError: boolean;
-  gatedChainName?: string;
-  isVerified: boolean;
-  infoMessage: string;
-  loaderText: string;
-  parnterName: string;
+  partnerName: string;
   refDomain: string;
+  gatedChainName: string;
+  connectButtonDisabled: boolean;
   showProviderWindowError: boolean;
   showBrowserExtensionErrorModal: boolean;
   showProviderLoadingIcon: boolean;
   showSelectProviderModalVisible: boolean;
-  verifyLoading: boolean;
   connectWallet: () => void;
   closeSelectProviderModal: () => void;
   onClick: () => void;
   setConnectionError: (data: null) => void;
   setShowBrowserExtensionErrorModal: (show: boolean) => void;
-};
+} & VerificationLoaderProps;
 
 export const GateVerificationComponent: React.FC<Props> = props => {
   const {
     connectButtonDisabled,
     gatedChainName,
-    hasFioVerificactionError,
+    hasFioVerificationError,
     hasVerifiedError,
     isVerified,
     infoMessage,
     loaderText,
-    parnterName,
+    partnerName,
     refDomain,
     showProviderWindowError,
     showBrowserExtensionErrorModal,
@@ -62,38 +55,18 @@ export const GateVerificationComponent: React.FC<Props> = props => {
     setShowBrowserExtensionErrorModal,
   } = props;
 
+  const verificationLoaderProps = {
+    isVerified,
+    hasFioVerificationError,
+    hasVerifiedError,
+    infoMessage,
+    loaderText,
+    verifyLoading,
+  };
+
   return (
     <div className={classes.container}>
-      {verifyLoading && (
-        <div className={classes.loader}>
-          <FadeLoader
-            height="8px"
-            width="5px"
-            radius="3px"
-            margin="1px"
-            color="rgb(118, 92, 214)"
-          />
-          <p>{loaderText}</p>
-        </div>
-      )}
-      <div
-        className={classnames(
-          classes.infoBadge,
-          (hasVerifiedError || hasFioVerificactionError) &&
-            classes.hasVerifiedError,
-          isVerified && classes.isVerified,
-          hasFioVerificactionError && classes.hasFioVerificactionError,
-        )}
-      >
-        {isVerified && !hasVerifiedError && !hasFioVerificactionError ? (
-          <CheckCircleIcon />
-        ) : hasVerifiedError || hasFioVerificactionError ? (
-          <WarningIcon />
-        ) : (
-          <InfoIcon />
-        )}
-        <p className={classes.infoMessage}>{infoMessage}</p>
-      </div>
+      <VerificationLoader {...verificationLoaderProps} />
 
       {isVerified ? null : (
         <>
@@ -101,7 +74,7 @@ export const GateVerificationComponent: React.FC<Props> = props => {
           <p className={classes.text}>
             Registration of FIO Handles on the{' '}
             <span className={classes.boldText}>@{refDomain}</span> domain is
-            reserved only for holders of {parnterName} NFTs on{' '}
+            reserved only for holders of {partnerName} NFTs on{' '}
             <span className={classes.boldText}>
               {gatedChainName?.toUpperCase()}
             </span>

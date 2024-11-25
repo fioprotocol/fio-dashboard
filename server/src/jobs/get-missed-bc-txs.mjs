@@ -36,7 +36,10 @@ class MissedTransactions extends CommonJob {
 	    INNER JOIN orders o ON o.id = oi."orderId" 
 	    LEFT JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
       LEFT JOIN "blockchain-transactions" bt ON bt."orderItemId" = oi.id
-      WHERE o.status = 7 AND (bt.id is NULL OR (bt."txId" is NULL AND ois."blockchainTransactionId" = bt.id))
+      WHERE o.status = 7 AND oi."deletedAt" IS NUll
+        AND o."deletedAt" IS NUll 
+        AND bt."deletedAt" IS NUll 
+        AND (bt.id is NULL OR (bt."txId" IS NULL AND ois."blockchainTransactionId" = bt.id))
       ORDER by o."createdAt" DESC
 `);
 
@@ -67,24 +70,32 @@ class MissedTransactions extends CommonJob {
           pos: -1,
         });
 
-        const addressTransactionHistory = res.actions
-          .filter(action => action.action_trace.receiver === 'fio.address')
-          .find(
-            action =>
-              action.action_trace.act.data.fio_address ||
-              action.action_trace.act.data.fio_domain === fioName,
+        const addressTransactionHistory =
+          res && res.actions
+            ? res.actions
+                .filter(action => action.action_trace.receiver === 'fio.address')
+                .find(
+                  action =>
+                    action.action_trace.act.data.fio_address ||
+                    action.action_trace.act.data.fio_domain === fioName,
+                )
+            : null;
+
+        if (!addressTransactionHistory) {
+          logger.error(
+            `BC TX Update: no data returned from tx history, res - ${JSON.stringify(
+              res,
+            )}`,
           );
+
+          return this.finish();
+        }
 
         const {
           block_num,
           block_time,
-          action_trace: {
-            trx_id,
-            act: {
-              data: { max_fee },
-            },
-          },
-        } = addressTransactionHistory;
+          action_trace: { trx_id, act: { data: { max_fee } = {} } = {} } = {},
+        } = addressTransactionHistory || {};
 
         await BlockchainTransaction.sequelize.transaction(async t => {
           const bcTxExists = await BlockchainTransaction.findOne({

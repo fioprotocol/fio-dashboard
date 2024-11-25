@@ -32,13 +32,11 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
     walletBalancesAvailable,
     fioWallet,
     handleSubmit,
+    backLink = ROUTES.FIO_DOMAINS,
   } = props;
 
   return (
-    <PseudoModalContainer
-      link={ROUTES.FIO_DOMAINS}
-      title="Change Domain Status"
-    >
+    <PseudoModalContainer link={backLink} title="Change Domain Status">
       <div className={classes.container}>
         <InfoBadge
           title="Important information"

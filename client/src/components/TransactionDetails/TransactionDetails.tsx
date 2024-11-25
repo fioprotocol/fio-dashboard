@@ -26,7 +26,7 @@ export type AdditionalDetails = {
   wrap?: boolean;
 };
 
-type Props = {
+export type TransactionDetailsProps = {
   className?: string;
   valuePosition?: ValuePosition;
   feeInFio?: number;
@@ -42,7 +42,7 @@ type Props = {
   additional?: AdditionalDetails[];
 };
 
-export const TransactionDetails: FC<Props> = ({
+export const TransactionDetails: FC<TransactionDetailsProps> = ({
   className,
   valuePosition = VALUE_POSITIONS.LEFT,
   feeInFio,
@@ -111,7 +111,7 @@ export const TransactionDetails: FC<Props> = ({
             <span className={classnames(classes.value)}>
               {bundles.fee} Bundle{bundles.fee > 1 ? 's' : ''}&nbsp;
             </span>
-            {bundles.remaining && (
+            {typeof bundles?.remaining !== 'undefined' && (
               <span className={classes.remaining}>
                 ({bundles.remaining} Remaining)
               </span>

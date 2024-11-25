@@ -16,6 +16,7 @@ import {
   RefProfileDomain,
   FioApiUrls,
   OrderDetails,
+  OrderItemsToCsv,
 } from '../types';
 
 export type DefaultSuccessResponse = { success: true };
@@ -175,6 +176,7 @@ export type NotificationsCreateResponse = Notification;
 export type NotificationsUpdateResponse = Notification;
 
 export type RefProfileGetResponse = RefProfile;
+export type RefProfileGetSettingsResponse = Pick<RefProfile, 'settings'>;
 
 export type UsersDetailsResponse = UserDetails;
 export type UsersListResponse = {
@@ -213,7 +215,10 @@ export type VarsResponse = {
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
-export type AdminOrdersListResponse = AdminUser[];
+export type AdminOrdersListResponse = {
+  orders: OrderDetails[];
+  orderItems: OrderItemsToCsv[];
+};
 export type AdminOrderItemResponse = OrderDetails;
 export type AdminFioApiUrlsListResponse = FioApiUrls;
 export type AdminFioApiUrlsListUpdateResponse = DefaultSuccessResponse;
@@ -322,6 +327,8 @@ export type AdminDefaultsRequest = AdminDefaults & {
   searchPostfixesToDelete?: string[];
   searchPrefixesToDelete?: string[];
   usernamesOnCustomDomainsToDelete?: string[];
+  voteFioHandles?: string;
+  mockedPublicKey?: string;
 };
 
 export type DefaultsAvailableDomainsResponse = AdminDomain[];

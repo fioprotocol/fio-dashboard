@@ -15,11 +15,8 @@ import {
   ordersCount,
   ordersList,
 } from '../../redux/admin/selectors';
-import {
-  getOrder,
-  getOrdersList,
-  exportOrdersData,
-} from '../../redux/admin/actions';
+import { getOrder, getOrdersList } from '../../redux/admin/actions';
+import { showGenericErrorModal } from '../../redux/modal/actions';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -30,7 +27,7 @@ const reduxConnect = connect(
     ordersList,
     orderItem,
   }),
-  { getOrdersList, getOrder, exportOrdersData },
+  { getOrdersList, getOrder, showGenericErrorModal },
 );
 
 export default compose(reduxConnect)(AdminOrdersPage);

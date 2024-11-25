@@ -16,7 +16,7 @@ export default class AdminUserRemove extends Base {
   }
 
   async execute({ adminUserId }) {
-    const adminUser = await AdminUser.findById(adminUserId);
+    const adminUser = await AdminUser.findByPk(adminUserId);
 
     if (!adminUser) {
       throw new X({

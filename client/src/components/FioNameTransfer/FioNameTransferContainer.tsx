@@ -74,10 +74,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
     null,
   );
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
-  const [newOwnerPublicKey, setNewOwnerPublicKey] = useState<string | null>(
-    null,
-  );
-
   const { publicKey } = currentWallet;
 
   const { available: walletBalancesAvailable } = useWalletBalances(
@@ -100,12 +96,13 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
           newOwnerKey = publicAddress;
         }
 
-        setNewOwnerPublicKey(newOwnerKey);
+        setSubmitData({ name, fioNameType, newOwnerPublicKey: newOwnerKey });
       } catch (error) {
         log.error(error);
+        setSubmitting(false);
       }
     },
-    [],
+    [name, fioNameType],
   );
 
   useEffect(() => {
@@ -120,12 +117,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
       setSubmitting(false);
     }
   }, [processing]);
-
-  useEffect(() => {
-    if (newOwnerPublicKey) {
-      setSubmitData({ name, fioNameType, newOwnerPublicKey });
-    }
-  }, [fioNameType, name, newOwnerPublicKey]);
 
   const onSubmit = (transferAddress: string) => {
     setNewOwnerPublicKeyFn(transferAddress);

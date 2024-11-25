@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
+import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import '../db';
-import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import {
   DomainsWatchlist,
@@ -21,7 +21,13 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
+import {
+  HOUR_MS,
+  DAY_MS,
+  DOMAIN_EXP_PERIOD,
+  ERROR_CODES,
+  VARS_KEYS,
+} from '../config/constants.js';
 import { DOMAIN_EXP_DEBUG_AFFIX } from '../constants/fio.mjs';
 
 const { Op } = Sequelize;
@@ -108,6 +114,10 @@ class WalletDataJob extends CommonJob {
       },
     } = wallet;
 
+    const voteFioHandleVar = await Var.getByKey(VARS_KEYS.VOTE_FIO_HANDLE);
+
+    const voteFioHandle = voteFioHandleVar ? voteFioHandleVar.value : null;
+
     let sentRequests = [];
     let receivedRequests = [];
     let changed = false;
@@ -119,8 +129,14 @@ class WalletDataJob extends CommonJob {
     }
 
     try {
+      const sentRequestsOffset = sent.length > 1 ? sent.length - 1 : 0;
       try {
-        const requestsResponse = await walletSdk.getSentFioRequests(0, 0, true);
+        const requestsResponse = await walletSdk.getSentFioRequests({
+          limit: 0,
+          offset: sentRequestsOffset,
+          includeEncrypted: true,
+        });
+
         sentRequests = requestsResponse.requests;
       } catch (e) {
         sentRequests = [...sent];
@@ -158,7 +174,8 @@ class WalletDataJob extends CommonJob {
               Number(sentItem.fio_request_id) === Number(sentRequest.fio_request_id),
           ) &&
           (sentRequest.status === FIO_REQUEST_STATUSES.REJECTED ||
-            sentRequest.status === FIO_REQUEST_STATUSES.PAID),
+            sentRequest.status === FIO_REQUEST_STATUSES.PAID) &&
+          sentRequest.payer_fio_address !== voteFioHandle,
       );
 
       for (const newRequest of newRequests) {
@@ -192,7 +209,8 @@ class WalletDataJob extends CommonJob {
         if (
           !existingNotification &&
           wallet.User.emailNotificationParams.fioRequest &&
-          !fioRequestOlderThanPublicDataWalletCreated
+          !fioRequestOlderThanPublicDataWalletCreated &&
+          newRequest.payer_fio_address !== voteFioHandle
         ) {
           changed = true;
           await this.createSentFioRequestNotification({
@@ -209,11 +227,11 @@ class WalletDataJob extends CommonJob {
       const receivedRequestsOffset = received.length > 1 ? received.length - 1 : 0;
 
       try {
-        const requestsResponse = await walletSdk.getReceivedFioRequests(
-          0,
-          receivedRequestsOffset,
-          true,
-        );
+        const requestsResponse = await walletSdk.getReceivedFioRequests({
+          limit: 0,
+          offset: receivedRequestsOffset,
+          includeEncrypted: true,
+        });
         receivedRequests = requestsResponse.requests;
       } catch (e) {
         receivedRequests = [...received];
@@ -276,10 +294,14 @@ class WalletDataJob extends CommonJob {
       await PublicWalletData.update(
         {
           requests: {
-            sent: sentRequests.map(({ fio_request_id, status }) => ({
-              fio_request_id,
-              status,
-            })),
+            sent: sentRequests.map(
+              ({ fio_request_id, status, time_stamp, payer_fio_address }) => ({
+                fio_request_id,
+                status,
+                time_stamp,
+                payer_fio_address,
+              }),
+            ),
             received,
           },
           meta,
@@ -623,7 +645,7 @@ class WalletDataJob extends CommonJob {
       include: [
         {
           model: User,
-          where: { status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED } },
+          where: { status: { [Op.ne]: User.STATUS.BLOCKED } },
         },
         { model: PublicWalletData, as: 'publicWalletData' },
       ],

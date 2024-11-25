@@ -1,6 +1,7 @@
 import { Api } from '../../api';
 
 import { CommonAction, CommonPromiseAction } from '../types';
+import { RefProfile } from '../../types';
 
 export const prefix = 'refProfile';
 
@@ -25,3 +26,12 @@ export const clear = (): CommonAction => ({
 
 export const SET_CONTAINED_PARAMS = `${prefix}/SET_CONTAINED_PARAMS`;
 export const SET_CONTAINED_PARAMS_ERROR = `${prefix}/SET_CONTAINED_PARAMS_ERROR`;
+
+export const SET_REF_PROFILE_SETTINGS = `${prefix}/SET_REF_PROFILE_SETTINGS`;
+
+export const setSettings = ({
+  settings,
+}: Pick<RefProfile, 'settings'>): CommonPromiseAction => ({
+  type: SET_REF_PROFILE_SETTINGS,
+  data: settings,
+});

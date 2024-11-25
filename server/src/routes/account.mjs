@@ -7,6 +7,7 @@ import WalletsAddMissing from '../services/wallets/AddMissing.mjs';
 import WalletsUpdate from '../services/wallets/Update';
 import WalletsDelete from '../services/wallets/Delete';
 import WalletsImportValidate from '../services/wallets/ImportValidate';
+import WalletsFioRequests from '../services/wallets/GetFioRequests.mjs';
 
 export default {
   walletsList: makeServiceRunner(WalletsList),
@@ -21,5 +22,6 @@ export default {
     ...req.params,
     ...req.body.data,
   })),
+  fioRequests: makeServiceRunner(WalletsFioRequests),
   importValidateWallet: makeServiceRunner(WalletsImportValidate, req => req.params),
 };

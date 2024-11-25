@@ -12,9 +12,11 @@
   padding: 60px 20px;
   position: relative;
   max-width: 1200px;
+  justify-content: center;
 
   .textContainer {
     flex: 2;
+    max-width: 780px;
   }
 
   .videoContainer {
@@ -26,27 +28,28 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    @include proxima-nova-semibold;
+    @include inter-semibold;
   }
 
   .text {
-    margin: 20px 0;
-    @include proxima-nova-regular;
+    margin: 15px 0;
+    @include inter-regular;
+    font-size: 0.75rem;
 
     a {
-      @include proxima-nova-regular;
+      @include inter-regular;
       color: $bright-turquoise;
     }
   }
 
   .info {
-    @include proxima-nova-regular-it;
+    @include inter-italic;
     font-size: 0.75em;
   }
 
   .fieldsContainer {
     display: flex;
-    margin: 30px 0;
+    margin: 0;
     gap: 20px;
 
     .field {
@@ -55,26 +58,27 @@
       flex-direction: column;
 
       .label {
-        @include proxima-nova-bold;
-        margin-bottom: 10px;
+        @include inter-bold;
+        font-size: 13px;
       }
 
       .description {
-        @include proxima-nova-regular;
-        font-size: 0.875rem;
+        @include inter-regular;
+        font-size: 0.75rem;
         color: $dove-gray;
         margin: 10px 0;
       }
 
       .input {
         position: relative;
-        margin-top: auto;
+        margin-top: 10px;
         margin-bottom: 20px;
         padding: 15px 20px;
         width: 100%;
+        max-width: 375px;
         background: $gallery;
         border-radius: 5px;
-        @include proxima-nova-semibold;
+        @include inter-semibold;
 
         svg {
           top: 0;
@@ -87,17 +91,26 @@
           right: 20px;
           top: 17px;
         }
+
+        &.disabled {
+          cursor: not-allowed;
+          opacity: 0.4;
+
+          .icon {
+            cursor: not-allowed;
+          }
+        }
       }
     }
   }
 
   .activeBadge {
-    margin-left: 10px;
+    margin-left: 50px;
     background: $green-main;
     color: $white;
     padding: 8px 12px;
     font-size: 0.625rem;
-    border-radius: 100px;
+    border-radius: 4px;
     vertical-align: super;
   }
 }

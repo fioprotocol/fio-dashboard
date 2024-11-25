@@ -16,7 +16,7 @@ export default class FioApiUrlDelete extends Base {
   }
 
   async execute({ id }) {
-    const fioApiUrl = await FioApiUrl.findById(id);
+    const fioApiUrl = await FioApiUrl.findByPk(id);
 
     if (!fioApiUrl) {
       throw new X({

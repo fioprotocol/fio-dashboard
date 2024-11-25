@@ -2,6 +2,8 @@ import MathOp from 'big.js';
 
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
+import { Cart } from '../models/Cart.mjs';
+
 import {
   CART_ITEM_TYPE,
   FIO_ADDRESS_DELIMITER,
@@ -15,38 +17,6 @@ import { CURRENCY_CODES } from '../constants/fio.mjs';
 import { getROE } from '../external/roe.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
-
-export const handlePrices = async ({ prices, roe }) => {
-  const dbPrices = await fioApi.getPrices(true);
-  const dbRoe = await getROE();
-
-  const {
-    addBundles: addBundlesPrice,
-    address: addressPrice,
-    domain: domainPrice,
-    combo: comboPrice,
-    renewDomain: renewDomainPrice,
-  } = prices;
-
-  const {
-    addBundles: addBundlesDbPrice,
-    address: addressDbPrice,
-    domain: domainDbPrice,
-    combo: comboDbPrice,
-    renewDomain: renewDomainDbPrice,
-  } = dbPrices;
-
-  return {
-    handledPrices: {
-      addBundles: Number(addBundlesPrice || addBundlesDbPrice),
-      address: Number(addressPrice || addressDbPrice),
-      domain: Number(domainPrice || domainDbPrice),
-      combo: Number(comboPrice || comboDbPrice),
-      renewDomain: Number(renewDomainPrice || renewDomainDbPrice),
-    },
-    handledRoe: roe || dbRoe,
-  };
-};
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
@@ -610,6 +580,7 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
   const {
     address: addressPrice,
     addBundles: addBundlesPrice,
+    combo: comboPrice,
     domain: domainPrice,
     renewDomain: renewDomainPrice,
   } = prices;
@@ -684,6 +655,11 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
         cartItemId = `${fioName}-${GenericAction.renewFioDomain}-${+new Date()}`;
         costNativeFio = renewDomainPrice;
         break;
+      case GenericAction.registerFioDomainAddress:
+        cartItemId = fioName;
+        costNativeFio = comboPrice;
+        domainType = DOMAIN_TYPE.CUSTOM;
+        break;
       default:
         null;
     }
@@ -709,4 +685,16 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
     delete cartItem.orderItemId;
     return cartItem;
   });
+};
+
+export const getCartOptions = async cart => {
+  let { prices, roe } = cart.options || {};
+  if (!prices || !roe) {
+    prices = await fioApi.getPrices();
+    roe = await getROE();
+    if (cart.id)
+      await Cart.update({ options: { prices, roe } }, { where: { id: cart.id } });
+  }
+
+  return { prices, roe };
 };

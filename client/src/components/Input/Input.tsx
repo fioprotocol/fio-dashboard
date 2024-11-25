@@ -24,6 +24,7 @@ export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
   BLACK_WHITE: 'blackWhite',
   BLACK_VIOLET: 'blackViolet',
+  BLACK_WHITE_WITH_BORDER: 'blackWhiteBorder',
 };
 
 type Props = {

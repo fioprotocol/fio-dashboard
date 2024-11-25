@@ -195,6 +195,7 @@ export type NewFioWalletDoublet = {
 };
 
 export type FioAddressDoublet = {
+  id?: string;
   name: string;
   expiration: number | string;
   remaining: number;
@@ -373,7 +374,7 @@ export type User = {
   createdAt: string;
   timeZone: string;
   refProfile: { code?: string } | null;
-  affiliateProfile: { code?: string; tpid?: string } | null;
+  affiliateProfile: Pick<RefProfile, 'code', 'settings', 'tpid'> | null;
   userProfileType: string;
 };
 
@@ -504,9 +505,11 @@ export type DecryptedFioRecordContent = {
   payeePublicAddress: string;
   amount: string;
   memo: string;
-  obtId?: string;
   chainCode: string;
   tokenCode: string;
+  obtId?: string;
+  chain?: string;
+  token?: string;
 };
 
 // FioRecord type represents FioRequest and FioObtData
@@ -571,9 +574,29 @@ export type PrivateRedirectLocationState = {
 };
 
 export type Proxy = {
-  id: string;
-  is_proxy: number;
+  id: number;
   fioaddress: string;
+  addresshash: string;
+  owner: string;
+  proxy: string;
+  producers: string[];
+  last_vote_weight: string;
+  proxied_vote_weight: string;
+  is_proxy: number;
+  is_auto_proxy: number;
+};
+
+export type DetailedProxy = {
+  id: number;
+  isAutoProxy: number;
+  isProxy: number;
+  proxy: string;
+  owner: string;
+  lastVoteWeight: number;
+  proxiedVoteWeight: number;
+  fioAddress: string;
+  producers: string[];
+  checked?: boolean;
 };
 
 export type FioHistoryNodeAction = {
@@ -836,6 +859,23 @@ export type OrderDetails = {
   orderUserType?: string;
 };
 
+export type OrderItemPdf = {
+  action: string;
+  data: {
+    hasCustomDomain: boolean;
+    hasCustomDomainFee: string;
+  };
+  feeCollected: string;
+  id: string;
+  nativeFio: string;
+  number: string;
+  price: string;
+  priceCurrency: string;
+  roe: string;
+  txStatus: number;
+  paymentStatus: number;
+};
+
 export type DateRange = { startDate?: number; endDate?: number };
 
 export type OrderListFilters = {
@@ -843,6 +883,8 @@ export type OrderListFilters = {
   freeStatus: string;
   dateRange: DateRange | null;
   orderUserType: string | null;
+  offset?: number;
+  limit?: number | null;
 };
 
 export type UserOrderDetails = {
@@ -1024,6 +1066,11 @@ export type DomainWatchlistItem = {
   id: string;
   domain: string;
   createdAt: string;
+};
+
+export type AddressWidgetDomain = {
+  id: string;
+  name: string;
 };
 
 declare global {

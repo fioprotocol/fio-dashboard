@@ -18,7 +18,7 @@ export default class UsersUpdateEmail extends Base {
 
   async execute({ data: { newEmail, newUsername } }) {
     try {
-      const user = await User.findById(this.context.id, {
+      const user = await User.findByPk(this.context.id, {
         where: { status: User.STATUS.ACTIVE },
       });
 

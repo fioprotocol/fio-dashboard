@@ -13,6 +13,9 @@ type LocationProps = {
     query: {
       name: string;
     };
+    state?: {
+      backPath?: string;
+    };
   };
 };
 
@@ -30,6 +33,7 @@ export type FormProps = {
   walletBalancesAvailable: WalletBalancesItem;
   fioWallet: FioWalletDoublet;
   handleSubmit: () => void;
+  backLink?: string;
 };
 
 export type ContainerOwnProps = RouteComponentProps & LocationProps;

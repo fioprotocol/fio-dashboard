@@ -3,24 +3,7 @@ import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 import MathOp from './math';
 import apis from '../api';
 
-import { OrderItem } from '../types';
-
-export type OrderItemPdf = {
-  id: string;
-  number: string;
-  action: string;
-  data: {
-    hasCustomDomain: boolean;
-    hasCustomDomainFee: string;
-  };
-  price: string;
-  priceCurrency: string;
-  roe: string;
-  nativeFio: string;
-  feeCollected: string;
-  txStatus: number;
-  paymentStatus: number;
-};
+import { OrderItem, OrderItemPdf } from '../types';
 
 export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
   const orderItems: OrderItem[] = [];

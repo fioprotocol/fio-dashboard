@@ -21,6 +21,7 @@ export default class OrdersGet extends Base {
   }
   async execute({ id, publicKey }) {
     const userId = this.context.id;
+    const guestId = this.context.guestId;
 
     const where = {
       id,
@@ -69,6 +70,10 @@ export default class OrdersGet extends Base {
 
     delete data.data;
     delete data.user;
+
+    if (!userId && order.guestId !== guestId) {
+      delete data.payment;
+    }
 
     return { data };
   }

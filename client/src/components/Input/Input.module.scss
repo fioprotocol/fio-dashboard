@@ -88,6 +88,7 @@
   &.blackLight,
   &.blackGray,
   &.blackWhite,
+  &.blackWhiteBorder,
   &.indigoWhite {
     color: $dark-jungle-green;
   }
@@ -108,6 +109,7 @@
 
   &.blackLight,
   &.blackGray,
+  &.blackWhiteBorder,
   &.blackWhite {
     color: $baltic-sea;
   }
@@ -230,6 +232,7 @@
 
     &.bw,
     &.blackGray,
+    &.blackWhiteBorder,
     &.blackWhite {
       color: $dark-gray;
     }
@@ -383,6 +386,23 @@
       height: 54px;
     }
 
+    &.blackWhiteBorder {
+      color: $baltic-sea;
+    
+      input,
+      textarea {
+        color: $baltic-sea;
+    
+        &::placeholder {
+          color: $dove-gray;
+        }
+      }
+    
+      &.error {
+        border-color: $warn-red;
+      }
+    }
+
     &.blackLight,
     &.blackGray,
     &.blackWhite {
@@ -420,7 +440,7 @@
       background-color: $aqua-haze;
     }
 
-    &.blackWhite {
+    &.blackWhite, &.blackWhiteBorder {
       background-color: $white;
     }
 

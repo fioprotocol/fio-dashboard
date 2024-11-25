@@ -1,0 +1,20 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/fontMixins';
+@import '../../../../assets/styles/mediaQueriesMixings';
+
+.powerValue {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 0.875em;
+  margin: 0;
+  @include proxima-nova-semibold;
+
+  .powerValueLabel {
+      text-wrap: nowrap;
+    }
+  
+    .powerValueCurrency {
+      color: $light-indigo;
+    }
+}

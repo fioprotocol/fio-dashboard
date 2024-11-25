@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react';
 
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
+import { AMERICA_NEW_YORK_TIMEZONE } from '../constants/time';
 
 import config from '../config';
 
@@ -315,3 +316,72 @@ export const convertToNewDate = (
   // If it's neither a valid timestamp nor a valid Date string
   throw new Error('Invalid input: Unable to convert to Date.');
 };
+
+export const getNextGovernanceDate = ({
+  returnLastVoteDate,
+  returnDefaultFormat,
+}: {
+  returnLastVoteDate?: boolean;
+  returnDefaultFormat?: boolean;
+} = {}): string => {
+  const createDates = (year: number) => [
+    new Date(Date.UTC(year, 3, 15, 19)), // April 15th 2PM (UTC-5)
+    new Date(Date.UTC(year, 7, 16, 19)), // August 16th 2PM (UTC-5)
+    new Date(Date.UTC(year, 11, 15, 19)), // December 15th 2PM (UTC-5)
+  ];
+
+  const now = new Date();
+  const dates = createDates(now.getUTCFullYear());
+
+  let voteDate;
+  if (returnLastVoteDate) {
+    // Find the last past date
+    const pastDates = dates.filter(date => date < now);
+    voteDate =
+      pastDates.length > 0
+        ? pastDates[pastDates.length - 1]
+        : createDates(now.getUTCFullYear() - 1)[2]; // Last date of previous year
+  } else {
+    // Find next future date or first date of next year
+    voteDate =
+      dates.find(date => date > now) ||
+      new Date(dates[0].setFullYear(dates[0].getFullYear() + 1));
+  }
+
+  if (returnDefaultFormat)
+    return voteDate.toLocaleString('en-US', {
+      timeZone: AMERICA_NEW_YORK_TIMEZONE,
+    });
+
+  const month = voteDate.toLocaleString('en-US', {
+    month: 'long',
+    timeZone: 'America/New_York',
+  });
+  const day = voteDate.toLocaleString('en-US', {
+    day: 'numeric',
+    timeZone: 'America/New_York',
+  });
+  const time = voteDate.toLocaleString('en-US', {
+    hour: 'numeric',
+    hour12: true,
+    timeZone: 'America/New_York',
+  });
+  const year = voteDate.toLocaleString('en-US', {
+    year: 'numeric',
+    timeZone: 'America/New_York',
+  });
+
+  return `${month} ${day}th ${time} (UTC-5), ${year}`;
+};
+
+export const voteFormatDate = (date: Date) =>
+  date
+    .toLocaleDateString('en', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    })
+    .replace('at', '@');

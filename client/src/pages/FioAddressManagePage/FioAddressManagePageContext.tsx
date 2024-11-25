@@ -20,10 +20,6 @@ import {
   showExpiredDomainWarningFchBadge as showExpiredDomainWarningFchBadgeSelector,
 } from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
-import {
-  prices as pricesSelector,
-  roe as roeSelector,
-} from '../../redux/registrations/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
@@ -73,9 +69,7 @@ export const useContext = (): UseContextProps => {
   const showExpiredDomainWarningFchBadge = useSelector(
     showExpiredDomainWarningFchBadgeSelector,
   );
-  const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
-  const roe = useSelector(roeSelector);
 
   const [warningContent, setWarningContent] = useState<WarningContent>({
     LOW_BUNDLES: {
@@ -116,9 +110,7 @@ export const useContext = (): UseContextProps => {
       dispatch(
         addItemToCart({
           item: newCartItem,
-          prices: prices?.nativeFio,
           refCode,
-          roe,
         }),
       );
       fireAnalyticsEvent(
@@ -138,9 +130,7 @@ export const useContext = (): UseContextProps => {
       cartItems,
       dispatch,
       history,
-      prices?.nativeFio,
       refCode,
-      roe,
     ],
   );
 

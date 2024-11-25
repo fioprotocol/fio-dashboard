@@ -17,17 +17,14 @@ import {
   FioWalletDoublet,
   FioActionExecuted,
   PaymentProvider,
-  NativePrices,
 } from '../types';
 
 // todo: set all actions types
 
 export type CreateOrderActionData = {
   cartId: string;
-  roe: number;
   publicKey: string;
   paymentProcessor?: PaymentProvider;
-  prices: NativePrices;
   data: {
     gaClientId: string | null;
     gaSessionId: string | null;

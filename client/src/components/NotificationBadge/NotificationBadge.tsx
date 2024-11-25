@@ -87,7 +87,8 @@ const NotificationBadge: React.FC<Props> = props => {
         {(type === BADGE_TYPES.ERROR ||
           type === BADGE_TYPES.WARNING ||
           type === BADGE_TYPES.ALERT ||
-          type === BADGE_TYPES.RED) && <WarningIcon />}
+          type === BADGE_TYPES.RED) &&
+          !mainIcon && <WarningIcon />}
 
         <div className={classes.contentContainer}>
           {title && <h5 className={classes.title}>{title}</h5>}
