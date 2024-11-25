@@ -580,6 +580,7 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
   const {
     address: addressPrice,
     addBundles: addBundlesPrice,
+    combo: comboPrice,
     domain: domainPrice,
     renewDomain: renewDomainPrice,
   } = prices;
@@ -653,6 +654,11 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
       case GenericAction.renewFioDomain:
         cartItemId = `${fioName}-${GenericAction.renewFioDomain}-${+new Date()}`;
         costNativeFio = renewDomainPrice;
+        break;
+      case GenericAction.registerFioDomainAddress:
+        cartItemId = fioName;
+        costNativeFio = comboPrice;
+        domainType = DOMAIN_TYPE.CUSTOM;
         break;
       default:
         null;
