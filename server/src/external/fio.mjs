@@ -338,6 +338,10 @@ class Fio {
 
   async getPrices(forceRefresh = false) {
     let prices;
+
+    const pricesVar = await Var.getByKey(PRICES_VAR_KEY);
+    const dataBasePrices = pricesVar.value ? JSON.parse(pricesVar.value) : null;
+
     if (!forceRefresh) {
       const pricesVar = await Var.getByKey(PRICES_VAR_KEY);
       if (
@@ -345,7 +349,7 @@ class Fio {
         !Var.updateRequired(pricesVar.updatedAt, FEES_UPDATE_TIMEOUT_SEC)
       ) {
         try {
-          prices = JSON.parse(pricesVar.value);
+          prices = dataBasePrices;
           // eslint-disable-next-line no-empty
         } catch (e) {}
       }
@@ -373,12 +377,22 @@ class Fio {
           this.getFee(GenericAction.addBundledTransactions),
         ]);
 
+        logger.info('GET PRICES FROM FIO SERVER:', {
+          registrationAddressFee,
+          registrationDomainFee,
+          registerDomainAddress,
+          renewDomainFee,
+          addBundlesFee,
+        });
+
+        // TODO: make better handling for fallback
+
         prices = {
-          address: registrationAddressFee,
-          domain: registrationDomainFee,
-          combo: registerDomainAddress,
-          renewDomain: renewDomainFee,
-          addBundles: addBundlesFee,
+          address: registrationAddressFee || dataBasePrices.address,
+          domain: registrationDomainFee || dataBasePrices.domain,
+          combo: registerDomainAddress || dataBasePrices.combo,
+          renewDomain: renewDomainFee || dataBasePrices.renewDomain,
+          addBundles: addBundlesFee || dataBasePrices.addBundles,
         };
 
         await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
