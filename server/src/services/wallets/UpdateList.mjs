@@ -66,7 +66,7 @@ export default class WalletsUpdateList extends Base {
       }
     }
 
-    if (archivedWalletIds.length > 0) {
+    if (archivedWalletIds && archivedWalletIds.length > 0) {
       for (const edgeWalletId of archivedWalletIds) {
         const wallet = wallets.find(
           ({ edgeId: itemEdgeId }) => edgeWalletId === itemEdgeId,
