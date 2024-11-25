@@ -1,6 +1,6 @@
 {
   "name": "@fioprotocol/fio-app",
-  "version": "0.0.1",
+  "version": "1.27",
   "description": "",
   "main": "index.js",
   "scripts": {
