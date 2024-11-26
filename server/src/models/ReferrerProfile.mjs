@@ -4,6 +4,7 @@ import Hashids from 'hashids';
 import Base from './Base';
 import { User } from './User';
 import { FioAccountProfile } from './FioAccountProfile';
+import { ReferrerProfileApiToken } from './ReferrerProfileApiToken.mjs';
 
 const { DataTypes: DT, Op } = Sequelize;
 
@@ -90,6 +91,11 @@ export class ReferrerProfile extends Base {
     this.belongsTo(FioAccountProfile, {
       foreignKey: 'paidFioAccountProfileId',
       targetKey: 'id',
+    });
+    this.hasMany(ReferrerProfileApiToken, {
+      foreignKey: 'refProfileId',
+      sourceKey: 'id',
+      as: 'refProfileApiToken',
     });
   }
 
