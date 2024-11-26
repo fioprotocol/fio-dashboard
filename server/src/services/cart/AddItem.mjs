@@ -19,7 +19,7 @@ import {
   getCartOptions,
 } from '../../utils/cart.mjs';
 
-import { CART_ITEM_TYPE } from '../../config/constants';
+import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -38,7 +38,7 @@ export default class AddItem extends Base {
             isFree: ['boolean'],
             isWatchedDomain: ['boolean'],
             hasCustomDomainInCart: ['boolean'],
-            period: ['string'],
+            period: ['integer', { one_of: DOMAIN_RENEW_PERIODS }],
             type: ['required', 'string'],
           },
         },
