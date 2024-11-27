@@ -155,7 +155,7 @@ export default class OrdersUpdate extends Base {
       data.results &&
       data.results.registered &&
       data.results.registered.length &&
-      order.Payments[0].paymentProvider === Payment.PROCESSOR.FIO
+      order.Payments[0].processor === Payment.PROCESSOR.FIO
     ) {
       try {
         const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
