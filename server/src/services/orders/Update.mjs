@@ -19,7 +19,16 @@ export default class OrdersUpdate extends Base {
       data: [
         {
           nested_object: {
-            status: 'integer',
+            status: [
+              'integer',
+              {
+                one_of: [
+                  Order.STATUS.PAYMENT_PENDING,
+                  Order.STATUS.CANCELED,
+                  Order.STATUS.SUCCESS,
+                ],
+              },
+            ],
             publicKey: 'string',
             results: [
               {
@@ -56,16 +65,7 @@ export default class OrdersUpdate extends Base {
                   paymentOption: 'string',
                   paymentAmount: 'string',
                   paymentCurrency: 'string',
-                  providerTxStatus: [
-                    'string',
-                    {
-                      one_of: [
-                        Order.STATUS.PAYMENT_PENDING,
-                        Order.STATUS.CANCELED,
-                        Order.STATUS.SUCCESS,
-                      ],
-                    },
-                  ],
+                  providerTxStatus: 'string',
                 },
               },
             ],
@@ -151,7 +151,6 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    // todo: check, maybe remove at all
     if (
       data.results &&
       data.results.registered &&
