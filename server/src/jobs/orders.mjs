@@ -73,7 +73,7 @@ class OrdersJob extends CommonJob {
   }
 
   async getFeeForAction(action, forceUpdate = false) {
-    let fee;
+    let fee = null;
 
     if (
       this.feesUpdatedAt &&
@@ -83,7 +83,12 @@ class OrdersJob extends CommonJob {
     ) {
       fee = this.feesJson[action];
     } else {
-      fee = await fioApi.getFee(action);
+      try {
+        fee = await fioApi.getFee(action);
+      } catch (error) {
+        logger.error(`GET FEE FOR ACTION ${action} FAILED: `, error);
+      }
+
       this.postMessage(`Fees: ${JSON.stringify({ action, fee })}`);
       this.feesJson[action] = fee;
       this.feesUpdatedAt = new Date();
