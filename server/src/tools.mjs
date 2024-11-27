@@ -4,6 +4,18 @@ import speakeasy from 'speakeasy';
 
 import logger from './logger';
 import Exception from './services/Exception';
+import { VARS_KEYS } from './config/constants';
+
+const HEALTH_CHECK_ACTION = 'GeneralHealthCheck';
+const VARS_GET_ACTION = 'VarsGet';
+
+const isSuccessfulHealthCheck = (actionName, result) =>
+  actionName === HEALTH_CHECK_ACTION && result.data.success === true;
+
+const isMaintenanceModeOff = (actionName, result) =>
+  actionName === VARS_GET_ACTION &&
+  result.data.key === VARS_KEYS.IS_MAINTENANCE &&
+  result.data.value === 'false';
 
 const SALT_ROUND = 10;
 
@@ -41,14 +53,20 @@ export async function runService(service, { context = {}, params = {}, res }) {
     if (service.resultSecret[0] !== '*') {
       const cleanResult = cleanup(result, service.resultSecret, service.resultCleanup);
 
-      logRequest({
-        type: 'info',
-        actionName,
-        params: cleanParams,
-        result: cleanResult,
-        startTime,
-        userId: context.id,
-      });
+      const hideLogs =
+        isSuccessfulHealthCheck(actionName, cleanResult) ||
+        isMaintenanceModeOff(actionName, cleanResult);
+
+      if (!hideLogs) {
+        logRequest({
+          type: 'info',
+          actionName,
+          params: cleanParams,
+          result: cleanResult,
+          startTime,
+          userId: context.id,
+        });
+      }
     }
 
     return result;
