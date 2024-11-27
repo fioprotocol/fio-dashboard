@@ -56,7 +56,16 @@ export default class OrdersUpdate extends Base {
                   paymentOption: 'string',
                   paymentAmount: 'string',
                   paymentCurrency: 'string',
-                  providerTxStatus: 'string',
+                  providerTxStatus: [
+                    'string',
+                    {
+                      one_of: [
+                        Order.STATUS.PAYMENT_PENDING,
+                        Order.STATUS.CANCELED,
+                        Order.STATUS.SUCCESS,
+                      ],
+                    },
+                  ],
                 },
               },
             ],
@@ -142,7 +151,13 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    if (data.results && data.results.paymentProvider === Payment.PROCESSOR.FIO) {
+    // todo: check, maybe remove at all
+    if (
+      data.results &&
+      data.results.registered &&
+      data.results.registered.length &&
+      order.Payments[0].paymentProvider === Payment.PROCESSOR.FIO
+    ) {
       try {
         const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
           if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
