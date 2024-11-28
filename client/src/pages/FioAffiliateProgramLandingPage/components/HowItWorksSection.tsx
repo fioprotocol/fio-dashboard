@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
@@ -38,6 +38,21 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
     showAffiliateModal,
   } = props;
 
+  const handleAffiliateModalClick = useCallback(
+    e => {
+      e.preventDefault();
+      showAffiliateModal();
+    },
+    [showAffiliateModal],
+  );
+  const handleShowLoginClick = useCallback(
+    e => {
+      e.preventDefault();
+      showLogin();
+    },
+    [showLogin],
+  );
+
   return (
     <section
       className={classnames(classes.containerLayout, classes.sectionLayout)}
@@ -54,9 +69,8 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
         customPaging={() => <div className={classes.dot}></div>}
       >
         {carouselItems.map(item => (
-          <div>
+          <div key={item}>
             <div
-              key={item}
               className={classes.img}
               style={{ backgroundImage: `url(${item})` }}
             />
@@ -76,8 +90,7 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
                 </Link>{' '}
                 and activate your FIO Domain and FIO Handle affiliate links.
                 Already have a FIO Handle? Even simpler, just{' '}
-                {/* eslint-disable-next-line no-script-url,jsx-a11y/anchor-is-valid */}
-                <a href="javascript:void(0);" onClick={showAffiliateModal}>
+                <a href="/" onClick={handleAffiliateModalClick}>
                   activate your links
                 </a>
               </div>
@@ -86,8 +99,7 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
                 <Link to={ROUTES.CREATE_ACCOUNT}>Create an account</Link>, get
                 yourself a FIO Handle and activate your FIO Domain and FIO
                 Handle affiliate links. Already have an account? Even simpler,{' '}
-                {/* eslint-disable-next-line no-script-url,jsx-a11y/anchor-is-valid */}
-                <a href="javascript:void(0);" onClick={showLogin}>
+                <a href="/" onClick={handleShowLoginClick}>
                   sign in
                 </a>{' '}
                 & activate your links.
