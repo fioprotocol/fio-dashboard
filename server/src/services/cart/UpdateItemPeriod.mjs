@@ -11,13 +11,13 @@ import {
   getCartOptions,
 } from '../../utils/cart.mjs';
 
-import { CART_ITEM_TYPE } from '../../config/constants';
+import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 
 export default class UpdateItemPeriod extends Base {
   static get validationRules() {
     return {
       itemId: ['required', 'string'],
-      period: ['required', 'string'],
+      period: ['required', 'integer', { one_of: DOMAIN_RENEW_PERIODS }],
     };
   }
 

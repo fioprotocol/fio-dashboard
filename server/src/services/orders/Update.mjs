@@ -19,7 +19,16 @@ export default class OrdersUpdate extends Base {
       data: [
         {
           nested_object: {
-            status: 'integer',
+            status: [
+              'integer',
+              {
+                one_of: [
+                  Order.STATUS.PAYMENT_PENDING,
+                  Order.STATUS.CANCELED,
+                  Order.STATUS.SUCCESS,
+                ],
+              },
+            ],
             publicKey: 'string',
             results: [
               {
@@ -142,7 +151,11 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    if (data.results && data.results.paymentProvider === Payment.PROCESSOR.FIO) {
+    if (
+      data.results &&
+      data.results.registered &&
+      order.Payments[0].processor === Payment.PROCESSOR.FIO
+    ) {
       try {
         const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
           if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
