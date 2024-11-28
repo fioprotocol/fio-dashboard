@@ -1,5 +1,3 @@
-import MathOp from 'big.js';
-
 import Base from '../Base';
 import X from '../Exception';
 
@@ -10,9 +8,7 @@ import { getROE } from '../../external/roe.mjs';
 
 import logger from '../../logger.mjs';
 
-import { convertFioPrices, handlePriceForMultiYearItems } from '../../utils/cart.mjs';
-
-import { CART_ITEM_TYPE } from '../../config/constants';
+import { recalculateCartItems } from '../../utils/cart.mjs';
 
 export default class RecalculateOnPriceUpdate extends Base {
   async execute() {
@@ -70,49 +66,15 @@ export default class RecalculateOnPriceUpdate extends Base {
         });
       }
 
-      const cartItemsWithRecalculatedPrices = cart.items.map(cartItem => {
-        const { hasCustomDomainInCart, type, period } = cartItem;
-        const { addBundles, address, renewDomain } = prices;
-
-        let nativeFioAmount = null;
-
-        switch (type) {
-          case CART_ITEM_TYPE.ADD_BUNDLES:
-            nativeFioAmount = Number(addBundles);
-            break;
-          case CART_ITEM_TYPE.ADDRESS:
-            nativeFioAmount = Number(address);
-            break;
-          case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
-            {
-              if (hasCustomDomainInCart) {
-                nativeFioAmount = Number(address);
-              } else {
-                nativeFioAmount = handlePriceForMultiYearItems({
-                  includeAddress: true,
-                  prices,
-                  period,
-                });
-              }
-            }
-            break;
-          case CART_ITEM_TYPE.DOMAIN:
-            nativeFioAmount = handlePriceForMultiYearItems({
-              includeAddress: false,
-              prices,
-              period,
-            });
-            break;
-          case CART_ITEM_TYPE.DOMAIN_RENEWAL:
-            nativeFioAmount = new MathOp(renewDomain).mul(period).toNumber();
-            break;
-          default:
-            nativeFioAmount = null;
-        }
-
-        const { fio, usdc } = convertFioPrices(nativeFioAmount, roe);
-
-        if (!nativeFioAmount) {
+      let cartItemsWithRecalculatedPrices = [];
+      try {
+        cartItemsWithRecalculatedPrices = recalculateCartItems({
+          items: cart.items,
+          prices,
+          roe,
+        });
+      } catch (err) {
+        if (err.message === 'NO_NATIVE_FIO_AMOUNT') {
           throw new X({
             code: 'NO_NATIVE_FIO_AMOUNT',
             fields: {
@@ -121,13 +83,8 @@ export default class RecalculateOnPriceUpdate extends Base {
           });
         }
 
-        return {
-          ...cartItem,
-          costNativeFio: nativeFioAmount,
-          costFio: fio,
-          costUsdc: usdc,
-        };
-      });
+        throw err;
+      }
 
       await cart.update({
         items: cartItemsWithRecalculatedPrices,

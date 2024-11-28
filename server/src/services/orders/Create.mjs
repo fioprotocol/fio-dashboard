@@ -23,6 +23,7 @@ import {
   calculateCartTotalCost,
   cartItemsToOrderItems,
   getCartOptions,
+  recalculateCartItems,
 } from '../../utils/cart.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
@@ -114,11 +115,6 @@ export default class OrdersCreate extends Base {
     const orderItems = [];
     const { prices, roe } = await getCartOptions(cart);
 
-    const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
-      cartItems: cart.items,
-      roe,
-    });
-
     const cartPublicKey = cart.publicKey;
 
     const dashboardDomains = await Domain.getDashboardDomains();
@@ -179,6 +175,18 @@ export default class OrdersCreate extends Base {
       userHasFreeAddress,
       walletType: wallet && wallet.from,
       refCode,
+    });
+
+    // recalculate cart item prices to set proper total value
+    const cartItemsWithRecalculatedPrices = recalculateCartItems({
+      items: cart.items,
+      prices,
+      roe,
+    });
+
+    const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
+      cartItems: cartItemsWithRecalculatedPrices,
+      roe,
     });
 
     await Order.sequelize.transaction(async t => {
