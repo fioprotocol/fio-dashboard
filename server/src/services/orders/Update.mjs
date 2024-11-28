@@ -154,7 +154,6 @@ export default class OrdersUpdate extends Base {
     if (
       data.results &&
       data.results.registered &&
-      data.results.registered.length &&
       order.Payments[0].processor === Payment.PROCESSOR.FIO
     ) {
       try {
