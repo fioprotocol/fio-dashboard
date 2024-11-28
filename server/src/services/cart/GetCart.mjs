@@ -3,6 +3,8 @@ import X from '../Exception';
 
 import { Cart } from '../../models/Cart.mjs';
 
+import { getCartOptions } from '../../utils/cart.mjs';
+
 import logger from '../../logger.mjs';
 
 export default class GetCart extends Base {
@@ -15,10 +17,14 @@ export default class GetCart extends Base {
     if (guestId) where.guestId = guestId;
 
     try {
-      const cart = await Cart.findOne({ where });
+      let cart = await Cart.findOne({ where });
+      if (!cart) return { items: [] };
+
+      await getCartOptions(cart || { options: {} });
+      cart = await Cart.findOne({ where });
 
       return {
-        data: cart ? Cart.format(cart.get({ plain: true })) : { items: [] },
+        data: Cart.format(cart.get({ plain: true })),
       };
     } catch (error) {
       logger.error(error);

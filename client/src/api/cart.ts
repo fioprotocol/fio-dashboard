@@ -8,6 +8,7 @@ type CartResponseType = {
 };
 
 export default class Cart extends Base {
+  // todo: return prices and roe and update it in redux if different. reset roe update component or decide what to do better
   addItem(data: {
     item: CartItem;
     publicKey?: string;
