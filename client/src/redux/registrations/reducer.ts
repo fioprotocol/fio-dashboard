@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 
 import * as actions from './actions';
+import * as cartActions from '../cart/actions';
 
 import { Prices } from '../../types';
 import { DomainsResponse } from '../../api/responses';
@@ -47,6 +48,18 @@ export default combineReducers({
         delete prices.usdtRoe;
         return prices;
       }
+      case cartActions.ADD_ITEM_SUCCESS:
+      case cartActions.DELETE_ITEM_SUCCESS:
+      case cartActions.GET_CART_REQUEST_SUCCESS:
+      case cartActions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
+      case cartActions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+      case cartActions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS: {
+        // Update prices based on prices set in the cart
+        if (action.data?.options?.prices)
+          return { nativeFio: { ...action.data.options.prices } };
+
+        return state;
+      }
       default:
         return state;
     }
@@ -55,6 +68,17 @@ export default combineReducers({
     switch (action.type) {
       case actions.PRICES_SUCCESS:
         return action.data.pricing.usdtRoe;
+      case cartActions.ADD_ITEM_SUCCESS:
+      case cartActions.DELETE_ITEM_SUCCESS:
+      case cartActions.GET_CART_REQUEST_SUCCESS:
+      case cartActions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
+      case cartActions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+      case cartActions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS: {
+        // Update roe based on roe set in the cart
+        if (action.data?.options?.roe) return action.data.options.roe;
+
+        return state;
+      }
       default:
         return state;
     }
@@ -63,6 +87,16 @@ export default combineReducers({
     switch (action.type) {
       case actions.PRICES_SUCCESS:
         return new Date();
+      case cartActions.ADD_ITEM_SUCCESS:
+      case cartActions.DELETE_ITEM_SUCCESS:
+      case cartActions.GET_CART_REQUEST_SUCCESS:
+      case cartActions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
+      case cartActions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+      case cartActions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS: {
+        if (action.data?.options?.roe) return new Date();
+
+        return state;
+      }
       default:
         return state;
     }

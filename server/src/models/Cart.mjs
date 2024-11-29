@@ -76,7 +76,7 @@ export class Cart extends Base {
     return attributes.default;
   }
 
-  static format({ id, items, publicKey }) {
-    return { id, items, publicKey };
+  static format({ id, items, publicKey, options }) {
+    return { id, items, publicKey, options };
   }
 }
