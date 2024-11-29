@@ -687,6 +687,70 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
   });
 };
 
+export const getItemCost = ({ item, prices, roe }) => {
+  const { type, period, hasCustomDomainInCart } = item;
+  const { address, addBundles, renewDomain } = prices;
+
+  let costNativeFio;
+
+  switch (type) {
+    case CART_ITEM_TYPE.ADD_BUNDLES:
+      costNativeFio = Number(addBundles);
+      break;
+    case CART_ITEM_TYPE.ADDRESS:
+      costNativeFio = Number(address);
+      break;
+    case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
+      if (hasCustomDomainInCart) {
+        costNativeFio = Number(address);
+      } else {
+        costNativeFio = handlePriceForMultiYearItems({
+          includeAddress: true,
+          prices,
+          period,
+        });
+      }
+      break;
+    }
+    case CART_ITEM_TYPE.DOMAIN:
+      costNativeFio = handlePriceForMultiYearItems({
+        includeAddress: false,
+        prices,
+        period,
+      });
+      break;
+    case CART_ITEM_TYPE.DOMAIN_RENEWAL:
+      costNativeFio = new MathOp(renewDomain).mul(period).toNumber();
+      break;
+    default:
+      throw new Error('Unknown cart item type');
+  }
+
+  const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+
+  return { costNativeFio, costFio: fio, costUsdc: usdc };
+};
+
+export const recalculateCartItems = ({ items, prices, roe }) =>
+  items.map(cartItem => {
+    const { costNativeFio, costFio, costUsdc } = getItemCost({
+      item: cartItem,
+      prices,
+      roe,
+    });
+
+    if (!costNativeFio) {
+      throw new Error('NO_NATIVE_FIO_AMOUNT');
+    }
+
+    return {
+      ...cartItem,
+      costNativeFio,
+      costFio,
+      costUsdc,
+    };
+  });
+
 export const getCartOptions = async cart => {
   let { prices, roe } = cart.options || {};
   if (!prices || !roe) {
