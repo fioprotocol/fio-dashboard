@@ -17,6 +17,7 @@ import {
   handleFreeCartAddItem,
   handleFioHandleCartItemsWithCustomDomain,
   getCartOptions,
+  getItemCost,
 } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
@@ -29,9 +30,6 @@ export default class AddItem extends Base {
         {
           nested_object: {
             address: ['string'],
-            costFio: ['required', 'string'],
-            costNativeFio: ['required', 'string'],
-            costUsdc: ['required', 'string'],
             domain: ['required', 'string'],
             domainType: ['string'],
             id: ['required', 'string'],
@@ -49,9 +47,36 @@ export default class AddItem extends Base {
     };
   }
 
+  setNewItemProps(item) {
+    const {
+      id,
+      address,
+      domain,
+      domainType,
+      isFree,
+      isWatchedDomain,
+      hasCustomDomainInCart,
+      period,
+      type,
+    } = item;
+
+    return {
+      id,
+      address,
+      domain,
+      domainType,
+      isFree,
+      isWatchedDomain,
+      hasCustomDomainInCart,
+      period,
+      type,
+    };
+  }
+
   async execute({ item, publicKey, token, refCode }) {
     try {
-      const { domain, type } = item;
+      let newItem = this.setNewItemProps(item);
+      const { domain, type } = newItem;
 
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
@@ -62,7 +87,9 @@ export default class AddItem extends Base {
 
       const existingCart = await Cart.findOne({ where });
 
-      const { prices, roe } = await getCartOptions(existingCart || { options: {} });
+      const { prices, roe, updatedAt } = await getCartOptions(
+        existingCart || { options: {} },
+      );
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
@@ -159,14 +186,19 @@ export default class AddItem extends Base {
         });
       }
 
+      const costs = getItemCost({ item: newItem, prices, roe });
+      newItem = { ...newItem, ...costs };
+
       const handledFreeCartItem = handleFreeCartAddItem({
         allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains,
-        item,
+        item: newItem,
         freeDomainOwner,
         userHasFreeAddress,
         refCode: refProfile && refProfile.code,
+        prices,
+        roe,
       });
 
       if (!existingCart) {
@@ -176,6 +208,7 @@ export default class AddItem extends Base {
           options: {
             prices,
             roe,
+            updatedAt,
           },
         };
 
@@ -201,7 +234,7 @@ export default class AddItem extends Base {
       const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
         {
           cartItems: handledCartItemsWithExistingCustomDomain,
-          item,
+          item: newItem,
           prices,
           roe,
         },

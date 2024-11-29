@@ -850,6 +850,7 @@ export const useContext = (): UseContextProps => {
       ),
     );
 
+    // todo: update the prices
     setUsersItemsListIfChanged(
       parsedUsersItemsList.map(usersItem =>
         parsedCartItems.find(cartItem => cartItem.id === usersItem.id)

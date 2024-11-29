@@ -88,7 +88,7 @@ export default class RecalculateOnPriceUpdate extends Base {
 
       await cart.update({
         items: cartItemsWithRecalculatedPrices,
-        options: { prices, roe },
+        options: { prices, roe, updatedAt: new Date() },
       });
 
       return {

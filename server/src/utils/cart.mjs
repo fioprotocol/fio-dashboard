@@ -2,7 +2,7 @@ import MathOp from 'big.js';
 
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
-import { Cart } from '../models/Cart.mjs';
+import { Var } from '../models/Var.mjs';
 
 import {
   CART_ITEM_TYPE,
@@ -17,6 +17,7 @@ import { CURRENCY_CODES } from '../constants/fio.mjs';
 import { getROE } from '../external/roe.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
+const CART_PRICES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 30; // 30 min
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
@@ -208,7 +209,7 @@ export const handleFreeCartAddItem = ({
     isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
   );
 
-  if (
+  const isFree =
     (existingDashboardDomain &&
       !existingDashboardDomain.isPremium &&
       (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
@@ -226,12 +227,9 @@ export const handleFreeCartAddItem = ({
       !cartHasFreeItemsOnDomains({
         cartItems,
         domains: [...domainsArr, ...firstRegFreeDomains],
-      }))
-  ) {
-    return { ...item, isFree: true };
-  }
+      }));
 
-  return { ...item, isFree: false };
+  return { ...item, isFree };
 };
 
 export const handleFreeCartDeleteItem = ({
@@ -470,43 +468,41 @@ export const cartItemsToOrderItems = async ({
     };
 
     switch (type) {
-      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
-        {
-          const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
-          const useComboAction = !hasCustomDomainInCart && supportCombo;
+      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
+        const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
+        const useComboAction = !hasCustomDomainInCart && supportCombo;
 
-          if (!supportCombo && !hasCustomDomainInCart) {
-            orderItems.push(domainOrderItem);
-          }
-
-          orderItem.action = useComboAction
-            ? GenericAction.registerFioDomainAddress
-            : GenericAction.registerFioAddress;
-          orderItem.address = address;
-          orderItem.nativeFio = (useComboAction
-            ? fioDomainHandlePrice
-            : fioHandlePrice
-          ).toString();
-          orderItem.price = convertFioPrices(
-            useComboAction ? fioDomainHandlePrice : fioHandlePrice,
-            roe,
-          ).usdc;
-          orderItems.push(orderItem);
-
-          if (!hasCustomDomainInCart) {
-            for (let i = 1; i < Number(period); i++) {
-              orderItems.push(renewOrderItem);
-            }
-          }
+        if (!supportCombo && !hasCustomDomainInCart) {
+          orderItems.push(domainOrderItem);
         }
-        break;
-      case CART_ITEM_TYPE.DOMAIN_RENEWAL:
-        {
-          for (let i = 0; i < Number(period); i++) {
+
+        orderItem.action = useComboAction
+          ? GenericAction.registerFioDomainAddress
+          : GenericAction.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = (useComboAction
+          ? fioDomainHandlePrice
+          : fioHandlePrice
+        ).toString();
+        orderItem.price = convertFioPrices(
+          useComboAction ? fioDomainHandlePrice : fioHandlePrice,
+          roe,
+        ).usdc;
+        orderItems.push(orderItem);
+
+        if (!hasCustomDomainInCart) {
+          for (let i = 1; i < Number(period); i++) {
             orderItems.push(renewOrderItem);
           }
         }
         break;
+      }
+      case CART_ITEM_TYPE.DOMAIN_RENEWAL: {
+        for (let i = 0; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
+        }
+        break;
+      }
       case CART_ITEM_TYPE.ADD_BUNDLES:
         orderItem.action = GenericAction.addBundledTransactions;
         orderItem.address = address;
@@ -557,15 +553,14 @@ export const cartItemsToOrderItems = async ({
         orderItems.push(orderItem);
         break;
       }
-      case CART_ITEM_TYPE.DOMAIN:
-        {
-          orderItems.push(domainOrderItem);
+      case CART_ITEM_TYPE.DOMAIN: {
+        orderItems.push(domainOrderItem);
 
-          for (let i = 1; i < Number(period); i++) {
-            orderItems.push(renewOrderItem);
-          }
+        for (let i = 1; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
         }
         break;
+      }
       default:
         break;
     }
@@ -752,13 +747,22 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
   });
 
 export const getCartOptions = async cart => {
-  let { prices, roe } = cart.options || {};
-  if (!prices || !roe) {
+  let { prices, roe, updatedAt } = cart.options || {};
+  const updateRequired =
+    !updatedAt || Var.updateRequired(updatedAt, CART_PRICES_UPDATE_TIMEOUT_SEC);
+  if (!prices || !roe || updateRequired) {
     prices = await fioApi.getPrices();
     roe = await getROE();
-    if (cart.id)
-      await Cart.update({ options: { prices, roe } }, { where: { id: cart.id } });
+    updatedAt = new Date();
+
+    if (cart.id) {
+      const values = { options: { prices, roe, updatedAt } };
+      if (cart.items && cart.items.length) {
+        values.items = recalculateCartItems({ items: cart.items, prices, roe });
+      }
+      await cart.update(values);
+    }
   }
 
-  return { prices, roe };
+  return { prices, roe, updatedAt };
 };
