@@ -18,7 +18,7 @@ export default class GetCart extends Base {
 
     try {
       let cart = await Cart.findOne({ where });
-      if (!cart) return { items: [] };
+      if (!cart) return { data: { items: [] } };
 
       await getCartOptions(cart || { options: {} });
       cart = await Cart.findOne({ where });
