@@ -23,6 +23,10 @@
   .loaderContainer {
     margin: 30px 0;
   }
+
+  &.hidden {
+    display: none;
+  }
 }
 
 

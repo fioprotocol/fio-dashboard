@@ -850,13 +850,21 @@ export const useContext = (): UseContextProps => {
       ),
     );
 
-    // todo: update the prices
     setUsersItemsListIfChanged(
-      parsedUsersItemsList.map(usersItem =>
-        parsedCartItems.find(cartItem => cartItem.id === usersItem.id)
-          ? { ...usersItem, isSelected: true }
-          : { ...usersItem, isSelected: false },
-      ),
+      parsedUsersItemsList.map(usersItem => {
+        const costNativeFio = prices.nativeFio.address;
+        const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+
+        return {
+          ...usersItem,
+          costNativeFio,
+          costFio: fio,
+          costUsdc: usdc,
+          isSelected: !!parsedCartItems.find(
+            cartItem => cartItem.id === usersItem.id,
+          ),
+        };
+      }),
     );
   }, [
     setUsersItemsListIfChanged,

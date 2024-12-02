@@ -55,7 +55,7 @@ import { ORDER_USER_TYPES } from '../../constants/order';
 import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
-import { isDomainExpired } from '../../util/fio';
+import { checkIsDomainExpired } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
 
@@ -344,27 +344,6 @@ export const useContext = (): UseContextReturnType => {
     setSelectedPaymentProvider(null);
   };
 
-  const getDomainExpiration = useCallback(async (domainName: string) => {
-    try {
-      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
-
-      return expiration || null;
-    } catch (err) {
-      log.error(err);
-    }
-  }, []);
-
-  const checkIsDomainExpired = useCallback(
-    async (domainName: string) => {
-      if (!domainName) return null;
-
-      const expiration = await getDomainExpiration(domainName);
-
-      return expiration && isDomainExpired(domainName, expiration);
-    },
-    [getDomainExpiration],
-  );
-
   const hasExpiredDomain = useCallback(async () => {
     let hasExpiredDomain = false;
 
@@ -389,15 +368,11 @@ export const useContext = (): UseContextReturnType => {
     }
 
     toggleShowExpiredDomainWarningBadge(hasExpiredDomain);
-  }, [checkIsDomainExpired, cartItems]);
+  }, [cartItems]);
 
   useEffect(() => {
     hasExpiredDomain();
   }, [hasExpiredDomain]);
-
-  useEffectOnce(() => {
-    dispatch(getPrices());
-  }, [dispatch, getPrices]);
 
   useEffectOnce(() => {
     if (!isEmpty(userWallets)) {
