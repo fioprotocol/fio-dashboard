@@ -21,6 +21,10 @@ import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { ROUTES } from '../../constants/routes';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
+import {
+  NOTIFICATIONS_CONTENT,
+  NOTIFICATIONS_CONTENT_TYPE,
+} from '../../constants/notifications';
 
 import {
   CartItem as CartItemType,
@@ -97,7 +101,9 @@ const Cart: React.FC<Props> = props => {
     [dispatch],
   );
 
-  let errorMessage = 'Your price has been updated due to pricing changes.';
+  let errorMessage =
+    NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.CART_PRICES_CHANGED]
+      .message;
   if (hasGetPricesError) {
     errorMessage = 'Price updating has been failed. Please, try again';
   }
@@ -113,7 +119,13 @@ const Cart: React.FC<Props> = props => {
             <InfoIcon className={classes.infoIcon} />
 
             <p className={classes.infoText}>
-              <span className="boldText">Pricing update</span>
+              <span className="boldText">
+                {
+                  NOTIFICATIONS_CONTENT[
+                    NOTIFICATIONS_CONTENT_TYPE.CART_PRICES_CHANGED
+                  ].title
+                }
+              </span>
               {` - `}
               {errorMessage}
             </p>

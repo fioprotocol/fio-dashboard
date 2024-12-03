@@ -27,7 +27,7 @@ type Props = {
 export const UsersItemsList: React.FC<Props> = props => {
   const { addressValue, isDesktop, error, list, loading, onClick } = props;
 
-  const [usersItemsList, setUsersItemsList] = useState<{
+  const [itemToExpiration, setItemToExpiration] = useState<{
     [id: string]: boolean | null;
   }>({});
   const [
@@ -36,16 +36,16 @@ export const UsersItemsList: React.FC<Props> = props => {
   ] = useState<boolean>(false);
 
   const idListJson = JSON.stringify(list.map(({ id }) => id));
-  const hasExpiredDomains = Object.values(usersItemsList).some(
+  const hasExpiredDomains = Object.values(itemToExpiration).some(
     isExpired => isExpired,
   );
-  const usersItemListLoading = Object.values(usersItemsList).some(
+  const itemsExpirationIsNotSet = Object.values(itemToExpiration).some(
     isExpired => isExpired === null,
   );
 
   const setDomainExpired = useCallback(
     ({ id, isExpired }: { id: string; isExpired: boolean | null }) => {
-      setUsersItemsList(prevList => ({ ...prevList, [id]: isExpired }));
+      setItemToExpiration(prevList => ({ ...prevList, [id]: isExpired }));
     },
     [],
   );
@@ -55,7 +55,7 @@ export const UsersItemsList: React.FC<Props> = props => {
   }, []);
 
   useEffect(() => {
-    setUsersItemsList(
+    setItemToExpiration(
       JSON.parse(idListJson).reduce(
         (acc: { [id: string]: boolean | null }, id: string) => {
           acc[id] = null;
@@ -77,7 +77,7 @@ export const UsersItemsList: React.FC<Props> = props => {
       <div
         className={classnames(
           classes.container,
-          loading || usersItemListLoading ? null : classes.hidden,
+          loading || itemsExpirationIsNotSet ? null : classes.hidden,
         )}
       >
         <h5 className={classes.subtitle}>My Domain FIO Handle</h5>
@@ -88,7 +88,7 @@ export const UsersItemsList: React.FC<Props> = props => {
       <div
         className={classnames(
           classes.container,
-          loading || usersItemListLoading ? classes.hidden : null,
+          loading || itemsExpirationIsNotSet ? classes.hidden : null,
         )}
       >
         <h5 className={classes.subtitle}>My Domain FIO Handle</h5>
