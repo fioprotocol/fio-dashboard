@@ -29,7 +29,7 @@ export const UsersItem: React.FC<Props> = props => {
   );
 
   const checkDomain = useCallback(async () => {
-    handleExpiredDomain({ id: listItem.id, isExpired: null });
+    handleExpiredDomain({ id: listItem.id, isExpired: null }); // set null to wait for results
     const isExpired = await checkIsDomainExpired(listItem.domain);
     handleExpiredDomain({ id: listItem.id, isExpired });
   }, [listItem.id, listItem.domain, handleExpiredDomain]);

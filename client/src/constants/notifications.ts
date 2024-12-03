@@ -2,6 +2,7 @@ export const NOTIFICATIONS_CONTENT_TYPE = {
   ACCOUNT_CONFIRMATION: 'ACCOUNT_CONFIRMATION',
   ACCOUNT_CREATE: 'ACCOUNT_CREATE',
   CART_TIMEOUT: 'CART_TIMEOUT',
+  CART_PRICES_CHANGED: 'CART_PRICES_CHANGED',
   UPDATE_EMAIL: 'UPDATE_EMAIL',
   WALLET_IMPORTED: 'WALLET_IMPORTED',
   WALLET_CREATED: 'WALLET_CREATED',
@@ -24,6 +25,10 @@ export const NOTIFICATIONS_CONTENT: {
   [NOTIFICATIONS_CONTENT_TYPE.CART_TIMEOUT]: {
     title: 'Cart was emptied',
     message: 'Your cart was emptied due to inactivity',
+  },
+  [NOTIFICATIONS_CONTENT_TYPE.CART_PRICES_CHANGED]: {
+    title: 'Pricing update',
+    message: 'Your price has been updated due to pricing changes.',
   },
   [NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL]: {
     title: 'Email was updated',

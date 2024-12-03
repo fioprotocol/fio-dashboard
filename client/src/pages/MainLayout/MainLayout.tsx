@@ -17,6 +17,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import Ref from '../../services/Ref';
 import Roe from '../../services/Roe';
+import PricesCartCheck from '../../services/PricesCartCheck';
 import TxHistoryService from '../../services/TxHistory';
 import ContainedFlow from '../../services/ContainedFlow';
 import PageTitle from '../../components/PageTitle/PageTitle';
@@ -173,6 +174,7 @@ const MainLayout: React.FC<Props> = props => {
           <AutoLogout />
           <Ref />
           <Roe />
+          <PricesCartCheck />
           <ContainedFlow />
           {isAuthenticated && <TxHistoryService />}
           {isAuthenticated && isDesktop && <Navigation />}
