@@ -8,9 +8,9 @@ import {
 } from './responses';
 
 export default class FioReg extends Base {
-  prices(forceRefresh = false): Promise<FioRegPricesResponse> {
+  prices(actual = false): Promise<FioRegPricesResponse> {
     return this.apiClient.get('reg/prices', {
-      forceRefresh,
+      actual,
     });
   }
   initCaptcha(): Promise<FioRegCaptchaResponse> {

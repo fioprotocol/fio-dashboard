@@ -346,13 +346,13 @@ class Fio {
     return { notes, code: tx.code, data: tx.data };
   }
 
-  async getPrices(forceRefresh = false) {
+  async getPrices(forceRefresh = false, onlyReturnActual = false) {
     let prices;
 
     const pricesVar = await Var.getByKey(PRICES_VAR_KEY);
     const dataBasePrices = pricesVar.value ? JSON.parse(pricesVar.value) : null;
 
-    if (!forceRefresh) {
+    if (!forceRefresh && !onlyReturnActual) {
       if (
         pricesVar &&
         !Var.updateRequired(pricesVar.updatedAt, FEES_UPDATE_TIMEOUT_SEC)
@@ -446,7 +446,7 @@ class Fio {
           {},
         );
 
-        await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
+        if (!onlyReturnActual) await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
       }
     } catch (e) {
       logger.error('Get Prices Error: ', e);
