@@ -12,7 +12,11 @@ import { getSiteSettings } from '../../redux/settings/actions';
 import { pathname } from '../../redux/navigation/selectors';
 
 import { cartId } from '../../redux/cart/selectors';
-import { isAuthenticated, isActiveUser } from '../../redux/profile/selectors';
+import {
+  isAuthenticated,
+  isActiveUser,
+  profileRefreshed,
+} from '../../redux/profile/selectors';
 import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
 import { isContainedFlow } from '../../redux/containedFlow/selectors';
@@ -29,6 +33,7 @@ const reduxConnect = connect(
     cartId,
     pathname,
     isAuthenticated,
+    profileRefreshed,
     isActiveUser,
     isNoProfileFlow,
     loginSuccess,

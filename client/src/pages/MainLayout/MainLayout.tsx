@@ -35,10 +35,10 @@ import { getObjKeyByValue } from '../../utils';
 import apis from '../../api';
 
 type Props = {
-  cartId: string;
   children: React.ReactNode | React.ReactNode[];
   pathname: string;
   isAuthenticated: boolean;
+  profileRefreshed: boolean;
   isActiveUser: boolean;
   isNoProfileFlow: boolean;
   loginSuccess: boolean;
@@ -67,11 +67,11 @@ type Props = {
 
 const MainLayout: React.FC<Props> = props => {
   const {
-    cartId,
     pathname,
     children,
     edgeContextSet,
     isAuthenticated,
+    profileRefreshed,
     isActiveUser,
     isNoProfileFlow,
     refProfileLoading,
@@ -119,11 +119,19 @@ const MainLayout: React.FC<Props> = props => {
     apiUrls?.length !== 0,
   );
 
-  useEffectOnce(() => {
-    if (cartId) {
+  useEffectOnce(
+    () => {
+      getCart();
+    },
+    [getCart],
+    profileRefreshed && !isAuthenticated,
+  );
+
+  useEffect(() => {
+    if (isAuthenticated) {
       getCart();
     }
-  }, [cartId]);
+  }, [isAuthenticated, getCart]);
 
   useEffectOnce(
     () => {
