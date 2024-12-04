@@ -7,7 +7,6 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
-import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
@@ -170,7 +169,7 @@ export const useContext = (): UseContextReturnType => {
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
     try {
-      const freshPrices = await apis.fioReg.prices(true);
+      const freshPrices = await apis.fioReg.prices();
       updatingPricesHasError && setUpdatingPricesHasError(false);
 
       return freshPrices;
@@ -283,7 +282,6 @@ export const useContext = (): UseContextReturnType => {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PRICE_CHANGE);
 
         dispatch(recalculateOnPriceUpdate());
-        dispatch(getPrices());
 
         return false;
       } catch (err) {
