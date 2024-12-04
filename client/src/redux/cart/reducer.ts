@@ -51,7 +51,7 @@ export default combineReducers({
         if (action.data.items?.length === 0) {
           return null;
         }
-        return state;
+        return action.data.id;
       }
       case actions.CREATE_CART_FROM_ORDER_SUCCESS: {
         return action.data.id;
