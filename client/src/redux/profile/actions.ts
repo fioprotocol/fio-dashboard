@@ -187,7 +187,6 @@ export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
 export const logout = ({
-  history,
   redirect = '',
 }: {
   history?: History;

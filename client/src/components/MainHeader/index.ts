@@ -54,8 +54,7 @@ const actions = (
 ) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
-    const { history } = ownProps;
-    dispatch(logout({ history }));
+    dispatch(logout());
     dispatch(resetLastAuthData());
   },
 });
