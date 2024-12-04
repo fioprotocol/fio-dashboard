@@ -11,13 +11,12 @@ import {
   WALLET_CREATED_FROM,
 } from '../config/constants';
 
-import { fioApi } from '../external/fio.mjs';
+import { FEES_UPDATE_TIMEOUT_SEC, fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
 import { CURRENCY_CODES } from '../constants/fio.mjs';
 import { getROE } from '../external/roe.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
-const CART_PRICES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 30; // 30 min
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
@@ -749,7 +748,7 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
 export const getCartOptions = async cart => {
   let { prices, roe, updatedAt } = cart.options || {};
   const updateRequired =
-    !updatedAt || Var.updateRequired(updatedAt, CART_PRICES_UPDATE_TIMEOUT_SEC);
+    !updatedAt || Var.updateRequired(updatedAt, FEES_UPDATE_TIMEOUT_SEC);
   if (!prices || !roe || updateRequired) {
     prices = await fioApi.getPrices();
     roe = await getROE();

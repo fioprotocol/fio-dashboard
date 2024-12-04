@@ -17,11 +17,10 @@ export default class GetCart extends Base {
     if (guestId) where.guestId = guestId;
 
     try {
-      let cart = await Cart.findOne({ where });
+      const cart = await Cart.findOne({ where });
       if (!cart) return { data: { items: [] } };
 
       await getCartOptions(cart || { options: {} });
-      cart = await Cart.findOne({ where });
 
       return {
         data: Cart.format(cart.get({ plain: true })),
