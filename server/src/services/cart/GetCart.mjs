@@ -12,6 +12,8 @@ export default class GetCart extends Base {
     const userId = this.context.id || null;
     const guestId = this.context.guestId || null;
 
+    if (!userId && !guestId) return { data: { items: [] } };
+
     const where = {};
     if (userId) where.userId = userId;
     if (guestId) where.guestId = guestId;
