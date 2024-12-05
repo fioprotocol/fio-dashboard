@@ -58,8 +58,10 @@ export class Cart extends Base {
 
   static async updateGuestCartUser(userId, guestId) {
     try {
-      await this.destroy({ where: { userId } });
-      await this.update({ userId, guestId: null }, { where: { guestId } });
+      if (await this.findOne({ where: { guestId } })) {
+        await this.destroy({ where: { userId } });
+        await this.update({ userId, guestId: null }, { where: { guestId } });
+      }
     } catch (e) {
       logger.error(e);
     }
