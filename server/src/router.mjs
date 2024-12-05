@@ -216,7 +216,7 @@ router.get('/wrap-status/domains/burn', routes.history.burnedDomains);
 router.post('/cart-add-item', checkGuestOrUserAuth, routes.cart.addItem);
 router.delete('/cart-clear-cart', checkGuestOrUserAuth, routes.cart.clearCart);
 router.patch('/cart-delete-item', checkGuestOrUserAuth, routes.cart.deleteItem);
-router.get('/cart', checkGuestOrUserAuth, routes.cart.getCart);
+router.get('/cart', checkUserOrGuestOptionalAuth, routes.cart.getCart);
 router.patch(
   '/cart-handle-free-items',
   checkGuestOrUserAuth,
