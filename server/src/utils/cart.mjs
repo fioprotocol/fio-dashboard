@@ -686,6 +686,7 @@ export const getItemCost = ({ item, prices, roe }) => {
   const { address, addBundles, renewDomain } = prices;
 
   let costNativeFio;
+  let costItemNativeFio; // cost for item for period 1 when applicable
 
   switch (type) {
     case CART_ITEM_TYPE.ADD_BUNDLES:
@@ -703,16 +704,19 @@ export const getItemCost = ({ item, prices, roe }) => {
           prices,
           period,
         });
+        costItemNativeFio = Number(prices.combo);
       }
       break;
     }
-    case CART_ITEM_TYPE.DOMAIN:
+    case CART_ITEM_TYPE.DOMAIN: {
       costNativeFio = handlePriceForMultiYearItems({
         includeAddress: false,
         prices,
         period,
       });
+      costItemNativeFio = Number(prices.domain);
       break;
+    }
     case CART_ITEM_TYPE.DOMAIN_RENEWAL:
       costNativeFio = new MathOp(renewDomain).mul(period).toNumber();
       break;
@@ -721,13 +725,16 @@ export const getItemCost = ({ item, prices, roe }) => {
   }
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+  const { fio: costItemFio, usdc: costItemUsdc } = costItemNativeFio
+    ? convertFioPrices(costItemNativeFio, roe)
+    : { fio, usdc };
 
-  return { costNativeFio, costFio: fio, costUsdc: usdc };
+  return { costNativeFio, costFio: fio, costUsdc: usdc, costItemFio, costItemUsdc };
 };
 
 export const recalculateCartItems = ({ items, prices, roe }) =>
   items.map(cartItem => {
-    const { costNativeFio, costFio, costUsdc } = getItemCost({
+    const { costNativeFio, costFio, costUsdc, costItemFio, costItemUsdc } = getItemCost({
       item: cartItem,
       prices,
       roe,
@@ -742,6 +749,8 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
       costNativeFio,
       costFio,
       costUsdc,
+      costItemFio,
+      costItemUsdc,
     };
   });
 
