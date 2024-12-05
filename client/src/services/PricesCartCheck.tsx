@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { addManual } from '../redux/notifications/actions';
@@ -17,29 +17,63 @@ import {
 } from '../constants/notifications';
 import { ROUTES } from '../constants/routes';
 
-const PricesCartCheck = (): null => {
+type PricesCartItemCheckProps = {
+  costItemFio?: string;
+  costItemUsdc?: string;
+  isFree?: boolean;
+  setItemPriceChanged: (changed: boolean) => void;
+};
+
+const PricesCartItemCheck: React.FC<PricesCartItemCheckProps> = ({
+  costItemFio = '',
+  costItemUsdc = '',
+  isFree,
+  setItemPriceChanged,
+}) => {
+  const initItemRef = useRef(false);
+
+  useEffect(() => {
+    if (costItemFio && costItemUsdc && !isFree) {
+      if (initItemRef.current) {
+        setItemPriceChanged(true);
+      }
+
+      initItemRef.current = true;
+    }
+  }, [costItemFio, costItemUsdc, isFree, setItemPriceChanged]);
+
+  return null;
+};
+
+const PricesCartCheck: React.FC = () => {
   const roe = useSelector(roeSelector);
   const prices = useSelector(pricesSelector);
   const cartItems = useSelector(cartItemsSelector);
   const initPricesRef = useRef(false);
   const [pricesChanged, setPricesChanged] = useState(false);
+  const [itemPriceChanged, setItemPriceChanged] = useState(false);
   const dispatch = useDispatch();
 
-  const itemsInCart = !!cartItems.length;
-
   useEffect(() => {
+    if (itemPriceChanged) setItemPriceChanged(false);
     if (pricesChanged) {
       setPricesChanged(false);
 
-      if (itemsInCart)
+      if (itemPriceChanged)
         dispatch(
           addManual({
             action: ACTIONS.CART_PRICES_CHANGED,
             type: BADGE_TYPES.WARNING,
             contentTypeUnique: true,
             contentType: NOTIFICATIONS_CONTENT_TYPE.CART_PRICES_CHANGED,
-            title: NOTIFICATIONS_CONTENT.CART_PRICES_CHANGED.title,
-            message: NOTIFICATIONS_CONTENT.CART_PRICES_CHANGED.message,
+            title:
+              NOTIFICATIONS_CONTENT[
+                NOTIFICATIONS_CONTENT_TYPE.CART_PRICES_CHANGED
+              ].title,
+            message:
+              NOTIFICATIONS_CONTENT[
+                NOTIFICATIONS_CONTENT_TYPE.CART_PRICES_CHANGED
+              ].message,
             pagesToShow: [
               ROUTES.CART,
               ROUTES.FIO_ADDRESSES_SELECTION,
@@ -50,7 +84,7 @@ const PricesCartCheck = (): null => {
           }),
         );
     }
-  }, [pricesChanged, itemsInCart, dispatch]);
+  }, [pricesChanged, itemPriceChanged, dispatch]);
 
   useEffect(() => {
     const pricesSet =
@@ -76,7 +110,21 @@ const PricesCartCheck = (): null => {
     prices.nativeFio.renewDomain,
   ]);
 
-  return null;
+  return (
+    <>
+      {initPricesRef.current
+        ? cartItems.map(({ id, costItemFio, costItemUsdc, isFree }) => (
+            <PricesCartItemCheck
+              key={`cart-item-price-check-${id}`}
+              costItemFio={costItemFio}
+              costItemUsdc={costItemUsdc}
+              isFree={isFree}
+              setItemPriceChanged={setItemPriceChanged}
+            />
+          ))
+        : null}
+    </>
+  );
 };
 
 export default PricesCartCheck;

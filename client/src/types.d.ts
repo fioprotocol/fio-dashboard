@@ -58,6 +58,8 @@ export type CartItem = {
   costNativeFio?: number;
   costFio?: string;
   costUsdc?: string;
+  costItemFio?: string;
+  costItemUsdc?: string;
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
