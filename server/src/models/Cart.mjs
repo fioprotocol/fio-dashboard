@@ -4,6 +4,7 @@ import Base from './Base.mjs';
 
 import { User } from './User';
 import logger from '../logger.mjs';
+import { getCartOptions } from '../utils/cart.mjs';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -54,6 +55,20 @@ export class Cart extends Base {
       foreignKey: 'userId',
       targetKey: 'id',
     });
+  }
+
+  static async getActive({ userId, guestId, withOpt = true }, seqOptions = {}) {
+    const where = {};
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
+    const cart = this.findOne({ where, ...seqOptions });
+
+    if (cart && withOpt) {
+      await getCartOptions(cart, seqOptions);
+    }
+
+    return cart;
   }
 
   static async updateGuestCartUser(userId, guestId) {

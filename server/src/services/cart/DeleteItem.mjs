@@ -31,6 +31,7 @@ export default class DeleteItem extends Base {
     if (guestId) where.guestId = guestId;
 
     try {
+      // todo: get active
       const cart = await Cart.findOne({ where });
 
       if (!cart) {
