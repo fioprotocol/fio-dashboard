@@ -76,7 +76,11 @@ export class Payment extends Base {
           allowNull: true,
           comment: 'Link to external payment page',
         },
-        price: { type: DT.STRING, allowNull: true, comment: 'Total price' },
+        price: {
+          type: DT.STRING,
+          allowNull: true,
+          comment: 'Total price',
+        },
         currency: {
           type: DT.STRING,
           allowNull: true,
@@ -88,7 +92,10 @@ export class Payment extends Base {
           defaultValue: 1,
           comment: 'NEW (1), PENDING (2), CANCELLED (5), EXPIRED (4), COMPLETED (3)',
         },
-        data: { type: DT.JSON, comment: 'Any additional data for the payment' },
+        data: {
+          type: DT.JSON,
+          comment: 'Any additional data for the payment',
+        },
       },
       {
         sequelize,
@@ -142,13 +149,14 @@ export class Payment extends Base {
     return null;
   }
 
-  static async cancelPayment(order) {
+  static async cancelPayment(order, seqOpt = {}) {
     const payment = await Payment.findOne({
       where: {
         status: Payment.STATUS.NEW,
         spentType: Payment.SPENT_TYPE.ORDER,
         orderId: order.id,
       },
+      ...seqOpt,
     });
 
     // Remove existing payment when trying to create new one for the order
@@ -158,7 +166,7 @@ export class Payment extends Base {
         const pExtPaymentProcessor = Payment.getPaymentProcessor(payment.processor);
 
         payment.status = Payment.STATUS.CANCELLED;
-        await payment.save();
+        await payment.save(seqOpt);
         if (pExtId && pExtPaymentProcessor) await pExtPaymentProcessor.cancel(pExtId);
       } catch (e) {
         logger.error(
@@ -206,7 +214,10 @@ export class Payment extends Base {
             orderPayment.externalId = extPaymentParams.externalPaymentId;
             orderPayment.amount = extPaymentParams.amount;
             orderPayment.currency = extPaymentParams.currency;
-            orderPayment.data = { ...orderPayment.data, secret: extPaymentParams.secret };
+            orderPayment.data = {
+              ...orderPayment.data,
+              secret: extPaymentParams.secret,
+            };
 
             await orderPayment.save({ transaction: t });
           }

@@ -1,5 +1,3 @@
-import Sequelize from 'sequelize';
-
 import Base from '../Base';
 import logger from '../../logger.mjs';
 
@@ -16,16 +14,11 @@ import {
   Wallet,
 } from '../../models';
 
-import { DAY_MS } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
-import {
-  calculateCartTotalCost,
-  cartItemsToOrderItems,
-  getCartOptions,
-  recalculateCartItems,
-} from '../../utils/cart.mjs';
+import { calculateCartTotalCost, cartItemsToOrderItems } from '../../utils/cart.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
+import { checkPrices } from '../../utils/prices.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -34,10 +27,18 @@ export default class OrdersCreate extends Base {
         'required',
         {
           nested_object: {
-            cartId: ['required', 'string'],
-            publicKey: 'string',
-            paymentProcessor: 'string',
-            refProfileId: 'string',
+            publicKey: ['required', 'string'],
+            paymentProcessor: [
+              'required',
+              'string',
+              {
+                one_of: [
+                  Payment.PROCESSOR.FIO,
+                  Payment.PROCESSOR.STRIPE,
+                  Payment.PROCESSOR.BITPAY,
+                ],
+              },
+            ],
             refCode: ['string'],
             data: {
               nested_object: {
@@ -52,14 +53,14 @@ export default class OrdersCreate extends Base {
     };
   }
 
-  async execute({
-    data: { cartId, publicKey, paymentProcessor, refProfileId, data, refCode },
-  }) {
+  async execute({ data: { publicKey, paymentProcessor, data, refCode } }) {
     let user;
+    let refProfile;
 
     if (this.context.id) {
       user = await User.findActive(this.context.id);
     } else if (publicKey && refCode) {
+      // No profile flow
       const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
         publicKey,
         refCode,
@@ -67,16 +68,20 @@ export default class OrdersCreate extends Base {
       user = resolvedUser;
     }
 
-    const cart = await Cart.findByPk(cartId);
+    const cart = await Cart.getActive({
+      userId: user && user.id,
+      guestId: this.context.guestId,
+    });
 
     if (!user || !cart) {
       if (!user)
         logger.error(
-          `Error user not found: cartId - ${cartId}, refCode - ${refCode}, publicKey - ${publicKey}`,
+          `Error user not found: cartId - ${cart &&
+            cart.id}, refCode - ${refCode}, publicKey - ${publicKey}`,
         );
       if (!cart)
         logger.error(
-          `Error cart not found: cartId - ${cartId}, refCode - ${refCode}, publicKey - ${publicKey}`,
+          `Error cart not found: refCode - ${refCode}, publicKey - ${publicKey}`,
         );
 
       throw new X({
@@ -85,83 +90,39 @@ export default class OrdersCreate extends Base {
       });
     }
 
-    const orderWhere = {
-      status: Order.STATUS.NEW,
-      userId: user.id,
-      createdAt: {
-        [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
-      },
-    };
+    const { prices, roe } = cart.options;
 
-    if (cart.guestId && this.context.guestId && cart.guestId !== this.context.guestId) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {},
-      });
-    }
+    checkPrices(prices, roe);
 
-    const guestId = cart.guestId || this.context.guestId;
-
-    if (guestId) {
-      orderWhere.guestId = guestId;
-    }
-
-    let order = await Order.findOne({
-      where: orderWhere,
-      include: [OrderItem],
-    });
-
+    let order;
     let payment = null;
     const orderItems = [];
-    const { prices, roe } = await getCartOptions(cart);
 
-    const cartPublicKey = cart.publicKey;
+    if (user.refProfileId)
+      refProfile = await ReferrerProfile.findOneWhere({ id: user.refProfileId });
+
+    await Order.removeIrrelevant({
+      userId: user.id,
+      guestId: this.context.guestId,
+    });
+
+    const cartPublicKey =
+      user.userProfileType === User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION
+        ? publicKey
+        : cart.publicKey;
 
     const dashboardDomains = await Domain.getDashboardDomains();
-    const allRefProfileDomains = refCode
+    const allRefProfileDomains = refProfile
       ? await ReferrerProfile.getRefDomainsList({
-          refCode,
+          refCode: refProfile.code,
         })
       : [];
-    const userHasFreeAddress = !publicKey
-      ? []
-      : await FreeAddress.getItems({
-          publicKey: cartPublicKey,
-          userId: user.id,
-        });
 
-    const {
-      addBundles: addBundlesPrice,
-      address: addressPrice,
-      domain: domainPrice,
-      combo: comboPrice,
-      renewDomain: renewDomainPrice,
-    } = prices;
-
-    const isEmptyPrices =
-      !addBundlesPrice ||
-      !addressPrice ||
-      !domainPrice ||
-      !comboPrice ||
-      !renewDomainPrice;
-
-    if (isEmptyPrices) {
-      throw new X({
-        code: 'ERROR',
-        fields: {
-          prices: 'PRICES_ARE_EMPTY',
-        },
-      });
-    }
-
-    if (!roe) {
-      throw new X({
-        code: 'ERROR',
-        fields: {
-          roe: 'ROE_IS_EMPTY',
-        },
-      });
-    }
+    const userHasFreeAddress =
+      (await FreeAddress.getItems({
+        publicKey: cartPublicKey,
+        userId: user.id,
+      })) || [];
 
     const wallet = await Wallet.findOneWhere({ userId: user.id, publicKey });
 
@@ -174,50 +135,33 @@ export default class OrdersCreate extends Base {
       roe,
       userHasFreeAddress,
       walletType: wallet && wallet.from,
-      refCode,
-    });
-
-    // recalculate cart item prices to set proper total value
-    const cartItemsWithRecalculatedPrices = recalculateCartItems({
-      items: cart.items,
-      prices,
-      roe,
+      refCode: refProfile && refProfile.code,
     });
 
     const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
-      cartItems: cartItemsWithRecalculatedPrices,
+      cartItems: items.map(({ nativeFio }) => ({ costNativeFio: nativeFio })),
       roe,
     });
 
     await Order.sequelize.transaction(async t => {
-      if (!order) {
-        order = await Order.create(
-          {
-            status: Order.STATUS.NEW,
-            total: totalCostUsdc,
-            roe,
-            publicKey,
-            customerIp: this.context.ipAddress,
-            userId: user.id,
-            guestId: guestId,
-            refProfileId: refProfileId ? refProfileId : user.refProfileId,
-            data,
-          },
-          { transaction: t },
-        );
+      order = await Order.create(
+        {
+          status: Order.STATUS.NEW,
+          total: totalCostUsdc,
+          roe,
+          publicKey,
+          customerIp: this.context.ipAddress,
+          userId: user.id,
+          guestId: this.context.guestId,
+          refProfileId: refProfile && refProfile.id,
+          data,
+        },
+        { transaction: t },
+      );
 
-        order.number = Order.generateNumber(order.id);
+      order.number = Order.generateNumber(order.id);
 
-        await order.save({ transaction: t });
-      } else {
-        await Order.update(
-          { publicKey, total: totalCostUsdc },
-          { where: { id: order.id }, transaction: t },
-        );
-        await OrderItem.destroy({
-          where: { orderId: order.id },
-        });
-      }
+      await order.save({ transaction: t });
 
       for (const {
         action,
@@ -255,9 +199,7 @@ export default class OrdersCreate extends Base {
       }
     });
 
-    if (paymentProcessor) {
-      payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
-    }
+    payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
 
     return {
       data: {

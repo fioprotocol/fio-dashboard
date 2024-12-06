@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 import {
   BlockchainTransaction,
@@ -28,8 +30,19 @@ export default class OrdersGet extends Base {
       publicKey,
     };
 
+    const userWhere = {
+      userProfileType: {
+        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+      },
+    };
     if (userId) {
       where.userId = userId;
+      userWhere.id = userId;
+    }
+
+    // do not get orders created by primary|alternate users
+    if (!userId && !guestId) {
+      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
     }
 
     const order = await Order.findOne({
@@ -52,7 +65,7 @@ export default class OrdersGet extends Base {
           model: Payment,
           where: { spentType: Payment.SPENT_TYPE.ORDER },
         },
-        User,
+        { model: User, where: userWhere, required: true },
         ReferrerProfile,
       ],
       order: [[OrderItem, 'id', 'ASC']],

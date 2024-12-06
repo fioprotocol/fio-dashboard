@@ -21,6 +21,7 @@ import {
 } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
+import { checkPrices } from '../../utils/prices.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -153,38 +154,7 @@ export default class AddItem extends Base {
         await gatedRegistrationToken.destroy({ force: true });
       }
 
-      const {
-        addBundles: addBundlesPrice,
-        address: addressPrice,
-        domain: domainPrice,
-        combo: comboPrice,
-        renewDomain: renewDomainPrice,
-      } = prices;
-
-      const isEmptyPrices =
-        !addBundlesPrice ||
-        !addressPrice ||
-        !domainPrice ||
-        !comboPrice ||
-        !renewDomainPrice;
-
-      if (isEmptyPrices) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            prices: 'PRICES_ARE_EMPTY',
-          },
-        });
-      }
-
-      if (!roe) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            roe: 'ROE_IS_EMPTY',
-          },
-        });
-      }
+      checkPrices(prices, roe);
 
       const costs = getItemCost({ item: newItem, prices, roe });
       newItem = { ...newItem, ...costs };
