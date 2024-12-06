@@ -30,6 +30,7 @@ export default class UpdateItemPeriod extends Base {
       if (userId) where.userId = userId;
       if (guestId) where.guestId = guestId;
 
+      // todo: get active
       const cart = await Cart.findOne({ where });
 
       const existingCartItem = cart.items.find(cartItem => cartItem.id === itemId);

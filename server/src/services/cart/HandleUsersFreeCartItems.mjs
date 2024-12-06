@@ -27,6 +27,7 @@ export default class HandleUsersFreeCartItems extends Base {
       if (userId) where.userId = userId;
       if (guestId) where.guestId = guestId;
 
+      // todo: get active
       const cart = await Cart.findOne({ where });
 
       if (!cart) {
