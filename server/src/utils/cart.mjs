@@ -754,7 +754,7 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
     };
   });
 
-export const getCartOptions = async cart => {
+export const getCartOptions = async (cart, seqOptions = null) => {
   let { prices, roe, updatedAt } = cart.options || {};
   const updateRequired =
     !updatedAt || Var.updateRequired(updatedAt, FEES_UPDATE_TIMEOUT_SEC);
@@ -768,7 +768,7 @@ export const getCartOptions = async cart => {
       if (cart.items && cart.items.length) {
         values.items = recalculateCartItems({ items: cart.items, prices, roe });
       }
-      await cart.update(values);
+      await cart.update(values, seqOptions);
     }
   }
 

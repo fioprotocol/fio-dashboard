@@ -61,7 +61,6 @@ import { ROUTES } from '../../constants/routes';
 import {
   PAYMENT_PROVIDER_PAYMENT_TITLE,
   PAYMENT_OPTIONS,
-  PURCHASE_RESULTS_STATUS,
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
@@ -254,15 +253,7 @@ export const useContext = (): {
     }
 
     apis.orders
-      .create({
-        cartId,
-        publicKey: paymentWalletPublicKey,
-        paymentProcessor: paymentProvider,
-        data: {
-          gaClientId: getGAClientId(),
-          gaSessionId: getGASessionId(),
-        },
-      })
+      .updatePubKey(paymentWalletPublicKey)
       .then(() => apis.orders.getActive(getActiveOrderParams))
       .then(setOrder);
   }, [
@@ -395,9 +386,7 @@ export const useContext = (): {
     (event?: Event) => {
       // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel order on close BitPay payment page
       if (!event && order?.id) {
-        void apis.orders.update(order.id, {
-          status: PURCHASE_RESULTS_STATUS.CANCELED,
-        });
+        void apis.orders.cancel();
       }
     },
     [order?.id],
@@ -415,7 +404,7 @@ export const useContext = (): {
       }
       void getOrder();
     },
-    [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
+    [dispatch, fioWallets, getOrder, paymentWalletPublicKey],
     (fioWallets.length > 0 &&
       !!userId &&
       (!orderNumberParam ||
@@ -487,7 +476,7 @@ export const useContext = (): {
     }
   }, [paymentWalletPublicKey, paymentWallets, fioWallets, setWallet]);
 
-  // Create order for free address
+  // Create order for free address or on retry
   useEffectOnce(
     () => {
       setOrder(undefined);
@@ -658,17 +647,13 @@ export const useContext = (): {
 
   const onClose = useCallback(() => {
     if (order?.id) {
-      void apis.orders.update(order.id, {
-        status: PURCHASE_RESULTS_STATUS.CANCELED,
-      });
+      void apis.orders.cancel();
     }
     history.push(ROUTES.CART);
   }, [order, history]);
 
   const onFinish = async (results: RegistrationResult) => {
-    await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
-      publicKey: paymentWalletPublicKey,
+    await apis.orders.processPayment({
       results,
     });
 

@@ -188,7 +188,13 @@ router.get('/check-pub-address', checkUserAuth, routes.external.validatePubAddre
 router.get('/orders', checkUserOrGuestOptionalAuth, routes.orders.list);
 router.get('/orders/active', checkGuestOrUserAuth, routes.orders.getActive);
 router.post('/orders', checkGuestOrUserAuth, routes.orders.create);
-router.post('/orders/update/:id', checkGuestOrUserAuth, routes.orders.update);
+router.post(
+  '/orders/process-payment',
+  checkGuestOrUserAuth,
+  routes.orders.processPayment,
+);
+router.post('/orders/update/public-key', checkUserAuth, routes.orders.updatePubKey);
+router.delete('/orders/active', checkGuestOrUserAuth, routes.orders.cancel);
 router.get(
   '/orders/item/:id/:publicKey',
   checkUserOrGuestOptionalAuth,
