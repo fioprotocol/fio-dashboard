@@ -23,11 +23,7 @@ export default class HandleUsersFreeCartItems extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
-      const where = {};
-      if (userId) where.userId = userId;
-      if (guestId) where.guestId = guestId;
-
-      const cart = await Cart.findOne({ where });
+      const cart = await Cart.getActive({ userId, guestId });
 
       if (!cart) {
         return {

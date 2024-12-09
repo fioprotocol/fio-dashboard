@@ -309,7 +309,6 @@ export const useContext = (): UseContextReturnType => {
       };
 
       if (isNoProfileFlow) {
-        orderParams.refProfileId = refProfile.id;
         orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
       }
 

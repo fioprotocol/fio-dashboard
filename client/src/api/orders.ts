@@ -7,7 +7,7 @@ import {
   UserOrdersListResponse,
 } from './responses';
 import { CreateOrderActionData } from '../redux/types';
-import { PurchaseTxStatus, RegistrationResult } from '../types';
+import { RegistrationResult } from '../types';
 
 export default class Orders extends Base {
   create(data: CreateOrderActionData): Promise<OrdersCreateResponse> {
@@ -21,15 +21,15 @@ export default class Orders extends Base {
   }): Promise<UserOrdersListResponse> {
     return this.apiClient.get('orders', data);
   }
-  update(
-    id: number,
-    data: {
-      status?: PurchaseTxStatus;
-      publicKey?: string;
-      results?: RegistrationResult;
-    },
-  ): Promise<OrdersUpdateResponse> {
-    return this.apiClient.post(`orders/update/${id}`, { data });
+  processPayment(data: {
+    results: RegistrationResult;
+  }): Promise<OrdersUpdateResponse> {
+    return this.apiClient.post(`orders/process-payment`, { data });
+  }
+  updatePubKey(publicKey: string): Promise<OrdersCreateResponse> {
+    return this.apiClient.post(`orders/update/public-key`, {
+      publicKey,
+    });
   }
   getActive(data?: {
     publicKey?: string;
@@ -39,5 +39,8 @@ export default class Orders extends Base {
   }
   get(id: string, publicKey: string): Promise<OrderGetResponse> {
     return this.apiClient.get(`orders/item/${id}/${publicKey}`);
+  }
+  cancel(): Promise<{ success: boolean }> {
+    return this.apiClient.delete(`orders/active`);
   }
 }
