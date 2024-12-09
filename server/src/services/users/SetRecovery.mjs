@@ -28,17 +28,8 @@ export default class UsersSetRecovery extends Base {
       });
     }
 
-    if (user.status === User.STATUS.BLOCKED) {
-      throw new X({
-        code: 'BLOCKED_USER',
-        fields: {
-          email: 'BLOCKED_USER',
-        },
-      });
-    }
-
     user.secretSet = true;
-    await user.save();
+    await User.update({ secretSet: true }, { where: { id: user.id } });
 
     await emailSender.send(templates.passRecovery, user.email, {
       username: user.username,

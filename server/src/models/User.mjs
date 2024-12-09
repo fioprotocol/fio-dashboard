@@ -150,6 +150,17 @@ export class User extends Base {
 
   static async findActive(id) {
     const user = await this.findByPk(id, {
+      raw: true,
+      where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
+    });
+
+    if (!user) return null;
+
+    return user;
+  }
+
+  static async getInfo(id) {
+    const user = await this.findByPk(id, {
       where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
       include: [
         { model: FreeAddress, as: 'freeAddresses' },
