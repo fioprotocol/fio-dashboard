@@ -16,12 +16,7 @@ export default class RecalculateOnPriceUpdate extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
-      const where = {};
-      if (userId) where.userId = userId;
-      if (guestId) where.guestId = guestId;
-
-      // todo: get active
-      const cart = await Cart.findOne({ where });
+      const cart = await Cart.getActive({ userId, guestId, withOpt: false });
 
       if (!cart) {
         throw new X({

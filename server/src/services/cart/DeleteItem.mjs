@@ -11,7 +11,6 @@ import logger from '../../logger.mjs';
 import {
   handleFreeCartDeleteItem,
   handleFioHandleCartItemsWithCustomDomain,
-  getCartOptions,
 } from '../../utils/cart.mjs';
 
 export default class DeleteItem extends Base {
@@ -26,19 +25,13 @@ export default class DeleteItem extends Base {
     const userId = this.context.id || null;
     const guestId = this.context.guestId || null;
 
-    const where = {};
-    if (userId) where.userId = userId;
-    if (guestId) where.guestId = guestId;
-
     try {
-      // todo: get active
-      const cart = await Cart.findOne({ where });
-
+      const cart = await Cart.getActive({ userId, guestId });
       if (!cart) {
         return { data: { items: [] } };
       }
 
-      const { prices, roe } = await getCartOptions(cart);
+      const { prices, roe } = cart.options;
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
@@ -120,7 +113,7 @@ export default class DeleteItem extends Base {
           data: Cart.format(cart.get({ plain: true })),
         };
       } else {
-        await Cart.destroy({ where });
+        await cart.destroy();
         return { data: { items: [] } };
       }
     } catch (error) {
