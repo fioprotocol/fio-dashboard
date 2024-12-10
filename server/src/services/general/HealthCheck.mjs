@@ -12,4 +12,9 @@ export default class GeneralHealthCheck extends Base {
   static get resultSecret() {
     return [];
   }
+
+  static get skipLog() {
+    // Do not spam with success logs. Show only if fails
+    return result => result && result.data && result.data.success;
+  }
 }
