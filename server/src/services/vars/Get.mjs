@@ -2,6 +2,7 @@ import Base from '../Base';
 import { Var } from '../../models';
 
 import X from '../Exception.mjs';
+import { VARS_KEYS } from '../../config/constants';
 
 export default class VarsGet extends Base {
   static get validationRules() {
@@ -35,5 +36,15 @@ export default class VarsGet extends Base {
 
   static get resultSecret() {
     return [];
+  }
+
+  static get skipLog() {
+    // Do not spam with logs for IS_MAINTENANCE false. Show only if IS_MAINTENANCE switched on.
+    return (result, params) =>
+      result &&
+      result.data &&
+      result.data.value === 'false' &&
+      params &&
+      params.key === VARS_KEYS.IS_MAINTENANCE;
   }
 }
