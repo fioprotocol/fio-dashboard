@@ -57,7 +57,10 @@ export class Cart extends Base {
     });
   }
 
-  static async getActive({ userId, guestId, withOpt = true }, seqOptions = {}) {
+  static async getActive(
+    { userId, guestId, withOpt = true, checkPrices = false },
+    seqOptions = {},
+  ) {
     const where = {};
     if (userId) where.userId = userId;
     if (guestId) where.guestId = guestId;
@@ -65,7 +68,7 @@ export class Cart extends Base {
     const cart = this.findOne({ where, ...seqOptions });
 
     if (cart && withOpt) {
-      await getCartOptions(cart, seqOptions);
+      await getCartOptions(cart, { checkPrices, seqOptions });
     }
 
     return cart;

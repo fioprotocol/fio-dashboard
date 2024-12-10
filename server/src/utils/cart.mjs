@@ -11,12 +11,13 @@ import {
   WALLET_CREATED_FROM,
 } from '../config/constants';
 
-import { FEES_UPDATE_TIMEOUT_SEC, fioApi } from '../external/fio.mjs';
+import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
 import { CURRENCY_CODES } from '../constants/fio.mjs';
 import { getROE } from '../external/roe.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
+const CART_OPTIONS_UPDATE_TIMEOUT = 1000 * 60 * 15; // 15 min
 
 export function convertFioPrices(nativeFio, roe) {
   const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
@@ -754,19 +755,44 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
     };
   });
 
-export const getCartOptions = async (cart, seqOptions = null) => {
+export const getCartOptions = async (
+  cart,
+  { checkPrices = false, seqOptions = null },
+) => {
   let { prices, roe, updatedAt } = cart.options || {};
   const updateRequired =
-    !updatedAt || Var.updateRequired(updatedAt, FEES_UPDATE_TIMEOUT_SEC);
-  if (!prices || !roe || updateRequired) {
-    prices = await fioApi.getPrices();
-    roe = await getROE();
-    updatedAt = new Date();
+    !updatedAt || Var.updateRequired(updatedAt, CART_OPTIONS_UPDATE_TIMEOUT);
+  if (!prices || !roe || updateRequired || checkPrices) {
+    const newPrices = await fioApi.getPrices();
+    const newRoe = await getROE();
+    const newUpdatedAt = new Date();
+    let updateCart = !!cart.id;
 
-    if (cart.id) {
+    // Update cart only when roe or prices changed
+    if (updateCart && checkPrices && !updateRequired) {
+      updateCart =
+        roe !== newRoe ||
+        prices.address !== newRoe.address ||
+        prices.domain !== newRoe.domain ||
+        prices.combo !== newRoe.combo ||
+        prices.renewDomain !== newRoe.renewDomain ||
+        prices.addBundles !== newRoe.addBundles ||
+        !prices ||
+        !roe;
+    }
+
+    roe = newRoe;
+    prices = newPrices;
+    updatedAt = newUpdatedAt;
+
+    if (updateCart) {
       const values = { options: { prices, roe, updatedAt } };
       if (cart.items && cart.items.length) {
-        values.items = recalculateCartItems({ items: cart.items, prices, roe });
+        values.items = recalculateCartItems({
+          items: cart.items,
+          prices,
+          roe,
+        });
       }
       await cart.update(values, seqOptions);
     }
