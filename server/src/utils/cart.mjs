@@ -757,7 +757,7 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
 
 export const getCartOptions = async (
   cart,
-  { checkPrices = false, seqOptions = null },
+  { checkPrices = false, seqOptions = null } = {},
 ) => {
   let { prices, roe, updatedAt } = cart.options || {};
   const updateRequired =
