@@ -82,15 +82,11 @@ export default class AddItem extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
-      const where = {};
-      if (userId) where.userId = userId;
-      if (guestId) where.guestId = guestId;
+      const existingCart = await Cart.getActive({ userId, guestId });
 
-      const existingCart = await Cart.findOne({ where });
-
-      const { prices, roe, updatedAt } = await getCartOptions(
-        existingCart || { options: {} },
-      );
+      const { prices, roe, updatedAt } = existingCart
+        ? existingCart.options
+        : await getCartOptions({ options: {} });
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
