@@ -3,10 +3,18 @@ import Sequelize from 'sequelize';
 import Base from './Base.mjs';
 
 import { User } from './User';
+import { Var } from './Var';
+
+import { fioApi } from '../external/fio.mjs';
+import { getROE } from '../external/roe.mjs';
+
 import logger from '../logger.mjs';
-import { getCartOptions } from '../utils/cart.mjs';
+
+import { recalculateCartItems } from '../utils/cart.mjs';
 
 const { DataTypes: DT } = Sequelize;
+
+const CART_OPTIONS_UPDATE_TIMEOUT = 1000 * 60 * 15; // 15 min
 
 export class Cart extends Base {
   static init(sequelize) {
@@ -57,6 +65,49 @@ export class Cart extends Base {
     });
   }
 
+  static async getCartOptions(cart, { checkPrices = false, seqOptions = null } = {}) {
+    let { prices, roe, updatedAt } = cart.options || {};
+    const updateRequired =
+      !updatedAt || Var.updateRequired(updatedAt, CART_OPTIONS_UPDATE_TIMEOUT);
+    if (!prices || !roe || updateRequired || checkPrices) {
+      const newPrices = await fioApi.getPrices();
+      const newRoe = await getROE();
+      const newUpdatedAt = new Date();
+      let updateCart = !!cart.id;
+
+      // Update cart only when roe or prices changed
+      if (updateCart && checkPrices && !updateRequired) {
+        updateCart =
+          roe !== newRoe ||
+          prices.address !== newRoe.address ||
+          prices.domain !== newRoe.domain ||
+          prices.combo !== newRoe.combo ||
+          prices.renewDomain !== newRoe.renewDomain ||
+          prices.addBundles !== newRoe.addBundles ||
+          !prices ||
+          !roe;
+      }
+
+      roe = newRoe;
+      prices = newPrices;
+      updatedAt = newUpdatedAt;
+
+      if (updateCart) {
+        const values = { options: { prices, roe, updatedAt } };
+        if (cart.items && cart.items.length) {
+          values.items = recalculateCartItems({
+            items: cart.items,
+            prices,
+            roe,
+          });
+        }
+        await cart.update(values, seqOptions);
+      }
+    }
+
+    return { prices, roe, updatedAt };
+  }
+
   static async getActive(
     { userId, guestId, withOpt = true, checkPrices = false },
     seqOptions = {},
@@ -68,7 +119,7 @@ export class Cart extends Base {
     const cart = this.findOne({ where, ...seqOptions });
 
     if (cart && withOpt) {
-      await getCartOptions(cart, { checkPrices, seqOptions });
+      await this.getCartOptions(cart, { checkPrices, seqOptions });
     }
 
     return cart;

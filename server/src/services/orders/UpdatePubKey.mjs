@@ -17,11 +17,7 @@ import {
 
 import X from '../Exception.mjs';
 
-import {
-  calculateCartTotalCost,
-  cartItemsToOrderItems,
-  getCartOptions,
-} from '../../utils/cart.mjs';
+import { calculateCartTotalCost, cartItemsToOrderItems } from '../../utils/cart.mjs';
 import { checkPrices } from '../../utils/prices.mjs';
 
 export default class OrderUpdatePubKey extends Base {
@@ -93,7 +89,7 @@ export default class OrderUpdatePubKey extends Base {
             transaction: t,
           });
         const cartPublicKey = cart.publicKey;
-        const { prices, roe } = await getCartOptions(cart);
+        const { prices, roe } = await Cart.getCartOptions(cart);
 
         checkPrices(prices, roe);
 
