@@ -638,16 +638,17 @@ export class Order extends Base {
   static async cancel(order) {
     try {
       await order.update({ status: Order.STATUS.CANCELED });
-      await OrderItemStatus.update(
-        { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
-        {
-          where: {
-            orderItemId: {
-              [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+      if (order.OrderItems && order.OrderItems.length)
+        await OrderItemStatus.update(
+          { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
+          {
+            where: {
+              orderItemId: {
+                [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+              },
             },
           },
-        },
-      );
+        );
       await Payment.cancelPayment(order);
     } catch (err) {
       logger.error(err);
