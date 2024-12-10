@@ -22,7 +22,6 @@ export default class OrderProcessPayment extends Base {
                       list_of_objects: {
                         fioName: 'string',
                         action: 'string',
-                        fee_collected: 'integer',
                         data: [
                           {
                             nested_object: {
@@ -90,15 +89,9 @@ export default class OrderProcessPayment extends Base {
 
       if (order.Payments[0].processor === Payment.PROCESSOR.FIO) {
         try {
-          const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
-            if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
-            return acc;
-          }, 0);
-
           await prepareOrderWithFioPaymentForExecution({
             paymentId: order.Payments[0].id,
             orderItems: order.OrderItems,
-            fioNativePrice: totalFioNativePrice,
           });
           await order.update({ status: Order.STATUS.SUCCESS });
         } catch (e) {
