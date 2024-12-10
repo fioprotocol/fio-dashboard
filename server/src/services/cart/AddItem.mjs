@@ -16,7 +16,6 @@ import {
   handleFioHandleOnExistingCustomDomain,
   handleFreeCartAddItem,
   handleFioHandleCartItemsWithCustomDomain,
-  getCartOptions,
   getItemCost,
 } from '../../utils/cart.mjs';
 
@@ -86,7 +85,7 @@ export default class AddItem extends Base {
 
       const { prices, roe, updatedAt } = existingCart
         ? existingCart.options
-        : await getCartOptions({ options: {} });
+        : await Cart.getCartOptions({ options: {} });
 
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode

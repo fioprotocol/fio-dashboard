@@ -5,7 +5,8 @@ import superagent from 'superagent';
 import fetch from 'node-fetch';
 import { Account, FIOSDK, fioConstants, GenericAction } from '@fioprotocol/fiosdk';
 
-import { FioApiUrl, Var } from '../models';
+import { FioApiUrl } from '../models/FioApiUrl.mjs';
+import { Var } from '../models/Var.mjs';
 
 import {
   DAY_MS,

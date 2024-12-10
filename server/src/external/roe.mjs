@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import Big from 'big.js';
 
-import { Var } from '../models';
+import { Var } from '../models/Var.mjs';
 
 import logger from '../logger';
 
