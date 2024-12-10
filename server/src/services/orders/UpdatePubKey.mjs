@@ -58,7 +58,7 @@ export default class OrderUpdatePubKey extends Base {
 
       throw new X({
         code: 'NOT_FOUND',
-        fields: { publicKey: 'WALLET_NOT_FOUND' },
+        fields: {},
       });
     }
 
