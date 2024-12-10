@@ -8,6 +8,7 @@ import {
   OrderItem,
   Payment,
   ReferrerProfile,
+  ReferrerProfileApiToken,
 } from '../../models';
 import {
   createCallWithRetry,
@@ -64,18 +65,25 @@ export default class BuyAddress extends Base {
         type: ReferrerProfile.TYPE.REF,
         code: referralCode,
       },
+      include: [{ model: ReferrerProfileApiToken, as: 'apiTokens' }],
     });
 
     if (!refProfile) {
       return generateErrorResponse(this.res, refNotFoundRes);
     }
 
-    !refProfile.apiToken &&
-      refProfile.apiHash &&
-      apiToken &&
-      (await handleRefProfileApiTokenAndLegacyHash({ apiToken, refProfile }));
+    for (const refProfileApiData of refProfile.apiTokens) {
+      !refProfileApiData.token &&
+        refProfileApiData.legacyHash &&
+        apiToken &&
+        (await handleRefProfileApiTokenAndLegacyHash({
+          refCode: refProfile.code,
+          apiToken,
+          refProfileApiData,
+        }));
+    }
 
-    if (!refProfile.apiAccess) {
+    if (!refProfile.hasApiAccess()) {
       return generateErrorResponse(this.res, {
         error: `Access by api deactivated`,
         errorCode: PUB_API_ERROR_CODES.REF_API_ACCESS_DEACTIVATED,
@@ -83,7 +91,8 @@ export default class BuyAddress extends Base {
       });
     }
 
-    if (apiToken && refProfile.apiToken !== apiToken) {
+    const apiProfile = refProfile.getApiProfile(apiToken);
+    if (!apiProfile) {
       return generateErrorResponse(this.res, {
         error: `Invalid api token`,
         errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,

@@ -439,9 +439,14 @@ export type RefProfile = {
     hasNoProfileFlow?: boolean;
     link?: string;
   };
-  tpid: string;
-  apiToken?: string;
   apiAccess?: boolean;
+  apiTokens?: {
+    id?: number;
+    token: string;
+    access: boolean;
+    dailyFreeLimit?: number | null;
+  }[];
+  tpid: string;
   freeFioAccountProfileId: string;
   paidFioAccountProfileId: string;
   createdAt?: string;

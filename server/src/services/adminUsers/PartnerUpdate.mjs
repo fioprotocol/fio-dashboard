@@ -1,7 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { ReferrerProfile } from '../../models';
+import { ReferrerProfile, ReferrerProfileApiToken } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 import { checkApiToken } from '../../utils/crypto.mjs';
 
@@ -16,8 +16,6 @@ export default class PartnerUpdate extends Base {
       type: ['required', 'string'],
       label: ['required', 'string'],
       tpid: ['string'],
-      apiToken: ['string'],
-      apiAccess: ['boolean'],
       settings: [
         'required',
         {
@@ -78,6 +76,18 @@ export default class PartnerUpdate extends Base {
           },
         },
       ],
+      apiAccess: 'boolean',
+      apiTokens: {
+        list_of_objects: [
+          {
+            id: 'string',
+            token: ['required', 'string'],
+            access: 'boolean',
+            legacyHash: 'string',
+            dailyFreeLimit: 'integer',
+          },
+        ],
+      },
       title: ['string'],
       subTitle: ['string'],
       freeFioAccountProfileId: ['string'],
@@ -86,7 +96,10 @@ export default class PartnerUpdate extends Base {
   }
 
   async execute({ id, ...data }) {
-    const partner = await ReferrerProfile.findByPk(id);
+    const partner = await ReferrerProfile.findOne({
+      where: { id },
+      include: [{ model: ReferrerProfileApiToken, as: 'apiTokens' }],
+    });
 
     if (!partner) {
       throw new X({
@@ -98,16 +111,55 @@ export default class PartnerUpdate extends Base {
       });
     }
 
-    if (data.apiToken && !checkApiToken(data.apiToken)) {
-      throw new X({
-        code: 'CREATION_FAILED',
-        fields: {
-          code: 'This api token is incorrect!',
-        },
-      });
+    const { apiTokens = [], ...rest } = data;
+    for (const apiTokenProfile of apiTokens) {
+      if (!checkApiToken(apiTokenProfile.token)) {
+        throw new X({
+          code: 'UPDATE_FAILED',
+          fields: {
+            apiToken: 'This api token is incorrect!',
+          },
+        });
+      }
     }
 
-    await partner.update(data);
+    await partner.update(rest);
+
+    // Remove ref profile api tokens
+    if (partner.apiTokens)
+      for (const exApiTokenProfile of partner.apiTokens) {
+        if (!apiTokens.find(({ id }) => id === exApiTokenProfile.id)) {
+          await exApiTokenProfile.destroy();
+        }
+      }
+
+    // Create / Update ref profile api tokens
+    for (const apiTokenProfile of apiTokens) {
+      if (apiTokenProfile.id) {
+        const { id: tokenProfileId, ...tokenProfileParams } = apiTokenProfile;
+        const exApiTokenProfile = partner.apiTokens
+          ? partner.apiTokens.find(({ id }) => id === tokenProfileId)
+          : null;
+
+        // Reset to send one more time when limit will be reached
+        if (
+          exApiTokenProfile &&
+          exApiTokenProfile.dailyFreeLimit !== tokenProfileParams.dailyFreeLimit
+        ) {
+          tokenProfileParams.lastNotificationDate = null;
+        }
+
+        await ReferrerProfileApiToken.update(tokenProfileParams, {
+          where: { id: tokenProfileId },
+        });
+      } else {
+        const newApiTokenProfile = new ReferrerProfileApiToken({
+          ...apiTokenProfile,
+          refProfileId: partner.id,
+        });
+        await newApiTokenProfile.save();
+      }
+    }
 
     return {
       data: partner.json(),
