@@ -115,7 +115,7 @@ export default class OrderProcessPayment extends Base {
   }
 
   static get paramsSecret() {
-    return ['data'];
+    return [];
   }
 
   static get resultSecret() {
