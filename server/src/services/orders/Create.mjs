@@ -71,6 +71,7 @@ export default class OrdersCreate extends Base {
     const cart = await Cart.getActive({
       userId: user && user.id,
       guestId: this.context.guestId,
+      checkPrices: true,
     });
 
     if (!user || !cart) {
