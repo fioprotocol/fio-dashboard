@@ -47,14 +47,6 @@ export class ReferrerProfile extends Base {
         //   isBranded: boolean,
         //   hasNoProfileFlow: boolean
         // },
-        apiToken: {
-          type: DT.STRING,
-          allowNull: true,
-        },
-        apiHash: {
-          type: DT.STRING,
-          allowNull: true,
-        },
         apiAccess: {
           type: DT.BOOLEAN,
           defaultValue: false,
@@ -95,7 +87,7 @@ export class ReferrerProfile extends Base {
     this.hasMany(ReferrerProfileApiToken, {
       foreignKey: 'refProfileId',
       sourceKey: 'id',
-      as: 'refProfileApiToken',
+      as: 'apiTokens',
     });
   }
 
@@ -111,9 +103,9 @@ export class ReferrerProfile extends Base {
         'title',
         'subTitle',
         'tpid',
-        'apiAccess',
-        'apiToken',
         'settings',
+        'apiAccess',
+        'apiTokens',
         'createdAt',
       ],
     };
@@ -192,7 +184,33 @@ export class ReferrerProfile extends Base {
       limit: limit ? limit : undefined,
       offset,
       where,
+      include: [{ model: ReferrerProfileApiToken, as: 'apiTokens' }],
     });
+  }
+
+  /**
+   *
+   * @param {string} apiToken
+   * @returns {boolean}
+   */
+  hasApiAccess(apiToken = '') {
+    return (
+      this.apiAccess &&
+      (apiToken
+        ? this.apiTokens.find(data => data.access && data.token === apiToken)
+        : this.apiTokens.some(data => data.access))
+    );
+  }
+
+  /**
+   *
+   * @param {string} apiToken
+   * @returns {ReferrerProfileApiToken.Model}
+   */
+  getApiProfile(apiToken) {
+    return (
+      apiToken && this.apiTokens.find(data => data.token === apiToken && data.access)
+    );
   }
 
   static partnersCount(where) {
