@@ -12,6 +12,7 @@ import { Payment } from './Payment';
 import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
+import { Var } from './Var.mjs';
 
 import {
   countTotalPriceAmount,
@@ -43,7 +44,8 @@ const hashids = new Hashids(
 );
 
 const DEFAULT_ORDERS_LIMIT = 25;
-const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
+const DEFAULT_ORDER_TIMEOUT = 1000 * 60 * 30; // 30 min
+const ORDER_TIMEOUT_KEY = 'ORDER_TIMEOUT'; // 30 min
 
 export class Order extends Base {
   static get STATUS() {
@@ -183,6 +185,10 @@ export class Order extends Base {
     return attributes.default;
   }
 
+  static async ORDER_TIMEOUT() {
+    return (await Var.getValByKey(ORDER_TIMEOUT_KEY)) || DEFAULT_ORDER_TIMEOUT;
+  }
+
   static async list({
     guestId,
     userId,
@@ -238,7 +244,7 @@ export class Order extends Base {
     const where = {
       status: Order.STATUS.NEW,
       updatedAt: {
-        [Sequelize.Op.gt]: new Date(new Date().getTime() - CART_TIMEOUT),
+        [Sequelize.Op.gt]: new Date(new Date().getTime() - (await this.ORDER_TIMEOUT())),
       },
     };
 
@@ -652,7 +658,7 @@ export class Order extends Base {
     const where = {
       status: Order.STATUS.NEW,
       updatedAt: {
-        [Sequelize.Op.lt]: new Date(new Date().getTime() - CART_TIMEOUT),
+        [Sequelize.Op.lt]: new Date(new Date().getTime() - (await this.ORDER_TIMEOUT())),
       },
     };
 
