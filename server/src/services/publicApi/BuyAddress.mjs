@@ -1,4 +1,5 @@
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import Sequelize from 'sequelize';
 
 import Base from '../Base';
 import {
@@ -202,6 +203,32 @@ export default class BuyAddress extends Base {
                 dashboardDomain && dashboardDomain.isFirstRegFree,
             }));
         }
+      }
+
+      if (isFreeRegistration && apiProfile.dailyFreeLimit) {
+        const TODAY_START = new Date().setHours(0, 0, 0, 0);
+        const NOW = new Date();
+        const freeRegs = await Order.count({
+          where: {
+            status: {
+              [Sequelize.Op.in]: [Order.STATUS.SUCCESS, Order.STATUS.TRANSACTION_PENDING],
+            },
+            total: '0',
+            refProfileId: refProfile.id,
+            data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+            createdAt: {
+              [Sequelize.Op.gt]: TODAY_START,
+              [Sequelize.Op.lt]: NOW,
+            },
+          },
+        });
+
+        if (freeRegs >= apiProfile.dailyFreeLimit)
+          return generateErrorResponse(this.res, {
+            error: 'Daily limit of Free FIO Handles reached.',
+            errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
+            statusCode: HTTP_CODES.FORBIDDEN,
+          });
       }
 
       const { order, charge } = await this.createFreeAddressBuyOrder({
