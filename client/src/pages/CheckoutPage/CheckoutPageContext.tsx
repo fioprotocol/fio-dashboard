@@ -170,7 +170,6 @@ export const useContext = (): {
   const stripeRedirectStatusParam = queryParams.get(
     QUERY_PARAMS_NAMES.STRIPE_REDIRECT_STATUS,
   );
-  const publicKeyQueryParams = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
   const [
     beforeSubmitProps,
@@ -197,14 +196,6 @@ export const useContext = (): {
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
 
-  const getActiveOrderParams: {
-    publicKey?: string;
-  } = useMemo(() => ({}), []);
-
-  if (publicKeyQueryParams) {
-    getActiveOrderParams.publicKey = publicKeyQueryParams;
-  }
-
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
       dispatchSetWallet(paymentWalletPublicKey);
@@ -216,7 +207,7 @@ export const useContext = (): {
     let result: Order;
 
     try {
-      result = await apis.orders.getActive(getActiveOrderParams);
+      result = await apis.orders.getActive();
     } catch (e) {
       setOrderError(e);
     }
@@ -237,7 +228,7 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  }, [cartItems, getActiveOrderParams, setWallet]);
+  }, [cartItems, setWallet]);
 
   useEffect(() => {
     if (isNoProfileFlow) {
@@ -254,12 +245,11 @@ export const useContext = (): {
 
     apis.orders
       .updatePubKey(paymentWalletPublicKey)
-      .then(() => apis.orders.getActive(getActiveOrderParams))
+      .then(() => apis.orders.getActive())
       .then(setOrder);
   }, [
     cartId,
     fioWallets,
-    getActiveOrderParams,
     isNoProfileFlow,
     order,
     paymentProvider,
