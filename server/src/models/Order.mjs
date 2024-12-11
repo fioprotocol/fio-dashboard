@@ -244,7 +244,9 @@ export class Order extends Base {
     const where = {
       status: Order.STATUS.NEW,
       updatedAt: {
-        [Sequelize.Op.gt]: new Date(new Date().getTime() - (await this.ORDER_TIMEOUT())),
+        [Sequelize.Op.gt]: Sequelize.literal(
+          `now() - interval '${await this.ORDER_TIMEOUT()} ms'`,
+        ),
       },
     };
 
