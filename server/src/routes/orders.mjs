@@ -13,7 +13,7 @@ export default {
   create: makeServiceRunner(OrdersCreate, req => req.body),
   updatePubKey: makeServiceRunner(OrderUpdatePubKey, req => req.body),
   processPayment: makeServiceRunner(OrderProcessPayment, req => req.body),
-  getActive: makeServiceRunner(OrdersActive, req => req.query),
+  getActive: makeServiceRunner(OrdersActive),
   get: makeServiceRunner(OrdersGet, req => req.params),
   cancel: makeServiceRunner(OrdersCancel),
 };
