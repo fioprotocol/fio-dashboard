@@ -10,7 +10,15 @@ import {
   Payment,
   ReferrerProfile,
   ReferrerProfileApiToken,
+  Var,
 } from '../../models';
+import { fioApi } from '../../external/fio';
+import { getROE } from '../../external/roe';
+import Bitpay from '../../external/payment-processor/bitpay.mjs';
+import emailSender from '../emailSender.mjs';
+import logger from '../../logger.mjs';
+import { templates } from '../../emails/emailTemplate.mjs';
+
 import {
   createCallWithRetry,
   destructAddress,
@@ -20,21 +28,19 @@ import {
   generateErrorResponse,
   generateSuccessResponse,
 } from '../../utils/publicApi';
-import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
-import { fioApi } from '../../external/fio';
-import { getROE } from '../../external/roe';
-import { CURRENCY_CODES } from '../../constants/fio.mjs';
-import { ORDER_USER_TYPES } from '../../constants/order.mjs';
-import { HTTP_CODES } from '../../constants/general.mjs';
 import {
   normalizePriceForBitPayInTestNet,
   prepareOrderWithFioPaymentForExecution,
 } from '../../utils/payment.mjs';
-import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { isDomainExpired } from '../../utils/fio.mjs';
 import { handleRefProfileApiTokenAndLegacyHash } from '../../utils/referrer-profile.mjs';
-import logger from '../../logger.mjs';
+
+import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
+import { CURRENCY_CODES } from '../../constants/fio.mjs';
+import { ORDER_USER_TYPES } from '../../constants/order.mjs';
+import { HTTP_CODES, REGSITE_NOTIF_EMAIL_KEY } from '../../constants/general.mjs';
+import { DAY_MS } from '../../config/constants.js';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -223,12 +229,15 @@ export default class BuyAddress extends Base {
           },
         });
 
-        if (freeRegs >= apiProfile.dailyFreeLimit)
+        if (freeRegs >= apiProfile.dailyFreeLimit) {
+          await this.sendNotification(apiProfile, refProfile);
+
           return generateErrorResponse(this.res, {
             error: 'Daily limit of Free FIO Handles reached.',
             errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
             statusCode: HTTP_CODES.FORBIDDEN,
           });
+        }
       }
 
       const { order, charge } = await this.createFreeAddressBuyOrder({
@@ -386,6 +395,29 @@ export default class BuyAddress extends Base {
       .find(({ address, domain }) => address === fioAddress && domain === fioDomain);
 
     return !!order;
+  }
+
+  async sendNotification(apiProfile, refProfile) {
+    try {
+      if (
+        (apiProfile.lastNotificationDate &&
+          Var.updateRequired(apiProfile.lastNotificationDate, DAY_MS)) ||
+        !apiProfile.lastNotificationDate
+      ) {
+        const notifEmail = await Var.getValByKey(REGSITE_NOTIF_EMAIL_KEY);
+        await emailSender.send(templates.freeLimitReached, notifEmail, {
+          refProfileName: refProfile.label,
+          limit: apiProfile.dailyFreeLimit,
+          lastApiToken: `${apiProfile.token}`.slice(-4),
+        });
+
+        await apiProfile.update({
+          lastNotificationDate: new Date().setHours(0, 0, 0, 0),
+        });
+      }
+    } catch (err) {
+      logger.error(err);
+    }
   }
 
   static get validationRules() {
