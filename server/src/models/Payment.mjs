@@ -33,8 +33,6 @@ export class Payment extends Base {
   static get PROCESSOR() {
     return {
       BITPAY: 'BITPAY',
-      COINBASE: 'COINBASE',
-      COIN_PAYMENTS: 'COIN_PAYMENTS',
       STRIPE: 'STRIPE',
       FIO: 'FIO',
       ADMIN: 'ADMIN',
