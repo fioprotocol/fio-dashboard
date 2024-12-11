@@ -746,7 +746,9 @@ class WrapStatusJob extends CommonJob {
 
           if (blockTxIds && blockTxIds.ids && blockTxIds.ids.length) {
             for (const blockTxIdItem of blockTxIds.ids) {
-              const blockTxData = await getTransaction(blockTxIdItem);
+              const blockTxData = await getTransaction({
+                transactionId: blockTxIdItem,
+              });
 
               if (blockTxData && blockTxData.traces && blockTxData.traces.length) {
                 const burnedDomainAction = blockTxData.traces.find(

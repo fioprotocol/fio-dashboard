@@ -32,7 +32,7 @@ export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
 const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 
-const FIO_ACTION_NAMES = {
+export const FIO_ACTION_NAMES = {
   [GenericAction.registerFioAddress]: 'regaddress',
   [GenericAction.registerFioDomain]: 'regdomain',
   [GenericAction.registerFioDomainAddress]: 'regdomadd',
@@ -82,6 +82,13 @@ class Fio {
       });
     }
     return this.publicFioSDK;
+  }
+
+  getMasterPublicKey() {
+    const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
+      process.env.MASTER_FIOSDK_KEY,
+    );
+    return masterPubKey;
   }
 
   async getMasterFioSDK() {
