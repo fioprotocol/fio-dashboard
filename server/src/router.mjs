@@ -188,6 +188,7 @@ router.get('/check-pub-address', checkUserAuth, routes.external.validatePubAddre
 router.get('/orders', checkUserOrGuestOptionalAuth, routes.orders.list);
 router.get('/orders/active', checkGuestOrUserAuth, routes.orders.getActive);
 router.post('/orders', checkGuestOrUserAuth, routes.orders.create);
+router.post('/orders/prepared-tx', checkGuestOrUserAuth, routes.orders.preparedTx);
 router.post(
   '/orders/process-payment',
   checkGuestOrUserAuth,

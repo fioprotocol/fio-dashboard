@@ -266,6 +266,20 @@ export class Order extends Base {
     });
   }
 
+  static async getPaidById({ id, userId, guestId }) {
+    const where = {
+      id,
+      status: Order.STATUS.PAID,
+    };
+
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
+    return this.findOne({
+      where,
+    });
+  }
+
   static ordersCount(query) {
     return this.count(query);
   }
@@ -660,9 +674,6 @@ export class Order extends Base {
   static async removeIrrelevant({ userId, guestId }) {
     const where = {
       status: Order.STATUS.NEW,
-      updatedAt: {
-        [Sequelize.Op.lt]: new Date(new Date().getTime() - (await this.ORDER_TIMEOUT())),
-      },
     };
 
     if (userId) where.userId = userId;
