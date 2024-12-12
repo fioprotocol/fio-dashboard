@@ -217,7 +217,11 @@ export default class BuyAddress extends Base {
         const freeRegs = await Order.count({
           where: {
             status: {
-              [Sequelize.Op.in]: [Order.STATUS.SUCCESS, Order.STATUS.TRANSACTION_PENDING],
+              [Sequelize.Op.in]: [
+                Order.STATUS.SUCCESS,
+                Order.STATUS.TRANSACTION_PENDING,
+                Order.STATUS.NEW,
+              ],
             },
             total: '0',
             refProfileId: refProfile.id,
