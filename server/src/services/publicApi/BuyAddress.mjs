@@ -98,13 +98,16 @@ export default class BuyAddress extends Base {
       });
     }
 
-    const apiProfile = refProfile.getApiProfile(apiToken);
-    if (!apiProfile) {
-      return generateErrorResponse(this.res, {
-        error: `Invalid api token`,
-        errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
-        statusCode: HTTP_CODES.BAD_REQUEST,
-      });
+    let apiProfile = null;
+    if (apiToken) {
+      apiProfile = refProfile.getApiProfile(apiToken);
+      if (!apiProfile) {
+        return generateErrorResponse(this.res, {
+          error: `Invalid api token`,
+          errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
+          statusCode: HTTP_CODES.BAD_REQUEST,
+        });
+      }
     }
 
     const lowerCasedAddress = address ? address.toLowerCase() : address;
@@ -184,7 +187,7 @@ export default class BuyAddress extends Base {
 
       let isFreeRegistration = false;
 
-      if (apiToken && domainFromChain) {
+      if (apiToken && apiProfile && domainFromChain) {
         const refDomain = findDomainInRefProfile(refProfile, fioDomain);
 
         if (refDomain) {
@@ -209,38 +212,38 @@ export default class BuyAddress extends Base {
                 dashboardDomain && dashboardDomain.isFirstRegFree,
             }));
         }
-      }
 
-      if (isFreeRegistration && apiProfile.dailyFreeLimit) {
-        const TODAY_START = new Date().setHours(0, 0, 0, 0);
-        const NOW = new Date();
-        const freeRegs = await Order.count({
-          where: {
-            status: {
-              [Sequelize.Op.in]: [
-                Order.STATUS.SUCCESS,
-                Order.STATUS.TRANSACTION_PENDING,
-                Order.STATUS.NEW,
-              ],
+        if (isFreeRegistration && apiProfile.dailyFreeLimit) {
+          const TODAY_START = new Date().setHours(0, 0, 0, 0);
+          const NOW = new Date();
+          const freeRegs = await Order.count({
+            where: {
+              status: {
+                [Sequelize.Op.in]: [
+                  Order.STATUS.SUCCESS,
+                  Order.STATUS.TRANSACTION_PENDING,
+                  Order.STATUS.NEW,
+                ],
+              },
+              total: '0',
+              refProfileId: refProfile.id,
+              data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+              createdAt: {
+                [Sequelize.Op.gt]: TODAY_START,
+                [Sequelize.Op.lt]: NOW,
+              },
             },
-            total: '0',
-            refProfileId: refProfile.id,
-            data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
-            createdAt: {
-              [Sequelize.Op.gt]: TODAY_START,
-              [Sequelize.Op.lt]: NOW,
-            },
-          },
-        });
-
-        if (freeRegs >= apiProfile.dailyFreeLimit) {
-          await this.sendNotification(apiProfile, refProfile);
-
-          return generateErrorResponse(this.res, {
-            error: 'Daily limit of Free FIO Handles reached.',
-            errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
-            statusCode: HTTP_CODES.FORBIDDEN,
           });
+
+          if (freeRegs >= apiProfile.dailyFreeLimit) {
+            await this.sendNotification(apiProfile, refProfile);
+
+            return generateErrorResponse(this.res, {
+              error: 'Daily limit of Free FIO Handles reached.',
+              errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
+              statusCode: HTTP_CODES.FORBIDDEN,
+            });
+          }
         }
       }
 
