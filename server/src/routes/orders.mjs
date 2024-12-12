@@ -1,6 +1,7 @@
 import { makeServiceRunner } from '../tools';
 
 import OrdersCreate from '../services/orders/Create';
+import OrderPreparedTx from '../services/orders/PreparedTx.mjs';
 import OrderProcessPayment from '../services/orders/ProcessPayment.mjs';
 import OrderUpdatePubKey from '../services/orders/UpdatePubKey.mjs';
 import OrdersList from '../services/orders/List';
@@ -12,6 +13,7 @@ export default {
   list: makeServiceRunner(OrdersList, req => req.query),
   create: makeServiceRunner(OrdersCreate, req => req.body),
   updatePubKey: makeServiceRunner(OrderUpdatePubKey, req => req.body),
+  preparedTx: makeServiceRunner(OrderPreparedTx, req => req.body),
   processPayment: makeServiceRunner(OrderProcessPayment, req => req.body),
   getActive: makeServiceRunner(OrdersActive),
   get: makeServiceRunner(OrdersGet, req => req.params),

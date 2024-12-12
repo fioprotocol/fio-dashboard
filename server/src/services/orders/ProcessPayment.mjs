@@ -14,37 +14,30 @@ export default class OrderProcessPayment extends Base {
       data: [
         {
           nested_object: {
-            results: [
-              {
-                nested_object: {
-                  registered: [
-                    {
-                      list_of_objects: {
-                        fioName: 'string',
-                        action: 'string',
-                        data: [
-                          {
-                            nested_object: {
-                              signedTx: [
-                                {
-                                  nested_object: {
-                                    compression: 'integer',
-                                    packed_context_free_data: 'string',
-                                    packed_trx: 'string',
-                                    signatures: { list_of: 'string' },
-                                  },
-                                },
-                              ],
-                              signingWalletPubKey: 'string',
-                            },
+            orderId: 'string',
+            results: {
+              list_of_objects: {
+                fioName: 'string',
+                action: 'string',
+                data: [
+                  {
+                    nested_object: {
+                      signedTx: [
+                        {
+                          nested_object: {
+                            compression: 'integer',
+                            packed_context_free_data: 'string',
+                            packed_trx: 'string',
+                            signatures: { list_of: 'string' },
                           },
-                        ],
-                      },
+                        },
+                      ],
+                      signingWalletPubKey: 'string',
                     },
-                  ],
-                },
+                  },
+                ],
               },
-            ],
+            },
           },
         },
       ],
@@ -52,23 +45,35 @@ export default class OrderProcessPayment extends Base {
   }
 
   async execute({ data }) {
-    const order = await Order.getActive({
+    let order = await Order.getActive({
       userId: this.context.id,
       guestId: this.context.guestId,
     });
 
     if (!order) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
-          code: 'NOT_FOUND',
-        },
+      // Check if payment received
+      order = await Order.getPaidById({
+        id: data.orderId,
+        userId: this.context.id,
+        guestId: this.context.guestId,
       });
+
+      if (!order)
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {
+            code: 'NOT_FOUND',
+          },
+        });
+
+      return {
+        data: { success: true },
+      };
     }
 
-    if (data.results && data.results.registered) {
+    if (data.results) {
       const processedOrderItems = [];
-      for (const regItem of data.results.registered) {
+      for (const regItem of data.results) {
         const { fioName, action: itemAction, data: itemData } = regItem;
 
         const orderItem = order.OrderItems.find(

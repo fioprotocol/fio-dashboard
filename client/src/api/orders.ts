@@ -7,7 +7,8 @@ import {
   UserOrdersListResponse,
 } from './responses';
 import { CreateOrderActionData } from '../redux/types';
-import { RegistrationResult } from '../types';
+import { RegistrationRegistered } from '../types';
+import { SignedTxArgs } from './fio';
 
 export default class Orders extends Base {
   create(data: CreateOrderActionData): Promise<OrdersCreateResponse> {
@@ -22,9 +23,22 @@ export default class Orders extends Base {
     return this.apiClient.get('orders', data);
   }
   processPayment(data: {
-    results: RegistrationResult;
+    orderId?: number;
+    results: RegistrationRegistered[];
   }): Promise<OrdersUpdateResponse> {
     return this.apiClient.post(`orders/process-payment`, { data });
+  }
+  preparedTx(
+    data: {
+      fioName: string;
+      action: string;
+      data: {
+        signedTx?: SignedTxArgs;
+        signingWalletPubKey?: string;
+      };
+    }[],
+  ): Promise<OrdersUpdateResponse> {
+    return this.apiClient.post(`orders/prepared-tx`, { data });
   }
   updatePubKey(publicKey: string): Promise<OrdersCreateResponse> {
     return this.apiClient.post(`orders/update/public-key`, {

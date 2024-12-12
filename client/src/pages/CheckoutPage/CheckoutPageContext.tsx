@@ -48,6 +48,7 @@ import {
   totalCost,
   cartIsRelative,
   groupCartItemsByPaymentWallet,
+  actionFromCartItem,
 } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
@@ -643,11 +644,17 @@ export const useContext = (): {
   }, [order, history]);
 
   const onFinish = async (results: RegistrationResult) => {
-    await apis.orders.processPayment({
-      results,
-    });
+    try {
+      await apis.orders.processPayment({
+        orderId: order.id,
+        results: results.registered,
+      });
+    } catch (err) {
+      return dispatch(showGenericErrorModal());
+    } finally {
+      dispatch(setProcessing(false));
+    }
 
-    dispatch(setProcessing(false));
     history.push(
       {
         pathname: ROUTES.PURCHASE,
@@ -732,8 +739,29 @@ export const useContext = (): {
           .toNumber(),
         submitData: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
-          handleSubmit(data);
-          dispatchSetProcessing(false);
+          apis.orders
+            .preparedTx(
+              cartItems.map(
+                ({ address, domain, type, domainType }: CartItem) => ({
+                  action: actionFromCartItem(
+                    type,
+                    (paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                      paymentWallet?.from === WALLET_CREATED_FROM.METAMASK) &&
+                      domainType === DOMAIN_TYPE.CUSTOM,
+                  ),
+                  fioName: setFioName(address, domain),
+                  data: data?.[setFioName(address, domain)],
+                }),
+              ),
+            )
+            .then(() => {
+              handleSubmit(data);
+              dispatchSetProcessing(false);
+            })
+            .catch(() => {
+              setBeforeSubmitProps(null);
+              dispatchSetProcessing(false);
+            });
         },
         onCancel: () => setBeforeSubmitProps(null),
       });
