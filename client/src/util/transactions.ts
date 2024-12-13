@@ -237,6 +237,8 @@ export const checkTransactions = async (
       return [];
     }
 
+    if (!lastActionObject.actions) return [];
+
     if (lastActionObject.actions.length) {
       lastActionSeqNumber = lastActionObject.actions[0].account_action_seq;
     } else {

@@ -18,7 +18,6 @@ import AutoLogout from '../../services/AutoLogout';
 import Ref from '../../services/Ref';
 import Roe from '../../services/Roe';
 import PricesCartCheck from '../../services/PricesCartCheck';
-import TxHistoryService from '../../services/TxHistory';
 import ContainedFlow from '../../services/ContainedFlow';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { ContentContainer } from '../../components/ContentContainer';
@@ -172,7 +171,6 @@ const MainLayout: React.FC<Props> = props => {
           <Roe />
           <PricesCartCheck />
           <ContainedFlow />
-          {isAuthenticated && <TxHistoryService />}
           {isAuthenticated && isDesktop && <Navigation />}
           {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
             <Notifications />
