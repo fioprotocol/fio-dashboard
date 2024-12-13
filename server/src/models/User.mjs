@@ -128,6 +128,7 @@ export class User extends Base {
         'fioWallets',
         'newDeviceTwoFactor',
         'refProfile',
+        'refProfileId',
         'affiliateProfile',
         'createdAt',
         'timeZone',
