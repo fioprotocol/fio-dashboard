@@ -15,6 +15,7 @@ import { siteSetings as siteSetingsSelector } from '../../redux/settings/selecto
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
+import { useWalletTxHistory } from './useWalletTxHistory';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
@@ -115,6 +116,7 @@ export const useContext = (): UseContextProps => {
     fioWalletsBalances,
     userId,
   } = allFioNamesAndWallets;
+  useWalletTxHistory({ walletPublicKey: publicKey });
 
   const fioCryptoHandles = fioAddresses.filter(
     fioAddress => fioAddress.walletPublicKey === publicKey,
