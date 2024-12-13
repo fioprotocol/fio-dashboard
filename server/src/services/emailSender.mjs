@@ -327,8 +327,7 @@ class EmailSender {
         return {
           subject: `API daily limit reached for ${sendData.refProfileName}`,
           body: `
-<p>API daily limit of <b>${sendData.limit}</b> free FIO Handles has been reached for partner profile <b>${sendData.refProfileName}</b>, api key *<i>${sendData.lastApiToken}</i>.</p>
-<p>You will receive this email once every 24 hrs or until issue is resolved.</p>`,
+<p>API daily limit of <b>${sendData.limit}</b> free FIO Handles has been reached for partner profile <b>${sendData.refProfileName}</b>, api key *<i>${sendData.lastApiToken}</i>.</p>`,
           text: `API daily limit of ${sendData.limit} free FIO Handles has been reached for partner profile ${sendData.refProfileName}, api key *${sendData.lastApiToken}.`,
         };
     }
