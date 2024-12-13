@@ -44,19 +44,21 @@ module.exports = {
       for (const refProfile of refProfiles) {
         const { id, apiToken, apiHash } = refProfile;
 
-        apiTokens.push({
-          refProfileId: id,
-          token: apiToken,
-          access: true,
-          legacyHash: apiHash,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
+        if (apiToken || apiHash)
+          apiTokens.push({
+            refProfileId: id,
+            token: apiToken,
+            access: true,
+            legacyHash: apiHash,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
       }
 
-      await QI.bulkInsert('referrer-profile-api-tokens', apiTokens, {
-        transaction: t,
-      });
+      if (apiTokens.length)
+        await QI.bulkInsert('referrer-profile-api-tokens', apiTokens, {
+          transaction: t,
+        });
 
       await QI.removeColumn('referrer-profiles', 'apiToken', { transaction: t });
       await QI.removeColumn('referrer-profiles', 'apiHash', { transaction: t });
