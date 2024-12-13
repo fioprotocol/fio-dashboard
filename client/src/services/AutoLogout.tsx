@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 
@@ -15,14 +15,12 @@ import {
   logout,
 } from '../redux/profile/actions';
 import { setRedirectPath } from '../redux/navigation/actions';
-import { clearCart } from '../redux/cart/actions';
 import {
   isAuthenticated,
   tokenCheckResult,
   lastActivityDate,
   profileRefreshed,
 } from '../redux/profile/selectors';
-import { cartId } from '../redux/cart/selectors';
 import { redirectLink } from '../redux/navigation/selectors';
 
 import { compose } from '../utils';
@@ -31,7 +29,6 @@ import useEffectOnce from '../hooks/general';
 import { RedirectLinkData, Unknown } from '../types';
 
 type Props = {
-  cartId: string;
   tokenCheckResult: boolean;
   lastActivityDate: number;
   isAuthenticated: boolean;
@@ -84,7 +81,6 @@ const AutoLogout = (
     RouterProps & { history: { location: { query: Record<string, string> } } }, // todo: fixed in react router 6.9.1
 ): React.FunctionComponent | null => {
   const {
-    cartId,
     tokenCheckResult,
     lastActivityDate,
     isAuthenticated,
@@ -97,7 +93,6 @@ const AutoLogout = (
     setRedirectPath,
   } = props;
 
-  const dispatch = useDispatch();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const initLoad = useMemo(
@@ -203,18 +198,6 @@ const AutoLogout = (
     initLoad,
   );
 
-  // Empty cart when page loaded
-  useEffectOnce(() => {
-    if (!initLoad) {
-      const now = new Date();
-      const lastActivity = new Date(lastActivityDate);
-
-      if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-        cartId && dispatch(clearCart({ isNotify: true }));
-      }
-    }
-  }, [cartId, dispatch, initLoad, lastActivityDate]);
-
   useEffect(() => {
     if (tokenCheckResult === null) return;
     if (tokenCheckResult) {
@@ -238,7 +221,6 @@ const AutoLogout = (
 
 const reduxConnect = connect(
   createStructuredSelector({
-    cartId,
     isAuthenticated,
     lastActivityDate,
     tokenCheckResult,
@@ -249,7 +231,6 @@ const reduxConnect = connect(
     setLastActivity,
     checkAuthToken,
     logout,
-    clearCart,
     setRedirectPath,
   },
 );
