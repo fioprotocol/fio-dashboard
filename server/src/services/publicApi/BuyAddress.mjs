@@ -4,7 +4,6 @@ import Sequelize from 'sequelize';
 import Base from '../Base';
 import {
   Domain,
-  FreeAddress,
   Order,
   OrderItem,
   Payment,
@@ -192,11 +191,13 @@ export default class BuyAddress extends Base {
 
         if (refDomain) {
           isFreeRegistration =
-            (!refDomain.isPremium || refDomain.isFirstRegFree) &&
+            !refDomain.isPremium &&
             (await this.isFreeAddressNotExist({
               userId: user.id,
+              publicKey,
               fioDomain,
-              enableCompareByDomainName: refDomain && refDomain.isFirstRegFree,
+              refProfileId: refProfile.id,
+              enableCompareByDomainName: refDomain.isFirstRegFree,
             }));
         } else {
           const dashboardDomains = await Domain.getDashboardDomains();
@@ -207,7 +208,9 @@ export default class BuyAddress extends Base {
             !dashboardDomain.isPremium &&
             (await this.isFreeAddressNotExist({
               userId: user.id,
+              publicKey,
               fioDomain,
+              refProfileId: refProfile.id,
               enableCompareByDomainName:
                 dashboardDomain && dashboardDomain.isFirstRegFree,
             }));
@@ -369,21 +372,37 @@ export default class BuyAddress extends Base {
     return { order, orderItem, payment, charge };
   }
 
-  async isFreeAddressNotExist({ userId, fioDomain, enableCompareByDomainName }) {
-    const freeAddresses = await FreeAddress.findAll({
-      where: { userId },
+  async isFreeAddressNotExist({
+    userId,
+    publicKey,
+    fioDomain,
+    refProfileId,
+    enableCompareByDomainName,
+  }) {
+    const orders = await Order.findAll({
+      attributes: ['id'],
+      where: {
+        userId,
+        publicKey,
+        refProfileId,
+        status: {
+          [Sequelize.Op.in]: [
+            Order.STATUS.SUCCESS,
+            Order.STATUS.TRANSACTION_PENDING,
+            Order.STATUS.NEW,
+          ],
+        },
+        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+        total: '0',
+      },
+      include: [{ model: OrderItem, attributes: ['id', 'domain'] }],
     });
 
     const freeRegisteredAddressWithDomain = enableCompareByDomainName
-      ? freeAddresses.find(it => {
-          const { fioDomain: addressFioDomain } = destructAddress(it.name);
-          return addressFioDomain === fioDomain;
-        })
+      ? orders.find(order => order.OrderItems.find(({ domain }) => domain === fioDomain))
       : null;
 
-    return enableCompareByDomainName
-      ? !freeRegisteredAddressWithDomain
-      : !freeAddresses.length;
+    return enableCompareByDomainName ? !freeRegisteredAddressWithDomain : !orders.length;
   }
 
   async isSameAccountRegistrationExist(publicKey, refProfile, address) {
