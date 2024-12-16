@@ -31,6 +31,9 @@ const updateTx = (
     txList[existingIndex].nativeAmount = newTx.nativeAmount;
     txList[existingIndex].networkFee = newTx.networkFee;
     txList[existingIndex].otherParams = newTx.otherParams;
+    if (!txList[existingIndex].timestamp) {
+      txList[existingIndex].timestamp = newTx.timestamp;
+    }
     return true;
   }
 
@@ -60,7 +63,10 @@ const processTransaction = (
   let editedExisting = false;
   const currencyCode = FIO_CHAIN_CODE;
   const ourReceiveAddresses = [];
-  if (new Date(action.timestamp) < new Date(lastTxActionTime)) {
+  if (
+    lastTxActionTime &&
+    new Date(action.timestamp) < new Date(lastTxActionTime)
+  ) {
     return { timestamp: action.timestamp, editedExisting };
   }
   if (
@@ -93,6 +99,9 @@ const processTransaction = (
     if (index > -1) {
       const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
+      if (!existingTrx.timestamp) {
+        transactions[index].timestamp = action.timestamp;
+      }
       if (+nativeAmount > 0) {
         return { timestamp: action.timestamp, editedExisting };
       }
@@ -146,6 +155,9 @@ const processTransaction = (
     if (index > -1) {
       const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
+      if (!existingTrx.timestamp) {
+        transactions[index].timestamp = action.timestamp;
+      }
       if (
         +existingTrx.nativeAmount > 0 &&
         otherParams?.feeActors?.includes(data?.to)
