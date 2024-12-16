@@ -48,7 +48,7 @@ export const useWalletTxHistory = (props: Props): React.FC | null => {
     const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
       walletPublicKey
     ] ?? {
-      lastTxActionTime: '',
+      lastTxActionTime: null,
       txs: [],
     };
     await checkTransactions(
