@@ -2,6 +2,11 @@ import { combineReducers } from 'redux';
 
 import * as actions from './actions';
 import * as cartActions from '../cart/actions';
+import {
+  GET_SITE_SETTINGS_REQUEST,
+  GET_SITE_SETTINGS_FAILURE,
+  GET_SITE_SETTINGS_SUCCESS,
+} from '../settings/actions';
 
 import { Prices } from '../../types';
 import { DomainsResponse } from '../../api/responses';
@@ -18,6 +23,7 @@ export default combineReducers({
       case actions.PRICES_REQUEST:
       case actions.DOMAINS_REQUEST:
       case actions.API_URLS_REQUEST:
+      case GET_SITE_SETTINGS_REQUEST:
         return [...state, action.type];
       case actions.PRICES_FAILURE:
       case actions.PRICES_SUCCESS:
@@ -25,6 +31,8 @@ export default combineReducers({
       case actions.DOMAINS_SUCCESS:
       case actions.API_URLS_SUCCESS:
       case actions.API_URLS_FAILURE:
+      case GET_SITE_SETTINGS_SUCCESS:
+      case GET_SITE_SETTINGS_FAILURE:
         return state.filter(
           type =>
             type !== action.type.replace(/_FAILURE|_SUCCESS/gi, '_REQUEST'),
