@@ -32,7 +32,6 @@ import { REACT_SNAP_AGENT } from '../../constants/twitter';
 
 import useEffectOnce from '../../hooks/general';
 import { getObjKeyByValue } from '../../utils';
-import apis from '../../api';
 
 type Props = {
   children: React.ReactNode | React.ReactNode[];
@@ -56,7 +55,6 @@ type Props = {
   init: () => void;
   showRecoveryModal: () => void;
   apiUrls: string[];
-  getApiUrls: () => void;
   isMaintenance?: boolean;
   isLoading?: boolean;
   getCart: () => void;
@@ -81,7 +79,6 @@ const MainLayout: React.FC<Props> = props => {
     edgeContextInit,
     isContainedFlow,
     apiUrls,
-    getApiUrls,
     isMaintenance,
     isLoading,
     getCart,
@@ -102,21 +99,12 @@ const MainLayout: React.FC<Props> = props => {
 
   useEffectOnce(
     () => {
-      edgeContextInit();
       getSiteSettings();
+      edgeContextInit();
       loadProfile({ shouldHandleUsersFreeCart: true });
-      getApiUrls();
     },
-    [edgeContextInit, loadProfile, getApiUrls],
+    [edgeContextInit, loadProfile],
     !refProfileLoading,
-  );
-
-  useEffectOnce(
-    () => {
-      apis.fio.setApiUrls(apiUrls);
-    },
-    [apiUrls],
-    apiUrls?.length !== 0,
   );
 
   useEffectOnce(
@@ -158,7 +146,7 @@ const MainLayout: React.FC<Props> = props => {
         <PageTitle link={LINKS[routeName]} />
       )}
 
-      {isLoading ? (
+      {isLoading || !apiUrls.length ? (
         <>
           <MainHeader isMaintenance />
           <ContentContainer>

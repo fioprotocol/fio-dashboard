@@ -45,7 +45,6 @@ import {
 import { convertFioPrices } from '../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
-import useEffectOnce from '../../hooks/general';
 import apis from '../../api';
 import { getZeroIndexPublicKey } from '../../util/snap';
 
@@ -370,8 +369,6 @@ export const useContext = (): UseContextProps => {
   const [previousAddressValue, setPreviousAddressValue] = useState<string>(
     null,
   );
-  const [isRawAbiLoading, toggleIsRawAbiLoading] = useState<boolean>(false);
-  const [hasRawAbiLoaded, setIsRawAbiLoaded] = useState<boolean>(false);
 
   const cartHasFreeItem = cartItems.some(
     cartItem =>
@@ -777,23 +774,14 @@ export const useContext = (): UseContextProps => {
     [dispatch, refCode, user?.userProfileType],
   );
 
-  const getFioRawAbis = useCallback(async () => {
-    toggleIsRawAbiLoading(true);
-
-    await apis.fio.getRawAbi();
-
-    setIsRawAbiLoaded(true);
-    toggleIsRawAbiLoading(false);
-  }, []);
-
   useEffect(() => {
     dispatch(getDomains({ refCode }));
   }, [refCode, dispatch]);
 
   useEffect(() => {
-    if (domainsLoading || !hasRawAbiLoaded) return;
+    if (domainsLoading) return;
     validateAddress(addressValue);
-  }, [addressValue, domainsLoading, hasRawAbiLoaded, validateAddress]);
+  }, [addressValue, domainsLoading, validateAddress]);
 
   useEffect(() => {
     for (const fioWallet of fioWallets) {
@@ -881,16 +869,12 @@ export const useContext = (): UseContextProps => {
     usersFreeAddresses,
   ]);
 
-  useEffectOnce(() => {
-    getFioRawAbis();
-  }, []);
-
   return {
     additionalItemsList,
     addressValue,
     error,
     infoMessage,
-    loading: loading || domainsLoading || isRawAbiLoading,
+    loading: loading || domainsLoading,
     suggestedItemsList,
     usersItemsList,
     setAddressValue,
