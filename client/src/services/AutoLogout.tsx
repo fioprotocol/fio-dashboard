@@ -36,7 +36,7 @@ type Props = {
   redirectLink: RedirectLinkData;
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
-  logout: (routerProps: RouterProps) => void;
+  logout: (routerProps: RouterProps & { auto?: boolean }) => void;
   setRedirectPath: (route: RedirectLinkData) => void;
 };
 const TIMEOUT = 5000; // 5 sec
@@ -118,7 +118,7 @@ const AutoLogout = (
   activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath(redirectParams);
-    logout({ history });
+    logout({ history, auto: true });
     clearChecksTimeout();
   }, [history, redirectParams, logout, setRedirectPath]);
 
@@ -191,7 +191,7 @@ const AutoLogout = (
       const now = new Date();
       const lastActivity = new Date(lastActivityDate);
       if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-        logout({ history });
+        logout({ history, auto: true });
       }
     },
     [lastActivityDate, history, logout],

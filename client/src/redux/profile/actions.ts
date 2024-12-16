@@ -188,13 +188,16 @@ export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
 export const logout = ({
   redirect = '',
+  auto = false,
 }: {
   history?: History;
   redirect?: string;
+  auto?: boolean;
 } = {}): CommonPromiseAction => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: (api: Api) => api.auth.logout(),
   redirect,
+  auto,
 });
 
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;
