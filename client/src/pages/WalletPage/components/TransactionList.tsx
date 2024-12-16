@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import TransactionItem from './TransactionItem';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
+import Loader from '../../../components/Loader/Loader';
 
 import {
   FioWalletDoublet,
@@ -21,7 +22,9 @@ const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 const MARGIN_BETWEEN_ITEMS = 10;
 
 const TransactionList: React.FC<Props> = props => {
-  const { walletTxHistory = { lastTxActionTime: '', txs: [] } } = props;
+  const { walletTxHistory } = props;
+  const { lastTxActionTime = null } = walletTxHistory || {};
+
   const transactionList: TransactionItemProps[] = walletTxHistory
     ? walletTxHistory.txs
     : [];
@@ -35,6 +38,14 @@ const TransactionList: React.FC<Props> = props => {
   useEffect(() => {
     setHeight(elementRef?.current?.clientHeight || 0);
   }, []);
+
+  // when no history fetched yet
+  if (lastTxActionTime === null)
+    return (
+      <div className={classes.loader}>
+        <Loader />
+      </div>
+    );
 
   if (!transactionList || !transactionList.length)
     return (

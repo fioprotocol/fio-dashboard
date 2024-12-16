@@ -214,7 +214,7 @@ export const checkTransactions = async (
     ? [...currentHistory.txs]
     : [];
 
-  const lastTxActionTime = currentHistory.lastTxActionTime || '';
+  const lastTxActionTime = currentHistory.lastTxActionTime;
 
   let lastActionTime = '';
   const actor = apis.fio.publicFioSDK.transactions.getActor(publicKey);
@@ -241,14 +241,11 @@ export const checkTransactions = async (
       // no more history nodes left
       return [];
     }
-
-    if (!lastActionObject.actions) return [];
-
     if (lastActionObject.actions.length) {
       lastActionTime = lastActionObject.actions[0].timestamp;
     } else {
       // if no transactions at all
-      if (!lastTxActionTime) return [];
+      if (lastTxActionTime === '') return [];
       updateHistory(
         {
           lastTxActionTime: '',

@@ -550,7 +550,7 @@ export type FioWalletData = {
 };
 
 export type FioWalletTxHistory = {
-  lastTxActionTime: string;
+  lastTxActionTime: string | null;
   txs: TransactionItemProps[];
 };
 
