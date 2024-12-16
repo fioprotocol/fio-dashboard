@@ -488,6 +488,7 @@ export type TransactionItemProps = {
   nativeAmount: string;
   networkFee: string;
   date: number;
+  timestamp: string;
   blockHeight: number;
   otherParams: {
     isTransferProcessed?: boolean;
@@ -544,7 +545,7 @@ export type FioWalletData = {
 };
 
 export type FioWalletTxHistory = {
-  highestTxHeight: number;
+  lastTxActionTime: string;
   txs: TransactionItemProps[];
 };
 
@@ -599,35 +600,6 @@ export type DetailedProxy = {
   fioAddress: string;
   producers: string[];
   checked?: boolean;
-};
-
-export type FioHistoryNodeAction = {
-  account_action_seq: number;
-  block_num: number;
-  block_time: string;
-  action_trace: {
-    receiver: string;
-    act: {
-      account: string;
-      name: string;
-      data: {
-        payee_public_key?: string;
-        amount?: number;
-        max_fee?: number;
-        actor?: string;
-        tpid?: string;
-        quantity?: string;
-        memo?: string;
-        to?: string;
-        from?: string;
-      };
-      hex_data: string;
-    };
-    trx_id: string;
-    block_num: number;
-    block_time: string;
-    producer_block_id: string;
-  };
 };
 
 export type FioApiError = Error & { json?: { message?: string } };

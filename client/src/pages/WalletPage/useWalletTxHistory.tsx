@@ -8,6 +8,8 @@ import { user as userSelector } from '../../redux/profile/selectors';
 
 import useInterval from '../../util/hooks';
 import { checkTransactions } from '../../util/transactions';
+import useEffectOnce from '../../hooks/general';
+import { log } from '../../util/general';
 
 import { FioWalletTxHistory } from '../../types';
 
@@ -38,12 +40,15 @@ export const useWalletTxHistory = (props: Props): React.FC | null => {
   );
 
   const fetchWalletTxHistory = useCallback(async () => {
-    if (isLoading) return;
+    if (isLoading) {
+      log.info('Still fetching wallet transactions.');
+      return;
+    }
     setIsLoading(true);
     const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
       walletPublicKey
     ] ?? {
-      highestTxHeight: -1,
+      lastTxActionTime: '',
       txs: [],
     };
     await checkTransactions(
@@ -53,6 +58,10 @@ export const useWalletTxHistory = (props: Props): React.FC | null => {
     );
     setIsLoading(false);
   }, [isLoading, walletPublicKey, updateHistory, userFioWalletsTxHistory]);
+
+  useEffectOnce(() => {
+    fetchWalletTxHistory();
+  }, [fetchWalletTxHistory]);
 
   useInterval(() => {
     fetchWalletTxHistory();

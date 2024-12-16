@@ -86,3 +86,5 @@ export const LOW_BUNDLES_TEXT = {
   messageText:
     'Unfortunately there are not enough bundled transactions available to complete this transaction. Please add more to your FIO Handle now.',
 };
+
+export const RATE_LIMIT_TYPE_ERROR = 'RATE_LIMIT';

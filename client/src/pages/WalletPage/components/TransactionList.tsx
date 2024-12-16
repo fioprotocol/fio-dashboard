@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import TransactionItem from './TransactionItem';
-import Loader from '../../../components/Loader/Loader';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
 
 import {
@@ -22,7 +21,7 @@ const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 const MARGIN_BETWEEN_ITEMS = 10;
 
 const TransactionList: React.FC<Props> = props => {
-  const { walletTxHistory = { highestTxHeight: -1, txs: [] } } = props;
+  const { walletTxHistory = { lastTxActionTime: '', txs: [] } } = props;
   const transactionList: TransactionItemProps[] = walletTxHistory
     ? walletTxHistory.txs
     : [];
@@ -36,18 +35,6 @@ const TransactionList: React.FC<Props> = props => {
   useEffect(() => {
     setHeight(elementRef?.current?.clientHeight || 0);
   }, []);
-
-  // when no history fetched yet
-  if (
-    walletTxHistory &&
-    (typeof walletTxHistory.highestTxHeight === 'undefined' ||
-      walletTxHistory.highestTxHeight < 0)
-  )
-    return (
-      <div className={classes.loader}>
-        <Loader />
-      </div>
-    );
 
   if (!transactionList || !transactionList.length)
     return (
