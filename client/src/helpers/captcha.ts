@@ -1,6 +1,8 @@
 import { FioRegCaptchaResponse } from '../api/responses';
 import { log } from '../util/general';
 
+import { VerifyParams } from '../types';
+
 // @ts-ignore
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 type GeetestInitOptions = {
@@ -11,12 +13,6 @@ type GeetestInitOptions = {
   lang: string;
   product: string;
   width: string;
-};
-
-type VerifyParams = {
-  geetest_challenge: string;
-  geetest_validate: string;
-  geetest_seccode: string;
 };
 
 type CaptchaObj = {

@@ -7,7 +7,7 @@ import {
   UserOrdersListResponse,
 } from './responses';
 import { CreateOrderActionData } from '../redux/types';
-import { RegistrationRegistered } from '../types';
+import { RegistrationRegistered, VerifyParams } from '../types';
 import { SignedTxArgs } from './fio';
 
 export default class Orders extends Base {
@@ -25,6 +25,7 @@ export default class Orders extends Base {
   processPayment(data: {
     orderId?: number;
     results: RegistrationRegistered[];
+    captcha?: VerifyParams;
   }): Promise<OrdersUpdateResponse> {
     return this.apiClient.post(`orders/process-payment`, { data });
   }

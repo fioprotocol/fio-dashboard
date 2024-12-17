@@ -152,6 +152,12 @@ export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCH
 export type PaymentStatus = typeof PAYMENT_RESULTS_STATUS[keyof typeof PAYMENT_RESULTS_STATUS];
 export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
 
+export type VerifyParams = {
+  geetest_challenge: string;
+  geetest_validate: string;
+  geetest_seccode: string;
+};
+
 export type RegistrationResult = {
   errors: RegistrationErrors[];
   registered: RegistrationRegistered[];
@@ -164,6 +170,7 @@ export type RegistrationResult = {
   convertedPaymentCurrency?: PaymentCurrency;
   convertedPaymentAmount?: string;
   providerTxStatus?: PurchaseTxStatus;
+  captcha?: VerifyParams;
 };
 
 export type DeleteCartItem = {
