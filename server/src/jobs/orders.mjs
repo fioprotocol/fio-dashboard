@@ -1027,6 +1027,7 @@ class OrdersJob extends CommonJob {
         // Check if fee/roe changed and handle changes
         if (!useDomainOwnerAuthParams) await this.checkPriceChanges(orderItem, roe);
 
+        let partnerDomainOwner = false;
         if (
           data &&
           data.publicKey &&
@@ -1056,9 +1057,15 @@ class OrdersJob extends CommonJob {
             });
             return this.updateOrderStatus(orderId);
           }
+
+          partnerDomainOwner = true;
         }
 
-        if (orderItem.processor === Payment.PROCESSOR.FIO && !hasSignedTx) {
+        if (
+          orderItem.processor === Payment.PROCESSOR.FIO &&
+          !hasSignedTx &&
+          !partnerDomainOwner
+        ) {
           logger.error(NO_REQUIRED_SIGNED_TX);
 
           await this.handleFail(orderItem, NO_REQUIRED_SIGNED_TX, {
@@ -1081,12 +1088,7 @@ class OrdersJob extends CommonJob {
             );
             await OrderItem.setPending(result, id, blockchainTransactionId);
 
-            if (
-              data &&
-              data.publicKey &&
-              domainOwner &&
-              [METAMASK_DOMAIN_NAME].includes(domain)
-            ) {
+            if (partnerDomainOwner) {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
                 publicKey: data.publicKey,
