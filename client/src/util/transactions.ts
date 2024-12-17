@@ -291,7 +291,7 @@ export const checkTransactions = async (
 
     try {
       const actionsObject = await apis.fioHistory.getHistoryV2Actions({
-        params: { account: actor, limit: WALLET_HISTORY_NODE_LIMIT, before },
+        params: { ...actionParams, before },
         nodeIndex: historyNodeIndex,
       });
 
