@@ -648,6 +648,7 @@ export const useContext = (): {
       await apis.orders.processPayment({
         orderId: order.id,
         results: results.registered,
+        captcha: results.captcha,
       });
     } catch (err) {
       return dispatch(showGenericErrorModal());

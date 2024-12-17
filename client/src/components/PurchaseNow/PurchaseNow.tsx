@@ -62,11 +62,11 @@ import {
   PurchaseNowTypes,
   GroupedPurchaseValues,
 } from './types';
-import { AnyType, RegistrationResult } from '../../types';
+import { AnyType, RegistrationResult, VerifyParams } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
 
-type CaptchaResult = { success: boolean; verifyParams: {} };
+type CaptchaResult = { success: boolean; verifyParams: VerifyParams };
 
 export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const { onFinish, disabled = false } = props;
@@ -149,22 +149,29 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     [onFinish, waitFn],
   );
 
-  const execRegistration = useCallback(() => {
-    setProcessingDispatched(true);
-    onProcessingEnd({
-      errors: [],
-      registered: [],
-      partial: [],
-      paymentProvider: PAYMENT_PROVIDER.FIO,
-      providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
-    });
-  }, [setProcessingDispatched, onProcessingEnd]);
+  const execRegistration = useCallback(
+    captchaVerifyParams => {
+      setProcessingDispatched(true);
+      onProcessingEnd({
+        errors: [],
+        registered: [],
+        partial: [],
+        paymentProvider: PAYMENT_PROVIDER.FIO,
+        providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
+        captcha: captchaVerifyParams,
+      });
+    },
+    [setProcessingDispatched, onProcessingEnd],
+  );
 
   useEffect(() => {
     if (captchaResult) {
-      const { success } = captchaResult;
+      const { success, verifyParams } = captchaResult;
 
-      if (success && isWaiting) execRegistration();
+      if (success && isWaiting) {
+        execRegistration(verifyParams);
+        setCaptchaResult(null);
+      }
 
       if (success === false) {
         setProcessingDispatched(false);

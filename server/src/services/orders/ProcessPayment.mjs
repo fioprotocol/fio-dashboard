@@ -7,6 +7,7 @@ import X from '../Exception.mjs';
 
 import logger from '../../logger.mjs';
 import { prepareOrderWithFioPaymentForExecution } from '../../utils/payment.mjs';
+import { validate } from '../../external/captcha.mjs';
 
 export default class OrderProcessPayment extends Base {
   static get validationRules() {
@@ -36,6 +37,13 @@ export default class OrderProcessPayment extends Base {
                     },
                   },
                 ],
+              },
+            },
+            captcha: {
+              nested_object: {
+                geetest_challenge: 'string',
+                geetest_validate: 'string',
+                geetest_seccode: 'string',
               },
             },
           },
@@ -93,6 +101,26 @@ export default class OrderProcessPayment extends Base {
       }
 
       if (order.Payments[0].processor === Payment.PROCESSOR.FIO) {
+        if (order.total === '0' && order.OrderItems.every(({ price }) => price === '0')) {
+          if (!data.captcha) {
+            throw new X({
+              code: 'NOT_FOUND',
+              fields: {
+                code: 'NOT_FOUND',
+              },
+            });
+          }
+
+          if (!(await validate(data.captcha))) {
+            throw new X({
+              code: 'NOT_FOUND',
+              fields: {
+                code: 'NOT_FOUND',
+              },
+            });
+          }
+        }
+
         try {
           await prepareOrderWithFioPaymentForExecution({
             paymentId: order.Payments[0].id,
@@ -113,7 +141,7 @@ export default class OrderProcessPayment extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['data.captcha'];
   }
 
   static get resultSecret() {

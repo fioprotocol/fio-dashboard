@@ -36,7 +36,7 @@ export const validate = async params => {
         if (err) {
           return reject(err);
         } else if (!success) {
-          return reject(false);
+          return resolve(false);
         } else {
           return resolve(true);
         }
