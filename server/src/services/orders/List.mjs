@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 import Base from '../Base';
 import X from '../Exception';
 
-import { Order } from '../../models';
+import { Order, User } from '../../models';
 import { DEFAULT_LIMIT, MAX_LIMIT } from '../../constants/general.mjs';
 
 export default class OrdersList extends Base {
@@ -53,6 +53,18 @@ export default class OrdersList extends Base {
     const totalOrdersCount = await Order.ordersCount({
       col: userId ? 'userId' : 'publicKey',
       where: ordersCountWhere,
+      include: [
+        {
+          model: User,
+          where: {
+            userProfileType:
+              !userId && publicKey
+                ? User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION
+                : { [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION },
+          },
+          required: true,
+        },
+      ],
     });
 
     const orders = [];

@@ -38,7 +38,10 @@ export async function runService(service, { context = {}, params = {}, res }) {
       res,
     }).run(params);
 
-    if (service.resultSecret[0] !== '*') {
+    const shouldSkipLog =
+      service.skipLog(result, params) || service.resultSecret[0] === '*';
+
+    if (!shouldSkipLog) {
       const cleanResult = cleanup(result, service.resultSecret, service.resultCleanup);
 
       logRequest({

@@ -3,12 +3,15 @@ import Sequelize from 'sequelize';
 import logger from '../../logger';
 import Base from '../Base';
 import X from '../Exception';
-import { Var } from '../../models';
+import { FioApiUrl, Var } from '../../models';
 
 import { VARS_KEYS } from '../../config/constants';
+import { ABIS_VAR_KEY } from '../../external/fio.mjs';
+import { FIO_API_URLS_TYPES } from '../../constants/fio.mjs';
 
 export default class GetSiteSettings extends Base {
   async execute() {
+    let formattedData = {};
     try {
       const varsData = await Var.findAll({
         where: {
@@ -16,12 +19,13 @@ export default class GetSiteSettings extends Base {
             [Sequelize.Op.in]: [
               VARS_KEYS.VOTE_FIO_HANDLE,
               VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE,
+              ABIS_VAR_KEY,
             ],
           },
         },
       });
 
-      const formattedData = varsData.reduce((acc, varData) => {
+      formattedData = varsData.reduce((acc, varData) => {
         const key = varData.key;
 
         if (!acc[key]) {
@@ -30,8 +34,6 @@ export default class GetSiteSettings extends Base {
 
         return acc;
       }, {});
-
-      return { data: formattedData };
     } catch (error) {
       logger.error(`Get site settings: ${error}`);
       throw new X({
@@ -41,6 +43,18 @@ export default class GetSiteSettings extends Base {
         },
       });
     }
+
+    try {
+      const apiUrls = await FioApiUrl.getApiUrls({
+        type: FIO_API_URLS_TYPES.DASHBOARD_API,
+      });
+
+      formattedData[FIO_API_URLS_TYPES.DASHBOARD_API] = apiUrls;
+    } catch (error) {
+      logger.error(`Get apiUrls ${FIO_API_URLS_TYPES.DASHBOARD_API}: ${error}`);
+    }
+
+    return { data: formattedData };
   }
 
   static get paramsSecret() {

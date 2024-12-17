@@ -1,0 +1,1 @@
+export const RATE_LIMIT_TYPE_ERROR = 'RATE_LIMIT';

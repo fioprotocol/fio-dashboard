@@ -1,11 +1,18 @@
 import { ChangeEvent } from 'react';
 
-import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
+import {
+  DEFAULT_TEXT_TRUNCATE_LENGTH,
+  MINUTE_MS,
+  SECOND_MS,
+} from '../constants/common';
 import { AMERICA_NEW_YORK_TIMEZONE } from '../constants/time';
 
 import config from '../config';
 
 import { AnyObject } from '../types';
+import { RESPONSE_STATUSES } from '../constants/statuses';
+import { RATE_LIMIT_TYPE_ERROR } from '../constants/errors';
+import { sleep } from '../utils';
 
 export const log = {
   error: (e: Error | string, ...rest: Array<Error | string>): void => {
@@ -385,3 +392,95 @@ export const voteFormatDate = (date: Date) =>
       hour12: true,
     })
     .replace('at', '@');
+
+export const convertObjToString = (
+  params: AnyObject,
+): Record<string, string> => {
+  const stringParams: Record<string, string> = {};
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) {
+      stringParams[key] = String(value);
+    }
+  });
+
+  return stringParams;
+};
+
+export const fetchWithRateLimit = async ({
+  url,
+  options = {},
+  backupUrl = null,
+  maxRetries = 1,
+}: {
+  url: string;
+  options?: AnyObject;
+  backupUrl?: string | null;
+  maxRetries?: number;
+}): Promise<AnyObject> => {
+  let retries = 0;
+
+  const makeRequest = async ({
+    targetUrl,
+    isBackupRetry,
+  }: {
+    targetUrl: string;
+    isBackupRetry?: boolean;
+  }): Promise<AnyObject> => {
+    try {
+      const response = await fetch(targetUrl, options);
+
+      if (response.ok) return response;
+
+      if (response.status === RESPONSE_STATUSES.TOO_MANY_REQUESTS) {
+        if (retries > maxRetries) {
+          throw new Error(
+            `${RATE_LIMIT_TYPE_ERROR}: Max retries (${maxRetries}) reached`,
+          );
+        }
+
+        retries++;
+        const backoffDelay =
+          retries === maxRetries
+            ? MINUTE_MS
+            : SECOND_MS * Math.pow(2, retries - 1); // Exponential backoff
+
+        log.info(
+          `RATE LIMIT FOR URL: ${targetUrl} ${
+            options ? `OPTIONS: ${JSON.stringify(options)}` : ''
+          }`,
+        );
+        log.info(`RETRY count: ${retries}, waiting ${backoffDelay}ms`);
+
+        await sleep(backoffDelay);
+        return makeRequest({ targetUrl });
+      }
+
+      const responseJSON = response ? await response.json() : null;
+
+      throw new Error(
+        `HTTP error! status: ${response.status}, response: ${
+          responseJSON ? JSON.stringify(responseJSON, null, 4) : 'N/A'
+        }`,
+      );
+    } catch (error) {
+      if (!isBackupRetry && backupUrl) {
+        log.error(error, 'Fetch server failed');
+
+        retries = 0; // Reset retries count for backup url
+        log.info(`RUNING backup server: ${backupUrl}`);
+
+        return makeRequest({ targetUrl: backupUrl, isBackupRetry: true });
+      }
+
+      throw error;
+    }
+  };
+
+  try {
+    return await makeRequest({ targetUrl: url });
+  } catch (error) {
+    log.error(error, 'Fetch with rate limit failed');
+    throw error;
+  }
+};

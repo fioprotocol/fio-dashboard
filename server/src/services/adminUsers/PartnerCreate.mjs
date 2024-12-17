@@ -1,7 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { ReferrerProfile } from '../../models';
+import { ReferrerProfile, ReferrerProfileApiToken } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 import { checkApiToken } from '../../utils/crypto.mjs';
 
@@ -16,8 +16,6 @@ export default class PartnerCreate extends Base {
       label: ['required', 'string'],
       code: ['required', 'string', 'trim', 'to_lc'],
       tpid: ['string'],
-      apiToken: ['string'],
-      apiAccess: ['boolean'],
       settings: [
         'required',
         {
@@ -78,6 +76,17 @@ export default class PartnerCreate extends Base {
           },
         },
       ],
+      apiAccess: 'boolean',
+      apiTokens: {
+        list_of_objects: [
+          {
+            token: ['required', 'string'],
+            access: 'boolean',
+            legacyHash: 'string',
+            dailyFreeLimit: 'integer',
+          },
+        ],
+      },
       title: ['string'],
       subTitle: ['string'],
       freeFioAccountProfileId: ['string'],
@@ -101,20 +110,31 @@ export default class PartnerCreate extends Base {
       });
     }
 
-    if (data.apiToken && !checkApiToken(data.apiToken)) {
-      throw new X({
-        code: 'CREATION_FAILED',
-        fields: {
-          apiToken: 'This api token is incorrect!',
-        },
-      });
+    const { apiTokens = [], ...rest } = data;
+    for (const apiTokenProfile of apiTokens) {
+      if (!checkApiToken(apiTokenProfile.token)) {
+        throw new X({
+          code: 'CREATION_FAILED',
+          fields: {
+            apiToken: 'This api token is incorrect!',
+          },
+        });
+      }
     }
 
     const createdPartner = new ReferrerProfile({
-      ...data,
+      ...rest,
       code: data.code.toLowerCase(),
     });
     await createdPartner.save();
+
+    for (const apiTokenProfile of apiTokens) {
+      const newApiTokenProfile = new ReferrerProfileApiToken({
+        ...apiTokenProfile,
+        refProfileId: createdPartner.id,
+      });
+      await newApiTokenProfile.save();
+    }
 
     return {
       data: { success: true },

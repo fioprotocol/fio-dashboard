@@ -29,6 +29,7 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
 };
 
 const USER_HAS_FREE_ADDRESS_MESSAGE = 'You have already registered a free FIO Handle';
+const NO_REQUIRED_SIGNED_TX_MESSAGE = 'There is no signed tx provided for order item';
 
 const FIO_ACTIONS_TO_END_POINT_MAP = {
   [GenericAction.requestFunds]: EndPoint.newFundsRequest,
@@ -136,6 +137,8 @@ const ADMIN_STATUS_IDS = {
   NEW_EMAIL_NOT_VERIFIED: 4,
 };
 
+const SECOND_MS = 1000; // 1 sec
+const MINUTE_MS = 1000 * 60; // 1 min
 const HOUR_MS = 1000 * 60 * 60; // 1 hour
 const DAY_MS = HOUR_MS * 24; // 1 day
 
@@ -202,6 +205,7 @@ const ORDER_ERROR_TYPES = {
   default: 'default',
   freeAddressError: 'freeAddressError',
   userHasFreeAddress: 'userHasFreeAddress',
+  noSignedTxProvided: 'noSignedTxProvided',
 };
 
 const VARS_KEYS = {
@@ -210,6 +214,8 @@ const VARS_KEYS = {
   FORMS_OF_PAYMENT: 'FORMS_OF_PAYMENT',
   VOTE_FIO_HANDLE: 'VOTE_FIO_HANDLE',
   MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE: 'MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE',
+  FIO_HISTORY_LIMIT: 'FIO_HISTORY_LIMIT',
+  DEFAULT_MAX_RETRIES: 'DEFAULT_MAX_RETRIES',
 };
 
 const PASSWORDS = {
@@ -254,6 +260,8 @@ module.exports = {
   USER_STATUS,
   ADMIN_ROLES_IDS,
   ADMIN_STATUS_IDS,
+  SECOND_MS,
+  MINUTE_MS,
   HOUR_MS,
   DAY_MS,
   WRAP_STATUS_NETWORKS,
@@ -264,6 +272,7 @@ module.exports = {
   DEFAULT_BUNDLE_SET_VALUE,
   QUERY_PARAMS_NAMES,
   USER_HAS_FREE_ADDRESS_MESSAGE,
+  NO_REQUIRED_SIGNED_TX_MESSAGE,
   ORDER_ERROR_TYPES,
   VARS_KEYS,
   PASSWORDS,

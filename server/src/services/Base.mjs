@@ -36,6 +36,10 @@ export default class Base {
     return this.execute(cleanParams);
   }
 
+  static get skipLog() {
+    return () => false; // Default behavior - log everything
+  }
+
   async checkPermissions() {
     const role = this.context.role;
     const permissions = this.constructor.requiredPermissions;

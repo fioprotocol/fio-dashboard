@@ -17,7 +17,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import Ref from '../../services/Ref';
 import Roe from '../../services/Roe';
-import TxHistoryService from '../../services/TxHistory';
+import PricesCartCheck from '../../services/PricesCartCheck';
 import ContainedFlow from '../../services/ContainedFlow';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { ContentContainer } from '../../components/ContentContainer';
@@ -31,13 +31,12 @@ import { REACT_SNAP_AGENT } from '../../constants/twitter';
 
 import useEffectOnce from '../../hooks/general';
 import { getObjKeyByValue } from '../../utils';
-import apis from '../../api';
 
 type Props = {
-  cartId: string;
   children: React.ReactNode | React.ReactNode[];
   pathname: string;
   isAuthenticated: boolean;
+  profileRefreshed: boolean;
   isActiveUser: boolean;
   isNoProfileFlow: boolean;
   loginSuccess: boolean;
@@ -55,7 +54,6 @@ type Props = {
   init: () => void;
   showRecoveryModal: () => void;
   apiUrls: string[];
-  getApiUrls: () => void;
   isMaintenance?: boolean;
   isLoading?: boolean;
   getCart: () => void;
@@ -66,11 +64,11 @@ type Props = {
 
 const MainLayout: React.FC<Props> = props => {
   const {
-    cartId,
     pathname,
     children,
     edgeContextSet,
     isAuthenticated,
+    profileRefreshed,
     isActiveUser,
     isNoProfileFlow,
     refProfileLoading,
@@ -80,7 +78,6 @@ const MainLayout: React.FC<Props> = props => {
     edgeContextInit,
     isContainedFlow,
     apiUrls,
-    getApiUrls,
     isMaintenance,
     isLoading,
     getCart,
@@ -101,28 +98,27 @@ const MainLayout: React.FC<Props> = props => {
 
   useEffectOnce(
     () => {
-      edgeContextInit();
       getSiteSettings();
+      edgeContextInit();
       loadProfile({ shouldHandleUsersFreeCart: true });
-      getApiUrls();
     },
-    [edgeContextInit, loadProfile, getApiUrls],
+    [edgeContextInit, loadProfile],
     !refProfileLoading,
   );
 
   useEffectOnce(
     () => {
-      apis.fio.setApiUrls(apiUrls);
+      getCart();
     },
-    [apiUrls],
-    apiUrls?.length !== 0,
+    [getCart],
+    profileRefreshed && !isAuthenticated,
   );
 
-  useEffectOnce(() => {
-    if (cartId) {
+  useEffect(() => {
+    if (isAuthenticated) {
       getCart();
     }
-  }, [cartId]);
+  }, [isAuthenticated, getCart]);
 
   useEffectOnce(
     () => {
@@ -149,7 +145,7 @@ const MainLayout: React.FC<Props> = props => {
         <PageTitle link={LINKS[routeName]} />
       )}
 
-      {isLoading ? (
+      {isLoading || !apiUrls.length ? (
         <>
           <MainHeader isMaintenance />
           <ContentContainer>
@@ -173,8 +169,8 @@ const MainLayout: React.FC<Props> = props => {
           <AutoLogout />
           <Ref />
           <Roe />
+          <PricesCartCheck />
           <ContainedFlow />
-          {isAuthenticated && <TxHistoryService />}
           {isAuthenticated && isDesktop && <Navigation />}
           {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
             <Notifications />

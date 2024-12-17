@@ -5,11 +5,7 @@ import { Cart } from '../../models/Cart.mjs';
 
 import logger from '../../logger.mjs';
 
-import {
-  handlePriceForMultiYearItems,
-  convertFioPrices,
-  getCartOptions,
-} from '../../utils/cart.mjs';
+import { handlePriceForMultiYearItems, convertFioPrices } from '../../utils/cart.mjs';
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 
@@ -26,11 +22,7 @@ export default class UpdateItemPeriod extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
-      const where = {};
-      if (userId) where.userId = userId;
-      if (guestId) where.guestId = guestId;
-
-      const cart = await Cart.findOne({ where });
+      const cart = await Cart.getActive({ userId, guestId });
 
       const existingCartItem = cart.items.find(cartItem => cartItem.id === itemId);
 
@@ -43,7 +35,7 @@ export default class UpdateItemPeriod extends Base {
         });
       }
 
-      const { prices, roe } = await getCartOptions(cart);
+      const { prices, roe } = cart.options;
 
       const {
         addBundles: addBundlesPrice,

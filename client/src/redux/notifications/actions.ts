@@ -50,6 +50,7 @@ export const MANUAL_REMOVE = `${prefix}/MANUAL_REMOVE`;
 export const addManual = (data: {
   type: string;
   action: string;
+  contentTypeUnique?: boolean;
   contentType?: string;
   title?: string;
   message?: string;

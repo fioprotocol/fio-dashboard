@@ -38,7 +38,7 @@ export default class Renew extends Base {
     const refNotFoundRes = {
       error: 'Referral code not found',
       errorCode: PUB_API_ERROR_CODES.REF_NOT_FOUND,
-      statusCode: HTTP_CODES.NOT_FOUND,
+      statusCode: HTTP_CODES.BAD_REQUEST, // NOT_FOUND, fix server to send proper code
     };
 
     if (!referralCode) {
@@ -60,7 +60,7 @@ export default class Renew extends Base {
       return generateErrorResponse(this.res, {
         error: `Access by api deactivated`,
         errorCode: PUB_API_ERROR_CODES.REF_API_ACCESS_DEACTIVATED,
-        statusCode: HTTP_CODES.FORBIDDEN,
+        statusCode: HTTP_CODES.BAD_REQUEST, // FORBIDDEN, fix server to send proper code
       });
     }
 
@@ -71,7 +71,7 @@ export default class Renew extends Base {
     const addressCantBeRenewedRes = {
       error: `${type} not registered`,
       errorCode: PUB_API_ERROR_CODES.ADDRESS_CANT_BE_RENEWED,
-      statusCode: HTTP_CODES.NOT_FOUND,
+      statusCode: HTTP_CODES.BAD_REQUEST, // NOT_FOUND, fix server to send proper code
     };
 
     try {

@@ -28,6 +28,9 @@ export const TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS =
 
 export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 
+export const DEFAULT_HISTORY_ITEMS_LIMIT = 1000;
+export const WALLET_HISTORY_NODE_LIMIT = 20;
+
 export enum AdditionalAction {
   addNft = 'addNft',
   voteProducer = 'voteproducer',
@@ -125,7 +128,9 @@ const GENERIC_ACTIONS_ENDPOINTS = {
   [GenericAction.getAccountPubKey]: EndPoint.getAccountFioPublicKey,
 };
 
-export const getEndPointByGenericAction = (genericAction: GenericAction) => {
+export const getEndPointByGenericAction = (
+  genericAction: GenericAction,
+): EndPoint => {
   const endpoint =
     GENERIC_ACTIONS_ENDPOINTS[
       genericAction as keyof typeof GENERIC_ACTIONS_ENDPOINTS
@@ -180,7 +185,7 @@ const FIO_ACCOUNT_NAMES = {
 
 export const getAccountByDashboardAction = (
   dashboardAction: DashboardAction,
-) => {
+): Account => {
   const account =
     FIO_ACCOUNT_NAMES[dashboardAction as keyof typeof FIO_ACCOUNT_NAMES];
 
@@ -219,7 +224,7 @@ const FIO_ACTION_NAMES = {
 
 export const getActionByDashboardAction = (
   dashboardAction: DashboardAction,
-) => {
+): Action | 'voteproxy' => {
   const action =
     FIO_ACTION_NAMES[dashboardAction as keyof typeof FIO_ACTION_NAMES];
 

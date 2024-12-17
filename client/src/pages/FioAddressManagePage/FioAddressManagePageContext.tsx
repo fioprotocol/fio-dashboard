@@ -22,16 +22,13 @@ import {
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
-import apis from '../../api';
-
 import { DEFAULT_FEE_PRICES } from '../../util/prices';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { log } from '../../util/general';
-import { isDomainExpired } from '../../util/fio';
+import { checkIsDomainExpired } from '../../util/fio';
 
 import {
   CART_ITEM_TYPE,
@@ -156,27 +153,6 @@ export const useContext = (): UseContextProps => {
     dispatch(toggleExpiredDomainFchBadge(false));
   }, [dispatch, warningContent]);
 
-  const getDomainExpiration = useCallback(async (domainName: string) => {
-    try {
-      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
-
-      return expiration || null;
-    } catch (err) {
-      log.error(err);
-    }
-  }, []);
-
-  const checkIsDomainExpired = useCallback(
-    async (domainName: string) => {
-      if (!domainName) return null;
-
-      const expiration = await getDomainExpiration(domainName);
-
-      return expiration && isDomainExpired(domainName, expiration);
-    },
-    [getDomainExpiration],
-  );
-
   const hasExpiredDomain = useCallback(async () => {
     let hasExpiredDomain = false;
 
@@ -195,7 +171,7 @@ export const useContext = (): UseContextProps => {
     }
 
     return hasExpiredDomain;
-  }, [checkIsDomainExpired, fioAddresses]);
+  }, [fioAddresses]);
 
   const handleExpiredWarningContent = useCallback(async () => {
     const fioHandlesHasExpiredDomain = await hasExpiredDomain();

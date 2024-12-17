@@ -272,10 +272,10 @@ export function* profileSuccess(): Generator {
 }
 
 export function* logoutRequest(): Generator {
-  yield takeEvery(LOGOUT_REQUEST, function*() {
+  yield takeEvery(LOGOUT_REQUEST, function*(action: Action) {
     const cartId: string | null = yield select(cartIdSelector);
     if (cartId) {
-      yield put<Action>(clearCart());
+      yield put<Action>(clearCart({ isNotify: action.auto }));
     }
   });
 }

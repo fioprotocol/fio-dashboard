@@ -5,7 +5,8 @@ import superagent from 'superagent';
 import fetch from 'node-fetch';
 import { Account, FIOSDK, fioConstants, GenericAction } from '@fioprotocol/fiosdk';
 
-import { FioApiUrl, Var } from '../models';
+import { FioApiUrl } from '../models/FioApiUrl.mjs';
+import { Var } from '../models/Var.mjs';
 
 import {
   DAY_MS,
@@ -31,7 +32,7 @@ export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
 const DEFAULT_MAX_FEE_MULTIPLE_AMOUNT = 1.25;
 const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 
-const FIO_ACTION_NAMES = {
+export const FIO_ACTION_NAMES = {
   [GenericAction.registerFioAddress]: 'regaddress',
   [GenericAction.registerFioDomain]: 'regdomain',
   [GenericAction.registerFioDomainAddress]: 'regdomadd',
@@ -53,6 +54,22 @@ const FIO_ACCOUNT_NAMES = {
   [GenericAction.transferTokens]: 'fio.token',
 };
 
+const REQUIRED_PRICE_FIELDS_NAMES = {
+  ADDRESS: 'address',
+  DOMAIN: 'domain',
+  COMBO: 'combo',
+  ADD_BUNDLES: 'addBundles',
+  RENEW_DOMAIN: 'renewDomain',
+};
+
+const PRICE_ACTIONS = {
+  [REQUIRED_PRICE_FIELDS_NAMES.ADDRESS]: GenericAction.registerFioAddress,
+  [REQUIRED_PRICE_FIELDS_NAMES.DOMAIN]: GenericAction.registerFioDomain,
+  [REQUIRED_PRICE_FIELDS_NAMES.COMBO]: GenericAction.registerFioDomainAddress,
+  [REQUIRED_PRICE_FIELDS_NAMES.RENEW_DOMAIN]: GenericAction.renewFioDomain,
+  [REQUIRED_PRICE_FIELDS_NAMES.ADD_BUNDLES]: GenericAction.addBundledTransactions,
+};
+
 class Fio {
   async getPublicFioSDK() {
     if (!this.publicFioSDK) {
@@ -65,6 +82,13 @@ class Fio {
       });
     }
     return this.publicFioSDK;
+  }
+
+  getMasterPublicKey() {
+    const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
+      process.env.MASTER_FIOSDK_KEY,
+    );
+    return masterPubKey;
   }
 
   async getMasterFioSDK() {
@@ -241,19 +265,13 @@ class Fio {
   }
 
   async getFee(action) {
-    try {
-      const publicFioSDK = await this.getPublicFioSDK();
+    const publicFioSDK = await this.getPublicFioSDK();
 
-      const { fee } = await publicFioSDK.getFee({
-        endPoint: FIO_ACTIONS_TO_END_POINT_MAP[action],
-      });
+    const { fee } = await publicFioSDK.getFee({
+      endPoint: FIO_ACTIONS_TO_END_POINT_MAP[action],
+    });
 
-      return fee;
-    } catch (e) {
-      this.logError('Get fee error', e);
-    }
-
-    return null;
+    return fee;
   }
 
   async executeAction(action, params, auth = {}, keys = {}) {
@@ -336,14 +354,13 @@ class Fio {
     return { notes, code: tx.code, data: tx.data };
   }
 
-  async getPrices(forceRefresh = false) {
+  async getPrices(forceRefresh = false, onlyReturnActual = false) {
     let prices;
 
     const pricesVar = await Var.getByKey(PRICES_VAR_KEY);
     const dataBasePrices = pricesVar.value ? JSON.parse(pricesVar.value) : null;
 
-    if (!forceRefresh) {
-      const pricesVar = await Var.getByKey(PRICES_VAR_KEY);
+    if (!forceRefresh && !onlyReturnActual) {
       if (
         pricesVar &&
         !Var.updateRequired(pricesVar.updatedAt, FEES_UPDATE_TIMEOUT_SEC)
@@ -354,48 +371,90 @@ class Fio {
         } catch (e) {}
       }
     }
+
     try {
       if (
         !prices ||
-        !prices.renewDomain ||
-        !prices.addBundles ||
-        !prices.address ||
-        !prices.domain ||
-        !prices.combo
+        (prices &&
+          Object.values(REQUIRED_PRICE_FIELDS_NAMES).some(field => !prices[field]))
       ) {
-        const [
-          registrationAddressFee,
-          registrationDomainFee,
-          registerDomainAddress,
-          renewDomainFee,
-          addBundlesFee,
-        ] = await Promise.all([
-          this.getFee(GenericAction.registerFioAddress),
-          this.getFee(GenericAction.registerFioDomain),
-          this.getFee(GenericAction.registerFioDomainAddress),
-          this.getFee(GenericAction.renewFioDomain),
-          this.getFee(GenericAction.addBundledTransactions),
-        ]);
+        const priceResults = await Promise.allSettled(
+          Object.entries(PRICE_ACTIONS).map(async ([key, action]) =>
+            this.getFee(action)
+              .then(fee => ({ fee, key }))
+              .catch(error =>
+                Promise.reject({
+                  message: error.message || 'Unknown error',
+                  stack: error.stack,
+                  ...error,
+                  key,
+                }),
+              ),
+          ),
+        );
 
-        logger.info('GET PRICES FROM FIO SERVER:', {
-          registrationAddressFee,
-          registrationDomainFee,
-          registerDomainAddress,
-          renewDomainFee,
-          addBundlesFee,
-        });
+        logger.info(
+          `SUCCESS PRICES FROM FIO SERVER: ${priceResults
+            .filter(({ status }) => status === 'fulfilled')
+            .map(({ value }) => ` ${value.key}: ${value.fee}`)}`,
+        );
 
-        // TODO: make better handling for fallback
+        if (priceResults.some(({ status }) => status === 'rejected')) {
+          logger.info(
+            `FAILED PRICES FROM FIO SERVER ${priceResults
+              .filter(({ status }) => status === 'rejected')
+              .map(({ reason: { key, message } }) => ` ${key}: ${message}`)}`,
+          );
+        }
 
-        prices = {
-          address: registrationAddressFee || dataBasePrices.address,
-          domain: registrationDomainFee || dataBasePrices.domain,
-          combo: registerDomainAddress || dataBasePrices.combo,
-          renewDomain: renewDomainFee || dataBasePrices.renewDomain,
-          addBundles: addBundlesFee || dataBasePrices.addBundles,
-        };
+        const processedPricesResults = priceResults.map(
+          ({ status, value: { fee, key } = {}, reason: { key: reasonKey } = {} }) => {
+            if (status === 'fulfilled') {
+              if (fee)
+                return {
+                  fee,
+                  key,
+                };
 
-        await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
+              if (!fee && dataBasePrices && dataBasePrices[key]) {
+                logger.info(
+                  `FEE for ${key} is absent set fallback price to: ${dataBasePrices[key]}`,
+                );
+                return {
+                  fee: dataBasePrices[key],
+                  key,
+                };
+              }
+
+              throw new Error(
+                `Failed to get price for ${key} action and no fallback available.`,
+              );
+            }
+
+            if (status === 'rejected') {
+              if (dataBasePrices && dataBasePrices[reasonKey]) {
+                logger.info(
+                  `Get FEE for ${reasonKey} has an error set fallback price to: ${dataBasePrices[reasonKey]}`,
+                );
+                return {
+                  fee: dataBasePrices[reasonKey],
+                  key: reasonKey,
+                };
+              }
+
+              throw new Error(
+                `Failed to set fallback price for errored ${reasonKey} action.`,
+              );
+            }
+          },
+        );
+
+        prices = processedPricesResults.reduce(
+          (acc, { fee, key }) => ({ ...acc, [key]: fee }),
+          {},
+        );
+
+        if (!onlyReturnActual) await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
       }
     } catch (e) {
       logger.error('Get Prices Error: ', e);

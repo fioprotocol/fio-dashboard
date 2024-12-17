@@ -37,6 +37,7 @@ import {
   setFeesService,
 } from './fio/sagas';
 import { getRefProfileSuccess } from './refProfile/sagas';
+import { getSettingsSuccess } from './settings/sagas';
 
 import { Api } from '../api';
 
@@ -70,5 +71,6 @@ export default function* rootSaga(history: History, api: Api) {
     deleteItem(),
     updatePeriodItem(),
     onDomainRenew(history),
+    getSettingsSuccess(),
   ]);
 }

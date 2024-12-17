@@ -321,3 +321,21 @@ export const prepareChainTransaction = async (
     transaction,
   };
 };
+
+export const getDomainExpiration = async (domainName: string) => {
+  try {
+    const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
+
+    return expiration || null;
+  } catch (err) {
+    log.error(err);
+  }
+};
+
+export const checkIsDomainExpired = async (domainName: string) => {
+  if (!domainName) return null;
+
+  const expiration = await getDomainExpiration(domainName);
+
+  return expiration && isDomainExpired(domainName, expiration);
+};

@@ -27,6 +27,7 @@ export const {
   PaymentEventLog,
   PublicWalletData,
   ReferrerProfile,
+  ReferrerProfileApiToken,
   SearchTerm,
   TokenCode,
   User,

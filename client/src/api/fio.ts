@@ -1,5 +1,6 @@
 import {
   Account,
+  AbiResponse,
   Action,
   EndPoint,
   FioAddressesResponse,
@@ -77,6 +78,10 @@ type GetTableRawsParams = {
   json?: boolean;
   reverse?: boolean;
   limit?: number;
+};
+
+type DefaultAbiMap = {
+  [account_name: string]: { name: string; response: AbiResponse };
 };
 
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
@@ -893,16 +898,42 @@ export default class Fio {
     });
   };
 
-  getRawAbi = async (): Promise<void> => {
-    for (const accountName of Object.values(Account)) {
-      try {
-        if (!FIOSDK.abiMap.get(accountName)) {
-          const abiResponse = await this.publicFioSDK.getAbi({ accountName });
-          FIOSDK.abiMap.set(abiResponse.account_name, abiResponse);
+  getRawAbiAccount = async (
+    accountName: string,
+    defaultAbiMap: DefaultAbiMap = {},
+  ): Promise<void> => {
+    try {
+      if (!FIOSDK.abiMap.get(accountName)) {
+        if (defaultAbiMap[accountName]) {
+          try {
+            FIOSDK.abiMap.set(
+              defaultAbiMap[accountName].name,
+              defaultAbiMap[accountName].response,
+            );
+
+            return;
+          } catch (e) {
+            log.error('Raw Abi default set error:', e);
+          }
         }
-      } catch (e) {
-        log.error('Raw Abi Error:', e);
+
+        const abiResponse = await this.publicFioSDK.getAbi({
+          accountName,
+        });
+        FIOSDK.abiMap.set(abiResponse.account_name, abiResponse);
       }
+    } catch (e) {
+      log.error('Raw Abi Error:', e);
     }
+  };
+
+  getRawAbi = async (defaultAbiMap: DefaultAbiMap = {}): Promise<void> => {
+    await Promise.allSettled(
+      Object.values(Account).map(account =>
+        this.getRawAbiAccount(account, defaultAbiMap),
+      ),
+    );
+
+    return;
   };
 }

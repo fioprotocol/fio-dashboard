@@ -2,8 +2,6 @@ import MathOp from 'big.js';
 
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
-import { Cart } from '../models/Cart.mjs';
-
 import {
   CART_ITEM_TYPE,
   FIO_ADDRESS_DELIMITER,
@@ -14,7 +12,6 @@ import {
 import { fioApi } from '../external/fio.mjs';
 import { DOMAIN_TYPE } from '../constants/cart.mjs';
 import { CURRENCY_CODES } from '../constants/fio.mjs';
-import { getROE } from '../external/roe.mjs';
 
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
@@ -208,7 +205,7 @@ export const handleFreeCartAddItem = ({
     isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
   );
 
-  if (
+  const isFree =
     (existingDashboardDomain &&
       !existingDashboardDomain.isPremium &&
       (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
@@ -226,12 +223,9 @@ export const handleFreeCartAddItem = ({
       !cartHasFreeItemsOnDomains({
         cartItems,
         domains: [...domainsArr, ...firstRegFreeDomains],
-      }))
-  ) {
-    return { ...item, isFree: true };
-  }
+      }));
 
-  return { ...item, isFree: false };
+  return { ...item, isFree };
 };
 
 export const handleFreeCartDeleteItem = ({
@@ -470,43 +464,41 @@ export const cartItemsToOrderItems = async ({
     };
 
     switch (type) {
-      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN:
-        {
-          const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
-          const useComboAction = !hasCustomDomainInCart && supportCombo;
+      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
+        const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
+        const useComboAction = !hasCustomDomainInCart && supportCombo;
 
-          if (!supportCombo && !hasCustomDomainInCart) {
-            orderItems.push(domainOrderItem);
-          }
-
-          orderItem.action = useComboAction
-            ? GenericAction.registerFioDomainAddress
-            : GenericAction.registerFioAddress;
-          orderItem.address = address;
-          orderItem.nativeFio = (useComboAction
-            ? fioDomainHandlePrice
-            : fioHandlePrice
-          ).toString();
-          orderItem.price = convertFioPrices(
-            useComboAction ? fioDomainHandlePrice : fioHandlePrice,
-            roe,
-          ).usdc;
-          orderItems.push(orderItem);
-
-          if (!hasCustomDomainInCart) {
-            for (let i = 1; i < Number(period); i++) {
-              orderItems.push(renewOrderItem);
-            }
-          }
+        if (!supportCombo && !hasCustomDomainInCart) {
+          orderItems.push(domainOrderItem);
         }
-        break;
-      case CART_ITEM_TYPE.DOMAIN_RENEWAL:
-        {
-          for (let i = 0; i < Number(period); i++) {
+
+        orderItem.action = useComboAction
+          ? GenericAction.registerFioDomainAddress
+          : GenericAction.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = (useComboAction
+          ? fioDomainHandlePrice
+          : fioHandlePrice
+        ).toString();
+        orderItem.price = convertFioPrices(
+          useComboAction ? fioDomainHandlePrice : fioHandlePrice,
+          roe,
+        ).usdc;
+        orderItems.push(orderItem);
+
+        if (!hasCustomDomainInCart) {
+          for (let i = 1; i < Number(period); i++) {
             orderItems.push(renewOrderItem);
           }
         }
         break;
+      }
+      case CART_ITEM_TYPE.DOMAIN_RENEWAL: {
+        for (let i = 0; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
+        }
+        break;
+      }
       case CART_ITEM_TYPE.ADD_BUNDLES:
         orderItem.action = GenericAction.addBundledTransactions;
         orderItem.address = address;
@@ -557,15 +549,14 @@ export const cartItemsToOrderItems = async ({
         orderItems.push(orderItem);
         break;
       }
-      case CART_ITEM_TYPE.DOMAIN:
-        {
-          orderItems.push(domainOrderItem);
+      case CART_ITEM_TYPE.DOMAIN: {
+        orderItems.push(domainOrderItem);
 
-          for (let i = 1; i < Number(period); i++) {
-            orderItems.push(renewOrderItem);
-          }
+        for (let i = 1; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
         }
         break;
+      }
       default:
         break;
     }
@@ -692,6 +683,7 @@ export const getItemCost = ({ item, prices, roe }) => {
   const { address, addBundles, renewDomain } = prices;
 
   let costNativeFio;
+  let costItemNativeFio; // cost for item for period 1 when applicable
 
   switch (type) {
     case CART_ITEM_TYPE.ADD_BUNDLES:
@@ -709,16 +701,19 @@ export const getItemCost = ({ item, prices, roe }) => {
           prices,
           period,
         });
+        costItemNativeFio = Number(prices.combo);
       }
       break;
     }
-    case CART_ITEM_TYPE.DOMAIN:
+    case CART_ITEM_TYPE.DOMAIN: {
       costNativeFio = handlePriceForMultiYearItems({
         includeAddress: false,
         prices,
         period,
       });
+      costItemNativeFio = Number(prices.domain);
       break;
+    }
     case CART_ITEM_TYPE.DOMAIN_RENEWAL:
       costNativeFio = new MathOp(renewDomain).mul(period).toNumber();
       break;
@@ -727,13 +722,16 @@ export const getItemCost = ({ item, prices, roe }) => {
   }
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+  const { fio: costItemFio, usdc: costItemUsdc } = costItemNativeFio
+    ? convertFioPrices(costItemNativeFio, roe)
+    : { fio, usdc };
 
-  return { costNativeFio, costFio: fio, costUsdc: usdc };
+  return { costNativeFio, costFio: fio, costUsdc: usdc, costItemFio, costItemUsdc };
 };
 
 export const recalculateCartItems = ({ items, prices, roe }) =>
   items.map(cartItem => {
-    const { costNativeFio, costFio, costUsdc } = getItemCost({
+    const { costNativeFio, costFio, costUsdc, costItemFio, costItemUsdc } = getItemCost({
       item: cartItem,
       prices,
       roe,
@@ -748,17 +746,7 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
       costNativeFio,
       costFio,
       costUsdc,
+      costItemFio,
+      costItemUsdc,
     };
   });
-
-export const getCartOptions = async cart => {
-  let { prices, roe } = cart.options || {};
-  if (!prices || !roe) {
-    prices = await fioApi.getPrices();
-    roe = await getROE();
-    if (cart.id)
-      await Cart.update({ options: { prices, roe } }, { where: { id: cart.id } });
-  }
-
-  return { prices, roe };
-};

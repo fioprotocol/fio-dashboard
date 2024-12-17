@@ -23,6 +23,12 @@ export class Var extends Base {
     return this.findOne({ where: { key } });
   }
 
+  static async getValByKey(key) {
+    const varItem = await this.findOne({ raw: true, where: { key } });
+
+    return varItem ? varItem.value : null;
+  }
+
   static async setValue(key, value) {
     const varItem = await this.getByKey(key);
     if (!varItem) return Var.create({ key, value });

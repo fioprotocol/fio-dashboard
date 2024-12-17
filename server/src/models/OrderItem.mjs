@@ -200,6 +200,7 @@ export class OrderItem extends Base {
           o."publicKey", 
           o.total,
           o."userId",
+          p.processor,
           ois."blockchainTransactionId",
           ois."paymentId",
           rp.label,
@@ -213,6 +214,7 @@ export class OrderItem extends Base {
         FROM "order-items" oi
           INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
           INNER JOIN orders o ON o.id = oi."orderId"
+          LEFT JOIN "payments" p ON p."orderId" = oi."orderId" AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId" AND rp.type = '${ReferrerProfile.TYPE.REF}'
           LEFT JOIN "referrer-profiles" drp ON drp.id = o."refProfileId"
           LEFT JOIN "fio-account-profiles" fapfree ON fapfree.id = rp."freeFioAccountProfileId"

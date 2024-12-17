@@ -30,7 +30,7 @@ export default class ActivateAffiliate extends Base {
       });
     }
 
-    if (user.affiliateProfile) {
+    if (user.affiliateProfileId) {
       throw new X({
         code: 'FORMAT_ERROR',
         fields: {

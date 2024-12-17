@@ -21,13 +21,14 @@
 }
 
 .apiTokenWrapper {
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   display: flex;
 }
 
 .apiToken {
   display: flex;
-  font-size: 1em;
+  font-size: 0.875em;
   word-break: break-all;
   flex: 1;
   color: $baltic-sea;

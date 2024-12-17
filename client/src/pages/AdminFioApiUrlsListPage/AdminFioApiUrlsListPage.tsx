@@ -220,7 +220,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
 
         <p className={classes.apiTitles}>DASHBOARD API URLS:</p>
         <DragDropComponent apiUrlsList={dashaboardApiUrlsList} />
-        <p className={classes.apiTitles}>DASHBOARD HISTORY URLS:</p>
+        <p className={classes.apiTitles}>DASHBOARD HISTORY V2 URLS:</p>
         <DragDropComponent apiUrlsList={dashboardHistoryUrlsList} />
         <p className={classes.apiTitles}>WRAP STATUS PAGE API URLS:</p>
         <DragDropComponent apiUrlsList={wrapStatusPageApiUrls} />

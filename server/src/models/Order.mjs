@@ -12,6 +12,7 @@ import { Payment } from './Payment';
 import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
+import { Var } from './Var.mjs';
 
 import {
   countTotalPriceAmount,
@@ -27,6 +28,7 @@ import {
   FIO_ACTIONS_LABEL,
   CART_ITEM_TYPE,
   ORDER_ERROR_TYPES,
+  PAYMENTS_STATUSES,
 } from '../config/constants.js';
 import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
@@ -42,6 +44,8 @@ const hashids = new Hashids(
 );
 
 const DEFAULT_ORDERS_LIMIT = 25;
+const DEFAULT_ORDER_TIMEOUT = 1000 * 60 * 30; // 30 min
+const ORDER_TIMEOUT_KEY = 'ORDER_TIMEOUT'; // 30 min
 
 export class Order extends Base {
   static get STATUS() {
@@ -77,7 +81,11 @@ export class Order extends Base {
           defaultValue: null,
           comment: 'Order number',
         },
-        total: { type: DT.STRING, allowNull: true, comment: 'Total cost' },
+        total: {
+          type: DT.STRING,
+          allowNull: true,
+          comment: 'Total cost',
+        },
         roe: {
           type: DT.STRING,
           allowNull: false,
@@ -90,7 +98,10 @@ export class Order extends Base {
           comment:
             'Order status: NEW (1) , PENDING (2), PAYMENT_AWAITING (3), PAID (4), TRANSACTION_EXECUTED (5), PARTIALLY_SUCCESS (6), DONE (7)',
         },
-        data: { type: DT.JSON, comment: 'Any additional data for the order' },
+        data: {
+          type: DT.JSON,
+          comment: 'Any additional data for the order',
+        },
         guestId: {
           type: DT.UUID,
           allowNull: true,
@@ -174,7 +185,12 @@ export class Order extends Base {
     return attributes.default;
   }
 
+  static async ORDER_TIMEOUT() {
+    return (await Var.getValByKey(ORDER_TIMEOUT_KEY)) || DEFAULT_ORDER_TIMEOUT;
+  }
+
   static async list({
+    guestId,
     userId,
     search,
     offset,
@@ -183,6 +199,11 @@ export class Order extends Base {
     publicKey,
   }) {
     const where = {};
+    const userWhere = {
+      userProfileType: {
+        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+      },
+    };
 
     if (userId) {
       where.userId = userId;
@@ -200,12 +221,62 @@ export class Order extends Base {
       where.publicKey = publicKey;
     }
 
+    // do not get orders created by primary|alternate users
+    if (!userId && !guestId) {
+      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
+    }
+
     return this.findAll({
       where,
-      include: [OrderItem, Payment, ReferrerProfile, User],
+      include: [
+        OrderItem,
+        Payment,
+        ReferrerProfile,
+        { model: User, required: true, where: userWhere },
+      ],
       order: [['createdAt', 'DESC']],
       offset: offset,
       limit,
+    });
+  }
+
+  static async getActive({ userId, guestId }) {
+    const where = {
+      status: Order.STATUS.NEW,
+      updatedAt: {
+        [Sequelize.Op.gt]: Sequelize.literal(
+          `now() - interval '${await this.ORDER_TIMEOUT()} ms'`,
+        ),
+      },
+    };
+
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
+    return this.findOne({
+      where,
+      include: [
+        { model: OrderItem, include: [OrderItemStatus] },
+        {
+          model: Payment,
+          where: { spentType: Payment.SPENT_TYPE.ORDER },
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
+  static async getPaidById({ id, userId, guestId }) {
+    const where = {
+      id,
+      status: Order.STATUS.PAID,
+    };
+
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
+    return this.findOne({
+      where,
     });
   }
 
@@ -282,7 +353,10 @@ export class Order extends Base {
           model: OrderItem,
           include: [
             OrderItemStatus,
-            { model: BlockchainTransaction, include: [BlockchainTransactionEventLog] },
+            {
+              model: BlockchainTransaction,
+              include: [BlockchainTransactionEventLog],
+            },
           ],
         },
         { model: Payment, include: PaymentEventLog },
@@ -568,6 +642,50 @@ export class Order extends Base {
       } catch (err) {
         logger.error(err);
       }
+    }
+  }
+
+  /**
+   *
+   * @param {Sequelize.Model} order Order model
+   *
+   * @returns {Promise<void>}
+   */
+  static async cancel(order) {
+    try {
+      await order.update({ status: Order.STATUS.CANCELED });
+      if (order.OrderItems && order.OrderItems.length)
+        await OrderItemStatus.update(
+          { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
+          {
+            where: {
+              orderItemId: {
+                [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+              },
+            },
+          },
+        );
+      await Payment.cancelPayment(order);
+    } catch (err) {
+      logger.error(err);
+    }
+  }
+
+  static async removeIrrelevant({ userId, guestId }) {
+    const where = {
+      status: Order.STATUS.NEW,
+    };
+
+    if (userId) where.userId = userId;
+    if (guestId) where.guestId = guestId;
+
+    try {
+      const orders = await this.findAll({ where });
+      for (const order of orders) {
+        await this.cancel(order);
+      }
+    } catch (err) {
+      logger.error(err);
     }
   }
 

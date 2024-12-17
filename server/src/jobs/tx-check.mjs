@@ -8,6 +8,7 @@ import {
   LockedFch,
   OrderItem,
   FioApiUrl,
+  Var,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
@@ -16,7 +17,7 @@ import { updateOrderStatus } from '../services/updateOrderStatus.mjs';
 import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
 
-import { FIO_ADDRESS_DELIMITER, ERROR_CODES } from '../config/constants.js';
+import { FIO_ADDRESS_DELIMITER, ERROR_CODES, VARS_KEYS } from '../config/constants.js';
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
@@ -41,6 +42,8 @@ class TxCheckJob extends CommonJob {
     const fioHistoryUrls = await FioApiUrl.getApiUrls({
       type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
     });
+
+    const maxRetries = Number(await Var.getValByKey(VARS_KEYS.DEFAULT_MAX_RETRIES));
 
     const processTxItems = items => async () => {
       if (this.isCancelled) return false;
@@ -103,7 +106,7 @@ class TxCheckJob extends CommonJob {
                 try {
                   const resJson = await new FioHistory({
                     fioHistoryUrls,
-                  }).getTransaction(txId);
+                  }).getTransaction({ transactionId: txId, maxRetries });
                   const res = JSON.parse(resJson);
                   const txRegexpString = `Transaction ${txId} not found`;
                   const txRegexp = new RegExp(txRegexpString, 'i');
