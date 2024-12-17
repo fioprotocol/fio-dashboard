@@ -56,9 +56,12 @@ export default class ActivateAffiliate extends Base {
       affiliateProfile.code = ReferrerProfile.generateCode(affiliateProfile.id);
 
       await affiliateProfile.save({ transaction: t });
-      await user.update({
-        affiliateProfileId: affiliateProfile.id,
-      });
+      await User.update(
+        {
+          affiliateProfileId: affiliateProfile.id,
+        },
+        { where: { id: user.id } },
+      );
     });
 
     return await runService(UsersInfo, { context: this.context, params: {} });
