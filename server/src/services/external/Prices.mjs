@@ -7,11 +7,11 @@ import X from '../Exception.mjs';
 export default class Prices extends Base {
   static get validationRules() {
     return {
-      forceRefresh: ['boolean'],
+      actual: ['boolean'],
     };
   }
 
-  async execute({ forceRefresh }) {
+  async execute({ actual }) {
     const pricing = {
       nativeFio: {
         domain: null,
@@ -23,7 +23,7 @@ export default class Prices extends Base {
     };
     try {
       const roePromise = getROE();
-      const pricesPromise = fioApi.getPrices(forceRefresh);
+      const pricesPromise = fioApi.getPrices(false, actual);
 
       pricing.usdtRoe = await roePromise;
       pricing.nativeFio = await pricesPromise;

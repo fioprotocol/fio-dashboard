@@ -807,3 +807,8 @@ export const ORDER_DATE_FILTER_OPTIONS = [
 ] as const;
 
 export const NOT_FOUND_CODE = 'NOT_FOUND';
+
+export const SECOND_MS = 1000; // 1 sec
+export const MINUTE_MS = 1000 * 60; // 1 min
+
+export const DEFAULT_MAX_RETRIES = 5;

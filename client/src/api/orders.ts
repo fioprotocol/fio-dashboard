@@ -7,7 +7,8 @@ import {
   UserOrdersListResponse,
 } from './responses';
 import { CreateOrderActionData } from '../redux/types';
-import { PurchaseTxStatus, RegistrationResult } from '../types';
+import { RegistrationRegistered, VerifyParams } from '../types';
+import { SignedTxArgs } from './fio';
 
 export default class Orders extends Base {
   create(data: CreateOrderActionData): Promise<OrdersCreateResponse> {
@@ -21,23 +22,37 @@ export default class Orders extends Base {
   }): Promise<UserOrdersListResponse> {
     return this.apiClient.get('orders', data);
   }
-  update(
-    id: number,
-    data: {
-      status?: PurchaseTxStatus;
-      publicKey?: string;
-      results?: RegistrationResult;
-    },
-  ): Promise<OrdersUpdateResponse> {
-    return this.apiClient.post(`orders/update/${id}`, { data });
+  processPayment(data: {
+    orderId?: number;
+    results: RegistrationRegistered[];
+    captcha?: VerifyParams;
+  }): Promise<OrdersUpdateResponse> {
+    return this.apiClient.post(`orders/process-payment`, { data });
   }
-  getActive(data?: {
-    publicKey?: string;
-    userId?: string;
-  }): Promise<OrdersCreateResponse> {
-    return this.apiClient.get(`orders/active`, data);
+  preparedTx(
+    data: {
+      fioName: string;
+      action: string;
+      data: {
+        signedTx?: SignedTxArgs;
+        signingWalletPubKey?: string;
+      };
+    }[],
+  ): Promise<OrdersUpdateResponse> {
+    return this.apiClient.post(`orders/prepared-tx`, { data });
+  }
+  updatePubKey(publicKey: string): Promise<OrdersCreateResponse> {
+    return this.apiClient.post(`orders/update/public-key`, {
+      publicKey,
+    });
+  }
+  getActive(): Promise<OrdersCreateResponse> {
+    return this.apiClient.get('orders/active');
   }
   get(id: string, publicKey: string): Promise<OrderGetResponse> {
     return this.apiClient.get(`orders/item/${id}/${publicKey}`);
+  }
+  cancel(): Promise<{ success: boolean }> {
+    return this.apiClient.delete(`orders/active`);
   }
 }

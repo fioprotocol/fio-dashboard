@@ -1,14 +1,23 @@
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import Sequelize from 'sequelize';
 
 import Base from '../Base';
 import {
   Domain,
-  FreeAddress,
   Order,
   OrderItem,
   Payment,
   ReferrerProfile,
+  ReferrerProfileApiToken,
+  Var,
 } from '../../models';
+import { fioApi } from '../../external/fio';
+import { getROE } from '../../external/roe';
+import Bitpay from '../../external/payment-processor/bitpay.mjs';
+import emailSender from '../emailSender.mjs';
+import logger from '../../logger.mjs';
+import { templates } from '../../emails/emailTemplate.mjs';
+
 import {
   createCallWithRetry,
   destructAddress,
@@ -18,21 +27,19 @@ import {
   generateErrorResponse,
   generateSuccessResponse,
 } from '../../utils/publicApi';
-import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
-import { fioApi } from '../../external/fio';
-import { getROE } from '../../external/roe';
-import { CURRENCY_CODES } from '../../constants/fio.mjs';
-import { ORDER_USER_TYPES } from '../../constants/order.mjs';
-import { HTTP_CODES } from '../../constants/general.mjs';
 import {
   normalizePriceForBitPayInTestNet,
   prepareOrderWithFioPaymentForExecution,
 } from '../../utils/payment.mjs';
-import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { isDomainExpired } from '../../utils/fio.mjs';
 import { handleRefProfileApiTokenAndLegacyHash } from '../../utils/referrer-profile.mjs';
-import logger from '../../logger.mjs';
+
+import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
+import { CURRENCY_CODES } from '../../constants/fio.mjs';
+import { ORDER_USER_TYPES } from '../../constants/order.mjs';
+import { HTTP_CODES, REGSITE_NOTIF_EMAIL_KEY } from '../../constants/general.mjs';
+import { DAY_MS } from '../../config/constants.js';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -52,7 +59,7 @@ export default class BuyAddress extends Base {
     const refNotFoundRes = {
       error: 'Referral code not found',
       errorCode: PUB_API_ERROR_CODES.REF_NOT_FOUND,
-      statusCode: HTTP_CODES.NOT_FOUND,
+      statusCode: HTTP_CODES.BAD_REQUEST, // NOT_FOUND, fix server to send proper code
     };
 
     if (!referralCode) {
@@ -64,31 +71,42 @@ export default class BuyAddress extends Base {
         type: ReferrerProfile.TYPE.REF,
         code: referralCode,
       },
+      include: [{ model: ReferrerProfileApiToken, as: 'apiTokens' }],
     });
 
     if (!refProfile) {
       return generateErrorResponse(this.res, refNotFoundRes);
     }
 
-    !refProfile.apiToken &&
-      refProfile.apiHash &&
-      apiToken &&
-      (await handleRefProfileApiTokenAndLegacyHash({ apiToken, refProfile }));
+    for (const refProfileApiData of refProfile.apiTokens) {
+      !refProfileApiData.token &&
+        refProfileApiData.legacyHash &&
+        apiToken &&
+        (await handleRefProfileApiTokenAndLegacyHash({
+          refCode: refProfile.code,
+          apiToken,
+          refProfileApiData,
+        }));
+    }
 
-    if (!refProfile.apiAccess) {
+    if (!refProfile.hasApiAccess()) {
       return generateErrorResponse(this.res, {
         error: `Access by api deactivated`,
         errorCode: PUB_API_ERROR_CODES.REF_API_ACCESS_DEACTIVATED,
-        statusCode: HTTP_CODES.FORBIDDEN,
+        statusCode: HTTP_CODES.BAD_REQUEST, // FORBIDDEN, fix server to send proper code
       });
     }
 
-    if (apiToken && refProfile.apiToken !== apiToken) {
-      return generateErrorResponse(this.res, {
-        error: `Invalid api token`,
-        errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
-        statusCode: HTTP_CODES.BAD_REQUEST,
-      });
+    let apiProfile = null;
+    if (apiToken) {
+      apiProfile = refProfile.getApiProfile(apiToken);
+      if (!apiProfile) {
+        return generateErrorResponse(this.res, {
+          error: `Invalid api token`,
+          errorCode: PUB_API_ERROR_CODES.INVALID_API_TOKEN,
+          statusCode: HTTP_CODES.BAD_REQUEST,
+        });
+      }
     }
 
     const lowerCasedAddress = address ? address.toLowerCase() : address;
@@ -168,16 +186,18 @@ export default class BuyAddress extends Base {
 
       let isFreeRegistration = false;
 
-      if (apiToken && domainFromChain) {
+      if (apiToken && apiProfile && domainFromChain) {
         const refDomain = findDomainInRefProfile(refProfile, fioDomain);
 
         if (refDomain) {
           isFreeRegistration =
-            (!refDomain.isPremium || refDomain.isFirstRegFree) &&
+            !refDomain.isPremium &&
             (await this.isFreeAddressNotExist({
               userId: user.id,
+              publicKey,
               fioDomain,
-              enableCompareByDomainName: refDomain && refDomain.isFirstRegFree,
+              refProfileId: refProfile.id,
+              enableCompareByDomainName: refDomain.isFirstRegFree,
             }));
         } else {
           const dashboardDomains = await Domain.getDashboardDomains();
@@ -188,10 +208,45 @@ export default class BuyAddress extends Base {
             !dashboardDomain.isPremium &&
             (await this.isFreeAddressNotExist({
               userId: user.id,
+              publicKey,
               fioDomain,
+              refProfileId: refProfile.id,
               enableCompareByDomainName:
                 dashboardDomain && dashboardDomain.isFirstRegFree,
             }));
+        }
+
+        if (isFreeRegistration && apiProfile.dailyFreeLimit) {
+          const TODAY_START = new Date().setHours(0, 0, 0, 0);
+          const NOW = new Date();
+          const freeRegs = await Order.count({
+            where: {
+              status: {
+                [Sequelize.Op.in]: [
+                  Order.STATUS.SUCCESS,
+                  Order.STATUS.TRANSACTION_PENDING,
+                  Order.STATUS.NEW,
+                ],
+              },
+              total: '0',
+              refProfileId: refProfile.id,
+              data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+              createdAt: {
+                [Sequelize.Op.gt]: TODAY_START,
+                [Sequelize.Op.lt]: NOW,
+              },
+            },
+          });
+
+          if (freeRegs >= apiProfile.dailyFreeLimit) {
+            await this.sendNotification(apiProfile, refProfile);
+
+            return generateErrorResponse(this.res, {
+              error: 'Daily limit of Free FIO Handles reached.',
+              errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
+              statusCode: HTTP_CODES.BAD_REQUEST, // FORBIDDEN, fix server to send proper code
+            });
+          }
         }
       }
 
@@ -317,21 +372,37 @@ export default class BuyAddress extends Base {
     return { order, orderItem, payment, charge };
   }
 
-  async isFreeAddressNotExist({ userId, fioDomain, enableCompareByDomainName }) {
-    const freeAddresses = await FreeAddress.findAll({
-      where: { userId },
+  async isFreeAddressNotExist({
+    userId,
+    publicKey,
+    fioDomain,
+    refProfileId,
+    enableCompareByDomainName,
+  }) {
+    const orders = await Order.findAll({
+      attributes: ['id'],
+      where: {
+        userId,
+        publicKey,
+        refProfileId,
+        status: {
+          [Sequelize.Op.in]: [
+            Order.STATUS.SUCCESS,
+            Order.STATUS.TRANSACTION_PENDING,
+            Order.STATUS.NEW,
+          ],
+        },
+        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+        total: '0',
+      },
+      include: [{ model: OrderItem, attributes: ['id', 'domain'] }],
     });
 
     const freeRegisteredAddressWithDomain = enableCompareByDomainName
-      ? freeAddresses.find(it => {
-          const { fioDomain: addressFioDomain } = destructAddress(it.name);
-          return addressFioDomain === fioDomain;
-        })
+      ? orders.find(order => order.OrderItems.find(({ domain }) => domain === fioDomain))
       : null;
 
-    return enableCompareByDomainName
-      ? !freeRegisteredAddressWithDomain
-      : !freeAddresses.length;
+    return enableCompareByDomainName ? !freeRegisteredAddressWithDomain : !orders.length;
   }
 
   async isSameAccountRegistrationExist(publicKey, refProfile, address) {
@@ -350,6 +421,29 @@ export default class BuyAddress extends Base {
       .find(({ address, domain }) => address === fioAddress && domain === fioDomain);
 
     return !!order;
+  }
+
+  async sendNotification(apiProfile, refProfile) {
+    try {
+      if (
+        (apiProfile.lastNotificationDate &&
+          Var.updateRequired(apiProfile.lastNotificationDate, DAY_MS)) ||
+        !apiProfile.lastNotificationDate
+      ) {
+        const notifEmail = await Var.getValByKey(REGSITE_NOTIF_EMAIL_KEY);
+        await emailSender.send(templates.freeLimitReached, notifEmail, {
+          refProfileName: refProfile.label,
+          limit: apiProfile.dailyFreeLimit,
+          lastApiToken: `${apiProfile.token}`.slice(-4),
+        });
+
+        await apiProfile.update({
+          lastNotificationDate: new Date().setHours(0, 0, 0, 0),
+        });
+      }
+    } catch (err) {
+      logger.error(err);
+    }
   }
 
   static get validationRules() {

@@ -1,6 +1,5 @@
-import fetch from 'node-fetch';
-
 import logger from '../logger.mjs';
+import { fetchWithRateLimit } from '../utils/general.mjs';
 
 export default class FioHistory {
   constructor({ fioHistoryUrls }) {
@@ -11,19 +10,19 @@ export default class FioHistory {
     this.historyNodeUrls = historyUrls;
   }
 
-  async requestHistory(params) {
+  async requestHistoryActions({ params, maxRetries }) {
+    const queryString = new URLSearchParams(params).toString();
+
     for (const url of this.historyNodeUrls) {
       try {
-        const result = await fetch(`${url}history/get_actions`, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(params),
+        const result = await fetchWithRateLimit({
+          url: `${url}history/get_actions?${queryString}`,
+          maxRetries,
         });
 
-        return result.json();
+        const data = await result.json();
+
+        return data;
       } catch (err) {
         logger.error(`Get FIO History Error for URL: ${url}`, err);
       }
@@ -32,22 +31,22 @@ export default class FioHistory {
     throw new Error('All FIO History URLs failed');
   }
 
-  async getTransaction(transactionId) {
+  async getTransaction({ transactionId, maxRetries }) {
+    const queryString = new URLSearchParams({
+      id: transactionId,
+      block_hint: 0,
+    }).toString();
+
     for (const url of this.historyNodeUrls) {
       try {
-        const result = await fetch(`${url}history/get_transaction`, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: transactionId,
-            block_num_hint: 0,
-          }),
+        const result = await fetchWithRateLimit({
+          url: `${url}history/get_transaction?${queryString}`,
+          maxRetries,
         });
 
-        return result.json();
+        const data = await result.json();
+
+        return data;
       } catch (err) {
         logger.error(
           `Get FIO History For Transaction: ${transactionId} Error for URL: ${url}`,

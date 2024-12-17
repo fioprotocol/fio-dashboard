@@ -40,6 +40,7 @@ import { convertFioPrices } from '../utils/cart.mjs';
 import {
   FIO_ACCOUNT_TYPES,
   USER_HAS_FREE_ADDRESS_MESSAGE,
+  NO_REQUIRED_SIGNED_TX_MESSAGE,
   ORDER_ERROR_TYPES,
   FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
@@ -63,6 +64,7 @@ const TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE = process.env
   ? parseInt(process.env.TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE)
   : TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION;
 
+const NO_REQUIRED_SIGNED_TX = `Register address error: ${NO_REQUIRED_SIGNED_TX_MESSAGE}`;
 const USER_HAS_FREE_ERROR = `Register free address error: ${USER_HAS_FREE_ADDRESS_MESSAGE}`;
 const CANNOT_IDENTIFY_USER = `Register free address error: Cannot identify user. User id and public key are missing`;
 
@@ -73,7 +75,7 @@ class OrdersJob extends CommonJob {
   }
 
   async getFeeForAction(action, forceUpdate = false) {
-    let fee;
+    let fee = null;
 
     if (
       this.feesUpdatedAt &&
@@ -83,7 +85,12 @@ class OrdersJob extends CommonJob {
     ) {
       fee = this.feesJson[action];
     } else {
-      fee = await fioApi.getFee(action);
+      try {
+        fee = await fioApi.getFee(action);
+      } catch (error) {
+        logger.error(`GET FEE FOR ACTION ${action} FAILED: `, error);
+      }
+
       this.postMessage(`Fees: ${JSON.stringify({ action, fee })}`);
       this.feesJson[action] = fee;
       this.feesUpdatedAt = new Date();
@@ -1049,6 +1056,15 @@ class OrdersJob extends CommonJob {
             });
             return this.updateOrderStatus(orderId);
           }
+        }
+
+        if (orderItem.processor === Payment.PROCESSOR.FIO && !hasSignedTx) {
+          logger.error(NO_REQUIRED_SIGNED_TX);
+
+          await this.handleFail(orderItem, NO_REQUIRED_SIGNED_TX, {
+            errorType: ORDER_ERROR_TYPES.noSignedTxProvided,
+          });
+          return this.updateOrderStatus(orderId);
         }
 
         try {

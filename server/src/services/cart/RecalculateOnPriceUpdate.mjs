@@ -16,11 +16,7 @@ export default class RecalculateOnPriceUpdate extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
-      const where = {};
-      if (userId) where.userId = userId;
-      if (guestId) where.guestId = guestId;
-
-      const cart = await Cart.findOne({ where });
+      const cart = await Cart.getActive({ userId, guestId, withOpt: false });
 
       if (!cart) {
         throw new X({
@@ -88,7 +84,7 @@ export default class RecalculateOnPriceUpdate extends Base {
 
       await cart.update({
         items: cartItemsWithRecalculatedPrices,
-        options: { prices, roe },
+        options: { prices, roe, updatedAt: new Date() },
       });
 
       return {

@@ -7,7 +7,6 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
-import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
@@ -55,7 +54,7 @@ import { ORDER_USER_TYPES } from '../../constants/order';
 import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
-import { isDomainExpired } from '../../util/fio';
+import { checkIsDomainExpired } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
 
@@ -170,7 +169,7 @@ export const useContext = (): UseContextReturnType => {
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
     try {
-      const freshPrices = await apis.fioReg.prices(true);
+      const freshPrices = await apis.fioReg.prices();
       updatingPricesHasError && setUpdatingPricesHasError(false);
 
       return freshPrices;
@@ -283,7 +282,6 @@ export const useContext = (): UseContextReturnType => {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PRICE_CHANGE);
 
         dispatch(recalculateOnPriceUpdate());
-        dispatch(getPrices());
 
         return false;
       } catch (err) {
@@ -311,7 +309,6 @@ export const useContext = (): UseContextReturnType => {
       };
 
       if (isNoProfileFlow) {
-        orderParams.refProfileId = refProfile.id;
         orderParams.data['orderUserType'] = ORDER_USER_TYPES.NO_PROFILE_FLOW;
       }
 
@@ -344,27 +341,6 @@ export const useContext = (): UseContextReturnType => {
     setSelectedPaymentProvider(null);
   };
 
-  const getDomainExpiration = useCallback(async (domainName: string) => {
-    try {
-      const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
-
-      return expiration || null;
-    } catch (err) {
-      log.error(err);
-    }
-  }, []);
-
-  const checkIsDomainExpired = useCallback(
-    async (domainName: string) => {
-      if (!domainName) return null;
-
-      const expiration = await getDomainExpiration(domainName);
-
-      return expiration && isDomainExpired(domainName, expiration);
-    },
-    [getDomainExpiration],
-  );
-
   const hasExpiredDomain = useCallback(async () => {
     let hasExpiredDomain = false;
 
@@ -389,15 +365,11 @@ export const useContext = (): UseContextReturnType => {
     }
 
     toggleShowExpiredDomainWarningBadge(hasExpiredDomain);
-  }, [checkIsDomainExpired, cartItems]);
+  }, [cartItems]);
 
   useEffect(() => {
     hasExpiredDomain();
   }, [hasExpiredDomain]);
-
-  useEffectOnce(() => {
-    dispatch(getPrices());
-  }, [dispatch, getPrices]);
 
   useEffectOnce(() => {
     if (!isEmpty(userWallets)) {

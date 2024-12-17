@@ -13,17 +13,15 @@ import { compose } from '../../../../utils';
 import DeleteMyAccount from './DeleteMyAccount';
 
 import { AppDispatch } from '../../../../redux/init';
-import { OwnPropsAny } from '../../../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
     username: edgeUsername,
     user,
   }),
-  (dispatch: AppDispatch, ownProps: OwnPropsAny) => ({
+  (dispatch: AppDispatch) => ({
     logout: () => {
-      const { history } = ownProps;
-      dispatch(logout({ history, redirect: '/?logout=silent' }));
+      dispatch(logout({ redirect: '/?logout=silent' }));
       dispatch(resetLastAuthData());
     },
     closeSuccessModal: () => {

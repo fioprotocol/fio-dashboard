@@ -58,6 +58,8 @@ export type CartItem = {
   costNativeFio?: number;
   costFio?: string;
   costUsdc?: string;
+  costItemFio?: string;
+  costItemUsdc?: string;
   nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
@@ -150,6 +152,12 @@ export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCH
 export type PaymentStatus = typeof PAYMENT_RESULTS_STATUS[keyof typeof PAYMENT_RESULTS_STATUS];
 export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
 
+export type VerifyParams = {
+  geetest_challenge: string;
+  geetest_validate: string;
+  geetest_seccode: string;
+};
+
 export type RegistrationResult = {
   errors: RegistrationErrors[];
   registered: RegistrationRegistered[];
@@ -162,6 +170,7 @@ export type RegistrationResult = {
   convertedPaymentCurrency?: PaymentCurrency;
   convertedPaymentAmount?: string;
   providerTxStatus?: PurchaseTxStatus;
+  captcha?: VerifyParams;
 };
 
 export type DeleteCartItem = {
@@ -437,9 +446,14 @@ export type RefProfile = {
     hasNoProfileFlow?: boolean;
     link?: string;
   };
-  tpid: string;
-  apiToken?: string;
   apiAccess?: boolean;
+  apiTokens?: {
+    id?: number;
+    token: string;
+    access: boolean;
+    dailyFreeLimit?: number | null;
+  }[];
+  tpid: string;
   freeFioAccountProfileId: string;
   paidFioAccountProfileId: string;
   createdAt?: string;
@@ -486,6 +500,7 @@ export type TransactionItemProps = {
   nativeAmount: string;
   networkFee: string;
   date: number;
+  timestamp: string;
   blockHeight: number;
   otherParams: {
     isTransferProcessed?: boolean;
@@ -542,7 +557,7 @@ export type FioWalletData = {
 };
 
 export type FioWalletTxHistory = {
-  highestTxHeight: number;
+  lastTxActionTime: string | null;
   txs: TransactionItemProps[];
 };
 
@@ -597,35 +612,6 @@ export type DetailedProxy = {
   fioAddress: string;
   producers: string[];
   checked?: boolean;
-};
-
-export type FioHistoryNodeAction = {
-  account_action_seq: number;
-  block_num: number;
-  block_time: string;
-  action_trace: {
-    receiver: string;
-    act: {
-      account: string;
-      name: string;
-      data: {
-        payee_public_key?: string;
-        amount?: number;
-        max_fee?: number;
-        actor?: string;
-        tpid?: string;
-        quantity?: string;
-        memo?: string;
-        to?: string;
-        from?: string;
-      };
-      hex_data: string;
-    };
-    trx_id: string;
-    block_num: number;
-    block_time: string;
-    producer_block_id: string;
-  };
 };
 
 export type FioApiError = Error & { json?: { message?: string } };

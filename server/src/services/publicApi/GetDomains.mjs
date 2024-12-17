@@ -25,7 +25,7 @@ export default class GetDomains extends Base {
     const refNotFoundRes = {
       error: 'Referral code not found',
       errorCode: PUB_API_ERROR_CODES.REF_NOT_FOUND,
-      statusCode: HTTP_CODES.NOT_FOUND,
+      statusCode: HTTP_CODES.BAD_REQUEST, // NOT_FOUND, fix server to send proper code
     };
 
     if (!referralCode) {

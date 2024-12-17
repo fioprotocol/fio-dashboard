@@ -15,7 +15,9 @@ import debounce from 'lodash/debounce';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Input from '../../../../components/Input/Input';
+import DangerModal from '../../../../components/Modal/DangerModal';
 import { PartnerFormDomainRow } from './PartnerFormDomainRow';
+import { PartnerFormApiTokenRow } from './PartnerFormApiTokenRow';
 
 import { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
@@ -38,8 +40,6 @@ import {
 
 import classes from '../../AdminPartnersListPage.module.scss';
 import api from '../../../../admin/api';
-import { copyToClipboard } from '../../../../util/general';
-import DangerModal from '../../../../components/Modal/DangerModal';
 
 type FieldsType = FieldArrayRenderProps<
   RefProfileDomain,
@@ -72,6 +72,11 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     isRegenerateApiTokenApproveModalVisible,
     setIsRegenerateApiTokenApproveModalVisible,
   ] = useState(false);
+  const [apiTokenToEdit, setApiTokenToEdit] = useState<{
+    index: number;
+    item?: Pick<RefProfile, 'apiTokens'>;
+    remove?: (index: number) => void;
+  } | null>(null);
 
   const fioAccountsProfilesOptions = fioAccountsProfilesList.map(
     fioAccountsProfile => ({
@@ -142,18 +147,40 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
 
   const onGenerateApiToken = useCallback(async () => {
     const apiToken = await api.admin.createPartnerApiToken();
-    form.change('apiToken' as keyof RefProfile, apiToken);
+
+    form.mutators.push('apiTokens' as keyof RefProfile, {
+      token: apiToken,
+      access: true,
+      dailyFreeLimit: null,
+    });
   }, [form]);
 
+  const onRegenerateApiTokenConfirm = useCallback(
+    async (index: number, item: Pick<RefProfile, 'apiTokens'>) => {
+      setIsRegenerateApiTokenApproveModalVisible(true);
+      setApiTokenToEdit({ index, item });
+    },
+    [],
+  );
   const onRegenerateApiToken = useCallback(async () => {
     setIsRegenerateApiTokenApproveModalVisible(false);
-    onGenerateApiToken?.();
-  }, [onGenerateApiToken]);
+    const apiToken = await api.admin.createPartnerApiToken();
+
+    form.mutators.update('apiTokens', apiTokenToEdit.index, {
+      ...apiTokenToEdit.item,
+      token: apiToken,
+    });
+  }, [form, apiTokenToEdit]);
+
+  const onRemoveApiTokenConfirm = useCallback(async (index, remove) => {
+    setIsRemoveApiTokenApproveModalVisible(true);
+    setApiTokenToEdit({ index, remove });
+  }, []);
 
   const onRemoveApiToken = useCallback(async () => {
     setIsRemoveApiTokenApproveModalVisible(false);
-    form.change('apiToken' as keyof RefProfile, null);
-  }, [form]);
+    apiTokenToEdit.remove(apiTokenToEdit.index);
+  }, [apiTokenToEdit]);
 
   const onRemoveImage = useCallback(() => {
     form.change('settings.img' as keyof RefProfile, null);
@@ -180,8 +207,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
     }
     fields.move(result.source.index, result.destination.index);
   };
-
-  const apiToken = form.getState().values?.apiToken;
 
   return (
     <>
@@ -451,44 +476,38 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
                   'mb-3',
                 )}
               >
-                <span className={classes.label}>Api Token</span>
-                <Field name="apiToken">{() => null}</Field>
-                {apiToken ? (
-                  <div className={classes.apiTokenWrapper}>
-                    <span className={classes.apiToken}>{apiToken}</span>
-                    <Button
-                      size="sm"
-                      className="autosize ml-2 mb-0"
-                      onClick={() => copyToClipboard(apiToken)}
-                    >
-                      <FontAwesomeIcon icon="copy" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="autosize ml-2 mb-0"
-                      onClick={() =>
-                        setIsRegenerateApiTokenApproveModalVisible(true)
-                      }
-                    >
-                      <FontAwesomeIcon icon="sync" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      className="autosize ml-2 mb-0"
-                      onClick={() =>
-                        setIsRemoveApiTokenApproveModalVisible(true)
-                      }
-                    >
-                      <FontAwesomeIcon icon="trash" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Button className="w-auto mb-0" onClick={onGenerateApiToken}>
-                    <FontAwesomeIcon icon="key" className="mr-2" />
-                    <span>Generate New</span>
+                <div className="d-flex justify-content-between">
+                  <span className={classes.label} />
+                  <Button className="w-auto mb-4" onClick={onGenerateApiToken}>
+                    <FontAwesomeIcon icon="plus-square" className="mr-2" />{' '}
+                    Generate New API Key
                   </Button>
-                )}
+                </div>
+                <div className="d-flex flex-column">
+                  <FieldArray
+                    name="apiTokens"
+                    render={({ fields }) => (
+                      <>
+                        {fields.map((field, index) => (
+                          <PartnerFormApiTokenRow
+                            key={field}
+                            index={index}
+                            field={field}
+                            token={fields.value[index].token}
+                            onRegenerate={() =>
+                              onRegenerateApiTokenConfirm(index, {
+                                ...fields.value[index],
+                              })
+                            }
+                            onRemove={() =>
+                              onRemoveApiTokenConfirm(index, fields.remove)
+                            }
+                          />
+                        ))}
+                      </>
+                    )}
+                  />
+                </div>
               </div>
             )}
 

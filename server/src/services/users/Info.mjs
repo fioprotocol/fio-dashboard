@@ -4,7 +4,7 @@ import { User, Wallet, NewDeviceTwoFactor } from '../../models';
 
 export default class UsersInfo extends Base {
   async execute() {
-    const user = await User.findActive(this.context.id);
+    const user = await User.getInfo(this.context.id);
 
     if (!user) {
       throw new X({

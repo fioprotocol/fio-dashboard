@@ -36,6 +36,15 @@ export default combineReducers({
         return state.filter(notification => notification.id !== action.data.id);
       case actions.MANUAL_CREATE:
       case actions.CREATE_SUCCESS:
+        if (
+          action.data?.contentTypeUnique &&
+          !!state.find(
+            ({ contentType }) => contentType === action.data?.contentType,
+          )
+        ) {
+          return state;
+        }
+
         return action.data ? [action.data, ...state] : state;
       case SET_RECOVERY_SUCCESS:
         return [];

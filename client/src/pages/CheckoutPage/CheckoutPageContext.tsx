@@ -48,6 +48,7 @@ import {
   totalCost,
   cartIsRelative,
   groupCartItemsByPaymentWallet,
+  actionFromCartItem,
 } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
@@ -61,7 +62,6 @@ import { ROUTES } from '../../constants/routes';
 import {
   PAYMENT_PROVIDER_PAYMENT_TITLE,
   PAYMENT_OPTIONS,
-  PURCHASE_RESULTS_STATUS,
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
@@ -171,7 +171,6 @@ export const useContext = (): {
   const stripeRedirectStatusParam = queryParams.get(
     QUERY_PARAMS_NAMES.STRIPE_REDIRECT_STATUS,
   );
-  const publicKeyQueryParams = queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY);
 
   const [
     beforeSubmitProps,
@@ -198,14 +197,6 @@ export const useContext = (): {
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
 
-  const getActiveOrderParams: {
-    publicKey?: string;
-  } = useMemo(() => ({}), []);
-
-  if (publicKeyQueryParams) {
-    getActiveOrderParams.publicKey = publicKeyQueryParams;
-  }
-
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
       dispatchSetWallet(paymentWalletPublicKey);
@@ -217,7 +208,7 @@ export const useContext = (): {
     let result: Order;
 
     try {
-      result = await apis.orders.getActive(getActiveOrderParams);
+      result = await apis.orders.getActive();
     } catch (e) {
       setOrderError(e);
     }
@@ -238,7 +229,7 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  }, [cartItems, getActiveOrderParams, setWallet]);
+  }, [cartItems, setWallet]);
 
   useEffect(() => {
     if (isNoProfileFlow) {
@@ -254,21 +245,12 @@ export const useContext = (): {
     }
 
     apis.orders
-      .create({
-        cartId,
-        publicKey: paymentWalletPublicKey,
-        paymentProcessor: paymentProvider,
-        data: {
-          gaClientId: getGAClientId(),
-          gaSessionId: getGASessionId(),
-        },
-      })
-      .then(() => apis.orders.getActive(getActiveOrderParams))
+      .updatePubKey(paymentWalletPublicKey)
+      .then(() => apis.orders.getActive())
       .then(setOrder);
   }, [
     cartId,
     fioWallets,
-    getActiveOrderParams,
     isNoProfileFlow,
     order,
     paymentProvider,
@@ -395,9 +377,7 @@ export const useContext = (): {
     (event?: Event) => {
       // BitPay iframe code changes window.location.href and reloads the page. We don't need to cancel order on close BitPay payment page
       if (!event && order?.id) {
-        void apis.orders.update(order.id, {
-          status: PURCHASE_RESULTS_STATUS.CANCELED,
-        });
+        void apis.orders.cancel();
       }
     },
     [order?.id],
@@ -415,7 +395,7 @@ export const useContext = (): {
       }
       void getOrder();
     },
-    [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
+    [dispatch, fioWallets, getOrder, paymentWalletPublicKey],
     (fioWallets.length > 0 &&
       !!userId &&
       (!orderNumberParam ||
@@ -487,7 +467,7 @@ export const useContext = (): {
     }
   }, [paymentWalletPublicKey, paymentWallets, fioWallets, setWallet]);
 
-  // Create order for free address
+  // Create order for free address or on retry
   useEffectOnce(
     () => {
       setOrder(undefined);
@@ -658,21 +638,24 @@ export const useContext = (): {
 
   const onClose = useCallback(() => {
     if (order?.id) {
-      void apis.orders.update(order.id, {
-        status: PURCHASE_RESULTS_STATUS.CANCELED,
-      });
+      void apis.orders.cancel();
     }
     history.push(ROUTES.CART);
   }, [order, history]);
 
   const onFinish = async (results: RegistrationResult) => {
-    await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
-      publicKey: paymentWalletPublicKey,
-      results,
-    });
+    try {
+      await apis.orders.processPayment({
+        orderId: order.id,
+        results: results.registered,
+        captcha: results.captcha,
+      });
+    } catch (err) {
+      return dispatch(showGenericErrorModal());
+    } finally {
+      dispatch(setProcessing(false));
+    }
 
-    dispatch(setProcessing(false));
     history.push(
       {
         pathname: ROUTES.PURCHASE,
@@ -757,8 +740,29 @@ export const useContext = (): {
           .toNumber(),
         submitData: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
-          handleSubmit(data);
-          dispatchSetProcessing(false);
+          apis.orders
+            .preparedTx(
+              cartItems.map(
+                ({ address, domain, type, domainType }: CartItem) => ({
+                  action: actionFromCartItem(
+                    type,
+                    (paymentWallet?.from === WALLET_CREATED_FROM.EDGE ||
+                      paymentWallet?.from === WALLET_CREATED_FROM.METAMASK) &&
+                      domainType === DOMAIN_TYPE.CUSTOM,
+                  ),
+                  fioName: setFioName(address, domain),
+                  data: data?.[setFioName(address, domain)],
+                }),
+              ),
+            )
+            .then(() => {
+              handleSubmit(data);
+              dispatchSetProcessing(false);
+            })
+            .catch(() => {
+              setBeforeSubmitProps(null);
+              dispatchSetProcessing(false);
+            });
         },
         onCancel: () => setBeforeSubmitProps(null),
       });
