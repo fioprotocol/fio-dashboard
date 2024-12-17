@@ -29,6 +29,7 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
 };
 
 const USER_HAS_FREE_ADDRESS_MESSAGE = 'You have already registered a free FIO Handle';
+const NO_REQUIRED_SIGNED_TX_MESSAGE = 'There is no signed tx provided for order item';
 
 const FIO_ACTIONS_TO_END_POINT_MAP = {
   [GenericAction.requestFunds]: EndPoint.newFundsRequest,
@@ -204,6 +205,7 @@ const ORDER_ERROR_TYPES = {
   default: 'default',
   freeAddressError: 'freeAddressError',
   userHasFreeAddress: 'userHasFreeAddress',
+  noSignedTxProvided: 'noSignedTxProvided',
 };
 
 const VARS_KEYS = {
@@ -270,6 +272,7 @@ module.exports = {
   DEFAULT_BUNDLE_SET_VALUE,
   QUERY_PARAMS_NAMES,
   USER_HAS_FREE_ADDRESS_MESSAGE,
+  NO_REQUIRED_SIGNED_TX_MESSAGE,
   ORDER_ERROR_TYPES,
   VARS_KEYS,
   PASSWORDS,
