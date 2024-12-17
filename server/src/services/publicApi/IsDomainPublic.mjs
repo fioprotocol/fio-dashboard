@@ -40,7 +40,7 @@ export default class IsDomainPublic extends Base {
       return generateErrorResponse(this.res, {
         error: 'Domain is not registered',
         errorCode: PUB_API_ERROR_CODES.DOMAIN_NOT_FOUND,
-        statusCode: HTTP_CODES.NOT_FOUND,
+        statusCode: HTTP_CODES.BAD_REQUEST, // NOT_FOUND, fix server to send proper code
       });
     }
 
