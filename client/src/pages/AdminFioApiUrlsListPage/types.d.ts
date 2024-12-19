@@ -6,6 +6,9 @@ export type FormValuesProps = {
   type: string;
   url: string;
 };
+export type MinVersionFormValuesProps = {
+  minVersion: string;
+};
 
 export type FormValuesEditProps = {
   id: string;
