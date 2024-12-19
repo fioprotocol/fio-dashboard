@@ -111,6 +111,8 @@ router.put(
   checkAdminAuth,
   routes.adminUsers.updateFioApiUrlsList,
 );
+router.get('/admin/api-urls/var', checkAdminAuth, routes.adminUsers.getFioApiUrlVar);
+router.post('/admin/api-urls/var', checkAdminAuth, routes.adminUsers.updateFioApiUrlVar);
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
 router.get(
