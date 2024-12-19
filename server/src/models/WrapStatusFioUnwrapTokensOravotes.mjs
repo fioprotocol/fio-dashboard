@@ -48,23 +48,16 @@ export class WrapStatusFioUnwrapTokensOravotes extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [log.id, log.obt_id, !!log.isComplete, JSON.stringify({ ...log })];
+    const records = data.map(log => ({
+      id: log.id,
+      obtId: log.obt_id,
+      isComplete: !!log.isComplete,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: ['obtId', 'isComplete', 'data'],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-fio-unwrap-tokens-oravotes" ("id", "obtId", "isComplete", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("id") DO UPDATE SET "obtId" = EXCLUDED."obtId", "isComplete" = EXCLUDED."isComplete", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 
   static format({

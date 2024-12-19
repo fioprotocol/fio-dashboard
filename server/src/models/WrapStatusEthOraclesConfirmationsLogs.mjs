@@ -33,22 +33,14 @@ export class WrapStatusEthOraclesConfirmationsLogs extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [log.transactionHash, log.returnValues.obtid, JSON.stringify({ ...log })];
+    const records = data.map(log => ({
+      transactionHash: log.transactionHash,
+      obtId: log.returnValues.obtid,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: ['obtId', 'data'],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-eth-oracles-confirmations-logs" ("transactionHash", "obtId", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("transactionHash") DO UPDATE SET "obtId" = EXCLUDED."obtId", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 }

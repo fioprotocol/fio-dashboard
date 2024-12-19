@@ -40,7 +40,6 @@ export const {
   WrapStatusPolygonUnwrapLogs,
   WrapStatusEthWrapLogs,
   WrapStatusPolygonWrapLogs,
-  WrapStatusFioHistoryOffsetParams,
   WrapStatusFioUnwrapNftsLogs,
   WrapStatusFioUnwrapTokensLogs,
   WrapStatusFioWrapNftsLogs,
