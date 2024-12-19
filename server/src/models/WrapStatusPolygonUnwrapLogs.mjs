@@ -74,29 +74,24 @@ export class WrapStatusPolygonUnwrapLogs extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [
-        log.transactionHash,
-        log.address,
-        log.blockNumber,
-        log.returnValues.domain,
-        log.returnValues.fioaddress,
-        JSON.stringify({ ...log }),
-      ];
+    const records = data.map(log => ({
+      transactionHash: log.transactionHash,
+      address: log.address,
+      blockNumber: log.blockNumber,
+      domain: log.returnValues.domain,
+      fioAddress: log.returnValues.fioaddress,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: [
+        'transactionHash',
+        'address',
+        'blockNumber',
+        'domain',
+        'fioAddress',
+        'data',
+      ],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-polygon-unwrap-logs" ("transactionHash", address, "blockNumber", domain, "fioAddress", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("transactionHash") DO UPDATE SET address = EXCLUDED.address, domain = EXCLUDED.domain, "blockNumber" = EXCLUDED."blockNumber", "fioAddress" = EXCLUDED."fioAddress", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 }

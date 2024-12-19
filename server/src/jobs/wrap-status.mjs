@@ -4,7 +4,7 @@ import Sequelize from 'sequelize';
 import Web3 from 'web3';
 import superagent from 'superagent';
 
-import { Account } from '@fioprotocol/fiosdk';
+import { Account, Action } from '@fioprotocol/fiosdk';
 
 import MathOp from '../services/math.mjs';
 import { fioApi } from '../external/fio.mjs';
@@ -14,11 +14,11 @@ import '../db';
 import CommonJob from './job.mjs';
 import {
   FioApiUrl,
+  Var,
   WrapStatusBlockNumbers,
   WrapStatusEthOraclesConfirmationsLogs,
   WrapStatusEthUnwrapLogs,
   WrapStatusEthWrapLogs,
-  WrapStatusFioHistoryOffsetParams,
   WrapStatusFioUnwrapNftsLogs,
   WrapStatusFioUnwrapNftsOravotes,
   WrapStatusFioUnwrapTokensLogs,
@@ -32,10 +32,12 @@ import {
   WrapStatusPolygonWrapLogs,
   WrapStatusPolygonBurnedDomainsLogs,
 } from '../models/index.mjs';
-import { WRAP_STATUS_NETWORKS_IDS } from '../config/constants.js';
+import { WRAP_STATUS_NETWORKS_IDS, VARS_KEYS, SECOND_MS } from '../config/constants.js';
 import config from '../config/index.mjs';
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
+import { CHAIN_CODES } from '../constants/chain.mjs';
 import { sleep } from '../tools.mjs';
+import { fetchWithRateLimit, compareTimestampsWithThreshold } from '../utils/general.mjs';
 
 const WRAPPED_DOMAIN_ABI = JSON.parse(
   fs.readFileSync('server/static-files/abi_fio_domain_nft.json', 'utf8'),
@@ -52,12 +54,12 @@ class WrapStatusJob extends CommonJob {
     console.log(message);
   }
 
-  async getHistoryUrls() {
-    const fioHistoryUrls = await FioApiUrl.findAll({
-      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_URL },
+  async getActionUrls() {
+    const fioActionUrls = await FioApiUrl.findAll({
+      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API },
     });
 
-    return fioHistoryUrls.map(fioHistoryItem => fioHistoryItem.url);
+    return fioActionUrls.map(fioActionItem => fioActionItem.url);
   }
 
   async getHistoryV2Urls() {
@@ -558,13 +560,9 @@ class WrapStatusJob extends CommonJob {
     }
   }
 
-  async getFioLogs({ accountName }) {
-    const logPrefix = `Get FIO Logs for account name ${accountName} --> `;
+  async getFioLogs() {
+    const logPrefix = `Get FIO Logs --> `;
     try {
-      const accountActionSequence = await WrapStatusFioHistoryOffsetParams.getAccountActionSequence(
-        { accountName },
-      );
-
       const networkData = await WrapStatusNetworks.findOneWhere({
         id: WRAP_STATUS_NETWORKS_IDS.FIO,
       });
@@ -574,10 +572,14 @@ class WrapStatusJob extends CommonJob {
         true,
       );
 
-      let lastProcessedAccountActionSequence;
+      this.postMessage(
+        logPrefix + `searching for blocks starting from: ${lastProcessedBlockNumber}`,
+      );
+
+      const FIO_HISTORY_LIMIT = await Var.getValByKey(VARS_KEYS.FIO_HISTORY_LIMIT);
 
       const getChainInfo = async () => {
-        const urls = this.fioHistoryUrls;
+        const urls = this.fioActionUrls;
         let response = null;
         for (const url of urls) {
           try {
@@ -593,15 +595,16 @@ class WrapStatusJob extends CommonJob {
       };
 
       const chainInfo = await getChainInfo();
+      const toBlockNum = chainInfo.last_irreversible_block_num;
 
-      const getBlockTransactionIds = async blockNumber => {
-        const urls = this.fioHistoryUrls;
+      const getBlockTransactions = async blockNumber => {
+        const urls = this.fioActionUrls;
         let response = null;
         for (const url of urls) {
           try {
-            const res = await superagent
-              .post(`${url}history/get_block_txids`)
-              .send({ block_num: blockNumber });
+            const res = await superagent.get(
+              `${url}chain/get_block?block_num_or_id=${blockNumber}`,
+            );
             response = res.body;
             break;
           } catch (error) {
@@ -614,35 +617,18 @@ class WrapStatusJob extends CommonJob {
         return response;
       };
 
-      const getTransaction = async trxId => {
-        const urls = this.fioHistoryUrls;
+      const getFioActionsV2Logs = async params => {
+        const urls = this.fioHistoryV2Urls;
         let response = null;
         for (const url of urls) {
           try {
-            const res = await superagent
-              .post(`${url}history/get_transaction`)
-              .send({ id: trxId });
-            response = res.body;
-            break;
-          } catch (error) {
-            this.postMessage(`Get Transaction ${trxId} ${url} error ${error.message}`);
-          }
-        }
+            const queryString = new URLSearchParams(params).toString();
 
-        return response;
-      };
-
-      const getFioActionsLogs = async ({ pos, offset }) => {
-        const urls = this.fioHistoryUrls;
-        let response = null;
-        for (const url of urls) {
-          try {
-            const res = await superagent.post(`${url}history/get_actions`).send({
-              account_name: accountName,
-              pos,
-              offset,
+            const res = await fetchWithRateLimit({
+              url: `${url}history/get_actions?${queryString}`,
             });
-            response = res.body;
+
+            response = res.json();
             break;
           } catch (error) {
             this.postMessage(`Failed to fetch from ${url}: ${error.message}`);
@@ -652,7 +638,7 @@ class WrapStatusJob extends CommonJob {
         return response;
       };
 
-      const getFioActionsLogsV2 = async params => {
+      const getFioDeltasLogs = async params => {
         const urls = this.fioHistoryV2Urls;
         let response = null;
 
@@ -689,8 +675,8 @@ class WrapStatusJob extends CommonJob {
           limit: DEFAULT_V2_ITEMS_LIMIT_PER_REQUEST,
         };
 
-        const getFioBurnedDomainsLogsAll = async ({ params, shouldSetBlockNumber }) => {
-          const burnedDomainsLogs = await getFioActionsLogsV2(params);
+        const getFioBurnedDomainsLogsAll = async ({ params }) => {
+          const burnedDomainsLogs = await getFioDeltasLogs(params);
 
           if (
             burnedDomainsLogs &&
@@ -705,16 +691,10 @@ class WrapStatusJob extends CommonJob {
               ),
             );
 
-            shouldSetBlockNumber &&
-              burnedDomainsLogs.deltas[0] &&
-              burnedDomainsLogs.deltas[0].block_num &&
-              (await WrapStatusBlockNumbers.setBlockNumber(
-                burnedDomainsLogs.deltas[0].block_num,
-                networkData.id,
-                true,
-              ));
-
             if (deltasLength) {
+              if (new MathOp(deltasLength).eq(burnedDomainsLogs.total.value)) {
+                return;
+              }
               const lastDeltasItem = burnedDomainsLogs.deltas[deltasLength - 1];
               if (lastDeltasItem && lastDeltasItem.block_num) {
                 params.before =
@@ -727,42 +707,45 @@ class WrapStatusJob extends CommonJob {
 
               await getFioBurnedDomainsLogsAll({ params });
             }
-          } else {
-            if (after > 0) {
-              await WrapStatusBlockNumbers.setBlockNumber(before, networkData.id, true);
-            }
           }
         };
 
         await getFioBurnedDomainsLogsAll({
           params: paramsToPass,
-          shouldSetBlockNumber: true,
         });
 
-        for (const unprocessedBurnDomainItem of unprocessedBurnedDomainsList) {
-          const blockTxIds = await getBlockTransactionIds(
+        for (let i = 0; i < unprocessedBurnedDomainsList.length; i++) {
+          const unprocessedBurnDomainItem = unprocessedBurnedDomainsList[i];
+          const previousUnprocessedBurnDomainItem =
+            i > 0 ? unprocessedBurnedDomainsList[i - 1] : null;
+
+          if (
+            previousUnprocessedBurnDomainItem &&
+            unprocessedBurnDomainItem.block_num ===
+              previousUnprocessedBurnDomainItem.block_num
+          ) {
+            // if blocknumbers are the same we need to wait around 3 seconds to fetch block data again. If not wait returns empty object.
+            await sleep(3000);
+          }
+          const blockData = await getBlockTransactions(
             unprocessedBurnDomainItem.block_num,
           );
 
-          if (blockTxIds && blockTxIds.ids && blockTxIds.ids.length) {
-            for (const blockTxIdItem of blockTxIds.ids) {
-              const blockTxData = await getTransaction({
-                transactionId: blockTxIdItem,
-              });
+          if (blockData && blockData.transactions && blockData.transactions.length) {
+            const burnedDomainAction = blockData.transactions.find(
+              ({ trx }) =>
+                trx.id &&
+                trx.transaction &&
+                trx.transaction.actions &&
+                !!trx.transaction.actions.find(
+                  ({ name, data }) =>
+                    (name === 'burndomain' || name === 'burnexpired') &&
+                    new MathOp(data.offset).eq(unprocessedBurnDomainItem.data.id),
+                ),
+            );
 
-              if (blockTxData && blockTxData.traces && blockTxData.traces.length) {
-                const burnedDomainAction = blockTxData.traces.find(
-                  traceItem =>
-                    traceItem.act &&
-                    traceItem.act.name &&
-                    (traceItem.act.name === 'burndomain' ||
-                      traceItem.act.name === 'burnexpired'),
-                );
-
-                if (burnedDomainAction) {
-                  unprocessedBurnDomainItem.trx_id = burnedDomainAction.trx_id;
-                }
-              }
+            if (burnedDomainAction) {
+              unprocessedBurnDomainItem.trx_id = burnedDomainAction.trx.id;
             }
           }
         }
@@ -781,144 +764,299 @@ class WrapStatusJob extends CommonJob {
         return unprocessedBurnedDomainsListNonDuplicate;
       };
 
-      const getUnprocessedActionsOnFioChain = async () => {
-        const offsetRange = parseInt(config.wrap.fioHistoryOffset);
+      const getFioActionLogsAll = async ({ params, actionLogsList = [] }) => {
+        const actionLogs = await getFioActionsV2Logs({
+          ...params,
+          block_num: `${params.fromBlockNum}-${params.toBlockNum}`,
+        });
 
-        this.postMessage(
-          logPrefix +
-            `searching for blocks after Account Action Sequence: ${accountActionSequence}`,
-        );
-
-        const unprocessedActionsList = [];
-
-        const getFioActionsLogsAll = async ({ pos, actionsList }) => {
-          const actionsLogsResult = await getFioActionsLogs({
-            pos,
-            offset: offsetRange,
-          });
-
-          const actionsLogsLength =
-            actionsLogsResult &&
-            actionsLogsResult.actions &&
-            actionsLogsResult.actions.length
-              ? actionsLogsResult.actions.length
-              : 0;
-
-          const actionTraceHasNonIrreversibleBlockIndex =
-            actionsLogsResult && actionsLogsResult.actions
-              ? actionsLogsResult.actions.findIndex(actionItem =>
-                  new MathOp(actionItem.block_num).gt(
-                    actionsLogsResult.last_irreversible_block,
-                  ),
-                )
-              : null;
+        if (actionLogs && actionLogs.actions && actionLogs.actions.length) {
+          actionLogsList = [...actionLogsList, ...actionLogs.actions];
 
           if (
-            actionsLogsResult &&
-            actionsLogsResult.last_irreversible_block &&
-            actionsLogsResult.actions &&
-            actionsLogsLength > 0 &&
-            actionTraceHasNonIrreversibleBlockIndex < 0
+            actionLogs.total &&
+            actionLogs.total.value &&
+            new MathOp(actionLogs.total.value).gt(actionLogs.actions.length)
           ) {
-            actionsList.push(...actionsLogsResult.actions);
-            lastProcessedAccountActionSequence =
-              actionsList[actionsList.length - 1].account_action_seq;
-            await getFioActionsLogsAll({ pos: pos + actionsLogsLength, actionsList });
+            const lastActionLogItem = actionLogs.actions[actionLogs.actions.length - 1];
+            // Add 1 second timeout to decrease 429 Too many requests error
+            await sleep(SECOND_MS);
+
+            return await getFioActionLogsAll({
+              params: { ...params, toBlockNum: lastActionLogItem.block_num },
+              actionLogsList,
+            });
+          }
+        }
+
+        // Avoiding duplications. If we will decrement toBlockNum parameter we could miss actions in next call if they had the same block number.
+        const uniqueActions = Object.values(
+          actionLogsList.reduce((acc, action) => {
+            // Keep the latest action for each trx_id
+            acc[action.trx_id] = action;
+            return acc;
+          }, {}),
+        );
+
+        return uniqueActions;
+      };
+
+      const getFioOracleTableWrapItems = async ({
+        oracleItems,
+        lowerBound,
+        upperBound,
+      }) => {
+        const tableRowsParams = {
+          json: true,
+          code: Account.oracle,
+          limit: FIO_HISTORY_LIMIT,
+          scope: Account.oracle,
+          table: 'oracleldgrs',
+          reverse: true,
+        };
+
+        if (lowerBound) {
+          tableRowsParams.lower_bound = lowerBound;
+        }
+
+        if (upperBound) {
+          tableRowsParams.upper_bound = upperBound;
+        }
+
+        const response = await fioApi.getTableRows({
+          params: tableRowsParams,
+          apiUrlType: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
+        });
+
+        try {
+          if (!response || !response.rows || response.rows.length === 0) {
+            return oracleItems;
           }
 
-          if (actionTraceHasNonIrreversibleBlockIndex >= 0) {
-            if (actionsLogsResult && actionsLogsResult.actions) {
-              actionsList.push(
-                ...actionsLogsResult.actions.slice(
-                  0,
-                  actionTraceHasNonIrreversibleBlockIndex,
+          const { rows, more } = response;
+          const updatedItems = [...oracleItems, ...rows];
+
+          if (!more) {
+            return updatedItems;
+          }
+
+          const lastRow = rows[rows.length - 1];
+
+          // Add 1 second timeout to decrease 429 Too many requests error
+          await sleep(SECOND_MS);
+
+          return getFioOracleTableWrapItems({
+            oracleItems: updatedItems,
+            lowerBound,
+            upperBound: lastRow.id - 1,
+          });
+        } catch (error) {
+          this.handleErrorMessage(error);
+          throw error;
+        }
+      };
+
+      const handleFioWraps = async () => {
+        try {
+          const wrapTokensLogs = [];
+          const wrapDomainLogs = [];
+
+          const handleFioWrapTokensLogs = async () => {
+            const params = {
+              account: Account.oracle,
+              checkLib: true,
+              fromBlockNum: lastProcessedBlockNumber,
+              limit: FIO_HISTORY_LIMIT,
+              toBlockNum,
+              'act.name': Action.wrapTokens,
+            };
+            const wrapTokenActionLogs = await getFioActionLogsAll({ params });
+
+            if (wrapTokenActionLogs && wrapTokenActionLogs.length) {
+              wrapTokensLogs.push(
+                ...wrapTokenActionLogs.filter(
+                  ({ act }) => act && act.data && act.data.chain_code === CHAIN_CODES.ETH,
                 ),
               );
-
-              lastProcessedAccountActionSequence =
-                actionTraceHasNonIrreversibleBlockIndex > 0
-                  ? actionsLogsResult.actions[actionTraceHasNonIrreversibleBlockIndex - 1]
-                      .account_action_seq
-                  : lastProcessedAccountActionSequence;
             }
+          };
+
+          const handleFioWrapDomains = async () => {
+            const params = {
+              account: Account.oracle,
+              fromBlockNum: lastProcessedBlockNumber,
+              checkLib: true,
+              limit: FIO_HISTORY_LIMIT,
+              toBlockNum,
+              'act.name': Action.wrapDomain,
+            };
+            const wrapDomainActionLogs = await getFioActionLogsAll({ params });
+
+            if (wrapDomainActionLogs && wrapDomainActionLogs.length) {
+              wrapDomainLogs.push(
+                ...wrapDomainActionLogs.filter(
+                  ({ act }) =>
+                    act &&
+                    act.data &&
+                    (act.data.chain_code === CHAIN_CODES.MATIC ||
+                      act.data.chain_code === CHAIN_CODES.POL),
+                ),
+              );
+            }
+          };
+
+          await handleFioWrapTokensLogs();
+          await handleFioWrapDomains();
+
+          if (wrapTokensLogs.length || wrapDomainLogs.length) {
+            // Getting oracle table rows to match oracle id with wraped item
+            const oracleTableItems = await getFioOracleTableWrapItems({
+              oracleItems: [],
+            });
+
+            if (wrapTokensLogs.length > 0) {
+              for (const wrapTokensItem of wrapTokensLogs) {
+                const { timestamp, act } = wrapTokensItem;
+                const {
+                  data: { amount, chain_code, public_address, actor },
+                } = act || {};
+                const existingOracleTableItem = oracleTableItems.find(
+                  ({
+                    actor: oracleItemActor,
+                    chaincode: oracleItemChainCode,
+                    pubaddress: oracleItemPublicAddress,
+                    amount: oracleItemAmount,
+                    timestamp: oracleItemTimestamp,
+                  }) =>
+                    oracleItemActor === actor &&
+                    oracleItemChainCode === chain_code &&
+                    oracleItemPublicAddress === public_address &&
+                    new MathOp(oracleItemAmount).eq(amount) &&
+                    compareTimestampsWithThreshold(oracleItemTimestamp, timestamp + 'Z'),
+                );
+
+                if (existingOracleTableItem) {
+                  wrapTokensItem.oracleId = existingOracleTableItem.id;
+                }
+              }
+              await WrapStatusFioWrapTokensLogs.addLogs(wrapTokensLogs);
+            }
+            if (wrapDomainLogs.length > 0) {
+              for (const wrapDomainItem of wrapDomainLogs) {
+                const { timestamp, act } = wrapDomainItem;
+                const {
+                  data: { actor, chain_code, fio_domain, public_address },
+                } = act || {};
+                const existingOracleTableItem = oracleTableItems.find(
+                  ({
+                    actor: oracleItemActor,
+                    chaincode: oracleItemChainCode,
+                    pubaddress: oracleItemPublicAddress,
+                    nftname,
+                    timestamp: oracleItemTimestamp,
+                  }) =>
+                    oracleItemActor === actor &&
+                    oracleItemChainCode === chain_code &&
+                    oracleItemPublicAddress === public_address &&
+                    nftname === fio_domain &&
+                    compareTimestampsWithThreshold(oracleItemTimestamp, timestamp + 'Z'),
+                );
+
+                if (existingOracleTableItem) {
+                  wrapDomainItem.oracleId = existingOracleTableItem.id;
+                }
+              }
+              await WrapStatusFioWrapNftsLogs.addLogs(wrapDomainLogs);
+            }
+          }
+
+          this.postMessage(
+            logPrefix + `wrapTokens result length: ${wrapTokensLogs.length}`,
+          );
+          this.postMessage(
+            logPrefix + `wrapDomains result length: ${wrapDomainLogs.length}`,
+          );
+        } catch (error) {
+          this.handleErrorMessage(error);
+        }
+      };
+
+      const handleUnwrapTokens = async () => {
+        const unwrapTokensLogs = [];
+
+        const handleFioUnwrapTokensLogs = async () => {
+          const params = {
+            account: Account.oracle,
+            checkLib: true,
+            fromBlockNum: lastProcessedBlockNumber,
+            limit: FIO_HISTORY_LIMIT,
+            toBlockNum,
+            'act.name': 'unwraptokens',
+          };
+          const unwrapTokenActionLogs = await getFioActionLogsAll({ params });
+
+          if (unwrapTokenActionLogs && unwrapTokenActionLogs.length) {
+            unwrapTokensLogs.push(...unwrapTokenActionLogs);
           }
         };
 
-        try {
-          await getFioActionsLogsAll({
-            pos:
-              accountActionSequence > 0
-                ? new MathOp(accountActionSequence).add(1).toNumber()
-                : accountActionSequence,
-            actionsList: unprocessedActionsList,
-          });
-        } catch (error) {
-          this.postMessage(`${logPrefix} Error: ${error}`);
+        await handleFioUnwrapTokensLogs();
+
+        if (unwrapTokensLogs.length > 0) {
+          await WrapStatusFioUnwrapTokensLogs.addLogs(unwrapTokensLogs);
         }
 
-        return unprocessedActionsList.filter(
-          elem =>
-            (elem.action_trace.act.name === 'wraptokens' &&
-              elem.action_trace.act.data.chain_code === 'ETH') ||
-            (elem.action_trace.act.name === 'wrapdomain' &&
-              (elem.action_trace.act.data.chain_code === 'MATIC' ||
-                elem.action_trace.act.data.chain_code === 'POL')) ||
-            elem.action_trace.act.name === 'unwraptokens' ||
-            elem.action_trace.act.name === 'unwrapdomain',
+        this.postMessage(
+          logPrefix + `unwrapTokens result length: ${unwrapTokensLogs.length}`,
         );
       };
 
-      const logs = await getUnprocessedActionsOnFioChain();
-      const burnedDomainsLogs = await getUnporcessedBurnDomainActionsOnFioChain();
+      const handleUnwrapDomains = async () => {
+        const unwrapDomainLogs = [];
 
-      const wrapDomainLogs = [];
-      const wrapTokensLogs = [];
-      const unwrapDomainLogs = [];
-      const unwrapTokensLogs = [];
+        const handleFioUnwrapTokensLogs = async () => {
+          const params = {
+            account: Account.oracle,
+            checkLib: true,
+            fromBlockNum: lastProcessedBlockNumber,
+            limit: FIO_HISTORY_LIMIT,
+            toBlockNum,
+            'act.name': 'unwrapdomain',
+          };
+          const unwrapTokenActionLogs = await getFioActionLogsAll({ params });
 
-      logs.forEach(logItem => {
-        if (logItem.action_trace.act.name === 'wraptokens') wrapTokensLogs.push(logItem);
-        if (logItem.action_trace.act.name === 'wrapdomain') wrapDomainLogs.push(logItem);
-        if (logItem.action_trace.act.name === 'unwraptokens')
-          unwrapTokensLogs.push(logItem);
-        if (logItem.action_trace.act.name === 'unwrapdomain')
-          unwrapDomainLogs.push(logItem);
-      });
+          if (unwrapTokenActionLogs && unwrapTokenActionLogs.length) {
+            unwrapDomainLogs.push(...unwrapTokenActionLogs);
+          }
+        };
 
-      this.postMessage(
-        logPrefix + `unwrapTokens result length: ${unwrapTokensLogs.length}`,
-      );
-      this.postMessage(
-        logPrefix + `unwrapDomains result length: ${unwrapDomainLogs.length}`,
-      );
-      this.postMessage(logPrefix + `wrapTokens result length: ${wrapTokensLogs.length}`);
-      this.postMessage(logPrefix + `wrapDomains result length: ${wrapDomainLogs.length}`);
-      this.postMessage(
-        logPrefix + `burnedDomains result length: ${burnedDomainsLogs.length}`,
-      );
+        await handleFioUnwrapTokensLogs();
 
-      if (unwrapDomainLogs.length > 0) {
-        await WrapStatusFioUnwrapNftsLogs.addLogs(unwrapDomainLogs);
-      }
-      if (unwrapTokensLogs.length > 0) {
-        await WrapStatusFioUnwrapTokensLogs.addLogs(unwrapTokensLogs);
-      }
-      if (wrapDomainLogs.length > 0) {
-        await WrapStatusFioWrapNftsLogs.addLogs(wrapDomainLogs);
-      }
-      if (wrapTokensLogs.length > 0)
-        await WrapStatusFioWrapTokensLogs.addLogs(wrapTokensLogs);
-      if (burnedDomainsLogs.length > 0)
-        await WrapStatusFioBurnedDomainsLogs.addLogs(burnedDomainsLogs);
-      if (
-        lastProcessedAccountActionSequence &&
-        lastProcessedAccountActionSequence > accountActionSequence
-      ) {
-        await WrapStatusFioHistoryOffsetParams.setActionSequence({
-          accountName,
-          accountActionSequenceValue: lastProcessedAccountActionSequence,
-        });
-      }
+        if (unwrapDomainLogs.length > 0) {
+          await WrapStatusFioUnwrapNftsLogs.addLogs(unwrapDomainLogs);
+        }
+
+        this.postMessage(
+          logPrefix + `unwrapDomains result length: ${unwrapDomainLogs.length}`,
+        );
+      };
+
+      const handleBurnedDomains = async () => {
+        const burnedDomainActionLogs = await getUnporcessedBurnDomainActionsOnFioChain();
+
+        this.postMessage(
+          `${logPrefix} burnedDomains result length: ${burnedDomainActionLogs.length}`,
+        );
+        if (burnedDomainActionLogs.length > 0)
+          await WrapStatusFioBurnedDomainsLogs.addLogs(burnedDomainActionLogs);
+      };
+
+      await handleFioWraps();
+      await handleUnwrapTokens();
+      await handleUnwrapDomains();
+      await handleBurnedDomains();
+
+      await WrapStatusBlockNumbers.setBlockNumber(toBlockNum, networkData.id, true);
 
       this.postMessage(logPrefix + 'successfully finished');
     } catch (e) {
@@ -931,7 +1069,7 @@ class WrapStatusJob extends CommonJob {
       `Starting... If there are a lot of unprocessed data, it may take some time to get it.`,
     );
 
-    this.fioHistoryUrls = await this.getHistoryUrls();
+    this.fioActionUrls = await this.getActionUrls();
     this.fioHistoryV2Urls = await this.getHistoryV2Urls();
 
     await this.executeActions([
@@ -941,8 +1079,7 @@ class WrapStatusJob extends CommonJob {
       this.getEthLogs.bind(this, true),
       this.getEthLogs.bind(this, false),
       this.getUnwrapOravotesLogs.bind(this),
-      this.getFioLogs.bind(this, { accountName: 'fio.oracle' }),
-      this.getFioLogs.bind(this, { accountName: 'fio.address' }),
+      this.getFioLogs.bind(this),
       // this.test,
     ]);
 

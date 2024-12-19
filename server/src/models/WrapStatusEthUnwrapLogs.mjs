@@ -74,29 +74,17 @@ export class WrapStatusEthUnwrapLogs extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [
-        log.transactionHash,
-        log.address,
-        log.blockNumber,
-        log.returnValues.amount,
-        log.returnValues.fioaddress,
-        JSON.stringify({ ...log }),
-      ];
+    const records = data.map(log => ({
+      transactionHash: log.transactionHash,
+      address: log.address,
+      blockNumber: log.blockNumber,
+      amount: log.returnValues.amount,
+      fioAddress: log.returnValues.fioaddress,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: ['address', 'blockNumber', 'amount', 'fioAddress', 'data'],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-eth-unwrap-logs" ("transactionHash", address, "blockNumber", amount, "fioAddress", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("transactionHash") DO UPDATE SET address = EXCLUDED.address, amount = EXCLUDED.amount, "blockNumber" = EXCLUDED."blockNumber", "fioAddress" = EXCLUDED."fioAddress", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 }
