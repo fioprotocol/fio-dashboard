@@ -1,0 +1,114 @@
+// import Sequelize from 'sequelize';
+import fetch from 'node-fetch';
+
+import '../db';
+import { FioApiUrl, Var } from '../models/index.mjs';
+import CommonJob from './job.mjs';
+import MathOp from '../services/math.mjs';
+
+import logger from '../logger.mjs';
+
+import { VARS_KEYS } from '../config/constants.js';
+import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
+
+const FETCH_URL = process.env.API_URLS_JOB_ENDPOINT;
+const MIN_VOTES = process.env.API_URLS_JOB_MIN_VOTES;
+
+class ApiUrlsJob extends CommonJob {
+  async execute() {
+    const minVersion = await Var.getValByKey(VARS_KEYS.API_URLS_MIN_VERSION);
+    const dynamicFetch = Number(await Var.getValByKey(VARS_KEYS.API_URLS_DYNAMIC_FETCH));
+
+    if (!dynamicFetch) {
+      this.postMessage('Dynamic fetch is off');
+      return this.finish();
+    }
+    this.postMessage(`Process api urls - ${FETCH_URL}`);
+
+    const processUrl = async item => {
+      try {
+        const {
+          server_version,
+          url,
+          api,
+          hyperion,
+          votes,
+          score: { score },
+          // location_country,
+          // location_latitude,
+          // location_longitude,
+        } = item;
+
+        // if (!this.hasNeededEndpoints(url)) return;
+        if (!this.minVersionRequired(server_version, minVersion)) return;
+        if (!this.votesRequired(votes)) return;
+
+        await FioApiUrl.destroy({ where: { url: `${url}/v1/` }, force: true });
+
+        const rank = score;
+        if (api) {
+          await FioApiUrl.create({
+            url: `${url}/v1/`,
+            type: FIO_API_URLS_TYPES.DASHBOARD_API,
+            rank,
+          });
+          await FioApiUrl.create({
+            url: `${url}/v1/`,
+            type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
+            rank,
+          });
+        }
+        if (hyperion) {
+          await FioApiUrl.create({
+            url: `${url}/v2/`,
+            type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+            rank,
+          });
+          await FioApiUrl.create({
+            url: `${url}/v2/`,
+            type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
+            rank,
+          });
+        }
+      } catch (err) {
+        logger.error(err);
+      }
+    };
+
+    let list = [];
+    try {
+      const res = await fetch(FETCH_URL);
+      list = await res.json();
+    } catch (err) {
+      logger.error(err);
+    }
+
+    list.sort(({ score: { score } }, { score: { score: score2 } }) => score > score2);
+    list.splice(Math.ceil(list.length / 2), list.length - Math.ceil(list.length / 2));
+
+    const methods = list.map(item => processUrl(item));
+
+    await this.executeActions(methods);
+
+    this.finish();
+  }
+
+  minVersionRequired(version, minVersion) {
+    const [, , maj, min, sub] = version.match(/v?((\d+)\.(\d+)\.(\d+))/);
+    const [, , minMaj, minMin, minSub] = minVersion.match(/v?((\d+)\.(\d+)\.(\d+))/);
+
+    return (
+      Number(maj) > Number(minMaj) ||
+      (Number(maj) === Number(minMaj) && Number(min) > Number(minMin)) ||
+      (Number(maj) === Number(minMaj) &&
+        Number(min) === Number(minMin) &&
+        Number(sub) >= Number(minSub))
+    );
+  }
+
+  votesRequired(votes) {
+    return new MathOp(votes).gte(MIN_VOTES);
+  }
+}
+
+new ApiUrlsJob().execute();
