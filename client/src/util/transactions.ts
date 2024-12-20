@@ -307,7 +307,7 @@ export const checkTransactions = async (
         break;
       }
 
-      for (let i = 0; i < actions.length - 1; i++) {
+      for (let i = 0; i < actions.length; i++) {
         const action = actions[i];
 
         const { timestamp, editedExisting } = processTransaction(
@@ -350,7 +350,7 @@ export const checkTransactions = async (
   const sortedTxns = transactions.sort((tx1, tx2) =>
     tx1.date < tx2.date ? 1 : -1,
   );
-  const newLastTxActionTime = sortedTxns[0].timestamp;
+  const newLastTxActionTime = sortedTxns[0]?.timestamp;
 
   if (
     (!lastTxActionTime && newLastTxActionTime) ||
