@@ -990,7 +990,7 @@ export type WrapStatusWrapItem = {
   status: string;
   to: string;
   tpid?: string;
-  voters?: { account: string; transactionHash: string }[];
+  voters?: { account: string; transactionHash: string; obtid: string }[];
   transactionId: string;
 };
 

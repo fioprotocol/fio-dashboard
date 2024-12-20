@@ -42,27 +42,15 @@ export class WrapStatusFioUnwrapTokensLogs extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [
-        log.action_trace.trx_id,
-        log.action_trace.act.data.obt_id,
-        JSON.stringify({ ...log }),
-      ];
+    const records = data.map(log => ({
+      transactionId: log.trx_id,
+      obtId: log.act.data.obt_id,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: ['obtId', 'data'],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-fio-unwrap-tokens-logs" ("transactionId", "obtId", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("transactionId") DO UPDATE SET "obtId" = EXCLUDED."obtId", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 
   static format({ data, obtId, transactionId }) {

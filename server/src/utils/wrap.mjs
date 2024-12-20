@@ -46,11 +46,9 @@ export const normalizeWrapData = wrapItem => {
   } = wrapItem;
 
   const {
-    action_trace: {
-      act: { data: { actor, chain_code, tpid } = {}, name: actionType } = {},
-      receiver: escrowAccount,
-    } = {},
-    block_time,
+    act: { data: { actor, chain_code, tpid } = {}, name: actionType } = {},
+    receiver: escrowAccount,
+    timestamp,
   } = data || {};
 
   const approvals = {},
@@ -63,7 +61,7 @@ export const normalizeWrapData = wrapItem => {
     confirmData &&
     (!Object.keys(confirmData).includes('isComplete') || !!data.confirmData.isComplete);
 
-  const status = parseActionStatus({ blockTimestamp: block_time + 'Z', isComplete });
+  const status = parseActionStatus({ blockTimestamp: timestamp + 'Z', isComplete });
 
   if (confirmBlockNumber) {
     approvals.blockNumber = confirmBlockNumber;
@@ -83,8 +81,8 @@ export const normalizeWrapData = wrapItem => {
 
   if (oravotes && oravotes.length)
     for (const oracleVoter of oravotes) {
-      const { returnValues: { account } = {}, transactionHash } = oracleVoter;
-      voters.push({ account, transactionHash });
+      const { returnValues: { account, obtid } = {}, transactionHash } = oracleVoter;
+      voters.push({ account, transactionHash, obtid });
     }
 
   return {
@@ -92,7 +90,7 @@ export const normalizeWrapData = wrapItem => {
     amount,
     approvals,
     blockNumber,
-    blockTimestamp: block_time + 'Z',
+    blockTimestamp: timestamp + 'Z',
     chain: WRAP_STATUS_NETWORKS.FIO,
     domain,
     escrowAccount,
@@ -223,8 +221,8 @@ export const normalizeBurnData = burnDomainItem => {
 
   if (oravotes && oravotes.length)
     for (const oracleVoter of oravotes) {
-      const { returnValues: { account } = {}, transactionHash } = oracleVoter;
-      voters.push({ account, transactionHash });
+      const { returnValues: { account, obtid } = {}, transactionHash } = oracleVoter;
+      voters.push({ account, transactionHash, obtid });
     }
 
   return {

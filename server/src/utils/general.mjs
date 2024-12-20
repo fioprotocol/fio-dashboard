@@ -5,6 +5,7 @@ import { sleep } from '../tools.mjs';
 import { HTTP_CODES } from '../constants/general.mjs';
 import { RATE_LIMIT_TYPE_ERROR } from '../constants/errors.mjs';
 import { MINUTE_MS, SECOND_MS } from '../config/constants';
+import MathOp from '../services/math.mjs';
 
 export function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
@@ -97,4 +98,28 @@ export const fetchWithRateLimit = async ({
     logger.error(error, 'Fetch with rate limit failed');
     throw error;
   }
+};
+
+export const compareTimestampsWithThreshold = (timestamp1, timestamp2) => {
+  // Convert timestamps to milliseconds
+  const getMilliseconds = timestamp => {
+    if (typeof timestamp === 'number') {
+      // Convert Unix timestamp to milliseconds
+      return new MathOp(timestamp).mul(SECOND_MS);
+    }
+    // Convert ISO string to milliseconds
+    return new MathOp(new Date(timestamp).getTime());
+  };
+
+  const time1 = getMilliseconds(timestamp1);
+  const time2 = getMilliseconds(timestamp2);
+
+  // Calculate absolute difference in seconds
+  const diffInSeconds = time1
+    .sub(time2)
+    .abs()
+    .div(SECOND_MS);
+
+  // Compare with threshold of 1 second
+  return diffInSeconds.lte(1);
 };
