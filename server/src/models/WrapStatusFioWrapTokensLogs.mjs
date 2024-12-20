@@ -12,6 +12,7 @@ export class WrapStatusFioWrapTokensLogs extends Base {
         address: { type: DT.STRING, allowNull: false },
         amount: { type: DT.STRING, allowNull: false },
         blockNumber: { type: DT.STRING, allowNull: false },
+        oracleId: { type: DT.STRING },
         data: { type: DT.JSON },
       },
       {
@@ -24,7 +25,7 @@ export class WrapStatusFioWrapTokensLogs extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['transactionId', 'address', 'amount', 'blockNumber', 'data'],
+      default: ['transactionId', 'address', 'amount', 'blockNumber', 'oracleId', 'data'],
     };
 
     if (type in attributes) {
@@ -44,13 +45,14 @@ export class WrapStatusFioWrapTokensLogs extends Base {
           wf."transactionId", 
           wf.address, 
           wf."amount", 
-          wf."blockNumber", 
+          wf."blockNumber",
+          wf."oracleId",
           wf."data", 
           we."data" as "confirmData",
           array_agg(wo."data") FILTER (WHERE wo."data" IS NOT NULL)  as "oravotes"
         FROM "wrap-status-fio-wrap-tokens-logs" wf
-          LEFT JOIN "wrap-status-eth-wrap-logs" we ON we."obtId" = wf."transactionId"
-          LEFT JOIN "wrap-status-eth-oracles-confirmations-logs" wo ON wo."obtId" = wf."transactionId"
+          LEFT JOIN "wrap-status-eth-wrap-logs" we ON (we."obtId" = wf."transactionId" OR we."obtId" = wf."oracleId")
+          LEFT JOIN "wrap-status-eth-oracles-confirmations-logs" wo ON (wo."obtId" = wf."transactionId" OR wo."obtId" = wf."oracleId")
         WHERE wf."transactionId" IS NOT NULL
         GROUP BY wf."transactionId", we."transactionHash"
         ORDER BY wf."blockNumber"::bigint desc
@@ -61,28 +63,17 @@ export class WrapStatusFioWrapTokensLogs extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [
-        log.action_trace.trx_id,
-        log.action_trace.act.data.public_address,
-        log.action_trace.act.data.amount,
-        log.block_num,
-        JSON.stringify({ ...log }),
-      ];
+    const records = data.map(log => ({
+      transactionId: log.trx_id,
+      address: log.act.data.public_address,
+      amount: log.act.data.amount,
+      blockNumber: log.block_num,
+      oracleId: log.oracleId,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: ['address', 'amount', 'blockNumber', 'oracleId', 'data'],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-fio-wrap-tokens-logs" ("transactionId", address, amount, "blockNumber", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("transactionId") DO UPDATE SET address = EXCLUDED.address, amount = EXCLUDED.amount, "blockNumber" = EXCLUDED."blockNumber", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 }

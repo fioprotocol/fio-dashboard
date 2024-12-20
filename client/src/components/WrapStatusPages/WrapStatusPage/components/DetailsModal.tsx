@@ -50,11 +50,15 @@ const DetailsModal: React.FC<Props> = props => {
   const isPending = status === WRAP_ITEM_STATUS.PENDING;
   const isFailed = status === WRAP_ITEM_STATUS.FAILED;
 
-  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${to} ${transactionId}`;
-  const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${to} ${transactionId}`;
-  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${amount} ${to} ${transactionId}`;
-  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${domain} ${to} ${transactionId}`;
-  const burnDomainFailedCommand = `npm run oracle burn domain ${domain} ${transactionId}`;
+  const obtid = voters?.length
+    ? voters[0].obtid || transactionId
+    : transactionId;
+
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${to} ${obtid}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${to} ${obtid}`;
+  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${amount} ${to} ${obtid}`;
+  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${domain} ${to} ${obtid}`;
+  const burnDomainFailedCommand = `npm run oracle burn domain ${domain} ${obtid}`;
 
   const wrapCommand = isWrap
     ? isTokens

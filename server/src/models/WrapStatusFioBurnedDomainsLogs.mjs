@@ -63,22 +63,15 @@ export class WrapStatusFioBurnedDomainsLogs extends Base {
   }
 
   static async addLogs(data) {
-    const values = data.map(log => {
-      return [log.trx_id, log.data.name, log.block_num, JSON.stringify({ ...log })];
+    const records = data.map(log => ({
+      transactionId: log.trx_id,
+      domain: log.data.name,
+      blockNumber: log.block_num,
+      data: log,
+    }));
+
+    return this.bulkCreate(records, {
+      updateOnDuplicate: ['domain', 'blockNumber', 'data'],
     });
-
-    const query =
-      'INSERT INTO "wrap-status-fio-burned-domains-logs" ("transactionId", domain, "blockNumber", data) VALUES ' +
-      data
-        .map(() => {
-          return '(?)';
-        })
-        .join(',') +
-      ' ON CONFLICT ("transactionId") DO UPDATE SET domain = EXCLUDED.domain, "blockNumber" = EXCLUDED."blockNumber", data = EXCLUDED.data;';
-
-    return this.sequelize.query(
-      { query, values },
-      { type: this.sequelize.QueryTypes.INSERT },
-    );
   }
 }
