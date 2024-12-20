@@ -19,6 +19,12 @@ export class FioApiUrl extends Base {
         type: {
           type: DT.STRING,
         },
+        location: {
+          type: DT.STRING,
+        },
+        data: {
+          type: DT.JSON,
+        },
       },
       {
         sequelize,
@@ -30,7 +36,7 @@ export class FioApiUrl extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'url', 'rank', 'type', 'createdAt'],
+      default: ['id', 'url', 'rank', 'type', 'location', 'data', 'createdAt'],
     };
 
     if (type in attributes) {
@@ -49,12 +55,14 @@ export class FioApiUrl extends Base {
     return urls.map(item => item.url);
   }
 
-  static format({ id, rank, url, type }) {
+  static format({ id, rank, url, type, location, data }) {
     return {
       id,
       rank,
       url,
       type,
+      location,
+      data,
     };
   }
 }
