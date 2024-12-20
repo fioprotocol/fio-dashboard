@@ -1,4 +1,3 @@
-// import Sequelize from 'sequelize';
 import fetch from 'node-fetch';
 
 import '../db';
@@ -12,6 +11,7 @@ import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
 const FETCH_URL = process.env.API_URLS_JOB_ENDPOINT;
 const MIN_VOTES = process.env.API_URLS_JOB_MIN_VOTES;
+const REQUIRED_APIS = ['/v1/chain/get_block', '/v1/chain/get_info'];
 
 class ApiUrlsJob extends CommonJob {
   async execute() {
@@ -33,28 +33,34 @@ class ApiUrlsJob extends CommonJob {
           hyperion,
           votes,
           score: { score },
-          // location_country,
-          // location_latitude,
-          // location_longitude,
+          location_country,
+          location_latitude,
+          location_longitude,
         } = item;
 
-        // if (!this.hasNeededEndpoints(url)) return;
         if (!this.minVersionRequired(server_version, minVersion)) return;
         if (!this.votesRequired(votes)) return;
 
         await FioApiUrl.destroy({ where: { url }, force: true });
 
         const rank = score;
+        const location = location_country;
+        const data = { location_longitude, location_latitude };
         if (api) {
+          if (!(await this.hasRequiredEndpoints(url))) return;
           await FioApiUrl.create({
             url: `${url}/v1/`,
             type: FIO_API_URLS_TYPES.DASHBOARD_API,
             rank,
+            location,
+            data,
           });
           await FioApiUrl.create({
             url: `${url}/v1/`,
             type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
             rank,
+            location,
+            data,
           });
         }
         if (hyperion) {
@@ -62,11 +68,15 @@ class ApiUrlsJob extends CommonJob {
             url: `${url}/v2/`,
             type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
             rank,
+            location,
+            data,
           });
           await FioApiUrl.create({
             url: `${url}/v2/`,
             type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
             rank,
+            location,
+            data,
           });
         }
       } catch (err) {
@@ -87,6 +97,7 @@ class ApiUrlsJob extends CommonJob {
 
     const methods = list.map(item => processUrl(item));
 
+    this.postMessage(`Process api urls - ${methods.length}`);
     await this.executeActions(methods);
 
     this.finish();
@@ -107,6 +118,17 @@ class ApiUrlsJob extends CommonJob {
 
   votesRequired(votes) {
     return votes > MIN_VOTES; // todo:
+  }
+
+  async hasRequiredEndpoints(url) {
+    const res = await fetch(`${url}/v1/node/get_supported_apis`);
+    const supportedList = await res.json();
+
+    for (const url of REQUIRED_APIS) {
+      if (supportedList.apis.indexOf(url) === -1) return false;
+    }
+
+    return true;
   }
 }
 
