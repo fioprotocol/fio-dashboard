@@ -42,6 +42,7 @@ export const normalizeWrapData = wrapItem => {
     data,
     domain,
     oravotes,
+    oracleId,
     transactionId,
   } = wrapItem;
 
@@ -95,6 +96,7 @@ export const normalizeWrapData = wrapItem => {
     domain,
     escrowAccount,
     from: actor,
+    oracleId,
     status,
     to: address,
     tpid,
@@ -138,12 +140,12 @@ export const normalizeUnwrapData = unwrapItem => {
 
   if (confirmData) {
     for (const confirmDataItem of confirmData) {
-      const { action_trace: { trx_id } = {}, block_time } = confirmDataItem;
+      const { trx_id, timestamp } = confirmDataItem;
 
       if (!approvals.blockTimeStamp) {
-        approvals.blockTimeStamp = block_time + 'Z';
+        approvals.blockTimeStamp = timestamp + 'Z';
       } else {
-        const blockTime = new Date(block_time + 'Z');
+        const blockTime = new Date(timestamp + 'Z');
         const approvalsBlockTime = new Date(approvals.blockTimeStamp);
 
         if (blockTime > approvalsBlockTime) {
