@@ -623,6 +623,13 @@ class WrapStatusJob extends CommonJob {
         let response = null;
         for (const url of urls) {
           try {
+            // delete params that are not present in call
+            if ('fromBlockNum' in params) {
+              delete params.fromBlockNum;
+            }
+            if ('toBlockNum' in params) {
+              delete params.toBlockNum;
+            }
             const queryString = new URLSearchParams(params).toString();
 
             const res = await fetchWithRateLimit({

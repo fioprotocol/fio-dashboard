@@ -40,6 +40,7 @@ const DetailsModal: React.FC<Props> = props => {
     domain,
     escrowAccount,
     from,
+    oracleId,
     status,
     to,
     tpid,
@@ -51,8 +52,8 @@ const DetailsModal: React.FC<Props> = props => {
   const isFailed = status === WRAP_ITEM_STATUS.FAILED;
 
   const obtid = voters?.length
-    ? voters[0].obtid || transactionId
-    : transactionId;
+    ? voters[0].obtid || oracleId || transactionId
+    : oracleId || transactionId;
 
   const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${to} ${obtid}`;
   const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${to} ${obtid}`;

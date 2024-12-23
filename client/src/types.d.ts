@@ -987,6 +987,7 @@ export type WrapStatusWrapItem = {
   domain?: string;
   escrowAccount?: string;
   from: string;
+  oracleId?: string;
   status: string;
   to: string;
   tpid?: string;
