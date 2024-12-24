@@ -55,19 +55,15 @@ class WrapStatusJob extends CommonJob {
   }
 
   async getActionUrls() {
-    const fioActionUrls = await FioApiUrl.findAll({
-      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API },
+    return FioApiUrl.getApiUrls({
+      type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
     });
-
-    return fioActionUrls.map(fioActionItem => fioActionItem.url);
   }
 
   async getHistoryV2Urls() {
-    const fioHistoryV2Urls = await FioApiUrl.findAll({
-      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL },
+    return FioApiUrl.getApiUrls({
+      type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
     });
-
-    return fioHistoryV2Urls.map(fioHistoryV2Item => fioHistoryV2Item.url);
   }
 
   // example of getting all POLYGON smart contract events
