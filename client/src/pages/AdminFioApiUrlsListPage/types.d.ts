@@ -6,6 +6,9 @@ export type FormValuesProps = {
   type: string;
   url: string;
 };
+export type MinVersionFormValuesProps = {
+  minVersion: string;
+};
 
 export type FormValuesEditProps = {
   id: string;
@@ -17,5 +20,5 @@ export type PageProps = {
   loading: boolean;
   fioApiUrlsCount: number;
   fioApiUrlsList: FioApiUrl[];
-  getFioApiUrlsList: (limit?: number, offset?: number) => Promise<void>;
+  getFioApiUrlsList: () => Promise<void>;
 };
