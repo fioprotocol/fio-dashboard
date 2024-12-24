@@ -40,6 +40,11 @@ const updateApiUrlVar = async (key: string, value: string) => {
 const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
   const { loading, fioApiUrlsList, getFioApiUrlsList } = props;
 
+  const newApiUrlData = {
+    rank: fioApiUrlsList?.length
+      ? fioApiUrlsList[fioApiUrlsList.length - 1].rank + 1
+      : 1,
+  };
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showMinVerModal, setShowMinVerModal] = useState<boolean>(false);
   const [apiUrlData, setApiUrlData] = useState<FioApiUrl | null>(null);
@@ -148,25 +153,25 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
   );
 
   const onDragEnd = useCallback(
-    result => {
+    (result, apiUrlList) => {
       if (!result.destination) {
         return;
       }
 
       const reorderedApiUrls: FioApiUrl[] = reorder(
-        fioApiUrlsList,
+        apiUrlList,
         result.source.index,
         result.destination.index,
       );
 
       const updatedApiUrls = reorderedApiUrls.map((reordered, i) => ({
         ...reordered,
-        rank: i + 1,
+        rank: reorderedApiUrls.length - i,
       }));
 
       updateFioApiUrlList(updatedApiUrls);
     },
-    [fioApiUrlsList, updateFioApiUrlList],
+    [updateFioApiUrlList],
   );
 
   const getFioApiUrlsVar = async () => {
@@ -201,7 +206,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
   );
 
   const DragDropComponent = ({ apiUrlsList }: { apiUrlsList: FioApiUrl[] }) => (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={result => onDragEnd(result, apiUrlsList)}>
       <Droppable droppableId="droppable">
         {(provided, snapshot) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -316,7 +321,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
       </div>
 
       <FioApiUrlModal
-        initialValues={apiUrlData || { rank: fioApiUrlsList?.length + 1 }}
+        initialValues={apiUrlData || newApiUrlData}
         show={showModal}
         onSubmit={updateFioApiUrl}
         loading={loading}
