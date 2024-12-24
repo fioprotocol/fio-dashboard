@@ -1,6 +1,8 @@
 import { FIO_API_URLS_TYPES } from '../constants/fio';
 import Base from './base';
 
+import { getUserTz } from '../util/general';
+
 import {
   FioRegApiUrlsResponse,
   FioRegCaptchaResponse,
@@ -19,11 +21,13 @@ export default class FioReg extends Base {
   apiUrls(): Promise<FioRegApiUrlsResponse> {
     return this.apiClient.get('reg/api-urls', {
       fioUrlType: FIO_API_URLS_TYPES.DASHBOARD_API,
+      tz: getUserTz(),
     });
   }
   historyUrls(): Promise<FioRegApiUrlsResponse> {
     return this.apiClient.get('reg/api-urls', {
       fioUrlType: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+      tz: getUserTz(),
     });
   }
 }

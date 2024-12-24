@@ -1,10 +1,18 @@
 import Sequelize from 'sequelize';
+import { sortByDistance } from 'sort-by-distance';
 
 import Base from './Base';
+import { getLocByCountry } from '../external/geo/index.mjs';
 
 const { DataTypes: DT } = Sequelize;
 
 export class FioApiUrl extends Base {
+  static get LOCATION() {
+    return {
+      US: 'US',
+    };
+  }
+
   static init(sequelize) {
     super.init(
       {
@@ -46,13 +54,28 @@ export class FioApiUrl extends Base {
     return attributes.default;
   }
 
-  static async getApiUrls({ type }) {
+  static async getApiUrls({ type, location = this.LOCATION.US, tz = '' }) {
+    const where = {};
+    if (type) where.type = type;
+
     const urls = await this.findAll({
-      order: [['rank', 'ASC']],
-      where: { type },
+      order: [['rank', 'DESC']],
+      where,
     });
 
-    return urls.map(item => item.url);
+    const defaultLocData = getLocByCountry({ code: this.LOCATION.US });
+    const locData = getLocByCountry({ code: location, tz });
+    const sorted = sortByDistance(
+      { x: locData.longitude, y: locData.latitude },
+      urls.map(({ url, data }) =>
+        data && data.location_latitude
+          ? { url, x: data.location_longitude, y: data.location_latitude }
+          : { url, x: defaultLocData.longitude, y: defaultLocData.latitude },
+      ),
+      { type: 'haversine' },
+    );
+
+    return sorted.map(item => item.url);
   }
 
   static format({ id, rank, url, type, location, data }) {

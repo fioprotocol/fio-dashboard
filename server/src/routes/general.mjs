@@ -8,7 +8,7 @@ import GetSiteSettings from '../services/general/GetSiteSettings.mjs';
 export default {
   getUrlContent: makeServiceRunner(GetUrlContent, req => req.query),
   healthCheck: makeServiceRunner(GeneralHealthCheck),
-  getSiteSettings: makeServiceRunner(GetSiteSettings),
+  getSiteSettings: makeServiceRunner(GetSiteSettings, req => req.query),
   // TODO: commented due to DASH-711 task. We hide it until figure out with hash
   // imageToHash: makeServiceRunner(ImageToHash, req => req.query),
 };

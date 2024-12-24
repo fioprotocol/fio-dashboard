@@ -484,3 +484,15 @@ export const fetchWithRateLimit = async ({
     throw error;
   }
 };
+
+export const getUserTz = () => {
+  try {
+    if (Intl) {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+  } catch (err) {
+    log.error(err);
+  }
+
+  return '';
+};
