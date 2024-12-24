@@ -184,12 +184,4 @@ export default combineReducers({
         return state;
     }
   },
-  fioApiUrlsCount(state: number = 0, action) {
-    switch (action.type) {
-      case actions.GET_FIO_API_URLS_SUCCESS:
-        return action.data.maxCount;
-      default:
-        return state;
-    }
-  },
 });

@@ -190,11 +190,8 @@ export default class Admin extends Base {
     return this.apiClient.post(`admin/defaults`, { data });
   }
 
-  getFioApiUrlsList(
-    limit: number,
-    offset: number,
-  ): Promise<AdminFioApiUrlsListResponse> {
-    return this.apiClient.get('admin/api-urls', { limit, offset });
+  getFioApiUrlsList(): Promise<AdminFioApiUrlsListResponse> {
+    return this.apiClient.get('admin/api-urls');
   }
 
   createFioApiUrl(data: { url: string }): Promise<AdminGeneralCreateResponse> {
