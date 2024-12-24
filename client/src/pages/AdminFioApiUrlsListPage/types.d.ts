@@ -20,5 +20,5 @@ export type PageProps = {
   loading: boolean;
   fioApiUrlsCount: number;
   fioApiUrlsList: FioApiUrl[];
-  getFioApiUrlsList: (limit?: number, offset?: number) => Promise<void>;
+  getFioApiUrlsList: () => Promise<void>;
 };
