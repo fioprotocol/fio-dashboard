@@ -25,7 +25,7 @@ class ApiUrlsJob extends CommonJob {
     }
     this.postMessage(`Process api urls - ${FETCH_URL}`);
 
-    const processUrl = async item => {
+    const processUrl = async (item, sqlTransaction) => {
       try {
         const {
           server_version,
@@ -42,43 +42,53 @@ class ApiUrlsJob extends CommonJob {
         if (!this.minVersionRequired(server_version, minVersion)) return;
         if (!this.votesRequired(votes)) return;
 
-        await FioApiUrl.destroy({ where: { url: `${url}/v1/` }, force: true });
-
         const rank = score;
         const location = location_country;
         const data = { location_longitude, location_latitude };
         if (api) {
           if (!(await this.hasRequiredEndpoints(url))) return;
-          await FioApiUrl.create({
-            url: `${url}/v1/`,
-            type: FIO_API_URLS_TYPES.DASHBOARD_API,
-            rank,
-            location,
-            data,
-          });
-          await FioApiUrl.create({
-            url: `${url}/v1/`,
-            type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
-            rank,
-            location,
-            data,
-          });
+          await FioApiUrl.create(
+            {
+              url: `${url}/v1/`,
+              type: FIO_API_URLS_TYPES.DASHBOARD_API,
+              rank,
+              location,
+              data,
+            },
+            { transaction: sqlTransaction },
+          );
+          await FioApiUrl.create(
+            {
+              url: `${url}/v1/`,
+              type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
+              rank,
+              location,
+              data,
+            },
+            { transaction: sqlTransaction },
+          );
         }
         if (hyperion) {
-          await FioApiUrl.create({
-            url: `${url}/v2/`,
-            type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
-            rank,
-            location,
-            data,
-          });
-          await FioApiUrl.create({
-            url: `${url}/v2/`,
-            type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
-            rank,
-            location,
-            data,
-          });
+          await FioApiUrl.create(
+            {
+              url: `${url}/v2/`,
+              type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+              rank,
+              location,
+              data,
+            },
+            { transaction: sqlTransaction },
+          );
+          await FioApiUrl.create(
+            {
+              url: `${url}/v2/`,
+              type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
+              rank,
+              location,
+              data,
+            },
+            { transaction: sqlTransaction },
+          );
         }
       } catch (err) {
         logger.error(err);
@@ -96,10 +106,15 @@ class ApiUrlsJob extends CommonJob {
     list.sort(({ score: { score } }, { score: { score: score2 } }) => score > score2);
     list.splice(Math.ceil(list.length / 2), list.length - Math.ceil(list.length / 2));
 
-    const methods = list.map(item => processUrl(item));
+    const sqlTransaction = await FioApiUrl.sequelize.transaction();
+    await FioApiUrl.destroy({ truncate: true, force: true, transaction: sqlTransaction });
+
+    const methods = list.map(item => processUrl(item, sqlTransaction));
 
     this.postMessage(`Process api urls - ${methods.length}`);
+
     await this.executeActions(methods);
+    await sqlTransaction.commit();
 
     this.finish();
   }
