@@ -12,7 +12,6 @@ import FioApiUrlMinVersionModal from './components/MinVersion/FioApiUrlMinVersio
 import apis from '../../admin/api';
 import { log } from '../../util/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
-import usePagination from '../../hooks/usePagination';
 import { reorder } from '../../util/general';
 
 import { FIO_API_URLS_TYPES } from '../../constants/fio';
@@ -49,8 +48,6 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
   const [fioApiUrlsMinVersion, setMinVersion] = useState<string>('');
   const [fioApiUrlsDynamicFetch, setDynamicFetch] = useState<number>(0);
 
-  const { paginationComponent, refresh } = usePagination(getFioApiUrlsList);
-
   const openFioApiUrlModal = useCallback(() => setShowModal(true), []);
   const closeFioApiUrlModal = useCallback(() => {
     setShowModal(false);
@@ -73,7 +70,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
             ? apis.admin.editFioApiUrl(values as FormValuesEditProps)
             : apis.admin.createFioApiUrl(values)
           ).then(async () => {
-            await refresh();
+            await getFioApiUrlsList();
           });
           closeFioApiUrlModal();
         } catch (err) {
@@ -82,7 +79,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
       };
       updateApiUrl();
     },
-    [refresh, closeFioApiUrlModal],
+    [getFioApiUrlsList, closeFioApiUrlModal],
   );
 
   const updateFioApiUrlMinVersion = useCallback(
@@ -114,7 +111,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
         try {
           toggleIsUpdating(true);
           await apis.admin.updateFioApiUrls(updatedApiUrls).then(async () => {
-            await refresh();
+            await getFioApiUrlsList();
             toggleIsUpdating(false);
           });
         } catch (err) {
@@ -124,7 +121,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
       };
       updateFioApiUrls();
     },
-    [refresh],
+    [getFioApiUrlsList],
   );
 
   const openApiUrl = useCallback(
@@ -140,14 +137,14 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
       const deleteApiUrl = async () => {
         try {
           await apis.admin.deleteFioApiUrl(fioApiUrl);
-          await refresh();
+          await getFioApiUrlsList();
         } catch (err) {
           log.error(err);
         }
       };
       deleteApiUrl();
     },
-    [refresh],
+    [getFioApiUrlsList],
   );
 
   const onDragEnd = useCallback(
@@ -184,7 +181,8 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
 
   useEffect(() => {
     getFioApiUrlsVar();
-  }, []);
+    getFioApiUrlsList();
+  }, [getFioApiUrlsList]);
 
   const dashaboardApiUrlsList = fioApiUrlsList.filter(
     fioApiUrlItem => fioApiUrlItem.type === FIO_API_URLS_TYPES.DASHBOARD_API,
@@ -312,7 +310,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
         <p className={classes.apiTitles}>WRAP STATUS PAGE HISTORY V2 URLS:</p>
         <DragDropComponent apiUrlsList={wrapStatusPageHistoryV2ApiUrls} />
 
-        <div className={classes.paginationContainer}>{paginationComponent}</div>
+        <div className="mb-5" />
 
         {loading && <Loader />}
       </div>

@@ -5,11 +5,7 @@ import { compose } from '../../utils';
 
 import { getFioApiUrlsList } from '../../redux/admin/actions';
 
-import {
-  fioApiUrlsList,
-  fioApiUrlsCount,
-  loading,
-} from '../../redux/admin/selectors';
+import { fioApiUrlsList, loading } from '../../redux/admin/selectors';
 
 import AdminFioApiUrlsListPage from './AdminFioApiUrlsListPage';
 
@@ -17,7 +13,6 @@ const reduxConnect = connect(
   createStructuredSelector({
     loading,
     fioApiUrlsList,
-    fioApiUrlsCount,
   }),
   {
     getFioApiUrlsList,
