@@ -25,7 +25,7 @@ class ApiUrlsJob extends CommonJob {
     }
     this.postMessage(`Process api urls - ${FETCH_URL}`);
 
-    const processUrl = (item, sqlTransaction) => async () => {
+    const processUrl = (item, index, sqlTransaction) => async () => {
       try {
         const {
           server_version,
@@ -42,6 +42,7 @@ class ApiUrlsJob extends CommonJob {
         if (!this.minVersionRequired(server_version, minVersion)) return;
         if (!this.votesRequired(votes)) return;
 
+        let id = index * 4;
         const rank = score;
         const location = location_country;
         const data = { location_longitude, location_latitude };
@@ -49,6 +50,7 @@ class ApiUrlsJob extends CommonJob {
           if (!(await this.hasRequiredEndpoints(url))) return;
           await FioApiUrl.create(
             {
+              id,
               url: `${url}/v1/`,
               type: FIO_API_URLS_TYPES.DASHBOARD_API,
               rank,
@@ -59,6 +61,7 @@ class ApiUrlsJob extends CommonJob {
           );
           await FioApiUrl.create(
             {
+              id: ++id,
               url: `${url}/v1/`,
               type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
               rank,
@@ -71,6 +74,7 @@ class ApiUrlsJob extends CommonJob {
         if (hyperion) {
           await FioApiUrl.create(
             {
+              id: ++id,
               url: `${url}/v2/`,
               type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
               rank,
@@ -81,6 +85,7 @@ class ApiUrlsJob extends CommonJob {
           );
           await FioApiUrl.create(
             {
+              id: ++id,
               url: `${url}/v2/`,
               type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
               rank,
@@ -109,7 +114,7 @@ class ApiUrlsJob extends CommonJob {
     const sqlTransaction = await FioApiUrl.sequelize.transaction();
     await FioApiUrl.destroy({ truncate: true, force: true, transaction: sqlTransaction });
 
-    const methods = list.map(item => processUrl(item, sqlTransaction));
+    const methods = list.map((item, i) => processUrl(item, i, sqlTransaction));
 
     this.postMessage(`Process api urls - ${methods.length}`);
 
