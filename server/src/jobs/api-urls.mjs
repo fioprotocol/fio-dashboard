@@ -25,7 +25,7 @@ class ApiUrlsJob extends CommonJob {
     }
     this.postMessage(`Process api urls - ${FETCH_URL}`);
 
-    const processUrl = async (item, sqlTransaction) => {
+    const processUrl = (item, sqlTransaction) => async () => {
       try {
         const {
           server_version,
