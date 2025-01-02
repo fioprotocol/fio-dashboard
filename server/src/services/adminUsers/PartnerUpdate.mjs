@@ -83,7 +83,6 @@ export default class PartnerUpdate extends Base {
             id: 'string',
             token: ['required', 'string'],
             access: 'boolean',
-            legacyHash: 'string',
             dailyFreeLimit: 'integer',
           },
         ],
@@ -161,8 +160,14 @@ export default class PartnerUpdate extends Base {
       }
     }
 
+    const partnerJson = partner.json();
     return {
-      data: partner.json(),
+      data: {
+        ...partnerJson,
+        apiTokens: partnerJson.apiTokens.map(apiToken =>
+          ReferrerProfileApiToken.format(apiToken),
+        ),
+      },
     };
   }
 
