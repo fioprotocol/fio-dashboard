@@ -56,11 +56,13 @@ export default class OrdersCreate extends Base {
   async execute({ data: { publicKey, paymentProcessor, data, refCode } }) {
     let user;
     let refProfile;
+    let isNoProfileFlow = false;
 
     if (this.context.id) {
       user = await User.findActive(this.context.id);
     } else if (publicKey && refCode) {
       // No profile flow
+      isNoProfileFlow = true;
       const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
         publicKey,
         refCode,
@@ -69,7 +71,7 @@ export default class OrdersCreate extends Base {
     }
 
     const cart = await Cart.getActive({
-      userId: !this.context.id && publicKey && refCode ? null : user && user.id,
+      userId: isNoProfileFlow ? null : user && user.id,
       guestId: this.context.guestId,
       checkPrices: true,
     });
@@ -99,7 +101,9 @@ export default class OrdersCreate extends Base {
     let payment = null;
     const orderItems = [];
 
-    if (user.refProfileId)
+    if (isNoProfileFlow) {
+      refProfile = await ReferrerProfile.findOneWhere({ code: refCode });
+    } else if (user.refProfileId)
       refProfile = await ReferrerProfile.findOneWhere({ id: user.refProfileId });
 
     await Order.removeIrrelevant({
