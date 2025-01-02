@@ -1,5 +1,5 @@
 import Base from '../Base';
-import { ReferrerProfile } from '../../models';
+import { ReferrerProfile, ReferrerProfileApiToken } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 import { DEFAULT_LIMIT, MAX_LIMIT } from '../../constants/general.mjs';
 
@@ -32,7 +32,16 @@ export default class PartnersList extends Base {
 
     return {
       data: {
-        partners: partners.map(partner => partner.json()),
+        partners: partners.map(partner => {
+          const pJson = partner.json();
+
+          return {
+            ...pJson,
+            apiTokens: pJson.apiTokens.map(apiToken =>
+              ReferrerProfileApiToken.format(apiToken),
+            ),
+          };
+        }),
         maxCount: partnersCount,
       },
     };

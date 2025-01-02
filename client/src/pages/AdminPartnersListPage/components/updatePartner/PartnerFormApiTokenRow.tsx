@@ -15,12 +15,13 @@ type Props = {
   field: string;
   index: number;
   token: string;
+  legacyHash?: boolean;
   onRegenerate: () => void;
   onRemove: () => void;
 };
 
 export const PartnerFormApiTokenRow: React.FC<Props> = props => {
-  const { field, token, onRegenerate, onRemove } = props;
+  const { field, token, legacyHash, onRegenerate, onRemove } = props;
 
   return (
     <>
@@ -39,6 +40,11 @@ export const PartnerFormApiTokenRow: React.FC<Props> = props => {
         <div className={classes.apiTokenWrapper}>
           <div>
             <span className={classes.apiToken}>{token}</span>
+            {!token && legacyHash && (
+              <span className={classnames(classes.apiToken, 'font-italic')}>
+                Legacy hash is set
+              </span>
+            )}
             <div className="mt-3">
               <div className="d-flex justify-content-between align-items-center">
                 <span className={classnames(classes.label, 'w-50', 'mb-4')}>

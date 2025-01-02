@@ -494,6 +494,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
                             index={index}
                             field={field}
                             token={fields.value[index].token}
+                            legacyHash={fields.value[index].legacyHash}
                             onRegenerate={() =>
                               onRegenerateApiTokenConfirm(index, {
                                 ...fields.value[index],
