@@ -81,7 +81,7 @@ export default class PartnerUpdate extends Base {
         list_of_objects: [
           {
             id: 'string',
-            token: ['required', 'string'],
+            token: 'string',
             access: 'boolean',
             dailyFreeLimit: 'integer',
           },
