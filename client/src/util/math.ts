@@ -23,7 +23,9 @@ class MathOp {
       this.value = Big(this.value).plus(x);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
@@ -32,7 +34,9 @@ class MathOp {
       this.value = Big(this.value).minus(x);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
@@ -41,7 +45,9 @@ class MathOp {
       this.value = Big(this.value).times(x);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
@@ -50,7 +56,9 @@ class MathOp {
       this.value = Big(this.value).div(x);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
@@ -59,7 +67,9 @@ class MathOp {
       this.value = args.reduce((sum, current) => Big(sum).plus(current), 0);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
@@ -68,7 +78,9 @@ class MathOp {
       this.value = Big(this.value).mod(modDigit);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
@@ -77,52 +89,54 @@ class MathOp {
       this.value = Big(this.value).round(decimalPlaces, roundingMode);
     } catch (err) {
       log.error(err);
+      throw err;
     }
+
     return this;
   }
 
   eq(x: BigSource): boolean {
     try {
-      return Big(this.value).eq(x || 0);
+      return Big(this.value).eq(x);
     } catch (err) {
       log.error(err);
-      return this.value === x;
+      throw err;
     }
   }
 
   gt(x: BigSource): boolean {
     try {
-      return Big(this.value).gt(x || 0);
+      return Big(this.value).gt(x);
     } catch (err) {
       log.error(err);
-      return this.value > x;
+      throw err;
     }
   }
 
   gte(x: BigSource): boolean {
     try {
-      return Big(this.value).gte(x || 0);
+      return Big(this.value).gte(x);
     } catch (err) {
       log.error(err);
-      return this.value >= x;
+      throw err;
     }
   }
 
   lt(x: BigSource): boolean {
     try {
-      return Big(this.value).lt(x || 0);
+      return Big(this.value).lt(x);
     } catch (err) {
       log.error(err);
-      return this.value < x;
+      throw err;
     }
   }
 
   lte(x: BigSource): boolean {
     try {
-      return Big(this.value).lte(x || 0);
+      return Big(this.value).lte(x);
     } catch (err) {
       log.error(err);
-      return this.value <= x;
+      throw err;
     }
   }
 
@@ -131,7 +145,7 @@ class MathOp {
       return Big(this.value).toNumber();
     } catch (err) {
       log.error(err);
-      return +this.value;
+      throw err;
     }
   }
 
@@ -140,7 +154,7 @@ class MathOp {
       return Big(this.value).toString();
     } catch (err) {
       log.error(err);
-      return '-';
+      throw err;
     }
   }
 
@@ -149,7 +163,7 @@ class MathOp {
       return Big(this.value).toFixed(toFixedDigit);
     } catch (err) {
       log.error(err);
-      return this.value.toString();
+      throw err;
     }
   }
 }
