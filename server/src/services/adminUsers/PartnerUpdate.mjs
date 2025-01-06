@@ -111,16 +111,6 @@ export default class PartnerUpdate extends Base {
     }
 
     const { apiTokens = [], ...rest } = data;
-    for (const apiTokenProfile of apiTokens) {
-      if (!checkApiToken(apiTokenProfile.token)) {
-        throw new X({
-          code: 'UPDATE_FAILED',
-          fields: {
-            apiToken: 'This api token is incorrect!',
-          },
-        });
-      }
-    }
 
     await partner.update(rest);
 
@@ -140,6 +130,22 @@ export default class PartnerUpdate extends Base {
           ? partner.apiTokens.find(({ id }) => id === tokenProfileId)
           : null;
 
+        // Do not check token when legacyHash is set and token is not set
+        if (
+          ((exApiTokenProfile &&
+            (!exApiTokenProfile.legacyHash || exApiTokenProfile.token)) ||
+            !exApiTokenProfile ||
+            apiTokenProfile.token) &&
+          !checkApiToken(apiTokenProfile.token)
+        ) {
+          throw new X({
+            code: 'UPDATE_FAILED',
+            fields: {
+              apiToken: 'This api token is incorrect!',
+            },
+          });
+        }
+
         // Reset to send one more time when limit will be reached
         if (
           exApiTokenProfile &&
@@ -152,6 +158,14 @@ export default class PartnerUpdate extends Base {
           where: { id: tokenProfileId },
         });
       } else {
+        if (!checkApiToken(apiTokenProfile.token)) {
+          throw new X({
+            code: 'UPDATE_FAILED',
+            fields: {
+              apiToken: 'This api token is incorrect!',
+            },
+          });
+        }
         const newApiTokenProfile = new ReferrerProfileApiToken({
           ...apiTokenProfile,
           refProfileId: partner.id,
