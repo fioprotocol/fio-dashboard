@@ -6,7 +6,16 @@ class MathOp {
   value: BigSource;
 
   constructor(x: BigSource) {
-    this.value = !isNaN(+x) ? x : 0;
+    try {
+      if (!isNaN(+x) && Big(x)) {
+        this.value = x;
+      } else {
+        throw new Error(`${x} is not a number`);
+      }
+    } catch (err) {
+      log.error(`${err.message}. Received input - ${x}`);
+      throw err;
+    }
   }
 
   add(x: BigSource): MathOp {

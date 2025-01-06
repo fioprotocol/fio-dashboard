@@ -4,7 +4,16 @@ import logger from '../logger.mjs';
 
 class MathOp {
   constructor(x) {
-    this.value = !isNaN(+x) ? x : 0;
+    try {
+      if (!isNaN(+x) && Big(x)) {
+        this.value = x;
+      } else {
+        throw new Error(`${x} is not a number`);
+      }
+    } catch (err) {
+      logger.error(`${err.message}. Received input - ${x}`);
+      throw err;
+    }
   }
 
   abs() {
