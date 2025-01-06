@@ -574,6 +574,7 @@ class WalletDataJob extends CommonJob {
           !existsNotification.emailDate;
 
         if (alreadyHasPendingNotification) {
+          // todo: change to calculate using MathOp
           previousBalance = fioApi.amountToSUF(
             parseFloat(existsNotification.data.emailData.newFioBalance) -
               parseFloat(existsNotification.data.emailData.fioBalanceChange),

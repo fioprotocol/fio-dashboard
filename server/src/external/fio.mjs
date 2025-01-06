@@ -123,7 +123,7 @@ class Fio {
 
   amountToSUF(amount) {
     if (!amount) return 0;
-    const floor = Math.floor(amount);
+    const floor = Math.floor(amount); // todo: change to use MathOp
     const tempResult = new MathOp(floor).mul(FIOSDK.SUFUnit).toNumber();
 
     // get remainder
@@ -142,6 +142,7 @@ class Fio {
   convertFioToUsdc(nativeAmount, roe) {
     if (roe == null) return 0;
 
+    // todo: create SUFToAmount using MathOp
     return new MathOp(FIOSDK.SUFToAmount(nativeAmount || 0))
       .mul(roe)
       .round(2, 1)
