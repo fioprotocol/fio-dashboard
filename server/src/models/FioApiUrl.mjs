@@ -66,11 +66,11 @@ export class FioApiUrl extends Base {
     const defaultLocData = getLocByCountry({ code: this.LOCATION.US });
     const locData = getLocByCountry({ code: location, tz });
     const sorted = sortByDistance(
-      { x: locData.longitude, y: locData.latitude },
+      { x: locData.latitude, y: locData.longitude },
       urls.map(({ url, data }) =>
         data && data.location_latitude
-          ? { url, x: data.location_longitude, y: data.location_latitude }
-          : { url, x: defaultLocData.longitude, y: defaultLocData.latitude },
+          ? { url, x: data.location_latitude, y: data.location_longitude }
+          : { url, x: defaultLocData.latitude, y: defaultLocData.longitude },
       ),
       { type: 'haversine' },
     );
