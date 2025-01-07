@@ -109,7 +109,10 @@ class ApiUrlsJob extends CommonJob {
     }
 
     list.sort(({ score: { score } }, { score: { score: score2 } }) => score > score2);
-    list.splice(Math.ceil(list.length / 2), list.length - Math.ceil(list.length / 2));
+    list.splice(
+      Math.ceil(list.length / 2) + 1,
+      list.length - Math.ceil(list.length / 2) - 1,
+    ); // Ceil half + 1 (9 -> 6)
 
     const sqlTransaction = await FioApiUrl.sequelize.transaction();
     await FioApiUrl.destroy({ truncate: true, force: true, transaction: sqlTransaction });
