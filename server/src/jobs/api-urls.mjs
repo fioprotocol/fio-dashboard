@@ -145,14 +145,19 @@ class ApiUrlsJob extends CommonJob {
   }
 
   async hasRequiredEndpoints(url) {
-    const res = await fetch(`${url}/v1/node/get_supported_apis`);
-    const supportedList = await res.json();
+    try {
+      const res = await fetch(`${url}/v1/node/get_supported_apis`);
+      const supportedList = await res.json();
 
-    for (const url of REQUIRED_APIS) {
-      if (supportedList.apis.indexOf(url) === -1) return false;
+      for (const url of REQUIRED_APIS) {
+        if (supportedList.apis.indexOf(url) === -1) return false;
+      }
+
+      return true;
+    } catch (err) {
+      logger.error(err);
+      return false;
     }
-
-    return true;
   }
 }
 
