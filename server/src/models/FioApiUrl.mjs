@@ -2,7 +2,9 @@ import Sequelize from 'sequelize';
 import { sortByDistance } from 'sort-by-distance';
 
 import Base from './Base';
+import { Var } from './Var.mjs';
 import { getLocByCountry } from '../external/geo/index.mjs';
+import { VARS_KEYS } from '../config/constants.js';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -62,6 +64,9 @@ export class FioApiUrl extends Base {
       order: [['rank', 'DESC']],
       where,
     });
+
+    const dynamicFetch = Number(await Var.getValByKey(VARS_KEYS.API_URLS_DYNAMIC_FETCH));
+    if (!dynamicFetch) return urls.map(item => item.url);
 
     const defaultLocData = getLocByCountry({ code: this.LOCATION.US });
     const locData = getLocByCountry({ code: location, tz });
