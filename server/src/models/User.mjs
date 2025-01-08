@@ -64,6 +64,12 @@ export class User extends Base {
           type: DT.STRING,
           defaultValue: this.USER_PROFILE_TYPE.PRIMARY,
         },
+        freeId: {
+          type: DT.STRING,
+          allowNull: true,
+          defaultValue: null,
+          unique: true,
+        },
       },
       {
         sequelize,
@@ -135,6 +141,7 @@ export class User extends Base {
         'orders',
         'emailNotificationParams',
         'userProfileType',
+        'freeId',
       ],
     };
 
