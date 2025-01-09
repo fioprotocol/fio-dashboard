@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import { MetamaskConnectionModal } from '../Modal/MetamaskConnectionModal';
 
 import { MetamaskSnap } from '../../services/MetamaskSnap';
 
-import { apiUrls as apiUrlsSelector } from '../../redux/registrations/selectors';
+import apis from '../../api';
 
 import {
   fireActionAnalyticsEvent,
@@ -94,8 +93,10 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     buttonText?: string;
   }>(null);
 
-  const apiUrls = useSelector(apiUrlsSelector);
-  const apiUrl = apiUrls[0]?.replace('/v1/', '');
+  const getApiUrl = async () => {
+    const validApiUrls = await apis.fio.checkUrls();
+    return validApiUrls[0]?.replace('/v1/', '');
+  };
 
   const submitAction = useCallback(async () => {
     try {
@@ -135,6 +136,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         ? uActionParams
         : [uActionParams];
 
+      const apiUrl = await getApiUrl();
       const signedTxnsResponse = await signTxn({
         actionParams: sendActionParams,
         apiUrl,
@@ -164,6 +166,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
               reason: string;
             }
         > => {
+          const apiUrl = await getApiUrl();
           const pushResult = await fetch(
             `${apiUrl}/v1/chain/push_transaction`,
             {
@@ -279,7 +282,6 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     actionParams,
     analyticAction,
     analyticsData,
-    apiUrl,
     returnOnlySignedTxn,
     derivationIndex,
     onSuccess,

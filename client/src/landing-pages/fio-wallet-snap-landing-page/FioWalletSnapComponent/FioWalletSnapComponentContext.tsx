@@ -86,6 +86,7 @@ export const useContext = (
       setExecutedTxnError(null);
       toggleExecutedTxnLoading(true);
 
+      // todo: DASH-1242 add apis.fio.checkUrls()
       const pushResult = await fetch(
         'https://test.fio.eosusa.io/v1/chain/push_transaction',
         {
