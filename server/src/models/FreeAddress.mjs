@@ -13,23 +13,24 @@ export class FreeAddress extends Base {
       {
         id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
         name: { type: DT.STRING, allowNull: false },
-        publicKey: { type: DT.STRING },
-        userId: { type: DT.STRING, allowNull: true },
+        freeId: {
+          type: DT.STRING,
+          allowNull: true,
+          defaultValue: null,
+        },
       },
       {
         sequelize,
         tableName: 'free-addresses',
         paranoid: true,
+        indexes: [
+          {
+            fields: ['freeId'],
+            using: 'BTREE',
+          },
+        ],
       },
     );
-  }
-
-  static associate() {
-    this.belongsTo(User, {
-      foreignKey: 'userId',
-      targetKey: 'id',
-      as: 'freeAddresses',
-    });
   }
 
   static async getItems(params) {
@@ -105,13 +106,13 @@ export class FreeAddress extends Base {
     return this.findAll({ where });
   }
 
-  static format({ id, name, publicKey, createdAt, userId }) {
+  static format({ id, name, publicKey, createdAt, freeId }) {
     return {
       id,
       name,
       publicKey,
       createdAt,
-      userId,
+      freeId,
     };
   }
 
