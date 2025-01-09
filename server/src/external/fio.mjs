@@ -13,6 +13,7 @@ import {
   FIO_ACTIONS_TO_END_POINT_MAP,
   FIO_ADDRESS_DELIMITER,
   DEFAULT_BUNDLE_SET_VALUE,
+  MINUTE_MS,
 } from '../config/constants.js';
 
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
@@ -71,6 +72,31 @@ const PRICE_ACTIONS = {
 };
 
 class Fio {
+  async checkUrls(apiUrls) {
+    const checkedUrls = [];
+    const checkUrl = async (apiUrl, index) => {
+      try {
+        const response = await superagent.get(`${apiUrl}chain/get_info`);
+
+        const { head_block_time } = response.body;
+        if (new Date().getTime() - new Date(head_block_time + 'Z').getTime() < MINUTE_MS)
+          checkedUrls[index] = apiUrl;
+      } catch (err) {
+        logger.error(err.message);
+      }
+    };
+    await Promise.allSettled(apiUrls.map((url, i) => checkUrl(url, i)));
+
+    if (checkedUrls.length === 0) throw new Error('No active valid api url is set.');
+
+    const newSet = [];
+    for (const url of checkedUrls) {
+      if (url) newSet.push(url);
+    }
+
+    return newSet;
+  }
+
   async getPublicFioSDK() {
     if (!this.publicFioSDK) {
       const apiUrls = await FioApiUrl.getApiUrls({
@@ -99,10 +125,11 @@ class Fio {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
+      const validApiUrls = await this.checkUrls(apiUrls);
       this.masterFioSDK = new FIOSDK({
         privateKey: process.env.MASTER_FIOSDK_KEY,
         publicKey: masterPubKey,
-        apiUrls,
+        apiUrls: validApiUrls,
         fetchJson: fetch,
         returnPreparedTrx: true,
       });
@@ -114,9 +141,10 @@ class Fio {
     const apiUrls = await FioApiUrl.getApiUrls({
       type: FIO_API_URLS_TYPES.DASHBOARD_API,
     });
+    const validApiUrls = await this.checkUrls(apiUrls);
     return new FIOSDK({
       publicKey,
-      apiUrls,
+      apiUrls: validApiUrls,
       fetchJson: fetch,
     });
   }

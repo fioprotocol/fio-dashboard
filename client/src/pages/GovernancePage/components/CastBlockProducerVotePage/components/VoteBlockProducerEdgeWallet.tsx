@@ -32,7 +32,7 @@ export const VoteBlockProducerEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
-    apis.fio.setWalletFioSdk(keys);
+    await apis.fio.setWalletFioSdk(keys);
 
     const result = await apis.fio.walletFioSDK.genericAction(
       GenericAction.pushTransaction,

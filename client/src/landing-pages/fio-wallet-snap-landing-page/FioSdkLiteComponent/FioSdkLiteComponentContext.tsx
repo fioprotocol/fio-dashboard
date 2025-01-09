@@ -578,6 +578,7 @@ export const useContext = (): UseContextProps => {
       } = signedTxn;
 
       const pushTransactionResult = async (signedTxn: any): Promise<any> => {
+        // todo: DASH-1242 add apis.fio.checkUrls()
         const pushResult = await fetch(
           `${BASE_URL}/v1/chain/push_transaction`,
           {

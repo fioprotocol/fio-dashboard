@@ -55,7 +55,9 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
     const signedTxs: BeforeSubmitData = {};
 
     for (const item of fioAddressItems) {
-      apis.fio.setWalletFioSdk(allWalletKeysInAccount[item.fioWallet.edgeId]);
+      await apis.fio.setWalletFioSdk(
+        allWalletKeysInAccount[item.fioWallet.edgeId],
+      );
 
       const isComboRegistration =
         !item.cartItem.hasCustomDomainInCart &&
