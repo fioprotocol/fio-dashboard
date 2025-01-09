@@ -83,11 +83,6 @@ export class User extends Base {
     this.hasMany(Nonce, { foreignKey: 'userId', sourceKey: 'id' });
     this.hasMany(Notification, { foreignKey: 'userId', sourceKey: 'id' });
     this.hasMany(Wallet, { foreignKey: 'userId', sourceKey: 'id', as: 'fioWallets' });
-    this.hasMany(FreeAddress, {
-      foreignKey: 'userId',
-      sourceKey: 'id',
-      as: 'freeAddresses',
-    });
     this.hasMany(NewDeviceTwoFactor, {
       foreignKey: 'userId',
       sourceKey: 'id',
