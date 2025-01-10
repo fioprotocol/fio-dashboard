@@ -17,7 +17,6 @@ import {
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   userId as userIdSelector,
-  user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
   lastAuthData as lastAuthDataSelector,
 } from '../../redux/profile/selectors';
@@ -25,7 +24,6 @@ import {
 import apis from '../../api';
 import { log } from '../../util/general';
 import { isDomainExpired, validateFioAddress } from '../../util/fio';
-import { getZeroIndexPublicKey } from '../../util/snap';
 import useQuery from '../../hooks/useQuery';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -99,7 +97,6 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userId = useSelector(userIdSelector);
-  const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
 
@@ -371,14 +368,9 @@ export const useContext = (): UseContextProps => {
           type: CART_ITEM_TYPE.ADDRESS,
         };
 
-        const metamaskUserPublicKey = await getZeroIndexPublicKey(
-          user?.userProfileType,
-        );
-
         dispatch(
           addItemToCart({
             item: cartItem,
-            publicKey: metamaskUserPublicKey,
             refCode,
             token: gatedToken,
           }),
@@ -404,7 +396,6 @@ export const useContext = (): UseContextProps => {
       roe,
       cartHasFreeItem,
       existingUsersFreeAddress,
-      user?.userProfileType,
       dispatch,
       gatedToken,
       isNoProfileFlow,

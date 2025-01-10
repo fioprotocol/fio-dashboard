@@ -19,7 +19,6 @@ import {
 import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
-  user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
 import {
@@ -46,7 +45,6 @@ import { convertFioPrices } from '../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 import apis from '../../api';
-import { getZeroIndexPublicKey } from '../../util/snap';
 
 import {
   DomainsArrItemType,
@@ -345,7 +343,6 @@ export const useContext = (): UseContextProps => {
   const isAffiliateProfile = useSelector(isAffiliateProfileSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const dispatch = useDispatch();
@@ -770,19 +767,14 @@ export const useContext = (): UseContextProps => {
 
   const onClick = useCallback(
     async (selectedItem: CartItem) => {
-      const metamaskUserPublicKey = await getZeroIndexPublicKey(
-        user?.userProfileType,
-      );
-
       dispatch(
         addItemToCart({
           item: selectedItem,
-          publicKey: metamaskUserPublicKey,
           refCode,
         }),
       );
     },
-    [dispatch, refCode, user?.userProfileType],
+    [dispatch, refCode],
   );
 
   useEffect(() => {
