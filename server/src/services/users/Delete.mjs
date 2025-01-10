@@ -7,7 +7,6 @@ import {
   Nonce,
   Notification,
   Wallet,
-  FreeAddress,
   NewDeviceTwoFactor,
   Order,
 } from '../../models';
@@ -37,7 +36,6 @@ export default class UserDelete extends Base {
 
       await Nonce.destroy(destroyCondition);
       await Notification.destroy(destroyCondition);
-      await FreeAddress.destroy(destroyCondition);
       await Wallet.destroy(destroyCondition);
       await NewDeviceTwoFactor.destroy(destroyCondition);
       await DomainsWatchlist.destroy(destroyCondition);

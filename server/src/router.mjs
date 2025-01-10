@@ -257,7 +257,11 @@ router.get(
   routes.users.alternativeUserVerification,
 );
 
-router.get('/free-addresses', routes.freeAddresses.getFreeAddresses);
+router.get(
+  '/free-addresses',
+  checkGuestOrUserAuth,
+  routes.freeAddresses.getFreeAddresses,
+);
 
 router.get('/gas-oracle', routes.external.getGasOracle);
 

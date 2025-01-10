@@ -2,7 +2,6 @@ import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
 import { log } from './general';
-import { USER_PROFILE_TYPE } from '../constants/profile';
 
 export type GetSnapsResponse = Record<string, Snap>;
 
@@ -111,21 +110,4 @@ export const decryptContent = async (params: {
       },
     },
   });
-};
-
-export const getZeroIndexPublicKey = async (
-  userType: string,
-): Promise<string | null> => {
-  if (
-    window.ethereum?.isMetaMask &&
-    userType === USER_PROFILE_TYPE.ALTERNATIVE
-  ) {
-    const zeroDerivationIndexpublicKey = await getPublicKey({
-      derivationIndex: 0,
-    });
-
-    return zeroDerivationIndexpublicKey;
-  }
-
-  return null;
 };

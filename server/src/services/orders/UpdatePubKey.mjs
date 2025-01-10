@@ -105,7 +105,6 @@ export default class OrderUpdatePubKey extends Base {
             },
             transaction: t,
           });
-        const cartPublicKey = cart.publicKey;
         const { prices, roe } = await Cart.getCartOptions(cart);
 
         checkPrices(prices, roe);
@@ -119,8 +118,7 @@ export default class OrderUpdatePubKey extends Base {
 
         const userHasFreeAddress =
           (await FreeAddress.getItems({
-            publicKey: cartPublicKey,
-            userId: user.id,
+            freeId: user.freeId,
           })) || [];
 
         const items = await cartItemsToOrderItems({
@@ -165,16 +163,8 @@ export default class OrderUpdatePubKey extends Base {
           nativeFio,
           price,
           priceCurrency,
-          data: itemData,
+          data,
         } of items) {
-          let orderItemData = itemData;
-
-          if (cartPublicKey) {
-            orderItemData = itemData
-              ? { ...itemData, publicKey: cartPublicKey }
-              : { publicKey: cartPublicKey };
-          }
-
           const orderItem = await OrderItem.create(
             {
               action,
@@ -184,7 +174,7 @@ export default class OrderUpdatePubKey extends Base {
               nativeFio,
               price,
               priceCurrency: priceCurrency || Payment.CURRENCY.USDC,
-              data: orderItemData ? { ...orderItemData } : null,
+              data,
               orderId: order.id,
             },
             { transaction: t },
