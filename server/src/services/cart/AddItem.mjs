@@ -41,7 +41,7 @@ export default class AddItem extends Base {
           },
         },
       ],
-      publicKey: ['string'],
+      publicKey: ['string'], // no profile flow
       token: ['string'],
       refCode: ['string'],
     };
@@ -81,6 +81,16 @@ export default class AddItem extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
+      if (!userId && !guestId) {
+        logger.error(`Error not authorized: userId - ${userId}, guestId - ${guestId}`);
+
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {},
+        });
+      }
+
+      const isNoProfileFlow = !userId && publicKey;
       const existingCart = await Cart.getActive({ userId, guestId });
 
       const { prices, roe, updatedAt } = existingCart
@@ -169,7 +179,7 @@ export default class AddItem extends Base {
       if (!existingCart) {
         const cartFields = {
           items: [handledFreeCartItem],
-          publicKey,
+          publicKey: isNoProfileFlow ? publicKey : null,
           options: {
             prices,
             roe,
@@ -208,7 +218,7 @@ export default class AddItem extends Base {
       await existingCart.update({
         items: handledCartItemsWithExistingFioHandleCustomDomain,
         userId,
-        publicKey,
+        publicKey: isNoProfileFlow ? publicKey : null,
       });
 
       return {
