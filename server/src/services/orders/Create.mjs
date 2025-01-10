@@ -93,6 +93,17 @@ export default class OrdersCreate extends Base {
       });
     }
 
+    if (isNoProfileFlow && publicKey !== cart.publicKey) {
+      logger.error(
+        `Public key in the cart is different from the provided in the api call: cart publicKey - ${cart.publicKey}, publicKey - ${publicKey}`,
+      );
+
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {},
+      });
+    }
+
     const { prices, roe } = cart.options;
 
     checkPrices(prices, roe);
@@ -111,11 +122,6 @@ export default class OrdersCreate extends Base {
       guestId: this.context.guestId,
     });
 
-    const cartPublicKey =
-      user.userProfileType === User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION
-        ? publicKey
-        : cart.publicKey;
-
     const dashboardDomains = await Domain.getDashboardDomains();
     const allRefProfileDomains = refProfile
       ? await ReferrerProfile.getRefDomainsList({
@@ -125,8 +131,7 @@ export default class OrdersCreate extends Base {
 
     const userHasFreeAddress =
       (await FreeAddress.getItems({
-        publicKey: cartPublicKey,
-        userId: user.id,
+        freeId: user.freeId,
       })) || [];
 
     const wallet = await Wallet.findOneWhere({ userId: user.id, publicKey });
@@ -180,10 +185,8 @@ export default class OrdersCreate extends Base {
       } of items) {
         let orderItemData = itemData;
 
-        if (cartPublicKey) {
-          orderItemData = itemData
-            ? { ...itemData, publicKey: cartPublicKey }
-            : { publicKey: cartPublicKey };
+        if (isNoProfileFlow) {
+          orderItemData = itemData ? { ...itemData, publicKey } : { publicKey };
         }
 
         const orderItem = await OrderItem.create(

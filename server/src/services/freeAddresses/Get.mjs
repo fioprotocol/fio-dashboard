@@ -6,16 +6,14 @@ import X from '../Exception.mjs';
 export default class GetFreeAddress extends Base {
   static get validationRules() {
     return {
-      name: ['string'],
       publicKey: ['string'],
-      userId: ['string'],
     };
   }
 
-  async execute({ name, publicKey, userId }) {
-    const where = {};
+  async execute({ publicKey }) {
+    const { id: userId } = this.context;
 
-    if (!name && !publicKey && !userId) {
+    if (!publicKey && !userId) {
       throw new X({
         code: 'REQUEST_FAILED',
         fields: {
@@ -26,11 +24,12 @@ export default class GetFreeAddress extends Base {
       });
     }
 
-    if (name) where.name = name;
-    if (publicKey) where.publicKey = publicKey;
-    if (userId) where.userId = userId;
+    const params = {};
 
-    const freeAddressList = await FreeAddress.getItems(where);
+    if (publicKey) params.publicKey = publicKey;
+    if (userId) params.userId = userId;
+
+    const freeAddressList = await FreeAddress.getItems(params);
 
     return {
       data: freeAddressList.map(freeAddressItem =>

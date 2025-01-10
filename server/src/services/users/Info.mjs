@@ -4,9 +4,9 @@ import { User, Wallet, NewDeviceTwoFactor } from '../../models';
 
 export default class UsersInfo extends Base {
   async execute() {
-    const user = await User.getInfo(this.context.id);
+    const userObj = await User.getInfo(this.context.id);
 
-    if (!user) {
+    if (!userObj) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
@@ -15,7 +15,6 @@ export default class UsersInfo extends Base {
       });
     }
 
-    const userObj = user.json();
     userObj.fioWallets = userObj.fioWallets.map(item => Wallet.format(item));
 
     if (userObj.newDeviceTwoFactor.length > 0) {
