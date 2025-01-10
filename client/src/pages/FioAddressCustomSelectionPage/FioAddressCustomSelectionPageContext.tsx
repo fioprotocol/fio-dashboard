@@ -12,7 +12,6 @@ import { addItem as addItemToCart } from '../../redux/cart/actions';
 import {
   isAuthenticated as isAuthenticatedSelector,
   lastAuthData as lastAuthDataSelector,
-  user as userSelector,
 } from '../../redux/profile/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -40,7 +39,6 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { getZeroIndexPublicKey } from '../../util/snap';
 
 import { OptionProps } from '../../components/Input/EditableSelect/EditableSelect';
 import { AllDomains, CartItem } from '../../types';
@@ -68,7 +66,6 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const user = useSelector(userSelector);
 
   const queryParams = useQuery();
   const dispatch = useDispatch();
@@ -122,21 +119,16 @@ export const useContext = (): UseContextProps => {
             : CART_ITEM_TYPE.ADDRESS,
       };
 
-      const metamaskUserPublicKey = await getZeroIndexPublicKey(
-        user?.userProfileType,
-      );
-
       dispatch(
         addItemToCart({
           item: newItem,
-          publicKey: metamaskUserPublicKey,
           refCode,
         }),
       );
 
       toggleHasItemAddedToCart(true);
     },
-    [dispatch, refCode, user?.userProfileType],
+    [dispatch, refCode],
   );
 
   const onFieldChange = (value: string) => {

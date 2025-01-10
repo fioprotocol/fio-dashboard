@@ -31,6 +31,7 @@ export default class HandleUsersFreeCartItems extends Base {
         };
       }
 
+      const isNoProfileFlow = !userId && publicKey;
       const dashboardDomains = await Domain.getDashboardDomains();
       const allRefProfileDomains = refCode
         ? await ReferrerProfile.getRefDomainsList({
@@ -57,7 +58,7 @@ export default class HandleUsersFreeCartItems extends Base {
       await cart.update({
         items: handledFreeCartItems,
         userId,
-        publicKey,
+        publicKey: isNoProfileFlow ? publicKey : null,
       });
 
       return {
