@@ -3,9 +3,8 @@ import Sequelize from 'sequelize';
 import Base from './Base';
 
 import { User } from './User';
-import { Wallet } from './Wallet.mjs';
 
-const { DataTypes: DT, Op } = Sequelize;
+const { DataTypes: DT } = Sequelize;
 
 export class FreeAddress extends Base {
   static init(sequelize) {
@@ -34,73 +33,18 @@ export class FreeAddress extends Base {
   }
 
   static async getItems(params) {
-    const { userId, publicKey, ...otherParams } = params;
-    let where = { ...otherParams };
-    const usersPublicKeys = [];
-    const userIds = [];
+    const { userId, publicKey, freeId, name } = params;
+    const where = {};
+    if (name) where.name = name;
+    if (freeId) where.freeId = freeId;
 
     if (userId) {
-      const wallets = await Wallet.list({ userId });
-      if (wallets && wallets.length > 0) {
-        for (const wallet of wallets) {
-          usersPublicKeys.push(wallet.publicKey);
-        }
-      }
+      const { freeId } = await User.findOne({ where: { id: userId }, raw: true });
+      where.freeId = freeId;
     }
 
     if (publicKey) {
-      if (!userId) {
-        const wallets = await Wallet.list({ publicKey });
-
-        if (wallets && wallets.length > 0) {
-          for (const wallet of wallets) {
-            userIds.push(wallet.userId);
-          }
-        }
-      }
-      usersPublicKeys.push(publicKey);
-    }
-
-    if (userId && usersPublicKeys.length > 0) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { userId },
-          {
-            publicKey: {
-              [Op.in]: usersPublicKeys,
-            },
-          },
-        ],
-      };
-    } else if (userId && !usersPublicKeys.length) {
-      where = {
-        ...where,
-        userId,
-      };
-    } else if (!userId && usersPublicKeys.length > 0 && !userIds.length) {
-      where = {
-        ...where,
-        publicKey: {
-          [Op.in]: usersPublicKeys,
-        },
-      };
-    } else if (!userId && usersPublicKeys.length > 0 && userIds.length > 0) {
-      where = {
-        ...where,
-        [Op.or]: [
-          {
-            userId: {
-              [Op.in]: [...new Set(userIds)],
-            },
-          },
-          {
-            publicKey: {
-              [Op.in]: usersPublicKeys,
-            },
-          },
-        ],
-      };
+      where.freeId = publicKey; // no profile flow
     }
 
     return this.findAll({ where });
