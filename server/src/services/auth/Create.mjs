@@ -76,6 +76,7 @@ export default class AuthCreate extends Base {
           status: User.STATUS.ACTIVE,
           refProfileId,
           isOptIn: true,
+          freeId: username,
         });
 
         await user.save();
