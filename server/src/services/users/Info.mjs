@@ -16,6 +16,7 @@ export default class UsersInfo extends Base {
     }
 
     userObj.fioWallets = userObj.fioWallets.map(item => Wallet.format(item));
+    delete userObj.freeId;
 
     if (userObj.newDeviceTwoFactor.length > 0) {
       const newDevicesValid = [];
