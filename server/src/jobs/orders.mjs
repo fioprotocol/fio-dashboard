@@ -439,7 +439,7 @@ class OrdersJob extends CommonJob {
       return this.updateOrderStatus(orderId);
     }
 
-    const userHasFreeAddress = await FreeAddress.getItems({ publicKey, userId });
+    const userHasFreeAddress = await FreeAddress.getItems({ freeId: orderItem.freeId });
 
     const existingUsersFreeAddress =
       userHasFreeAddress &&
@@ -474,7 +474,7 @@ class OrdersJob extends CommonJob {
         const freeAddressRecord = await new FreeAddress({
           name: fioName,
           publicKey,
-          userId: orderItem.userId,
+          freeId: orderItem.freeId,
         });
 
         await freeAddressRecord.save();
@@ -925,7 +925,6 @@ class OrdersJob extends CommonJob {
         freePermission,
         paidActor,
         paidPermission,
-        userId,
       } = orderItem;
 
       const hasSignedTx = data && !!data.signedTx;
@@ -1035,8 +1034,7 @@ class OrdersJob extends CommonJob {
           [METAMASK_DOMAIN_NAME].includes(domain)
         ) {
           const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
-            userId,
-            publicKey: data && data.publicKey,
+            freeId: orderItem.freeId,
           });
 
           const existingUsersFreeAddress =
@@ -1092,7 +1090,7 @@ class OrdersJob extends CommonJob {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
                 publicKey: data.publicKey,
-                userId,
+                freeId: orderItem.freeId,
               });
               await freeAddressRecord.save();
             }
