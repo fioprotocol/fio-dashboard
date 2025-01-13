@@ -127,6 +127,7 @@ export const getExistUsersByPublicKeyOrCreateNew = async (
     isOptIn: false,
     timeZone,
     userProfileType: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+    freeId: publicKey,
   });
 
   await user.save();

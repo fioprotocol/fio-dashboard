@@ -77,6 +77,11 @@ export default class AuthAlternateAuthenticate extends Base {
         await Cart.updateGuestCartUser(user.id, this.context.guestId);
       }
 
+      // todo: DASH-1254. Remove when no users left with no pub key set as freeId
+      if (user.id === user.freeId) {
+        await user.update({ freeId: publicKey });
+      }
+
       return {
         data: responseData,
       };
@@ -94,6 +99,7 @@ export default class AuthAlternateAuthenticate extends Base {
       isOptIn: false,
       timeZone,
       userProfileType: User.USER_PROFILE_TYPE.ALTERNATIVE,
+      freeId: publicKey,
     });
 
     await user.save();
