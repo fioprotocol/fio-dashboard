@@ -37,7 +37,7 @@ export default class UsersCreate extends Base {
   async execute({ data: { username, email, fioWallets, refCode, addEmailToPromoList } }) {
     try {
       const refProfile = await ReferrerProfile.findOneWhere({
-        code: refCode,
+        code: refCode || '',
       });
 
       const refProfileId = refProfile ? refProfile.id : null;
