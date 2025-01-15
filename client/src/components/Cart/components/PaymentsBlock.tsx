@@ -72,8 +72,14 @@ const PaymentsBlock: React.FC<Props> = props => {
     onPaymentChoose,
   };
 
-  const priceIsLowerThanHalfADollar = new MathOp(totalCartUsdcAmount).lt(0.5);
-  const priceIsLowerThanOneDollar = new MathOp(totalCartUsdcAmount).lt(1);
+  let priceIsLowerThanHalfADollar = true;
+  let priceIsLowerThanOneDollar = true;
+  try {
+    priceIsLowerThanHalfADollar = new MathOp(totalCartUsdcAmount).lt(0.5);
+    priceIsLowerThanOneDollar = new MathOp(totalCartUsdcAmount).lt(1);
+  } catch (err) {
+    //
+  }
 
   if (showExpiredDomainWarningBadge) {
     return (
