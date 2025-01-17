@@ -313,9 +313,11 @@ export class Order extends Base {
           rp.label as "refProfileName",
           count(*) OVER() AS "maxCount"
         FROM "orders" o
-          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
-            Payment.SPENT_TYPE.ORDER
-          }
+          INNER JOIN "payments" p ON p."orderId" = o.id 
+            AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+            AND p."createdAt" = (SELECT MAX(pm."createdAt") FROM "payments" pm WHERE pm."orderId" = o.id AND pm."spentType" = ${
+              Payment.SPENT_TYPE.ORDER
+            } GROUP BY pm."orderId")
           LEFT JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
