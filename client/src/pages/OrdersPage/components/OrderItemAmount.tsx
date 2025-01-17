@@ -18,7 +18,7 @@ export const OrderItemAmount: React.FC<AmountProps> = props => {
   const costFio = apis.fio
     .convertUsdcToFio(
       new MathOp(total || 0).toNumber(),
-      new MathOp(roe).toNumber(),
+      roe && new MathOp(roe).toNumber(),
     )
     .toFixed(2);
 

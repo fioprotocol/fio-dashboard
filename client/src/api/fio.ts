@@ -403,13 +403,14 @@ export default class Fio {
         fioPublicKey: publicKey,
       });
 
-      const rewardsAmount = !roe
-        ? 0
-        : new MathOp(srps)
-            .mul(roe)
-            .sub(staked)
-            .round(0, 2)
-            .toNumber();
+      const rewardsAmount =
+        !roe || !srps || !staked
+          ? 0
+          : new MathOp(srps)
+              .mul(roe)
+              .sub(staked)
+              .round(0, 2)
+              .toNumber();
 
       const rewards = new MathOp(rewardsAmount).lt(0) ? 0 : rewardsAmount;
 

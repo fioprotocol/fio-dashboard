@@ -25,9 +25,14 @@ export const isAmountValidator: FieldValidationFunctionSync<AmountFieldArgs> = (
     message: customMessage,
   };
 
-  if (new MathOp(value).lte(0)) {
+  try {
+    if (new MathOp(value).lte(0)) {
+      validationResult.succeeded = false;
+      validationResult.message = customMessage || 'Required';
+    }
+  } catch (err) {
     validationResult.succeeded = false;
-    validationResult.message = customMessage || 'Required';
+    validationResult.message = customMessage || 'No valid';
   }
 
   try {
