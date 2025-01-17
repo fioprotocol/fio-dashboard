@@ -186,7 +186,9 @@ export default class OrdersCreate extends Base {
         let orderItemData = itemData;
 
         if (isNoProfileFlow) {
-          orderItemData = itemData ? { ...itemData, publicKey } : { publicKey };
+          orderItemData = itemData
+            ? { ...itemData, isNoProfileFlow }
+            : { isNoProfileFlow };
         }
 
         const orderItem = await OrderItem.create(
