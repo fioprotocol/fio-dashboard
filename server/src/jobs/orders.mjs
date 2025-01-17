@@ -422,7 +422,7 @@ class OrdersJob extends CommonJob {
     auth,
     orderItem,
     fallbackFreeFioActor,
-    fallbackFreeFioPermision,
+    fallbackFreeFioPermission,
     processOrderItem,
     registeringDomainExistingInAppDomainsList,
     publicKey,
@@ -495,8 +495,8 @@ class OrdersJob extends CommonJob {
           freeActor: fallbackFreeFioActor
             ? fallbackFreeFioActor
             : process.env.REG_FALLBACK_ACCOUNT,
-          freePermission: fallbackFreeFioPermision
-            ? fallbackFreeFioPermision
+          freePermission: fallbackFreeFioPermission
+            ? fallbackFreeFioPermission
             : process.env.REG_FALLBACK_PERMISSION,
         })();
       }
@@ -897,11 +897,11 @@ class OrdersJob extends CommonJob {
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK,
       ) || {};
 
-    const { actor: freeFioActor, permission: freeFioPermision } =
+    const { actor: freeFioActor, permission: freeFioPermission } =
       freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE,
       ) || {};
-    const { actor: fallbackFreeFioActor, permission: fallbackFreeFioPermision } =
+    const { actor: fallbackFreeFioActor, permission: fallbackFreeFioPermission } =
       freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile =>
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK,
@@ -940,7 +940,7 @@ class OrdersJob extends CommonJob {
         };
         const freeAuth = {
           actor: freeActor || freeFioActor,
-          permission: freePermission || freeFioPermision,
+          permission: freePermission || freeFioPermission,
         };
 
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
@@ -981,7 +981,7 @@ class OrdersJob extends CommonJob {
             auth: freeAuth,
             orderItem,
             fallbackFreeFioActor,
-            fallbackFreeFioPermision,
+            fallbackFreeFioPermission,
             registeringDomainExistingInAppDomainsList,
             publicKey: data && data.publicKey,
             processOrderItem,
