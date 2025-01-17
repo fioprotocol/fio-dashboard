@@ -14,6 +14,7 @@ import {
   AdminSearchResponse,
   AdminUsersListResponse,
   AuthLoginResponse,
+  DefaultSuccessResponse,
   RemoveAdminResponse,
   SendResetAdminPasswordResponse,
   UsersDetailsResponse,
@@ -189,11 +190,8 @@ export default class Admin extends Base {
     return this.apiClient.post(`admin/defaults`, { data });
   }
 
-  getFioApiUrlsList(
-    limit: number,
-    offset: number,
-  ): Promise<AdminFioApiUrlsListResponse> {
-    return this.apiClient.get('admin/api-urls', { limit, offset });
+  getFioApiUrlsList(): Promise<AdminFioApiUrlsListResponse> {
+    return this.apiClient.get('admin/api-urls');
   }
 
   createFioApiUrl(data: { url: string }): Promise<AdminGeneralCreateResponse> {
@@ -215,6 +213,18 @@ export default class Admin extends Base {
 
   deleteFioApiUrl(data: { id: string }): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.delete(`admin/api-urls/${data.id}`, {});
+  }
+
+  getFioApiUrlsVar(
+    key: string | null = null,
+  ): Promise<{ [key: string]: string }> {
+    return this.apiClient.get(`admin/api-urls/var`, { key });
+  }
+
+  updateFioApiUrlsVar(data: {
+    [key: string]: string;
+  }): Promise<DefaultSuccessResponse> {
+    return this.apiClient.post(`admin/api-urls/var`, data);
   }
 
   changeAdminPassword(data: {

@@ -376,6 +376,9 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       log.error('Create Account Errors', submitErrors as Error);
       return (
         <GenericErrorModal
+          genericErrorData={{
+            message: 'Registration failed. Try signing in with MetaMask.',
+          }}
           showGenericError={true}
           closeGenericErrorModal={() => {
             window.location.reload();

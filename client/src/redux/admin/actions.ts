@@ -170,14 +170,11 @@ export const GET_FIO_API_URLS_REQUEST = `${prefix}/GET_FIO_API_URLS_REQUEST`;
 export const GET_FIO_API_URLS_SUCCESS = `${prefix}/GET_FIO_API_URLS_SUCCESS`;
 export const GET_FIO_API_URLS_FAILURE = `${prefix}/GET_FIO_API_URLS_FAILURE`;
 
-export const getFioApiUrlsList = (
-  limit = DEFAULT_LIMIT,
-  offset = DEFAULT_OFFSET,
-): CommonPromiseAction => ({
+export const getFioApiUrlsList = (): CommonPromiseAction => ({
   types: [
     GET_FIO_API_URLS_REQUEST,
     GET_FIO_API_URLS_SUCCESS,
     GET_FIO_API_URLS_FAILURE,
   ],
-  promise: (api: Api) => api.admin.getFioApiUrlsList(limit, offset),
+  promise: (api: Api) => api.admin.getFioApiUrlsList(),
 });

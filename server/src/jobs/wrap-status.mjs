@@ -55,19 +55,15 @@ class WrapStatusJob extends CommonJob {
   }
 
   async getActionUrls() {
-    const fioActionUrls = await FioApiUrl.findAll({
-      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API },
+    return FioApiUrl.getApiUrls({
+      type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_API,
     });
-
-    return fioActionUrls.map(fioActionItem => fioActionItem.url);
   }
 
   async getHistoryV2Urls() {
-    const fioHistoryV2Urls = await FioApiUrl.findAll({
-      where: { type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL },
+    return FioApiUrl.getApiUrls({
+      type: FIO_API_URLS_TYPES.WRAP_STATUS_PAGE_HISTORY_V2_URL,
     });
-
-    return fioHistoryV2Urls.map(fioHistoryV2Item => fioHistoryV2Item.url);
   }
 
   // example of getting all POLYGON smart contract events
@@ -600,11 +596,12 @@ class WrapStatusJob extends CommonJob {
       const getBlockTransactions = async blockNumber => {
         const urls = this.fioActionUrls;
         let response = null;
+
         for (const url of urls) {
           try {
-            const res = await superagent.get(
-              `${url}chain/get_block?block_num_or_id=${blockNumber}`,
-            );
+            const res = await superagent
+              .post(`${url}chain/get_block`)
+              .send({ block_num_or_id: blockNumber });
             response = res.body;
             break;
           } catch (error) {
@@ -622,6 +619,13 @@ class WrapStatusJob extends CommonJob {
         let response = null;
         for (const url of urls) {
           try {
+            // delete params that are not present in call
+            if ('fromBlockNum' in params) {
+              delete params.fromBlockNum;
+            }
+            if ('toBlockNum' in params) {
+              delete params.toBlockNum;
+            }
             const queryString = new URLSearchParams(params).toString();
 
             const res = await fetchWithRateLimit({
@@ -685,6 +689,7 @@ class WrapStatusJob extends CommonJob {
           ) {
             const deltasLength = burnedDomainsLogs.deltas.length;
 
+            // Find only burned domains that was owned by fio.oracle account at that moment.
             unprocessedBurnedDomainsList.push(
               ...burnedDomainsLogs.deltas.filter(
                 deltaItem => deltaItem.data.account === 'fio.oracle',
@@ -703,7 +708,7 @@ class WrapStatusJob extends CommonJob {
                     : lastDeltasItem.block_num;
               }
               // Add 1 second timeout to avoid 429 Too many requests error
-              await sleep(1000);
+              await sleep(SECOND_MS);
 
               await getFioBurnedDomainsLogsAll({ params });
             }
@@ -714,6 +719,7 @@ class WrapStatusJob extends CommonJob {
           params: paramsToPass,
         });
 
+        // Find transaction id for specific action by block number. Because it is not presented on deltas v2.
         for (let i = 0; i < unprocessedBurnedDomainsList.length; i++) {
           const unprocessedBurnDomainItem = unprocessedBurnedDomainsList[i];
           const previousUnprocessedBurnDomainItem =
@@ -725,7 +731,7 @@ class WrapStatusJob extends CommonJob {
               previousUnprocessedBurnDomainItem.block_num
           ) {
             // if blocknumbers are the same we need to wait around 3 seconds to fetch block data again. If not wait returns empty object.
-            await sleep(3000);
+            await sleep(SECOND_MS * 3);
           }
           const blockData = await getBlockTransactions(
             unprocessedBurnDomainItem.block_num,
@@ -875,7 +881,7 @@ class WrapStatusJob extends CommonJob {
             if (wrapTokenActionLogs && wrapTokenActionLogs.length) {
               wrapTokensLogs.push(
                 ...wrapTokenActionLogs.filter(
-                  ({ act }) => act && act.data && act.data.chain_code === CHAIN_CODES.ETH,
+                  ({ act }) => act && act.data && act.data.chain_code === CHAIN_CODES.ETH, // Filtering only by ETH wrap actions. At this time not acceptible to have other chains.
                 ),
               );
             }
@@ -898,7 +904,7 @@ class WrapStatusJob extends CommonJob {
                   ({ act }) =>
                     act &&
                     act.data &&
-                    (act.data.chain_code === CHAIN_CODES.MATIC ||
+                    (act.data.chain_code === CHAIN_CODES.MATIC || // Filtering by MATIC (legacy) or POL actions. At this time not acceptible to have other chains.
                       act.data.chain_code === CHAIN_CODES.POL),
                 ),
               );
@@ -932,7 +938,7 @@ class WrapStatusJob extends CommonJob {
                     oracleItemChainCode === chain_code &&
                     oracleItemPublicAddress === public_address &&
                     new MathOp(oracleItemAmount).eq(amount) &&
-                    compareTimestampsWithThreshold(oracleItemTimestamp, timestamp + 'Z'),
+                    compareTimestampsWithThreshold(oracleItemTimestamp, timestamp + 'Z'), // Time of transaction and table row time could be different. In most cases it is the same but could be difference in 1 sec. If more - skip.
                 );
 
                 if (existingOracleTableItem) {

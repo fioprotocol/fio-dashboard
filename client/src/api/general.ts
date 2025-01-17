@@ -2,6 +2,8 @@ import Base from './base';
 
 import { AbstractEmailVerificationResponse } from './responses';
 
+import { getUserTz } from '../util/general';
+
 import { SiteSetting } from '../types/settings';
 
 export default class General extends Base {
@@ -18,6 +20,6 @@ export default class General extends Base {
     return this.apiClient.get('verify-abstract-email', { email });
   }
   getSiteSettings(): Promise<SiteSetting> {
-    return this.apiClient.get('site-settings');
+    return this.apiClient.get('site-settings', { tz: getUserTz() });
   }
 }

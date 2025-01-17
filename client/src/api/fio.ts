@@ -34,6 +34,7 @@ import {
   FIO_PROXY_LIST,
   getEndPointByGenericAction,
 } from '../constants/fio';
+import { MINUTE_MS } from '../constants/common';
 
 import {
   AnyObject,
@@ -205,6 +206,35 @@ export default class Fio {
     if (!this.walletFioSDK) throw new Error('No wallet set.');
   };
 
+  checkUrls = async (): Promise<string[]> => {
+    const checkedUrls: string[] = [];
+    const checkUrl = async (apiUrl: string, index: number): Promise<void> => {
+      try {
+        const response = await superagent.get(`${apiUrl}chain/get_info`);
+
+        const { head_block_time }: { head_block_time: string } = response.body;
+        if (
+          new Date().getTime() - new Date(head_block_time + 'Z').getTime() <
+          MINUTE_MS
+        )
+          checkedUrls[index] = apiUrl;
+      } catch (err) {
+        log.error(err.message);
+      }
+    };
+    await Promise.allSettled(this.baseurls.map((url, i) => checkUrl(url, i)));
+
+    if (checkedUrls.length === 0)
+      throw new Error('No active valid api url is set.');
+
+    const newSet: string[] = [];
+    for (const url of checkedUrls) {
+      if (url) newSet.push(url);
+    }
+
+    return newSet;
+  };
+
   validateAction = (): void => {
     this.checkWallet();
   };
@@ -239,11 +269,12 @@ export default class Fio {
     });
   };
 
-  setWalletFioSdk = (keys: { public: string; private: string }) => {
+  setWalletFioSdk = async (keys: { public: string; private: string }) => {
+    const apiUrls = await this.checkUrls();
     this.walletFioSDK = new FIOSDK({
       privateKey: keys.private,
       publicKey: keys.public,
-      apiUrls: this.baseurls,
+      apiUrls,
       fetchJson: window.fioCorsFixfetch,
       logger: fioLogger,
       technologyProviderId: this.tpid,
@@ -372,13 +403,14 @@ export default class Fio {
         fioPublicKey: publicKey,
       });
 
-      const rewardsAmount = !roe
-        ? 0
-        : new MathOp(srps)
-            .mul(roe)
-            .sub(staked)
-            .round(0, 2)
-            .toNumber();
+      const rewardsAmount =
+        !roe || !srps || !staked
+          ? 0
+          : new MathOp(srps)
+              .mul(roe)
+              .sub(staked)
+              .round(0, 2)
+              .toNumber();
 
       const rewards = new MathOp(rewardsAmount).lt(0) ? 0 : rewardsAmount;
 
@@ -607,7 +639,7 @@ export default class Fio {
     action: GenericAction,
     params: AnyObject,
   ): Promise<TrxResponse> => {
-    this.setWalletFioSdk(keys);
+    await this.setWalletFioSdk(keys);
 
     if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
 

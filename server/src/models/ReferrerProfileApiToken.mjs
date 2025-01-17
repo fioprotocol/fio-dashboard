@@ -55,7 +55,7 @@ export class ReferrerProfileApiToken extends Base {
       id,
       token,
       access,
-      legacyHash,
+      legacyHash: !!legacyHash,
       dailyFreeLimit,
       lastNotificationDate,
       createdAt,

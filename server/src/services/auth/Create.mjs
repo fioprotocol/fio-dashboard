@@ -65,7 +65,7 @@ export default class AuthCreate extends Base {
     } else if (!userByEmail && !userByUsername) {
       try {
         const refProfile = await ReferrerProfile.findOneWhere({
-          code: referrerCode,
+          code: referrerCode || '',
         });
 
         const refProfileId = refProfile ? refProfile.id : null;

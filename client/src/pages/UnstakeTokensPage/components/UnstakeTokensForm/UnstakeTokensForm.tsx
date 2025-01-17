@@ -153,7 +153,9 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           ? fioAddresses.find(({ name }) => name === fioAddress)
           : null;
 
-        const notEnoughStaked = new MathOp(amount).gt(walletStakedTokens);
+        const notEnoughStaked = amount
+          ? new MathOp(amount).gt(walletStakedTokens)
+          : false;
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.UNSTAKE

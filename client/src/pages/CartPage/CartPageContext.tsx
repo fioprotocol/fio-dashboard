@@ -272,9 +272,14 @@ export const useContext = (): UseContextReturnType => {
           updatedPrices,
         );
 
-        const isEqualPrice =
-          new MathOp(totalCartNativeAmount).eq(updatedTotalPrice) &&
-          new MathOp(totalCartUsdcAmount).eq(updatedCostUsdc);
+        let isEqualPrice = false;
+        try {
+          isEqualPrice =
+            new MathOp(totalCartNativeAmount).eq(updatedTotalPrice) &&
+            new MathOp(totalCartUsdcAmount).eq(updatedCostUsdc);
+        } catch (e) {
+          //
+        }
 
         handlePriceChange(!isEqualPrice);
 

@@ -77,7 +77,8 @@ const PAYMENT_OPTIONS_PROPS = {
           (formsOfPayment.stripe &&
             isAffiliateEnabled &&
             !formsOfPayment.stripeAffiliate))) ||
-      new MathOp(totalCartUsdcAmount).lt(0.5),
+      !totalCartUsdcAmount ||
+      (totalCartUsdcAmount && new MathOp(totalCartUsdcAmount).lt(0.5)),
     provider: PAYMENT_PROVIDER.STRIPE,
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.STRIPE,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
@@ -97,7 +98,8 @@ const PAYMENT_OPTIONS_PROPS = {
     disabled: cartItems?.length === 0 || disabled,
     hideButton:
       (formsOfPayment && !formsOfPayment.bitpay) ||
-      new MathOp(totalCartUsdcAmount).lte(1),
+      !totalCartUsdcAmount ||
+      (totalCartUsdcAmount && new MathOp(totalCartUsdcAmount).lte(1)),
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };
