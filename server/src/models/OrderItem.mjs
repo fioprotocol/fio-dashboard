@@ -208,6 +208,7 @@ export class OrderItem extends Base {
           o.total,
           o."userId",
           u."freeId",
+          u."userProfileType",
           p.processor,
           ois."blockchainTransactionId",
           ois."paymentId",
