@@ -35,6 +35,10 @@ const ActionButtonContainer: React.FC<ActionButtonContainerProps> = props => {
 export const TotalBalanceComponent: React.FC<Props> = props => {
   const { loading, totalBalance } = props;
 
+  if (!loading && !totalBalance) return null;
+  const showActionButtons =
+    !loading && totalBalance && new MathOp(totalBalance?.fio).eq(0);
+
   return (
     <ItemWrapper>
       <Badge
@@ -59,9 +63,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
             </span>
           </div>
           <div className={classes.actionContainer}>
-            <ActionButtonContainer
-              show={!loading && new MathOp(totalBalance?.fio).eq(0)}
-            >
+            <ActionButtonContainer show={showActionButtons}>
               <a
                 href={config.getTokensUrl}
                 title={config.getTokensUrl}
@@ -79,9 +81,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
                 />
               </a>
             </ActionButtonContainer>
-            <ActionButtonContainer
-              show={!loading && new MathOp(totalBalance?.fio).eq(0)}
-            >
+            <ActionButtonContainer show={showActionButtons}>
               <Link to={ROUTES.IMPORT_WALLET}>
                 <SubmitButton
                   hasAutoHeight
@@ -97,9 +97,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
                 />
               </Link>
             </ActionButtonContainer>
-            <ActionButtonContainer
-              show={!loading && new MathOp(totalBalance?.fio).gt(0)}
-            >
+            <ActionButtonContainer show={showActionButtons}>
               <Link to={ROUTES.TOKENS}>
                 <SubmitButton
                   hasAutoHeight

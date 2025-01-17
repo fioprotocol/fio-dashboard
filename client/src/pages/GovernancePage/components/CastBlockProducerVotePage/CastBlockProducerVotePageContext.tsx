@@ -126,7 +126,7 @@ export const useContext = (props: Props): UseContextProps => {
 
   const hasLowBalance =
     (!selectedFioHandle?.remaining &&
-      new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio)) ||
+      new MathOp(selectedFioWallet?.balance || 0).lt(prices.nativeFio)) ||
     !selectedFioWallet?.balance;
 
   const onCancel = () => {
