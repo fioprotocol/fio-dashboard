@@ -17,6 +17,7 @@ import {
   Var,
   PublicWalletData,
   ReferrerProfile,
+  User,
   Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
@@ -425,11 +426,10 @@ class OrdersJob extends CommonJob {
     fallbackFreeFioPermission,
     processOrderItem,
     registeringDomainExistingInAppDomainsList,
-    publicKey,
   }) {
-    const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
+    const { id, domain, blockchainTransactionId, label, orderId, freeId } = orderItem;
 
-    if (!userId && !publicKey) {
+    if (!freeId) {
       logger.error(CANNOT_IDENTIFY_USER);
 
       await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
@@ -473,7 +473,6 @@ class OrdersJob extends CommonJob {
 
         const freeAddressRecord = await new FreeAddress({
           name: fioName,
-          publicKey,
           freeId: orderItem.freeId,
         });
 
@@ -983,7 +982,6 @@ class OrdersJob extends CommonJob {
             fallbackFreeFioActor,
             fallbackFreeFioPermission,
             registeringDomainExistingInAppDomainsList,
-            publicKey: data && data.publicKey,
             processOrderItem,
           });
         }
@@ -1029,8 +1027,8 @@ class OrdersJob extends CommonJob {
 
         let partnerDomainOwner = false;
         if (
-          data &&
-          data.publicKey &&
+          ((data && data.isNoProfileFlow) ||
+            orderItem.userProfileType === User.USER_PROFILE_TYPE.ALTERNATIVE) &&
           domainOwner &&
           [METAMASK_DOMAIN_NAME].includes(domain)
         ) {
@@ -1090,7 +1088,6 @@ class OrdersJob extends CommonJob {
             if (partnerDomainOwner) {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
-                publicKey: data.publicKey,
                 freeId: orderItem.freeId,
               });
               await freeAddressRecord.save();
