@@ -167,6 +167,10 @@ class Fio {
     return new MathOp(tempResult).add(floorRemainder).toNumber();
   }
 
+  SUFToAmount(suf) {
+    return new MathOp(suf).div(FIOSDK.SUFUnit).toString();
+  }
+
   convertFioToUsdc(nativeAmount, roe) {
     if (roe == null) return 0;
 

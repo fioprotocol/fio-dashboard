@@ -8,6 +8,7 @@ import X from '../Exception.mjs';
 import logger from '../../logger.mjs';
 import { prepareOrderWithFioPaymentForExecution } from '../../utils/payment.mjs';
 import { validate } from '../../external/captcha.mjs';
+import MathOp from '../math.mjs';
 
 export default class OrderProcessPayment extends Base {
   static get validationRules() {
@@ -20,6 +21,7 @@ export default class OrderProcessPayment extends Base {
               list_of_objects: {
                 fioName: 'string',
                 action: 'string',
+                fee_collected: 'string',
                 data: [
                   {
                     nested_object: {
@@ -122,11 +124,20 @@ export default class OrderProcessPayment extends Base {
         }
 
         try {
+          const fioNativePrice = data.results.reduce((acc, regItem) => {
+            try {
+              return new MathOp(acc || '0').sum(regItem.fee_collected).toString();
+            } catch (err) {
+              logger.error(err);
+            }
+            return acc;
+          }, null);
           await prepareOrderWithFioPaymentForExecution({
             paymentId: order.Payments[0].id,
             orderItems: order.OrderItems,
+            fioNativePrice: fioNativePrice && fioApi.SUFToAmount(fioNativePrice),
           });
-          await order.update({ status: Order.STATUS.SUCCESS });
+          await order.update({ status: Order.STATUS.PAID });
         } catch (e) {
           logger.error(`ORDER UPDATE ERROR ${order.id} #${order.number} - ${e.message}`);
         }
