@@ -121,7 +121,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     if (nativeAmountFieldName) {
       change(
         nativeAmountFieldName,
-        apis.fio.amountToSUF(Number(value)).toString(),
+        apis.fio.amountToSUF(Number(value || 0)).toString(),
       );
     }
   }, [
@@ -299,7 +299,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         type={BADGE_TYPES.ERROR}
         show={
           isUnwrap && availableValue
-            ? new MathOp(availableValue || 0).lt(value)
+            ? new MathOp(availableValue || 0).lt(value || 0)
             : false
         }
         title="Balance!"

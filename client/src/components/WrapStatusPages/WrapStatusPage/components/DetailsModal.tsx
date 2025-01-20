@@ -40,6 +40,7 @@ const DetailsModal: React.FC<Props> = props => {
     domain,
     escrowAccount,
     from,
+    oracleId,
     status,
     to,
     tpid,
@@ -50,15 +51,25 @@ const DetailsModal: React.FC<Props> = props => {
   const isPending = status === WRAP_ITEM_STATUS.PENDING;
   const isFailed = status === WRAP_ITEM_STATUS.FAILED;
 
-  const obtid = voters?.length
-    ? voters[0].obtid || transactionId
-    : transactionId;
+  let obtid = oracleId || transactionId;
+  const tokenId = voters?.length ? voters[0]?.tokenId : null;
 
-  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${amount} ${to} ${obtid}`;
-  const wrapDomainFailedCommand = `npm run oracle wrap domain ${domain} ${to} ${obtid}`;
-  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${amount} ${to} ${obtid}`;
-  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${domain} ${to} ${obtid}`;
-  const burnDomainFailedCommand = `npm run oracle burn domain ${domain} ${obtid}`;
+  if (voters?.length) {
+    const counts = voters.reduce((acc: Record<string, number>, obj) => {
+      const value = obj.obtid;
+      acc[value] = (acc[value] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Find the value with maximum count
+    obtid = Object.entries(counts).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+  }
+
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens amount:${amount} address:${to} obtId:${obtid}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap domain domain:${domain} address:${to} obtId:${obtid}`;
+  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens amount:${amount} address:${to} obtId:${obtid}`;
+  const unwrapDomainFailedCommand = `npm run oracle unwrap domain domain:${domain} address:${to} obtId:${obtid}`;
+  const burnDomainFailedCommand = `npm run oracle burn domain domain:${domain} tokenId:${tokenId} obtId:${obtid}`;
 
   const wrapCommand = isWrap
     ? isTokens
@@ -212,7 +223,10 @@ const DetailsModal: React.FC<Props> = props => {
                   </div>
                   <div>
                     {voters.map(voter => (
-                      <div className="d-flex flex-row" key={voter.account}>
+                      <div
+                        className="d-flex flex-row"
+                        key={voter.transactionHash}
+                      >
                         <div className="d-flex flex-row">
                           <p className="mr-2">Oracle:</p>
                           <a

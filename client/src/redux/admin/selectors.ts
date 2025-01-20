@@ -34,5 +34,3 @@ export const regularUsersList = (state: ReduxState): User[] =>
   state[prefix].regularUsersList;
 export const fioApiUrlsList = (state: ReduxState): FioApiUrl[] =>
   state[prefix].fioApiUrlsList;
-export const fioApiUrlsCount = (state: ReduxState): number =>
-  state[prefix].fioApiUrlsCount;

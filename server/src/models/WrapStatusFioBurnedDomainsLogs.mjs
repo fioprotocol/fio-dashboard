@@ -39,20 +39,20 @@ export class WrapStatusFioBurnedDomainsLogs extends Base {
 
   static async listWithConfirmation(limit, offset) {
     const [actions] = await this.sequelize.query(`
-        SELECT 
-          wfb."transactionId", 
-          wfb."domain", 
-          wfb."blockNumber", 
+        SELECT
+          wfb."transactionId",
+          wfb."domain",
+          wfb."blockNumber",
           wfb."data",
           wp."data" as "confirmData",
           array_agg(wo."data") FILTER (WHERE wo."data" IS NOT NULL)  as "oravotes"
         FROM "wrap-status-fio-burned-domains-logs" wfb
           LEFT JOIN "wrap-status-polygon-burned-domains-logs" wp
             ON wp."obtId" = wfb."transactionId"
-            OR SUBSTRING(wp."obtId" FROM 25) = wfb."domain"
+            OR wp."domain" = wfb."domain"
           LEFT JOIN "wrap-status-polygon-oracles-confirmations-logs" wo
             ON wo."obtId" = wfb."transactionId"
-            OR SUBSTRING(wo."obtId" FROM 25) = wfb."domain"
+            OR wo."domain" = wfb."domain"
         WHERE wfb."transactionId" IS NOT NULL
         GROUP BY wfb."transactionId", wp."transactionHash"
         ORDER BY wfb."blockNumber"::bigint desc

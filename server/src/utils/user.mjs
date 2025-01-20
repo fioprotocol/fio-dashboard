@@ -97,7 +97,7 @@ export const getDetailedUsersInfo = async user => {
 
 export const getExistUsersByPublicKeyOrCreateNew = async (
   publicKey,
-  refCode,
+  refCode = '',
   timeZone,
 ) => {
   const existingWallets = await Wallet.list({

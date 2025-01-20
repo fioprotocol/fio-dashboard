@@ -88,7 +88,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         walletEdgeId && allWalletKeysInAccount[walletEdgeId];
 
       existingFioWalletInEdgeAccount?.private &&
-        apis.fio.setWalletFioSdk(existingFioWalletInEdgeAccount);
+        (await apis.fio.setWalletFioSdk(existingFioWalletInEdgeAccount));
 
       if (!registration.isFree) {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);

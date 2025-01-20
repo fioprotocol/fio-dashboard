@@ -95,6 +95,13 @@ const availableJobsParams = {
     closeWorkerAfterMs:
       parseInt(process.env.DOMAINS_EXPIRATION_CLOSE_TIMEOUT) || ONE_HOUR_IN_MILISECONDS, // 60 min
   },
+  apiUrls: {
+    path: path.join(JOBS_PATH, 'api-urls.mjs'),
+    name: 'api-urls',
+    cron: `${process.env.API_URLS_JOB_CRON}`.replace(/\\\*/g, '*'),
+    timeout: 0,
+    closeWorkerAfterMs: ONE_HOUR_IN_MILISECONDS, // 60 min
+  },
 };
 
 const jobsToLaunch = process.env.JOB_LIST;

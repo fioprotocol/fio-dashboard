@@ -42,6 +42,7 @@ export const normalizeWrapData = wrapItem => {
     data,
     domain,
     oravotes,
+    oracleId,
     transactionId,
   } = wrapItem;
 
@@ -95,6 +96,7 @@ export const normalizeWrapData = wrapItem => {
     domain,
     escrowAccount,
     from: actor,
+    oracleId,
     status,
     to: address,
     tpid,
@@ -138,12 +140,12 @@ export const normalizeUnwrapData = unwrapItem => {
 
   if (confirmData) {
     for (const confirmDataItem of confirmData) {
-      const { action_trace: { trx_id } = {}, block_time } = confirmDataItem;
+      const { trx_id, timestamp } = confirmDataItem;
 
       if (!approvals.blockTimeStamp) {
-        approvals.blockTimeStamp = block_time + 'Z';
+        approvals.blockTimeStamp = timestamp + 'Z';
       } else {
-        const blockTime = new Date(block_time + 'Z');
+        const blockTime = new Date(timestamp + 'Z');
         const approvalsBlockTime = new Date(approvals.blockTimeStamp);
 
         if (blockTime > approvalsBlockTime) {
@@ -221,8 +223,12 @@ export const normalizeBurnData = burnDomainItem => {
 
   if (oravotes && oravotes.length)
     for (const oracleVoter of oravotes) {
-      const { returnValues: { account, obtid } = {}, transactionHash } = oracleVoter;
-      voters.push({ account, transactionHash, obtid });
+      const {
+        returnValues: { account, obtid } = {},
+        transactionHash,
+        tokenId,
+      } = oracleVoter;
+      voters.push({ account, transactionHash, obtid, tokenId });
     }
 
   return {
@@ -259,4 +265,54 @@ export const filterWrapItemsByDateRange = ({
   }
 
   return [];
+};
+
+export const extractDomainBurnValue = input => {
+  if (!input || typeof input !== 'string') {
+    return null;
+  }
+
+  // First check for the 8-digit case
+  const patternWith8 = /(?:AutomaticDomainBurn|ManualDomainBurn)(\d{8})([a-zA-Z0-9-]*)/;
+  const matchWith8 = input.match(patternWith8);
+
+  if (matchWith8) {
+    const value = matchWith8[2];
+    if (value) return value;
+
+    return null;
+  }
+
+  // If no 8-digit match, check for other cases
+  const pattern = /(?:AutomaticDomainBurn|ManualDomainBurn)(\d*)([a-zA-Z0-9-]*)/;
+  const match = input.match(pattern);
+
+  if (match) {
+    const digits = match[1];
+    const value = match[2];
+
+    // If we have a value after the digits
+    if (value) return value;
+    // If we only have digits
+    else if (digits) {
+      return digits;
+    }
+  }
+
+  return null;
+};
+
+export const extractDomainBurnTokeIdfromObtid = input => {
+  if (!input || typeof input !== 'string') {
+    return null;
+  }
+
+  const pattern = /^(\d+)AutomaticDomainBurn/;
+  const match = input.match(pattern);
+
+  if (match) {
+    return match[1]; // Returns just the tokenId part
+  }
+
+  return null;
 };

@@ -987,10 +987,16 @@ export type WrapStatusWrapItem = {
   domain?: string;
   escrowAccount?: string;
   from: string;
+  oracleId?: string;
   status: string;
   to: string;
   tpid?: string;
-  voters?: { account: string; transactionHash: string; obtid: string }[];
+  voters?: {
+    account: string;
+    transactionHash: string;
+    obtid: string;
+    tokenId?: string;
+  }[];
   transactionId: string;
 };
 

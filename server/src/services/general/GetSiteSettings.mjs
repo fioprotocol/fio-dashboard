@@ -10,7 +10,12 @@ import { ABIS_VAR_KEY } from '../../external/fio.mjs';
 import { FIO_API_URLS_TYPES } from '../../constants/fio.mjs';
 
 export default class GetSiteSettings extends Base {
-  async execute() {
+  static get validationRules() {
+    return {
+      tz: 'string',
+    };
+  }
+  async execute({ tz }) {
     let formattedData = {};
     try {
       const varsData = await Var.findAll({
@@ -47,6 +52,7 @@ export default class GetSiteSettings extends Base {
     try {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
+        tz,
       });
 
       formattedData[FIO_API_URLS_TYPES.DASHBOARD_API] = apiUrls;

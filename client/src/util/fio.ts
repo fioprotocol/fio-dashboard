@@ -305,6 +305,8 @@ export const prepareChainTransaction = async (
   action: DashboardAction,
   data: AnyObject,
 ): Promise<{ chainId: string; transaction: RawRequest }> => {
+  const validApiUrls = await apis.fio.checkUrls();
+  apis.fio.publicFioSDK.setApiUrls(validApiUrls);
   const chainData = await apis.fio.publicFioSDK.transactions.getChainDataForTx();
   const transaction = await apis.fio.publicFioSDK.transactions.createRawTransaction(
     {

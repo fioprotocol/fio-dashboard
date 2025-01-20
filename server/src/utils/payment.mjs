@@ -6,16 +6,14 @@ export const prepareOrderWithFioPaymentForExecution = async ({
   orderItems,
   fioNativePrice,
 }) => {
-  await Payment.update(
-    {
-      status: Payment.STATUS.COMPLETED,
-      price: fioNativePrice || null,
-      currency: Payment.PROCESSOR.FIO,
-    },
-    {
-      where: { id: paymentId },
-    },
-  );
+  const paymentUpdateParams = {
+    status: Payment.STATUS.COMPLETED,
+    currency: Payment.PROCESSOR.FIO,
+  };
+  if (fioNativePrice != null) paymentUpdateParams.price = fioNativePrice;
+  await Payment.update(paymentUpdateParams, {
+    where: { id: paymentId },
+  });
 
   for (const orderItem of orderItems) {
     const bcTx = await BlockchainTransaction.create({

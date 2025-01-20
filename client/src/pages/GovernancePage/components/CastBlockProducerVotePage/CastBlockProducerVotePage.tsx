@@ -178,7 +178,7 @@ export const CastBlockProducerVotePage: React.FC<GovernancePageContextProps> = p
               !selectedBlockProducers.length ||
               bpLoading ||
               fioHandlesLoading ||
-              new MathOp(selectedFioWallet?.balance).eq(0)
+              new MathOp(selectedFioWallet?.balance || 0).eq(0)
             }
             loading={bpLoading}
             withTopMargin={true}
