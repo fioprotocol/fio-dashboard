@@ -146,29 +146,89 @@ class WrapStatusJob extends CommonJob {
       const networkData = await WrapStatusNetworks.findOneWhere({
         id: WRAP_STATUS_NETWORKS_IDS.POLYGON,
       });
-      let maxCheckedBlockNumber = 0;
 
-      const getPolygonActionsLogs = async (from, to, isOraclesConfirmations = false) => {
-        return await fioNftContractOnPolygonChain.getPastEvents(
-          isOraclesConfirmations
-            ? 'consensus_activity'
-            : isWrap
-            ? 'wrapped'
-            : isBurn
-            ? 'domainburned'
-            : 'unwrapped',
-          {
-            fromBlock: from,
-            toBlock: to,
-          },
-          async (error, events) => {
-            if (!error) {
-              return events;
-            } else {
-              this.handleErrorMessage(error);
+      // Batch helper function for block data
+      const getBatchBlocksData = async blockNumbers => {
+        const batch = new web3.BatchRequest();
+        const promises = blockNumbers.map(blockNumber => {
+          return new Promise(resolve => {
+            batch.add(
+              web3.eth.getBlock.request(blockNumber, (error, block) => {
+                resolve(error ? null : block);
+              }),
+            );
+          });
+        });
+        batch.execute();
+        return Promise.all(promises);
+      };
+
+      const getTokenIdFromTx = async txHash => {
+        try {
+          const tx = await web3.eth.getTransaction(txHash);
+          const methodId = tx.input.slice(0, 10); // Get first 4 bytes of the input data
+
+          // Get burnnft method signature
+          const burnMethodId = web3.utils
+            .keccak256('burnnft(uint256,string)')
+            .slice(0, 10);
+
+          if (methodId === burnMethodId) {
+            // Decode parameters from input data
+            const decodedParams = web3.eth.abi.decodeParameters(
+              ['uint256', 'string'],
+              tx.input.slice(10), // Remove method id to get only parameters
+            );
+
+            return decodedParams[0]; // First parameter is tokenId
+          }
+          return null;
+        } catch (error) {
+          this.handleErrorMessage(`Error getting tokenId from tx:, ${error}`);
+          return null;
+        }
+      };
+
+      // Modified to use direct contract event fetching
+      const getPolygonActionsLogs = async (fromBlock, toBlock, eventNames) => {
+        try {
+          // Add retries for event fetching
+          const fetchWithRetry = async (eventName, retries = 3) => {
+            for (let i = 0; i < retries; i++) {
+              try {
+                const res = await fioNftContractOnPolygonChain.getPastEvents(eventName, {
+                  fromBlock,
+                  toBlock,
+                });
+
+                // If this is a consensus_activity event and we're in burn mode, enrich with tokenId
+                if (eventName === 'consensus_activity' && isBurn && res.length > 0) {
+                  const enrichedEvents = await Promise.all(
+                    res.map(async event => {
+                      const tokenId = await getTokenIdFromTx(event.transactionHash);
+                      return {
+                        ...event,
+                        tokenId, // Add tokenId to the event object
+                      };
+                    }),
+                  );
+                  return enrichedEvents;
+                }
+
+                return res;
+              } catch (error) {
+                if (i === retries - 1) throw error;
+                await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+              }
             }
-          },
-        );
+          };
+
+          const eventPromises = eventNames.map(eventName => fetchWithRetry(eventName));
+          return await Promise.all(eventPromises);
+        } catch (error) {
+          this.handleErrorMessage(error);
+          return eventNames.map(() => []);
+        }
       };
 
       const getUnprocessedActionsLogs = async () => {
@@ -180,118 +240,136 @@ class WrapStatusJob extends CommonJob {
 
         const lastInChainBlockNumber = await web3.eth.getBlockNumber();
 
-        if (lastProcessedBlockNumber > lastInChainBlockNumber)
+        if (lastProcessedBlockNumber > lastInChainBlockNumber) {
           throw new Error(
             logPrefix + `Wrong start blockNumber value, pls check the database value.`,
           );
+        }
 
         this.postMessage(
           logPrefix + `starting from blockNumber: ${lastProcessedBlockNumber}`,
         );
         this.postMessage(logPrefix + `finish at blockNumber: ${lastInChainBlockNumber}`);
 
-        let fromBlockNumber = lastProcessedBlockNumber + 1;
-
         const data = {
           transferActions: [],
           oraclesConfirmationActions: [],
         };
 
-        // todo: check if possible to rewrite onto Promise.all async bunches process. Possible difficulties: 1) large amount of parallel request (server limitations, and Infura Api limitations); 2) configuring limitation value. Profit: much faster job's work for big ranges (but less reliable).
-        while (fromBlockNumber <= lastInChainBlockNumber) {
-          const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
-          const toBlockNumber =
-            maxAllowedBlockNumber > lastInChainBlockNumber
-              ? lastInChainBlockNumber
-              : maxAllowedBlockNumber;
-
-          maxCheckedBlockNumber = toBlockNumber;
-
-          const eventsWithTimestamps = [];
-
-          const events = await await getPolygonActionsLogs(
-            fromBlockNumber,
-            toBlockNumber,
+        // Process blocks in chunks
+        for (
+          let fromBlock = lastProcessedBlockNumber + 1;
+          fromBlock <= lastInChainBlockNumber;
+          fromBlock += blocksRangeLimit
+        ) {
+          const toBlock = Math.min(
+            fromBlock + blocksRangeLimit - 1,
+            lastInChainBlockNumber,
           );
 
-          for (const event of events) {
-            const { blockNumber } = event;
-            const block = await web3.eth.getBlock(blockNumber);
-            eventsWithTimestamps.push({
-              ...event,
-              blockTimeStamp: block.timestamp,
-            });
-          }
-
-          data.transferActions = [...data.transferActions, ...eventsWithTimestamps];
-
+          // Determine which events to fetch
+          const eventNames = [isWrap ? 'wrapped' : isBurn ? 'domainburned' : 'unwrapped'];
           if (isWrap || isBurn) {
-            const oracleEventsWithTimestamps = [];
-
-            const oracleEvents = await getPolygonActionsLogs(
-              fromBlockNumber,
-              toBlockNumber,
-              true,
-            );
-
-            for (const orcaleEvent of oracleEvents) {
-              const { blockNumber } = orcaleEvent;
-              const block = await web3.eth.getBlock(blockNumber);
-              oracleEventsWithTimestamps.push({
-                ...orcaleEvent,
-                blockTimeStamp: block.timestamp,
-              });
-            }
-
-            data.oraclesConfirmationActions = [
-              ...data.oraclesConfirmationActions,
-              ...oracleEventsWithTimestamps,
-            ];
+            eventNames.push('consensus_activity');
           }
 
-          fromBlockNumber = toBlockNumber + 1;
+          // Fetch all events in parallel
+          const [transferEvents, oracleEvents] = await getPolygonActionsLogs(
+            fromBlock,
+            toBlock,
+            eventNames,
+          );
+
+          if (!transferEvents.length && (!oracleEvents || !oracleEvents.length)) {
+            // If no events in this block range, update the block number and continue
+            await WrapStatusBlockNumbers.setBlockNumber(
+              toBlock,
+              networkData.id,
+              isWrap,
+              isBurn,
+            );
+            continue;
+          }
+
+          // Get unique block numbers from all events
+          const blockNumbers = new Set([
+            ...transferEvents.map(e => e.blockNumber),
+            ...(oracleEvents || []).map(e => e.blockNumber),
+          ]);
+
+          // Batch fetch all required block timestamps
+          const blocks = await getBatchBlocksData([...blockNumbers]);
+          const blockTimestamps = blocks.reduce((acc, block) => {
+            if (block) {
+              acc[block.number] = block.timestamp;
+            }
+            return acc;
+          }, {});
+
+          // Add timestamps to events
+          const eventsWithTimestamps = transferEvents.map(event => ({
+            ...event,
+            blockTimeStamp: blockTimestamps[event.blockNumber],
+          }));
+
+          data.transferActions.push(...eventsWithTimestamps);
+
+          if (oracleEvents && oracleEvents.length > 0) {
+            const oracleEventsWithTimestamps = oracleEvents.map(event => ({
+              ...event,
+              blockTimeStamp: blockTimestamps[event.blockNumber],
+            }));
+            data.oraclesConfirmationActions.push(...oracleEventsWithTimestamps);
+          }
+
+          // Update block number after each chunk is processed
+          await WrapStatusBlockNumbers.setBlockNumber(
+            toBlock,
+            networkData.id,
+            isWrap,
+            isBurn,
+          );
+
+          // Optional: Add a small delay between chunks to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
 
         this.postMessage(
           logPrefix +
             `result length: transfers: ${data.transferActions.length} ${
               isWrap || isBurn
-                ? `oracles confirmations: ${data.oraclesConfirmationActions}`
+                ? `oracles confirmations: ${data.oraclesConfirmationActions.length}`
                 : ''
             }`,
         );
+
         return data;
       };
 
       const data = await getUnprocessedActionsLogs();
 
-      if (data.transferActions.length > 0) {
-        if (isWrap) {
-          await WrapStatusPolygonWrapLogs.addLogs(data.transferActions);
-        } else if (isBurn) {
-          await WrapStatusPolygonBurnedDomainsLogs.addLogs(data.transferActions);
-        } else {
-          await WrapStatusPolygonUnwrapLogs.addLogs(data.transferActions);
-        }
-      }
+      // Batch insert all logs
+      await Promise.all(
+        [
+          data.transferActions.length > 0 &&
+            (isWrap
+              ? WrapStatusPolygonWrapLogs.addLogs(data.transferActions)
+              : isBurn
+              ? WrapStatusPolygonBurnedDomainsLogs.addLogs(data.transferActions)
+              : WrapStatusPolygonUnwrapLogs.addLogs(data.transferActions)),
 
-      if (data.oraclesConfirmationActions.length > 0) {
-        await WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
-          data.oraclesConfirmationActions,
-        );
-      }
-
-      await WrapStatusBlockNumbers.setBlockNumber(
-        maxCheckedBlockNumber,
-        networkData.id,
-        isWrap,
-        isBurn,
+          data.oraclesConfirmationActions.length > 0 &&
+            WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+              data.oraclesConfirmationActions,
+            ),
+        ].filter(Boolean),
       );
 
       this.postMessage(logPrefix + 'successfully finished');
       return data.transferActions.length;
     } catch (e) {
       this.handleErrorMessage(e);
+      throw e;
     }
   }
 
@@ -429,9 +507,6 @@ class WrapStatusJob extends CommonJob {
 
       if (data.oraclesConfirmationActions.length > 0) {
         await WrapStatusEthOraclesConfirmationsLogs.addLogs(
-          data.oraclesConfirmationActions,
-        );
-        await WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
           data.oraclesConfirmationActions,
         );
       }
