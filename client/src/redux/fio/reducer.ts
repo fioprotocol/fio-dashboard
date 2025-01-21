@@ -17,6 +17,7 @@ import {
 import * as actions from './actions';
 
 import { normalizePublicAddresses, transformNft } from '../../util/fio';
+import MathOp from '../../util/math';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { FIO_CHAIN_CODE } from '../../constants/fio';
@@ -165,9 +166,13 @@ export default combineReducers({
                 },
           );
         }
-        return fioWallets.sort(({ id: id1 }, { id: id2 }) =>
-          id1 > id2 ? 1 : -1,
-        );
+        try {
+          return fioWallets.sort(({ id: id1 }, { id: id2 }) =>
+            new MathOp(id1 || 0).gt(id2 || 0) ? 1 : -1,
+          );
+        } catch (err) {
+          return fioWallets;
+        }
       }
       case actions.REFRESH_BALANCE_SUCCESS: {
         return state.map(fioWallet => {
