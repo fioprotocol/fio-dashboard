@@ -262,7 +262,10 @@ export class Order extends Base {
           where: { spentType: Payment.SPENT_TYPE.ORDER },
         },
       ],
-      order: [['createdAt', 'DESC']],
+      order: [
+        ['createdAt', 'DESC'],
+        [{ model: Payment }, 'createdAt', 'DESC'],
+      ],
     });
   }
 
