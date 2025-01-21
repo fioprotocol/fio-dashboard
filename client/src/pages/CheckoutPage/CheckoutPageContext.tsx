@@ -185,6 +185,8 @@ export const useContext = (): {
   );
 
   const location = history.location;
+  const orderId = order?.id || null;
+  const orderPubKey = order?.publicKey || null;
 
   const { state, search, query } = (location as AnyObject) || {};
 
@@ -236,11 +238,11 @@ export const useContext = (): {
       return;
     }
 
-    if (!order) {
+    if (!orderId) {
       return;
     }
 
-    if (order?.publicKey === paymentWalletPublicKey) {
+    if (orderPubKey === paymentWalletPublicKey) {
       return;
     }
 
@@ -248,14 +250,7 @@ export const useContext = (): {
       .updatePubKey(paymentWalletPublicKey)
       .then(() => apis.orders.getActive())
       .then(setOrder);
-  }, [
-    cartId,
-    fioWallets,
-    isNoProfileFlow,
-    order,
-    paymentProvider,
-    paymentWalletPublicKey,
-  ]);
+  }, [isNoProfileFlow, orderId, orderPubKey, paymentWalletPublicKey]);
 
   const createOrder = useCallback(
     async ({
@@ -641,7 +636,7 @@ export const useContext = (): {
       void apis.orders.cancel();
     }
     history.push(ROUTES.CART);
-  }, [order, history]);
+  }, [order?.id, history]);
 
   const onFinish = async (results: RegistrationResult) => {
     try {
