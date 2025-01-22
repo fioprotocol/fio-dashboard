@@ -329,20 +329,26 @@ class Fio {
         params.permission = auth.permission;
       }
       const fioSdk = await this.getMasterFioSDK();
-
+      logger.info('PARAMS', params);
+      logger.info('account', FIO_ACCOUNT_NAMES[action]);
+      logger.info('action', FIO_ACTION_NAMES[action]);
+      logger.info('auth.permission', auth.permission);
       const preparedTrx = await fioSdk.pushTransaction({
         account: FIO_ACCOUNT_NAMES[action] || '',
         action: FIO_ACTION_NAMES[action],
         data: params,
         authPermission: auth.permission,
       });
-
+      logger.info(
+        'FIO_ACTIONS_TO_END_POINT_MAP[action]',
+        FIO_ACTIONS_TO_END_POINT_MAP[action],
+      );
       return await fioSdk.executePreparedTrx(
         FIO_ACTIONS_TO_END_POINT_MAP[action],
         preparedTrx,
       );
     } catch (err) {
-      this.logError(err);
+      this.logError('EXECUTE ACTION ERROR', err);
 
       let errorObj = {
         message: err.message,
