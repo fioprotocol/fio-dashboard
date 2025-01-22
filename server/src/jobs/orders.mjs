@@ -385,17 +385,17 @@ class OrdersJob extends CommonJob {
     const fee = await this.getFeeForAction(orderItem.action);
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
-    this.postMessage('CURRENT PRICE', currentPrice);
-    this.postMessage('orderItem.price', orderItem.price);
+    this.postMessage(`CURRENT PRICE, ${currentPrice}`);
+    this.postMessage(`orderItem.price, ${orderItem.price}`);
     const threshold = new MathOp(orderItem.price)
       .mul(0.25)
       .round(2, 1)
       .toNumber();
-    this.postMessage('threshold', threshold);
+    this.postMessage(`threshold, ${threshold}`);
     const topThreshold = new MathOp(orderItem.price).add(threshold).toNumber();
     const bottomThreshold = new MathOp(orderItem.price).sub(threshold).toNumber();
-    this.postMessage('topThreshold', topThreshold);
-    this.postMessage('bottomThreshold', bottomThreshold);
+    this.postMessage(`topThreshold, ${topThreshold}`);
+    this.postMessage(`bottomThreshold, ${bottomThreshold}`);
     if (
       new MathOp(topThreshold).lt(currentPrice) ||
       new MathOp(bottomThreshold).gt(currentPrice)
@@ -405,11 +405,11 @@ class OrdersJob extends CommonJob {
         .div(orderItem.price)
         .mul(100)
         .toNumber();
-      this.postMessage('percentageChange', percentageChange);
+      this.postMessage(`percentageChange, ${percentageChange}`);
       const priceChangePercentage = new MathOp(percentageChange).gt(0)
         ? `-${percentageChange.toFixed(2)}`
         : `+${new MathOp(percentageChange).abs().toFixed(2)}`;
-      this.postMessage('priceChangePercentage', priceChangePercentage);
+      this.postMessage(`priceChangePercentage, ${priceChangePercentage}`);
       const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
       await this.handleFail(orderItem, errorMessage);
@@ -972,18 +972,19 @@ class OrdersJob extends CommonJob {
           code && domainExistingInRefProfile
             ? domainExistingInRefProfile
             : domainExistingInDashboardDomains;
-        this.postMessage('PRICE', price);
-        this.postMessage('!price || price === "0"', !price || price === '0');
+        this.postMessage(`PRICE:, ${price}`);
+        this.postMessage(`!price || price === "0", ${!price || price === '0'}`);
         this.postMessage(
-          'registeringDomainExistingInAppDomainsList',
-          registeringDomainExistingInAppDomainsList,
+          `registeringDomainExistingInAppDomainsList,
+          ${registeringDomainExistingInAppDomainsList}`,
         );
         this.postMessage(
-          'action === GenericAction.registerFioAddress',
-          action === GenericAction.registerFioAddress,
+          `action === GenericAction.registerFioAddress,
+          ${action === GenericAction.registerFioAddress}`,
         );
-        this.postMessage('domainOwner', domainOwner);
-        this.postMessage('!domainOwner', !domainOwner);
+        this.postMessage(`domainOwner, ${domainOwner}`);
+        this.postMessage(`!domainOwner, ${!domainOwner}`);
+        this.postMessage(`ORDER ITEM: ${JSON.stringify(orderItem)}`);
         // Handle free addresses
         if (
           (!price || price === '0') &&
