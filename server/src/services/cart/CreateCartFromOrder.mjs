@@ -1,17 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import {
-  BlockchainTransaction,
-  BlockchainTransactionEventLog,
-  Cart,
-  Order,
-  OrderItem,
-  OrderItemStatus,
-  Payment,
-  ReferrerProfile,
-  User,
-} from '../../models';
+import { Cart, Order } from '../../models';
 
 import logger from '../../logger.mjs';
 
@@ -31,41 +21,21 @@ export default class CreateCartFromOrder extends Base {
     try {
       const userId = this.context.id;
 
-      const order = await Order.findOne({
-        where: {
-          id: orderId,
+      const detailedOrder = await Order.orderInfo(orderId, {
+        useFormatDetailed: true,
+        onlyOrderPayment: true,
+        orderWhere: {
           userId,
         },
-        include: [
-          {
-            model: OrderItem,
-            include: [
-              OrderItemStatus,
-              {
-                model: BlockchainTransaction,
-                include: [BlockchainTransactionEventLog],
-              },
-            ],
-          },
-          {
-            model: Payment,
-            where: { spentType: Payment.SPENT_TYPE.ORDER },
-          },
-          User,
-          ReferrerProfile,
-        ],
-        order: [[OrderItem, 'id', 'ASC']],
       });
 
-      if (!order)
+      if (!detailedOrder)
         throw new X({
           code: 'NOT_FOUND',
           fields: {
             id: 'NOT_FOUND',
           },
         });
-
-      const detailedOrder = await Order.formatDetailed(order.get({ plain: true }));
 
       const prices = await fioApi.getPrices();
       const roe = await getROE();

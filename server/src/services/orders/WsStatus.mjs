@@ -1,15 +1,6 @@
 import WsBase from '../WsBase';
 
-import {
-  Order,
-  OrderItem,
-  OrderItemStatus,
-  Payment,
-  BlockchainTransaction,
-  BlockchainTransactionEventLog,
-  User,
-  ReferrerProfile,
-} from '../../models';
+import { Order, OrderItemStatus, Payment, BlockchainTransaction } from '../../models';
 
 import BitPay from '../../external/payment-processor/bitpay.mjs';
 
@@ -61,48 +52,29 @@ export default class WsStatus extends WsBase {
         logger.error(`ORDER STATUS UPDATE - ${orderId}`, error);
       }
 
-      const order = await Order.findOne({
-        where: {
-          id: orderId,
-        },
-        include: [
-          {
-            model: Payment,
-            where: { spentType: Payment.SPENT_TYPE.ORDER },
-          },
-          {
-            model: OrderItem,
-            include: [
-              OrderItemStatus,
-              {
-                model: BlockchainTransaction,
-                include: [BlockchainTransactionEventLog],
-              },
-            ],
-          },
-          User,
-          ReferrerProfile,
-        ],
-        order: [[OrderItem, 'id', 'ASC']],
+      const order = await Order.orderInfo(orderId, {
+        useFormatDetailed: true,
+        onlyOrderPayment: true,
       });
 
       try {
         if (
           this.messageData.orderStatus !== order.status ||
-          this.messageData.paymentStatus !== order.Payments[0].status
+          this.messageData.paymentStatus !== order.payment.paymentStatus
         ) {
           this.messageData.orderStatus = order.status;
-          this.messageData.paymentStatus = order.Payments[0].status;
+          this.messageData.paymentStatus = order.payment.paymentStatus;
 
           try {
             if (
-              order.Payments[0].processor === Payment.PROCESSOR.BITPAY &&
-              order.status === Order.STATUS.NEW
+              order.payment.paymentProcessor === Payment.PROCESSOR.BITPAY &&
+              order.status === Order.STATUS.NEW &&
+              order.payment.paymentData &&
+              order.payment.paymentData.webhookData
             ) {
-              await BitPay.getInvoiceWebHook(order.Payments[0].data.webhookData.id);
+              await BitPay.getInvoiceWebHook(order.payment.paymentData.webhookData.id);
             }
-            const orderDetailed = await Order.formatDetailed(order.get({ plain: true }));
-            this.messageData.results = orderDetailed;
+            this.messageData.results = order;
           } catch (e) {
             logger.error(`WS ERROR. Order items set. ${orderId}. ${e}`);
           }
