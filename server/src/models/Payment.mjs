@@ -260,6 +260,13 @@ export class Payment extends Base {
     };
   }
 
+  static async getOrderPayment(orderId) {
+    return Payment.findOne({
+      where: { orderId: orderId, spentType: Payment.SPENT_TYPE.ORDER },
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
   static format({
     id,
     price,

@@ -262,7 +262,10 @@ export class Order extends Base {
           where: { spentType: Payment.SPENT_TYPE.ORDER },
         },
       ],
-      order: [['createdAt', 'DESC']],
+      order: [
+        ['createdAt', 'DESC'],
+        [{ model: Payment }, 'createdAt', 'DESC'],
+      ],
     });
   }
 
@@ -284,7 +287,7 @@ export class Order extends Base {
     return this.count(query);
   }
 
-  static listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
+  static async listAll({ limit = DEFAULT_ORDERS_LIMIT, offset = 0, filters }) {
     const { dateRange = {}, freeStatus, status, orderUserType } = filters;
 
     const createdAtGte = dateRange.startDate
@@ -306,18 +309,10 @@ export class Order extends Base {
           o."createdAt", 
           o."updatedAt",
           COALESCE(o.data->>'orderUserType', null) as "orderUserType",
-          p.price,
-          p.currency,
-          p.processor as "paymentProcessor",
           u.email as "userEmail",
           rp.label as "refProfileName",
           count(*) OVER() AS "maxCount"
         FROM "orders" o
-          INNER JOIN "payments" p ON p."orderId" = o.id 
-            AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
-            AND p."createdAt" = (SELECT MAX(pm."createdAt") FROM "payments" pm WHERE pm."orderId" = o.id AND pm."spentType" = ${
-              Payment.SPENT_TYPE.ORDER
-            } GROUP BY pm."orderId")
           LEFT JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
@@ -343,35 +338,69 @@ export class Order extends Base {
         ${limit ? `LIMIT ${limit}` : ``}
       `;
 
-    return this.sequelize.query(query, {
+    const orders = await this.sequelize.query(query, {
       type: this.sequelize.QueryTypes.SELECT,
     });
-  }
 
-  static async orderInfo(id, useFormatDetailed) {
-    const orderObj = await this.findByPk(id, {
-      include: [
-        {
-          model: OrderItem,
-          include: [
-            OrderItemStatus,
-            {
-              model: BlockchainTransaction,
-              include: [BlockchainTransactionEventLog],
-            },
-          ],
-        },
-        { model: Payment, include: PaymentEventLog },
-        User,
-        ReferrerProfile,
-      ],
-      order: [[OrderItem, 'id', 'ASC']],
+    const paymentsQuery = `
+      SELECT
+          p."orderId",
+          p.price,
+          p.currency,
+          p.processor as "paymentProcessor"
+          FROM payments p
+          WHERE p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+            AND p."orderId" IN (${orders.map(order => order.id).join(',')})
+            AND p.id = (SELECT pm.id FROM "payments" pm WHERE pm."orderId" = p."orderId" AND pm."spentType" = 1 ORDER BY pm."createdAt" DESC LIMIT 1)
+      `;
+    const payments = await this.sequelize.query(paymentsQuery, {
+      type: this.sequelize.QueryTypes.SELECT,
     });
 
+    const paymentsMap = payments.reduce((acc, item) => {
+      const { orderId, ...rest } = item;
+      acc[orderId] = { ...rest };
+      return acc;
+    }, {});
+
+    return orders.map(order => ({ ...order, ...paymentsMap[order.id] }));
+  }
+
+  static async orderInfo(
+    orderId,
+    { useFormatDetailed, onlyOrderPayment, userWhere, orderWhere } = {},
+  ) {
+    const orderInst = await this.findByPk(orderId, {
+      where: orderWhere,
+      include: [{ model: User, where: userWhere, required: true }, ReferrerProfile],
+    });
+    const orderItems = await OrderItem.findAll({
+      where: { orderId },
+      include: [
+        OrderItemStatus,
+        {
+          model: BlockchainTransaction,
+          include: [BlockchainTransactionEventLog],
+        },
+      ],
+      order: [['id', 'ASC']],
+    });
+    const payments = await Payment.findAll({
+      where: {
+        orderId,
+        ...(onlyOrderPayment ? { spentType: Payment.SPENT_TYPE.ORDER } : {}),
+      },
+      include: [PaymentEventLog],
+      order: onlyOrderPayment ? [['createdAt', 'DESC']] : [],
+    });
+    const orderObj = orderInst.get({ plain: true });
+    orderObj.OrderItems = orderItems.map(orderItem => orderItem.get({ plain: true }));
+    orderObj.Payments = payments.map(payment => payment.get({ plain: true }));
+
     if (useFormatDetailed) {
-      return this.formatDetailed(orderObj.get({ pain: true }));
+      return this.formatDetailed(orderObj);
     } else {
-      const order = this.format(orderObj.get({ plain: true }));
+      const order = this.format(orderObj);
 
       const blockchainTransactionsIds = [];
 
@@ -944,6 +973,7 @@ export class Order extends Base {
         paidWith,
         paymentProcessor: payment ? payment.processor : null,
         paymentStatus: payment ? payment.status : null,
+        paymentData: payment ? payment.data : null,
         paymentCurrency,
       },
       refProfileName: refProfile ? refProfile.label : null,

@@ -135,7 +135,7 @@ export default class OrderProcessPayment extends Base {
           await prepareOrderWithFioPaymentForExecution({
             paymentId: order.Payments[0].id,
             orderItems: order.OrderItems,
-            fioNativePrice: fioNativePrice && fioApi.SUFToAmount(fioNativePrice),
+            fioNativePrice,
           });
           await order.update({ status: Order.STATUS.PAID });
         } catch (e) {

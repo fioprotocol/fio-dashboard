@@ -56,7 +56,7 @@ export class FioApiUrl extends Base {
     return attributes.default;
   }
 
-  static async getApiUrls({ type, location = this.LOCATION.US, tz = '' }) {
+  static async getApiUrls({ type, location = '', tz = '' }) {
     const where = {};
     if (type) where.type = type;
 
@@ -68,7 +68,7 @@ export class FioApiUrl extends Base {
     const dynamicFetch = Number(await Var.getValByKey(VARS_KEYS.API_URLS_DYNAMIC_FETCH));
     if (!dynamicFetch) return urls.map(item => item.url);
 
-    const defaultLocData = getLocByCountry({ code: this.LOCATION.US });
+    const defaultLocData = getLocByCountry();
     const locData = getLocByCountry({ code: location, tz });
     const sorted = sortByDistance(
       { x: locData.latitude, y: locData.longitude },

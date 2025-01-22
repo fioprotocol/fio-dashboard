@@ -44,6 +44,23 @@ export default class OrderUpdatePubKey extends Base {
       });
     }
 
+    if (publicKey === order.publicKey) {
+      logger.info(
+        JSON.stringify({
+          id: order.id,
+          number: order.number,
+          lastPubKey: order.publicKey,
+          publicKey,
+        }),
+      );
+
+      return {
+        data: {
+          success: true,
+        },
+      };
+    }
+
     const wallet = await Wallet.findOneWhere({ userId, publicKey });
     const lastWallet = await Wallet.findOneWhere({ userId, publicKey: order.publicKey });
 
@@ -182,12 +199,19 @@ export default class OrderUpdatePubKey extends Base {
       payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
     }
 
-    return {
-      data: {
+    logger.info(
+      JSON.stringify({
         id: order.id,
         number: order.number,
-        publicKey: order.publicKey,
+        lastPubKey: order.publicKey,
+        publicKey,
         payment,
+      }),
+    );
+
+    return {
+      data: {
+        success: true,
       },
     };
   }

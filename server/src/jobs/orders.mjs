@@ -712,6 +712,7 @@ class OrdersJob extends CommonJob {
     }
 
     if (
+      currentWallet &&
       currentWallet.data &&
       currentWallet.data.isChangeBalanceNotificationCreateStopped
     ) {
