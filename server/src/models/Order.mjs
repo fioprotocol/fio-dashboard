@@ -366,30 +366,41 @@ export class Order extends Base {
     return orders.map(order => ({ ...order, ...paymentsMap[order.id] }));
   }
 
-  static async orderInfo(id, useFormatDetailed) {
-    const orderObj = await this.findByPk(id, {
-      include: [
-        {
-          model: OrderItem,
-          include: [
-            OrderItemStatus,
-            {
-              model: BlockchainTransaction,
-              include: [BlockchainTransactionEventLog],
-            },
-          ],
-        },
-        { model: Payment, include: PaymentEventLog },
-        User,
-        ReferrerProfile,
-      ],
-      order: [[OrderItem, 'id', 'ASC']],
+  static async orderInfo(
+    orderId,
+    { useFormatDetailed, onlyOrderPayment, userWhere, orderWhere } = {},
+  ) {
+    const orderInst = await this.findByPk(orderId, {
+      where: orderWhere,
+      include: [{ model: User, where: userWhere, required: true }, ReferrerProfile],
     });
+    const orderItems = await OrderItem.findAll({
+      where: { orderId },
+      include: [
+        OrderItemStatus,
+        {
+          model: BlockchainTransaction,
+          include: [BlockchainTransactionEventLog],
+        },
+      ],
+      order: [['id', 'ASC']],
+    });
+    const payments = await Payment.findAll({
+      where: {
+        orderId,
+        ...(onlyOrderPayment ? { spentType: Payment.SPENT_TYPE.ORDER } : {}),
+      },
+      include: [PaymentEventLog],
+      order: onlyOrderPayment ? [['createdAt', 'DESC']] : [],
+    });
+    const orderObj = orderInst.get({ plain: true });
+    orderObj.OrderItems = orderItems.map(orderItem => orderItem.get({ plain: true }));
+    orderObj.Payments = payments.map(payment => payment.get({ plain: true }));
 
     if (useFormatDetailed) {
-      return this.formatDetailed(orderObj.get({ pain: true }));
+      return this.formatDetailed(orderObj);
     } else {
-      const order = this.format(orderObj.get({ plain: true }));
+      const order = this.format(orderObj);
 
       const blockchainTransactionsIds = [];
 
@@ -962,6 +973,7 @@ export class Order extends Base {
         paidWith,
         paymentProcessor: payment ? payment.processor : null,
         paymentStatus: payment ? payment.status : null,
+        paymentData: payment ? payment.data : null,
         paymentCurrency,
       },
       refProfileName: refProfile ? refProfile.label : null,

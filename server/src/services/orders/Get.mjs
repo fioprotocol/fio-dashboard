@@ -1,16 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Base from '../Base';
-import {
-  BlockchainTransaction,
-  BlockchainTransactionEventLog,
-  Order,
-  OrderItem,
-  OrderItemStatus,
-  Payment,
-  ReferrerProfile,
-  User,
-} from '../../models';
+import { Order, User } from '../../models';
 
 import X from '../Exception.mjs';
 
@@ -26,7 +17,6 @@ export default class OrdersGet extends Base {
     const guestId = this.context.guestId;
 
     const where = {
-      id,
       publicKey,
     };
 
@@ -45,32 +35,12 @@ export default class OrdersGet extends Base {
       userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
     }
 
-    const order = await Order.findOne({
-      where: {
-        id,
-        publicKey,
-      },
-      include: [
-        {
-          model: OrderItem,
-          include: [
-            OrderItemStatus,
-            {
-              model: BlockchainTransaction,
-              include: [BlockchainTransactionEventLog],
-            },
-          ],
-        },
-        {
-          model: Payment,
-          where: { spentType: Payment.SPENT_TYPE.ORDER },
-        },
-        { model: User, where: userWhere, required: true },
-        ReferrerProfile,
-      ],
-      order: [[OrderItem, 'id', 'ASC']],
+    const order = await Order.orderInfo(id, {
+      useFormatDetailed: true,
+      onlyOrderPayment: true,
+      userWhere,
+      orderWhere: where,
     });
-
     if (!order)
       throw new X({
         code: 'NOT_FOUND',
@@ -79,16 +49,14 @@ export default class OrdersGet extends Base {
         },
       });
 
-    const data = await Order.formatDetailed(order.get({ plain: true }));
-
-    delete data.data;
-    delete data.user;
+    delete order.data;
+    delete order.user;
 
     if (!userId && order.guestId !== guestId) {
-      delete data.payment;
+      delete order.payment;
     }
 
-    return { data };
+    return { data: order };
   }
 
   static get paramsSecret() {

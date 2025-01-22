@@ -1,6 +1,14 @@
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
-import { BlockchainTransaction, Notification, Order, Payment, User } from '../models';
+import {
+  BlockchainTransaction,
+  Notification,
+  Order,
+  Payment,
+  User,
+  OrderItem,
+  OrderItemStatus,
+} from '../models';
 
 import { sendGTMEvent } from '../external/googleapi.mjs';
 import { sendSendinblueEvent } from './external/SendinblueEvent.mjs';
@@ -17,13 +25,17 @@ import {
 } from '../config/constants.js';
 
 export const checkOrderStatusAndCreateNotification = async orderId => {
-  const order = await Order.orderInfo(orderId);
+  const order = await Order.findByPk(orderId, {
+    include: [User],
+  });
 
   if (
     order &&
     (order.status === Order.STATUS.PARTIALLY_SUCCESS ||
       order.status === Order.STATUS.SUCCESS)
   ) {
+    let orderData = order.get({ plain: true });
+
     const orderHasNotification = await Notification.findOne({
       where: {
         contentType: Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION,
@@ -36,22 +48,53 @@ export const checkOrderStatusAndCreateNotification = async orderId => {
     });
 
     if (!orderHasNotification) {
-      await createPurchaseConfirmationNotification(order);
+      const resData = await createPurchaseConfirmationNotification(Order.format(order));
+      orderData = { ...orderData, ...resData };
     }
+
+    return orderData;
   }
+
+  return null;
 };
 
-const sendAnalytics = async orderId => {
-  const order = await Order.orderInfo(orderId, true);
+const sendAnalytics = async (orderData = null) => {
+  if (!orderData) return;
+  if (!orderData.payment) {
+    orderData.payment = (await Payment.getOrderPayment(orderData.id)).get({
+      plain: true,
+    });
+  }
+  if (!orderData.succeedItems) {
+    orderData.succeedItems = (
+      await OrderItem.findAll({
+        where: { orderId: orderData.id },
+        include: [
+          {
+            model: OrderItemStatus,
+            where: { txStatus: BlockchainTransaction.STATUS.SUCCESS },
+            required: true,
+          },
+          BlockchainTransaction,
+        ],
+      })
+    ).map(item => item.get({ plain: true }));
+  }
 
-  const isSuccess = order && order.status === Order.STATUS.SUCCESS;
-  const isPartial = order && order.status === Order.STATUS.PARTIALLY_SUCCESS;
-  const isFailed = order && order.status === Order.STATUS.FAILED;
+  const { payment, succeedItems, user, ...rest } = orderData;
+  const orderFormatted = await Order.formatDetailed({
+    ...rest,
+    Payments: [payment],
+    OrderItems: succeedItems,
+    User: user,
+  });
+
+  const isSuccess = orderFormatted.status === Order.STATUS.SUCCESS;
+  const isPartial = orderFormatted.status === Order.STATUS.PARTIALLY_SUCCESS;
+  const isFailed = orderFormatted.status === Order.STATUS.FAILED;
 
   if (isSuccess || isPartial || isFailed) {
-    const user = await User.findActive(order.user && order.user.id);
-
-    const { payment, regItems, total, data: orderData } = order;
+    const { payment, regItems, total, data: orderData } = orderFormatted;
     const { gaClientId, gaSessionId } = orderData || {};
 
     const data = {
@@ -59,7 +102,7 @@ const sendAnalytics = async orderId => {
       payment_type: total === '0' ? 'free' : payment.paymentProcessor,
     };
 
-    let anayticsEvent = '';
+    let analyticsEvent = '';
 
     if (isSuccess || isPartial) {
       data.items = regItems.map(regItem => ({
@@ -70,29 +113,29 @@ const sendAnalytics = async orderId => {
     }
 
     if (isSuccess) {
-      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED;
+      analyticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED;
     }
     if (isPartial) {
-      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL;
+      analyticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL;
     }
     if (isFailed) {
-      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED;
+      analyticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED;
     }
 
     await sendGTMEvent({
-      event: anayticsEvent,
+      event: analyticsEvent,
       clientId: gaClientId,
       data,
       sessionId: gaSessionId,
     });
-    user && (await sendSendinblueEvent({ event: anayticsEvent, user }));
+    user && (await sendSendinblueEvent({ event: analyticsEvent, user }));
   }
 };
 
 export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) => {
   await Order.updateStatus(orderId, paymentStatus, txStatuses, t);
-  await checkOrderStatusAndCreateNotification(orderId);
-  await sendAnalytics(orderId);
+  const orderData = await checkOrderStatusAndCreateNotification(orderId);
+  await sendAnalytics(orderData);
 };
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
@@ -231,35 +274,42 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
 const createPurchaseConfirmationNotification = async order => {
   try {
     const {
-      items,
       number,
-      payments,
       publicKey,
       user: { id: userId, email },
     } = order;
 
     if (!email || !userId) return; // Do not create notification if user has no email. For example it could be MetaMask user.
 
-    const payment =
-      payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
+    const succeedItems = (
+      await OrderItem.findAll({
+        where: { orderId: order.id },
+        include: [
+          {
+            model: OrderItemStatus,
+            where: { txStatus: BlockchainTransaction.STATUS.SUCCESS },
+            required: true,
+          },
+          BlockchainTransaction,
+        ],
+      })
+    ).map(item => item.get({ plain: true }));
+    const payment = (await Payment.getOrderPayment(order.id)).get({ plain: true });
+    const succeedItemsFormatted = succeedItems.map(item => OrderItem.format(item));
+    const paymentFormatted = Payment.format(payment);
 
-    const successedOrderItemsArr = items.filter(
-      orderItem =>
-        orderItem.orderItemStatus.txStatus === BlockchainTransaction.STATUS.SUCCESS,
-    );
-
-    const successedOrderItems = transformOrderItemsForEmail(successedOrderItemsArr);
+    const succeedOrderItems = transformOrderItemsForEmail(succeedItemsFormatted);
 
     const paidWith = await getPaidWith({
-      paymentProcessor: payment.processor,
+      paymentProcessor: paymentFormatted.processor,
       publicKey,
       userId,
-      payment,
+      payment: paymentFormatted,
     });
 
-    const successedOrderPaymentInfo = await handleOrderPaymentInfo({
-      orderItems: successedOrderItemsArr,
-      payment,
+    const succeedOrderPaymentInfo = await handleOrderPaymentInfo({
+      orderItems: succeedItemsFormatted,
+      payment: paymentFormatted,
       paidWith,
       number,
     });
@@ -271,12 +321,17 @@ const createPurchaseConfirmationNotification = async order => {
       data: {
         emailData: {
           orderNumber: number,
-          successedOrderItems,
-          successedOrderPaymentInfo,
+          successedOrderItems: succeedOrderItems,
+          successedOrderPaymentInfo: succeedOrderPaymentInfo,
           date: new Date(),
         },
       },
     });
+
+    return {
+      payment,
+      succeedItems,
+    };
   } catch (e) {
     logger.error(
       `Purchase Confirmation create notification error ${e.message}. Order #${order.number}`,
