@@ -105,9 +105,10 @@ export default class AddItem extends Base {
           })
         : null;
 
+      const domainClause = ReferrerProfile.sequelize.escape(`%"name":"${domain}"%`);
       const gatedRefProfiles = await ReferrerProfile.findAll({
         where: Sequelize.literal(
-          `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE '%"name":"${domain}"%' AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
+          `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE ${domainClause} AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
         ),
       });
 
