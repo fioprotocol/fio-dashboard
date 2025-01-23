@@ -44,7 +44,9 @@ export type AuthSignUpResponse = User;
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;
 export type AuthResendRecoveryResponse = DefaultSuccessResponse;
-export type AuthUpdateEmailResponse = DefaultSuccessResponse;
+export type AuthUpdateEmailResponse = DefaultSuccessResponse & {
+  newUsername?: string;
+};
 export type AuthCreateNewDeviceRequestResponse = null;
 export type AuthDeleteNewDeviceRequestResponse =
   | DefaultSuccessResponse
