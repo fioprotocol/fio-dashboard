@@ -88,21 +88,21 @@ const ChangeEmail: React.FC<Props> = props => {
 
   const onChangeEmail = useCallback(
     async ({ password }: { password?: string } = {}) => {
-      const { newEmail, newUsername } = submitData;
+      const { newEmail } = submitData;
       toggleLoading(true);
 
       try {
         const updateEmailResult = await apis.auth.updateEmail({
           newEmail,
-          newUsername,
         });
 
         let updateEmailSuccess = !!updateEmailResult;
+        const updatedUsername = updateEmailResult.newUsername;
 
-        if (newUsername && password && showPasswordModal) {
+        if (updatedUsername && password && showPasswordModal) {
           try {
             await apis.edge.changeUsername({
-              newUsername,
+              newUsername: updatedUsername,
               password,
               username: user?.username,
             });
