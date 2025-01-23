@@ -213,7 +213,7 @@ export const handleFreeCartAddItem = ({
         cartItems,
         domains: [...domainsArr, ...firstRegFreeDomains],
       })) ||
-    (!existingDashboardDomain && freeDomainOwner) ||
+    (!existingDashboardDomain && !!freeDomainOwner) ||
     (!existingDashboardDomain &&
       existingIsFirstRegFreeDomain &&
       !existingIsFirstRegFreeDomain.isPremium &&
@@ -311,6 +311,7 @@ export const handleUsersFreeCartItems = ({
   cartItems,
   dashboardDomains,
   userHasFreeAddress,
+  freeDomainToOwner = {},
   refCode,
 }) => {
   let updatedCartItems;
@@ -374,12 +375,13 @@ export const handleUsersFreeCartItems = ({
       );
 
       if (
-        isFree &&
-        domainType === DOMAIN_TYPE.ALLOW_FREE &&
-        ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
-          (!existingDashboardDomain &&
-            existingIsFirstRegFree &&
-            !existingIsFirstRegFree.isPremium))
+        (isFree &&
+          domainType === DOMAIN_TYPE.ALLOW_FREE &&
+          ((existingDashboardDomain && !existingDashboardDomain.isPremium) ||
+            (!existingDashboardDomain &&
+              existingIsFirstRegFree &&
+              !existingIsFirstRegFree.isPremium))) ||
+        (domainType === DOMAIN_TYPE.PRIVATE && freeDomainToOwner[domain])
       ) {
         return { ...cartItem, isFree: true };
       } else {
