@@ -1,14 +1,20 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 import X from '../Exception';
 
-import { Cart } from '../../models/Cart.mjs';
-import { Domain } from '../../models/Domain.mjs';
-import { FreeAddress } from '../../models/FreeAddress.mjs';
-import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
+import {
+  Cart,
+  Domain,
+  FreeAddress,
+  ReferrerProfile,
+  FioAccountProfile,
+} from '../../models';
 
 import logger from '../../logger.mjs';
 
 import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
+import { CART_ITEM_TYPE } from '../../config/constants.js';
 
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
@@ -39,6 +45,30 @@ export default class HandleUsersFreeCartItems extends Base {
           })
         : [];
 
+      // Check if fch items has domain in fio account profile
+      const domains = cart.items.reduce((acc, item) => {
+        if (item.type === CART_ITEM_TYPE.ADDRESS) {
+          acc.push(item.domain);
+        }
+        return acc;
+      }, []);
+      const freeDomainOwners = await FioAccountProfile.findAll({
+        where: {
+          domains: {
+            [Sequelize.Op.contains]: [...domains],
+          },
+        },
+      });
+      const freeDomainToOwner = domains.reduce((acc, item) => {
+        const domainOwner = freeDomainOwners.find(
+          owner => owner.domains && owner.domains.includes(item),
+        );
+        if (domainOwner) {
+          acc[item] = domainOwner;
+        }
+        return acc;
+      }, {});
+
       const userHasFreeAddress =
         !publicKey && !userId
           ? []
@@ -51,6 +81,7 @@ export default class HandleUsersFreeCartItems extends Base {
         allRefProfileDomains,
         cartItems: cart.items,
         dashboardDomains,
+        freeDomainToOwner,
         userHasFreeAddress,
         refCode,
       });
