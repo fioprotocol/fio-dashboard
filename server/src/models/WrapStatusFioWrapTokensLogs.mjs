@@ -40,7 +40,8 @@ export class WrapStatusFioWrapTokensLogs extends Base {
   }
 
   static async listWithConfirmation(limit, offset) {
-    const [actions] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
         SELECT 
           wf."transactionId", 
           wf.address, 
@@ -56,10 +57,13 @@ export class WrapStatusFioWrapTokensLogs extends Base {
         WHERE wf."transactionId" IS NOT NULL
         GROUP BY wf."transactionId", we."transactionHash"
         ORDER BY wf."blockNumber"::bigint desc
-        ${limit ? `LIMIT ${limit}` : ``} OFFSET ${offset}
-      `);
-
-    return actions;
+        ${limit ? `LIMIT :limit` : ``} OFFSET :offset
+      `,
+      {
+        replacements: { limit, offset },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async addLogs(data) {
