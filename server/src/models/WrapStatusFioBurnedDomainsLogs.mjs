@@ -38,7 +38,8 @@ export class WrapStatusFioBurnedDomainsLogs extends Base {
   }
 
   static async listWithConfirmation(limit, offset) {
-    const [actions] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
         SELECT
           wfb."transactionId",
           wfb."domain",
@@ -56,10 +57,13 @@ export class WrapStatusFioBurnedDomainsLogs extends Base {
         WHERE wfb."transactionId" IS NOT NULL
         GROUP BY wfb."transactionId", wp."transactionHash"
         ORDER BY wfb."blockNumber"::bigint desc
-       ${limit ? `LIMIT ${limit}` : ``} OFFSET ${offset}
-      `);
-
-    return actions;
+       ${limit ? `LIMIT :limit` : ``} OFFSET :offset
+      `,
+      {
+        replacements: { limit, offset },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async addLogs(data) {
