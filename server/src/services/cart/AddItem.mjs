@@ -1,5 +1,3 @@
-import Sequelize from 'sequelize';
-
 import Base from '../Base.mjs';
 import X from '../Exception.mjs';
 
@@ -105,12 +103,20 @@ export default class AddItem extends Base {
           })
         : null;
 
-      const domainClause = ReferrerProfile.sequelize.escape(`%"name":"${domain}"%`);
-      const gatedRefProfiles = await ReferrerProfile.findAll({
-        where: Sequelize.literal(
-          `"type" = '${ReferrerProfile.TYPE.REF}' AND "settings"->>'domains' ILIKE ${domainClause} AND "settings"->'gatedRegistration'->>'isOn' = 'true' AND "settings" IS NOT NULL`,
-        ),
-      });
+      const gatedRefProfiles = await ReferrerProfile.sequelize.query(
+        `SELECT code FROM "referrer-profiles" 
+         WHERE "type" = :refType 
+         AND "settings"->>'domains' ILIKE :domainPattern
+         AND "settings"->'gatedRegistration'->>'isOn' = 'true' 
+         AND "settings" IS NOT NULL`,
+        {
+          replacements: {
+            refType: ReferrerProfile.TYPE.REF,
+            domainPattern: `%"name":${JSON.stringify(domain)}%`,
+          },
+          type: ReferrerProfile.sequelize.QueryTypes.SELECT,
+        },
+      );
 
       const domainExistsInDashboardDomains = dashboardDomains.find(
         dashboardDomain => dashboardDomain.name === domain,
