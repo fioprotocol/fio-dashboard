@@ -160,23 +160,30 @@ export class OrderItem extends Base {
   static async amount(action, refProfileId, statuses, paramsWhere) {
     const statusesWhere =
       statuses.length > 1
-        ? ` (${statuses.map(status => `ois."txStatus" = ${status}`).join(' OR ')}) `
-        : ` ois."txStatus" = ${statuses[0]} `;
+        ? ` (${statuses
+            .map(status => `ois."txStatus" = ${this.sequelize.escape(status)}`)
+            .join(' OR ')}) `
+        : ` ois."txStatus" = ${this.sequelize.escape(statuses[0])} `;
     const refProfileWhere =
       refProfileId === null
         ? 'o."refProfileId" IS NULL'
-        : `o."refProfileId" = ${refProfileId}`;
+        : `o."refProfileId" = :refProfileId`;
 
-    const [orderItemAmount] = await OrderItem.sequelize.query(`
+    return OrderItem.sequelize.query(
+      `
       SELECT count(oi.id) "orderItemAmount" FROM "order-items" oi 
         JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
         JOIN "orders" o ON o.id = oi."orderId"
-      WHERE oi.action = ${action} 
+      WHERE oi.action = :action
         AND ${statusesWhere} 
         AND ${refProfileWhere}
         AND ${paramsWhere}
-      `);
-    return orderItemAmount;
+      `,
+      {
+        replacements: { refProfileId, action },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   // Used to get order items needed to process

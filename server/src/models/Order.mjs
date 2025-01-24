@@ -316,7 +316,7 @@ export class Order extends Base {
           LEFT JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
-          ${status ? `AND o."status" = ${status}` : ``}
+          ${status ? `AND o."status" = :status` : ``}
           ${
             freeStatus
               ? freeStatus === this.FREE_STATUS.IS_FREE
@@ -330,19 +330,22 @@ export class Order extends Base {
             orderUserType === ORDER_USER_TYPES.DASHBOARD
               ? `AND (o.data->>'orderUserType' IS NULL OR o.data->>'orderUserType' = '')`
               : orderUserType
-              ? `AND o.data->>'orderUserType' = '${orderUserType}'`
+              ? `AND o.data->>'orderUserType' = :orderUserType`
               : ``
           }
         ORDER BY o."createdAt" DESC
-        OFFSET ${offset}
-        ${limit ? `LIMIT ${limit}` : ``}
+        OFFSET :offset
+        ${limit ? `LIMIT :limit` : ``}
       `;
 
     const orders = await this.sequelize.query(query, {
+      replacements: { limit, offset, status, orderUserType },
       type: this.sequelize.QueryTypes.SELECT,
     });
 
-    const paymentsQuery = `
+    let paymentsMap = {};
+    if (orders.length) {
+      const paymentsQuery = `
       SELECT
           p."orderId",
           p.price,
@@ -353,15 +356,16 @@ export class Order extends Base {
             AND p."orderId" IN (${orders.map(order => order.id).join(',')})
             AND p.id = (SELECT pm.id FROM "payments" pm WHERE pm."orderId" = p."orderId" AND pm."spentType" = 1 ORDER BY pm."createdAt" DESC LIMIT 1)
       `;
-    const payments = await this.sequelize.query(paymentsQuery, {
-      type: this.sequelize.QueryTypes.SELECT,
-    });
+      const payments = await this.sequelize.query(paymentsQuery, {
+        type: this.sequelize.QueryTypes.SELECT,
+      });
 
-    const paymentsMap = payments.reduce((acc, item) => {
-      const { orderId, ...rest } = item;
-      acc[orderId] = { ...rest };
-      return acc;
-    }, {});
+      paymentsMap = payments.reduce((acc, item) => {
+        const { orderId, ...rest } = item;
+        acc[orderId] = { ...rest };
+        return acc;
+      }, {});
+    }
 
     return orders.map(order => ({ ...order, ...paymentsMap[order.id] }));
   }
@@ -421,7 +425,8 @@ export class Order extends Base {
   }
 
   static async listSearchByFioAddressItems(domain, address) {
-    const [orders] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
         SELECT 
           o.id, 
           o.roe, 
@@ -438,15 +443,15 @@ export class Order extends Base {
           p.processor as "paymentProcessor",
           min(
             case
-              when (oi.domain LIKE '${domain}' ${
-      address ? `AND oi.address LIKE '${address}'` : ``
-    }) then 1
-              when (oi.domain LIKE '${domain}%' ${
-      address ? `AND oi.address LIKE '${address}'` : ``
-    }) then 2
-              when (oi.domain LIKE '${domain}%' ${
-      address ? `AND oi.address LIKE '%${address}'` : ``
-    }) then 3
+              when (oi.domain LIKE :domain ${
+                address ? `AND oi.address LIKE :address` : ``
+              }) then 1
+              when (oi.domain LIKE :startsDomain ${
+                address ? `AND oi.address LIKE :address` : ``
+              }) then 2
+              when (oi.domain LIKE :startsDomain ${
+                address ? `AND oi.address LIKE :endsAddress` : ``
+              }) then 3
               else 4
             end
             ) as orderPriority
@@ -460,18 +465,28 @@ export class Order extends Base {
         WHERE o."deletedAt" IS NULL
         AND o.id IN (SELECT "orderId" FROM "order-items" WHERE ${
           address
-            ? `domain LIKE '${domain}%' AND address LIKE '%${address}'`
-            : `domain LIKE '%${domain}%'`
+            ? `domain LIKE :startsDomain AND address LIKE :endsAddress`
+            : `domain LIKE :includeDomain`
         } AND "deletedAt" IS NULL) 
         GROUP BY o.id, p."currency", u.email, rp.label, p.processor
         ORDER BY orderPriority
-      `);
-
-    return orders;
+      `,
+      {
+        replacements: {
+          domain,
+          address,
+          startsDomain: `${domain}%`,
+          includeDomain: `%${domain}%`,
+          endsAddress: `%${address}`,
+        },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async listSearchByUserEmail(email) {
-    const [orders] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
         SELECT 
           o.id, 
           o.roe, 
@@ -488,9 +503,9 @@ export class Order extends Base {
           p.processor as "paymentProcessor",
           min(
             case
-              when (u.email LIKE '${email}') then 1
-              when (u.email LIKE '${email}%') then 2
-              when (u.email LIKE '%${email}%') then 3
+              when (u.email LIKE :email) then 1
+              when (u.email LIKE :startsEmail) then 2
+              when (u.email LIKE :includeEmail) then 3
               else 4
             end
             ) as orderPriority
@@ -500,16 +515,24 @@ export class Order extends Base {
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
           LEFT JOIN "order-items" oi ON oi."orderId" = o.id
         WHERE o."deletedAt" IS NULL
-        AND o."userId" IN (SELECT "id" FROM "users" WHERE email LIKE '%${email}%' AND "deletedAt" IS NULL)
+        AND o."userId" IN (SELECT "id" FROM "users" WHERE email LIKE :email AND "deletedAt" IS NULL)
         GROUP BY o.id, p."currency", u.email, rp.label, p.processor
         ORDER BY orderPriority
-      `);
-
-    return orders;
+      `,
+      {
+        replacements: {
+          email: `%${email}%`,
+          startsEmail: `${email}%`,
+          includeEmail: `%${email}%`,
+        },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async listSearchByUserId(userId) {
-    const [orders] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
       SELECT 
           o.id, 
           o.roe, 
@@ -530,14 +553,18 @@ export class Order extends Base {
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
           LEFT JOIN "order-items" oi ON oi."orderId" = o.id
       WHERE o."deletedAt" IS NULL
-          AND o."userId" = '${userId}'
-  `);
-
-    return orders;
+          AND o."userId" = :userId
+  `,
+      {
+        replacements: { userId },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async listSearchByPublicKey(publicKey) {
-    const [orders] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
         SELECT 
           o.id, 
           o.roe, 
@@ -558,16 +585,20 @@ export class Order extends Base {
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
           LEFT JOIN "order-items" oi ON oi."orderId" = o.id
         WHERE o."deletedAt" IS NULL
-        AND o."publicKey" = '${publicKey}'
+        AND o."publicKey" = :publicKey
         GROUP BY o.id, p."currency", u.email, rp.label, p.processor
         ORDER BY o."createdAt" DESC
-      `);
-
-    return orders;
+      `,
+      {
+        replacements: { publicKey },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async listSearchByNumber(number) {
-    const [orders] = await this.sequelize.query(`
+    return this.sequelize.query(
+      `
         SELECT 
           o.id, 
           o.roe, 
@@ -588,12 +619,15 @@ export class Order extends Base {
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
           LEFT JOIN "order-items" oi ON oi."orderId" = o.id
         WHERE o."deletedAt" IS NULL
-        AND o.number = '${number}'
+        AND o.number = :number
         GROUP BY o.id, p."currency", u.email, rp.label, p.processor
         ORDER BY o."createdAt" DESC
-      `);
-
-    return orders;
+      `,
+      {
+        replacements: { number },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
   }
 
   static async updateStatus(orderId, paymentStatus = null, txStatuses = [], t = null) {
