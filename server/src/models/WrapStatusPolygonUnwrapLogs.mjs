@@ -48,7 +48,8 @@ export class WrapStatusPolygonUnwrapLogs extends Base {
   }
 
   static async listWithConfirmation(limit, offset) {
-    const [actions] = await this.sequelize.query(`
+    const actions = await this.sequelize.query(
+      `
         SELECT 
           up."transactionHash", 
           up."blockNumber",
@@ -64,8 +65,13 @@ export class WrapStatusPolygonUnwrapLogs extends Base {
         WHERE up."transactionHash" IS NOT NULL
         GROUP BY up."transactionHash"
         ORDER BY up."blockNumber"::bigint desc
-        ${limit ? `LIMIT ${limit}` : ``} OFFSET ${offset}
-      `);
+        ${limit ? `LIMIT :limit` : ``} OFFSET :offset
+      `,
+      {
+        replacements: { limit, offset },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
 
     return actions.map(action => ({
       ...action,
