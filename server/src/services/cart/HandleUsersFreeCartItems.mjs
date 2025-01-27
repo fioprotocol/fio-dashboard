@@ -1,20 +1,12 @@
-import Sequelize from 'sequelize';
-
 import Base from '../Base';
 import X from '../Exception';
 
-import {
-  Cart,
-  Domain,
-  FreeAddress,
-  ReferrerProfile,
-  FioAccountProfile,
-} from '../../models';
+import { Cart } from '../../models';
 
 import logger from '../../logger.mjs';
 
-import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
-import { CART_ITEM_TYPE } from '../../config/constants.js';
+import { handleFreeItems } from '../../utils/cart.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
@@ -37,59 +29,42 @@ export default class HandleUsersFreeCartItems extends Base {
         };
       }
 
-      const isNoProfileFlow = !userId && publicKey;
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = refCode
-        ? await ReferrerProfile.getRefDomainsList({
-            refCode,
-          })
-        : [];
-
-      // Check if fch items has domain in fio account profile
-      const domains = cart.items.reduce((acc, item) => {
-        if (item.type === CART_ITEM_TYPE.ADDRESS) {
-          acc.push(item.domain);
-        }
-        return acc;
-      }, []);
-      const freeDomainOwners = await FioAccountProfile.findAll({
-        where: {
-          domains: {
-            [Sequelize.Op.contains]: [...domains],
-          },
-        },
-      });
-      const freeDomainToOwner = domains.reduce((acc, item) => {
-        const domainOwner = freeDomainOwners.find(
-          owner => owner.domains && owner.domains.includes(item),
+      let noProfileResolvedUser = null;
+      if (!userId && publicKey) {
+        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+          publicKey,
+          refCode,
         );
-        if (domainOwner) {
-          acc[item] = domainOwner;
-        }
-        return acc;
-      }, {});
+        noProfileResolvedUser = resolvedUser;
+      }
 
-      const userHasFreeAddress =
-        !publicKey && !userId
-          ? []
-          : await FreeAddress.getItems({
-              publicKey,
-              userId,
-            });
+      const {
+        userRefProfile,
+        dashboardDomains,
+        allRefProfileDomains,
+        freeDomainToOwner,
+        userHasFreeAddress,
+      } = await Cart.getDataForCartItemsUpdate({
+        refCode,
+        noProfileResolvedUser,
+        publicKey,
+        userId,
+        items: cart.items,
+      });
 
-      const handledFreeCartItems = handleUsersFreeCartItems({
+      const handledFreeCartItems = handleFreeItems({
         allRefProfileDomains,
         cartItems: cart.items,
         dashboardDomains,
         freeDomainToOwner,
         userHasFreeAddress,
-        refCode,
+        userRefCode: userRefProfile && userRefProfile.code,
       });
 
       await cart.update({
         items: handledFreeCartItems,
         userId,
-        publicKey: isNoProfileFlow ? publicKey : null,
+        publicKey: noProfileResolvedUser ? publicKey : null,
       });
 
       return {
