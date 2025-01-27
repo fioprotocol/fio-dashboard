@@ -40,10 +40,10 @@ export default class HandleUsersFreeCartItems extends Base {
 
       const {
         userRefProfile,
-        dashboardDomains,
-        allRefProfileDomains,
+        domainsList,
         freeDomainToOwner,
         userHasFreeAddress,
+        noAuth,
       } = await Cart.getDataForCartItemsUpdate({
         refCode,
         noProfileResolvedUser,
@@ -53,12 +53,12 @@ export default class HandleUsersFreeCartItems extends Base {
       });
 
       const handledFreeCartItems = handleFreeItems({
-        allRefProfileDomains,
         cartItems: cart.items,
-        dashboardDomains,
+        domainsList,
         freeDomainToOwner,
         userHasFreeAddress,
         userRefCode: userRefProfile && userRefProfile.code,
+        noAuth,
       });
 
       await cart.update({
