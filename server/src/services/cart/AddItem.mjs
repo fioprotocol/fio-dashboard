@@ -17,6 +17,7 @@ import {
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 import { checkPrices } from '../../utils/prices.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
+import { Domain } from '../../models/Domain.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -103,10 +104,10 @@ export default class AddItem extends Base {
 
       const {
         userRefProfile,
-        dashboardDomains,
-        allRefProfileDomains,
+        domainsList,
         freeDomainToOwner,
         userHasFreeAddress,
+        noAuth,
       } = await Cart.getDataForCartItemsUpdate({
         refCode,
         noProfileResolvedUser,
@@ -114,6 +115,8 @@ export default class AddItem extends Base {
         userId,
         domain,
       });
+
+      const dashboardDomains = refCode ? await Domain.getDashboardDomains() : domainsList;
 
       const gatedRefProfiles = await ReferrerProfile.sequelize.query(
         `SELECT code FROM "referrer-profiles"
@@ -131,12 +134,8 @@ export default class AddItem extends Base {
         },
       );
 
-      const domainExistsInDashboardDomains = dashboardDomains.find(
+      const domainExists = dashboardDomains.find(
         dashboardDomain => dashboardDomain.name === domain,
-      );
-
-      const domainExistsInRefProfile = allRefProfileDomains.find(
-        refDomain => refDomain.name === domain,
       );
 
       const isRefCodeEqualGatedRefProfile =
@@ -145,9 +144,7 @@ export default class AddItem extends Base {
         !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
 
       if (
-        ((gatedRefProfiles.length &&
-          (isRefCodeEqualGatedRefProfile ||
-            (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
+        ((gatedRefProfiles.length && (isRefCodeEqualGatedRefProfile || !domainExists)) ||
           freeDomainToOwner[domain]) &&
         type === CART_ITEM_TYPE.ADDRESS
       ) {
@@ -173,13 +170,13 @@ export default class AddItem extends Base {
       newItem = { ...newItem, ...costs };
 
       const handledFreeCartItem = handleFreeCartAddItem({
-        allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
-        dashboardDomains,
+        domainsList,
         item: newItem,
         freeDomainToOwner,
         userHasFreeAddress,
         userRefCode: userRefProfile && userRefProfile.code,
+        noAuth,
       });
 
       if (!existingCart) {

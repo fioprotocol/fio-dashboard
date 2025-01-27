@@ -44,10 +44,10 @@ export default class DeleteItem extends Base {
 
       const {
         userRefProfile,
-        dashboardDomains,
-        allRefProfileDomains,
+        domainsList,
         freeDomainToOwner,
         userHasFreeAddress,
+        noAuth,
       } = await Cart.getDataForCartItemsUpdate({
         refCode,
         noProfileResolvedUser,
@@ -89,13 +89,13 @@ export default class DeleteItem extends Base {
       const existingItem = items.find(item => item.id === itemId);
 
       const updatedItems = handleFreeCartDeleteItem({
-        allRefProfileDomains,
         cartItems: items,
-        dashboardDomains,
+        domainsList,
         existingItem,
         freeDomainToOwner,
         userHasFreeAddress,
         userRefCode: userRefProfile && userRefProfile.code,
+        noAuth,
       });
 
       const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(

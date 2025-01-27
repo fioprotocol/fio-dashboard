@@ -166,21 +166,14 @@ export const cartHasFreeItemsOnDomains = ({ cartItems, domains }) => {
 };
 
 export const handleFreeItems = ({
-  allRefProfileDomains,
+  domainsList,
   cartItems,
-  dashboardDomains,
   freeDomainToOwner,
   userHasFreeAddress,
   userRefCode,
+  noAuth = false,
 }) => {
-  const domainsArr = [
-    ...dashboardDomains,
-    ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
-  ];
-
-  const firstRegFreeDomains = allRefProfileDomains.filter(
-    refProfile => refProfile.isFirstRegFree,
-  );
+  const firstRegFreeDomains = domainsList.filter(refProfile => refProfile.isFirstRegFree);
 
   const newList = [];
   for (const cartItem of cartItems) {
@@ -195,10 +188,12 @@ export const handleFreeItems = ({
         freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
       );
 
-    const existingDashboardDomain = domainsArr.find(
+    const existingDomain = domainsList.find(
       dashboardDomain =>
         dashboardDomain.name === domain &&
-        (!userRefCode || (userRefCode && userRefCode === dashboardDomain.code)),
+        (noAuth ||
+          (!userRefCode && !dashboardDomain.code) ||
+          userRefCode === dashboardDomain.code),
     );
 
     const existingIsFirstRegFreeDomain = firstRegFreeDomains.find(
@@ -208,7 +203,7 @@ export const handleFreeItems = ({
 
     const isCartHasFreeItemsOnDomains = cartHasFreeItemsOnDomains({
       cartItems: [...newList],
-      domains: [...domainsArr],
+      domains: [...domainsList],
     });
     const isCartHasFreeItemsFirstRegFreeOnDomains = cartHasFreeItemsOnDomains({
       cartItems: [...newList],
@@ -217,15 +212,15 @@ export const handleFreeItems = ({
 
     // Defines if user can have its first free fch
     const defaultFirstFCHFree =
-      existingDashboardDomain &&
-      !existingDashboardDomain.isPremium &&
+      existingDomain &&
+      !existingDomain.isPremium &&
       (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
       !isCartHasFreeItemsOnDomains;
     // Defines if user can have free fch with twitter or metamask domain
-    const fioAccountFree = !existingDashboardDomain && !!freeDomainToOwner[domain];
+    const fioAccountFree = !existingDomain && !!freeDomainToOwner[domain];
     // Defines if user can have additional free FCH for ref profile
     const additionalFreeFCH =
-      !existingDashboardDomain &&
+      !existingDomain &&
       existingIsFirstRegFreeDomain &&
       !existingIsFirstRegFreeDomain.isPremium &&
       (!userHasFreeAddress ||
@@ -243,13 +238,13 @@ export const handleFreeItems = ({
 };
 
 export const handleFreeCartAddItem = ({
-  allRefProfileDomains,
   cartItems,
-  dashboardDomains,
+  domainsList,
   item,
   freeDomainToOwner,
   userHasFreeAddress,
   userRefCode,
+  noAuth,
 }) => {
   const { type } = item;
 
@@ -258,23 +253,23 @@ export const handleFreeCartAddItem = ({
   }
 
   return handleFreeItems({
-    allRefProfileDomains,
     cartItems: [...cartItems, item],
-    dashboardDomains,
+    domainsList,
     freeDomainToOwner,
     userHasFreeAddress,
     userRefCode,
+    noAuth,
   }).pop();
 };
 
 export const handleFreeCartDeleteItem = ({
-  allRefProfileDomains,
   cartItems,
-  dashboardDomains,
+  domainsList,
   existingItem,
   freeDomainToOwner,
   userHasFreeAddress,
   userRefCode,
+  noAuth,
 }) => {
   const { domainType, isFree, type } = existingItem;
 
@@ -289,12 +284,12 @@ export const handleFreeCartDeleteItem = ({
   return [
     existingItem,
     ...handleFreeItems({
-      allRefProfileDomains,
       cartItems: cartItems.filter(cartItem => cartItem.id !== existingItem.id),
-      dashboardDomains,
+      domainsList,
       freeDomainToOwner,
       userHasFreeAddress,
       userRefCode,
+      noAuth,
     }),
   ];
 };
