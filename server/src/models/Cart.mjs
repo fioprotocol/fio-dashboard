@@ -151,7 +151,7 @@ export class Cart extends Base {
     domain = null,
     items = null,
   }) {
-    const dashboardDomains = await Domain.getDashboardDomains();
+    const dashboardDomains = refCode ? [] : await Domain.getDashboardDomains();
     const allRefProfileDomains = refCode
       ? await ReferrerProfile.getRefDomainsList({
           refCode,
@@ -200,11 +200,11 @@ export class Cart extends Base {
     }
 
     return {
-      dashboardDomains,
-      allRefProfileDomains,
+      domainsList: [...dashboardDomains, ...allRefProfileDomains],
       userHasFreeAddress,
       userRefProfile,
       freeDomainToOwner,
+      noAuth: !userId && !noProfileResolvedUser,
     };
   }
 
