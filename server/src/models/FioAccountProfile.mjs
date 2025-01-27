@@ -108,6 +108,25 @@ export class FioAccountProfile extends Base {
     return domainOwner ? this.format(domainOwner) : null;
   }
 
+  static async getDomainsOwner(domains) {
+    const freeDomainOwners = await FioAccountProfile.findAll({
+      where: {
+        domains: {
+          [Sequelize.Op.contains]: [...domains],
+        },
+      },
+    });
+    return domains.reduce((acc, item) => {
+      const domainOwner = freeDomainOwners.find(
+        owner => owner.domains && owner.domains.includes(item),
+      );
+      if (domainOwner) {
+        acc[item] = domainOwner;
+      }
+      return acc;
+    }, {});
+  }
+
   static async getFreePaidItems() {
     const freeAndPaidFioAccountProfiles =
       (await this.findAll({

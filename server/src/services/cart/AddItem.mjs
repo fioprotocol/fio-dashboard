@@ -2,10 +2,7 @@ import Base from '../Base.mjs';
 import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
-import { Domain } from '../../models/Domain.mjs';
-import { FreeAddress } from '../../models/FreeAddress.mjs';
 import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
-import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
 import { GatedRegistrtionTokens } from '../../models/GatedRegistrationTokens.mjs';
 
 import logger from '../../logger.mjs';
@@ -19,6 +16,7 @@ import {
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 import { checkPrices } from '../../utils/prices.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -88,30 +86,34 @@ export default class AddItem extends Base {
         });
       }
 
-      const isNoProfileFlow = !userId && publicKey;
+      let noProfileResolvedUser = null;
+      if (!userId && publicKey) {
+        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+          publicKey,
+          refCode,
+        );
+        noProfileResolvedUser = resolvedUser;
+      }
+
       const existingCart = await Cart.getActive({ userId, guestId });
 
       const { prices, roe, updatedAt } = existingCart
         ? existingCart.options
         : await Cart.getCartOptions({ options: {} });
 
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = refCode
-        ? await ReferrerProfile.getRefDomainsList({
-            refCode,
-          })
-        : [];
-
-      const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-
-      const userHasFreeAddress =
-        !publicKey && !userId ? [] : await FreeAddress.getItems({ publicKey, userId });
-
-      const refProfile = refCode
-        ? await ReferrerProfile.findOne({
-            where: { code: refCode },
-          })
-        : null;
+      const {
+        userRefProfile,
+        dashboardDomains,
+        allRefProfileDomains,
+        freeDomainToOwner,
+        userHasFreeAddress,
+      } = await Cart.getDataForCartItemsUpdate({
+        refCode,
+        noProfileResolvedUser,
+        publicKey,
+        userId,
+        domain,
+      });
 
       const gatedRefProfiles = await ReferrerProfile.sequelize.query(
         `SELECT code FROM "referrer-profiles"
@@ -133,11 +135,9 @@ export default class AddItem extends Base {
         dashboardDomain => dashboardDomain.name === domain,
       );
 
-      const domainExistsInRefProfile =
-        refProfile &&
-        refProfile.settings &&
-        refProfile.settings.domains &&
-        !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
+      const domainExistsInRefProfile = allRefProfileDomains.find(
+        refDomain => refDomain.name === domain,
+      );
 
       const isRefCodeEqualGatedRefProfile =
         refCode &&
@@ -148,7 +148,7 @@ export default class AddItem extends Base {
         ((gatedRefProfiles.length &&
           (isRefCodeEqualGatedRefProfile ||
             (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
-          freeDomainOwner) &&
+          freeDomainToOwner[domain]) &&
         type === CART_ITEM_TYPE.ADDRESS
       ) {
         const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
@@ -177,17 +177,15 @@ export default class AddItem extends Base {
         cartItems: existingCart ? existingCart.items : [],
         dashboardDomains,
         item: newItem,
-        freeDomainOwner,
+        freeDomainToOwner,
         userHasFreeAddress,
-        refCode: refProfile && refProfile.code,
-        prices,
-        roe,
+        userRefCode: userRefProfile && userRefProfile.code,
       });
 
       if (!existingCart) {
         const cartFields = {
           items: [handledFreeCartItem],
-          publicKey: isNoProfileFlow ? publicKey : null,
+          publicKey: noProfileResolvedUser ? publicKey : null,
           options: {
             prices,
             roe,
@@ -226,7 +224,7 @@ export default class AddItem extends Base {
       await existingCart.update({
         items: handledCartItemsWithExistingFioHandleCustomDomain,
         userId,
-        publicKey: isNoProfileFlow ? publicKey : null,
+        publicKey: noProfileResolvedUser ? publicKey : null,
       });
 
       return {

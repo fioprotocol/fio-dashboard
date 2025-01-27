@@ -10,7 +10,14 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
+import { Domain } from './Domain.mjs';
+import { ReferrerProfile } from './ReferrerProfile.mjs';
+import { FioAccountProfile } from './FioAccountProfile.mjs';
+import { FreeAddress } from './FreeAddress.mjs';
+
 import { recalculateCartItems } from '../utils/cart.mjs';
+
+import { CART_ITEM_TYPE } from '../config/constants.js';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -134,6 +141,71 @@ export class Cart extends Base {
     } catch (e) {
       logger.error(e);
     }
+  }
+
+  static async getDataForCartItemsUpdate({
+    refCode,
+    noProfileResolvedUser,
+    publicKey,
+    userId,
+    domain = null,
+    items = null,
+  }) {
+    const dashboardDomains = await Domain.getDashboardDomains();
+    const allRefProfileDomains = refCode
+      ? await ReferrerProfile.getRefDomainsList({
+          refCode,
+        })
+      : [];
+
+    const userHasFreeAddress =
+      !publicKey && !userId
+        ? []
+        : await FreeAddress.getItems(
+            noProfileResolvedUser
+              ? { userId: noProfileResolvedUser.id }
+              : { publicKey, userId },
+          );
+
+    let userRefProfile = null;
+    if (userId || noProfileResolvedUser) {
+      let userRefProfileId = noProfileResolvedUser
+        ? noProfileResolvedUser.refProfileId
+        : null;
+      if (userId) {
+        const user = await User.findActive(userId);
+        userRefProfileId = user.refProfileId;
+      }
+      if (userRefProfileId)
+        userRefProfile = await ReferrerProfile.findOne({
+          raw: true,
+          where: { id: userRefProfileId },
+        });
+    }
+
+    // Set if fch items has domain in fio account profile
+    let freeDomainToOwner = {};
+    if (domain) {
+      freeDomainToOwner[domain] = await FioAccountProfile.getDomainOwner(domain);
+    }
+    if (items) {
+      freeDomainToOwner = await FioAccountProfile.getDomainsOwner(
+        items.reduce((acc, item) => {
+          if (item.type === CART_ITEM_TYPE.ADDRESS) {
+            acc.push(item.domain);
+          }
+          return acc;
+        }, []),
+      );
+    }
+
+    return {
+      dashboardDomains,
+      allRefProfileDomains,
+      userHasFreeAddress,
+      userRefProfile,
+      freeDomainToOwner,
+    };
   }
 
   static attrs(type = 'default') {
