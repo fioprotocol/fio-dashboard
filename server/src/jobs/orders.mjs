@@ -1061,7 +1061,7 @@ class OrdersJob extends CommonJob {
         if (
           orderItem.processor === Payment.PROCESSOR.FIO &&
           !hasSignedTx &&
-          !partnerDomainOwner
+          !domainOwner
         ) {
           logger.error(NO_REQUIRED_SIGNED_TX);
 
