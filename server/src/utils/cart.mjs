@@ -173,15 +173,23 @@ export const handleFreeItems = ({
   userRefCode,
   noAuth = false,
 }) => {
+  const regularDomains = domainsList.filter(refProfile => !refProfile.isFirstRegFree);
   const firstRegFreeDomains = domainsList.filter(refProfile => refProfile.isFirstRegFree);
 
-  const newList = [];
+  const newList = cartItems.map(item => {
+    const newItem = { ...item };
+    delete newItem.isFree;
+    return newItem;
+  });
+
   for (const cartItem of cartItems) {
     const { domain, type } = cartItem;
 
     if (type !== CART_ITEM_TYPE.ADDRESS) {
       return cartItem;
     }
+    const newCartItemIndex = newList.findIndex(({ id }) => id === cartItem.id);
+
     const isFreeAddressOnDomainExist =
       !!userHasFreeAddress &&
       !!userHasFreeAddress.find(
@@ -196,31 +204,43 @@ export const handleFreeItems = ({
           userRefCode === dashboardDomain.code),
     );
 
-    const existingIsFirstRegFreeDomain = firstRegFreeDomains.find(
-      isFirstRegFreeDomain =>
-        isFirstRegFreeDomain.name === domain && isFirstRegFreeDomain.code === userRefCode,
+    const existingRegularDomain = regularDomains.find(
+      dashboardDomain =>
+        dashboardDomain.name === domain &&
+        (noAuth ||
+          (!userRefCode && !dashboardDomain.code) ||
+          userRefCode === dashboardDomain.code),
     );
 
+    const existingIsFirstRegFreeDomain = firstRegFreeDomains.find(
+      isFirstRegFreeDomain =>
+        isFirstRegFreeDomain.name === domain &&
+        (noAuth ||
+          (!userRefCode && !isFirstRegFreeDomain.code) ||
+          userRefCode === isFirstRegFreeDomain.code),
+    );
+
+    const otherCartItems = [...newList];
+    otherCartItems.splice(newCartItemIndex, 1);
     const isCartHasFreeItemsOnDomains = cartHasFreeItemsOnDomains({
-      cartItems: [...newList],
-      domains: [...domainsList],
+      cartItems: otherCartItems,
+      domains: [...regularDomains],
     });
     const isCartHasFreeItemsFirstRegFreeOnDomains = cartHasFreeItemsOnDomains({
-      cartItems: [...newList],
-      domains: [...firstRegFreeDomains],
+      cartItems: otherCartItems,
+      domains: [{ name: domain }],
     });
 
     // Defines if user can have its first free fch
     const defaultFirstFCHFree =
-      existingDomain &&
-      !existingDomain.isPremium &&
+      existingRegularDomain &&
+      !existingRegularDomain.isPremium &&
       (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
       !isCartHasFreeItemsOnDomains;
     // Defines if user can have free fch with twitter or metamask domain
     const fioAccountFree = !existingDomain && !!freeDomainToOwner[domain];
     // Defines if user can have additional free FCH for ref profile
     const additionalFreeFCH =
-      !existingDomain &&
       existingIsFirstRegFreeDomain &&
       !existingIsFirstRegFreeDomain.isPremium &&
       (!userHasFreeAddress ||
@@ -228,7 +248,7 @@ export const handleFreeItems = ({
         (userHasFreeAddress && !isFreeAddressOnDomainExist)) &&
       !isCartHasFreeItemsFirstRegFreeOnDomains;
 
-    newList.push({
+    newList.splice(newCartItemIndex, 1, {
       ...cartItem,
       isFree: defaultFirstFCHFree || fioAccountFree || additionalFreeFCH,
     });
@@ -313,15 +333,14 @@ export const calculateCartTotalCost = ({ cartItems, roe }) => {
 };
 
 export const cartItemsToOrderItems = async ({
-  allRefProfileDomains,
   cartItems,
-  dashboardDomains,
-  FioAccountProfile,
   prices,
-  refCode,
   roe,
-  userHasFreeAddress,
   walletType,
+  domainsList,
+  freeDomainToOwner,
+  userRefCode,
+  userHasFreeAddress,
 }) => {
   const {
     addBundles: addBundlesPrice,
@@ -331,15 +350,13 @@ export const cartItemsToOrderItems = async ({
     renewDomain: renewDomainPrice,
   } = prices;
   const orderItems = [];
-
-  const domainsArr = [
-    ...dashboardDomains,
-    ...allRefProfileDomains.filter(refProfileDomain => !refProfileDomain.isFirstRegFree),
-  ];
-
-  const isFirstRegFreeDomains = allRefProfileDomains.filter(
-    refProfile => refProfile.isFirstRegFree,
-  );
+  cartItems = handleFreeItems({
+    cartItems,
+    domainsList,
+    freeDomainToOwner,
+    userHasFreeAddress,
+    userRefCode,
+  });
 
   for (const cartItem of cartItems) {
     const { address, domain, id, isFree, hasCustomDomainInCart, period, type } = cartItem;
@@ -410,45 +427,10 @@ export const cartItemsToOrderItems = async ({
         orderItems.push(orderItem);
         break;
       case CART_ITEM_TYPE.ADDRESS: {
-        const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
-
-        const existingDashboardDomain = domainsArr.find(
-          domainItem =>
-            domainItem.name === domain &&
-            (!refCode || (refCode && refCode === domainItem.code)),
-        );
-        const existingIsFirstRegFree = isFirstRegFreeDomains.find(
-          isFirstRegFreeDomain => isFirstRegFreeDomain.name === domain,
-        );
-
-        const existingUsersFreeAddress =
-          userHasFreeAddress &&
-          userHasFreeAddress.find(
-            freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
-          );
-
-        const isUserAbleRegisterFree =
-          (existingDashboardDomain &&
-            !existingDashboardDomain.isPremium &&
-            (!userHasFreeAddress || (userHasFreeAddress && !userHasFreeAddress.length)) &&
-            !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id)) ||
-          (!existingDashboardDomain && freeDomainOwner) ||
-          (!existingDashboardDomain &&
-            existingIsFirstRegFree &&
-            !existingIsFirstRegFree.isPremium &&
-            (!userHasFreeAddress ||
-              (userHasFreeAddress && !userHasFreeAddress.length) ||
-              (userHasFreeAddress.length && !existingUsersFreeAddress)) &&
-            !cartItems.some(cartItem => cartItem.isFree && cartItem.id !== id));
-
         orderItem.action = GenericAction.registerFioAddress;
         orderItem.address = address;
-        orderItem.nativeFio =
-          isFree && isUserAbleRegisterFree ? '0' : fioHandlePrice.toString();
-        orderItem.price =
-          isFree && isUserAbleRegisterFree
-            ? '0'
-            : convertFioPrices(fioHandlePrice, roe).usdc;
+        orderItem.nativeFio = isFree ? '0' : fioHandlePrice.toString();
+        orderItem.price = isFree ? '0' : convertFioPrices(fioHandlePrice, roe).usdc;
         orderItems.push(orderItem);
         break;
       }
