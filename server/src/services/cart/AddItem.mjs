@@ -116,6 +116,9 @@ export default class AddItem extends Base {
         domain,
       });
 
+      // do not allow refCode other than auth user has
+      if (userId) refCode = userRefProfile ? userRefProfile.code : null;
+
       const dashboardDomains = refCode ? await Domain.getDashboardDomains() : domainsList;
 
       const gatedRefProfiles = await ReferrerProfile.sequelize.query(
