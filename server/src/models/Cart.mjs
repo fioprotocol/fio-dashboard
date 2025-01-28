@@ -151,13 +151,6 @@ export class Cart extends Base {
     domain = null,
     items = null,
   }) {
-    const dashboardDomains = refCode ? [] : await Domain.getDashboardDomains();
-    const allRefProfileDomains = refCode
-      ? await ReferrerProfile.getRefDomainsList({
-          refCode,
-        })
-      : [];
-
     const userHasFreeAddress =
       !publicKey && !userId
         ? []
@@ -181,7 +174,19 @@ export class Cart extends Base {
           raw: true,
           where: { id: userRefProfileId },
         });
+
+      // do not allow refCode other than auth user has
+      if (userRefProfile && userId) {
+        refCode = userRefProfile.refCode;
+      }
     }
+
+    const dashboardDomains = refCode ? [] : await Domain.getDashboardDomains();
+    const allRefProfileDomains = refCode
+      ? await ReferrerProfile.getRefDomainsList({
+          refCode,
+        })
+      : [];
 
     // Set if fch items has domain in fio account profile
     let freeDomainToOwner = {};
