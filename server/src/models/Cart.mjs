@@ -163,7 +163,7 @@ export class Cart extends Base {
         ? []
         : await FreeAddress.getItems(
             noProfileResolvedUser
-              ? { userId: noProfileResolvedUser.id }
+              ? { freeId: noProfileResolvedUser.freeId }
               : { publicKey, userId },
           );
 
