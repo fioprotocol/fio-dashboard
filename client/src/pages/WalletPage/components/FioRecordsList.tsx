@@ -148,9 +148,12 @@ const FioRecordsList: React.FC<Props> = props => {
   };
 
   const onSuccess = (fioRecordItemDecrypted: FioDecryptedRecordData) => {
-    const { itemData, paymentOtbData } = fioRecordItemDecrypted;
+    const { itemData, paymentOtbData } = fioRecordItemDecrypted || {};
     setProcessing(false);
     setSubmitData(null);
+
+    if (!itemData) return; // Do not show modal if itemData is not present
+
     const transformedFioRecordItem = transformFioRecord({
       fioRecordItem: itemData,
       publicKey: fioWallet.publicKey,
