@@ -16,3 +16,4 @@ yarn-error.log
 .vscode/
 /server/static-files/abi_fio_token.json
 /server/static-files/abi_fio_domain_nft.json
+.cursorignore
