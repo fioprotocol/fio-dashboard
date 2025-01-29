@@ -186,7 +186,7 @@ export const handleFreeItems = ({
     const { domain, type } = cartItem;
 
     if (type !== CART_ITEM_TYPE.ADDRESS) {
-      return cartItem;
+      continue;
     }
     const newCartItemIndex = newList.findIndex(({ id }) => id === cartItem.id);
 
