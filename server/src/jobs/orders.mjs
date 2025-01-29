@@ -426,6 +426,7 @@ class OrdersJob extends CommonJob {
     fallbackFreeFioPermission,
     processOrderItem,
     registeringDomainExistingInAppDomainsList,
+    allRefProfileDomains,
   }) {
     const { id, domain, blockchainTransactionId, label, orderId, freeId } = orderItem;
 
@@ -454,12 +455,44 @@ class OrdersJob extends CommonJob {
         (registeringDomainExistingInAppDomainsList.isFirstRegFree &&
           existingUsersFreeAddress))
     ) {
-      logger.error(USER_HAS_FREE_ERROR);
+      let allowFree = false;
+      // check if item in the order with other isFirstRegFree item
+      if (orderItem.code && orderItem.data && orderItem.data.isNoProfileFlow) {
+        const orderItems = await OrderItem.findAll({
+          raw: true,
+          where: {
+            orderId: orderItem.orderId,
+            id: { [Sequelize.Op.ne]: orderItem.id },
+          },
+        });
+        if (orderItems && orderItems.length > 0) {
+          allowFree = !!orderItems.find(otherOrderItem => {
+            if (
+              otherOrderItem.price !== '0' ||
+              otherOrderItem.action !== GenericAction.registerFioAddress
+            ) {
+              return false;
+            }
 
-      await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
-        errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
-      });
-      return this.updateOrderStatus(orderId);
+            const refProfileDomain = allRefProfileDomains.find(
+              refProfileDomain =>
+                refProfileDomain.code === orderItem.code &&
+                refProfileDomain.name === otherOrderItem.domain,
+            );
+
+            return refProfileDomain && refProfileDomain.isFirstRegFree;
+          });
+        }
+      }
+
+      if (!allowFree) {
+        logger.error(USER_HAS_FREE_ERROR);
+
+        await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+          errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+        });
+        return this.updateOrderStatus(orderId);
+      }
     }
 
     try {
@@ -983,6 +1016,7 @@ class OrdersJob extends CommonJob {
             fallbackFreeFioPermission,
             registeringDomainExistingInAppDomainsList,
             processOrderItem,
+            allRefProfileDomains,
           });
         }
 
