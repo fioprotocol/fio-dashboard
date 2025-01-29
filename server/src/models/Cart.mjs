@@ -177,7 +177,7 @@ export class Cart extends Base {
 
       // do not allow refCode other than auth user has
       if (userRefProfile && userId) {
-        refCode = userRefProfile.refCode;
+        refCode = userRefProfile.code;
       }
     }
 
