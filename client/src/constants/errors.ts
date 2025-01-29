@@ -94,5 +94,5 @@ export const RATE_LIMIT_TYPE_ERROR = 'RATE_LIMIT';
 export const ERROR_MESSAGE_FOR_DECRYPT_CONTENT = {
   title: 'Unable to Decrypt',
   message:
-    'The information in this FIO Request or FIO Data could not be decrypted likely because it was not encrypted correctly',
+    'The information in this FIO Request or FIO Data could not be decrypted, likely because it was not encrypted correctly',
 };
