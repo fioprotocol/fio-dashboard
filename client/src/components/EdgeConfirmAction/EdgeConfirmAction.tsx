@@ -6,10 +6,12 @@ import Processing from '../../components/common/TransactionProcessing';
 import { CONFIRM_FIO_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import {
+  CANNOT_DECRYPT_CONTENT_ERROR,
   CANNOT_TRANSFER_ERROR,
   CANNOT_TRANSFER_ERROR_TITLE,
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  ERROR_MESSAGE_FOR_DECRYPT_CONTENT,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
 } from '../../constants/errors';
 
@@ -102,19 +104,22 @@ const EdgeConfirmAction: React.FC<Props> = props => {
           fireActionAnalyticsEventError(action);
           let buttonText, message, title;
 
-          if (
-            e.message &&
-            typeof e.message === 'string' &&
-            e.message === TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS
-          ) {
+          if (e.message && typeof e.message === 'string') {
             buttonText = 'Close';
 
-            if (window?.location?.pathname === ROUTES.FIO_ADDRESS_OWNERSHIP) {
-              message = CANNOT_TRANSFER_ERROR;
-              title = CANNOT_TRANSFER_ERROR_TITLE;
-            } else {
-              message = CANNOT_UPDATE_FIO_HANDLE;
-              title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
+            if (e.message === TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS) {
+              if (window?.location?.pathname === ROUTES.FIO_ADDRESS_OWNERSHIP) {
+                message = CANNOT_TRANSFER_ERROR;
+                title = CANNOT_TRANSFER_ERROR_TITLE;
+              } else {
+                message = CANNOT_UPDATE_FIO_HANDLE;
+                title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
+              }
+            }
+
+            if (e.message === CANNOT_DECRYPT_CONTENT_ERROR) {
+              message = ERROR_MESSAGE_FOR_DECRYPT_CONTENT.message;
+              title = ERROR_MESSAGE_FOR_DECRYPT_CONTENT.title;
             }
           }
 
