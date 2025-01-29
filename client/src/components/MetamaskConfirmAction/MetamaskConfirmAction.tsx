@@ -19,6 +19,7 @@ import {
   CANNOT_TRANSFER_ERROR_TITLE,
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  ERROR_MESSAGE_FOR_DECRYPT_CONTENT,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
 } from '../../constants/errors';
 import { ROUTES } from '../../constants/routes';
@@ -272,6 +273,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           }
 
           setErrorObj({ message, title, buttonText });
+        }
+
+        if (isDecryptContent) {
+          setErrorObj({
+            message: ERROR_MESSAGE_FOR_DECRYPT_CONTENT.message,
+            title: ERROR_MESSAGE_FOR_DECRYPT_CONTENT.title,
+            buttonText: 'Close',
+          });
         }
 
         fireActionAnalyticsEventError(analyticAction);
