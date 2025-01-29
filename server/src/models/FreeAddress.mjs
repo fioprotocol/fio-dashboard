@@ -38,13 +38,13 @@ export class FreeAddress extends Base {
     if (name) where.name = name;
     if (freeId) where.freeId = freeId;
 
+    if (publicKey) {
+      where.freeId = publicKey; // no profile flow
+    }
+
     if (userId) {
       const { freeId } = await User.findOne({ where: { id: userId }, raw: true });
       where.freeId = freeId;
-    }
-
-    if (publicKey) {
-      where.freeId = publicKey; // no profile flow
     }
 
     return this.findAll({ where });
