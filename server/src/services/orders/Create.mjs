@@ -127,7 +127,7 @@ export default class OrdersCreate extends Base {
       refCode,
       noProfileResolvedUser: isNoProfileFlow ? user : null,
       publicKey,
-      userId: user.id,
+      userId: isNoProfileFlow ? null : user.id,
       items: cart.items,
     });
 
