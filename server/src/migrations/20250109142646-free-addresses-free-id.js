@@ -21,7 +21,7 @@ module.exports = {
         transaction: t,
       });
 
-      const limit = 5000;
+      const limit = 20000;
       let finish = false;
       while (!finish) {
         const freeAddresses = await QI.sequelize.query(
