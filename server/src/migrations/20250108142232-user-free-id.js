@@ -17,7 +17,7 @@ module.exports = {
         },
       );
 
-      const limit = 500;
+      const limit = 20000;
       let finish = false;
       while (!finish) {
         const users = await QI.sequelize.query(
@@ -55,7 +55,7 @@ module.exports = {
                   await QI.sequelize.query(
                     `
                     DELETE FROM "users"
-                    WHERE "userId" = '${user.id}';
+                    WHERE "id" = '${user.id}';
                   `,
                     { type: QI.sequelize.QueryTypes.DELETE, transaction: t },
                   );
