@@ -54,5 +54,7 @@ export default {
   user: {
     fioDashUsernameDelimiter: `.fio.dash.${process.env.EDGE_ACC_DELIMITER || ''}`,
   },
+  exportOrdersCSVLimit: Number(process.env.EXPORT_ORDERS_CSV_LIMIT),
+
   ...dbConfig,
 };

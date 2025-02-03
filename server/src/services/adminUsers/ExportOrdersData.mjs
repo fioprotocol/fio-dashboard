@@ -1,6 +1,7 @@
 import Base from '../Base';
 import { Order, OrderItem } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import config from '../../config/index.mjs';
 
 export default class ExportOrdersData extends Base {
   static get requiredPermissions() {
@@ -26,27 +27,45 @@ export default class ExportOrdersData extends Base {
           },
         },
       ],
-      offest: 'integer',
-      limit: 'integer',
     };
   }
 
-  async execute({ offset, filters, limit }) {
-    const ordersList = await Order.listAll({
-      offset,
-      limit,
-      filters,
-    });
+  async execute({ filters }) {
+    let offset = 0;
+    let allOrders = [];
+    let allOrderItems = [];
+    let hasMoreData = true;
+    const batchSize = config.exportOrdersCSVLimit;
 
-    const ordersIds = ordersList.map(order => order.id);
-    const orderItemsList = await OrderItem.listAll({
-      ordersIds,
-    });
+    // Fetch orders and their items in batches
+    while (hasMoreData) {
+      const ordersBatch = await Order.listAll({
+        offset,
+        limit: batchSize,
+        filters,
+      });
+
+      if (!ordersBatch.length || ordersBatch.length < batchSize) {
+        hasMoreData = false;
+      }
+
+      // Get order items for current batch
+      if (ordersBatch.length > 0) {
+        const orderItemsBatch = await OrderItem.listAll({
+          ordersIds: ordersBatch.map(order => order.id),
+        });
+
+        allOrders = [...allOrders, ...ordersBatch];
+        allOrderItems = [...allOrderItems, ...orderItemsBatch];
+      }
+
+      offset += batchSize;
+    }
 
     return {
       data: {
-        orders: ordersList,
-        orderItems: orderItemsList,
+        orders: allOrders,
+        orderItems: allOrderItems,
       },
     };
   }

@@ -28,13 +28,10 @@ import {
 } from '../../constants/common';
 import { ORDER_USER_TYPES_TITLE } from '../../constants/order';
 
-import config from '../../config';
-
 import {
   AdminUser,
   DateRange,
   OrderDetails,
-  OrderItemPdf,
   OrderListFilters,
 } from '../../types';
 
@@ -204,30 +201,13 @@ const AdminOrdersPage: React.FC<Props> = props => {
   };
 
   const handleExportOrderData = useCallback(async () => {
-    let offset = 0;
-    const limit = config.exportOrdersCSVLimit;
-    let allOrders: OrderDetails[] = [];
-    let allOrderItems: OrderItemPdf[] = [];
-    let hasMoreData = true;
-
     toggleIsExporting(true);
 
     try {
-      while (hasMoreData) {
-        const { orders = [], orderItems = [] } =
-          (await apis.admin.exportOrdersData({ filters, offset, limit })) || {};
+      const { orders = [], orderItems = [] } =
+        (await apis.admin.exportOrdersData({ filters })) || {};
 
-        allOrders = [...allOrders, ...orders];
-        allOrderItems = [...allOrderItems, ...orderItems];
-
-        if (orders.length < limit) {
-          hasMoreData = false;
-        } else {
-          offset += limit;
-        }
-      }
-
-      generateCSVOrderData({ orders: allOrders, orderItems: allOrderItems });
+      generateCSVOrderData({ orders, orderItems });
     } catch (error) {
       log.error(error);
       showGenericErrorModal();
