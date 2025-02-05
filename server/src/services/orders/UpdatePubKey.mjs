@@ -3,14 +3,10 @@ import logger from '../../logger.mjs';
 
 import {
   Cart,
-  Domain,
-  FioAccountProfile,
-  FreeAddress,
   Order,
   OrderItem,
   OrderItemStatus,
   Payment,
-  ReferrerProfile,
   User,
   Wallet,
 } from '../../models';
@@ -97,40 +93,31 @@ export default class OrderUpdatePubKey extends Base {
 
         const user = await User.findOne({ where: { id: userId }, transaction: t });
 
-        let refProfile;
-        if (user.refProfileId)
-          refProfile = await ReferrerProfile.findOne({
-            where: {
-              id: user.refProfileId,
-            },
-            transaction: t,
-          });
+        const {
+          userRefProfile,
+          domainsList,
+          freeDomainToOwner,
+          userHasFreeAddress,
+        } = await Cart.getDataForCartItemsUpdate({
+          noProfileResolvedUser: null,
+          publicKey,
+          userId: user.id,
+          items: cart.items,
+        });
+
         const { prices, roe } = await Cart.getCartOptions(cart);
 
         checkPrices(prices, roe);
 
-        const dashboardDomains = await Domain.getDashboardDomains();
-        const allRefProfileDomains = refProfile
-          ? await ReferrerProfile.getRefDomainsList({
-              refCode: refProfile.code,
-            })
-          : [];
-
-        const userHasFreeAddress =
-          (await FreeAddress.getItems({
-            freeId: user.freeId,
-          })) || [];
-
         const items = await cartItemsToOrderItems({
-          allRefProfileDomains,
           cartItems: cart.items,
-          dashboardDomains,
-          FioAccountProfile,
           prices,
           roe,
-          userHasFreeAddress,
           walletType: wallet && wallet.from,
-          refCode: refProfile && refProfile.code,
+          domainsList,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          refCode: userRefProfile && userRefProfile.code,
         });
 
         const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
