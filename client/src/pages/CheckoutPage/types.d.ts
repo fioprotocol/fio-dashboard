@@ -40,7 +40,7 @@ type DefaultProps = {
   setWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
-  cart: CartItemType[];
+  displayOrderItems: CartItemType[];
 };
 
 export type CheckoutComponentProps = {
@@ -69,7 +69,7 @@ export type SignFioAddressItem = {
   fioWallet: FioWalletDoublet;
   name: string;
   ownerKey: string;
-  cartItem: CartItem;
+  displayOrderItem: CartItem;
 };
 
 export type BeforeSubmitValues = {

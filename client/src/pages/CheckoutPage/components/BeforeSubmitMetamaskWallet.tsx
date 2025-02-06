@@ -98,8 +98,8 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
       const actionParamsArr = [];
       for (const [index, fioAddressItem] of fioAddressItems.entries()) {
         const isComboRegistration =
-          !fioAddressItem.cartItem.hasCustomDomainInCart &&
-          fioAddressItem.cartItem.type ===
+          !fioAddressItem.displayOrderItem.hasCustomDomainInCart &&
+          fioAddressItem.displayOrderItem.type ===
             CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         const fioHandleActionParams = {
           action: isComboRegistration

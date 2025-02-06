@@ -17,6 +17,7 @@ import {
   FioApiUrls,
   OrderDetails,
   OrderItemsToCsv,
+  CartItem,
 } from '../types';
 
 export type DefaultSuccessResponse = { success: true };
@@ -190,6 +191,9 @@ export type UsersShowResponse = User;
 export type OrdersCreateResponse = Order;
 export type OrderGetResponse = OrderDetailed;
 export type OrdersUpdateResponse = DefaultSuccessResponse;
+export type OrdersUpdatePubKeyResponse = DefaultSuccessResponse & {
+  displayOrderItems: CartItem[];
+};
 export type UserOrdersListResponse = {
   data: {
     orders: UserOrderDetails;

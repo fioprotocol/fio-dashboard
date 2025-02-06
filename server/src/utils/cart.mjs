@@ -2,9 +2,13 @@ import MathOp from 'big.js';
 
 import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
+import { Payment } from '../models/Payment.mjs';
+
+import { transformOrderItemCostToPriceString, combineOrderItems } from './order.mjs';
 import {
   CART_ITEM_TYPE,
   FIO_ADDRESS_DELIMITER,
+  FIO_ACTIONS_LABEL,
   ORDER_ERROR_TYPES,
   WALLET_CREATED_FROM,
 } from '../config/constants';
@@ -337,6 +341,7 @@ export const cartItemsToOrderItems = async ({
   prices,
   roe,
   walletType,
+  paymentProcessor,
   domainsList,
   freeDomainToOwner,
   userRefCode,
@@ -385,11 +390,17 @@ export const cartItemsToOrderItems = async ({
 
     switch (type) {
       case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
-        const supportCombo = walletType !== WALLET_CREATED_FROM.LEDGER;
+        const supportCombo =
+          walletType !== WALLET_CREATED_FROM.LEDGER ||
+          paymentProcessor !== Payment.PROCESSOR.FIO;
         const useComboAction = !hasCustomDomainInCart && supportCombo;
 
         if (!supportCombo && !hasCustomDomainInCart) {
-          orderItems.push(domainOrderItem);
+          orderItems.push({
+            ...domainOrderItem,
+            data: { ...domainOrderItem.data, cartItemId: domain },
+          });
+          renewOrderItem.data = { ...renewOrderItem.data, cartItemId: domain };
         }
 
         orderItem.action = useComboAction
@@ -475,6 +486,7 @@ export const createCartFromOrder = ({ orderItems, prices, roe }) => {
     } = orderItem;
 
     if (
+      error &&
       error.includes(ALREADY_REGISTERED_ERROR_TEXT) &&
       errorType !== ORDER_ERROR_TYPES.userHasFreeAddress
     ) {
@@ -611,7 +623,13 @@ export const getItemCost = ({ item, prices, roe }) => {
     ? convertFioPrices(costItemNativeFio, roe)
     : { fio, usdc };
 
-  return { costNativeFio, costFio: fio, costUsdc: usdc, costItemFio, costItemUsdc };
+  return {
+    costNativeFio,
+    costFio: fio,
+    costUsdc: usdc,
+    costItemFio,
+    costItemUsdc,
+  };
 };
 
 export const recalculateCartItems = ({ items, prices, roe }) =>
@@ -635,3 +653,129 @@ export const recalculateCartItems = ({ items, prices, roe }) =>
       costItemUsdc,
     };
   });
+
+export const getOrderItemType = orderItem => {
+  const { action, address, data } = orderItem;
+  const { hasCustomDomain } = data || {};
+
+  if (action === GenericAction.renewFioDomain) {
+    return CART_ITEM_TYPE.DOMAIN_RENEWAL;
+  } else if (action === GenericAction.addBundledTransactions) {
+    return CART_ITEM_TYPE.ADD_BUNDLES;
+  } else if (!address) {
+    return CART_ITEM_TYPE.DOMAIN;
+  } else if (
+    action === GenericAction.registerFioDomainAddress ||
+    (address && hasCustomDomain)
+  ) {
+    return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+  } else {
+    return CART_ITEM_TYPE.ADDRESS;
+  }
+};
+
+export const getDisplayOrderItems = ({ orderItems, roe }) => {
+  const combinedItems = combineOrderItems({
+    orderItems: orderItems
+      .sort((a, b) => a.id - b.id)
+      .map(orderItem => {
+        const { action, address, data, domain, price, nativeFio } = orderItem;
+
+        const isFree = price === '0';
+        const { cartItemId } = data || {};
+        const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
+        const itemType = getOrderItemType(orderItem);
+        const hasCustomDomain = itemType === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+
+        return {
+          action: hasCustomDomain
+            ? FIO_ACTIONS_LABEL[
+                `${GenericAction.registerFioAddress}_${GenericAction.registerFioDomain}`
+              ]
+            : FIO_ACTIONS_LABEL[action],
+          originalAction: action,
+          address,
+          domain,
+          fee_collected: isFree ? null : nativeFio,
+          costUsdc: price,
+          type: itemType,
+          id: cartItemId || fioName,
+          isFree,
+          hasCustomDomain,
+          priceString: transformOrderItemCostToPriceString({
+            fioNativeAmount: nativeFio,
+            usdcAmount: price,
+            isFree,
+          }),
+        };
+      }),
+  });
+
+  const displayItems = [];
+
+  for (const item of combinedItems) {
+    const {
+      id,
+      address,
+      domain,
+      type,
+      originalAction,
+      isFree,
+      period,
+      fee_collected,
+      priceString,
+    } = item;
+
+    let cartItemId = null;
+    let costNativeFio = fee_collected;
+    let domainType = null;
+
+    const fioName = fioApi.setFioName(address, domain);
+    switch (originalAction) {
+      case GenericAction.addBundledTransactions:
+        cartItemId = `${fioName}-${GenericAction.addBundledTransactions}-${+new Date()}`;
+        costNativeFio = fee_collected;
+        break;
+      case GenericAction.registerFioAddress:
+        cartItemId = fioName;
+        costNativeFio = fee_collected;
+        domainType = isFree ? DOMAIN_TYPE.ALLOW_FREE : DOMAIN_TYPE.PREMIUM;
+        break;
+      case GenericAction.registerFioDomain:
+        cartItemId = fioName;
+        domainType = DOMAIN_TYPE.CUSTOM;
+        break;
+      case GenericAction.renewFioDomain:
+        cartItemId = `${fioName}-${GenericAction.renewFioDomain}-${+new Date()}`;
+        break;
+      case GenericAction.registerFioDomainAddress:
+        cartItemId = fioName;
+        domainType = DOMAIN_TYPE.CUSTOM;
+        break;
+      default:
+        null;
+    }
+
+    const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+
+    displayItems.push({
+      orderItemId: id,
+      id: cartItemId,
+      address,
+      domain,
+      domainType,
+      type,
+      costFio: fio,
+      costNativeFio,
+      costUsdc: usdc,
+      isFree,
+      period,
+      priceString,
+    });
+  }
+
+  return displayItems.map(displayItem => {
+    delete displayItem.orderItemId;
+    return displayItem;
+  });
+};

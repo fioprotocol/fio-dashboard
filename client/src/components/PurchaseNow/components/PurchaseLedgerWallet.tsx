@@ -54,8 +54,8 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.LEDGER,
   );
 
-  const cartItems = ledgerItemsGroups
-    ?.map(ledgerItem => ledgerItem.submitData.cartItems)
+  const displayOrderItems = ledgerItemsGroups
+    ?.map(ledgerItem => ledgerItem.submitData.displayOrderItems)
     .flat();
 
   const submit = useCallback(
@@ -71,7 +71,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
       };
 
       const registrations = makeRegistrationOrder({
-        cartItems,
+        cartItems: [...displayOrderItems],
         fees: prices.nativeFio,
       });
 
@@ -159,7 +159,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
 
       return results;
     },
-    [ownerFioPublicKey, analyticsData, cartItems],
+    [ownerFioPublicKey, analyticsData, displayOrderItems],
   );
 
   if (!analyticsData) return null;
@@ -167,7 +167,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.PURCHASE}
-      data={{ ...analyticsData, cartItems }}
+      data={{ ...analyticsData, cartItems: [...displayOrderItems] }}
       fee={fee}
       ownerFioPublicKey={ownerFioPublicKey}
       fioWalletsForCheck={ledgerItemsGroups.map(it => it.signInFioWallet)}

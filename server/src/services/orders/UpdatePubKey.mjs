@@ -13,7 +13,11 @@ import {
 
 import X from '../Exception.mjs';
 
-import { calculateCartTotalCost, cartItemsToOrderItems } from '../../utils/cart.mjs';
+import {
+  calculateCartTotalCost,
+  cartItemsToOrderItems,
+  getDisplayOrderItems,
+} from '../../utils/cart.mjs';
 import { checkPrices } from '../../utils/prices.mjs';
 
 export default class OrderUpdatePubKey extends Base {
@@ -58,7 +62,10 @@ export default class OrderUpdatePubKey extends Base {
     }
 
     const wallet = await Wallet.findOneWhere({ userId, publicKey });
-    const lastWallet = await Wallet.findOneWhere({ userId, publicKey: order.publicKey });
+    const lastWallet = await Wallet.findOneWhere({
+      userId,
+      publicKey: order.publicKey,
+    });
 
     if (!wallet || !lastWallet) {
       logger.error(
@@ -79,6 +86,7 @@ export default class OrderUpdatePubKey extends Base {
       (wallet.from === Wallet.CREATED_FROM.LEDGER ||
         lastWallet.from === Wallet.CREATED_FROM.LEDGER);
     const orderItems = [];
+    let displayOrderItems = [];
 
     await Order.sequelize.transaction(async t => {
       await Order.update({ publicKey }, { where: { id: order.id }, transaction: t });
@@ -91,7 +99,10 @@ export default class OrderUpdatePubKey extends Base {
           { transaction: t },
         );
 
-        const user = await User.findOne({ where: { id: userId }, transaction: t });
+        const user = await User.findOne({
+          where: { id: userId },
+          transaction: t,
+        });
 
         const {
           userRefProfile,
@@ -114,6 +125,7 @@ export default class OrderUpdatePubKey extends Base {
           prices,
           roe,
           walletType: wallet && wallet.from,
+          paymentProcessor,
           domainsList,
           freeDomainToOwner,
           userHasFreeAddress,
@@ -121,7 +133,9 @@ export default class OrderUpdatePubKey extends Base {
         });
 
         const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
-          cartItems: items.map(({ nativeFio }) => ({ costNativeFio: nativeFio })),
+          cartItems: items.map(({ nativeFio }) => ({
+            costNativeFio: nativeFio,
+          })),
           roe,
         });
 
@@ -168,6 +182,12 @@ export default class OrderUpdatePubKey extends Base {
           );
           orderItems.push(orderItem);
         }
+        displayOrderItems = getDisplayOrderItems({
+          orderItems: orderItems.map(orderItem =>
+            OrderItem.format(orderItem.get({ plain: true })),
+          ),
+          roe: order.roe,
+        });
       }
     });
 
@@ -189,6 +209,7 @@ export default class OrderUpdatePubKey extends Base {
     return {
       data: {
         success: true,
+        displayOrderItems,
       },
     };
   }

@@ -27,7 +27,7 @@ import { CartItem } from '../../../types';
 
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
   const {
-    cart,
+    displayOrderItems,
     order,
     payment,
     paymentOption,
@@ -42,7 +42,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     if (success) {
       props.onFinish({
         errors: [],
-        registered: cart.map(
+        registered: displayOrderItems.map(
           ({
             id,
             address,
@@ -108,7 +108,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       }}
     >
       <StripeForm
-        cart={cart}
+        displayOrderItems={displayOrderItems}
         onFinish={onFinish}
         beforeSubmit={beforePaymentSubmit}
         orderNumber={order?.number}
