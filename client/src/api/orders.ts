@@ -4,6 +4,7 @@ import {
   OrdersCreateResponse,
   OrderGetResponse,
   OrdersUpdateResponse,
+  OrdersUpdatePubKeyResponse,
   UserOrdersListResponse,
 } from './responses';
 import { CreateOrderActionData } from '../redux/types';
@@ -41,7 +42,7 @@ export default class Orders extends Base {
   ): Promise<OrdersUpdateResponse> {
     return this.apiClient.post(`orders/prepared-tx`, { data });
   }
-  updatePubKey(publicKey: string): Promise<OrdersCreateResponse> {
+  updatePubKey(publicKey: string): Promise<OrdersUpdatePubKeyResponse> {
     return this.apiClient.post(`orders/update/public-key`, {
       publicKey,
     });

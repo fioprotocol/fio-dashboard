@@ -104,7 +104,7 @@ import { CreateOrderActionData } from '../../redux/types';
 const SIGN_TX_MAX_FEE_COEFFICIENT = 1.5;
 
 export const useContext = (): {
-  cartItems: CartItem[];
+  displayOrderItems: CartItem[];
   isLoading?: boolean;
   walletBalancesAvailable: WalletBalancesItem;
   paymentWallet: FioWalletDoublet;
@@ -198,6 +198,7 @@ export const useContext = (): {
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
+  const displayOrderItems = order?.displayOrderItems || [];
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
@@ -289,7 +290,7 @@ export const useContext = (): {
 
       let cartHasExpiredDomain = false;
 
-      const domains = cartItems
+      const domains = displayOrderItems
         .filter(cartItem => {
           const { domain, type } = cartItem;
           return (
@@ -358,7 +359,7 @@ export const useContext = (): {
     },
     [
       cartId,
-      cartItems,
+      displayOrderItems,
       dispatch,
       history,
       prices?.nativeFio,
@@ -399,7 +400,8 @@ export const useContext = (): {
   );
 
   const isFree =
-    !isEmpty(cartItems) && cartItems.every(cartItem => cartItem.isFree);
+    !isEmpty(displayOrderItems) &&
+    displayOrderItems.every(cartItem => cartItem.isFree);
 
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,
@@ -418,7 +420,7 @@ export const useContext = (): {
     hasPublicCartItems,
   } = groupCartItemsByPaymentWallet(
     paymentWallet?.publicKey,
-    cartItems,
+    displayOrderItems,
     fioWallets,
     userDomains,
   );
@@ -430,7 +432,7 @@ export const useContext = (): {
     : undefined;
 
   const { costNativeFio: publicCartItemsCost } = totalCost(
-    publicCartItemsPaymentWallet?.cartItems ?? [],
+    publicCartItemsPaymentWallet?.displayOrderItems ?? [],
     roe,
   );
 
@@ -473,13 +475,7 @@ export const useContext = (): {
         isFree,
       });
     },
-    [
-      paymentWalletPublicKey,
-      fioWallets,
-      orderParamsFromLocation,
-      cartItems,
-      isFree,
-    ],
+    [paymentWalletPublicKey, fioWallets, orderParamsFromLocation, isFree],
     isAuth &&
       order === null &&
       !orderNumberParam &&
@@ -617,7 +613,8 @@ export const useContext = (): {
           it => !!fioWalletsBalances.wallets[it.signInFioWallet.publicKey],
         )
         .map(it => {
-          const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
+          const totalCostNativeFio = totalCost(it.displayOrderItems, roe)
+            .costNativeFio;
           const available =
             fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
           const notEnoughFio = available.nativeFio < totalCostNativeFio;
@@ -667,15 +664,17 @@ export const useContext = (): {
   ) => {
     const privateDomainList: { [domain: string]: boolean } = {};
 
-    for (const cartItem of cartItems) {
+    for (const displayOrderItem of displayOrderItems) {
       if (
-        userDomains.findIndex(({ name }) => name === cartItem.domain) === -1 &&
-        cartItem.domainType !== DOMAIN_TYPE.CUSTOM
+        userDomains.findIndex(
+          ({ name }) => name === displayOrderItem.domain,
+        ) === -1 &&
+        displayOrderItem.domainType !== DOMAIN_TYPE.CUSTOM
       ) {
         continue;
       }
 
-      privateDomainList[cartItem.domain] = false;
+      privateDomainList[displayOrderItem.domain] = false;
     }
 
     for (const domain of Object.keys(privateDomainList)) {
@@ -694,11 +693,11 @@ export const useContext = (): {
 
     const signTxItems: SignFioAddressItem[] = [];
 
-    for (const cartItem of cartItems) {
+    for (const displayOrderItem of displayOrderItems) {
       const includeCartItemTypes = [CART_ITEM_TYPE.ADDRESS];
 
       const domainWallet = userDomains.find(
-        ({ name }) => name === cartItem.domain,
+        ({ name }) => name === displayOrderItem.domain,
       );
 
       const paymentFioWallet = fioWallets.find(
@@ -714,14 +713,14 @@ export const useContext = (): {
       }
 
       if (
-        includeCartItemTypes.includes(cartItem.type) &&
-        privateDomainList[cartItem.domain]
+        includeCartItemTypes.includes(displayOrderItem.type) &&
+        privateDomainList[displayOrderItem.domain]
       ) {
         signTxItems.push({
           fioWallet: paymentFioWallet,
-          name: setFioName(cartItem.address, cartItem.domain),
+          name: setFioName(displayOrderItem.address, displayOrderItem.domain),
           ownerKey: paymentWalletPublicKey,
-          cartItem,
+          displayOrderItem,
         });
       }
     }
@@ -737,7 +736,7 @@ export const useContext = (): {
         onSuccess: (data: BeforeSubmitData) => {
           apis.orders
             .preparedTx(
-              cartItems.map(
+              displayOrderItems.map(
                 ({ address, domain, type, domainType }: CartItem) => ({
                   action: actionFromCartItem(
                     type,
@@ -767,7 +766,7 @@ export const useContext = (): {
   };
 
   return {
-    cartItems,
+    displayOrderItems,
     isLoading:
       fioLoading ||
       getOrderLoading ||

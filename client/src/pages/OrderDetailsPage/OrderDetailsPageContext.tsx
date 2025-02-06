@@ -98,7 +98,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
       ? groupedCartItemsByPaymentWallet.map(it => ({
           publicKey: it.signInFioWallet.publicKey,
           paidWith: it.signInFioWallet.name,
-          totalFioNativeCostPrice: it.cartItems.reduce(
+          totalFioNativeCostPrice: it.displayOrderItems.reduce(
             (total, it) => total + Number(it.fee_collected),
             0,
           ),

@@ -8,10 +8,7 @@ import { PurchaseMetamaskWallet } from './components/PurchaseMetamaskWallet';
 import { setProcessing } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
 
-import {
-  cartItems as cartItemsSelector,
-  paymentWalletPublicKey as paymentWalletPublicKeySelector,
-} from '../../redux/cart/selectors';
+import { paymentWalletPublicKey as paymentWalletPublicKeySelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   isProcessing as isProcessingSelector,
@@ -69,9 +66,8 @@ const MIN_WAIT_TIME = 3000;
 type CaptchaResult = { success: boolean; verifyParams: VerifyParams };
 
 export const PurchaseNow: FC<PurchaseNowTypes> = props => {
-  const { onFinish, disabled = false } = props;
+  const { displayOrderItems, onFinish, disabled = false } = props;
 
-  const cartItems = useSelector(cartItemsSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const prices = useSelector(pricesSelector);
@@ -189,10 +185,10 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const purchase = () => {
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
-      getCartItemsDataForAnalytics(cartItems),
+      getCartItemsDataForAnalytics(displayOrderItems),
     );
     setWaiting(true);
-    const cartHasFreeItemsOnly = cartHasOnlyFreeItems(cartItems);
+    const cartHasFreeItemsOnly = cartHasOnlyFreeItems(displayOrderItems);
 
     if (cartHasFreeItemsOnly) {
       checkCaptcha();
@@ -200,7 +196,7 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     }
 
     setSubmitData({
-      cartItems,
+      displayOrderItems,
       prices,
       refProfileInfo,
     });
@@ -305,22 +301,22 @@ const useMultipleWalletAction = ({
       return;
     }
 
-    const { cartItems } = submitData;
+    const { displayOrderItems } = submitData;
 
     const { groups: groupedCartItems } = groupCartItemsByPaymentWallet(
       fioWallet,
-      cartItems,
+      displayOrderItems,
       fioWallets,
       userDomains,
     );
 
     const groupedPurchaseValues = groupedCartItems.map(
-      ({ signInFioWallet, cartItems }) => ({
+      ({ signInFioWallet, displayOrderItems }) => ({
         signInFioWallet,
         submitData: {
           ...submitData,
-          cartItems: cartItems.map(cartItem => ({
-            ...cartItem,
+          cartItems: displayOrderItems.map(displayOrderItem => ({
+            ...displayOrderItem,
             signInFioWallet,
           })),
         },
@@ -359,12 +355,13 @@ const useMultipleWalletAction = ({
           ...group,
           submitData: {
             ...group.submitData,
-            cartItems: group.submitData.cartItems.filter(
-              cartItem => !registeredCartItems.includes(cartItem.id),
+            displayOrderItems: group.submitData.displayOrderItems.filter(
+              displayOrderItem =>
+                !registeredCartItems.includes(displayOrderItem.id),
             ),
           },
         }))
-        .filter(group => group.submitData.cartItems.length > 0),
+        .filter(group => group.submitData.displayOrderItems.length > 0),
     );
   };
 

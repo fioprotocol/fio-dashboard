@@ -8,12 +8,13 @@ import {
 } from '../../types';
 
 export type PurchaseValues = {
-  cartItems: CartItem[];
+  displayOrderItems: CartItem[];
   prices: Prices;
   refProfileInfo: RefProfile | null;
 };
 
 export type PurchaseNowTypes = {
+  displayOrderItems: CartItem[];
   disabled?: boolean;
   onFinish: (results: RegistrationResult) => void;
 };

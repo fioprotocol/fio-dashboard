@@ -642,6 +642,7 @@ export type Order = {
   number: string;
   publicKey: string;
   orderItems?: OrderItem[];
+  displayOrderItems?: CartItem[];
   payment?: Payment;
 };
 

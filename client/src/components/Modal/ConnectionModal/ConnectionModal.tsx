@@ -681,7 +681,7 @@ const ConnectionModal: React.FC<Props> = props => {
     }
 
     if (action === CONFIRM_LEDGER_ACTIONS.PURCHASE) {
-      const { cartItems, prices } = data as PurchaseValues;
+      const { displayOrderItems, prices } = data as PurchaseValues;
 
       type PurchaseAction = {
         valueName: string;
@@ -695,7 +695,7 @@ const ConnectionModal: React.FC<Props> = props => {
 
       const purchaseActions: PurchaseAction[] = [];
 
-      cartItems.forEach(
+      displayOrderItems.forEach(
         ({ id, type, domain, address, period, signInFioWallet }) => {
           if (type === CART_ITEM_TYPE.DOMAIN) {
             purchaseActions.push({

@@ -22,11 +22,10 @@ import {
   transformOrderItemCostToPriceString,
   combineOrderItems,
 } from '../utils/order.mjs';
-
+import { getOrderItemType } from '../utils/cart.mjs';
 import {
   FIO_ADDRESS_DELIMITER,
   FIO_ACTIONS_LABEL,
-  CART_ITEM_TYPE,
   ORDER_ERROR_TYPES,
   PAYMENTS_STATUSES,
 } from '../config/constants.js';
@@ -790,26 +789,6 @@ export class Order extends Base {
     };
   }
 
-  static getOrderItemType(orderItem) {
-    const { action, address, data } = orderItem;
-    const { hasCustomDomain } = data || {};
-
-    if (action === GenericAction.renewFioDomain) {
-      return CART_ITEM_TYPE.DOMAIN_RENEWAL;
-    } else if (action === GenericAction.addBundledTransactions) {
-      return CART_ITEM_TYPE.ADD_BUNDLES;
-    } else if (!address) {
-      return CART_ITEM_TYPE.DOMAIN;
-    } else if (
-      action === GenericAction.registerFioDomainAddress ||
-      (address && hasCustomDomain)
-    ) {
-      return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
-    } else {
-      return CART_ITEM_TYPE.ADDRESS;
-    }
-  }
-
   static async formatDetailed({
     id,
     number,
@@ -886,7 +865,7 @@ export class Order extends Base {
 
       const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
       const feeCollected = bcTx.feeCollected || nativeFio;
-      const itemType = this.getOrderItemType(orderItem);
+      const itemType = getOrderItemType(orderItem);
 
       if (
         itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||

@@ -29,7 +29,7 @@ const BITPAY_ORIGIN_REGEX = new RegExp(BITPAY_ORIGIN, 'i');
 
 export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   const {
-    cart,
+    displayOrderItems,
     order,
     payment,
     paymentOption,
@@ -47,7 +47,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
     (beforeSubmitData: BeforeSubmitData) => {
       props.onFinish({
         errors: [],
-        registered: cart.map(
+        registered: displayOrderItems.map(
           ({
             id,
             address,
@@ -82,7 +82,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
       });
     },
     [
-      cart,
+      displayOrderItems,
       payment.amount,
       payment.externalPaymentId,
       paymentOption,
@@ -102,7 +102,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
 
         fireAnalyticsEvent(
           ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
-          getCartItemsDataForAnalytics(cart),
+          getCartItemsDataForAnalytics(displayOrderItems),
         );
 
         if (window.bitpay && typeof window.bitpay.showInvoice === 'function') {
@@ -127,7 +127,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
         window.bitpay.showInvoice(bitPayInvoiceId);
       }
     },
-    [bitPayInvoiceId, cart],
+    [bitPayInvoiceId, displayOrderItems],
   );
 
   const onSubmit = async (event: ClickEventTypes) => {

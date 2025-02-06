@@ -171,7 +171,7 @@ export type GroupedCartItem = {
 
 export type GroupedCartItemsByPaymentWallet<T extends GroupedCartItem> = {
   signInFioWallet: FioWalletDoublet;
-  cartItems: T[];
+  displayOrderItems: T[];
 };
 
 export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
@@ -181,7 +181,7 @@ export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
 
 export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   defaultWalletPublicKey: string,
-  cartItems: T[],
+  displayOrderItems: T[],
   fioWallets: FioWalletDoublet[],
   userDomains: FioDomainDoublet[],
 ): GroupCartItemsByPaymentWalletResult<T> => {
@@ -204,28 +204,28 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
     if (!group) {
       group = {
         signInFioWallet,
-        cartItems: [],
+        displayOrderItems: [],
       };
       groups.push(group);
     }
 
-    group.cartItems.push(cartItem);
+    group.displayOrderItems.push(cartItem);
   };
 
-  for (const cartItem of cartItems) {
-    if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
+  for (const displayOrderItem of displayOrderItems) {
+    if (displayOrderItem.type !== CART_ITEM_TYPE.ADDRESS) {
       hasPublicCartItems = true;
-      addToGroup(defaultOwnerWallet, cartItem);
+      addToGroup(defaultOwnerWallet, displayOrderItem);
       continue;
     }
 
     const addressDomain = userDomains.find(
-      domain => domain.name === cartItem.domain,
+      domain => domain.name === displayOrderItem.domain,
     );
 
     if (!addressDomain || addressDomain.isPublic) {
       hasPublicCartItems = true;
-      addToGroup(defaultOwnerWallet, cartItem);
+      addToGroup(defaultOwnerWallet, displayOrderItem);
       continue;
     }
 
@@ -233,7 +233,7 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
       wallet => wallet.publicKey === addressDomain.walletPublicKey,
     );
 
-    addToGroup(domainOwnerWallet, cartItem);
+    addToGroup(domainOwnerWallet, displayOrderItem);
   }
 
   return { groups, hasPublicCartItems };

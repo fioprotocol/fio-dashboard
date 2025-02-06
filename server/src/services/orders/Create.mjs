@@ -138,6 +138,7 @@ export default class OrdersCreate extends Base {
       prices,
       roe,
       walletType: wallet && wallet.from,
+      paymentProcessor,
       domainsList,
       freeDomainToOwner,
       userHasFreeAddress,
@@ -162,7 +163,7 @@ export default class OrdersCreate extends Base {
           refProfileId: isNoProfileFlow
             ? refProfile && refProfile.id
             : userRefProfile && userRefProfile.id,
-          data,
+          data: { ...data },
         },
         { transaction: t },
       );
