@@ -67,12 +67,12 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
   );
 
-  const cartItems = metamaskItems
-    ?.map(metamaskItem => metamaskItem.submitData.cartItems)
+  const displayOrderItems = metamaskItems
+    ?.map(metamaskItem => metamaskItem.submitData.displayOrderItems)
     .flat();
 
   const registrations = makeRegistrationOrder({
-    cartItems,
+    cartItems: [...displayOrderItems],
     fees: analyticsData?.prices?.nativeFio,
     isComboSupported: true,
   });
@@ -326,7 +326,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
-      analyticsData={{ ...analyticsData, cartItems }}
+      analyticsData={{ ...analyticsData, cartItems: [...displayOrderItems] }}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

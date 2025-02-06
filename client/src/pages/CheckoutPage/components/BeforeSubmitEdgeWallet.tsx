@@ -60,8 +60,9 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       );
 
       const isComboRegistration =
-        !item.cartItem.hasCustomDomainInCart &&
-        item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+        !item.displayOrderItem.hasCustomDomainInCart &&
+        item.displayOrderItem.type ===
+          CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);

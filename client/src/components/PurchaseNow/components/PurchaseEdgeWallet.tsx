@@ -58,8 +58,8 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.EDGE,
   );
 
-  const cartItems = edgeItems
-    ?.map(edgeItem => edgeItem.submitData.cartItems)
+  const displayOrderItems = edgeItems
+    ?.map(edgeItem => edgeItem.submitData.displayOrderItems)
     .flat();
 
   const submit = async ({
@@ -226,7 +226,11 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={analyticsData ? { ...analyticsData, cartItems } : null}
+      data={
+        analyticsData
+          ? { ...analyticsData, cartItems: [...displayOrderItems] }
+          : null
+      }
       submitAction={submit}
       edgeAccountLogoutBefore
     />
