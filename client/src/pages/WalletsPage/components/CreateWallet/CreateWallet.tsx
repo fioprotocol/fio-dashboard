@@ -20,6 +20,8 @@ import {
 } from '../../../../redux/modal/selectors';
 import { walletHasBeenAdded as walletHasBeenAddedSelector } from '../../../../redux/account/selectors';
 
+import { isMetaMask } from '../../../../util/ethereum';
+
 import {
   WALLET_CREATED_FROM,
   DEFAULT_WALLET_OPTIONS,
@@ -59,8 +61,7 @@ export const CreateWallet: React.FC<Props> = props => {
   });
   const dispatch = useDispatch();
 
-  const isMetamaskWalletProvider =
-    window.ethereum?.isMetaMask && isAlternativeAccountType;
+  const isMetamaskWalletProvider = isMetaMask() && isAlternativeAccountType;
 
   useEffect(() => {
     if (show) {

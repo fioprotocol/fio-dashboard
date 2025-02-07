@@ -9,6 +9,7 @@ import { alternateLogin } from '../../../../redux/profile/actions';
 
 import { WALLET_TYPES } from '../../../../constants/wallets';
 import { log } from '../../../../util/general';
+import { isMetaMask } from '../../../../util/ethereum';
 import useEffectOnce from '../../../../hooks/general';
 
 import { isAuthenticated } from '../../../../redux/profile/selectors';
@@ -77,7 +78,7 @@ export const useContext = (props?: Props): UseContextProps => {
   }, []);
 
   const connectMetamask = useCallback(() => {
-    if (window.ethereum?.isMetaMask) {
+    if (isMetaMask()) {
       onLoginModalOpen();
       handleConnectClick();
       setAlternativeLoginError(null);
@@ -140,7 +141,7 @@ export const useContext = (props?: Props): UseContextProps => {
     alternativeLoginError,
     isDescriptionModalOpen,
     isLoginModalOpen,
-    isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,
+    isMobileDeviceWithMetamask: isMobile && isMetaMask(),
     connectMetamask,
     onDetailsClick,
     onDescriptionModalClose,
