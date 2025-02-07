@@ -707,6 +707,18 @@ const ConnectionModal: React.FC<Props> = props => {
               valueName: 'FIO Domain',
               signInPublicKey: signInFioWallet?.publicKey,
             });
+
+            if (+period > 1) {
+              purchaseActions.push({
+                id,
+                type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+                fee: prices.nativeFio.renewDomain * (+period - 1),
+                name: 'Renew FIO Domain',
+                value: domain,
+                valueName: 'FIO Domain',
+                signInPublicKey: signInFioWallet?.publicKey,
+              });
+            }
           }
 
           if (type === CART_ITEM_TYPE.ADDRESS) {
