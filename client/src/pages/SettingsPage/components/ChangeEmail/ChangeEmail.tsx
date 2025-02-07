@@ -17,6 +17,7 @@ import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 import { log } from '../../../../util/general';
 import { emailToUsername } from '../../../../utils';
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
+import { isMetaMask } from '../../../../util/ethereum';
 
 import apis from '../../../../api';
 
@@ -163,7 +164,7 @@ const ChangeEmail: React.FC<Props> = props => {
         const analyticsData = { newEmail };
         let analyticAction: string;
 
-        if (window.ethereum?.isMetaMask) {
+        if (isMetaMask()) {
           analyticAction = CONFIRM_METAMASK_ACTION.UPDATE_EMAIL;
         }
 

@@ -3,6 +3,8 @@ import React from 'react';
 import { LoggedNav } from './LoggedNav';
 import { RegularNav } from './RegularNav';
 
+import { isMetaMask, isOpera } from '../../../util/ethereum';
+
 import { NavigationProps } from '../types';
 
 export const Navigation: React.FC<NavigationProps> | null = props => {
@@ -17,8 +19,7 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     showLogin,
   } = props;
 
-  const isAlternativeEthereumWalletSetup =
-    window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+  const isAlternativeEthereumWalletSetup = isMetaMask() || isOpera();
 
   if (isAuthenticated)
     return (

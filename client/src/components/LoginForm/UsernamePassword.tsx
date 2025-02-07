@@ -20,6 +20,7 @@ import { LINKS } from '../../constants/labels';
 
 import { usernamePasswordValidation } from './components/validation';
 import { isEdgeAuthenticationError, isEdgeNetworkError } from '../../util/edge';
+import { isMetaMask, isOpera } from '../../util/ethereum';
 import { setDataMutator } from '../../utils';
 
 import { LoginFailure } from '../../types';
@@ -236,8 +237,7 @@ const UsernamePassword: React.FC<Props> = props => {
     const { handleSubmit: login, form } = formRenderProps;
     currentForm = form;
 
-    const isAlternativeEthereumWalletSetup =
-      window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+    const isAlternativeEthereumWalletSetup = isMetaMask() || isOpera();
 
     return (
       <form onSubmit={login}>
@@ -248,7 +248,7 @@ const UsernamePassword: React.FC<Props> = props => {
               For the most seamless Web3 experience simply sign in with
               MetaMask.
             </p>
-            {window.ethereum.isMetaMask && (
+            {isMetaMask() && (
               <MetamaskLogin
                 setAlternativeLoginErrorToParentsComponent={
                   setAlternativeLoginErrorToParentsComponent

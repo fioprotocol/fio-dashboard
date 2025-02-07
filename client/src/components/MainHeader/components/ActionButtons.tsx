@@ -9,6 +9,8 @@ import { useSelector } from 'react-redux';
 import Navigation from '../../Navigation';
 import Loader from '../../Loader/Loader';
 
+import { isMetaMask, isOpera } from '../../../util/ethereum';
+
 import { ROUTES } from '../../../constants/routes';
 
 import metamaskSrc from '../../../assets/images/metamask.svg';
@@ -127,11 +129,9 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
   }
 
   const isOperaWallet =
-    window.ethereum?.isOpera &&
-    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
+    isOpera() && user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
   const isMetamaskWallet =
-    window.ethereum?.isMetaMask &&
-    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
+    isMetaMask() && user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
   const isAlternativeWallet = isMetamaskWallet || isOperaWallet;
 
   return (
