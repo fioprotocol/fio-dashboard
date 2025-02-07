@@ -72,7 +72,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
     .flat();
 
   const registrations = makeRegistrationOrder({
-    cartItems: [...displayOrderItems],
+    displayOrderItems,
     fees: analyticsData?.prices?.nativeFio,
     isComboSupported: true,
   });
@@ -326,7 +326,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
-      analyticsData={{ ...analyticsData, cartItems: [...displayOrderItems] }}
+      analyticsData={{ ...analyticsData, displayOrderItems }}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}
