@@ -71,7 +71,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
       };
 
       const registrations = makeRegistrationOrder({
-        cartItems: [...displayOrderItems],
+        displayOrderItems,
         fees: prices.nativeFio,
       });
 
@@ -167,7 +167,7 @@ const PurchaseLedgerWallet: React.FC<Props> = props => {
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.PURCHASE}
-      data={{ ...analyticsData, cartItems: [...displayOrderItems] }}
+      data={{ ...analyticsData, displayOrderItems }}
       fee={fee}
       ownerFioPublicKey={ownerFioPublicKey}
       fioWalletsForCheck={ledgerItemsGroups.map(it => it.signInFioWallet)}

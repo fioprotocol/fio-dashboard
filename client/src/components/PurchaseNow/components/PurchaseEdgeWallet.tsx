@@ -66,7 +66,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
     allWalletKeysInAccount,
     data,
   }: SubmitActionParams) => {
-    const { cartItems, prices } = data;
+    const { displayOrderItems, prices } = data;
 
     const result: RegistrationResult = {
       errors: [],
@@ -76,8 +76,9 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
     };
 
+    console.log('displayOrderItems', displayOrderItems);
     const registrations = makeRegistrationOrder({
-      cartItems,
+      displayOrderItems,
       fees: prices?.nativeFio,
       isComboSupported: true,
     });
@@ -226,11 +227,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={
-        analyticsData
-          ? { ...analyticsData, cartItems: [...displayOrderItems] }
-          : null
-      }
+      data={analyticsData ? { ...analyticsData, displayOrderItems } : null}
       submitAction={submit}
       edgeAccountLogoutBefore
     />
