@@ -136,7 +136,10 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
 
         const fioHandle = setFioName(addressValue, domain);
 
-        if (!apis.fio.publicFioSDK.validateFioAddress(fioHandle)) {
+        if (
+          !apis.fio.publicFioSDK.validateFioAddress(fioHandle) ||
+          validateFioAddress(addressValue, domain)
+        ) {
           setInfoMessage(NON_VALID_FCH);
           toggleIsFioItemVerified(false);
           toggleIsVerifying(false);

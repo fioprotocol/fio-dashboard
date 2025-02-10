@@ -67,8 +67,12 @@ export const validateFioAddress = (address: string, domain: string) => {
     return 'Missing domain';
   }
 
-  if (address && domain && address.length + domain.length > 63) {
-    return 'FIO Handle should be less than 63 characters';
+  if (
+    address &&
+    domain &&
+    (address.length + domain.length > 63 || address.length > 36)
+  ) {
+    return 'FIO Handle should be less than 63 characters and username cannot be longer than 36 characters.';
   }
 
   const addressValidation = validate(

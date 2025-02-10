@@ -75,7 +75,10 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
 
   if (address) {
-    if (!apis.fio.publicFioSDK.validateFioAddress(fchValue)) {
+    if (
+      !apis.fio.publicFioSDK.validateFioAddress(fchValue) ||
+      !allRules.fioName.match.test(address)
+    ) {
       succeeded = false;
       message = NON_VALID_FCH;
     }

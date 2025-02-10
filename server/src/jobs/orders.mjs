@@ -45,7 +45,7 @@ import {
   FIO_ADDRESS_DELIMITER,
 } from '../config/constants.js';
 
-import { METAMASK_DOMAIN_NAME } from '../constants/fio.mjs';
+import { METAMASK_DOMAIN_NAME, NON_VALID_FCH } from '../constants/fio.mjs';
 
 import logger from '../logger.mjs';
 import {
@@ -934,6 +934,17 @@ class OrdersJob extends CommonJob {
       this.postMessage(`Processing item id - ${id}`);
 
       try {
+        if (
+          (action === GenericAction.registerFioAddress ||
+            action === GenericAction.registerFioDomainAddress) &&
+          !(await fioApi.validateFioAddress(address, domain))
+        ) {
+          await this.handleFail(orderItem, NON_VALID_FCH, {
+            errorType: ORDER_ERROR_TYPES.default,
+          });
+          return this.updateOrderStatus(orderId);
+        }
+
         const fioName = fioApi.setFioName(address, domain);
         let auth = {
           actor: paidActor || paidFioActor,
