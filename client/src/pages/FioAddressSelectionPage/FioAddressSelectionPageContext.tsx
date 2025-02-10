@@ -122,6 +122,17 @@ const handleFCHItems = async ({
 
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
 
+  if (domainArr.length === 0) {
+    return [];
+  }
+
+  const error = validateFioAddress(address, domainArr[0]?.name);
+
+  if (error) {
+    setError(error);
+    return [];
+  }
+
   return (
     await Promise.all(
       domainArr.map(async domain => {

@@ -16,6 +16,7 @@ import {
   handleFioHandleCartItemsWithCustomDomain,
   getItemCost,
 } from '../../utils/cart.mjs';
+import { fioApi } from '../../external/fio.mjs';
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 import { checkPrices } from '../../utils/prices.mjs';
@@ -74,10 +75,23 @@ export default class AddItem extends Base {
   async execute({ item, publicKey, token, refCode }) {
     try {
       let newItem = this.setNewItemProps(item);
-      const { domain, type } = newItem;
+      const { address, domain, type } = newItem;
 
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
+
+      if (
+        (type === CART_ITEM_TYPE.ADDRESS ||
+          type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) &&
+        !(await fioApi.validateFioAddress(address, domain))
+      ) {
+        throw new X({
+          code: 'SERVER_ERROR',
+          fields: {
+            address: 'INVALID_FIO_HANDLE',
+          },
+        });
+      }
 
       const existingCart = await Cart.getActive({ userId, guestId });
 
