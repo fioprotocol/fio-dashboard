@@ -45,7 +45,7 @@ class TxCheckJob extends CommonJob {
 
     const maxRetries = Number(await Var.getValByKey(VARS_KEYS.DEFAULT_MAX_RETRIES));
 
-    const processTxItems = items => async () => {
+    const processTxItems = async items => {
       if (this.isCancelled) return false;
 
       const { orderId } = items[0];
