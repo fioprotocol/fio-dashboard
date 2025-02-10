@@ -116,6 +116,10 @@ export default class BuyAddress extends Base {
       fioAddress
         ? FIOSDK.isFioAddressValid(lowerCasedAddress)
         : FIOSDK.isFioDomainValid(fioDomain);
+
+      if (fioAddress && !(await fioApi.validateFioAddress(fioAddress, fioDomain))) {
+        throw new Error('Invalid FIO Address');
+      }
     } catch (e) {
       return generateErrorResponse(this.res, {
         error: `Invalid ${type}`,

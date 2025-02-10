@@ -24,3 +24,7 @@ export const FIO_API_URLS_TYPES = {
   WRAP_STATUS_PAGE_API: 'WRAP_STATUS_PAGE_API',
   WRAP_STATUS_PAGE_HISTORY_V2_URL: 'WRAP_STATUS_PAGE_HISTORY_V2_URL',
 };
+
+//Errors
+export const NON_VALID_FCH =
+  'FIO Handle only allows letters, numbers and dash in the middle. FIO Handle should be less than 63 characters and username cannot be longer than 36 characters.';

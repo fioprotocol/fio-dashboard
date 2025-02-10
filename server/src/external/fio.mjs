@@ -16,7 +16,7 @@ import {
   MINUTE_MS,
 } from '../config/constants.js';
 
-import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
+import { FIO_API_URLS_TYPES, NON_VALID_FCH } from '../constants/fio.mjs';
 
 import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
@@ -640,6 +640,26 @@ class Fio {
       : await this.getFioAddress(address);
 
     return !!data;
+  }
+
+  async validateFioAddress(address, domain) {
+    const publicFioSDK = await this.getPublicFioSDK();
+
+    if (
+      address.length > 36 ||
+      address.length + domain.length > 63 ||
+      !publicFioSDK.validateFioAddress(`${address}${FIO_ADDRESS_DELIMITER}${domain}`)
+    ) {
+      this.logError({
+        message: NON_VALID_FCH,
+        address,
+        domain,
+      });
+
+      return false;
+    }
+
+    return true;
   }
 }
 
