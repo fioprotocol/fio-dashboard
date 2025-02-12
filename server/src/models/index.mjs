@@ -2,6 +2,7 @@ import db from '../db';
 
 export const {
   Action,
+  ActionLimit,
   AdminUser,
   AdminUsersRole,
   AdminUsersStatus,

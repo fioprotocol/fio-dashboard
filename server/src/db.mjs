@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import config from './config';
 
 import { Action } from './models/Action';
+import { ActionLimit } from './models/ActionLimit.mjs';
 import { AdminUser } from './models/AdminUser.mjs';
 import { AdminUsersRole } from './models/AdminUsersRole.mjs';
 import { AdminUsersStatus } from './models/AdminUsersStatus.mjs';
@@ -55,6 +56,7 @@ import { WrapStatusPolygonBurnedDomainsLogs } from './models/WrapStatusPolygonBu
 const sequelize = new Sequelize(config.postgres);
 
 Action.init(sequelize);
+ActionLimit.init(sequelize);
 AdminUsersRole.init(sequelize);
 AdminUsersStatus.init(sequelize);
 AdminUser.init(sequelize);
