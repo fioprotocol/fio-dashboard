@@ -5,6 +5,10 @@ import { User } from './User';
 
 const { DataTypes: DT } = Sequelize;
 
+import { ACTION_LIMIT } from '../config/constants.js';
+
+const ACTION_LIMIT_HOURS = 24;
+
 export class ActionLimit extends Base {
   static get ACTION() {
     return {
@@ -77,9 +81,44 @@ export class ActionLimit extends Base {
     return attributes.default;
   }
 
-  static async getByAction(userId, action) {
+  static async getByAction(userId, action, hours = ACTION_LIMIT_HOURS) {
     return this.findOne({
-      where: { userId, action },
+      where: {
+        userId,
+        action,
+        updatedAt: {
+          [Sequelize.Op.gte]: Sequelize.literal('NOW() - INTERVAL :hours'),
+        },
+      },
+      replacements: {
+        hours: `${parseInt(hours, 10)} hours`,
+      },
     });
+  }
+
+  static async executeWithinLimit(
+    userId,
+    action,
+    callback,
+    { maxCount = ACTION_LIMIT, hours = ACTION_LIMIT_HOURS } = {},
+  ) {
+    const existing = await this.getByAction(userId, action, hours);
+
+    if (existing && existing.count >= maxCount) {
+      return false;
+    }
+
+    if (callback) {
+      await callback();
+    }
+
+    await this.upsert({
+      userId,
+      action,
+      count: existing ? existing.count + 1 : 1,
+      updatedAt: Sequelize.literal('NOW()'),
+    });
+
+    return true;
   }
 }

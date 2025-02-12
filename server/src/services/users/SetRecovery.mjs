@@ -3,7 +3,7 @@ import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
 
-import { User } from '../../models';
+import { User, ActionLimit } from '../../models';
 
 export default class UsersSetRecovery extends Base {
   static get validationRules() {
@@ -31,10 +31,25 @@ export default class UsersSetRecovery extends Base {
     user.secretSet = true;
     await User.update({ secretSet: true }, { where: { id: user.id } });
 
-    await emailSender.send(templates.passRecovery, user.email, {
-      username: user.username,
-      token,
-    });
+    const actionCompleted = await ActionLimit.executeWithinLimit(
+      user.id,
+      ActionLimit.ACTION.SEND_RECOVERY_EMAIL,
+      async () => {
+        await emailSender.send(templates.passRecovery, user.email, {
+          username: user.username,
+          token,
+        });
+      },
+    );
+
+    if (!actionCompleted) {
+      throw new X({
+        code: 'LIMIT_EXCEEDED',
+        fields: {
+          email: 'TOO_MANY_RECOVERY_EMAILS',
+        },
+      });
+    }
 
     return {};
   }
