@@ -295,7 +295,6 @@ const useMultipleWalletAction = ({
   >([]);
 
   useEffect(() => {
-    console.log('submitData', submitData);
     if (!submitData) {
       setResult(initialRegistrationResult);
       setGroupedPurchaseValues([]);
@@ -310,7 +309,6 @@ const useMultipleWalletAction = ({
       fioWallets,
       userDomains,
     );
-    console.log('groupedCartItems', groupedCartItems);
 
     const groupedPurchaseValues: GroupedPurchaseValues[] = groupedCartItems.map(
       ({ signInFioWallet, displayOrderItems }) => ({
@@ -335,7 +333,6 @@ const useMultipleWalletAction = ({
       return g1Priority - g2Priority;
     });
 
-    console.log('groupedPurchaseValues', groupedPurchaseValues);
     setResult(initialRegistrationResult);
     setGroupedPurchaseValues(groupedPurchaseValues);
   }, [fioWallet, submitData, fioWallets, userDomains]);
