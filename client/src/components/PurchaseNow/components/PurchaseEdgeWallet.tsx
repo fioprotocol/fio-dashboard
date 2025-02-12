@@ -76,7 +76,6 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
     };
 
-    console.log('displayOrderItems', displayOrderItems);
     const registrations = makeRegistrationOrder({
       displayOrderItems,
       fees: prices?.nativeFio,
