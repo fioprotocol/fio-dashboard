@@ -17,11 +17,6 @@ module.exports = {
       count: { type: DT.INTEGER, allowNull: false },
       updatedAt: { type: DT.DATE, allowNull: false },
     });
-
-    await QI.addIndex('action-limit', ['userId', 'action'], {
-      unique: true,
-      name: 'action_limit_user_action_unique',
-    });
   },
 
   down: async QI => {
