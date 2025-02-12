@@ -51,7 +51,7 @@ export const NON_VALID_FIO_PUBLIC_KEY =
 
 export const INTERNAL_SERVER_ERROR_CODE = 500;
 export const NOT_FOUND = 404;
-
+export const LIMIT_EXCEEDED_CODE = 'LIMIT_EXCEEDED';
 export const DOMAIN_IS_NOT_EXIST =
   'This domain doesn’t exist and is eligible for purchase below.';
 
@@ -80,6 +80,9 @@ export const CANNOT_UPDATE_FIO_HANDLE =
 
 export const CANNOT_TRANSFER_ERROR_TITLE = 'Cannot Transfer';
 export const CANNOT_UPDATE_FIO_HANDLE_TITLE = 'Cannot Update';
+export const LIMIT_EXCEEDED_ERROR =
+  "You've hit the daily limit of attempts. Please wait until tomorrow to try again.";
+export const LIMIT_EXCEEDED_ERROR_TITLE = 'Limit Exceeded';
 
 export const LOW_BUNDLES_TEXT = {
   buttonText: LOW_BALANCE_TEXT.buttonText,
