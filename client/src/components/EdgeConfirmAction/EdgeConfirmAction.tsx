@@ -11,6 +11,9 @@ import {
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
+  LIMIT_EXCEEDED_ERROR,
+  LIMIT_EXCEEDED_ERROR_TITLE,
+  LIMIT_EXCEEDED_CODE,
 } from '../../constants/errors';
 
 import { waitForEdgeAccountStop } from '../../util/edge';
@@ -100,7 +103,10 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         } catch (e) {
           log.error('EDGE action Error', e);
           fireActionAnalyticsEventError(action);
-          let buttonText, message, title;
+          let buttonText,
+            message,
+            title,
+            cancelAction = false;
 
           if (
             e.message &&
@@ -118,8 +124,20 @@ const EdgeConfirmAction: React.FC<Props> = props => {
             }
           }
 
+          if (
+            e.code &&
+            typeof e.code === 'string' &&
+            e.code === LIMIT_EXCEEDED_CODE
+          ) {
+            buttonText = 'Close';
+
+            message = LIMIT_EXCEEDED_ERROR;
+            title = LIMIT_EXCEEDED_ERROR_TITLE;
+            cancelAction = true;
+          }
+
           showGenericErrorModal(message, title, buttonText);
-          onCancel();
+          onCancel({ cancelAction });
         }
       }
 

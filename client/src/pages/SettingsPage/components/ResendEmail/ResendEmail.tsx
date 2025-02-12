@@ -31,20 +31,22 @@ const ResendEmail: React.FC<Props> = props => {
     return apis.auth.resendRecovery(token);
   };
 
-  const onCancel = () => {
+  const onCancel = ({
+    cancelAction = false,
+  }: { cancelAction?: boolean } = {}) => {
     setSubmitData(null);
     setProcessing(false);
-    toggleSendEmailModal(true);
+    toggleSendEmailModal(!cancelAction);
   };
   const onSuccess = (result: { success: boolean }) => {
-    if (result.success) {
+    if (result?.success) {
       setSubmitData(null);
       setProcessing(false);
 
       toggleSendEmailModal(false);
       toggleSuccessModal(true);
     } else {
-      onCancel();
+      onCancel({ cancelAction: true });
     }
   };
   const onResendClick = () => {
