@@ -32,20 +32,20 @@ export const NETWORKS_LIST: {
     currency: 'RIN',
     chainID: 4,
   },
-  Goerli: {
-    name: 'Goerli',
-    currency: 'GOR',
-    chainID: 5,
+  Sepolia: {
+    name: 'Sepolia',
+    currency: 'SETH',
+    chainID: 11155111,
   },
   Polygon: {
     name: 'Polygon Mainnet',
     currency: 'POL',
     chainID: 137,
   },
-  Mumbai: {
+  Amoy: {
     name: 'Polygon Testnet',
-    currency: 'POL',
-    chainID: 80001,
+    currency: 'POLYGON',
+    chainID: 80002,
   },
   ArbitrumOne: {
     name: 'ArbitrumOne',
