@@ -37,6 +37,6 @@ export default class GetExternalProviderNfts extends Base {
   }
 
   static get resultSecret() {
-    return ['*'];
+    return [];
   }
 }

@@ -17,6 +17,9 @@ class GetMoralis {
   }
 
   async resyncNftMetadata({ chain, nftItem }) {
+    logger.info(
+      `Starting resync for token id - ${nftItem.token_id} and address - ${nftItem.token_address}`,
+    );
     try {
       await Moralis.EvmApi.nft.reSyncMetadata({
         chain,
@@ -27,6 +30,7 @@ class GetMoralis {
       });
     } catch (error) {
       logger.error(`Resync uri for token id - ${nftItem.token_id}: `, error.message);
+      throw error;
     }
 
     try {
@@ -39,6 +43,7 @@ class GetMoralis {
       });
     } catch (error) {
       logger.error(`Resync metadata for token id - ${nftItem.token_id}: `, error.message);
+      throw error;
     }
 
     try {
@@ -53,6 +58,7 @@ class GetMoralis {
       return nftItemWithFreshMetadataRes.toJSON();
     } catch (error) {
       logger.error(`Get metadata for token id - ${nftItem.token_id}: `, error.message);
+      throw error;
     }
   }
 
@@ -123,15 +129,25 @@ class GetMoralis {
       const nftItemsWithSyncedMetadata = [];
 
       const processChunk = async chunk => {
-        const nftMetadataPromises = chunk.map(nftItem => this.resyncNftMetadata(nftItem));
+        const nftMetadataPromises = chunk.map(nftItem =>
+          this.resyncNftMetadata({ chain: EvmChain[chainName], nftItem }),
+        );
 
         const chunkResults = await Promise.allSettled(nftMetadataPromises);
 
-        const resolvedChunkResults = chunkResults
-          .filter(result => result.status === 'fulfilled')
-          .map(result => result.value);
-
-        nftItemsWithSyncedMetadata.push(...resolvedChunkResults);
+        for (let i = 0; i < chunkResults.length; i++) {
+          const result = chunkResults[i];
+          if (result.status === 'fulfilled' && result.value) {
+            nftItemsWithSyncedMetadata.push(result.value);
+          } else {
+            const failedItem = chunk[i];
+            logger.error(
+              `Failed to sync metadata for address - ${address}, contractAddress - ${contractAddresses}, tokenId - ${
+                failedItem.token_id
+              }: ${(result.reason && result.reason.message) || 'Unknown error'}`,
+            );
+          }
+        }
       };
 
       for (let i = 0; i < nftItemsWithNoMetadata.length; i += CHUNK_SIZE) {

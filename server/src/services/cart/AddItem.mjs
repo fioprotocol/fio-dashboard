@@ -129,6 +129,7 @@ export default class AddItem extends Base {
         userId,
         domain,
       });
+
       // do not allow refCode other than auth user has
       if (userId) refCode = userRefProfile ? userRefProfile.code : null;
 

@@ -124,9 +124,21 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               title="Choose FIO Domain"
               subTitle="Select or manually enter a token id of FIO domain to unwrap"
               label="FIO Domain Unwrap"
-              footerTitle="Wrapped Domains"
+              footerTitle={
+                <>
+                  <span>Wrapped Domains</span>
+                  <InfoBadge
+                    className={classes.unwrapInfoBadge}
+                    type={BADGE_TYPES.INFO}
+                    show={true}
+                    title="Wrapped Domains"
+                    message="It may take up to 15 minutes for newly wrapped domains to display and be available for further action."
+                  />
+                </>
+              }
               notFoundText="No FIO Domains found"
             />
+
             {wrappedDomainName ? (
               <div className={classes.selectedDomainName}>
                 wrapped Domain: <span>{wrappedDomainName}</span>
