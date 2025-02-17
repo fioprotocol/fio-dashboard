@@ -24,7 +24,6 @@ import {
 import apis from '../../api';
 import { log } from '../../util/general';
 import { isDomainExpired, validateFioAddress } from '../../util/fio';
-import { isOpera } from '../../util/ethereum';
 import useQuery from '../../hooks/useQuery';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -132,7 +131,7 @@ export const useContext = (): UseContextProps => {
 
   const refCode = refProfileInfo?.code;
 
-  const isAlternativeUser = !!metaMaskProvider || isOpera();
+  const isAlternativeUser = !!metaMaskProvider;
 
   const cartHasFreeItem = cartItems.some(
     cartItem =>
