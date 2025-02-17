@@ -17,7 +17,8 @@ import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 import { log } from '../../../../util/general';
 import { emailToUsername } from '../../../../utils';
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
-import { isMetaMask } from '../../../../util/ethereum';
+
+import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import apis from '../../../../api';
 
@@ -51,6 +52,8 @@ const ChangeEmail: React.FC<Props> = props => {
     null,
   );
   const [showPasswordModal, togglePasswordModal] = useState(false);
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetaMask = !!metaMaskProvider;
 
   const isPrimaryProfile = user?.userProfileType === USER_PROFILE_TYPE.PRIMARY;
 
@@ -164,7 +167,7 @@ const ChangeEmail: React.FC<Props> = props => {
         const analyticsData = { newEmail };
         let analyticAction: string;
 
-        if (isMetaMask()) {
+        if (isMetaMask) {
           analyticAction = CONFIRM_METAMASK_ACTION.UPDATE_EMAIL;
         }
 
@@ -174,7 +177,7 @@ const ChangeEmail: React.FC<Props> = props => {
       }
       return {};
     },
-    [error, isPrimaryProfile],
+    [error, isPrimaryProfile, isMetaMask],
   );
 
   useEffect(() => {

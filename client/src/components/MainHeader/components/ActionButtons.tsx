@@ -9,7 +9,9 @@ import { useSelector } from 'react-redux';
 import Navigation from '../../Navigation';
 import Loader from '../../Loader/Loader';
 
-import { isMetaMask, isOpera } from '../../../util/ethereum';
+import { useMetaMaskProvider } from '../../../hooks/useMetaMaskProvider';
+
+import { isOpera } from '../../../util/ethereum';
 
 import { ROUTES } from '../../../constants/routes';
 
@@ -102,6 +104,8 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
   } = props;
 
   const user = useSelector(userSelector);
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetaMask = !!metaMaskProvider;
 
   if (onlyAuth) {
     return (
@@ -131,7 +135,7 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
   const isOperaWallet =
     isOpera() && user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
   const isMetamaskWallet =
-    isMetaMask() && user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
+    isMetaMask && user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
   const isAlternativeWallet = isMetamaskWallet || isOperaWallet;
 
   return (

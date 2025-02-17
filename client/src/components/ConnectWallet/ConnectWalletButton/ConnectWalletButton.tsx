@@ -13,6 +13,7 @@ import {
   ConnectionErrorType,
   ConnectProviderType,
 } from '../../../hooks/externalWalletsConnection/useInitializeProviderConnection';
+import { useMetaMaskProvider } from '../../../hooks/useMetaMaskProvider';
 
 import classes from '../../Input/Input.module.scss';
 
@@ -59,31 +60,29 @@ const ConnectWalletButton: React.FC<Props> = props => {
     setShowSelectProviderModalVisible,
   ] = useState<boolean>(false);
   const [showProviderLoadingIcon, setShowProviderLoadingIcon] = useState(false);
-
+  const metaMaskProvider = useMetaMaskProvider();
   const connectWallet = useCallback(async () => {
     setShowProviderLoadingIcon(true);
 
-    const provider = window.ethereum;
-
-    if (!provider) {
+    if (!metaMaskProvider) {
       setShowBrowserExtensionErrorModal(true);
       log.error('!window.ethereum');
       setShowProviderLoadingIcon(false);
       return;
     }
 
-    const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    const web3Provider = new ethers.providers.Web3Provider(metaMaskProvider);
     const network = await web3Provider.getNetwork();
 
     try {
-      await provider.request({
+      await metaMaskProvider.request({
         method: 'eth_requestAccounts',
       });
 
       const signer = web3Provider.getSigner();
       const address = await signer.getAddress();
 
-      setProvider(provider);
+      setProvider(metaMaskProvider);
       setWeb3Provider(web3Provider);
       setAddress(address);
       setNetwork(network);
@@ -101,6 +100,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
     setNetwork,
     setProvider,
     setWeb3Provider,
+    metaMaskProvider,
   ]);
 
   const handleDisconnect = async (

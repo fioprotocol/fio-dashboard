@@ -24,7 +24,7 @@ import {
 import apis from '../../api';
 import { log } from '../../util/general';
 import { isDomainExpired, validateFioAddress } from '../../util/fio';
-import { isMetaMask, isOpera } from '../../util/ethereum';
+import { isOpera } from '../../util/ethereum';
 import useQuery from '../../hooks/useQuery';
 
 import { addItem as addItemToCart } from '../../redux/cart/actions';
@@ -34,6 +34,7 @@ import { setRedirectPath } from '../../redux/navigation/actions';
 import useInitializeProviderConnection, {
   ConnectionErrorType,
 } from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
+import { useMetaMaskProvider } from '../../hooks/useMetaMaskProvider';
 
 import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
 import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
@@ -121,6 +122,7 @@ export const useContext = (): UseContextProps => {
   >(false);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
   const [gatedToken, setGatedToken] = useState<string | null>(null);
+  const metaMaskProvider = useMetaMaskProvider();
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -130,7 +132,7 @@ export const useContext = (): UseContextProps => {
 
   const refCode = refProfileInfo?.code;
 
-  const isAlternativeUser = isMetaMask() || isOpera();
+  const isAlternativeUser = !!metaMaskProvider || isOpera();
 
   const cartHasFreeItem = cartItems.some(
     cartItem =>
@@ -203,27 +205,25 @@ export const useContext = (): UseContextProps => {
     toggleHasVerifiedError(false);
     toggleFioVerificationError(false);
 
-    const provider = window.ethereum;
-
-    if (!provider) {
+    if (!metaMaskProvider) {
       setShowBrowserExtensionErrorModal(true);
       log.error('!window.ethereum');
       setShowProviderLoadingIcon(false);
       return;
     }
 
-    const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    const web3Provider = new ethers.providers.Web3Provider(metaMaskProvider);
     const network = await web3Provider.getNetwork();
 
     try {
-      await provider.request({
+      await metaMaskProvider.request({
         method: 'eth_requestAccounts',
       });
 
       const signer = web3Provider.getSigner();
       const address = await signer.getAddress();
 
-      setProvider(provider);
+      setProvider(metaMaskProvider);
       setWeb3Provider(web3Provider);
       setAddress(address);
       setNetwork(network);
@@ -241,6 +241,7 @@ export const useContext = (): UseContextProps => {
     setNetwork,
     setProvider,
     setWeb3Provider,
+    metaMaskProvider,
   ]);
 
   const handleDisconnect = useCallback(

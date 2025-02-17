@@ -7,8 +7,6 @@ import { useContext as useContextMetamaskLogin } from '../../components/LoginFor
 
 import { setRedirectPath } from '../../redux/navigation/actions';
 
-import { isMetaMask } from '../../util/ethereum';
-
 import { ROUTES } from '../../constants/routes';
 
 type Props = {
@@ -26,6 +24,7 @@ export const useContext = (): Props => {
     isLoginModalOpen,
     connectMetamask,
     onLoginModalClose,
+    isMetaMask,
   } = useContextMetamaskLogin();
 
   const [noMetamaskExtension, toggleNoMetamaskExtension] = useState<boolean>(
@@ -35,18 +34,18 @@ export const useContext = (): Props => {
   const dispatch = useDispatch();
 
   const handleConnectClick = useCallback(() => {
-    if (isMetaMask()) {
+    if (isMetaMask) {
       connectMetamask();
       dispatch(setRedirectPath({ pathname: ROUTES.HOME }));
     } else {
       toggleNoMetamaskExtension(true);
     }
-  }, [connectMetamask, dispatch]);
+  }, [connectMetamask, dispatch, isMetaMask]);
 
   return {
     alternativeLoginError,
     isLoginModalOpen,
-    isMobileDeviceWithMetamask: isMobile && isMetaMask(),
+    isMobileDeviceWithMetamask: isMobile && isMetaMask,
     noMetamaskExtension,
     handleConnectClick,
     onLoginModalClose,
