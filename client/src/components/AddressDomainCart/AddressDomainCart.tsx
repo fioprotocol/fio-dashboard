@@ -22,6 +22,8 @@ import {
   refProfileCode,
 } from '../../redux/refProfile/selectors';
 
+import { useMetaMaskProvider } from '../../hooks/useMetaMaskProvider';
+
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
@@ -31,7 +33,7 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { isMetaMask, isOpera } from '../../util/ethereum';
+import { isOpera } from '../../util/ethereum';
 
 import {
   CartItem,
@@ -79,6 +81,8 @@ const AddressDomainCart: React.FC<Props> = props => {
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const isNoProfileFlow = useSelector(isNoProfileFlowSelector);
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetaMask = !!metaMaskProvider;
 
   const isCartEmpty = count === 0;
   const cartHasFreeAddress = !!cartItems.every(({ isFree }) => isFree);
@@ -101,7 +105,7 @@ const AddressDomainCart: React.FC<Props> = props => {
     }
 
     if (!isAuthenticated && !isNoProfileFlow) {
-      const isAlternativeUser = isMetaMask() || isOpera();
+      const isAlternativeUser = isMetaMask || isOpera();
 
       setRedirectPath({ pathname: route });
       return lastAuthData || isAlternativeUser
