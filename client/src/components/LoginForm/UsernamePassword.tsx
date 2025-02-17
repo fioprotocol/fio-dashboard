@@ -22,7 +22,6 @@ import { LINKS } from '../../constants/labels';
 
 import { usernamePasswordValidation } from './components/validation';
 import { isEdgeAuthenticationError, isEdgeNetworkError } from '../../util/edge';
-import { isOpera } from '../../util/ethereum';
 import { setDataMutator } from '../../utils';
 
 import { LoginFailure } from '../../types';
@@ -241,7 +240,7 @@ const UsernamePassword: React.FC<Props> = props => {
     const { handleSubmit: login, form } = formRenderProps;
     currentForm = form;
 
-    const isAlternativeEthereumWalletSetup = isMetaMask || isOpera();
+    const isAlternativeEthereumWalletSetup = isMetaMask;
 
     return (
       <form onSubmit={login}>

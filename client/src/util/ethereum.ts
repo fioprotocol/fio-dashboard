@@ -1,7 +1,5 @@
 import { EIP6963ProviderDetail } from '@metamask/providers';
 
-import { log } from './general';
-
 let providers: EIP6963ProviderDetail[] = [];
 
 export const METAMASK_PROVIDER_NAME = 'MetaMask';
@@ -27,21 +25,4 @@ export const store = {
         onAnnouncement as EventListener,
       );
   },
-};
-
-export const isOpera = () => {
-  try {
-    const provider = providers?.find((p: EIP6963ProviderDetail) => {
-      try {
-        return p.info.name === 'Opera';
-      } catch {
-        return false;
-      }
-    });
-
-    return !!provider;
-  } catch (error) {
-    log.error('Error checking Opera wallet:', error);
-    return false;
-  }
 };

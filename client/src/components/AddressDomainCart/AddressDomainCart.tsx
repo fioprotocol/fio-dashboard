@@ -33,7 +33,6 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { isOpera } from '../../util/ethereum';
 
 import {
   CartItem,
@@ -105,7 +104,7 @@ const AddressDomainCart: React.FC<Props> = props => {
     }
 
     if (!isAuthenticated && !isNoProfileFlow) {
-      const isAlternativeUser = isMetaMask || isOpera();
+      const isAlternativeUser = isMetaMask;
 
       setRedirectPath({ pathname: route });
       return lastAuthData || isAlternativeUser
