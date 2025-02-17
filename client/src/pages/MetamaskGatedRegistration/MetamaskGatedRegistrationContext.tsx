@@ -20,7 +20,6 @@ import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
-import { isMetaMask } from '../../util/ethereum';
 import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
 import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
@@ -152,7 +151,7 @@ export const useContext = (): UseContext => {
     onLoginModalClose,
   } = useContextMetamaskLogin();
 
-  const isVerified = isMetaMask() && !isMobileDeviceWithMetamask;
+  const isVerified = !isMobileDeviceWithMetamask;
   const userHasMetamaskFioHandleInCart = cartItems.find(
     cartItem => cartItem.domain === METAMASK_DOMAIN_NAME,
   );

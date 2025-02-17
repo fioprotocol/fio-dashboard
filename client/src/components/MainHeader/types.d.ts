@@ -37,4 +37,5 @@ export type NavigationProps = {
   closeMenu: () => void;
   showLogin: () => void;
   isMaintenance: boolean;
+  isMetaMask: boolean;
 } & MainHeaderProps;

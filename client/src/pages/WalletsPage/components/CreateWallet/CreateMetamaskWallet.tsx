@@ -1,4 +1,5 @@
 import React from 'react';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import {
   CONFIRM_METAMASK_ACTION,
@@ -7,10 +8,13 @@ import {
 
 import { getPublicKey } from '../../../../util/snap';
 
+import useEffectOnce from '../../../../hooks/general';
+import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
+
+import { fireActionAnalyticsEvent } from '../../../../util/analytics';
+
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
 import { CreateWalletValues } from '../../types';
-import useEffectOnce from '../../../../hooks/general';
-import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
@@ -21,6 +25,8 @@ type Props = {
 
 export const CreateMetamaskWallet: React.FC<Props> = props => {
   const { onWalletDataPrepared, fioWallets, values, setProcessing } = props;
+
+  const metaMaskProvider = useMetaMaskProvider();
 
   const createMetamaskWallet = async () => {
     setProcessing(true);
@@ -39,9 +45,12 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
 
     const nextDerivationIndex = findMissingIndex();
 
-    const publicKey = await getPublicKey({
-      derivationIndex: nextDerivationIndex,
-    });
+    const publicKey = await getPublicKey(
+      metaMaskProvider as MetaMaskInpageProvider,
+      {
+        derivationIndex: nextDerivationIndex,
+      },
+    );
 
     onWalletDataPrepared({
       name: values.name,

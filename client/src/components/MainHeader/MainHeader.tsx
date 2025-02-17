@@ -5,6 +5,8 @@ import { MainHeaderContainer } from '../MainHeaderContainer';
 import Loader from '../Loader/Loader';
 import { Navigation } from './components/Navigation';
 
+import { useMetaMaskProvider } from '../../hooks/useMetaMaskProvider';
+
 import classes from './MainHeader.module.scss';
 
 import { MainHeaderProps } from './types';
@@ -24,6 +26,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   const history = useHistory();
 
   const isPreviouslyAuth = useRef(false);
+  const metaMaskProvider = useMetaMaskProvider();
 
   const closeMenu = useCallback(() => {
     toggleMenuOpen(false);
@@ -102,6 +105,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
         closeMenu={closeMenu}
         showLogin={showLogin}
         isMaintenance={isMaintenance}
+        isMetaMask={!!metaMaskProvider}
       />
     </MainHeaderContainer>
   );

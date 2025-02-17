@@ -20,14 +20,13 @@ import {
 } from '../../../../redux/modal/selectors';
 import { walletHasBeenAdded as walletHasBeenAddedSelector } from '../../../../redux/account/selectors';
 
-import { isMetaMask } from '../../../../util/ethereum';
-
 import {
   WALLET_CREATED_FROM,
   DEFAULT_WALLET_OPTIONS,
 } from '../../../../constants/common';
 
 import useEffectOnce from '../../../../hooks/general';
+import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import { CreateWalletValues } from '../../types';
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
@@ -60,8 +59,9 @@ export const CreateWallet: React.FC<Props> = props => {
     ledger: false,
   });
   const dispatch = useDispatch();
-
-  const isMetamaskWalletProvider = isMetaMask() && isAlternativeAccountType;
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetamaskWalletProvider =
+    !!metaMaskProvider && isAlternativeAccountType;
 
   useEffect(() => {
     if (show) {
