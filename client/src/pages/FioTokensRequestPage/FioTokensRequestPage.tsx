@@ -138,9 +138,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
       other: {
         ...requestData,
         amount: requestData?.amount,
-        nativeAmount: apis.fio
-          .amountToSUF(Number(requestData?.amount))
-          .toString(),
+        nativeAmount: apis.fio.amountToSUF(requestData?.amount),
         ...res,
         toFioAddress: requestData?.payerFioAddress,
         fromFioAddress: requestData?.payeeFioAddress,

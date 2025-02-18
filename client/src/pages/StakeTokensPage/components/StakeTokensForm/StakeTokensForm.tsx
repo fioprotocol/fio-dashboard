@@ -41,13 +41,13 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     proxyLoading,
   } = props;
 
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
+  const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
-    number | null
+    string | null
   >(null);
 
   useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
+    setWalletAvailableAmount(balance?.available?.nativeFio || '0');
   }, [balance]);
 
   useEffect(() => {
@@ -57,10 +57,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
       } else {
         setWalletMaxAvailableAmount(
           new MathOp(fee.nativeFio || 0).gt(walletAvailableAmount)
-            ? 0
+            ? '0'
             : new MathOp(walletAvailableAmount)
                 .sub(fee.nativeFio || 0)
-                .toNumber(),
+                .toString(),
         );
       }
     }
@@ -189,7 +189,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           : null;
 
         const hasLowBalance =
-          (walletMaxAvailableAmount === 0 ||
+          (walletMaxAvailableAmount === '0' ||
             (!!walletMaxAvailableAmount &&
               new MathOp(apis.fio.amountToSUF(amount)).gt(
                 walletMaxAvailableAmount,

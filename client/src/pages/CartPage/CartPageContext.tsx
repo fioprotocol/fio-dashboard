@@ -84,11 +84,11 @@ type UseContextReturnType = {
   disabled: boolean;
   paymentWalletPublicKey: string;
   prices: Prices;
-  roe: number;
+  roe: string;
   showExpiredDomainWarningBadge: boolean;
   totalCartAmount: string;
   totalCartUsdcAmount: string;
-  totalCartNativeAmount: number;
+  totalCartNativeAmount: string;
   userWallets: FioWalletDoublet[];
   walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
@@ -185,7 +185,7 @@ export const useContext = (): UseContextReturnType => {
   const recalculateBalance = (
     updatedPrices: IncomePrices,
   ): {
-    updatedTotalPrice: number;
+    updatedTotalPrice: string;
     updatedFree: string;
     updatedCostUsdc: string;
     updatedCartItems: CartItem[];
@@ -215,7 +215,7 @@ export const useContext = (): UseContextReturnType => {
         case CART_ITEM_TYPE.DOMAIN_RENEWAL:
           costNativeFio = new MathOp(updatedRenewFioDomainPrice)
             .mul(period)
-            .toNumber();
+            .toString();
           break;
         case CART_ITEM_TYPE.ADDRESS:
           costNativeFio = updatedFioAddressPrice;
@@ -262,7 +262,7 @@ export const useContext = (): UseContextReturnType => {
 
   const allowCheckout = async (): Promise<boolean> => {
     if (
-      totalCartNativeAmount > 0 ||
+      new MathOp(totalCartNativeAmount).gt('0') ||
       !cartItems.every(cartItem => cartItem.isFree)
     ) {
       try {

@@ -17,14 +17,13 @@ const StakeTokensResults: React.FC<ResultsProps & {
 }> = props => {
   const {
     results: {
-      other: { amount },
+      other: { amount: fioAmount },
     },
     titleAmount = 'Amount Staked',
     labelAmount = 'Staking Information',
     topElement = null,
   } = props;
 
-  const fioAmount = Number(amount);
   const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
@@ -37,8 +36,8 @@ const StakeTokensResults: React.FC<ResultsProps & {
         value={
           <PriceComponent
             className={classes.priceValue}
-            costFio={fioAmount?.toString(10)}
-            costUsdc={usdcPrice?.toString(10)}
+            costFio={fioAmount}
+            costUsdc={usdcPrice}
           />
         }
       />

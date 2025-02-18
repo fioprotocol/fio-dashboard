@@ -3,7 +3,10 @@ import { FIOSDK } from '@fioprotocol/fiosdk';
 import MathOp from '../util/math';
 import apis from '../api';
 
-import { AdditionalAction } from '../constants/fio';
+import {
+  AdditionalAction,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
+} from '../constants/fio';
 
 import {
   FioBalanceRes,
@@ -13,8 +16,8 @@ import {
 } from '../types';
 
 export function convertFioPrices(
-  nativeFio: number | null | undefined,
-  roe: number,
+  nativeFio: string | null | undefined,
+  roe: string,
 ): WalletBalancesItem {
   const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
 
@@ -31,14 +34,14 @@ export function convertFioPrices(
 
 export const calculateBalances = (
   {
-    balance = 0,
-    available = 0,
-    locked = 0,
-    staked = 0,
-    rewards = 0,
+    balance = '0',
+    available = '0',
+    locked = '0',
+    staked = '0',
+    rewards = '0',
     unlockPeriods = [],
   }: FioBalanceRes,
-  roe: number,
+  roe: string,
 ): WalletBalances => ({
   total: convertFioPrices(balance, roe),
   available: convertFioPrices(available, roe),
@@ -53,33 +56,33 @@ export const calculateBalances = (
 
 export const calculateTotalBalances = (
   walletsBalances: { [publicKey: string]: WalletBalances },
-  roe: number,
+  roe: string,
 ): WalletBalances => {
   const total: FioBalanceRes = {
-    balance: 0,
-    available: 0,
-    locked: 0,
-    staked: 0,
-    rewards: 0,
+    balance: '0',
+    available: '0',
+    locked: '0',
+    staked: '0',
+    rewards: '0',
     unlockPeriods: [],
   };
   for (const publicKey in walletsBalances) {
     if (walletsBalances[publicKey] != null) {
       total.balance = new MathOp(total.balance)
         .add(walletsBalances[publicKey].total.nativeFio)
-        .toNumber();
+        .toString();
       total.available = new MathOp(total.available)
         .add(walletsBalances[publicKey].available.nativeFio)
-        .toNumber();
+        .toString();
       total.locked = new MathOp(total.locked)
         .add(walletsBalances[publicKey].locked.nativeFio)
-        .toNumber();
+        .toString();
       total.staked = new MathOp(total.staked)
         .add(walletsBalances[publicKey].staked.nativeFio)
-        .toNumber();
+        .toString();
       total.rewards = new MathOp(total.rewards)
         .add(walletsBalances[publicKey].rewards.nativeFio)
-        .toNumber();
+        .toString();
       total.unlockPeriods = [
         ...(total.unlockPeriods || []),
         ...(walletsBalances[publicKey].unlockPeriods?.map(
@@ -97,8 +100,8 @@ export const calculateTotalBalances = (
   return calculateBalances(total, roe);
 };
 
-export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
-export const DEFAULT_BALANCES = calculateBalances({}, 1);
+export const DEFAULT_FEE_PRICES = convertFioPrices('0', '1');
+export const DEFAULT_BALANCES = calculateBalances({}, '1');
 
 export const DEFAULT_ORACLE_FEE_PRICES = {
   [AdditionalAction.wrapFioDomain]:
@@ -111,15 +114,9 @@ export const getDefaultOracleFeePrices = ({
   roe,
   action,
 }: {
-  roe?: number;
+  roe?: string;
   action: AdditionalAction.wrapFioDomain | AdditionalAction.wrapFioTokens;
-}) =>
-  convertFioPrices(
-    DEFAULT_ORACLE_FEE_PRICES[action]
-      ? Number(DEFAULT_ORACLE_FEE_PRICES[action])
-      : 0,
-    roe || 1,
-  );
+}) => convertFioPrices(DEFAULT_ORACLE_FEE_PRICES[action] || '0', roe || '1');
 
 export const combinePriceWithDivider = ({
   totalCostPrice,
@@ -134,3 +131,12 @@ export const combinePriceWithDivider = ({
 
   return `${usdcTotalPrice} (${fioTotalPrice})`;
 };
+
+export const defaultMaxFee = (
+  fee: string | number,
+  multiple: string = DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
+): number =>
+  new MathOp(fee)
+    .mul(multiple)
+    .round(0)
+    .toNumber();

@@ -17,7 +17,7 @@ import { GroupedBeforeSubmitValues } from './components/BeforeSubmitWalletConfir
 
 export type PayWith = GroupedCartItemsByPaymentWallet<CartItem> & {
   notEnoughFio: boolean;
-  totalCostNativeFio: number;
+  totalCostNativeFio: string;
   available: WalletBalancesItem;
 };
 

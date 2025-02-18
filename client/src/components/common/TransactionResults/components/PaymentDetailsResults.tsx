@@ -21,7 +21,7 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
   const {
     results: {
       payeeFioAddress,
-      amount,
+      amount: fioAmount,
       chainCode,
       tokenCode,
       transactionId,
@@ -29,7 +29,6 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
     },
   } = props;
 
-  const fioAmount = Number(amount);
   const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
@@ -43,8 +42,8 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
         value={
           <PriceComponent
             className={classes.priceValue}
-            costFio={fioAmount?.toString(10)}
-            costUsdc={usdcPrice?.toString(10)}
+            costFio={fioAmount}
+            costUsdc={usdcPrice}
             tokenCode={tokenCode}
           />
         }

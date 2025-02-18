@@ -7,6 +7,8 @@ import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import CancelButton from '../CancelButton/CancelButton';
 
+import MathOp from '../../../util/math';
+
 import { ERROR_MESSAGES } from './constants';
 
 import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/errors';
@@ -20,7 +22,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
     results: {
       payWith,
       feeCollected: { nativeFio } = {
-        nativeFio: 0,
+        nativeFio: '0',
         fio: '0',
         usdc: '0',
       },
@@ -82,22 +84,24 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {children}
         {!error && (
           <>
-            {isPaymentDetailsVisible && (!!nativeFio || !!bundlesCollected) && (
-              <>
-                <p className={classes.label}>Transaction Details</p>
-                <TransactionDetails
-                  feeInFio={nativeFio ? nativeFio : null}
-                  bundles={
-                    bundlesCollected
-                      ? {
-                          fee: bundlesCollected,
-                        }
-                      : null
-                  }
-                  payWith={payWith}
-                />
-              </>
-            )}
+            {isPaymentDetailsVisible &&
+              ((nativeFio && new MathOp(nativeFio).gt(0)) ||
+                !!bundlesCollected) && (
+                <>
+                  <p className={classes.label}>Transaction Details</p>
+                  <TransactionDetails
+                    feeInFio={nativeFio ? nativeFio : null}
+                    bundles={
+                      bundlesCollected
+                        ? {
+                            fee: bundlesCollected,
+                          }
+                        : null
+                    }
+                    payWith={payWith}
+                  />
+                </>
+              )}
             <SubmitButton
               className={classes.submitButton}
               onClick={handleClose}

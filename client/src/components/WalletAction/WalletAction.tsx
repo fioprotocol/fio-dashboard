@@ -22,8 +22,8 @@ type WalletTypeActionProps = {
   submitData?: AnyObject | null;
   processing: boolean;
   action: string;
-  fee?: number;
-  oracleFee?: number;
+  fee?: string;
+  oracleFee?: string;
   fioWalletEdgeId?: string;
   edgeAccountLogoutBefore?: boolean;
   createContact?: (name: string) => void;

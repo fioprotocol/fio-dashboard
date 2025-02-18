@@ -40,31 +40,31 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
   const providerData = useInitializeProviderConnection();
 
   const [unitedFee, setUnitedFee] = useState<FeePrice>(DEFAULT_FEE_PRICES);
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
+  const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
-    number | null
+    string | null
   >(null);
 
   useEffect(() => {
     setUnitedFee(
       convertFioPrices(
-        new MathOp(fee.nativeFio || 0).add(oracleFee.nativeFio).toNumber(),
+        new MathOp(fee.nativeFio || 0).add(oracleFee.nativeFio).toString(),
         roe,
       ),
     );
   }, [fee, oracleFee, roe]);
 
   useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
+    setWalletAvailableAmount(balance?.available?.nativeFio || '0');
   }, [balance]);
 
   useEffect(() => {
     setWalletMaxAvailableAmount(
       new MathOp(unitedFee.nativeFio || 0).gt(walletAvailableAmount)
-        ? 0
+        ? '0'
         : new MathOp(walletAvailableAmount)
             .sub(unitedFee.nativeFio || 0)
-            .toNumber(),
+            .toString(),
     );
   }, [walletAvailableAmount, unitedFee]);
 

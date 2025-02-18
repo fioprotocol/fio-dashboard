@@ -67,7 +67,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
     action: Action.transferTokensKey,
     account: Account.token,
     data: {
-      amount: apis.fio.amountToSUF(Number(amount)),
+      amount: apis.fio.amountToSUF(amount),
       payee_public_key: toPubKey,
       tpid: apis.fio.tpid,
       max_fee: new MathOp(fee)

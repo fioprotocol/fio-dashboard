@@ -55,12 +55,12 @@ export type CartItem = {
   address?: string;
   domain: string;
   id: string;
-  costNativeFio?: number;
+  costNativeFio?: string;
   costFio?: string;
   costUsdc?: string;
   costItemFio?: string;
   costItemUsdc?: string;
-  nativeFioAddressPrice?: number;
+  nativeFioAddressPrice?: string;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
   period?: number;
@@ -101,23 +101,23 @@ export type NotificationParams = {
 };
 
 export type NativePrices = {
-  addBundles: number;
-  address: number;
-  domain: number;
-  combo: number;
-  renewDomain: number;
+  addBundles: string;
+  address: string;
+  domain: string;
+  combo: string;
+  renewDomain: string;
 };
 
 export type Prices = {
-  fio: { address: number; domain: number };
+  fio: { address: string; domain: string };
   nativeFio: NativePrices;
-  usdt: { address: number; domain: number };
+  usdt: { address: string; domain: string };
 };
 
 export type IncomePrices = {
   pricing: {
     nativeFio: NativePrices;
-    usdtRoe: number;
+    usdtRoe: string;
   };
 };
 
@@ -185,11 +185,11 @@ export type FioWalletDoublet = {
   name: string;
   publicKey: string;
   data?: { device?: number; derivationIndex?: number };
-  balance?: number | null;
-  available?: number | null;
-  locked?: number | null;
-  staked?: number | null;
-  rewards?: number | null;
+  balance?: string | null;
+  available?: string | null;
+  locked?: string | null;
+  staked?: string | null;
+  rewards?: string | null;
   publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
   failedSyncedWithEdge?: boolean;
@@ -305,7 +305,7 @@ export type PinConfirmation = {
 };
 
 export type FeePrice = {
-  nativeFio: number | null;
+  nativeFio: string | null;
   fio: string;
   usdc: string;
 };
@@ -316,19 +316,19 @@ export type OracleFees = {
 };
 
 export type FioBalanceRes = {
-  balance?: number;
-  available?: number;
-  locked?: number;
-  staked?: number;
-  rewards?: number;
+  balance?: string;
+  available?: string;
+  locked?: string;
+  staked?: string;
+  rewards?: string;
   unlockPeriods?: {
-    amount: number;
+    amount: string;
     date: number;
   }[];
 };
 
 export type WalletBalancesItem = {
-  nativeFio: number | null;
+  nativeFio: string | null;
   fio: string;
   usdc: string;
 };

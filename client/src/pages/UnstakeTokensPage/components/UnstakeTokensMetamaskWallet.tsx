@@ -50,7 +50,7 @@ export const UnstakeTokensMetamaskWallet: React.FC<Props> = props => {
     action: Action.unstake,
     account: Account.staking,
     data: {
-      amount: apis.fio.amountToSUF(Number(amount)),
+      amount: apis.fio.amountToSUF(amount),
       fio_address: fioAddress,
       tpid: apis.fio.tpid,
       max_fee: new MathOp(fee)
