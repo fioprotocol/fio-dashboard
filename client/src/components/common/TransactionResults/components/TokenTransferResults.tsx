@@ -26,7 +26,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         toFioAddress,
         from,
         fromFioAddress,
-        amount,
+        amount: fioAmount,
         nativeAmount,
         tokenCode,
         transaction_id,
@@ -46,8 +46,6 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
     titleAmount,
   } = props;
 
-  const fioNativeAmount = Number(nativeAmount);
-  const fioAmount = Number(amount);
   const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
@@ -99,8 +97,8 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         value={
           <PriceComponent
             className={classes.priceValue}
-            costFio={fioAmount?.toString(10)}
-            costUsdc={usdcPrice?.toString(10)}
+            costFio={fioAmount}
+            costUsdc={usdcPrice}
             tokenCode={tokenCode}
           />
         }
@@ -111,7 +109,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       <p className={classes.label}>Transaction Details</p>
       <TransactionDetails
         feeInFio={feeCollected?.nativeFio ? feeCollected.nativeFio : null}
-        amountInFio={fioNativeAmount}
+        amountInFio={nativeAmount}
         bundles={bundlesCollected ? { fee: bundlesCollected } : null}
         payWith={payWith}
         additional={[

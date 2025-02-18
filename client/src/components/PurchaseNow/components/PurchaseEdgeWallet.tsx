@@ -6,7 +6,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { makeRegistrationOrder } from '../middleware';
 import { sleep } from '../../../utils';
-import MathOp from '../../../util/math';
+import { defaultMaxFee } from '../../../util/prices';
 
 import {
   CART_ITEM_TYPE,
@@ -19,10 +19,7 @@ import {
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
 import apis from '../../../api';
-import {
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
-} from '../../../constants/fio';
+import { TRANSACTION_DEFAULT_OFFSET_EXPIRATION } from '../../../constants/fio';
 
 import { RegistrationResult } from '../../../types';
 import { SubmitActionParams } from '../../EdgeConfirmAction/types';
@@ -101,10 +98,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               : GenericAction.registerFioAddress,
             {
               fioAddress: registration.fioName,
-              maxFee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              maxFee: defaultMaxFee(registration.fee),
               technologyProviderId: apis.fio.affiliateTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -126,10 +120,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
-              maxFee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              maxFee: defaultMaxFee(registration.fee),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -150,10 +141,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             GenericAction.registerFioDomain,
             {
               fioDomain: registration.fioName,
-              maxFee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              maxFee: defaultMaxFee(registration.fee),
               technologyProviderId: apis.fio.affiliateTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
               ownerPublicKey: ownerFioPublicKey,
@@ -175,10 +163,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             GenericAction.renewFioDomain,
             {
               fioDomain: registration.fioName,
-              maxFee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              maxFee: defaultMaxFee(registration.fee),
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
@@ -188,10 +173,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             GenericAction.registerFioAddress,
             {
               fioAddress: registration.fioName,
-              maxFee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              maxFee: defaultMaxFee(registration.fee),
               technologyProviderId: apis.fio.affiliateTpid,
               ownerPublicKey: ownerFioPublicKey,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,

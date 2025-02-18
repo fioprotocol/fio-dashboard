@@ -4,7 +4,7 @@ export type HandleTransactionDetailsProps = {
   bundles?: number;
   feeCollected?: number;
   remaningBundles?: number;
-  roe?: number;
+  roe?: string;
   shouldSubBundlesFromRemaining?: boolean;
   shouldSubFeesFromBalance?: boolean;
   transactionId?: string;

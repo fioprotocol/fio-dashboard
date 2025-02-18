@@ -51,7 +51,7 @@ export const WrapTokensMetamaskWallet: React.FC<Props> = props => {
     action: Action.wrapTokens,
     account: Account.oracle,
     data: {
-      amount: apis.fio.amountToSUF(Number(amount)),
+      amount: apis.fio.amountToSUF(amount),
       chain_code: chainCode,
       public_address: publicAddress,
       max_oracle_fee: oracleFee,

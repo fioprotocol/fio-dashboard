@@ -57,7 +57,7 @@ type Props = {
     item: CartItem;
     prices: NativePrices;
     refCode?: string;
-    roe: number;
+    roe: string;
   }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;

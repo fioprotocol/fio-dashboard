@@ -8,6 +8,8 @@ import {
   GET_SITE_SETTINGS_SUCCESS,
 } from '../settings/actions';
 
+import MathOp from '../../util/math';
+
 import { Prices } from '../../types';
 import { DomainsResponse } from '../../api/responses';
 
@@ -72,7 +74,7 @@ export default combineReducers({
         return state;
     }
   },
-  roe(state: number | null = null, action) {
+  roe(state: string | null = null, action) {
     switch (action.type) {
       case actions.PRICES_SUCCESS:
         return action.data.pricing.usdtRoe;
@@ -83,7 +85,8 @@ export default combineReducers({
       case cartActions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
       case cartActions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS: {
         // Update roe based on roe set in the cart
-        if (action.data?.options?.roe) return action.data.options.roe;
+        if (action.data?.options?.roe)
+          return new MathOp(action.data.options.roe).toString();
 
         return state;
       }

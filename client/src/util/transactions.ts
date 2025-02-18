@@ -137,7 +137,7 @@ const processTransaction = (
 
   // Fee transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER && data.amount != null) {
-    const fioAmount = apis.fio.amountToSUF(parseFloat(`${data.amount}`));
+    const fioAmount = apis.fio.amountToSUF(data.amount);
     otherParams.feeActors = [data?.to];
     if (data?.to === actor) {
       nativeAmount = `${fioAmount}`;
@@ -405,10 +405,10 @@ export const handleTransactionDetails = ({
   }
 
   if (feeCollected) {
-    transactionDetails.feeInFio = feeCollected;
+    transactionDetails.feeInFio = new MathOp(feeCollected).toString();
 
     const walletBalance = shouldSubFeesFromBalance
-      ? new MathOp(fioWallet?.balance).sub(feeCollected).toNumber()
+      ? new MathOp(fioWallet?.balance).sub(feeCollected).toString()
       : fioWallet?.balance;
 
     transactionDetails.payWith.walletBalances = {

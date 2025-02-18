@@ -85,9 +85,14 @@ type DefaultAbiMap = {
   [account_name: string]: { name: string; response: AbiResponse };
 };
 
+const DEFAULT_ACTION_FEE_AMOUNT_MUL = 1500;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
-  .mul(1500)
+  .mul(DEFAULT_ACTION_FEE_AMOUNT_MUL)
   .toNumber();
+export const DEFAULT_ACTION_FEE_AMOUNT_STR = new MathOp(FIOSDK.SUFUnit)
+  .mul(DEFAULT_ACTION_FEE_AMOUNT_MUL)
+  .toString();
+
 export const ENDPOINT_FEE_HASH: { [endpoint: string]: string } = {
   [EndPoint.stakeFioTokens]: '0x83c48bde1205347001e4ddd44c571f78',
   [EndPoint.unStakeFioTokens]: '0x85248efc2886d68989b010f21cb2f480',
@@ -150,24 +155,26 @@ export default class Fio {
     this.publicFioSDK.setApiUrls(apiUrls);
   };
 
-  amountToSUF = (amount: number): number => {
-    if (!amount) return 0;
-    const floor = Math.floor(amount);
-    const tempResult = new MathOp(floor).mul(FIOSDK.SUFUnit).toNumber();
+  amountToSUF = (amount: number | string): string => {
+    if (!amount) return '0';
+
+    const floor = new MathOp(amount).round(0, 0).toString();
+    const tempResult = new MathOp(floor).mul(FIOSDK.SUFUnit).toString();
 
     // get remainder
-    const remainder: number = new MathOp(amount)
+    const remainder = new MathOp(amount)
       .mod(1)
       .round(9, 2)
-      .toNumber();
+      .toString();
 
-    const remainderResult: number = new MathOp(remainder)
+    const remainderResult = new MathOp(remainder)
       .mul(FIOSDK.SUFUnit)
-      .toNumber();
-    const floorRemainder = Math.floor(remainderResult);
+      .toString();
+
+    const floorRemainder = new MathOp(remainderResult).round(0, 0).toString();
 
     // add integer and remainder
-    return new MathOp(tempResult).add(floorRemainder).toNumber();
+    return new MathOp(tempResult).add(floorRemainder).toString();
   };
 
   sufToAmount = (suf: number): number =>
@@ -184,22 +191,25 @@ export default class Fio {
     return publicKey;
   };
 
-  convertFioToUsdc = (nativeAmount: number, roe: number | null): number => {
-    if (roe == null) return 0;
+  convertFioToUsdc = (
+    nativeAmount: number | string,
+    roe: string | null,
+  ): string => {
+    if (roe == null) return '0';
 
     return new MathOp(FIOSDK.SUFToAmount(nativeAmount))
       .mul(roe)
       .round(2, 1)
-      .toNumber();
+      .toString();
   };
 
-  convertUsdcToFio = (amount: number, roe: number | null): number => {
-    if (roe == null) return 0;
+  convertUsdcToFio = (amount: number | string, roe: string | null): string => {
+    if (roe == null) return '0';
 
     return new MathOp(amount)
       .div(roe)
       .round(9, 2)
-      .toNumber();
+      .toString();
   };
 
   checkWallet = (): void => {
@@ -385,11 +395,11 @@ export default class Fio {
 
   getBalance = async (publicKey: string): Promise<FioBalanceRes> => {
     let balances: FioBalanceRes = {
-      balance: 0,
-      available: 0,
-      staked: 0,
-      locked: 0,
-      rewards: 0,
+      balance: '0',
+      available: '0',
+      staked: '0',
+      locked: '0',
+      rewards: '0',
       unlockPeriods: [],
     };
     try {
@@ -405,21 +415,21 @@ export default class Fio {
 
       const rewardsAmount =
         !roe || !srps || !staked
-          ? 0
+          ? '0'
           : new MathOp(srps)
               .mul(roe)
               .sub(staked)
               .round(0, 2)
-              .toNumber();
+              .toString();
 
-      const rewards = new MathOp(rewardsAmount).lt(0) ? 0 : rewardsAmount;
+      const rewards = new MathOp(rewardsAmount).lt(0) ? '0' : rewardsAmount;
 
       balances = {
         ...balances,
-        balance,
-        available,
-        staked,
-        rewards,
+        balance: new MathOp(balance).toString(),
+        available: new MathOp(available).toString(),
+        staked: new MathOp(staked).toString(),
+        rewards: new MathOp(rewards).toString(),
       };
     } catch (e) {
       this.logError(e);
@@ -434,10 +444,10 @@ export default class Fio {
 
       balances = {
         ...balances,
-        locked: remaining_lock_amount,
+        locked: new MathOp(remaining_lock_amount).toString(),
         unlockPeriods: unlock_periods.map(
           ({ amount, duration }: { amount: number; duration: number }) => ({
-            amount,
+            amount: new MathOp(amount).toString(),
             date: (time_stamp + duration) * 1000, // unlock date-time in ms
           }),
         ),

@@ -34,7 +34,7 @@ type Props = {
 export type CartItemProps = {
   costFio: string;
   costUsdc: string;
-  costNativeFio?: number;
+  costNativeFio?: string;
   domainType?: DomainItemType;
   isFree?: boolean;
 };

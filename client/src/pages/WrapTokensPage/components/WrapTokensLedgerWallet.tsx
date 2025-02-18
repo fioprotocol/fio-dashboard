@@ -46,7 +46,7 @@ export const WrapTokensLedgerWallet: React.FC<Props> = props => {
       fioWallet.publicKey,
       AdditionalAction.wrapFioTokens,
       {
-        amount: apis.fio.amountToSUF(Number(submitData.amount)),
+        amount: apis.fio.amountToSUF(submitData.amount),
         chain_code: submitData.chainCode,
         public_address: submitData.publicAddress,
         max_oracle_fee: oracleFee,
