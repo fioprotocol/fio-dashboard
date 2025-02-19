@@ -16,7 +16,6 @@ import { formatLedgerSignature, getPath } from '../../../util/ledger';
 import { FioWalletDoublet } from '../../../types';
 import { StakeTokensValues } from '../types';
 import { BUNDLES_TX_COUNT } from '../../../constants/fio';
-import MathOp from '../../../util/math';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -25,7 +24,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: StakeTokensValues | null;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 const StakeTokensLedgerWallet: React.FC<Props> = props => {
@@ -44,7 +43,7 @@ const StakeTokensLedgerWallet: React.FC<Props> = props => {
       fioWallet.publicKey,
       GenericAction.stakeFioTokens,
       {
-        amount: apis.fio.amountToSUF(new MathOp(submitData.amount).toNumber()),
+        amount: apis.fio.amountToSUF(submitData.amount),
         fio_address: submitData.fioAddress,
         max_fee: fee,
         tpid: submitData.proxy,

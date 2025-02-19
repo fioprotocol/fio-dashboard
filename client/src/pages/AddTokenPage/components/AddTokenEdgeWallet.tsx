@@ -23,7 +23,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: AddTokenValues | null;
   processing: boolean;
-  fee?: number | null;
+  fee?: string | null;
 };
 
 const AddTokenEdgeWallet: React.FC<Props> = props => {

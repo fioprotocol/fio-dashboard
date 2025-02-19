@@ -25,8 +25,8 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: WrapTokensValues | null;
   processing: boolean;
-  fee?: number | null;
-  oracleFee?: number | null;
+  fee?: string | null;
+  oracleFee?: string | null;
 };
 
 export const WrapTokensLedgerWallet: React.FC<Props> = props => {
@@ -46,7 +46,7 @@ export const WrapTokensLedgerWallet: React.FC<Props> = props => {
       fioWallet.publicKey,
       AdditionalAction.wrapFioTokens,
       {
-        amount: apis.fio.amountToSUF(Number(submitData.amount)),
+        amount: apis.fio.amountToSUF(submitData.amount),
         chain_code: submitData.chainCode,
         public_address: submitData.publicAddress,
         max_oracle_fee: oracleFee,

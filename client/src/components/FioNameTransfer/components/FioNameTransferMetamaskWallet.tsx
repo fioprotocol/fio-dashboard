@@ -49,7 +49,7 @@ export const FioNameTransferMetamaskWallet: React.FC<Props> = props => {
       fio_domain?: string;
       new_owner_fio_public_key: string;
       tpid: string;
-      max_fee: number;
+      max_fee: string;
     };
     derivationIndex: number;
   } = {

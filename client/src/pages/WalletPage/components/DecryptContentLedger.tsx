@@ -27,7 +27,7 @@ type Props = {
     fioRecordType: string;
   } | null;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 const RequestTokensLedgerWallet: React.FC<Props> = props => {

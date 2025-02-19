@@ -11,6 +11,7 @@ import { PriceComponent } from '../PriceComponent';
 import { TransactionDetailsItem } from './components/TransactionDetailsItem';
 
 import { convertFioPrices } from '../../util/prices';
+import MathOp from '../../util/math';
 
 import { roe as roeSelector } from '../../redux/registrations/selectors';
 import { WalletBalancesItem } from '../../types';
@@ -29,8 +30,8 @@ export type AdditionalDetails = {
 export type TransactionDetailsProps = {
   className?: string;
   valuePosition?: ValuePosition;
-  feeInFio?: number;
-  amountInFio?: number;
+  feeInFio?: string;
+  amountInFio?: string;
   bundles?: {
     fee: number;
     remaining?: number;
@@ -71,14 +72,14 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
 
   const totalRender = () => {
     if (
-      typeof feeInFio !== 'number' ||
-      typeof amountInFio !== 'number' ||
+      typeof feeInFio !== 'string' ||
+      typeof amountInFio !== 'string' ||
       feeInFio === amountInFio
     ) {
       return null;
     }
 
-    const totalFio = feeInFio + amountInFio;
+    const totalFio = new MathOp(feeInFio).add(amountInFio).toString();
 
     const total = convertFioPrices(totalFio, roe);
 
@@ -90,7 +91,7 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
           <PriceComponent
             costFio={total.fio}
             costUsdc={total.usdc}
-            isFree={totalFio === 0}
+            isFree={totalFio === '0'}
           />
         }
       />

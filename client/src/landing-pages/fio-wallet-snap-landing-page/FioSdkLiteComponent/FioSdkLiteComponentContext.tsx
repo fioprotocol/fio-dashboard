@@ -230,7 +230,7 @@ export const useContext = (): UseContextProps => {
           fio_domain?: string;
           fio_request_id?: string;
           is_public?: number;
-          max_fee: number;
+          max_fee: string;
           max_oracle_fee?: string;
           nfts?: {
             chain_code: string;
@@ -428,9 +428,7 @@ export const useContext = (): UseContextProps => {
         params.actionParams[0].data = {
           ...params.actionParams[0].data,
           fio_address: fioActionFormParams.fioHandle,
-          amount: fioApi
-            .amountToSUF(Number(fioActionFormParams.amount))
-            .toString(),
+          amount: fioApi.amountToSUF(fioActionFormParams.amount),
           tpid: 'dashboard@fiotestnet',
         };
         break;
@@ -452,9 +450,7 @@ export const useContext = (): UseContextProps => {
         params.actionParams[0].account = Account.token;
         params.actionParams[0].data = {
           ...params.actionParams[0].data,
-          amount: fioApi
-            .amountToSUF(Number(fioActionFormParams.amount))
-            .toString(),
+          amount: fioApi.amountToSUF(fioActionFormParams.amount),
           payee_public_key: fioActionFormParams.payeeFioPublicKey,
         };
         break;
@@ -463,9 +459,7 @@ export const useContext = (): UseContextProps => {
         params.actionParams[0].data = {
           ...params.actionParams[0].data,
           fio_address: fioActionFormParams.fioHandle,
-          amount: fioApi
-            .amountToSUF(Number(fioActionFormParams.amount))
-            .toString(),
+          amount: fioApi.amountToSUF(fioActionFormParams.amount),
           tpid: 'dashboard@fiotestnet',
         };
         break;
@@ -483,9 +477,7 @@ export const useContext = (): UseContextProps => {
         params.actionParams[0].account = Account.oracle;
         params.actionParams[0].data = {
           ...params.actionParams[0].data,
-          amount: fioApi
-            .amountToSUF(Number(fioActionFormParams.amount))
-            .toString(),
+          amount: fioApi.amountToSUF(fioActionFormParams.amount),
           chain_code: fioActionFormParams.chainCode,
           public_address: fioActionFormParams.publicAddress,
           max_oracle_fee: DEFAULT_ORACLE_FEE_AMOUNT,

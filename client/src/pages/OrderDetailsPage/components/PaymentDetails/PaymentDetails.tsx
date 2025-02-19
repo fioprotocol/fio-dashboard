@@ -6,7 +6,7 @@ import { TransactionDetails } from '../../../../components/TransactionDetails/Tr
 type Props = {
   orderNumber: string;
   paidWith?: string;
-  totalFioNativeCostPrice?: number;
+  totalFioNativeCostPrice?: string;
   isFree?: boolean;
 };
 
@@ -19,7 +19,7 @@ export const PaymentDetails: React.FC<Props> = props => {
     <div className={classes.details}>
       <h6 className={classes.subtitle}>Payment Details</h6>
       <TransactionDetails
-        feeInFio={0}
+        feeInFio="0"
         amountInFio={totalFioNativeCostPrice}
         additional={[
           {

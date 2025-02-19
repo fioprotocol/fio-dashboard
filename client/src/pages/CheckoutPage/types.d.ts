@@ -10,6 +10,7 @@ import {
   ApiError,
   PaymentProvider,
   CartItem,
+  Roe,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
 import { GroupedCartItemsByPaymentWallet } from '../../util/cart';
@@ -17,7 +18,7 @@ import { GroupedBeforeSubmitValues } from './components/BeforeSubmitWalletConfir
 
 export type PayWith = GroupedCartItemsByPaymentWallet<CartItem> & {
   notEnoughFio: boolean;
-  totalCostNativeFio: number;
+  totalCostNativeFio: string;
   available: WalletBalancesItem;
 };
 
@@ -44,17 +45,17 @@ type DefaultProps = {
 };
 
 export type CheckoutComponentProps = {
-  roe: number | null;
+  roe: Roe;
 } & DefaultProps;
 
 export type PaymentOptionComponentProps = {
   costFree?: string | null;
-  totalCost: number;
+  totalCost: string;
 } & DefaultProps;
 
 export type StripePaymentOptionProps = {
   paymentOption: PaymentOptionsProps;
-  totalCost: number;
+  totalCost: string;
 } & DefaultProps;
 
 export type BeforeSubmitData = Record<
@@ -81,7 +82,7 @@ export type BeforeSubmitState = {
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
   submitData: BeforeSubmitValues | null;
-  fee?: number | null;
+  fee?: string | null;
   groupedBeforeSubmitValues?: GroupedBeforeSubmitValues[];
 };
 
@@ -92,5 +93,5 @@ export type BeforeSubmitProps = {
 
 export type BitPayOptionProps = {
   paymentOption: PaymentOptionsProps;
-  totalCost: number;
+  totalCost: string;
 } & DefaultProps;

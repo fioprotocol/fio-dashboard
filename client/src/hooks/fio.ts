@@ -31,6 +31,7 @@ import useEffectOnce from './general';
 import { isDomainExpired } from '../util/fio';
 import apis from '../api';
 import { log } from '../util/general';
+import MathOp from '../util/math';
 
 import { NOT_FOUND } from '../constants/errors';
 import { ROUTES } from '../constants/routes';
@@ -103,9 +104,11 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
   const firstFromListFioDomainName = fioDomains[0]?.name;
   const firstFromListFioWalletPublicKey = fioWallets[0]?.publicKey;
 
-  const hasNoStakedTokens = fioWalletsBalances.total?.staked?.nativeFio === 0;
+  const hasNoStakedTokens = new MathOp(
+    fioWalletsBalances.total?.staked?.nativeFio,
+  ).eq(0);
   const totalBalance = fioWalletsBalances?.total?.total;
-  const hasZeroTotalBalance = totalBalance?.nativeFio === 0;
+  const hasZeroTotalBalance = new MathOp(totalBalance?.nativeFio).eq(0);
 
   const loading =
     !initialLoadComplete ||

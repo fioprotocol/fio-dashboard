@@ -25,7 +25,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: StakeTokensValues | null;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 const UnstakeTokensEdgeWallet: React.FC<Props> = props => {

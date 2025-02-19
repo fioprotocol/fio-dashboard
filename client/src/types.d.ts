@@ -55,12 +55,12 @@ export type CartItem = {
   address?: string;
   domain: string;
   id: string;
-  costNativeFio?: number;
+  costNativeFio?: string;
   costFio?: string;
   costUsdc?: string;
   costItemFio?: string;
   costItemUsdc?: string;
-  nativeFioAddressPrice?: number;
+  nativeFioAddressPrice?: string;
   hasCustomDomain?: boolean;
   hasCustomDomainInCart?: boolean;
   period?: number;
@@ -101,23 +101,23 @@ export type NotificationParams = {
 };
 
 export type NativePrices = {
-  addBundles: number;
-  address: number;
-  domain: number;
-  combo: number;
-  renewDomain: number;
+  addBundles: string;
+  address: string;
+  domain: string;
+  combo: string;
+  renewDomain: string;
 };
 
 export type Prices = {
-  fio: { address: number; domain: number };
+  fio: { address: string; domain: string };
   nativeFio: NativePrices;
-  usdt: { address: number; domain: number };
+  usdt: { address: string; domain: string };
 };
 
 export type IncomePrices = {
   pricing: {
     nativeFio: NativePrices;
-    usdtRoe: number;
+    usdtRoe: string;
   };
 };
 
@@ -134,7 +134,7 @@ export type RegistrationRegistered = {
   fioName: string;
   action: string;
   isFree?: boolean;
-  fee_collected: number;
+  fee_collected: string;
   costUsdc?: string;
   cartItemId: string;
   transaction_id: string;
@@ -185,11 +185,11 @@ export type FioWalletDoublet = {
   name: string;
   publicKey: string;
   data?: { device?: number; derivationIndex?: number };
-  balance?: number | null;
-  available?: number | null;
-  locked?: number | null;
-  staked?: number | null;
-  rewards?: number | null;
+  balance?: string | null;
+  available?: string | null;
+  locked?: string | null;
+  staked?: string | null;
+  rewards?: string | null;
   publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
   failedSyncedWithEdge?: boolean;
@@ -305,7 +305,7 @@ export type PinConfirmation = {
 };
 
 export type FeePrice = {
-  nativeFio: number | null;
+  nativeFio: string | null;
   fio: string;
   usdc: string;
 };
@@ -316,22 +316,24 @@ export type OracleFees = {
 };
 
 export type FioBalanceRes = {
-  balance?: number;
-  available?: number;
-  locked?: number;
-  staked?: number;
-  rewards?: number;
+  balance?: string;
+  available?: string;
+  locked?: string;
+  staked?: string;
+  rewards?: string;
   unlockPeriods?: {
-    amount: number;
+    amount: string;
     date: number;
   }[];
 };
 
 export type WalletBalancesItem = {
-  nativeFio: number | null;
+  nativeFio: string | null;
   fio: string;
   usdc: string;
 };
+
+export type Roe = string | null;
 
 export type UnlockPeriod = {
   date: Date | null;
@@ -655,7 +657,7 @@ type OrderDefault = {
   number: string;
   publicKey: string;
   refProfileId: string | null;
-  roe: string;
+  roe: Roe;
   status: number;
   total: string;
   updatedAt: string;
@@ -719,7 +721,7 @@ export type AdminUserItemProfile = {
 export type AdminOrderItemProfile = {
   id: string;
   total: string;
-  roe: string;
+  roe: Roe;
   status: number;
   data?: string;
   createdAt: string;
@@ -775,7 +777,7 @@ export type OrderPaymentItem = {
   id: string;
   statusNotes?: string;
   data?: {
-    roe?: string;
+    roe?: Roe;
     fioName?: string;
     action?: string;
     sendingFioTokens?: boolean;
@@ -828,7 +830,7 @@ export type OrderItem = {
 export type OrderDetails = {
   id: string;
   number: string;
-  roe: string;
+  roe: Roe;
   total: string;
   publicKey: string;
   createdAt: string;
@@ -858,7 +860,7 @@ export type OrderItemPdf = {
   number: string;
   price: string;
   priceCurrency: string;
-  roe: string;
+  roe: Roe;
   txStatus: number;
   paymentStatus: number;
 };
@@ -877,7 +879,7 @@ export type OrderListFilters = {
 export type UserOrderDetails = {
   id: string;
   number: string;
-  roe: string;
+  roe: Roe;
   total: string;
   publicKey: string;
   createdAt: string;
@@ -911,8 +913,8 @@ export type OrderItemDetailed = {
 };
 
 export type OrderDetailedTotalCost = {
-  fioNativeTotal: number;
-  usdcTotal: number;
+  fioNativeTotal: string;
+  usdcTotal: string;
   fioTotal: string;
   freeTotalPrice?: string;
   fioTotalPrice?: string;
@@ -932,7 +934,7 @@ export type OrderDetailed = {
   id: string;
   number: string;
   total: string;
-  roe: string;
+  roe: Roe;
   publicKey: string;
   createdAt: string;
   status: number;

@@ -34,7 +34,7 @@ type Props = {
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   processing: boolean;
-  fee?: number;
+  fee?: string;
 };
 
 const PurchaseLedgerWallet: React.FC<Props> = props => {

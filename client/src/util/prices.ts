@@ -1,26 +1,28 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import MathOp from '../util/math';
 import apis from '../api';
 
-import { AdditionalAction } from '../constants/fio';
+import {
+  AdditionalAction,
+  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
+} from '../constants/fio';
 
 import {
   FioBalanceRes,
   OrderDetailedTotalCost,
+  Roe,
   WalletBalances,
   WalletBalancesItem,
 } from '../types';
 
 export function convertFioPrices(
-  nativeFio: number | null | undefined,
-  roe: number,
+  nativeFio: string | null | undefined,
+  roe: Roe,
 ): WalletBalancesItem {
-  const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
+  const fioAmount = apis.fio.sufToAmount(nativeFio || 0);
 
   return {
     nativeFio,
-    fio: `${fioAmount != null ? fioAmount.toFixed(2) : fioAmount}`,
+    fio: fioAmount,
     usdc: `${
       nativeFio != null && roe != null
         ? apis.fio.convertFioToUsdc(nativeFio, roe)
@@ -31,14 +33,14 @@ export function convertFioPrices(
 
 export const calculateBalances = (
   {
-    balance = 0,
-    available = 0,
-    locked = 0,
-    staked = 0,
-    rewards = 0,
+    balance = '0',
+    available = '0',
+    locked = '0',
+    staked = '0',
+    rewards = '0',
     unlockPeriods = [],
   }: FioBalanceRes,
-  roe: number,
+  roe: Roe,
 ): WalletBalances => ({
   total: convertFioPrices(balance, roe),
   available: convertFioPrices(available, roe),
@@ -53,33 +55,33 @@ export const calculateBalances = (
 
 export const calculateTotalBalances = (
   walletsBalances: { [publicKey: string]: WalletBalances },
-  roe: number,
+  roe: Roe,
 ): WalletBalances => {
   const total: FioBalanceRes = {
-    balance: 0,
-    available: 0,
-    locked: 0,
-    staked: 0,
-    rewards: 0,
+    balance: '0',
+    available: '0',
+    locked: '0',
+    staked: '0',
+    rewards: '0',
     unlockPeriods: [],
   };
   for (const publicKey in walletsBalances) {
     if (walletsBalances[publicKey] != null) {
       total.balance = new MathOp(total.balance)
         .add(walletsBalances[publicKey].total.nativeFio)
-        .toNumber();
+        .toString();
       total.available = new MathOp(total.available)
         .add(walletsBalances[publicKey].available.nativeFio)
-        .toNumber();
+        .toString();
       total.locked = new MathOp(total.locked)
         .add(walletsBalances[publicKey].locked.nativeFio)
-        .toNumber();
+        .toString();
       total.staked = new MathOp(total.staked)
         .add(walletsBalances[publicKey].staked.nativeFio)
-        .toNumber();
+        .toString();
       total.rewards = new MathOp(total.rewards)
         .add(walletsBalances[publicKey].rewards.nativeFio)
-        .toNumber();
+        .toString();
       total.unlockPeriods = [
         ...(total.unlockPeriods || []),
         ...(walletsBalances[publicKey].unlockPeriods?.map(
@@ -97,8 +99,8 @@ export const calculateTotalBalances = (
   return calculateBalances(total, roe);
 };
 
-export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
-export const DEFAULT_BALANCES = calculateBalances({}, 1);
+export const DEFAULT_FEE_PRICES = convertFioPrices('0', '1');
+export const DEFAULT_BALANCES = calculateBalances({}, '1');
 
 export const DEFAULT_ORACLE_FEE_PRICES = {
   [AdditionalAction.wrapFioDomain]:
@@ -111,15 +113,9 @@ export const getDefaultOracleFeePrices = ({
   roe,
   action,
 }: {
-  roe?: number;
+  roe?: Roe;
   action: AdditionalAction.wrapFioDomain | AdditionalAction.wrapFioTokens;
-}) =>
-  convertFioPrices(
-    DEFAULT_ORACLE_FEE_PRICES[action]
-      ? Number(DEFAULT_ORACLE_FEE_PRICES[action])
-      : 0,
-    roe || 1,
-  );
+}) => convertFioPrices(DEFAULT_ORACLE_FEE_PRICES[action] || '0', roe || '1');
 
 export const combinePriceWithDivider = ({
   totalCostPrice,
@@ -133,4 +129,17 @@ export const combinePriceWithDivider = ({
   if (!fioTotalPrice && !usdcTotalPrice) return 'N/A';
 
   return `${usdcTotalPrice} (${fioTotalPrice})`;
+};
+
+export const defaultMaxFee = (
+  fee: string | number,
+  opt: {
+    multiple?: string;
+    retNum?: boolean;
+  } = { multiple: DEFAULT_MAX_FEE_MULTIPLE_AMOUNT, retNum: false },
+): string | number => {
+  const { multiple = DEFAULT_MAX_FEE_MULTIPLE_AMOUNT, retNum = false } = opt;
+  const maxFee = new MathOp(fee).mul(multiple).round(0);
+
+  return retNum ? maxFee.toNumber() : maxFee.toString();
 };

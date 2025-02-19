@@ -24,7 +24,7 @@ import { SubmitData } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  fee: number;
+  fee: string;
   processing: boolean;
   submitData: SubmitData | null;
   onCancel: () => void;

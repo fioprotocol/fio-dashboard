@@ -6,12 +6,13 @@ import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 
 import { removeTrailingSlashFromUrl } from '../../../../util/general';
+import MathOp from '../../../../util/math';
 
 import { ROUTES } from '../../../../constants/routes';
 import config from '../../../../config';
 
 import { ResultsProps } from '../types';
-import { AnyObject } from '../../../../types';
+import { AnyObject, Roe } from '../../../../types';
 
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
@@ -33,7 +34,7 @@ export type ResultsData = {
 
 type UnWrapResultsProps = {
   isTokens?: boolean;
-  roe: number;
+  roe: Roe;
   itemName?: string;
   results: ResultsData;
 } & ResultsProps;
@@ -44,7 +45,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
       receivingAddress,
       chainCode,
       publicAddress,
-      amount,
+      amount: fioAmount,
       fioDomain,
       other: { transaction_id },
     },
@@ -52,7 +53,6 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
     isTokens = false,
   } = props;
 
-  const fioAmount = Number(amount);
   const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
@@ -97,13 +97,13 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
       />
 
       <ResultDetails
-        show={!!amount}
+        show={fioAmount && new MathOp(fioAmount).gt(0)}
         label="FIO Unwrapped"
         value={
           <PriceComponent
             className={classes.priceValue}
-            costFio={fioAmount?.toString(10)}
-            costUsdc={usdcPrice?.toString(10)}
+            costFio={fioAmount}
+            costUsdc={usdcPrice}
           />
         }
       />

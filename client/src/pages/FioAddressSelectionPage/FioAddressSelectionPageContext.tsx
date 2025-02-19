@@ -53,7 +53,7 @@ import {
   UseContextProps,
 } from './types';
 import { AdminDomain } from '../../api/responses';
-import { CartItem, Prices } from '../../types';
+import { CartItem, Prices, Roe } from '../../types';
 
 const ADDITIONAL_DOMAINS_COUNT_LIMIT = 12;
 const USER_DOMAINS_LIMIT = 3;
@@ -78,8 +78,8 @@ type HandledFioHandleType = {
   domain: string;
   costFio: string;
   costUsdc: string;
-  costNativeFio: number;
-  nativeFioAddressPrice: number;
+  costNativeFio: string;
+  nativeFioAddressPrice: string;
   domainType: string;
   isFree: boolean;
   isSelected: boolean;
@@ -110,7 +110,7 @@ const handleFCHItems = async ({
   hasFreeAddress: boolean;
   isAffiliateProfile: boolean;
   prices: Prices;
-  roe: number;
+  roe: Roe;
   usersFreeAddresses: { name: string }[];
   setError: (error: string) => void;
 }) => {
@@ -248,7 +248,7 @@ const handleSelectedDomain = ({
   domains: DomainsItemType[];
   hasFreeAddress: boolean;
   prices: Prices;
-  roe: number;
+  roe: Roe;
   usersFreeAddresses: { name: string }[];
 }) => {
   const {

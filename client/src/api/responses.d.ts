@@ -82,13 +82,13 @@ export type DomainsWatchlistListResponse = {
 export type FioRegPricesResponse = {
   pricing: {
     nativeFio: {
-      domain: number;
-      address: number;
-      combo: number;
-      renewDomain: number;
-      addBundles: number;
+      domain: string;
+      address: string;
+      combo: string;
+      renewDomain: string;
+      addBundles: string;
     };
-    usdtRoe: number;
+    usdtRoe: string;
   };
 };
 export type FioRegCaptchaResponse = {

@@ -7,9 +7,10 @@ import { compose } from '../utils';
 import { getPrices } from '../redux/registrations/actions';
 
 import { roe, roeSetDate } from '../redux/registrations/selectors';
+import { Roe as RoeType } from '../types';
 
 type Props = {
-  roe: number | null;
+  roe: RoeType;
   roeSetDate: Date;
   getPrices: () => void;
 };

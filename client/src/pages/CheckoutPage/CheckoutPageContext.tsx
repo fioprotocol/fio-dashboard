@@ -43,7 +43,7 @@ import {
 
 import apis from '../../api';
 
-import MathOp from '../../util/math';
+import { defaultMaxFee } from '../../util/prices';
 import {
   totalCost,
   cartIsRelative,
@@ -92,6 +92,7 @@ import {
   Order,
   RedirectLinkData,
   AnyObject,
+  Roe,
 } from '../../types';
 import {
   BeforeSubmitData,
@@ -100,8 +101,9 @@ import {
   SignFioAddressItem,
 } from './types';
 import { CreateOrderActionData } from '../../redux/types';
+import MathOp from '../../util/math';
 
-const SIGN_TX_MAX_FEE_COEFFICIENT = 1.5;
+const SIGN_TX_MAX_FEE_COEFFICIENT = '1.5';
 
 export const useContext = (): {
   displayOrderItems: CartItem[];
@@ -109,7 +111,7 @@ export const useContext = (): {
   walletBalancesAvailable: WalletBalancesItem;
   paymentWallet: FioWalletDoublet;
   paymentWalletPublicKey: string;
-  roe: number | null;
+  roe: Roe;
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
@@ -442,10 +444,12 @@ export const useContext = (): {
         .filter(wallet => {
           if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
 
-          return wallet.available > publicCartItemsCost;
+          return new MathOp(wallet.available).gt(publicCartItemsCost);
         })
         .sort(
-          (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+          (a, b) =>
+            new MathOp(b.available).sub(a.available).toNumber() ||
+            a.name.localeCompare(b.name),
         ),
     [fioWallets, isFree, paymentOption, publicCartItemsCost],
   );
@@ -728,10 +732,9 @@ export const useContext = (): {
     if (signTxItems.length) {
       return setBeforeSubmitProps({
         fioWallet: paymentWallet,
-        fee: new MathOp(prices?.nativeFio?.address)
-          .mul(SIGN_TX_MAX_FEE_COEFFICIENT) // +50%
-          .round(0, 2)
-          .toNumber(),
+        fee: defaultMaxFee(prices?.nativeFio?.address, {
+          multiple: SIGN_TX_MAX_FEE_COEFFICIENT,
+        }) as string,
         submitData: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
           apis.orders

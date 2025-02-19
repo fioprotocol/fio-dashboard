@@ -95,8 +95,8 @@ const AdminOrderModal: React.FC<Props> = ({
         ` ${orderPayment.currency.toUpperCase()}`;
 
       orderPaymentPrice += ` (${apis.fio.convertFioToUsdc(
-        Number(orderPayment.price),
-        Number(orderItem.roe),
+        orderPayment.price,
+        orderItem.roe,
       )} USDC)`;
     }
 

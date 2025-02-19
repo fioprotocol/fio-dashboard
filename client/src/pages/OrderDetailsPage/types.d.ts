@@ -27,7 +27,7 @@ export type PaymentInfo = {
   publicKey: string;
   orderNumber: string;
   paidWith?: string;
-  totalFioNativeCostPrice?: number;
+  totalFioNativeCostPrice?: string;
   isFree?: boolean;
 };
 
