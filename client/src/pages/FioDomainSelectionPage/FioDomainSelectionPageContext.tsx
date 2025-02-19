@@ -30,7 +30,7 @@ import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { SearchTerm } from '../../api/responses';
 import { SelectedItemProps } from '../FioAddressSelectionPage/types';
-import { CartItem } from '../../types';
+import { CartItem, Roe } from '../../types';
 
 const DEFAULT_ADDITIONAL_ITEMS_COUNT = 5;
 
@@ -53,8 +53,8 @@ const handleDomainItem = async ({
 }: {
   domainItem: { name: string; rank?: number };
   cartItemsJSON: string;
-  nativeFioDomainPrice: number;
-  roe: number;
+  nativeFioDomainPrice: string;
+  roe: Roe;
 }) => {
   const { name, rank } = domainItem;
 
@@ -63,7 +63,7 @@ const handleDomainItem = async ({
     checkIsDomainItemExistsOnCart(name, cartItem),
   );
   const period = existingCartItem ? Number(existingCartItem.period) : 1;
-  const costNativeFio = new MathOp(nativeFioDomainPrice).mul(period).toNumber();
+  const costNativeFio = new MathOp(nativeFioDomainPrice).mul(period).toString();
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
 
@@ -95,8 +95,8 @@ const validateDomainItems = async ({
 }: {
   domainArr: Partial<SearchTerm> & { name: string }[];
   cartItemsJSON: string;
-  nativeFioDomainPrice: number;
-  roe: number;
+  nativeFioDomainPrice: string;
+  roe: Roe;
 }) =>
   (
     await Promise.all(
@@ -179,23 +179,24 @@ export const useContext = () => {
   );
 
   const onPeriodChange = (period: string, id: string) => {
+    const periodNumber = new MathOp(period).toNumber();
     if (suggestedItem?.id === id) {
-      if (suggestedItem.period === Number(period)) return;
+      if (suggestedItem.period === periodNumber) return;
 
       const { domain, renewDomain } = prices?.nativeFio;
 
-      const renewPeriod = new MathOp(period).sub(1).toNumber();
+      const renewPeriod = new MathOp(periodNumber).sub(1).toNumber();
       const renewDomainNativeCost = new MathOp(renewDomain)
         .mul(renewPeriod)
-        .toNumber();
+        .toString();
       const multiDomainPrice = new MathOp(domain)
         .add(renewDomainNativeCost)
-        .toNumber();
+        .toString();
       const fioPrices = convertFioPrices(multiDomainPrice, roe);
 
       setSuggestedItem({
         ...suggestedItem,
-        period: Number(period),
+        period: periodNumber,
         costFio: fioPrices.fio,
         costUsdc: fioPrices.usdc,
       });
@@ -206,10 +207,10 @@ export const useContext = () => {
     );
 
     if (existingAdditionalItem) {
-      if (existingAdditionalItem.period === Number(period)) return;
+      if (existingAdditionalItem.period === periodNumber) return;
 
       const fioPrices = convertFioPrices(
-        new MathOp(existingAdditionalItem.costNativeFio).mul(period).toNumber(),
+        new MathOp(existingAdditionalItem.costNativeFio).mul(period).toString(),
         roe,
       );
       setAdditionalItemsList(
@@ -217,7 +218,7 @@ export const useContext = () => {
           additionalItem.id === id
             ? {
                 ...additionalItem,
-                period: Number(period),
+                period: periodNumber,
                 costFio: fioPrices.fio,
                 costUsdc: fioPrices.usdc,
               }
@@ -232,13 +233,13 @@ export const useContext = () => {
     );
 
     if (existingCartItem) {
-      if (existingCartItem.period === Number(period)) return;
+      if (existingCartItem.period === periodNumber) return;
 
       dispatch(
         updateCartItemPeriod({
           itemId: existingCartItem.id,
           item: existingCartItem,
-          period: Number(period),
+          period: periodNumber,
         }),
       );
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { FioRecord, FioWalletDoublet } from '../../types';
+import { FioRecord, FioWalletDoublet, Roe } from '../../types';
 
 export type FioRequestDecryptValues = {
   itemData: FioRecord;
@@ -30,7 +30,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 export interface ContainerProps extends ContainerOwnProps {
   fioWallets: FioWalletDoublet[];
   loading: boolean;
-  roe: number;
+  roe: Roe;
   refreshBalance: (publicKey: string) => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
   setConfirmPinKeys: (keys: null) => void;

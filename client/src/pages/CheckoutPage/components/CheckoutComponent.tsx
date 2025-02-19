@@ -73,7 +73,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
         {payWith.length === 0 ? (
           <TransactionDetails
             valuePosition={VALUE_POSITIONS.RIGHT}
-            feeInFio={0}
+            feeInFio="0"
             amountInFio={costNativeFio}
             additional={additionalTransactionDetails}
           />
@@ -82,7 +82,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
             <TransactionDetails
               key={it.signInFioWallet.publicKey}
               valuePosition={VALUE_POSITIONS.LEFT}
-              feeInFio={0}
+              feeInFio="0"
               amountInFio={it.totalCostNativeFio}
               payWith={{
                 walletName: it.signInFioWallet.name,

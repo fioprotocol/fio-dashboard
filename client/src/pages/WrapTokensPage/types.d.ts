@@ -5,6 +5,7 @@ import {
   FeePrice,
   FioAddressDoublet,
   FioWalletDoublet,
+  Roe,
   WalletBalances,
 } from '../../types';
 
@@ -39,7 +40,7 @@ export type WrapTokensFormProps = {
   fioAddresses: FioAddressDoublet[];
   fee: FeePrice;
   oracleFee: FeePrice;
-  roe?: number;
+  roe?: Roe;
   balance: WalletBalances;
   loading: boolean;
   initialValues?: InitialValues;
@@ -53,7 +54,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
   loading: boolean;
-  roe: number;
+  roe: Roe;
   feePrice: FeePrice;
   oracleFeePrice: FeePrice;
   refreshBalance: (publicKey: string) => void;

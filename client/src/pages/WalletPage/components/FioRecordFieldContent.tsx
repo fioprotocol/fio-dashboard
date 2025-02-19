@@ -1,7 +1,6 @@
 import { FC } from 'react';
 
 import { commonFormatTime } from '../../../util/general';
-import { priceToNumber } from '../../../utils';
 import { isFioChain } from '../../../util/fio';
 
 import { FIO_RECORD_DETAILED_FIELDS } from '../constants';
@@ -67,14 +66,13 @@ type RenderFIOPriceComponentProps = {
 const RenderFIOPriceComponent: FC<RenderFIOPriceComponentProps> = ({
   value,
 }) => {
-  const fioAmount = priceToNumber(value);
-  const usdcPrice = useConvertFioToUsdc({ fioAmount });
+  const usdcPrice = useConvertFioToUsdc({ fioAmount: value });
 
   return (
     <PriceComponent
       className={classes.priceValue}
-      costFio={fioAmount?.toString(10)}
-      costUsdc={usdcPrice?.toString(10)}
+      costFio={value}
+      costUsdc={usdcPrice}
     />
   );
 };

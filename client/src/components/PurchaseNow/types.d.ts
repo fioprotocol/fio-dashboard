@@ -26,7 +26,7 @@ export type RegistrationType = {
   isFree: boolean;
   isCombo?: boolean;
   isCustomDomain?: boolean;
-  fee: number;
+  fee: string;
   fee_collected?: number;
   type: CartItemType;
   iteration?: number;

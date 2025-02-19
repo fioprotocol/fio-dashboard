@@ -29,6 +29,7 @@ import {
   FeePrice,
   FioBalanceRes,
   OracleFees,
+  Roe,
   WalletsBalances,
 } from '../../types';
 import { Action } from '../types';
@@ -52,13 +53,13 @@ export function* setFeesService(): Generator {
       data: { oracle_fees },
     } = action;
     const fees = {} as OracleFees;
-    const roe: number = yield select(roeSelector);
+    const roe: Roe = yield select(roeSelector);
 
     if (oracle_fees?.length) {
       oracle_fees.forEach(
         (el: {
           fee_name: 'wrap_fio_tokens' | 'wrap_fio_domain';
-          fee_amount: number;
+          fee_amount: string;
         }) => {
           fees[el.fee_name] = convertFioPrices(el.fee_amount, roe);
         },
@@ -73,7 +74,7 @@ export function* setFeesService(): Generator {
       data: { fee },
     } = action;
     const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
-    const roe: number = yield select(roeSelector);
+    const roe: Roe = yield select(roeSelector);
 
     fees[endpoint] = convertFioPrices(fee, roe);
     yield put(setFees(fees));
@@ -105,7 +106,7 @@ export function* setBalancesService(): Generator {
 
     const walletsBalances: WalletsBalances = yield select(balancesSelector);
 
-    const roe: number = yield select(roeSelector);
+    const roe: Roe = yield select(roeSelector);
 
     const recalculatedBalances = { ...walletsBalances };
     recalculatedBalances.wallets[publicKey] = calculateBalances(data, roe);

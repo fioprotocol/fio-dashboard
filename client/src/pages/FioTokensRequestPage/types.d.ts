@@ -6,6 +6,7 @@ import {
   FioAddressDoublet,
   FioWalletDoublet,
   MappedPublicAddresses,
+  Roe,
 } from '../../types';
 
 type LocationProps = {
@@ -61,7 +62,7 @@ export interface ContainerOwnProps
 export interface ContainerProps extends ContainerOwnProps {
   fioWallets: FioWalletDoublet[];
   fioWalletsLoading: boolean;
-  roe: number;
+  roe: Roe;
   feePrice: FeePrice;
   contactsList: string[];
   contactsLoading: boolean;

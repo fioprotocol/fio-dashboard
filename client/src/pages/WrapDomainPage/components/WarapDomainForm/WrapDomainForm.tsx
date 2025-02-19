@@ -42,7 +42,7 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
       convertFioPrices(
         new MathOp(fee?.nativeFio || 0)
           .add(oracleFee?.nativeFio || 0)
-          .toNumber(),
+          .toString(),
         roe,
       ),
     );

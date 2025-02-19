@@ -9,10 +9,9 @@ import {
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
-} from '../../../constants/fio';
+import { defaultMaxFee } from '../../../util/prices';
+
+import { TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS } from '../../../constants/fio';
 import {
   CART_ITEM_TYPE,
   CONFIRM_METAMASK_ACTION,
@@ -23,7 +22,6 @@ import apis from '../../../api';
 
 import { ActionParams } from '../../../types/fio';
 import useEffectOnce from '../../../hooks/general';
-import MathOp from '../../../util/math';
 import {
   BeforeSubmitData,
   BeforeSubmitProps,
@@ -111,14 +109,11 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
             fio_address: fioAddressItem.name,
             is_public: 0,
             tpid: apis.fio.tpid,
-            max_fee: new MathOp(
+            max_fee: defaultMaxFee(
               isComboRegistration
                 ? prices.nativeFio.combo
                 : prices.nativeFio.address,
-            )
-              .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-              .round(0)
-              .toNumber(),
+            ) as string,
           },
           derivationIndex: fioAddressItem?.fioWallet?.data?.derivationIndex,
           timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
