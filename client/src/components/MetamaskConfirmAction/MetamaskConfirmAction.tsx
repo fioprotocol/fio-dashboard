@@ -103,6 +103,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     try {
       setProcessing(true);
 
+      // todo: check if max_fee should be converted to number
       let uActionParams = actionParams;
       if (!uActionParams && handleActionParams) {
         uActionParams = handleActionParams(analyticsData, derivationIndex);

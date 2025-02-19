@@ -40,6 +40,7 @@ import {
   LastAuthData,
   NativePrices,
   RedirectLinkData,
+  Roe,
 } from '../../types';
 
 import classes from './AddressDomainCart.module.scss';
@@ -57,7 +58,7 @@ type Props = {
     item: CartItem;
     prices: NativePrices;
     refCode?: string;
-    roe: number;
+    roe: Roe;
   }) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;

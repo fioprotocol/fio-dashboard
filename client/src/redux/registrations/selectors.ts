@@ -22,7 +22,7 @@ export const loading = (state: ReduxState): boolean =>
 export const prices = (state: ReduxState): Prices => state[prefix].prices;
 export const registrationDomains = (state: ReduxState): DomainsResponse =>
   state[prefix].domains;
-export const roe = (state: ReduxState): number | null => state[prefix].roe;
+export const roe = (state: ReduxState): string | null => state[prefix].roe;
 export const roeSetDate = (state: ReduxState): Date => state[prefix].roeSetDate;
 export const domains = createSelector(
   registrationDomains,

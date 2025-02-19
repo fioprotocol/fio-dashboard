@@ -54,7 +54,7 @@ const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
     if (eventData.fioTxId) notes += `\nTX ID: ${eventData.fioTxId}`;
     if (eventData.fioFee)
       notes += `\nFee collected: ${FIOSDK.SUFToAmount(
-        new MathOp(eventData.fioFee).toNumber(),
+        new MathOp(eventData.fioFee).toString(),
       ).toString()} ${CURRENCY_CODES.FIO}`;
     if (eventData.error) notes += `\n${JSON.stringify(eventData.error)}`;
   }
@@ -110,8 +110,8 @@ const setHistory = (
         const amount =
           currency === CURRENCY_CODES.FIO
             ? apis.fio.convertFioToUsdc(
-                apis.fio.amountToSUF(new MathOp(price).toNumber()),
-                new MathOp(data && data.roe ? data.roe : order.roe).toNumber(),
+                apis.fio.amountToSUF(price),
+                data && data.roe ? data.roe : order.roe,
               )
             : price;
 

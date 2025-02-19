@@ -28,8 +28,8 @@ export type ActionDataParams = {
   fio_domain?: string;
   fio_request_id?: string | number;
   is_public?: number;
-  max_fee: number;
-  max_oracle_fee?: number;
+  max_fee: string;
+  max_oracle_fee?: string;
   nfts?: NFT_ITEM[];
   new_owner_fio_public_key?: string;
   owner_fio_public_key?: string;

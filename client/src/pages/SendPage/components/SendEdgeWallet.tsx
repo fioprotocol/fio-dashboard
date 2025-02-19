@@ -24,7 +24,7 @@ import {
 type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
-  fee?: number | null;
+  fee?: string | null;
   submitData: SendTokensValues | null;
   createContact: (name: string) => void;
   onSuccess: (data: TrxResponsePaidBundles) => void;

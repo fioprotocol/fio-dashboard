@@ -19,11 +19,15 @@ import MathOp from '../../../util/math';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
-import { TrxResponse, TrxResponsePaidBundles } from '../../../api/fio';
+import {
+  TrxResponse,
+  TrxResponsePaidBundles,
+  trxResponseTransform,
+} from '../../../api/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  fee: number;
+  fee: string;
   processing: boolean;
   submitData: SendTokensValues | null;
   createContact: (name: string) => void;
@@ -78,7 +82,7 @@ const SendLedgerWallet: FC<Props> = props => {
       transaction,
     });
 
-    const result: TrxResponse = await apis.fio.publicFioSDK.executePreparedTrx(
+    const result = await apis.fio.publicFioSDK.executePreparedTrx(
       EndPoint.transferTokensPublicKey,
       {
         compression: 0,
@@ -90,7 +94,7 @@ const SendLedgerWallet: FC<Props> = props => {
       },
     );
 
-    setResult(result);
+    setResult(trxResponseTransform(result));
 
     if (
       !!submitData?.to &&

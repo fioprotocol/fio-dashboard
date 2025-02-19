@@ -19,12 +19,11 @@ import { TransactionDetailsProps } from '../../../../components/TransactionDetai
 
 import {
   BUNDLES_TX_COUNT,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
   FIO_ENDPOINT_NAME,
   FIO_ENDPOINT_TAG_NAME,
 } from '../../../../constants/fio';
 import { ROUTES } from '../../../../constants/routes';
-import { DEFAULT_FEE_PRICES } from '../../../../util/prices';
+import { DEFAULT_FEE_PRICES, defaultMaxFee } from '../../../../util/prices';
 import { TrxResponse } from '../../../../api/fio';
 
 import { useRefreshBalancesAndFioNames } from '../../../../hooks/fio';
@@ -123,7 +122,8 @@ export const useContext = (props: Props): UseContextProps => {
 
   const hasLowTokenBalance =
     new MathOp(selectedFioWallet?.balance).lt(prices.nativeFio) ||
-    !selectedFioWallet?.balance;
+    !selectedFioWallet?.balance ||
+    new MathOp(selectedFioWallet?.balance).eq(0);
 
   const onCancel = () => {
     setSubmitData(null);
@@ -177,11 +177,8 @@ export const useContext = (props: Props): UseContextProps => {
         proxy: selectedProxy?.fioAddress,
         fio_address: selectedFioHandle?.name || '',
         max_fee: !transactionDetailsParams?.feeCollected
-          ? 0
-          : new MathOp(prices.nativeFio)
-              .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-              .round(0)
-              .toNumber(),
+          ? '0'
+          : (defaultMaxFee(prices.nativeFio) as string),
       },
     });
   };

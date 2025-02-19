@@ -16,7 +16,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: NFTTokenDoublet | null;
   processing: boolean;
-  fee?: number | null;
+  fee?: string | null;
 };
 
 const SignNftEdgeWallet: React.FC<Props> = props => {

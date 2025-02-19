@@ -92,15 +92,22 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   // todo: extent formula to use currencyCode
   const relationFormula = (val: string, isReverse: boolean = false) => {
-    let valueToExchange = Number(val);
+    let valueToExchange;
+    if (val) {
+      try {
+        valueToExchange = new MathOp(val).toString();
+      } catch (error) {
+        //
+      }
+    }
+
     if (!valueToExchange) return '';
     valueToExchange = !isReverse
       ? apis.fio.amountToSUF(valueToExchange)
       : valueToExchange;
-    return (!isReverse
+    return !isReverse
       ? apis.fio.convertFioToUsdc(valueToExchange, roe)
-      : apis.fio.convertUsdcToFio(valueToExchange, roe)
-    ).toString();
+      : apis.fio.convertUsdcToFio(valueToExchange, roe);
   };
 
   const { value, onChange } = input;
@@ -119,10 +126,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   useEffect(() => {
     if (isPrimaryExchange) exchangeValue(relationFormula(value));
     if (nativeAmountFieldName) {
-      change(
-        nativeAmountFieldName,
-        apis.fio.amountToSUF(Number(value || 0)).toString(),
-      );
+      change(nativeAmountFieldName, apis.fio.amountToSUF(value || 0));
     }
   }, [
     change,

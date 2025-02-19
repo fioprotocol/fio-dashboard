@@ -22,8 +22,8 @@ export type Props = {
   result?: AnyType;
   data?: AnyType;
   isTransaction?: boolean;
-  fee?: number;
-  oracleFee?: number;
+  fee?: string;
+  oracleFee?: string;
   fioWallet?: FioWalletDoublet;
   fioWalletsForCheck?: FioWalletDoublet[];
   ownerFioPublicKey?: string;

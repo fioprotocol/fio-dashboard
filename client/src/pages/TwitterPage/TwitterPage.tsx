@@ -343,7 +343,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         domain: TWITTER_DOMAIN,
         costFio: '0',
         costUsdc: '0',
-        costNativeFio: 0,
+        costNativeFio: '0',
         domainType: DOMAIN_TYPE.PRIVATE,
         isFree: true,
         period: 1,

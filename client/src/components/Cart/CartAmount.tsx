@@ -20,7 +20,7 @@ type Props = {
   hasLowBalance: boolean;
   totalCartAmount: string;
   totalCartUsdcAmount: string;
-  totalCartNativeAmount: number;
+  totalCartNativeAmount: string;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;

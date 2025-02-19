@@ -138,7 +138,7 @@ export const useContext = (): UseContextProps => {
     fioWalletsBalances.wallets[fioWallet?.publicKey] || DEFAULT_BALANCES;
 
   const hasNoTransactions =
-    fioWalletBalance.total.nativeFio === 0 &&
+    fioWalletBalance.total.nativeFio === '0' &&
     fioWalletTxHistory?.txs.length === 0;
 
   const getReceivedFioRequests = useCallback(async () => {

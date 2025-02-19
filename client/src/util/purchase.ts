@@ -16,12 +16,10 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
         action: GenericAction.registerFioDomain,
         address: '',
         nativeFio: item.data.hasCustomDomainFee,
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.order.roe).toNumber(),
-          )
-          .toFixed(2),
+        price: apis.fio.convertFioToUsdc(
+          item.data.hasCustomDomainFee,
+          item.order.roe,
+        ),
         feeCollected: FIOSDK.SUFToAmount(
           +item.data.hasCustomDomainFee || 0,
         ).toFixed(2),
@@ -32,13 +30,12 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
       orderItems.push({
         ...item,
         nativeFio: (+item.nativeFio - +item.data.hasCustomDomainFee).toFixed(),
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.nativeFio).toNumber() -
-              new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.order.roe).toNumber(),
-          )
-          .toFixed(2),
+        price: apis.fio.convertFioToUsdc(
+          new MathOp(item.nativeFio)
+            .sub(item.data.hasCustomDomainFee)
+            .toString(),
+          item.order.roe,
+        ),
         feeCollected: FIOSDK.SUFToAmount(
           (item.blockchainTransactions?.find(
             ({ action }) => action === GenericAction.registerFioDomain,
@@ -76,12 +73,10 @@ export const transformOrderItemsPDF = (
         action: GenericAction.registerFioDomain,
         address: '',
         nativeFio: item.data.hasCustomDomainFee,
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.roe).toNumber(),
-          )
-          .toFixed(2),
+        price: apis.fio.convertFioToUsdc(
+          item.data.hasCustomDomainFee,
+          item.roe,
+        ),
         feeCollected: FIOSDK.SUFToAmount(
           +item.data.hasCustomDomainFee || 0,
         ).toFixed(2),
@@ -92,13 +87,12 @@ export const transformOrderItemsPDF = (
       orderItems.push({
         ...item,
         nativeFio: (+item.nativeFio - +item.data.hasCustomDomainFee).toFixed(),
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.nativeFio).toNumber() -
-              new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.roe).toNumber(),
-          )
-          .toFixed(2),
+        price: apis.fio.convertFioToUsdc(
+          new MathOp(item.nativeFio)
+            .sub(item.data.hasCustomDomainFee)
+            .toString(),
+          item.roe,
+        ),
         feeCollected: FIOSDK.SUFToAmount(
           Number(item.feeCollected) || 0,
         ).toFixed(2),

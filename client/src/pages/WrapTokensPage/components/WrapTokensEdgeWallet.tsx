@@ -22,8 +22,8 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: WrapTokensValues | null;
   processing: boolean;
-  fee?: number | null;
-  oracleFee?: number | null;
+  fee?: string | null;
+  oracleFee?: string | null;
 };
 
 const WrapTokensEdgeWallet: React.FC<Props> = props => {

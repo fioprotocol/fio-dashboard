@@ -17,6 +17,7 @@ import {
   FioWalletDoublet,
   NativePrices,
   OrderItem,
+  Roe,
 } from '../types';
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
@@ -30,21 +31,21 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   );
 
 export type TotalCost = {
-  costNativeFio?: number;
+  costNativeFio?: string;
   costFree?: string;
   costFio?: string;
   costUsdc?: string;
 };
 
-export const totalCost = (cartItems: CartItem[], roe: number): TotalCost => {
+export const totalCost = (cartItems: CartItem[], roe: Roe): TotalCost => {
   if (cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree))
     return { costFree: 'FREE' };
 
   const fioNativeTotal = cartItems
     .filter(cartItem => !cartItem.isFree)
-    .reduce<number>(
-      (acc, cartItem) => new MathOp(acc).add(cartItem.costNativeFio).toNumber(),
-      0,
+    .reduce<string>(
+      (acc, cartItem) => new MathOp(acc).add(cartItem.costNativeFio).toString(),
+      '0',
     );
 
   const { fio, usdc } = convertFioPrices(fioNativeTotal, roe);
@@ -129,19 +130,19 @@ export const handlePriceForMultiYearItems = ({
   includeAddress?: boolean;
   prices: NativePrices;
   period: number;
-}): number => {
+}): string => {
   const { domain, renewDomain, combo } = prices;
   const renewPeriod = new MathOp(period).sub(1).toNumber();
   const renewDomainNativeCost = new MathOp(renewDomain)
     .mul(renewPeriod)
-    .toNumber();
+    .toString();
   const multiDomainPrice = new MathOp(domain)
     .add(renewDomainNativeCost)
-    .toNumber();
+    .toString();
 
   if (includeAddress) {
     if (renewPeriod > 0) {
-      return new MathOp(combo).add(renewDomainNativeCost).toNumber();
+      return new MathOp(combo).add(renewDomainNativeCost).toString();
     } else {
       return combo;
     }

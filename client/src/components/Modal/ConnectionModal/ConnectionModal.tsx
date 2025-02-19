@@ -44,6 +44,7 @@ import { PurchaseValues } from '../../PurchaseNow/types';
 import { TrxResponse } from '../../../api/fio';
 import { SubmitData as BlockProducerVoteValues } from '../../../pages/GovernancePage/components/CastBlockProducerVotePage/types';
 import { SubmitData as ProxyVoteValues } from '../../../pages/GovernancePage/components/ProxiesVotePage/types';
+import MathOp from '../../../util/math';
 
 type Props = {
   action: string;
@@ -51,8 +52,8 @@ type Props = {
   result?: AnyType;
   fioWalletPublicKey?: string;
   ownerFioPublicKey?: string;
-  fee: number;
-  oracleFee: number;
+  fee: string;
+  oracleFee: string;
   show: boolean;
   onClose: () => void;
   onContinue?: () => void;
@@ -688,7 +689,7 @@ const ConnectionModal: React.FC<Props> = props => {
         value: string;
         name: string;
         type: CartItemType;
-        fee: number;
+        fee: string;
         id: string;
         signInPublicKey: string;
       };
@@ -712,7 +713,9 @@ const ConnectionModal: React.FC<Props> = props => {
               purchaseActions.push({
                 id,
                 type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-                fee: prices.nativeFio.renewDomain * (+period - 1),
+                fee: new MathOp(prices.nativeFio.renewDomain)
+                  .mul(new MathOp(period).sub(1).toString())
+                  .toString(),
                 name: 'Renew FIO Domain',
                 value: domain,
                 valueName: 'FIO Domain',
@@ -749,7 +752,9 @@ const ConnectionModal: React.FC<Props> = props => {
             purchaseActions.push({
               id,
               type,
-              fee: prices.nativeFio.renewDomain * +period,
+              fee: new MathOp(prices.nativeFio.renewDomain)
+                .mul(period)
+                .toString(),
               name: 'Renew FIO Domain',
               value: domain,
               valueName: 'FIO Domain',
@@ -771,7 +776,9 @@ const ConnectionModal: React.FC<Props> = props => {
               purchaseActions.push({
                 id,
                 type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-                fee: prices.nativeFio.renewDomain * (+period - 1),
+                fee: new MathOp(prices.nativeFio.renewDomain)
+                  .mul(new MathOp(period).sub(1).toString())
+                  .toString(),
                 name: 'Renew FIO Domain',
                 value: domain,
                 valueName: 'FIO Domain',

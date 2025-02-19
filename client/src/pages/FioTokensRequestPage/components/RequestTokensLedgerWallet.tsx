@@ -28,7 +28,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: RequestTokensValues | null;
   processing: boolean;
-  fee: number;
+  fee: string;
   createContact: (name: string) => void;
   contactsList: string[];
 };

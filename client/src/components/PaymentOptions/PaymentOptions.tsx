@@ -30,7 +30,7 @@ type DefaultPaymentOptionProps = {
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
   cartItems?: CartItemProps[];
-  totalCartNativeAmount?: number;
+  totalCartNativeAmount?: string;
   totalCartUsdcAmount?: string;
   userWallets?: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;

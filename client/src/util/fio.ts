@@ -11,6 +11,7 @@ import apis from '../api';
 import { AdminDomain } from '../api/responses';
 import { setFioName } from '../utils';
 import { convertToNewDate, log } from './general';
+import MathOp from './math';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
@@ -280,9 +281,9 @@ export const handleFioServerResponse = (
   response: FioServerResponse,
 ): {
   status: string;
-  fee_collected?: number;
+  fee_collected?: string;
   fio_request_id?: number;
-  oracle_fee_collected?: number;
+  oracle_fee_collected?: string;
 } => {
   const serverResponse =
     response.processed?.action_traces[0]?.receipt?.response;
@@ -290,9 +291,18 @@ export const handleFioServerResponse = (
     const parsedResponse: {
       status: string;
       fee_collected?: number;
+      oracle_fee_collected?: number;
     } = serverResponse ? JSON.parse(serverResponse) : {};
 
-    return parsedResponse;
+    return {
+      ...parsedResponse,
+      fee_collected: parsedResponse.fee_collected
+        ? new MathOp(parsedResponse.fee_collected).toString()
+        : undefined,
+      oracle_fee_collected: parsedResponse.oracle_fee_collected
+        ? new MathOp(parsedResponse.oracle_fee_collected).toString()
+        : undefined,
+    };
   } catch (error) {
     log.error(error);
   }

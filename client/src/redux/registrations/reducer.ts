@@ -8,13 +8,21 @@ import {
   GET_SITE_SETTINGS_SUCCESS,
 } from '../settings/actions';
 
-import { Prices } from '../../types';
+import MathOp from '../../util/math';
+
+import { Prices, Roe } from '../../types';
 import { DomainsResponse } from '../../api/responses';
 
 const PRICES_DEFAULT: Prices = {
-  fio: { address: 0, domain: 0 },
-  nativeFio: { addBundles: 0, address: 0, domain: 0, renewDomain: 0, combo: 0 },
-  usdt: { address: 0, domain: 0 },
+  fio: { address: '0', domain: '0' },
+  nativeFio: {
+    addBundles: '0',
+    address: '0',
+    domain: '0',
+    renewDomain: '0',
+    combo: '0',
+  },
+  usdt: { address: '0', domain: '0' },
 };
 
 export default combineReducers({
@@ -72,7 +80,7 @@ export default combineReducers({
         return state;
     }
   },
-  roe(state: number | null = null, action) {
+  roe(state: Roe = null, action) {
     switch (action.type) {
       case actions.PRICES_SUCCESS:
         return action.data.pricing.usdtRoe;
@@ -83,7 +91,8 @@ export default combineReducers({
       case cartActions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
       case cartActions.HANDLE_USERS_FREE_CART_ITEMS_SUCCESS: {
         // Update roe based on roe set in the cart
-        if (action.data?.options?.roe) return action.data.options.roe;
+        if (action.data?.options?.roe)
+          return new MathOp(action.data.options.roe).toString();
 
         return state;
       }
