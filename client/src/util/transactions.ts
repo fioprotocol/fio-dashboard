@@ -1,4 +1,4 @@
-import { Account, FIOSDK } from '@fioprotocol/fiosdk';
+import { Account } from '@fioprotocol/fiosdk';
 
 import apis from '../api';
 
@@ -79,7 +79,7 @@ const processTransaction = (
   // Transfer funds transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER_PUB_KEY && data.amount != null) {
     nativeAmount = data.amount.toString();
-    const amount = `${FIOSDK.SUFToAmount(nativeAmount)}`;
+    const amount = apis.fio.sufToAmount(nativeAmount);
     actorSender = data.actor;
     if (data.payee_public_key === publicKey) {
       ourReceiveAddresses.push(publicKey);
@@ -398,8 +398,8 @@ export const handleTransactionDetails = ({
       walletName: fioWallet?.name,
       walletBalances: {
         nativeFio: fioWallet?.balance,
-        fio: FIOSDK.SUFToAmount(fioWallet?.balance).toFixed(2),
-        usdc: apis.fio.convertFioToUsdc(fioWallet?.balance, roe)?.toString(),
+        fio: apis.fio.sufToAmount(fioWallet?.balance),
+        usdc: apis.fio.convertFioToUsdc(fioWallet?.balance, roe),
       },
     };
   }
@@ -413,8 +413,8 @@ export const handleTransactionDetails = ({
 
     transactionDetails.payWith.walletBalances = {
       nativeFio: walletBalance,
-      fio: FIOSDK.SUFToAmount(walletBalance).toFixed(2),
-      usdc: apis.fio.convertFioToUsdc(walletBalance, roe)?.toString(),
+      fio: apis.fio.sufToAmount(walletBalance),
+      usdc: apis.fio.convertFioToUsdc(walletBalance, roe),
     };
   }
 

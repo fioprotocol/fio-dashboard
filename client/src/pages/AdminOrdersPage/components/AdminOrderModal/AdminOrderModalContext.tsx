@@ -1,4 +1,4 @@
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import apis from '../../../../admin/api';
 
@@ -53,9 +53,9 @@ const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
   if (eventData) {
     if (eventData.fioTxId) notes += `\nTX ID: ${eventData.fioTxId}`;
     if (eventData.fioFee)
-      notes += `\nFee collected: ${FIOSDK.SUFToAmount(
-        new MathOp(eventData.fioFee).toString(),
-      ).toString()} ${CURRENCY_CODES.FIO}`;
+      notes += `\nFee collected: ${apis.fio
+        .sufToAmount(eventData.fioFee)
+        .toString()} ${CURRENCY_CODES.FIO}`;
     if (eventData.error) notes += `\n${JSON.stringify(eventData.error)}`;
   }
 
@@ -167,7 +167,7 @@ const setHistory = (
         statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
         statusMsg += `\nFee collected: ${
           bt?.feeCollected
-            ? `${FIOSDK.SUFToAmount(bt.feeCollected).toFixed(2)} FIO`
+            ? `${apis.fio.sufToAmount(bt.feeCollected)} FIO`
             : 'N/A'
         }`;
       } else {
