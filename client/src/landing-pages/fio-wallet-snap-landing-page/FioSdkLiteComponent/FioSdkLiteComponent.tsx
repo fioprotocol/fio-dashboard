@@ -6,6 +6,8 @@ import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import {
   DECRYPT_FIO_REQUEST_CONTENT_NAME,
   DECRYPT_OBT_DATA_CONTENT_NAME,
+  ENCRYPT_FIO_REQUEST_CONTENT_NAME,
+  ENCRYPT_OBT_DATA_CONTENT_NAME,
   FIO_ACTIONS_OBJECT_LIST,
 } from '../FioWalletSnapComponent/constants';
 
@@ -22,6 +24,8 @@ export const FioSdkLiteComponent: React.FC<Props> = () => {
     activeAction,
     decryptedContent,
     decryptedError,
+    encryptedContent,
+    encryptedError,
     executedTxn,
     executedTxnError,
     executedTxnLoading,
@@ -36,6 +40,7 @@ export const FioSdkLiteComponent: React.FC<Props> = () => {
     publicKey,
     onActionChange,
     onDecryptContent,
+    onEncryptContent,
     onExecuteTxn,
     onPrivateKeyChange,
     onSignTxn,
@@ -95,6 +100,15 @@ export const FioSdkLiteComponent: React.FC<Props> = () => {
               withTopMargin
               withBottomMargin
             />
+          ) : activeAction === ENCRYPT_FIO_REQUEST_CONTENT_NAME ||
+            activeAction === ENCRYPT_OBT_DATA_CONTENT_NAME ? (
+            <SubmitButton
+              onClick={onEncryptContent}
+              text="Encrypt Content"
+              disabled={!fioActionFormParams}
+              withTopMargin
+              withBottomMargin
+            />
           ) : (
             <SubmitButton
               onClick={onSignTxn}
@@ -118,6 +132,19 @@ export const FioSdkLiteComponent: React.FC<Props> = () => {
                 </p>
               ))}
             </div>
+          )}
+          {encryptedContent && (
+            <div>
+              <h5 className="mt-4">Encrypted Content:</h5>
+              <h5 className="mt-4 text-break" style={{ maxWidth: '500px' }}>
+                {encryptedContent}
+              </h5>
+            </div>
+          )}
+          {encryptedError && (
+            <p className={classes.snapErrorMessage}>
+              {encryptedError?.message}
+            </p>
           )}
           {signedTxnError && (
             <p className={classes.snapErrorMessage}>

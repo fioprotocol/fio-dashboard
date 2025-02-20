@@ -3,6 +3,8 @@ import { Action } from '@fioprotocol/fiosdk';
 export const CUSTOM_ACTION_NAME = 'customAction';
 export const DECRYPT_FIO_REQUEST_CONTENT_NAME = 'decryptContent';
 export const DECRYPT_OBT_DATA_CONTENT_NAME = 'decryptObtDataContent';
+export const ENCRYPT_FIO_REQUEST_CONTENT_NAME = 'encryptContent';
+export const ENCRYPT_OBT_DATA_CONTENT_NAME = 'encryptObtDataContent';
 
 export const FIO_ACTIONS_OBJECT_LIST = [
   {
@@ -81,6 +83,14 @@ export const FIO_ACTIONS_OBJECT_LIST = [
   {
     id: Action.wrapTokens,
     name: 'Wrap FIO Tokens',
+  },
+  {
+    id: ENCRYPT_FIO_REQUEST_CONTENT_NAME,
+    name: 'Encrypt content for FIO Request',
+  },
+  {
+    id: ENCRYPT_OBT_DATA_CONTENT_NAME,
+    name: 'Encrypt content for OBT Data Record',
   },
   {
     id: DECRYPT_FIO_REQUEST_CONTENT_NAME,
