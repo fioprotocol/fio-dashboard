@@ -117,6 +117,7 @@
   "dependencies": {
     "@emotion/react": "11.10.5",
     "@emotion/styled": "11.10.5",
+    "@fioprotocol/fio-sdk-lite": "1.0.1",
     "@fioprotocol/fiojs": "github:fioprotocol/fiojs#82de180a6781b7a654d21b5e33f624ef63848ead",
     "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#a13583613c94e020b8b2e23a62813f05ea5ede0e",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
@@ -166,7 +167,6 @@
     "express": "4.18.2",
     "final-form": "4.20.7",
     "final-form-arrays": "3.0.2",
-    "fio-sdk-lite": "0.0.3",
     "gt3-sdk": "2.0.0",
     "handlebars": "4.7.7",
     "hashids": "2.2.10",
