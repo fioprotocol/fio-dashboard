@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { isMobile } from 'react-device-detect';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
@@ -128,14 +126,10 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
               showMaxInfoBadge={false}
-              availableValue={new MathOp(
-                FIOSDK.SUFToAmount(walletAvailableAmount),
-              ).toString()}
+              availableValue={apis.fio.sufToAmount(walletAvailableAmount)}
               maxValue={
                 walletMaxAvailableAmount
-                  ? new MathOp(
-                      FIOSDK.SUFToAmount(walletMaxAvailableAmount),
-                    ).toString()
+                  ? apis.fio.sufToAmount(walletMaxAvailableAmount)
                   : '0'
               }
             />
@@ -147,9 +141,9 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
             />
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText={`Not enough FIO. Balance: ${FIOSDK.SUFToAmount(
+              messageText={`Not enough FIO. Balance: ${apis.fio.sufToAmount(
                 fioWallet.available || 0,
-              ).toFixed(2)} FIO`}
+              )}`}
             />
 
             <SubmitButton

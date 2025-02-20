@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -156,7 +154,7 @@ export const useContext = (): UseContextReturnType => {
     costUsdc: totalCartUsdcAmount,
   } = (cartItems && totalCost(cartItems, roe)) || {};
 
-  const totalCartAmount = FIOSDK.SUFToAmount(totalCartNativeAmount).toFixed(2);
+  const totalCartAmount = apis.fio.sufToAmount(totalCartNativeAmount);
 
   const hasLowBalance =
     userWallets &&

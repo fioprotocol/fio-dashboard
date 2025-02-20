@@ -5,6 +5,8 @@ import mapKeys from 'lodash/mapKeys';
 import camelCase from 'camelcase';
 import { FioItem, FioSentItem } from '@fioprotocol/fiosdk';
 
+import MathOp from './util/math';
+
 import {
   Domain,
   FioNameItemProps,
@@ -127,7 +129,7 @@ export const setFioName = (address: string | null, domain: string): string =>
   address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
 
 export const priceToNumber = (price: string): number =>
-  +parseFloat(price).toFixed(2);
+  new MathOp(price).round(2, 1).toNumber();
 
 export const getElementByFioName = ({
   fioNameList,
