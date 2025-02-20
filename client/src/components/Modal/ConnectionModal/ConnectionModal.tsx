@@ -4,12 +4,12 @@ import { Button } from 'react-bootstrap';
 
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import Modal from '../Modal';
 import LedgerBadge from '../../Badges/LedgerBadge/LedgerBadge';
 
 import { TransactionInfoBadge } from './components/TransactionInfoBadge';
+
+import apis from '../../../api';
 
 import {
   AnyType,
@@ -160,7 +160,7 @@ const ConnectionModal: React.FC<Props> = props => {
                 {toPubKey}
               </TransactionInfoBadge>
               <TransactionInfoBadge title="Amount Requested">
-                {amount ?? FIOSDK.SUFToAmount(nativeAmount)} FIO
+                {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
               </TransactionInfoBadge>
               <TransactionInfoBadge title="Chain Code">
                 FIO
@@ -184,11 +184,11 @@ const ConnectionModal: React.FC<Props> = props => {
                 {toPubKey}
               </TransactionInfoBadge>
               <TransactionInfoBadge title="Amount">
-                {amount ?? FIOSDK.SUFToAmount(nativeAmount)} FIO
+                {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
               </TransactionInfoBadge>
               {fee && (
                 <TransactionInfoBadge title="Max Fee">
-                  {FIOSDK.SUFToAmount(fee)} FIO
+                  {apis.fio.sufToAmount(fee)} FIO
                 </TransactionInfoBadge>
               )}
               <TransactionInfoBadge title="Sign With">
@@ -214,11 +214,11 @@ const ConnectionModal: React.FC<Props> = props => {
             {fioAddress}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Amount">
-            {amount ?? FIOSDK.SUFToAmount(nativeAmount)} FIO
+            {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
           </TransactionInfoBadge>
           {fee && (
             <TransactionInfoBadge title="Max Fee">
-              {FIOSDK.SUFToAmount(fee)} FIO
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
           <TransactionInfoBadge title="Sign With">
@@ -242,11 +242,11 @@ const ConnectionModal: React.FC<Props> = props => {
             {fioAddress}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Amount">
-            {amount ?? FIOSDK.SUFToAmount(nativeAmount)} FIO
+            {amount ?? apis.fio.sufToAmount(nativeAmount)} FIO
           </TransactionInfoBadge>
           {fee && (
             <TransactionInfoBadge title="Max Fee">
-              {FIOSDK.SUFToAmount(fee)} FIO
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
           <TransactionInfoBadge title="Sign With">
@@ -272,12 +272,12 @@ const ConnectionModal: React.FC<Props> = props => {
           </TransactionInfoBadge>
           {oracleFee && (
             <TransactionInfoBadge title="Max Oracle Fee">
-              {FIOSDK.SUFToAmount(oracleFee)} FIO
+              {apis.fio.sufToAmount(oracleFee)} FIO
             </TransactionInfoBadge>
           )}
           {fee && (
             <TransactionInfoBadge title="Max Fee">
-              {FIOSDK.SUFToAmount(fee)} FIO
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
           {fioWalletPublicKey && (
@@ -303,12 +303,12 @@ const ConnectionModal: React.FC<Props> = props => {
           </TransactionInfoBadge>
           {oracleFee && (
             <TransactionInfoBadge title="Max Oracle Fee">
-              {FIOSDK.SUFToAmount(oracleFee)} FIO
+              {apis.fio.sufToAmount(oracleFee)} FIO
             </TransactionInfoBadge>
           )}
           {fee && (
             <TransactionInfoBadge title="Max Fee">
-              {FIOSDK.SUFToAmount(fee)} FIO
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
           {fioWalletPublicKey && (
@@ -529,7 +529,7 @@ const ConnectionModal: React.FC<Props> = props => {
           </TransactionInfoBadge>
           {fee && (
             <TransactionInfoBadge title="Max Fee">
-              {FIOSDK.SUFToAmount(fee)} FIO
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
           {fioWalletPublicKey && (
@@ -638,7 +638,7 @@ const ConnectionModal: React.FC<Props> = props => {
           </TransactionInfoBadge>
           {fee && (
             <TransactionInfoBadge title="Max Fee">
-              {FIOSDK.SUFToAmount(fee)} FIO
+              {apis.fio.sufToAmount(fee)} FIO
             </TransactionInfoBadge>
           )}
           {fioWalletPublicKey && (
@@ -669,7 +669,7 @@ const ConnectionModal: React.FC<Props> = props => {
               </span>
               <br />
               <span>
-                <b>Max Fee</b>: {FIOSDK.SUFToAmount(fee)} FIO
+                <b>Max Fee</b>: {apis.fio.sufToAmount(fee)} FIO
               </span>
               <br />
               <span>
@@ -828,7 +828,7 @@ const ConnectionModal: React.FC<Props> = props => {
                   </>
                 )}
               <span>
-                <b>Max Fee</b>: {FIOSDK.SUFToAmount(it.fee)} FIO
+                <b>Max Fee</b>: {apis.fio.sufToAmount(it.fee)} FIO
               </span>
               <br />
               {it.signInPublicKey && (
@@ -924,7 +924,7 @@ const ConnectionModal: React.FC<Props> = props => {
             {fio_address}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Max Fee">
-            {FIOSDK.SUFToAmount(max_fee)} FIO
+            {apis.fio.sufToAmount(max_fee)} FIO
           </TransactionInfoBadge>
         </>
       );
@@ -941,7 +941,7 @@ const ConnectionModal: React.FC<Props> = props => {
             {fio_address}
           </TransactionInfoBadge>
           <TransactionInfoBadge title="Max Fee">
-            {FIOSDK.SUFToAmount(max_fee)} FIO
+            {apis.fio.sufToAmount(max_fee)} FIO
           </TransactionInfoBadge>
         </>
       );
