@@ -1,9 +1,10 @@
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import { Payment } from '../models/Payment.mjs';
 import { Wallet } from '../models/Wallet.mjs';
 
 import MathOp from '../services/math.mjs';
+import { fioApi } from '../external/fio.mjs';
 
 import {
   ERROR_CODES,
@@ -12,7 +13,6 @@ import {
   CART_ITEM_TYPES_COMBO,
   FIO_ACTIONS_LABEL,
 } from '../config/constants';
-
 const FREE_PRICE = 'FREE';
 
 const getFioWalletName = async (publicKey, userId) => {
@@ -88,14 +88,14 @@ export const countTotalPriceAmount = orderItems =>
       return {
         fioNativeTotal,
         usdcTotal,
-        fioTotal: FIOSDK.SUFToAmount(fioNativeTotal).toFixed(2),
+        fioTotal: fioApi.sufToAmount(fioNativeTotal),
       };
     },
     { fioNativeTotal: 0, usdcTotal: 0 },
   );
 
 export const transformCostToPriceString = ({ fioNativeAmount, usdcAmount }) => {
-  if (fioNativeAmount) return `${FIOSDK.SUFToAmount(fioNativeAmount).toFixed(2)} FIO`;
+  if (fioNativeAmount) return `${fioApi.sufToAmount(fioNativeAmount)} FIO`;
 
   if (usdcAmount) {
     if (typeof usdcAmount === 'string') return `$${usdcAmount}`;
