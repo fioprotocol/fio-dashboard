@@ -1,7 +1,5 @@
 import { ExportToCsv } from 'export-to-csv';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import { getPagePrintScreenDimensions } from '../util/screen';
 
 import {
@@ -12,6 +10,8 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
 } from '../constants/purchase';
 import { ORDER_USER_TYPES_TITLE } from '../constants/order';
+
+import apis from '../api';
 
 import { transformOrderItemsPDF } from '../util/purchase';
 
@@ -167,7 +167,7 @@ export const generateCSVOrderData = ({
       fio:
         orderItem.price === '0'
           ? '0'
-          : FIOSDK.SUFToAmount(orderItem.nativeFio).toFixed(2),
+          : apis.fio.sufToAmount(orderItem.nativeFio),
       feeCollected: `${orderItem.feeCollected} FIO`,
       status:
         BC_TX_STATUS_LABELS[orderItem.txStatus] ||
