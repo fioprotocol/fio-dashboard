@@ -23,6 +23,7 @@ import {
   transformNonPremiumDomains,
   transformPremiumDomains,
 } from '../../../../util/fio';
+import MathOp from '../../../../util/math';
 
 import apis from '../../../../api';
 
@@ -90,7 +91,12 @@ export const useContext = (
         rows
           .filter(
             row =>
-              row.is_public && row.expiration > Math.floor(Date.now() / 1000),
+              row.is_public &&
+              row.expiration >
+                new MathOp(Date.now())
+                  .div(1000)
+                  .round(0, 0)
+                  .toNumber(),
           )
           .map(row => ({ name: row.name, domainType: DOMAIN_TYPE.PREMIUM })),
       );

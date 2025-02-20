@@ -7,6 +7,7 @@ import CancelButton from '../../../CancelButton/CancelButton';
 import { TransactionDetails } from '../../../../TransactionDetails/TransactionDetails';
 import FioName from '../../../FioName/FioName';
 
+import MathOp from '../../../../../util/math';
 import { genericTokenId } from '../../../../../util/fio';
 import { ROUTES } from '../../../../../constants/routes';
 import { ERROR_TYPES } from '../../constants';
@@ -113,9 +114,10 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
     if ((failed?.length || 0) > 0 && (updated?.length || 0) > 0)
       changeBundleCost(
         bundleCost -
-          Math.ceil(
-            (failed?.length || 0) / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-          ),
+          new MathOp(failed?.length || 0)
+            .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+            .round(0, 3)
+            .toNumber(),
       );
   }, [JSON.stringify(failed)]);
 
