@@ -144,7 +144,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
         contentType: ContentType.recordObtDataContent,
         data: {
           content: {
-            amount: Number(amount),
+            amount: amount,
             chain_code: FIO_CHAIN_CODE,
             token_code: FIO_CHAIN_CODE,
             payer_public_address: fromPubKey,

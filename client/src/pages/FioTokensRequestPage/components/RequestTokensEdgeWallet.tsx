@@ -56,7 +56,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
   const send = async ({ keys, data }: SubmitActionParams) => {
     const params: RequestProps = {
       ...data,
-      amount: Number(data.amount),
+      amount: data.amount,
     };
 
     const result = await apis.fio.executeAction(

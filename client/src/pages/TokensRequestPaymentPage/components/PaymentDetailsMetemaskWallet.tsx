@@ -60,7 +60,7 @@ export const PaymentDetailsMetemaskWallet: React.FC<Props> = props => {
     contentType: ContentType.recordObtDataContent,
     data: {
       content: {
-        amount: Number(amount),
+        amount: amount,
         chain_code: chainCode,
         token_code: tokenCode,
         payer_public_address: publicKey,
