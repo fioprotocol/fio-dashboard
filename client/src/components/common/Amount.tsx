@@ -1,15 +1,24 @@
 import React from 'react';
 
-import { US_LOCALE } from '../../constants/common';
+import MathOp from '../../util/math';
+
+const formatLocale = (value: number | string | object) => {
+  if (typeof value === 'object') {
+    value = value.toString();
+  }
+
+  try {
+    return new MathOp(value || 0)
+      .round(2)
+      .toFixed(2)
+      .replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+  } catch {
+    return '-';
+  }
+};
 
 const Amount: React.FC<{ value?: number | string }> = ({ value, children }) => {
-  return (
-    <>
-      {Number(value || children || 0).toLocaleString(US_LOCALE, {
-        minimumFractionDigits: 2,
-      })}
-    </>
-  );
+  return <>{formatLocale(value || children || 0)}</>;
 };
 
 export default Amount;
