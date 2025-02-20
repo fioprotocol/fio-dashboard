@@ -102,14 +102,16 @@ const processTransaction = (
       if (!existingTrx.timestamp) {
         transactions[index].timestamp = action.timestamp;
       }
-      if (+nativeAmount > 0) {
+      if (new MathOp(nativeAmount).gt(0)) {
         return { timestamp: action.timestamp, editedExisting };
       }
       if (otherParams.isTransferProcessed) {
         return { timestamp: action.timestamp, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
-        nativeAmount = `${+nativeAmount - +existingTrx.networkFee}`;
+        nativeAmount = new MathOp(nativeAmount)
+          .sub(existingTrx.networkFee)
+          .toString();
         networkFee = existingTrx.networkFee;
       } else {
         log.error(
@@ -159,7 +161,7 @@ const processTransaction = (
         transactions[index].timestamp = action.timestamp;
       }
       if (
-        +existingTrx.nativeAmount > 0 &&
+        new MathOp(existingTrx.nativeAmount).gt(0) &&
         otherParams?.feeActors?.includes(data?.to)
       ) {
         return { timestamp: action.timestamp, editedExisting };
@@ -185,7 +187,9 @@ const processTransaction = (
         }
       }
       if (otherParams?.isTransferProcessed) {
-        nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
+        nativeAmount = new MathOp(existingTrx.nativeAmount)
+          .sub(networkFee)
+          .toString();
       } else {
         log.error(
           'processTransaction error - existing spend transaction should have isTransferProcessed or isFeeProcessed set',
