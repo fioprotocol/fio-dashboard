@@ -1,8 +1,6 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -140,7 +138,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           ? 0
           : new MathOp(walletBalances.available.nativeFio)
               .sub(fee.nativeFio || 0)
-              .toNumber();
+              .toString();
 
         return (
           <form
@@ -188,14 +186,12 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               component={AmountInput}
               disabled={loading}
               label="Send Amount"
-              availableValue={new MathOp(
-                FIOSDK.SUFToAmount(walletBalances.available.nativeFio),
-              ).toString()}
+              availableValue={apis.fio.sufToAmount(
+                walletBalances.available.nativeFio,
+              )}
               maxValue={
                 walletMaxAvailableAmount
-                  ? new MathOp(
-                      FIOSDK.SUFToAmount(walletMaxAvailableAmount),
-                    ).toString()
+                  ? apis.fio.sufToAmount(walletMaxAvailableAmount)
                   : '0'
               }
             />
@@ -233,9 +229,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             />
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText={`Not enough FIO. Balance: ${FIOSDK.SUFToAmount(
+              messageText={`Not enough FIO. Balance: ${apis.fio.sufToAmount(
                 fioWallet.available || 0,
-              ).toFixed(2)} FIO`}
+              )} FIO`}
             />
             <LowBalanceBadge
               hasLowBalance={notEnoughBundles}

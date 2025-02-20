@@ -2,8 +2,6 @@ import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { useHistory } from 'react-router';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import FioLoader from '../../../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import WrapDomainForm from '../WarapDomainForm';
@@ -109,13 +107,13 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
       chainCode: sendData.chainCode,
       publicAddress: sendData.publicAddress,
       feeCollectedAmount: new MathOp(
-        FIOSDK.SUFToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
+        apis.fio.sufToAmount(res.oracle_fee_collected),
       )
-        .add(FIOSDK.SUFToAmount(res.fee_collected) || feePrice.fio)
-        .toNumber(),
+        .add(apis.fio.sufToAmount(res.fee_collected))
+        .toString(),
       nativeFeeCollectedAmount: new MathOp(res.oracle_fee_collected)
         .add(res.fee_collected)
-        .toNumber(),
+        .toString(),
       other: {
         ...sendData,
         ...res,

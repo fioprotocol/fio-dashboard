@@ -59,7 +59,7 @@ const SendLedgerWallet: FC<Props> = props => {
       GenericAction.transferTokens,
       {
         payee_public_key: submitData.toPubKey,
-        amount: new MathOp(submitData.nativeAmount).toNumber(),
+        amount: new MathOp(submitData.nativeAmount).toString(),
         max_fee: fee,
         tpid: apis.fio.tpid,
       },

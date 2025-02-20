@@ -17,8 +17,8 @@ export type ResultsData = {
   amount: string;
   chainCode: string;
   publicAddress: string;
-  feeCollectedAmount: number;
-  nativeFeeCollectedAmount: number;
+  feeCollectedAmount: string;
+  nativeFeeCollectedAmount: string;
   other?: { transaction_id?: string };
   error?: string | null;
 };
