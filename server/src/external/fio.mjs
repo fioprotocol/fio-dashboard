@@ -167,15 +167,17 @@ class Fio {
     return new MathOp(tempResult).add(floorRemainder).toNumber();
   }
 
-  SUFToAmount(suf) {
-    return new MathOp(suf).div(FIOSDK.SUFUnit).toString();
+  sufToAmount(suf) {
+    return new MathOp(suf)
+      .div(FIOSDK.SUFUnit)
+      .round(2, 1)
+      .toString();
   }
 
   convertFioToUsdc(nativeAmount, roe) {
     if (roe == null) return 0;
 
-    // todo: create SUFToAmount using MathOp
-    return new MathOp(FIOSDK.SUFToAmount(nativeAmount || 0))
+    return new MathOp(this.sufToAmount(nativeAmount || 0))
       .mul(roe)
       .round(2, 1)
       .toNumber();

@@ -1,6 +1,6 @@
 import MathOp from 'big.js';
 
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import { Payment } from '../models/Payment.mjs';
 
@@ -20,11 +20,11 @@ import { CURRENCY_CODES } from '../constants/fio.mjs';
 const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
 export function convertFioPrices(nativeFio, roe) {
-  const fioAmount = FIOSDK.SUFToAmount(nativeFio || 0);
+  const fioAmount = fioApi.sufToAmount(nativeFio || 0);
 
   return {
     nativeFio,
-    fio: `${fioAmount != null ? fioAmount.toFixed(2) : fioAmount}`,
+    fio: fioAmount,
     usdc: `${
       nativeFio != null && roe != null ? fioApi.convertFioToUsdc(nativeFio, roe) : 0
     }`,
