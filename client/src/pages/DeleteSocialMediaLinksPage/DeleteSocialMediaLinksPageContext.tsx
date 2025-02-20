@@ -12,6 +12,7 @@ import {
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
+import MathOp from '../../util/math';
 
 import {
   BUNDLES_TX_COUNT,
@@ -157,10 +158,10 @@ export const useContext = (): UseContextProps => {
 
     if (hasChecked) {
       return changeBundleCost(
-        Math.ceil(
-          checkedSocialMediaLinks.length /
-            ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-        ),
+        new MathOp(checkedSocialMediaLinks.length)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       );
     }
     return changeBundleCost(0);

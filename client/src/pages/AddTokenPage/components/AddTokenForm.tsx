@@ -13,6 +13,7 @@ import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../constants/fio';
 import { CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
 
 import { genericTokenId } from '../../../util/fio';
+import MathOp from '../../../util/math';
 
 import { AddTokenValues, AddTokenFormProps } from '../types';
 import { AnyObject, PublicAddressDoublet } from '../../../types';
@@ -163,7 +164,10 @@ export const AddTokenForm: React.FC<AddTokenFormProps> = props => {
   useEffect(
     () =>
       changeBundleCost(
-        Math.ceil(tokens.length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
+        new MathOp(tokens.length)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       ),
     [changeBundleCost, tokens.length],
   );

@@ -15,6 +15,7 @@ import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../../constants/fio
 import { CONTAINER_NAMES } from '../../../../components/LinkTokenList/constants';
 
 import { extractLastValueFormUrl, isURL } from '../../../../util/general';
+import MathOp from '../../../../util/math';
 
 import { FormValues } from '../../types';
 import {
@@ -61,9 +62,10 @@ export const AddSocialMediaLinksForm: React.FC<Props> = props => {
   useEffect(
     () =>
       changeBundleCost(
-        Math.ceil(
-          Object.keys(values).length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-        ),
+        new MathOp(Object.keys(values).length)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       ),
     [changeBundleCost, values],
   );
