@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -233,14 +231,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              availableValue={new MathOp(
-                FIOSDK.SUFToAmount(walletAvailableAmount),
-              ).toString()}
+              availableValue={apis.fio.sufToAmount(walletAvailableAmount)}
               maxValue={
                 walletMaxAvailableAmount
-                  ? new MathOp(
-                      FIOSDK.SUFToAmount(walletMaxAvailableAmount),
-                    ).toString()
+                  ? apis.fio.sufToAmount(walletMaxAvailableAmount)
                   : '0'
               }
             />
