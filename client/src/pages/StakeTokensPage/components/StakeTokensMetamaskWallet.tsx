@@ -47,7 +47,7 @@ export const StakeTokensMetamaskWallet: React.FC<Props> = props => {
     action: Action.stake,
     account: Account.staking,
     data: {
-      amount: apis.fio.amountToSUF(Number(amount)),
+      amount: apis.fio.amountToSUF(amount),
       fio_address: fioAddress,
       tpid: proxy,
       max_fee: defaultMaxFee(fee) as string,
