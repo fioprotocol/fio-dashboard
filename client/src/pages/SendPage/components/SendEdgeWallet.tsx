@@ -8,6 +8,7 @@ import apis from '../../../api';
 
 import { log } from '../../../util/general';
 import MathOp from '../../../util/math';
+import { defaultMaxFee } from '../../../util/prices';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { TrxResponsePaidBundles } from '../../../api/fio';
@@ -15,11 +16,7 @@ import { TrxResponsePaidBundles } from '../../../api/fio';
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import {
-  BUNDLES_TX_COUNT,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  FIO_CHAIN_CODE,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../constants/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -50,11 +47,8 @@ const SendEdgeWallet: React.FC<Props> = props => {
       GenericAction.transferTokens,
       {
         payeeFioPublicKey: data.toPubKey,
-        amount: Number(data.nativeAmount),
-        maxFee: new MathOp(fee)
-          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-          .round(0)
-          .toNumber(),
+        amount: new MathOp(data.nativeAmount).toString(),
+        maxFee: defaultMaxFee(fee) as string,
       },
     );
     let obtError = null;
@@ -66,7 +60,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           payeeFioAddress: data.to,
           payerTokenPublicAddress: keys.public,
           payeeTokenPublicAddress: data.toPubKey,
-          amount: Number(data.amount),
+          amount: new MathOp(data.amount).toString(),
           chainCode: FIO_CHAIN_CODE,
           tokenCode: FIO_CHAIN_CODE,
           obtId: result.transaction_id,

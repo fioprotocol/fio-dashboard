@@ -5,19 +5,15 @@ import { GenericAction } from '@fioprotocol/fiosdk';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
-import MathOp from '../../../util/math';
+import { defaultMaxFee } from '../../../util/prices';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import {
-  BUNDLES_TX_COUNT,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { StakeTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 import { TrxResponsePaidBundles } from '../../../api/fio';
-
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (data: TrxResponsePaidBundles) => void;
@@ -46,10 +42,7 @@ const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
       {
         fioAddress: data.fioAddress,
         amount: apis.fio.amountToSUF(data.amount),
-        maxFee: new MathOp(fee)
-          .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-          .round(0)
-          .toNumber(),
+        maxFee: defaultMaxFee(fee) as string,
       },
     );
     return {
