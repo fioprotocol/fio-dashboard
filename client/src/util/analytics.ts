@@ -103,15 +103,14 @@ export const getCartItemsDataForAnalytics = (
       renewDomain: nativeRenewDomainPrice,
     },
   } = prices;
-  const renewDomainUsdcPrice = +convertFioPrices(nativeRenewDomainPrice, roe)
+  const renewDomainUsdcPrice = convertFioPrices(nativeRenewDomainPrice, roe)
     .usdc;
-  const fioAddressUsdcPrice = +convertFioPrices(nativeFioAddressPrice, roe)
-    .usdc;
-  const fioDomainUsdcPrice = +convertFioPrices(nativeFioDomainPrice, roe).usdc;
+  const fioAddressUsdcPrice = convertFioPrices(nativeFioAddressPrice, roe).usdc;
+  const fioDomainUsdcPrice = convertFioPrices(nativeFioDomainPrice, roe).usdc;
 
   return {
     currency: CURRENCY_CODES.USD,
-    value: +cartItems.reduce((sum, item) => {
+    value: cartItems.reduce((sum, item) => {
       const { costUsdc, domainType, isFree, period, type } = item;
 
       let itemPrice =
@@ -120,7 +119,7 @@ export const getCartItemsDataForAnalytics = (
       if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
         itemPrice = new MathOp(fioAddressUsdcPrice)
           .add(fioDomainUsdcPrice)
-          .toNumber();
+          .toString();
       } else if (type === CART_ITEM_TYPE.DOMAIN) {
         itemPrice = fioDomainUsdcPrice;
       } else {
@@ -128,11 +127,11 @@ export const getCartItemsDataForAnalytics = (
       }
 
       for (let i = 1; i < period; i++) {
-        itemPrice = new MathOp(renewDomainUsdcPrice).add(itemPrice).toNumber();
+        itemPrice = new MathOp(renewDomainUsdcPrice).add(itemPrice).toString();
       }
 
-      return new MathOp(sum).add(itemPrice).toNumber();
-    }, 0),
+      return new MathOp(sum).add(itemPrice).toString();
+    }, '0'),
     items: cartItems
       .map(cartItem => {
         const item = {
@@ -143,14 +142,14 @@ export const getCartItemsDataForAnalytics = (
           price:
             cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE && cartItem.isFree
               ? 0
-              : +cartItem.costUsdc,
+              : cartItem.costUsdc,
         };
 
         if (cartItem.period > 1) {
           if (cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
             item.price = new MathOp(fioAddressUsdcPrice)
               .add(fioDomainUsdcPrice)
-              .toNumber();
+              .toString();
           } else if (cartItem.type === CART_ITEM_TYPE.DOMAIN) {
             item.price = fioDomainUsdcPrice;
           } else {

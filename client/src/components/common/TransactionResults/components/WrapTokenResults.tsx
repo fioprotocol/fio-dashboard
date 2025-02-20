@@ -29,7 +29,7 @@ type ResultsData = {
   chainCode: string;
   block_num?: number;
   publicAddress: string;
-  nativeFeeCollectedAmount: number;
+  nativeFeeCollectedAmount: string;
   other?: { transaction_id?: string } & AnyType;
   error?: string | null;
 };
@@ -105,7 +105,7 @@ const WrapTokenResults: FC<WrapTokenResultsProps> = props => {
 
       <p className={classes.label}>Transaction Details</p>
       <TransactionDetails
-        feeInFio={new MathOp(nativeFeeCollectedAmount).toString()}
+        feeInFio={nativeFeeCollectedAmount}
         additional={[
           {
             label: 'Wrap Chain',
