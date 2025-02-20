@@ -18,6 +18,17 @@ class MathOp {
     }
   }
 
+  abs(): MathOp {
+    try {
+      this.value = Big(this.value).abs();
+    } catch (err) {
+      log.error(err);
+      throw err;
+    }
+
+    return this;
+  }
+
   add(x: BigSource): MathOp {
     try {
       this.value = Big(this.value).plus(x);
@@ -138,6 +149,17 @@ class MathOp {
       log.error(err);
       throw err;
     }
+  }
+
+  pow(x: number): MathOp {
+    try {
+      this.value = Big(this.value).pow(x);
+    } catch (err) {
+      log.error(err);
+      throw err;
+    }
+
+    return this;
   }
 
   toNumber(): number {

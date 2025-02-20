@@ -16,6 +16,7 @@ import {
   commonFormatTime,
   truncateTextInMiddle,
 } from '../../../util/general';
+import MathOp from '../../../util/math';
 
 import { TransactionItemProps } from '../../../types';
 
@@ -28,7 +29,7 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
     copyToClipboard(txId);
   };
 
-  const isReceive = parseInt(nativeAmount, 10) > 0;
+  const isReceive = new MathOp(nativeAmount).gt(0);
 
   return (
     <div className={classes.badgeContainer}>

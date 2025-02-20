@@ -7,6 +7,7 @@ import {
 } from '../../redux/fio/selectors';
 
 import { genericTokenId } from '../../util/fio';
+import MathOp from '../../util/math';
 
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
@@ -106,7 +107,10 @@ export const useContext = (): EditTokenContextProps => {
       ).length;
 
       changeBundleCost(
-        Math.ceil(editedCount / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
+        new MathOp(editedCount)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       );
       changePubAddresses(updatedArr);
     };

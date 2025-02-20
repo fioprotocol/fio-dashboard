@@ -9,6 +9,8 @@ import { AMERICA_NEW_YORK_TIMEZONE } from '../constants/time';
 
 import config from '../config';
 
+import MathOp from './math';
+
 import { AnyObject } from '../types';
 import { RESPONSE_STATUSES } from '../constants/statuses';
 import { RATE_LIMIT_TYPE_ERROR } from '../constants/errors';
@@ -443,7 +445,9 @@ export const fetchWithRateLimit = async ({
         const backoffDelay =
           retries === maxRetries
             ? MINUTE_MS
-            : SECOND_MS * Math.pow(2, retries - 1); // Exponential backoff
+            : new MathOp(SECOND_MS)
+                .mul(new MathOp(2).pow(retries - 1).toNumber())
+                .toNumber();
 
         log.info(
           `RATE LIMIT FOR URL: ${targetUrl} ${

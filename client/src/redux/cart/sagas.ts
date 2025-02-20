@@ -41,6 +41,7 @@ import {
   fireAnalyticsEventDebounced,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
+import MathOp from '../../util/math';
 
 import { convertFioPrices, DEFAULT_FEE_PRICES } from '../../util/prices';
 
@@ -122,7 +123,10 @@ export function* updatePeriodItem(): Generator {
     const { period } = cartItem;
 
     if (newPeriod !== period) {
-      const periodDiff = Math.abs(period - newPeriod);
+      const periodDiff = new MathOp(period)
+        .sub(newPeriod)
+        .abs()
+        .toNumber();
 
       const prices: Prices = yield select(pricesSelector);
       const roe: Roe = yield select(roeSelector);
