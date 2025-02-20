@@ -4,10 +4,13 @@ import {
   signNonce,
   signTransaction,
   decryptContent,
+  encryptContent,
   getPublicKey,
-} from 'fio-sdk-lite';
+} from '@fioprotocol/fio-sdk-lite';
 import { Ecc } from '@fioprotocol/fiojs';
 import { Account, Action, ContentType } from '@fioprotocol/fiosdk';
+
+import { DecryptedContent } from '@fioprotocol/fio-sdk-lite/dist/types';
 
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
@@ -17,6 +20,8 @@ import {
   CUSTOM_ACTION_NAME,
   DECRYPT_FIO_REQUEST_CONTENT_NAME,
   DECRYPT_OBT_DATA_CONTENT_NAME,
+  ENCRYPT_FIO_REQUEST_CONTENT_NAME,
+  ENCRYPT_OBT_DATA_CONTENT_NAME,
 } from '../FioWalletSnapComponent/constants';
 
 import { log } from '../../../util/general';
@@ -51,8 +56,10 @@ const canceledRegexp = /transaction canceled|decrypt fio data canceled/i;
 
 type UseContextProps = {
   activeAction: string;
-  decryptedContent: any;
+  decryptedContent: DecryptedContent;
   decryptedError: Error | null;
+  encryptedContent: string;
+  encryptedError: Error | null;
   executedTxn: AnyType;
   executedTxnError: Error | null;
   executedTxnLoading: boolean;
@@ -61,12 +68,13 @@ type UseContextProps = {
   nonce: string;
   signature: string;
   signatureError: Error;
-  signedTxn: any;
+  signedTxn: AnyType;
   signedTxnLoading: boolean;
   signedTxnError: Error | null;
   publicKey: string | null;
   onActionChange: (value: string) => void;
   onDecryptContent: () => void;
+  onEncryptContent: () => void;
   onExecuteTxn: () => void;
   onPrivateKeyChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onSignTxn: () => void;
@@ -84,11 +92,17 @@ export const useContext = (): UseContextProps => {
   >(null);
 
   const [signedTxnLoading, toggleSignedTxnLoading] = useState<boolean>(false);
-  const [signedTxn, setSignedTxn] = useState<any | null>(null);
+  const [signedTxn, setSignedTxn] = useState<AnyType | null>(null);
   const [signedTxnError, setSignedTxnError] = useState<Error | null>(null);
 
-  const [decryptedContent, setDecryptedContent] = useState<any | null>(null);
+  const [
+    decryptedContent,
+    setDecryptedContent,
+  ] = useState<DecryptedContent | null>(null);
   const [decryptedError, setDecryptedError] = useState<Error | null>(null);
+
+  const [encryptedContent, setEncryptedContent] = useState<string | null>(null);
+  const [encryptedError, setEncryptedError] = useState<Error | null>(null);
 
   const [executedTxn, setExecutedTxn] = useState<AnyType | null>(null);
   const [executedTxnError, setExecutedTxnError] = useState<Error | null>(null);
@@ -110,6 +124,11 @@ export const useContext = (): UseContextProps => {
     setDecryptedContent(null);
   }, []);
 
+  const clearEncryptResults = useCallback(() => {
+    setEncryptedError(null);
+    setEncryptedContent(null);
+  }, []);
+
   const clearSignTx = useCallback(() => {
     setSignedTxn(null);
     setSignedTxnError(null);
@@ -119,9 +138,10 @@ export const useContext = (): UseContextProps => {
     (value: string) => {
       clearSignTx();
       clearDecryptResults();
+      clearEncryptResults();
       setActiveAction(value);
     },
-    [clearDecryptResults, clearSignTx],
+    [clearDecryptResults, clearEncryptResults, clearSignTx],
   );
 
   const verifySignature = useCallback(
@@ -160,15 +180,16 @@ export const useContext = (): UseContextProps => {
       setExecutedTxnError(null);
       clearSignTx();
       clearDecryptResults();
+      clearEncryptResults();
     },
-    [clearDecryptResults, clearSignTx],
+    [clearDecryptResults, clearEncryptResults, clearSignTx],
   );
 
-  const signSnapTxn = useCallback(async (params: any) => {
+  const signSnapTxn = useCallback(async (params: AnyType) => {
     try {
       setSignedTxnError(null);
       toggleSignedTxnLoading(true);
-      console.log(params);
+      log.info(params);
       const signedTxn = await signTransaction(params);
 
       setSignedTxn(JSON.parse(signedTxn));
@@ -531,6 +552,35 @@ export const useContext = (): UseContextProps => {
     [],
   );
 
+  const encryptRequestContent = useCallback(
+    async (params: {
+      content: {
+        amount: string;
+        status: string;
+        payee_public_address: string;
+        payer_public_address?: string;
+        chain_code: string;
+        token_code: string;
+        obt_id?: string;
+        memo: string | null;
+        hash: string | null;
+        offline_url: string | null;
+      };
+      encryptionPublicKey: string;
+      fioContentType: string;
+      privateKey: string;
+    }) => {
+      try {
+        const encryptedContent = encryptContent(params);
+        setEncryptedContent(encryptedContent);
+      } catch (error) {
+        log.error(error);
+        setEncryptedError(error);
+      }
+    },
+    [],
+  );
+
   const onDecryptContent = useCallback(() => {
     const params: {
       content: string;
@@ -567,17 +617,82 @@ export const useContext = (): UseContextProps => {
     privateKey,
   ]);
 
+  const onEncryptContent = useCallback(() => {
+    const params: {
+      content: {
+        amount: string;
+        status: string;
+        payee_public_address: string;
+        payer_public_address?: string;
+        chain_code: string;
+        token_code: string;
+        obt_id?: string;
+        memo: string | null;
+        hash: string | null;
+        offline_url: string | null;
+      };
+      encryptionPublicKey: string;
+      fioContentType: string;
+      privateKey: string;
+    } = {
+      content: {
+        amount: fioActionFormParams.amount,
+        status: 'sent_to_blockchain',
+        payee_public_address: fioActionFormParams.encryptionPublicKey,
+        chain_code: FIO_CHAIN_CODE,
+        token_code: FIO_CHAIN_CODE,
+        memo: fioActionFormParams.memo || null,
+        hash: fioActionFormParams.hash || null,
+        offline_url: fioActionFormParams.offlineUrl || null,
+        payer_public_address: publicKey,
+      },
+      encryptionPublicKey: fioActionFormParams.encryptionPublicKey,
+      fioContentType: '',
+      privateKey,
+    };
+
+    clearEncryptResults();
+
+    switch (activeAction) {
+      case ENCRYPT_FIO_REQUEST_CONTENT_NAME:
+        params.fioContentType = ContentType.newFundsContent;
+        break;
+      case ENCRYPT_OBT_DATA_CONTENT_NAME:
+        params.fioContentType = ContentType.recordObtDataContent;
+        params.content.obt_id = fioActionFormParams.obtId;
+        break;
+      default:
+        break;
+    }
+
+    encryptRequestContent(params);
+  }, [
+    activeAction,
+    clearEncryptResults,
+    encryptRequestContent,
+    fioActionFormParams?.amount,
+    fioActionFormParams?.encryptionPublicKey,
+    fioActionFormParams?.hash,
+    fioActionFormParams?.memo,
+    fioActionFormParams?.obtId,
+    fioActionFormParams?.offlineUrl,
+    privateKey,
+    publicKey,
+  ]);
+
   const executeFioAction = useCallback(async () => {
     try {
       setExecutedTxnError(null);
       toggleExecutedTxnLoading(true);
 
       const signedTxns: {
-        successed: any[];
+        successed: AnyType[];
         failed: { error: string; id: string }[];
       } = signedTxn;
 
-      const pushTransactionResult = async (signedTxn: any): Promise<any> => {
+      const pushTransactionResult = async (
+        signedTxn: AnyType,
+      ): Promise<AnyType> => {
         // todo: DASH-1242 add apis.fio.checkUrls()
         const pushResult = await fetch(
           `${BASE_URL}/v1/chain/push_transaction`,
@@ -593,11 +708,12 @@ export const useContext = (): UseContextProps => {
           pushResult.status === 500
         ) {
           const jsonResult = await pushResult.json();
-          const errorMessage = jsonResult.message || 'Something went wrong';
+          const errorMessage =
+            (jsonResult.message as string) || 'Something went wrong';
 
           if (jsonResult.fields) {
             // Handle specific error structure with "fields" array
-            const fieldErrors = jsonResult.fields.map((field: any) => ({
+            const fieldErrors = jsonResult.fields.map((field: AnyType) => ({
               name: field.name,
               value: field.value,
               error: field.error,
@@ -619,7 +735,7 @@ export const useContext = (): UseContextProps => {
         signedTxns.successed.map(pushTransactionResult),
       );
 
-      const successedResults: any[] = [];
+      const successedResults: AnyType[] = [];
       const erroredResults: Error[] = [];
 
       results.forEach(result => {
@@ -681,6 +797,8 @@ export const useContext = (): UseContextProps => {
     activeAction,
     decryptedContent,
     decryptedError,
+    encryptedContent,
+    encryptedError,
     executedTxn,
     executedTxnError,
     executedTxnLoading,
@@ -695,6 +813,7 @@ export const useContext = (): UseContextProps => {
     publicKey,
     onActionChange,
     onDecryptContent,
+    onEncryptContent,
     onExecuteTxn,
     onPrivateKeyChange,
     onSignTxn,
