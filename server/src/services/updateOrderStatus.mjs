@@ -1,4 +1,4 @@
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import {
   BlockchainTransaction,
@@ -10,6 +10,7 @@ import {
   OrderItemStatus,
 } from '../models';
 
+import { fioApi } from '../external/fio.mjs';
 import { sendGTMEvent } from '../external/googleapi.mjs';
 import { sendSendinblueEvent } from './external/SendinblueEvent.mjs';
 
@@ -140,9 +141,9 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${FIOSDK.SUFToAmount(
+  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${fioApi.sufToAmount(
     nativeAmount || 0,
-  ).toFixed(2)}) FIO`;
+  )}) FIO`;
 };
 
 const transformOrderItemsForEmail = orderItems =>
@@ -294,7 +295,9 @@ const createPurchaseConfirmationNotification = async order => {
         ],
       })
     ).map(item => item.get({ plain: true }));
-    const payment = (await Payment.getOrderPayment(order.id)).get({ plain: true });
+    const payment = (await Payment.getOrderPayment(order.id)).get({
+      plain: true,
+    });
     const succeedItemsFormatted = succeedItems.map(item => OrderItem.format(item));
     const paymentFormatted = Payment.format(payment);
 

@@ -1,5 +1,3 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import { fioApi } from '../external/fio.mjs';
 
 import logger from '../logger.mjs';
@@ -35,7 +33,7 @@ export const getDetailedUsersInfo = async user => {
           const balanceResponse = await publicFioSDK.getFioBalance({
             fioPublicKey: publicKey,
           });
-          fioWalletObj.balance = FIOSDK.SUFToAmount(balanceResponse.balance).toFixed(2);
+          fioWalletObj.balance = fioApi.sufToAmount(balanceResponse.balance);
         } catch (err) {
           // getFioBalance returns a 404 error if user doesn't have any transactions on a wallet
           if (err.errorCode === 404) fioWalletObj.balance = '0.00';

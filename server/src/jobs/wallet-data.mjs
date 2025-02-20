@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import '../db';
 
@@ -599,10 +598,10 @@ class WalletDataJob extends CommonJob {
               ...existsNotification.data,
               emailData: {
                 ...existsNotification.data.emailData,
-                fioBalanceChange: `${sign}$${usdcChangeBalance} (${FIOSDK.SUFToAmount(
+                fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
                   new MathOp(fioNativeChangeBalance).abs().toNumber() || 0,
                 )} FIO)`,
-                newFioBalance: `$${usdcBalance} (${FIOSDK.SUFToAmount(
+                newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(
                   balance || 0,
                 )} FIO)`,
                 date: await User.formatDateWithTimeZone(wallet.User.id),
@@ -618,10 +617,10 @@ class WalletDataJob extends CommonJob {
               data: {
                 pagesToShow: ['/'],
                 emailData: {
-                  fioBalanceChange: `${sign}$${usdcChangeBalance} (${FIOSDK.SUFToAmount(
+                  fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
                     new MathOp(fioNativeChangeBalance).abs().toNumber() || 0,
                   )} FIO)`,
-                  newFioBalance: `$${usdcBalance} (${FIOSDK.SUFToAmount(
+                  newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(
                     balance || 0,
                   )} FIO)`,
                   wallet: wallet.publicKey,
