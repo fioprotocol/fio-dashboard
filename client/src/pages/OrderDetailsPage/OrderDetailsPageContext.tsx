@@ -53,6 +53,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     isAllErrored,
     isPartial,
     errorBadges,
+    roe,
   } = orderItem || {};
   const {
     paidWith,
@@ -104,6 +105,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
             '0',
           ),
           orderNumber: number,
+          roe,
         }))
       : [
           {
@@ -111,6 +113,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
             paidWith,
             totalFioNativeCostPrice: totalCostPrice?.fioNativeTotal ?? '0',
             orderNumber: number,
+            roe,
             isFree: true,
           },
         ];
