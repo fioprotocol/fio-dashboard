@@ -9,6 +9,11 @@ const ROE_VAR_KEY = 'ROE';
 const roeEndpoint = process.env.FIO_ROE_URL || 'https://ascendex.com/api/pro/v1/';
 const timeout = 1000 * 60 * 15; // 15 min
 
+/**
+ * Get the ROE from the AscendEx API
+ *
+ * @returns {Promise<string | null>} The ROE
+ */
 export const getROE = async () => {
   const roeVar = await Var.getByKey(ROE_VAR_KEY);
 
@@ -24,11 +29,11 @@ export const getROE = async () => {
         for (const tradeItem of data) {
           sum = Big(sum)
             .plus(tradeItem.p)
-            .toNumber();
+            .toString();
         }
         const avgPrice = Big(sum)
           .div(data.length)
-          .toNumber();
+          .toString();
 
         await Var.setValue(ROE_VAR_KEY, avgPrice);
 
@@ -37,9 +42,9 @@ export const getROE = async () => {
     } catch (e) {
       logger.error('ROE UPDATE ERROR ===');
       logger.error(e);
-      return (roeVar && +roeVar.value) || null;
+      return (roeVar && Big(roeVar.value).toString()) || null;
     }
   }
 
-  return +roeVar.value;
+  return Big(roeVar.value).toString();
 };

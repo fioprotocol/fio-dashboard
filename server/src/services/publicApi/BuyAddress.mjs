@@ -315,7 +315,7 @@ export default class BuyAddress extends Base {
       order = await Order.create(
         {
           status: Order.STATUS.NEW,
-          total: isFree ? 0 : normalizedPriceUsdc,
+          total: isFree ? '0' : normalizedPriceUsdc,
           roe,
           publicKey,
           userId,
