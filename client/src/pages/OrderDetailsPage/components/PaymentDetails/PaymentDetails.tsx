@@ -3,15 +3,18 @@ import React from 'react';
 import classes from './PaymentDetails.module.scss';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
+import { Roe } from '../../../../types';
+
 type Props = {
   orderNumber: string;
   paidWith?: string;
   totalFioNativeCostPrice?: string;
   isFree?: boolean;
+  roe?: Roe;
 };
 
 export const PaymentDetails: React.FC<Props> = props => {
-  const { orderNumber, paidWith, totalFioNativeCostPrice, isFree } = props;
+  const { orderNumber, paidWith, totalFioNativeCostPrice, isFree, roe } = props;
 
   const paidWithTitle = isFree ? 'Assigned To' : 'Paid With';
 
@@ -33,6 +36,7 @@ export const PaymentDetails: React.FC<Props> = props => {
             hide: !orderNumber,
           },
         ]}
+        roe={roe}
       />
     </div>
   );
