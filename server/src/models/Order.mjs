@@ -32,6 +32,7 @@ import {
 import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
 import logger from '../logger.mjs';
+import MathOp from '../services/math.mjs';
 
 const { DataTypes: DT } = Sequelize;
 const ORDER_NUMBER_LENGTH = 6;
@@ -858,7 +859,9 @@ export class Order extends Base {
             bcTxItem => bcTxItem.action === GenericAction.registerFioDomain,
           );
           if (customDomainBcTx && customDomainBcTx.feeCollected) {
-            bcTx.feeCollected = +bcTx.feeCollected + +customDomainBcTx.feeCollected;
+            bcTx.feeCollected = new MathOp(bcTx.feeCollected)
+              .add(customDomainBcTx.feeCollected)
+              .toString();
           }
         }
       }

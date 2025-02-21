@@ -18,11 +18,13 @@ class MathOp {
 
   abs() {
     try {
-      return Big(this.value).abs();
+      this.value = Big(this.value).abs();
     } catch (err) {
       logger.error(err);
       throw err;
     }
+
+    return this;
   }
 
   add(x) {

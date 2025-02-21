@@ -25,9 +25,8 @@ export function convertFioPrices(nativeFio, roe) {
   return {
     nativeFio,
     fio: fioAmount,
-    usdc: `${
-      nativeFio != null && roe != null ? fioApi.convertFioToUsdc(nativeFio, roe) : 0
-    }`,
+    usdc:
+      nativeFio != null && roe != null ? fioApi.convertFioToUsdc(nativeFio, roe) : '0',
   };
 }
 
@@ -35,12 +34,12 @@ export const handlePriceForMultiYearItems = ({ includeAddress, prices, period })
   const { domain, renewDomain, combo } = prices;
 
   const renewPeriod = new MathOp(period).sub(1).toNumber();
-  const renewDomainNativeCost = new MathOp(renewDomain).mul(renewPeriod).toNumber();
-  const multiDomainPrice = new MathOp(domain).add(renewDomainNativeCost).toNumber();
+  const renewDomainNativeCost = new MathOp(renewDomain).mul(renewPeriod).toString();
+  const multiDomainPrice = new MathOp(domain).add(renewDomainNativeCost).toString();
 
   if (includeAddress) {
     if (renewPeriod > 0) {
-      return new MathOp(combo).add(renewDomainNativeCost).toNumber();
+      return new MathOp(combo).add(renewDomainNativeCost).toString();
     } else {
       return combo;
     }
@@ -109,7 +108,7 @@ export const handleFioHandleCartItemsWithCustomDomain = ({
     item = {
       ...item,
       hasCustomDomainInCart: true,
-      costNativeFio: Number(addressPrice),
+      costNativeFio: addressPrice,
       costFio: fio,
       costUsdc: usdc,
     };
@@ -324,8 +323,8 @@ export const calculateCartTotalCost = ({ cartItems, roe }) => {
 
     if (isFree && type === CART_ITEM_TYPE.ADDRESS) return acc;
 
-    return new MathOp(acc).add(costNativeFio).toNumber();
-  }, 0);
+    return new MathOp(acc).add(costNativeFio).toString();
+  }, '0');
 
   const { fio, usdc } = convertFioPrices(nativeFioTotalCost, roe);
 
@@ -584,21 +583,21 @@ export const getItemCost = ({ item, prices, roe }) => {
 
   switch (type) {
     case CART_ITEM_TYPE.ADD_BUNDLES:
-      costNativeFio = Number(addBundles);
+      costNativeFio = addBundles;
       break;
     case CART_ITEM_TYPE.ADDRESS:
-      costNativeFio = Number(address);
+      costNativeFio = address;
       break;
     case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
       if (hasCustomDomainInCart) {
-        costNativeFio = Number(address);
+        costNativeFio = address;
       } else {
         costNativeFio = handlePriceForMultiYearItems({
           includeAddress: true,
           prices,
           period,
         });
-        costItemNativeFio = Number(prices.combo);
+        costItemNativeFio = prices.combo;
       }
       break;
     }
@@ -608,11 +607,11 @@ export const getItemCost = ({ item, prices, roe }) => {
         prices,
         period,
       });
-      costItemNativeFio = Number(prices.domain);
+      costItemNativeFio = prices.domain;
       break;
     }
     case CART_ITEM_TYPE.DOMAIN_RENEWAL:
-      costNativeFio = new MathOp(renewDomain).mul(period).toNumber();
+      costNativeFio = new MathOp(renewDomain).mul(period).toString();
       break;
     default:
       throw new Error('Unknown cart item type');
