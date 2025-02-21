@@ -14,7 +14,7 @@ import { convertFioPrices } from '../../util/prices';
 import MathOp from '../../util/math';
 
 import { roe as roeSelector } from '../../redux/registrations/selectors';
-import { WalletBalancesItem } from '../../types';
+import { Roe, WalletBalancesItem } from '../../types';
 import { VALUE_POSITIONS, ValuePosition } from './constants';
 
 import classes from './TransactionDetails.module.scss';
@@ -41,6 +41,7 @@ export type TransactionDetailsProps = {
     walletName?: string;
   };
   additional?: AdditionalDetails[];
+  roe?: Roe;
 };
 
 export const TransactionDetails: FC<TransactionDetailsProps> = ({
@@ -51,15 +52,17 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
   bundles,
   payWith,
   additional = [],
+  roe,
 }) => {
-  const roe = useSelector(roeSelector);
+  const roeCurrent = useSelector(roeSelector);
+  const roeValue = roe || roeCurrent;
 
   const feeRender = () => {
     if (typeof feeInFio !== 'number' || feeInFio === 0) {
       return null;
     }
 
-    const fee = convertFioPrices(feeInFio, roe);
+    const fee = convertFioPrices(feeInFio, roeValue);
 
     return (
       <TransactionDetailsItem
@@ -81,7 +84,7 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
 
     const totalFio = new MathOp(feeInFio).add(amountInFio).toString();
 
-    const total = convertFioPrices(totalFio, roe);
+    const total = convertFioPrices(totalFio, roeValue);
 
     return (
       <TransactionDetailsItem
