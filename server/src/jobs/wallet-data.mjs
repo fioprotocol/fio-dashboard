@@ -574,19 +574,19 @@ class WalletDataJob extends CommonJob {
           !existsNotification.emailDate;
 
         if (alreadyHasPendingNotification) {
-          // todo: change to calculate using MathOp
           previousBalance = fioApi.amountToSUF(
-            parseFloat(existsNotification.data.emailData.newFioBalance) -
-              parseFloat(existsNotification.data.emailData.fioBalanceChange),
+            new MathOp(existsNotification.data.emailData.newFioBalance)
+              .sub(existsNotification.data.emailData.fioBalanceChange)
+              .toString(),
           );
         }
 
         const roe = await getROE();
         const fioNativeChangeBalance = new MathOp(balance)
           .sub(previousBalance)
-          .toNumber();
+          .toString();
         const usdcChangeBalance = fioApi.convertFioToUsdc(
-          new MathOp(fioNativeChangeBalance).abs().toNumber(),
+          new MathOp(fioNativeChangeBalance).abs().toString(),
           roe,
         );
         const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
@@ -599,7 +599,7 @@ class WalletDataJob extends CommonJob {
               emailData: {
                 ...existsNotification.data.emailData,
                 fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
-                  new MathOp(fioNativeChangeBalance).abs().toNumber() || 0,
+                  new MathOp(fioNativeChangeBalance).abs().toString(),
                 )} FIO)`,
                 newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(
                   balance || 0,
@@ -618,7 +618,7 @@ class WalletDataJob extends CommonJob {
                 pagesToShow: ['/'],
                 emailData: {
                   fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
-                    new MathOp(fioNativeChangeBalance).abs().toNumber() || 0,
+                    new MathOp(fioNativeChangeBalance).abs().toString(),
                   )} FIO)`,
                   newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(
                     balance || 0,

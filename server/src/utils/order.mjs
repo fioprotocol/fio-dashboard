@@ -77,13 +77,13 @@ export const countTotalPriceAmount = orderItems =>
         orderItem.fee_collected ||
         orderItem.nativeFio ||
         0;
-      const usdcAmount = orderItem.costUsdc || orderItem.price || 0;
+      const usdcAmount = orderItem.costUsdc || orderItem.price || '0';
 
-      const orderNativeFio = new MathOp(fioNativeAmount).toNumber();
-      const orderPrice = new MathOp(usdcAmount).toNumber();
+      const orderNativeFio = new MathOp(fioNativeAmount).toString();
+      const orderPrice = new MathOp(usdcAmount).toString();
 
-      fioNativeTotal = new MathOp(fioNativeTotal).add(orderNativeFio).toNumber();
-      usdcTotal = new MathOp(usdcTotal).add(orderPrice).toNumber();
+      fioNativeTotal = new MathOp(fioNativeTotal).add(orderNativeFio).toString();
+      usdcTotal = new MathOp(usdcTotal).add(orderPrice).toString();
 
       return {
         fioNativeTotal,
@@ -91,7 +91,7 @@ export const countTotalPriceAmount = orderItems =>
         fioTotal: fioApi.sufToAmount(fioNativeTotal),
       };
     },
-    { fioNativeTotal: 0, usdcTotal: 0 },
+    { fioNativeTotal: '0', usdcTotal: '0' },
   );
 
 export const transformCostToPriceString = ({ fioNativeAmount, usdcAmount }) => {
@@ -100,7 +100,7 @@ export const transformCostToPriceString = ({ fioNativeAmount, usdcAmount }) => {
   if (usdcAmount) {
     if (typeof usdcAmount === 'string') return `$${usdcAmount}`;
 
-    return `$${usdcAmount.toFixed(2)}`;
+    return `$${new MathOp(usdcAmount).round(2, 1).toString()}`;
   }
 };
 
@@ -149,7 +149,7 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
       badgeKey = `${errorData.code}`;
       totalCurrency = Payment.CURRENCY.FIO;
       customItemAmount = errorData.credited
-        ? new MathOp(errorData.credited).toNumber()
+        ? new MathOp(errorData.credited).toString()
         : null;
     } else {
       badgeKey = `${errorType}`;
@@ -201,10 +201,10 @@ export const combineOrderItems = ({ orderItems = [] }) => {
         ];
         existsItem.fee_collected = new MathOp(existsItem.fee_collected)
           .add(item.fee_collected)
-          .toNumber();
+          .toString();
         existsItem.costUsdc = new MathOp(existsItem.costUsdc)
           .add(item.costUsdc)
-          .toNumber();
+          .toString();
         existsItem.priceString = transformOrderItemCostToPriceString({
           fioNativeAmount: existsItem.fee_collected,
           usdcAmount: existsItem.costUsdc,
@@ -223,10 +223,10 @@ export const combineOrderItems = ({ orderItems = [] }) => {
         ];
         existsItem.fee_collected = new MathOp(existsItem.fee_collected)
           .add(item.fee_collected)
-          .toNumber();
+          .toString();
         existsItem.costUsdc = new MathOp(existsItem.costUsdc)
           .add(item.costUsdc)
-          .toNumber();
+          .toString();
         existsItem.priceString = transformOrderItemCostToPriceString({
           fioNativeAmount: existsItem.fee_collected,
           usdcAmount: existsItem.costUsdc,

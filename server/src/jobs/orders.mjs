@@ -391,10 +391,10 @@ class OrdersJob extends CommonJob {
     const threshold = new MathOp(orderItem.price)
       .mul(0.25)
       .round(2, 1)
-      .toNumber();
+      .toString();
     this.postMessage(`threshold, ${threshold}`);
-    const topThreshold = new MathOp(orderItem.price).add(threshold).toNumber();
-    const bottomThreshold = new MathOp(orderItem.price).sub(threshold).toNumber();
+    const topThreshold = new MathOp(orderItem.price).add(threshold).toString();
+    const bottomThreshold = new MathOp(orderItem.price).sub(threshold).toString();
     this.postMessage(`topThreshold, ${topThreshold}`);
     this.postMessage(`bottomThreshold, ${bottomThreshold}`);
     if (
@@ -405,11 +405,12 @@ class OrdersJob extends CommonJob {
         .sub(currentPrice)
         .div(orderItem.price)
         .mul(100)
-        .toNumber();
+        .round(2, 1)
+        .toString();
       this.postMessage(`percentageChange, ${percentageChange}`);
       const priceChangePercentage = new MathOp(percentageChange).gt(0)
-        ? `-${percentageChange.toFixed(2)}`
-        : `+${new MathOp(percentageChange).abs().toFixed(2)}`;
+        ? `-${percentageChange}`
+        : `+${new MathOp(percentageChange).abs().toString()}`;
       this.postMessage(`priceChangePercentage, ${priceChangePercentage}`);
       const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
