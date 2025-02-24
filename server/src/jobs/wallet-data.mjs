@@ -538,7 +538,8 @@ class WalletDataJob extends CommonJob {
           logger.error(
             `Process wallet error - id: ${(wallet && wallet.id) || 'N/A'} - error - ${
               e.message
-            } - detailed message - ${e.json.message} - action - checkBalance`,
+            } - detailed message - ${(e.json && e.json.message) ||
+              'N/A'} - action - checkBalance`,
           );
         }
         throw new Error(e);
