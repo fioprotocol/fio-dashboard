@@ -31,15 +31,20 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   );
 
 export type TotalCost = {
-  costNativeFio?: string;
+  costNativeFio: string;
   costFree?: string;
-  costFio?: string;
-  costUsdc?: string;
+  costFio: string;
+  costUsdc: string;
 };
 
 export const totalCost = (cartItems: CartItem[], roe: Roe): TotalCost => {
   if (cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree))
-    return { costFree: 'FREE' };
+    return {
+      costFree: 'FREE',
+      costNativeFio: '0',
+      costFio: '0',
+      costUsdc: '0',
+    };
 
   const fioNativeTotal = cartItems
     .filter(cartItem => !cartItem.isFree)

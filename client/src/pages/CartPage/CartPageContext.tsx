@@ -152,7 +152,7 @@ export const useContext = (): UseContextReturnType => {
   const {
     costNativeFio: totalCartNativeAmount,
     costUsdc: totalCartUsdcAmount,
-  } = (cartItems && totalCost(cartItems, roe)) || {};
+  } = totalCost(cartItems || [], roe);
 
   const totalCartAmount = apis.fio.sufToAmount(totalCartNativeAmount);
 
