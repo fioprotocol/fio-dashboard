@@ -621,7 +621,9 @@ export const useContext = (): {
             .costNativeFio;
           const available =
             fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
-          const notEnoughFio = available.nativeFio < totalCostNativeFio;
+          const notEnoughFio = new MathOp(available.nativeFio).lt(
+            totalCostNativeFio,
+          );
 
           return {
             ...it,
