@@ -87,7 +87,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
       payment.externalPaymentId,
       paymentOption,
       paymentWallet?.from,
-      props,
+      props.onFinish,
     ],
   );
 
@@ -129,15 +129,10 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   }, []);
 
   const onBitPayModalClose = useCallback(() => {
-    window.bitpay?.onModalWillLeave(function() {
-      if (isPaid) {
-        onFinish(submitData);
-      }
-    });
     window.bitpay?.onModalWillEnter(function() {
       setIsLoadingBitPay(false);
     });
-  }, [isPaid, onFinish, submitData]);
+  }, []);
 
   useEffect(() => {
     onBitPayModalClose();
@@ -146,6 +141,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
   useEffect(() => {
     if (isPaid) {
       onFinish(submitData);
+      setIsPaid(false);
     }
   }, [isPaid, onFinish, submitData]);
 
