@@ -101,7 +101,8 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
           publicKey: it.signInFioWallet.publicKey,
           paidWith: it.signInFioWallet.name,
           totalFioNativeCostPrice: it.displayOrderItems.reduce(
-            (total, it) => new MathOp(total).add(it.fee_collected).toString(),
+            (total, it) =>
+              new MathOp(total).add(it.fee_collected || 0).toString(),
             '0',
           ),
           orderNumber: number,

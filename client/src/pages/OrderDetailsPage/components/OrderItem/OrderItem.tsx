@@ -39,7 +39,7 @@ export const OrderItem: FC<Props> = props => {
     domain,
     type,
     period,
-    costFio: apis.fio.sufToAmount(fee_collected),
+    costFio: fee_collected ? apis.fio.sufToAmount(fee_collected) : null,
     costUsdc,
     costNativeFio: fee_collected ? new MathOp(fee_collected).toString() : null,
     id,
