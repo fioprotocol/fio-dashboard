@@ -92,7 +92,7 @@ const WrapTokenResults: FC<WrapTokenResultsProps> = props => {
       <ResultDetails show={!!name} label="Domain Wrapped" value={name} />
 
       <ResultDetails
-        show={fioAmount && new MathOp(fioAmount).gt(0)}
+        show={!!fioAmount && new MathOp(fioAmount).gt(0)}
         label="FIO Wrapped"
         value={
           <PriceComponent

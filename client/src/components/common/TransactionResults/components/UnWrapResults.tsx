@@ -97,7 +97,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
       />
 
       <ResultDetails
-        show={fioAmount && new MathOp(fioAmount).gt(0)}
+        show={!!fioAmount && new MathOp(fioAmount).gt(0)}
         label="FIO Unwrapped"
         value={
           <PriceComponent
