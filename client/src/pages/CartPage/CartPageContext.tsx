@@ -26,7 +26,11 @@ import {
 } from '../../redux/registrations/selectors';
 import { refProfileInfo } from '../../redux/refProfile/selectors';
 
-import { handlePriceForMultiYearItems, totalCost } from '../../util/cart';
+import {
+  cartItemsToOrderItems,
+  handlePriceForMultiYearItems,
+  totalCost,
+} from '../../util/cart';
 import MathOp from '../../util/math';
 import {
   fireAnalyticsEvent,
@@ -42,6 +46,7 @@ import {
   CART_ITEM_TYPE,
   NOT_FOUND_CODE,
   REF_PROFILE_TYPE,
+  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import {
   NOT_FOUND_CART_BUTTON_TEXT,
@@ -156,14 +161,42 @@ export const useContext = (): UseContextReturnType => {
 
   const totalCartAmount = apis.fio.sufToAmount(totalCartNativeAmount);
 
-  const hasLowBalance =
-    userWallets &&
-    userWallets.every(
-      wallet =>
-        wallet.available != null &&
-        totalCartNativeAmount &&
-        new MathOp(wallet.available).lte(totalCartNativeAmount),
+  const hasLowBalance = useCallback(() => {
+    const hasNoComboSupportWallet = userWallets.find(
+      wallet => wallet.from === WALLET_CREATED_FROM.LEDGER,
     );
+
+    let noComboTotal: string | undefined;
+    if (hasNoComboSupportWallet) {
+      const noComboTotalCost = totalCost(
+        cartItemsToOrderItems({
+          cartItems: cartItems || [],
+          prices: prices.nativeFio,
+          supportCombo: false,
+          roe,
+        }).map(({ nativeFio }) => ({
+          costNativeFio: nativeFio,
+          domain: '',
+          id: '',
+        })),
+        roe,
+      );
+      noComboTotal = noComboTotalCost.costNativeFio;
+    }
+
+    return (
+      userWallets &&
+      userWallets.every(wallet =>
+        wallet.from !== WALLET_CREATED_FROM.LEDGER || !noComboTotal
+          ? wallet.available != null &&
+            totalCartNativeAmount &&
+            new MathOp(wallet.available).lte(totalCartNativeAmount)
+          : wallet.from === WALLET_CREATED_FROM.LEDGER &&
+            noComboTotal &&
+            new MathOp(wallet.available).lte(noComboTotal),
+      )
+    );
+  }, [userWallets, totalCartNativeAmount, cartItems, prices, roe]);
 
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
@@ -395,7 +428,7 @@ export const useContext = (): UseContextReturnType => {
     cartId,
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
-    hasLowBalance,
+    hasLowBalance: hasLowBalance(),
     loading: loading || loadingCart || walletsLoading,
     walletCount,
     isAffiliateEnabled,
