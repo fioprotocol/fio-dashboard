@@ -6,6 +6,8 @@ import { DeviceStatusCodes } from 'ledgerjs-hw-app-fio/dist/errors/deviceStatusE
 
 import ConnectionModal from '../Modal/ConnectionModal';
 
+import { trxResponseTransform } from '../../api/fio';
+
 import useEffectOnce from '../../hooks/general';
 import { getPubKeyFromLedger, handleLedgerError } from '../../util/ledger';
 import { fireActionAnalyticsEvent } from '../../util/analytics';
@@ -199,7 +201,7 @@ const LedgerConnect: React.FC<Props> = props => {
 
       setConnecting(false);
 
-      onSuccess(result);
+      onSuccess(trxResponseTransform(result));
     } catch (e) {
       handleLedgerError({
         error: e,
