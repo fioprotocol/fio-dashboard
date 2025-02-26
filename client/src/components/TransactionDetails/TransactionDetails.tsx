@@ -58,7 +58,7 @@ export const TransactionDetails: FC<TransactionDetailsProps> = ({
   const roeValue = roe || roeCurrent;
 
   const feeRender = () => {
-    if (typeof feeInFio !== 'number' || feeInFio === 0) {
+    if (typeof feeInFio !== 'string' || feeInFio === '0') {
       return null;
     }
 
