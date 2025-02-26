@@ -18,6 +18,8 @@ export function convertFioPrices(
   nativeFio: string | null | undefined,
   roe: Roe,
 ): WalletBalancesItem {
+  if (!nativeFio) return { nativeFio: '0', fio: '0', usdc: '0' };
+
   const fioAmount = apis.fio.sufToAmount(nativeFio || 0);
 
   return {

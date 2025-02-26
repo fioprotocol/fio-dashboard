@@ -328,7 +328,7 @@ class Fio {
       endPoint: FIO_ACTIONS_TO_END_POINT_MAP[action],
     });
 
-    return fee;
+    return new MathOp(fee).toString();
   }
 
   async executeAction(action, params, auth = {}, keys = {}) {
