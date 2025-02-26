@@ -3,9 +3,11 @@ import { GenericAction } from '@fioprotocol/fiosdk';
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
+  CURRENCY_CODES,
 } from '../constants/common';
 import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
+import { BC_TX_STATUSES } from '../constants/purchase';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
@@ -243,4 +245,134 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   }
 
   return { groups, hasPublicCartItems };
+};
+
+export const cartItemsToOrderItems = ({
+  cartItems,
+  prices,
+  supportCombo,
+  roe,
+}: {
+  cartItems: CartItem[];
+  prices: NativePrices;
+  supportCombo: boolean;
+  roe: Roe;
+}) => {
+  const orderItems: OrderItem[] = [];
+
+  for (const cartItem of cartItems) {
+    const {
+      address,
+      domain,
+      id,
+      isFree,
+      hasCustomDomainInCart,
+      period,
+      type,
+    } = cartItem;
+
+    const orderItem: OrderItem = {
+      id: '',
+      action: '',
+      createdAt: '',
+      nativeFio: '',
+      price: '',
+      priceCurrency: CURRENCY_CODES.USDC,
+      data: {
+        cartItemId: id,
+      },
+      domain,
+      updatedAt: '',
+      blockchainTransactions: [],
+      orderItemStatus: {
+        txStatus: BC_TX_STATUSES.NONE,
+      },
+    };
+
+    const renewOrderItem: OrderItem = {
+      ...orderItem,
+      action: GenericAction.renewFioDomain,
+      address: null,
+      nativeFio: prices.renewDomain,
+      price: convertFioPrices(prices.renewDomain, roe).usdc,
+    };
+
+    const domainOrderItem: OrderItem = {
+      ...orderItem,
+      address: null,
+      action: GenericAction.registerFioDomain,
+      nativeFio: prices.domain,
+      price: convertFioPrices(prices.domain, roe).usdc,
+    };
+
+    switch (type) {
+      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
+        const useComboAction = !hasCustomDomainInCart && supportCombo;
+
+        if (!supportCombo && !hasCustomDomainInCart) {
+          orderItems.push({
+            ...domainOrderItem,
+            data: { ...domainOrderItem.data, cartItemId: domain },
+          });
+          renewOrderItem.data = { ...renewOrderItem.data, cartItemId: domain };
+        }
+
+        orderItem.action = useComboAction
+          ? GenericAction.registerFioDomainAddress
+          : GenericAction.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = (useComboAction
+          ? prices.combo
+          : prices.address
+        ).toString();
+        orderItem.price = convertFioPrices(
+          useComboAction ? prices.combo : prices.address,
+          roe,
+        ).usdc;
+        orderItems.push(orderItem);
+
+        if (!hasCustomDomainInCart) {
+          for (let i = 1; i < Number(period); i++) {
+            orderItems.push(renewOrderItem);
+          }
+        }
+        break;
+      }
+      case CART_ITEM_TYPE.DOMAIN_RENEWAL: {
+        for (let i = 0; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
+        }
+        break;
+      }
+      case CART_ITEM_TYPE.ADD_BUNDLES:
+        orderItem.action = GenericAction.addBundledTransactions;
+        orderItem.address = address;
+        orderItem.nativeFio = prices.addBundles;
+        orderItem.price = convertFioPrices(prices.addBundles, roe).usdc;
+        orderItems.push(orderItem);
+        break;
+      case CART_ITEM_TYPE.ADDRESS: {
+        orderItem.action = GenericAction.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = isFree ? '0' : prices.address;
+        orderItem.price = isFree
+          ? '0'
+          : convertFioPrices(prices.address, roe).usdc;
+        orderItems.push(orderItem);
+        break;
+      }
+      case CART_ITEM_TYPE.DOMAIN: {
+        orderItems.push(domainOrderItem);
+
+        for (let i = 1; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  return orderItems;
 };
