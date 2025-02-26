@@ -818,7 +818,7 @@ export default class Fio {
     return rows;
   };
 
-  getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
+  getFeeFromTable = async (feeHash: string): Promise<{ fee: string }> => {
     const resultRows: {
       rows: {
         end_point: string;
@@ -836,7 +836,46 @@ export default class Fio {
       json: true,
     });
 
-    return { fee: resultRows.rows[0].suf_amount };
+    return { fee: new MathOp(resultRows.rows[0].suf_amount).toString() };
+  };
+
+  getFee = async (
+    endpoint: EndPoint,
+    fioAddress?: string,
+  ): Promise<{ fee: string }> => {
+    const { fee } = await this.publicFioSDK.getFee(endpoint, fioAddress);
+
+    return { fee: new MathOp(fee).toString() };
+  };
+
+  getOracleFees = async (): Promise<{
+    oracle_fees: [
+      { fee_name: EndPoint.wrapFioDomain; fee_amount: string },
+      { fee_name: EndPoint.wrapFioTokens; fee_amount: string },
+    ];
+  }> => {
+    const { oracle_fees } = await this.publicFioSDK.getOracleFees();
+
+    return {
+      oracle_fees: [
+        {
+          fee_name: EndPoint.wrapFioDomain,
+          fee_amount: new MathOp(
+            oracle_fees.find(
+              ({ fee_name }) => fee_name === EndPoint.wrapFioDomain,
+            )?.fee_amount,
+          ).toString(),
+        },
+        {
+          fee_name: EndPoint.wrapFioTokens,
+          fee_amount: new MathOp(
+            oracle_fees.find(
+              ({ fee_name }) => fee_name === EndPoint.wrapFioTokens,
+            )?.fee_amount,
+          ).toString(),
+        },
+      ],
+    };
   };
 
   getAccountPubKey = async (account: string): Promise<string> => {
