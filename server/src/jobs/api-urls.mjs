@@ -33,7 +33,10 @@ class ApiUrlsJob extends CommonJob {
           api,
           hyperion,
           votes,
-          score: { score },
+          score: {
+            score,
+            details: { supports_burst, supports_cors },
+          },
           location_country,
           location_latitude,
           location_longitude,
@@ -41,11 +44,16 @@ class ApiUrlsJob extends CommonJob {
 
         if (!this.minVersionRequired(server_version, minVersion)) return;
         if (!this.votesRequired(votes)) return;
+        if (!this.supportBurst(supports_burst)) return;
 
         let id = index * 4;
         const rank = score;
         const location = location_country;
-        const data = { location_longitude, location_latitude };
+        const data = {
+          location_longitude,
+          location_latitude,
+          supports_cors: supports_cors.status,
+        };
         if (api) {
           if (!(await this.hasRequiredEndpoints(url))) return;
           await FioApiUrl.create(
@@ -142,6 +150,10 @@ class ApiUrlsJob extends CommonJob {
 
   votesRequired(votes) {
     return new MathOp(votes).gte(MIN_VOTES);
+  }
+
+  supportBurst(supportsBurst = {}) {
+    return supportsBurst.status === true;
   }
 
   async hasRequiredEndpoints(url) {
