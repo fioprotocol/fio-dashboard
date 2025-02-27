@@ -49,6 +49,8 @@ import {
   cartIsRelative,
   groupCartItemsByPaymentWallet,
   actionFromCartItem,
+  cartItemsToOrderItems,
+  walletSupportsCombo,
 } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
@@ -93,6 +95,8 @@ import {
   RedirectLinkData,
   AnyObject,
   Roe,
+  Prices,
+  FioDomainDoublet,
 } from '../../types';
 import {
   BeforeSubmitData,
@@ -104,6 +108,65 @@ import { CreateOrderActionData } from '../../redux/types';
 import MathOp from '../../util/math';
 
 const SIGN_TX_MAX_FEE_COEFFICIENT = '1.5';
+
+const calculateTotalForOtherWallets = ({
+  cartItems,
+  fioWallets,
+  paymentWallet,
+  userDomains,
+  prices,
+  roe,
+}: {
+  cartItems: CartItem[];
+  fioWallets: FioWalletDoublet[];
+  paymentWallet: FioWalletDoublet;
+  userDomains: FioDomainDoublet[];
+  prices: Prices;
+  roe: Roe;
+}) => {
+  const hasNoComboSupportWallet = fioWallets.find(
+    wallet => !walletSupportsCombo(wallet),
+  );
+  if (!hasNoComboSupportWallet) {
+    return {
+      selectedPaymentWalletSupportsCombo: false,
+      altTotal: null,
+    };
+  }
+
+  const selectedPaymentWalletSupportsCombo = walletSupportsCombo(paymentWallet);
+
+  const {
+    groups: groupedCartItemsByPaymentWallet,
+  } = groupCartItemsByPaymentWallet(
+    paymentWallet?.publicKey,
+    selectedPaymentWalletSupportsCombo
+      ? cartItemsToOrderItems({
+          cartItems: cartItems ?? [],
+          prices: prices.nativeFio,
+          supportCombo: false,
+          roe,
+        }).map(({ nativeFio, domain, data }) => ({
+          costNativeFio: nativeFio,
+          domain,
+          type: data.type,
+          id: data.cartItemId,
+        }))
+      : cartItems,
+    fioWallets,
+    userDomains,
+  );
+
+  return {
+    selectedPaymentWalletSupportsCombo,
+    altTotal: totalCost(
+      groupedCartItemsByPaymentWallet.find(
+        it => it.signInFioWallet.publicKey === paymentWallet.publicKey,
+      )?.displayOrderItems ?? [],
+      roe,
+    ).costNativeFio,
+  };
+};
 
 export const useContext = (): {
   displayOrderItems: CartItem[];
@@ -417,6 +480,8 @@ export const useContext = (): {
       ? 'Make Purchase'
       : PAYMENT_PROVIDER_PAYMENT_TITLE[paymentProvider];
 
+  // Group cart items by payment wallet,
+  // we need to know if there are items that can be paid only by other wallet in the account (fch with private domains)
   const {
     groups: groupedCartItemsByPaymentWallet,
     hasPublicCartItems,
@@ -437,6 +502,19 @@ export const useContext = (): {
     publicCartItemsPaymentWallet?.displayOrderItems ?? [],
     roe,
   );
+  // We need to calculate the total for other wallets (that support combo or not)
+  // to know if we need to show them in the assignment dropdown
+  const { altTotal, selectedPaymentWalletSupportsCombo } =
+    hasPublicCartItems && paymentOption === PAYMENT_OPTIONS.FIO
+      ? calculateTotalForOtherWallets({
+          cartItems: cartItems ?? [],
+          fioWallets,
+          paymentWallet,
+          userDomains,
+          prices,
+          roe,
+        })
+      : { altTotal: null, selectedPaymentWalletSupportsCombo: false };
 
   const paymentWallets = useMemo(
     () =>
@@ -444,14 +522,25 @@ export const useContext = (): {
         .filter(wallet => {
           if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
 
-          return new MathOp(wallet.available).gt(publicCartItemsCost);
+          return new MathOp(wallet.available).gt(
+            selectedPaymentWalletSupportsCombo === walletSupportsCombo(wallet)
+              ? publicCartItemsCost
+              : altTotal,
+          );
         })
         .sort(
           (a, b) =>
             new MathOp(b.available).sub(a.available).toNumber() ||
             a.name.localeCompare(b.name),
         ),
-    [fioWallets, isFree, paymentOption, publicCartItemsCost],
+    [
+      fioWallets,
+      isFree,
+      paymentOption,
+      publicCartItemsCost,
+      altTotal,
+      selectedPaymentWalletSupportsCombo,
+    ],
   );
 
   useEffect(() => {

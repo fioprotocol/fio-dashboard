@@ -185,6 +185,7 @@ export const useContext = (): UseContextReturnType => {
     }
 
     return (
+      totalCartNativeAmount &&
       userWallets &&
       userWallets.every(wallet =>
         wallet.from !== WALLET_CREATED_FROM.LEDGER || !noComboTotal
@@ -193,6 +194,7 @@ export const useContext = (): UseContextReturnType => {
             new MathOp(wallet.available).lte(totalCartNativeAmount)
           : wallet.from === WALLET_CREATED_FROM.LEDGER &&
             noComboTotal &&
+            wallet.available != null &&
             new MathOp(wallet.available).lte(noComboTotal),
       )
     );
