@@ -12,6 +12,7 @@ export default class ApiUrls extends Base {
     const apiUrls = await FioApiUrl.getApiUrls({
       type: fioUrlType,
       tz,
+      supportsCors: true,
     });
 
     return {
