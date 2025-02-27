@@ -56,9 +56,10 @@ export class FioApiUrl extends Base {
     return attributes.default;
   }
 
-  static async getApiUrls({ type, location = '', tz = '' }) {
+  static async getApiUrls({ type, location = '', tz = '', supportsCors = false }) {
     const where = {};
     if (type) where.type = type;
+    if (supportsCors) where.data = { supports_cors: true };
 
     const urls = await this.findAll({
       order: [['rank', 'DESC']],
