@@ -818,6 +818,7 @@ export type OrderItem = {
     hasCustomDomainFee?: string;
     period?: number;
     cartItemId?: string;
+    type?: string;
   };
   updatedAt: string;
   blockchainTransactions: BcTx[];

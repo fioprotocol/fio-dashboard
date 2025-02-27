@@ -4,6 +4,7 @@ import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
   CURRENCY_CODES,
+  WALLET_CREATED_FROM,
 } from '../constants/common';
 import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
@@ -247,6 +248,9 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   return { groups, hasPublicCartItems };
 };
 
+export const walletSupportsCombo = (wallet: FioWalletDoublet) =>
+  wallet.from !== WALLET_CREATED_FROM.LEDGER;
+
 export const cartItemsToOrderItems = ({
   cartItems,
   prices,
@@ -280,6 +284,7 @@ export const cartItemsToOrderItems = ({
       priceCurrency: CURRENCY_CODES.USDC,
       data: {
         cartItemId: id,
+        type,
       },
       domain,
       updatedAt: '',
