@@ -69,7 +69,7 @@ const returnDayRange = timePeriod => {
 
 class WalletDataJob extends CommonJob {
   logFioError(e, wallet, action = '-') {
-    if (e && (e.errorCode !== 404 || e.code !== 404)) {
+    if (e && e.errorCode !== ERROR_CODES.NOT_FOUND && e.code !== ERROR_CODES.NOT_FOUND) {
       if (wallet && wallet.id)
         this.postMessage(
           `Process wallet error - id: ${wallet.id} - error - ${e.message} - action - ${action}`,
