@@ -520,10 +520,12 @@ export const useContext = (): {
     () =>
       fioWallets
         .filter(wallet => {
+          if (!wallet.available || !publicCartItemsCost) return false;
           if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
 
           return new MathOp(wallet.available).gt(
-            selectedPaymentWalletSupportsCombo === walletSupportsCombo(wallet)
+            selectedPaymentWalletSupportsCombo ===
+              walletSupportsCombo(wallet) || !altTotal
               ? publicCartItemsCost
               : altTotal,
           );
