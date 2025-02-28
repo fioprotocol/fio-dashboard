@@ -75,9 +75,23 @@ class TxCheckJob extends CommonJob {
             case GenericAction.registerFioDomainAddress:
             case GenericAction.registerFioAddress:
             case GenericAction.registerFioDomain: {
-              const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
-                (params && params.owner_fio_public_key) || publicKey,
-              );
+              let fioAddresses = [];
+              let fioDomains = [];
+              try {
+                const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
+                  (params && params.owner_fio_public_key) || publicKey,
+                );
+                fioAddresses = fio_addresses;
+                fioDomains = fio_domains;
+              } catch (error) {
+                if (error.code !== ERROR_CODES.NOT_FOUND) {
+                  throw error;
+                }
+
+                fioAddresses = [];
+                fioDomains = [];
+              }
+
               const isAddress =
                 action === GenericAction.registerFioAddress ||
                 action === GenericAction.registerFioDomainAddress;
@@ -87,12 +101,12 @@ class TxCheckJob extends CommonJob {
 
               let found;
               if (isAddress) {
-                found = fio_addresses.find(
+                found = fioAddresses.find(
                   ({ fio_address }) =>
                     fio_address.toLowerCase() === fioName.toLowerCase(),
                 );
               } else {
-                found = fio_domains.find(
+                found = fioDomains.find(
                   ({ fio_domain }) => fio_domain.toLowerCase() === fioName.toLowerCase(),
                 );
               }
