@@ -431,7 +431,7 @@ export const useContext = (): UseContextProps => {
       setUsersItemsList(prevState =>
         isEqual(prevState, updatedState) ? prevState : updatedState,
       ),
-    [setUsersItemsList],
+    [],
   );
 
   const validateAddress = useCallback(
