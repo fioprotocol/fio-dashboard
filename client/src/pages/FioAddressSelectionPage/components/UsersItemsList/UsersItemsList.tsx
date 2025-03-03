@@ -34,6 +34,7 @@ export const UsersItemsList: React.FC<Props> = props => {
     showExpiredDomainWarningBadge,
     toggleShowExpiredDomainWarningBadge,
   ] = useState<boolean>(false);
+  const [listChanged, setListChanged] = useState<boolean>(false);
 
   const idListJson = JSON.stringify(list.map(({ id }) => id));
   const hasExpiredDomains = Object.values(itemToExpiration).some(
@@ -64,11 +65,18 @@ export const UsersItemsList: React.FC<Props> = props => {
         {},
       ),
     );
+    setListChanged(true);
   }, [idListJson]);
 
   useEffect(() => {
     toggleShowExpiredDomainWarningBadge(hasExpiredDomains);
   }, [hasExpiredDomains]);
+  useEffect(() => {
+    // Retrigger the list render when the list is changed
+    if (listChanged) {
+      setListChanged(false);
+    }
+  }, [listChanged]);
 
   if (error || !list.length) return null;
 
@@ -100,15 +108,17 @@ export const UsersItemsList: React.FC<Props> = props => {
           onClose={closeExpiredDomainNotification}
         />
         <div className={classes.listContainer}>
-          {list.map(listItem => (
-            <UsersItem
-              key={listItem.id}
-              listItem={listItem}
-              isDesktop={isDesktop}
-              setDomainExpired={setDomainExpired}
-              onClick={onClick}
-            />
-          ))}
+          {listChanged || loading
+            ? null
+            : list.map(listItem => (
+                <UsersItem
+                  key={listItem.id}
+                  listItem={listItem}
+                  isDesktop={isDesktop}
+                  setDomainExpired={setDomainExpired}
+                  onClick={onClick}
+                />
+              ))}
           <div className={classes.buttonContainer}>
             <ActionButton
               text="View More"
