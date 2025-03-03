@@ -113,10 +113,9 @@ class TxCheckJob extends CommonJob {
 
               if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
                 try {
-                  const resJson = await new FioHistory({
+                  const res = await new FioHistory({
                     fioHistoryUrls,
                   }).getTransaction({ transactionId: txId, maxRetries });
-                  const res = JSON.parse(resJson);
                   const txRegexpString = `Transaction ${txId} not found`;
                   const txRegexp = new RegExp(txRegexpString, 'i');
 
@@ -141,7 +140,7 @@ class TxCheckJob extends CommonJob {
                 btData.checkIteration > MAX_CHECK_TIMES &&
                 status !== BlockchainTransaction.STATUS.SUCCESS
               )
-                status = BlockchainTransaction.STATUS.EXPIRE;
+                status = BlockchainTransaction.STATUS.FAILED;
 
               break;
             }
