@@ -41,9 +41,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
   const { loading, fioApiUrlsList, getFioApiUrlsList } = props;
 
   const newApiUrlData = {
-    rank: fioApiUrlsList?.length
-      ? fioApiUrlsList[fioApiUrlsList.length - 1].rank + 1
-      : 1,
+    rank: fioApiUrlsList?.length ? Number(fioApiUrlsList[0].rank) + 1 : 1,
   };
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showMinVerModal, setShowMinVerModal] = useState<boolean>(false);
