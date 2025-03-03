@@ -38,6 +38,7 @@ export default class FioApiUrlCreate extends Base {
       rank,
       type,
       url,
+      data: { supports_cors: true },
     });
     await created.save();
 
