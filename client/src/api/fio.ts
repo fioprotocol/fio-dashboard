@@ -296,6 +296,10 @@ export default class Fio {
 
   setWalletFioSdk = async (keys: { public: string; private: string }) => {
     const apiUrls = await this.checkUrls();
+
+    // Update the api urls for the public FIOSDK too
+    this.setApiUrls(apiUrls);
+
     this.walletFioSDK = new FIOSDK({
       privateKey: keys.private,
       publicKey: keys.public,
