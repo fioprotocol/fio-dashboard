@@ -172,7 +172,7 @@ export function usePubAddressesFromWallet(
   return fioAddressToPubAddresses;
 }
 
-export function useRoe(): number | null {
+export function useRoe(): string | null {
   const roeCoefficient = useSelector(roe);
 
   return roeCoefficient || null;
@@ -182,9 +182,9 @@ export function useConvertFioToUsdc({
   fioAmount,
   nativeAmount,
 }: {
-  fioAmount?: number;
-  nativeAmount?: number;
-}): number | null {
+  fioAmount?: string;
+  nativeAmount?: string;
+}): string | null {
   const roeAmount = useSelector(roe);
 
   if ((!fioAmount && !nativeAmount) || !roeAmount) return null;

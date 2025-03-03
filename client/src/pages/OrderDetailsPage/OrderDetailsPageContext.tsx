@@ -19,6 +19,7 @@ import {
 import { isNoProfileFlow as isNoProfileFlowSelector } from '../../redux/refProfile/selectors';
 
 import { groupCartItemsByPaymentWallet } from '../../util/cart';
+import MathOp from '../../util/math';
 
 import { PaymentProvider, PaymentStatus } from '../../types';
 
@@ -52,6 +53,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     isAllErrored,
     isPartial,
     errorBadges,
+    roe,
   } = orderItem || {};
   const {
     paidWith,
@@ -98,18 +100,21 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
       ? groupedCartItemsByPaymentWallet.map(it => ({
           publicKey: it.signInFioWallet.publicKey,
           paidWith: it.signInFioWallet.name,
-          totalFioNativeCostPrice: it.cartItems.reduce(
-            (total, it) => total + Number(it.fee_collected),
-            0,
+          totalFioNativeCostPrice: it.displayOrderItems.reduce(
+            (total, it) =>
+              new MathOp(total).add(it.fee_collected || 0).toString(),
+            '0',
           ),
           orderNumber: number,
+          roe,
         }))
       : [
           {
             publicKey: publicKey,
             paidWith,
-            totalFioNativeCostPrice: totalCostPrice?.fioNativeTotal ?? 0,
+            totalFioNativeCostPrice: totalCostPrice?.fioNativeTotal ?? '0',
             orderNumber: number,
+            roe,
             isFree: true,
           },
         ];

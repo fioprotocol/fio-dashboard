@@ -7,14 +7,11 @@ import {
   OnSuccessResponseResult,
 } from '../../MetamaskConfirmAction';
 
-import MathOp from '../../../util/math';
+import { defaultMaxFee } from '../../../util/prices';
 import { makeRegistrationOrder } from '../middleware';
 import apis from '../../../api';
 
-import {
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
-} from '../../../constants/fio';
+import { TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS } from '../../../constants/fio';
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
@@ -67,12 +64,12 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
       groupedValue.signInFioWallet.from === WALLET_CREATED_FROM.METAMASK,
   );
 
-  const cartItems = metamaskItems
-    ?.map(metamaskItem => metamaskItem.submitData.cartItems)
+  const displayOrderItems = metamaskItems
+    ?.map(metamaskItem => metamaskItem.submitData.displayOrderItems)
     .flat();
 
   const registrations = makeRegistrationOrder({
-    cartItems,
+    displayOrderItems,
     fees: analyticsData?.prices?.nativeFio,
     isComboSupported: true,
   });
@@ -170,10 +167,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               fio_address: registration.fioName,
               is_public: 0,
               tpid: apis.fio.affiliateTpid,
-              max_fee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              max_fee: defaultMaxFee(registration.fee) as string,
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
@@ -201,10 +195,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               fio_address: registration.fioName,
               bundle_sets: DEFAULT_BUNDLE_SET_VALUE,
               tpid: apis.fio.tpid,
-              max_fee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              max_fee: defaultMaxFee(registration.fee) as string,
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
@@ -232,10 +223,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               fio_domain: registration.fioName,
               owner_fio_public_key: ownerFioPublicKey,
               tpid: apis.fio.affiliateTpid,
-              max_fee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              max_fee: defaultMaxFee(registration.fee) as string,
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
@@ -262,10 +250,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             data: {
               fio_domain: registration.fioName,
               tpid: apis.fio.tpid,
-              max_fee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              max_fee: defaultMaxFee(registration.fee) as string,
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
@@ -286,10 +271,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
               owner_fio_public_key: ownerFioPublicKey,
               fio_address: registration.fioName,
               tpid: apis.fio.affiliateTpid,
-              max_fee: new MathOp(registration.fee)
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+              max_fee: defaultMaxFee(registration.fee) as string,
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
@@ -326,7 +308,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
   return (
     <MetamaskConfirmAction
       analyticAction={CONFIRM_METAMASK_ACTION.PURCHASE}
-      analyticsData={{ ...analyticsData, cartItems }}
+      analyticsData={{ ...analyticsData, displayOrderItems }}
       actionParams={actionParams}
       processing={processing}
       setProcessing={setProcessing}

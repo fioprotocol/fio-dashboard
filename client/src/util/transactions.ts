@@ -1,4 +1,4 @@
-import { Account, FIOSDK } from '@fioprotocol/fiosdk';
+import { Account } from '@fioprotocol/fiosdk';
 
 import apis from '../api';
 
@@ -79,7 +79,7 @@ const processTransaction = (
   // Transfer funds transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER_PUB_KEY && data.amount != null) {
     nativeAmount = data.amount.toString();
-    const amount = `${FIOSDK.SUFToAmount(nativeAmount)}`;
+    const amount = apis.fio.sufToAmount(nativeAmount);
     actorSender = data.actor;
     if (data.payee_public_key === publicKey) {
       ourReceiveAddresses.push(publicKey);
@@ -102,14 +102,16 @@ const processTransaction = (
       if (!existingTrx.timestamp) {
         transactions[index].timestamp = action.timestamp;
       }
-      if (+nativeAmount > 0) {
+      if (new MathOp(nativeAmount).gt(0)) {
         return { timestamp: action.timestamp, editedExisting };
       }
       if (otherParams.isTransferProcessed) {
         return { timestamp: action.timestamp, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
-        nativeAmount = `${+nativeAmount - +existingTrx.networkFee}`;
+        nativeAmount = new MathOp(nativeAmount)
+          .sub(existingTrx.networkFee)
+          .toString();
         networkFee = existingTrx.networkFee;
       } else {
         log.error(
@@ -137,7 +139,7 @@ const processTransaction = (
 
   // Fee transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER && data.amount != null) {
-    const fioAmount = apis.fio.amountToSUF(parseFloat(`${data.amount}`));
+    const fioAmount = apis.fio.amountToSUF(data.amount);
     otherParams.feeActors = [data?.to];
     if (data?.to === actor) {
       nativeAmount = `${fioAmount}`;
@@ -159,7 +161,7 @@ const processTransaction = (
         transactions[index].timestamp = action.timestamp;
       }
       if (
-        +existingTrx.nativeAmount > 0 &&
+        new MathOp(existingTrx.nativeAmount).gt(0) &&
         otherParams?.feeActors?.includes(data?.to)
       ) {
         return { timestamp: action.timestamp, editedExisting };
@@ -185,7 +187,9 @@ const processTransaction = (
         }
       }
       if (otherParams?.isTransferProcessed) {
-        nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
+        nativeAmount = new MathOp(existingTrx.nativeAmount)
+          .sub(networkFee)
+          .toString();
       } else {
         log.error(
           'processTransaction error - existing spend transaction should have isTransferProcessed or isFeeProcessed set',
@@ -398,23 +402,23 @@ export const handleTransactionDetails = ({
       walletName: fioWallet?.name,
       walletBalances: {
         nativeFio: fioWallet?.balance,
-        fio: FIOSDK.SUFToAmount(fioWallet?.balance).toFixed(2),
-        usdc: apis.fio.convertFioToUsdc(fioWallet?.balance, roe)?.toString(),
+        fio: apis.fio.sufToAmount(fioWallet?.balance),
+        usdc: apis.fio.convertFioToUsdc(fioWallet?.balance, roe),
       },
     };
   }
 
   if (feeCollected) {
-    transactionDetails.feeInFio = feeCollected;
+    transactionDetails.feeInFio = new MathOp(feeCollected).toString();
 
     const walletBalance = shouldSubFeesFromBalance
-      ? new MathOp(fioWallet?.balance).sub(feeCollected).toNumber()
+      ? new MathOp(fioWallet?.balance).sub(feeCollected).toString()
       : fioWallet?.balance;
 
     transactionDetails.payWith.walletBalances = {
       nativeFio: walletBalance,
-      fio: FIOSDK.SUFToAmount(walletBalance).toFixed(2),
-      usdc: apis.fio.convertFioToUsdc(walletBalance, roe)?.toString(),
+      fio: apis.fio.sufToAmount(walletBalance),
+      usdc: apis.fio.convertFioToUsdc(walletBalance, roe),
     };
   }
 

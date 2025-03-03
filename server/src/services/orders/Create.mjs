@@ -3,9 +3,6 @@ import logger from '../../logger.mjs';
 
 import {
   Cart,
-  Domain,
-  FioAccountProfile,
-  FreeAddress,
   Order,
   OrderItem,
   Payment,
@@ -55,7 +52,6 @@ export default class OrdersCreate extends Base {
 
   async execute({ data: { publicKey, paymentProcessor, data, refCode } }) {
     let user;
-    let refProfile;
     let isNoProfileFlow = false;
 
     if (this.context.id) {
@@ -93,6 +89,17 @@ export default class OrdersCreate extends Base {
       });
     }
 
+    if (isNoProfileFlow && publicKey !== cart.publicKey) {
+      logger.error(
+        `Public key in the cart is different from the provided in the api call: cart publicKey - ${cart.publicKey}, publicKey - ${publicKey}`,
+      );
+
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {},
+      });
+    }
+
     const { prices, roe } = cart.options;
 
     checkPrices(prices, roe);
@@ -101,46 +108,41 @@ export default class OrdersCreate extends Base {
     let payment = null;
     const orderItems = [];
 
-    if (isNoProfileFlow) {
-      refProfile = await ReferrerProfile.findOneWhere({ code: refCode });
-    } else if (user.refProfileId)
-      refProfile = await ReferrerProfile.findOneWhere({ id: user.refProfileId });
+    // only to track which ref profile was used to create an order on no profile flow
+    const refProfile = isNoProfileFlow
+      ? await ReferrerProfile.findOneWhere({ code: refCode })
+      : null;
 
     await Order.removeIrrelevant({
       userId: user.id,
       guestId: this.context.guestId,
     });
 
-    const cartPublicKey =
-      user.userProfileType === User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION
-        ? publicKey
-        : cart.publicKey;
-
-    const dashboardDomains = await Domain.getDashboardDomains();
-    const allRefProfileDomains = refProfile
-      ? await ReferrerProfile.getRefDomainsList({
-          refCode: refProfile.code,
-        })
-      : [];
-
-    const userHasFreeAddress =
-      (await FreeAddress.getItems({
-        publicKey: cartPublicKey,
-        userId: user.id,
-      })) || [];
+    const {
+      userRefProfile,
+      domainsList,
+      freeDomainToOwner,
+      userHasFreeAddress,
+    } = await Cart.getDataForCartItemsUpdate({
+      refCode,
+      noProfileResolvedUser: isNoProfileFlow ? user : null,
+      publicKey,
+      userId: isNoProfileFlow ? null : user.id,
+      items: cart.items,
+    });
 
     const wallet = await Wallet.findOneWhere({ userId: user.id, publicKey });
 
     const items = await cartItemsToOrderItems({
-      allRefProfileDomains,
       cartItems: cart.items,
-      dashboardDomains,
-      FioAccountProfile,
       prices,
       roe,
-      userHasFreeAddress,
       walletType: wallet && wallet.from,
-      refCode: refProfile && refProfile.code,
+      paymentProcessor,
+      domainsList,
+      freeDomainToOwner,
+      userHasFreeAddress,
+      userRefCode: userRefProfile && userRefProfile.code,
     });
 
     const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
@@ -158,8 +160,10 @@ export default class OrdersCreate extends Base {
           customerIp: this.context.ipAddress,
           userId: user.id,
           guestId: this.context.guestId,
-          refProfileId: refProfile && refProfile.id,
-          data,
+          refProfileId: isNoProfileFlow
+            ? refProfile && refProfile.id
+            : userRefProfile && userRefProfile.id,
+          data: { ...data },
         },
         { transaction: t },
       );
@@ -180,10 +184,10 @@ export default class OrdersCreate extends Base {
       } of items) {
         let orderItemData = itemData;
 
-        if (cartPublicKey) {
+        if (isNoProfileFlow) {
           orderItemData = itemData
-            ? { ...itemData, publicKey: cartPublicKey }
-            : { publicKey: cartPublicKey };
+            ? { ...itemData, isNoProfileFlow }
+            : { isNoProfileFlow };
         }
 
         const orderItem = await OrderItem.create(

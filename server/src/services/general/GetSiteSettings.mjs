@@ -53,6 +53,7 @@ export default class GetSiteSettings extends Base {
       const apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
         tz,
+        supportsCors: true,
       });
 
       formattedData[FIO_API_URLS_TYPES.DASHBOARD_API] = apiUrls;

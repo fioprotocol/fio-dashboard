@@ -2,9 +2,6 @@ import Base from '../Base.mjs';
 import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
-import { Domain } from '../../models/Domain.mjs';
-import { FreeAddress } from '../../models/FreeAddress.mjs';
-import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -12,6 +9,7 @@ import {
   handleFreeCartDeleteItem,
   handleFioHandleCartItemsWithCustomDomain,
 } from '../../utils/cart.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class DeleteItem extends Base {
   static get validationRules() {
@@ -33,22 +31,30 @@ export default class DeleteItem extends Base {
 
       const { prices, roe } = cart.options;
 
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = refCode
-        ? await ReferrerProfile.getRefDomainsList({
-            refCode,
-          })
-        : [];
-
       const publicKey = cart.publicKey;
 
-      const userHasFreeAddress =
-        !publicKey && !userId
-          ? []
-          : await FreeAddress.getItems({
-              publicKey,
-              userId,
-            });
+      let noProfileResolvedUser = null;
+      if (!userId && publicKey) {
+        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+          publicKey,
+          refCode,
+        );
+        noProfileResolvedUser = resolvedUser;
+      }
+
+      const {
+        userRefProfile,
+        domainsList,
+        freeDomainToOwner,
+        userHasFreeAddress,
+        noAuth,
+      } = await Cart.getDataForCartItemsUpdate({
+        refCode,
+        noProfileResolvedUser,
+        publicKey,
+        userId,
+        items: cart.items,
+      });
 
       const {
         addBundles: addBundlesPrice,
@@ -83,12 +89,13 @@ export default class DeleteItem extends Base {
       const existingItem = items.find(item => item.id === itemId);
 
       const updatedItems = handleFreeCartDeleteItem({
-        allRefProfileDomains,
         cartItems: items,
-        dashboardDomains,
+        domainsList,
         existingItem,
+        freeDomainToOwner,
         userHasFreeAddress,
-        refCode,
+        userRefCode: userRefProfile && userRefProfile.code,
+        noAuth,
       });
 
       const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(

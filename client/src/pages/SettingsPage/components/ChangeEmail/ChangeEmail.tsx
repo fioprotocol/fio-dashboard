@@ -18,6 +18,8 @@ import { log } from '../../../../util/general';
 import { emailToUsername } from '../../../../utils';
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
+import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
+
 import apis from '../../../../api';
 
 import { User } from '../../../../types';
@@ -50,6 +52,8 @@ const ChangeEmail: React.FC<Props> = props => {
     null,
   );
   const [showPasswordModal, togglePasswordModal] = useState(false);
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetaMask = !!metaMaskProvider;
 
   const isPrimaryProfile = user?.userProfileType === USER_PROFILE_TYPE.PRIMARY;
 
@@ -88,21 +92,21 @@ const ChangeEmail: React.FC<Props> = props => {
 
   const onChangeEmail = useCallback(
     async ({ password }: { password?: string } = {}) => {
-      const { newEmail, newUsername } = submitData;
+      const { newEmail } = submitData;
       toggleLoading(true);
 
       try {
         const updateEmailResult = await apis.auth.updateEmail({
           newEmail,
-          newUsername,
         });
 
         let updateEmailSuccess = !!updateEmailResult;
+        const updatedUsername = updateEmailResult.newUsername;
 
-        if (newUsername && password && showPasswordModal) {
+        if (updatedUsername && password && showPasswordModal) {
           try {
             await apis.edge.changeUsername({
-              newUsername,
+              newUsername: updatedUsername,
               password,
               username: user?.username,
             });
@@ -163,7 +167,7 @@ const ChangeEmail: React.FC<Props> = props => {
         const analyticsData = { newEmail };
         let analyticAction: string;
 
-        if (window.ethereum?.isMetaMask) {
+        if (isMetaMask) {
           analyticAction = CONFIRM_METAMASK_ACTION.UPDATE_EMAIL;
         }
 
@@ -173,7 +177,7 @@ const ChangeEmail: React.FC<Props> = props => {
       }
       return {};
     },
-    [error, isPrimaryProfile],
+    [error, isPrimaryProfile, isMetaMask],
   );
 
   useEffect(() => {

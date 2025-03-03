@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import '../db';
 
@@ -70,7 +69,7 @@ const returnDayRange = timePeriod => {
 
 class WalletDataJob extends CommonJob {
   logFioError(e, wallet, action = '-') {
-    if (e && (e.errorCode !== 404 || e.code !== 404)) {
+    if (e && e.errorCode !== ERROR_CODES.NOT_FOUND && e.code !== ERROR_CODES.NOT_FOUND) {
       if (wallet && wallet.id)
         this.postMessage(
           `Process wallet error - id: ${wallet.id} - error - ${e.message} - action - ${action}`,
@@ -538,7 +537,8 @@ class WalletDataJob extends CommonJob {
           logger.error(
             `Process wallet error - id: ${(wallet && wallet.id) || 'N/A'} - error - ${
               e.message
-            } - detailed message - ${e.json.message} - action - checkBalance`,
+            } - detailed message - ${(e.json && e.json.message) ||
+              'N/A'} - action - checkBalance`,
           );
         }
         throw new Error(e);
@@ -574,19 +574,19 @@ class WalletDataJob extends CommonJob {
           !existsNotification.emailDate;
 
         if (alreadyHasPendingNotification) {
-          // todo: change to calculate using MathOp
           previousBalance = fioApi.amountToSUF(
-            parseFloat(existsNotification.data.emailData.newFioBalance) -
-              parseFloat(existsNotification.data.emailData.fioBalanceChange),
+            new MathOp(existsNotification.data.emailData.newFioBalance)
+              .sub(existsNotification.data.emailData.fioBalanceChange)
+              .toString(),
           );
         }
 
         const roe = await getROE();
         const fioNativeChangeBalance = new MathOp(balance)
           .sub(previousBalance)
-          .toNumber();
+          .toString();
         const usdcChangeBalance = fioApi.convertFioToUsdc(
-          new MathOp(fioNativeChangeBalance).abs().toNumber(),
+          new MathOp(fioNativeChangeBalance).abs().toString(),
           roe,
         );
         const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
@@ -598,10 +598,10 @@ class WalletDataJob extends CommonJob {
               ...existsNotification.data,
               emailData: {
                 ...existsNotification.data.emailData,
-                fioBalanceChange: `${sign}$${usdcChangeBalance} (${FIOSDK.SUFToAmount(
-                  new MathOp(fioNativeChangeBalance).abs().toNumber() || 0,
+                fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
+                  new MathOp(fioNativeChangeBalance).abs().toString(),
                 )} FIO)`,
-                newFioBalance: `$${usdcBalance} (${FIOSDK.SUFToAmount(
+                newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(
                   balance || 0,
                 )} FIO)`,
                 date: await User.formatDateWithTimeZone(wallet.User.id),
@@ -617,10 +617,10 @@ class WalletDataJob extends CommonJob {
               data: {
                 pagesToShow: ['/'],
                 emailData: {
-                  fioBalanceChange: `${sign}$${usdcChangeBalance} (${FIOSDK.SUFToAmount(
-                    new MathOp(fioNativeChangeBalance).abs().toNumber() || 0,
+                  fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
+                    new MathOp(fioNativeChangeBalance).abs().toString(),
                   )} FIO)`,
-                  newFioBalance: `$${usdcBalance} (${FIOSDK.SUFToAmount(
+                  newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(
                     balance || 0,
                   )} FIO)`,
                   wallet: wallet.publicKey,

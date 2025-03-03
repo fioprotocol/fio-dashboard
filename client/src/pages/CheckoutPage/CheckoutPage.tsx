@@ -16,7 +16,7 @@ import classes from './CheckoutPage.module.scss';
 
 const CheckoutPage: React.FC = () => {
   const {
-    cartItems,
+    displayOrderItems,
     isLoading,
     isProcessing,
     payment,
@@ -68,7 +68,7 @@ const CheckoutPage: React.FC = () => {
           payment={payment}
           paymentProvider={paymentProvider}
           paymentWalletPublicKey={paymentWalletPublicKey}
-          cart={cartItems}
+          displayOrderItems={displayOrderItems}
           {...rest}
         />
       </div>

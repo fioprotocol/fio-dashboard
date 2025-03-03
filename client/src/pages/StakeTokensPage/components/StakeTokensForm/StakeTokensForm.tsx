@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -41,13 +39,13 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     proxyLoading,
   } = props;
 
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
+  const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
-    number | null
+    string | null
   >(null);
 
   useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
+    setWalletAvailableAmount(balance?.available?.nativeFio || '0');
   }, [balance]);
 
   useEffect(() => {
@@ -57,10 +55,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
       } else {
         setWalletMaxAvailableAmount(
           new MathOp(fee.nativeFio || 0).gt(walletAvailableAmount)
-            ? 0
+            ? '0'
             : new MathOp(walletAvailableAmount)
                 .sub(fee.nativeFio || 0)
-                .toNumber(),
+                .toString(),
         );
       }
     }
@@ -189,7 +187,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           : null;
 
         const hasLowBalance =
-          (walletMaxAvailableAmount === 0 ||
+          (walletMaxAvailableAmount === '0' ||
             (!!walletMaxAvailableAmount &&
               new MathOp(apis.fio.amountToSUF(amount)).gt(
                 walletMaxAvailableAmount,
@@ -233,14 +231,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              availableValue={new MathOp(
-                FIOSDK.SUFToAmount(walletAvailableAmount),
-              ).toString()}
+              availableValue={apis.fio.sufToAmount(walletAvailableAmount)}
               maxValue={
                 walletMaxAvailableAmount
-                  ? new MathOp(
-                      FIOSDK.SUFToAmount(walletMaxAvailableAmount),
-                    ).toString()
+                  ? apis.fio.sufToAmount(walletMaxAvailableAmount)
                   : '0'
               }
             />

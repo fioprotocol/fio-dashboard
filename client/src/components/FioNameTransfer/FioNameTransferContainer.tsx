@@ -130,7 +130,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const onSuccess = (
     result:
       | {
-          fee_collected: number;
+          fee_collected: string;
           newOwnerKey?: string;
           newOwnerFioAddress?: string;
         }
@@ -138,7 +138,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   ) => {
     setSubmitData(null);
 
-    let feeCollected: number;
+    let feeCollected: string;
     let publicKey: string;
 
     if ('fee_collected' in result) {

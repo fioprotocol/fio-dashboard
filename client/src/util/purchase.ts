@@ -1,4 +1,4 @@
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import MathOp from './math';
 import apis from '../api';
@@ -16,46 +16,44 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
         action: GenericAction.registerFioDomain,
         address: '',
         nativeFio: item.data.hasCustomDomainFee,
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.order.roe).toNumber(),
-          )
-          .toFixed(2),
-        feeCollected: FIOSDK.SUFToAmount(
-          +item.data.hasCustomDomainFee || 0,
-        ).toFixed(2),
+        price: apis.fio.convertFioToUsdc(
+          item.data.hasCustomDomainFee,
+          item.order.roe,
+        ),
+        feeCollected: apis.fio.sufToAmount(item.data.hasCustomDomainFee || 0),
       };
 
       orderItems.push(customDomainItem);
 
       orderItems.push({
         ...item,
-        nativeFio: (+item.nativeFio - +item.data.hasCustomDomainFee).toFixed(),
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.nativeFio).toNumber() -
-              new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.order.roe).toNumber(),
-          )
-          .toFixed(2),
-        feeCollected: FIOSDK.SUFToAmount(
+        nativeFio: new MathOp(item.nativeFio)
+          .sub(item.data.hasCustomDomainFee)
+          .toString(),
+        price: apis.fio.convertFioToUsdc(
+          new MathOp(item.nativeFio)
+            .sub(item.data.hasCustomDomainFee)
+            .toString(),
+          item.order.roe,
+        ),
+        feeCollected: apis.fio.sufToAmount(
           (item.blockchainTransactions?.find(
             ({ action }) => action === GenericAction.registerFioDomain,
           )
             ? item.blockchainTransactions.find(
                 ({ action }) => action === GenericAction.registerFioAddress,
               )?.feeCollected
-            : item.blockchainTransactions?.[0]?.feeCollected -
-              +item.data.hasCustomDomainFee) || 0,
-        ).toFixed(2),
+            : new MathOp(item.blockchainTransactions?.[0]?.feeCollected)
+                .sub(item.data.hasCustomDomainFee)
+                .toString()) || 0,
+        ),
       });
     } else {
       orderItems.push({
         ...item,
-        feeCollected: FIOSDK.SUFToAmount(
+        feeCollected: apis.fio.sufToAmount(
           item.blockchainTransactions?.[0]?.feeCollected || 0,
-        ).toFixed(2),
+        ),
       });
     }
   });
@@ -76,39 +74,32 @@ export const transformOrderItemsPDF = (
         action: GenericAction.registerFioDomain,
         address: '',
         nativeFio: item.data.hasCustomDomainFee,
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.roe).toNumber(),
-          )
-          .toFixed(2),
-        feeCollected: FIOSDK.SUFToAmount(
-          +item.data.hasCustomDomainFee || 0,
-        ).toFixed(2),
+        price: apis.fio.convertFioToUsdc(
+          item.data.hasCustomDomainFee,
+          item.roe,
+        ),
+        feeCollected: apis.fio.sufToAmount(item.data.hasCustomDomainFee || 0),
       };
 
       orderItems.push(customDomainItem);
 
       orderItems.push({
         ...item,
-        nativeFio: (+item.nativeFio - +item.data.hasCustomDomainFee).toFixed(),
-        price: apis.fio
-          .convertFioToUsdc(
-            new MathOp(item.nativeFio).toNumber() -
-              new MathOp(item.data.hasCustomDomainFee).toNumber(),
-            new MathOp(item.roe).toNumber(),
-          )
-          .toFixed(2),
-        feeCollected: FIOSDK.SUFToAmount(
-          Number(item.feeCollected) || 0,
-        ).toFixed(2),
+        nativeFio: new MathOp(item.nativeFio)
+          .sub(item.data.hasCustomDomainFee)
+          .toString(),
+        price: apis.fio.convertFioToUsdc(
+          new MathOp(item.nativeFio)
+            .sub(item.data.hasCustomDomainFee)
+            .toString(),
+          item.roe,
+        ),
+        feeCollected: apis.fio.sufToAmount(item.feeCollected || 0),
       });
     } else {
       orderItems.push({
         ...item,
-        feeCollected: FIOSDK.SUFToAmount(
-          Number(item.feeCollected) || 0,
-        ).toFixed(2),
+        feeCollected: apis.fio.sufToAmount(item.feeCollected || 0),
       });
     }
   });

@@ -71,17 +71,11 @@ export default class Admin extends Base {
 
   exportOrdersData({
     filters,
-    offset,
-    limit,
   }: {
     filters: OrderListFilters;
-    offset: number;
-    limit: number;
   }): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders/export', {
       filters,
-      offset,
-      limit,
     });
   }
 

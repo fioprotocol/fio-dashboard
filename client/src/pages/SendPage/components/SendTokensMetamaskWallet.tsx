@@ -6,14 +6,9 @@ import {
   MetamaskConfirmAction,
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
-import {
-  BUNDLES_TX_COUNT,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  FIO_CHAIN_CODE,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT, FIO_CHAIN_CODE } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
-import MathOp from '../../../util/math';
 import apis from '../../../api';
 
 import { ActionParams, FioServerResponse } from '../../../types/fio';
@@ -22,6 +17,7 @@ import {
   DEFAULT_ACTION_FEE_AMOUNT,
   TrxResponsePaidBundles,
 } from '../../../api/fio';
+import { defaultMaxFee } from '../../../util/prices';
 import { log } from '../../../util/general';
 import { handleFioServerResponse } from '../../../util/fio';
 
@@ -29,7 +25,7 @@ import { FioWalletDoublet } from '../../../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  fee: number;
+  fee: string;
   processing: boolean;
   submitData: SendTokensValues;
   createContact: (name: string) => void;
@@ -67,13 +63,10 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
     action: Action.transferTokensKey,
     account: Account.token,
     data: {
-      amount: apis.fio.amountToSUF(Number(amount)),
+      amount: apis.fio.amountToSUF(amount),
       payee_public_key: toPubKey,
       tpid: apis.fio.tpid,
-      max_fee: new MathOp(fee)
-        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-        .round(0)
-        .toNumber(),
+      max_fee: defaultMaxFee(fee) as string,
     },
     derivationIndex,
   };
@@ -151,7 +144,7 @@ export const SendTokensMetamaskWallet: React.FC<Props> = props => {
         contentType: ContentType.recordObtDataContent,
         data: {
           content: {
-            amount: Number(amount),
+            amount: amount,
             chain_code: FIO_CHAIN_CODE,
             token_code: FIO_CHAIN_CODE,
             payer_public_address: fromPubKey,

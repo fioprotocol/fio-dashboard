@@ -26,6 +26,7 @@ import {
 } from '../../../../constants/common';
 
 import useEffectOnce from '../../../../hooks/general';
+import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import { CreateWalletValues } from '../../types';
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
@@ -58,9 +59,9 @@ export const CreateWallet: React.FC<Props> = props => {
     ledger: false,
   });
   const dispatch = useDispatch();
-
+  const metaMaskProvider = useMetaMaskProvider();
   const isMetamaskWalletProvider =
-    window.ethereum?.isMetaMask && isAlternativeAccountType;
+    !!metaMaskProvider && isAlternativeAccountType;
 
   useEffect(() => {
     if (show) {

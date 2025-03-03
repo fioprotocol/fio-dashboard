@@ -8,6 +8,7 @@ import {
 } from '../../redux/fio/selectors';
 
 import { genericTokenId } from '../../util/fio';
+import MathOp from '../../util/math';
 
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
@@ -105,9 +106,10 @@ export const useContext = (): DeleteTokenContextProps => {
 
     if (hasChecked) {
       return changeBundleCost(
-        Math.ceil(
-          checkedPubAddresses.length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-        ),
+        new MathOp(checkedPubAddresses.length)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       );
     }
 
@@ -116,10 +118,10 @@ export const useContext = (): DeleteTokenContextProps => {
         return changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS);
       }
       return changeBundleCost(
-        Math.ceil(
-          resultsData.disconnect.updated.length /
-            ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-        ),
+        new MathOp(resultsData.disconnect.updated.length)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       );
     }
     return changeBundleCost(0);

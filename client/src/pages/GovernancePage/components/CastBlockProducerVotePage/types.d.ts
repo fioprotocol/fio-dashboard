@@ -5,6 +5,6 @@ export type SubmitData = {
     actor: string;
     producers: string[];
     fio_address: string;
-    max_fee: number;
+    max_fee: string;
   };
 };

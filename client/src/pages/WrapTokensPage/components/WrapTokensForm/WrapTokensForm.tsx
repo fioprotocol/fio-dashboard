@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { isMobile } from 'react-device-detect';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
@@ -40,31 +38,31 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
   const providerData = useInitializeProviderConnection();
 
   const [unitedFee, setUnitedFee] = useState<FeePrice>(DEFAULT_FEE_PRICES);
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
+  const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
-    number | null
+    string | null
   >(null);
 
   useEffect(() => {
     setUnitedFee(
       convertFioPrices(
-        new MathOp(fee.nativeFio || 0).add(oracleFee.nativeFio).toNumber(),
+        new MathOp(fee.nativeFio || 0).add(oracleFee.nativeFio).toString(),
         roe,
       ),
     );
   }, [fee, oracleFee, roe]);
 
   useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
+    setWalletAvailableAmount(balance?.available?.nativeFio || '0');
   }, [balance]);
 
   useEffect(() => {
     setWalletMaxAvailableAmount(
       new MathOp(unitedFee.nativeFio || 0).gt(walletAvailableAmount)
-        ? 0
+        ? '0'
         : new MathOp(walletAvailableAmount)
             .sub(unitedFee.nativeFio || 0)
-            .toNumber(),
+            .toString(),
     );
   }, [walletAvailableAmount, unitedFee]);
 
@@ -128,14 +126,10 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
               showMaxInfoBadge={false}
-              availableValue={new MathOp(
-                FIOSDK.SUFToAmount(walletAvailableAmount),
-              ).toString()}
+              availableValue={apis.fio.sufToAmount(walletAvailableAmount)}
               maxValue={
                 walletMaxAvailableAmount
-                  ? new MathOp(
-                      FIOSDK.SUFToAmount(walletMaxAvailableAmount),
-                    ).toString()
+                  ? apis.fio.sufToAmount(walletMaxAvailableAmount)
                   : '0'
               }
             />
@@ -147,9 +141,9 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
             />
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText={`Not enough FIO. Balance: ${FIOSDK.SUFToAmount(
+              messageText={`Not enough FIO. Balance: ${apis.fio.sufToAmount(
                 fioWallet.available || 0,
-              ).toFixed(2)} FIO`}
+              )}`}
             />
 
             <SubmitButton

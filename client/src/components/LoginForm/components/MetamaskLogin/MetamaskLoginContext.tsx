@@ -9,6 +9,7 @@ import { alternateLogin } from '../../../../redux/profile/actions';
 
 import { WALLET_TYPES } from '../../../../constants/wallets';
 import { log } from '../../../../util/general';
+
 import useEffectOnce from '../../../../hooks/general';
 
 import { isAuthenticated } from '../../../../redux/profile/selectors';
@@ -22,6 +23,7 @@ type UseContextProps = {
   isDescriptionModalOpen: boolean;
   isLoginModalOpen: boolean;
   isMobileDeviceWithMetamask: boolean;
+  isMetaMask: boolean;
   connectMetamask: () => void;
   onDetailsClick: () => void;
   onDescriptionModalClose: () => void;
@@ -41,6 +43,7 @@ export const useContext = (props?: Props): UseContextProps => {
     snapError,
     handleConnectClick,
     resetSnap,
+    metaMaskProvider,
   } = MetamaskSnap();
 
   const [isDescriptionModalOpen, toggleIsDescriptionModalOpen] = useState<
@@ -55,6 +58,8 @@ export const useContext = (props?: Props): UseContextProps => {
   const isAuth = useSelector(isAuthenticated);
 
   const dispatch = useDispatch();
+
+  const isMetaMask = !!metaMaskProvider;
 
   const onDescriptionModalOpen = useCallback(() => {
     toggleIsDescriptionModalOpen(true);
@@ -77,19 +82,22 @@ export const useContext = (props?: Props): UseContextProps => {
   }, []);
 
   const connectMetamask = useCallback(() => {
-    if (window.ethereum?.isMetaMask) {
+    if (isMetaMask) {
       onLoginModalOpen();
       handleConnectClick();
       setAlternativeLoginError(null);
     } else {
       onDetailsClick();
     }
-  }, [handleConnectClick, onDetailsClick, onLoginModalOpen]);
+  }, [handleConnectClick, onDetailsClick, onLoginModalOpen, isMetaMask]);
 
   const metamaskLogin = useCallback(async () => {
     try {
       const { nonce } = await apis.auth.generateNonce();
-      const signature = await signNonce({ nonce, derivationIndex });
+      const signature = await signNonce(metaMaskProvider, {
+        nonce,
+        derivationIndex,
+      });
 
       dispatch(
         alternateLogin({
@@ -106,7 +114,7 @@ export const useContext = (props?: Props): UseContextProps => {
       log.error('Metamask Login error', error);
       setAlternativeLoginError(DEFAULT_METAMASK_ERROR);
     }
-  }, [derivationIndex, dispatch, publicKey, referrerCode]);
+  }, [derivationIndex, dispatch, publicKey, referrerCode, metaMaskProvider]);
 
   useEffect(() => {
     if (publicKey && !alternativeLoginError && !isAuth) {
@@ -140,10 +148,11 @@ export const useContext = (props?: Props): UseContextProps => {
     alternativeLoginError,
     isDescriptionModalOpen,
     isLoginModalOpen,
-    isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,
+    isMobileDeviceWithMetamask: isMobile && isMetaMask,
     connectMetamask,
     onDetailsClick,
     onDescriptionModalClose,
     onLoginModalClose,
+    isMetaMask,
   };
 };

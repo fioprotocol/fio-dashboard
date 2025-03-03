@@ -5,6 +5,7 @@ import { Contract } from '@ethersproject/contracts';
 
 import apis from '../../api';
 import { log } from '../../util/general';
+import MathOp from '../../util/math';
 import {
   NETWORKS_LIST,
   W_FIO_DOMAIN_NFT,
@@ -29,9 +30,9 @@ const isValidNetwork = (network: NetworkType, isNFT: boolean): boolean => {
     network?.name &&
     (isNFT
       ? network.chainId === NETWORKS_LIST.Polygon.chainID ||
-        network.chainId === NETWORKS_LIST.Mumbai.chainID
+        network.chainId === NETWORKS_LIST.Amoy.chainID
       : network.chainId === NETWORKS_LIST.Ethereum.chainID ||
-        network.chainId === NETWORKS_LIST.Goerli.chainID)
+        network.chainId === NETWORKS_LIST.Sepolia.chainID)
   );
 };
 
@@ -143,14 +144,15 @@ export function useGetWrappedFioData(
             const walletNativeBalance = await newTokenContract.balanceOf(
               address,
             );
-            const walletBalance =
-              walletNativeBalance.toString() /
-              Math.pow(
-                10,
-                isNFT ? W_FIO_DOMAIN_NFT.decimals : W_FIO_TOKEN.decimals,
-              );
+            const walletBalance = new MathOp(walletNativeBalance)
+              .div(
+                new MathOp(10)
+                  .pow(isNFT ? W_FIO_DOMAIN_NFT.decimals : W_FIO_TOKEN.decimals)
+                  .toString(),
+              )
+              .toString();
 
-            setWFioBalance(walletBalance + '');
+            setWFioBalance(walletBalance);
 
             if (
               isNFT &&

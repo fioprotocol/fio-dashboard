@@ -15,6 +15,8 @@ import PageTitle from '../PageTitle/PageTitle';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { MetamaskLogin } from './components/MetamaskLogin';
 
+import { useMetaMaskProvider } from '../../hooks/useMetaMaskProvider';
+
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
 
@@ -70,6 +72,8 @@ const UsernamePassword: React.FC<Props> = props => {
   const [showiframeLoader, toggleShowiframeLoader] = useState(true);
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetaMask = !!metaMaskProvider;
 
   const { challengeId, challengeUri } = edgeLoginFailure || {};
 
@@ -236,8 +240,7 @@ const UsernamePassword: React.FC<Props> = props => {
     const { handleSubmit: login, form } = formRenderProps;
     currentForm = form;
 
-    const isAlternativeEthereumWalletSetup =
-      window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+    const isAlternativeEthereumWalletSetup = isMetaMask;
 
     return (
       <form onSubmit={login}>
@@ -248,7 +251,7 @@ const UsernamePassword: React.FC<Props> = props => {
               For the most seamless Web3 experience simply sign in with
               MetaMask.
             </p>
-            {window.ethereum.isMetaMask && (
+            {isMetaMask && (
               <MetamaskLogin
                 setAlternativeLoginErrorToParentsComponent={
                   setAlternativeLoginErrorToParentsComponent

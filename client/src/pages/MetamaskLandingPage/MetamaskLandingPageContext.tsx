@@ -24,6 +24,7 @@ export const useContext = (): Props => {
     isLoginModalOpen,
     connectMetamask,
     onLoginModalClose,
+    isMetaMask,
   } = useContextMetamaskLogin();
 
   const [noMetamaskExtension, toggleNoMetamaskExtension] = useState<boolean>(
@@ -33,18 +34,18 @@ export const useContext = (): Props => {
   const dispatch = useDispatch();
 
   const handleConnectClick = useCallback(() => {
-    if (window.ethereum?.isMetaMask) {
+    if (isMetaMask) {
       connectMetamask();
       dispatch(setRedirectPath({ pathname: ROUTES.HOME }));
     } else {
       toggleNoMetamaskExtension(true);
     }
-  }, [connectMetamask, dispatch]);
+  }, [connectMetamask, dispatch, isMetaMask]);
 
   return {
     alternativeLoginError,
     isLoginModalOpen,
-    isMobileDeviceWithMetamask: isMobile && window.ethereum?.isMetaMask,
+    isMobileDeviceWithMetamask: isMobile && isMetaMask,
     noMetamaskExtension,
     handleConnectClick,
     onLoginModalClose,

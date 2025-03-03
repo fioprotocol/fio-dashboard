@@ -1,10 +1,8 @@
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import { fioApi } from '../external/fio.mjs';
 
 import logger from '../logger.mjs';
 import { Notification, ReferrerProfile, User, Wallet } from '../models/index.mjs';
-import { WALLET_CREATED_FROM } from '../config/constants.js';
+import { WALLET_CREATED_FROM, ERROR_CODES } from '../config/constants.js';
 import config from '../config/index.mjs';
 
 const DEFAULT_CHUNK_LIMIT = 100;
@@ -35,11 +33,17 @@ export const getDetailedUsersInfo = async user => {
           const balanceResponse = await publicFioSDK.getFioBalance({
             fioPublicKey: publicKey,
           });
-          fioWalletObj.balance = FIOSDK.SUFToAmount(balanceResponse.balance).toFixed(2);
+          fioWalletObj.balance = fioApi.sufToAmount(balanceResponse.balance);
         } catch (err) {
           // getFioBalance returns a 404 error if user doesn't have any transactions on a wallet
-          if (err.errorCode === 404) fioWalletObj.balance = '0.00';
-          logger.error(err);
+          if (
+            err.errorCode === ERROR_CODES.NOT_FOUND ||
+            err.code === ERROR_CODES.NOT_FOUND
+          ) {
+            fioWalletObj.balance = '0.00';
+          } else {
+            logger.error(err);
+          }
         }
 
         try {
@@ -127,6 +131,7 @@ export const getExistUsersByPublicKeyOrCreateNew = async (
     isOptIn: false,
     timeZone,
     userProfileType: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+    freeId: publicKey,
   });
 
   await user.save();

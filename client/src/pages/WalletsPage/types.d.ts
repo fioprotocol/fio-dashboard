@@ -1,7 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { FioWalletDoublet, WalletsBalances } from '../../types';
+import { FioWalletDoublet, Roe, WalletsBalances } from '../../types';
 
 type Location = {
   location: {
@@ -17,7 +17,7 @@ interface ComponentProps extends RouteComponentProps {
   noProfileLoaded?: boolean;
   loading: boolean;
   refreshBalance: (publicKey: string) => void;
-  roe: number;
+  roe: Roe;
   balance: WalletsBalances;
 }
 

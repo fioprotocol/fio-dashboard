@@ -55,7 +55,7 @@ type ModalProps = {
   show?: boolean;
   subTitle?: string;
   title?: string;
-  footerTitle?: string;
+  footerTitle?: React.ReactElement;
   notFoundText?: string;
   options?: { name: string; id: string }[];
   handleClose?: () => void;

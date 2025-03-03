@@ -22,7 +22,7 @@ import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
 
-export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toNumber();
+export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toString();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
 export const INSUFFICIENT_BALANCE = 'Insufficient balance';
 export const PRICES_VAR_KEY = 'FIO_PRICES';
@@ -110,6 +110,10 @@ class Fio {
     return this.publicFioSDK;
   }
 
+  accountHash(publicKey) {
+    return FIOSDK.accountHash(publicKey);
+  }
+
   getMasterPublicKey() {
     const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
       process.env.MASTER_FIOSDK_KEY,
@@ -149,45 +153,69 @@ class Fio {
     });
   }
 
+  /**
+   * Convert FIO amount to SUF
+   * @param {string | number} amount
+   *
+   * @returns {string}
+   */
   amountToSUF(amount) {
-    if (!amount) return 0;
-    const floor = Math.floor(amount); // todo: change to use MathOp
-    const tempResult = new MathOp(floor).mul(FIOSDK.SUFUnit).toNumber();
+    if (!amount) return '0';
+
+    const floor = new MathOp(amount).round(0, 0).toString();
+    const tempResult = new MathOp(floor).mul(FIOSDK.SUFUnit).toString();
 
     // get remainder
     const remainder = new MathOp(amount)
       .mod(1)
       .round(9, 2)
-      .toNumber();
+      .toString();
 
-    const remainderResult = new MathOp(remainder).mul(FIOSDK.SUFUnit).toNumber();
-    const floorRemainder = Math.floor(remainderResult);
+    const remainderResult = new MathOp(remainder).mul(FIOSDK.SUFUnit).toString();
+
+    const floorRemainder = new MathOp(remainderResult).round(0, 0).toString();
 
     // add integer and remainder
-    return new MathOp(tempResult).add(floorRemainder).toNumber();
+    return new MathOp(tempResult).add(floorRemainder).toString();
   }
 
-  SUFToAmount(suf) {
-    return new MathOp(suf).div(FIOSDK.SUFUnit).toString();
+  sufToAmount(suf) {
+    return new MathOp(suf)
+      .div(FIOSDK.SUFUnit)
+      .round(2, 1)
+      .toString();
   }
 
+  /**
+   * Convert FIO native amount to USD
+   * @param {string | number} nativeAmount
+   * @param {string} roe
+   *
+   * @returns {string}
+   */
   convertFioToUsdc(nativeAmount, roe) {
-    if (roe == null) return 0;
+    if (roe == null) return '0';
 
-    // todo: create SUFToAmount using MathOp
-    return new MathOp(FIOSDK.SUFToAmount(nativeAmount || 0))
+    return new MathOp(this.sufToAmount(nativeAmount || 0))
       .mul(roe)
       .round(2, 1)
-      .toNumber();
+      .toString();
   }
 
+  /**
+   * Convert USD amount to FIO native amount
+   * @param {string | number} amount
+   * @param {string} roe
+   *
+   * @returns {string}
+   */
   convertUsdcToFio(amount, roe) {
     if (roe == null || !roe) throw new Error('INVALID_ROE');
 
     return new MathOp(amount)
       .div(roe)
       .round(9, 2)
-      .toNumber();
+      .toString();
   }
 
   setFioName(address, domain) {
@@ -304,7 +332,7 @@ class Fio {
       endPoint: FIO_ACTIONS_TO_END_POINT_MAP[action],
     });
 
-    return fee;
+    return new MathOp(fee).toString();
   }
 
   async executeAction(action, params, auth = {}, keys = {}) {

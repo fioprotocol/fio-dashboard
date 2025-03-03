@@ -46,7 +46,7 @@ const PaymentDetailsEdgeWallet: React.FC<Props> = props => {
         payerTokenPublicAddress: keys.public,
         payeeTokenPublicAddress: data.payeePublicAddress,
         payeeFioPublicKey: data.payeeFioPublicKey,
-        amount: Number(data.amount),
+        amount: data.amount,
         chainCode: data.chainCode,
         tokenCode: data.tokenCode,
         obtId: data.obtId,

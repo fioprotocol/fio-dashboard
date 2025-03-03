@@ -5,6 +5,7 @@ import {
   FeePrice,
   FioAddressDoublet,
   FioWalletDoublet,
+  Roe,
   WalletBalances,
 } from '../../types';
 
@@ -20,10 +21,10 @@ export type SendTokensValues = {
   to: string;
   toPubKey?: string;
   amount: string;
-  nativeAmount: number;
+  nativeAmount: string;
   memo?: string;
   fioRequestId?: number;
-  feeRecordObtData: number;
+  feeRecordObtData: string;
   contactsList: string[];
 };
 
@@ -56,7 +57,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
   loading: boolean;
-  roe: number;
+  roe: Roe;
   feePrice: FeePrice;
   feePriceRecordObtData: FeePrice;
   balance: WalletBalances;

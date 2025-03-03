@@ -43,12 +43,14 @@ import {
 
 import apis from '../../api';
 
-import MathOp from '../../util/math';
+import { defaultMaxFee } from '../../util/prices';
 import {
   totalCost,
   cartIsRelative,
   groupCartItemsByPaymentWallet,
   actionFromCartItem,
+  cartItemsToOrderItems,
+  walletSupportsCombo,
 } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
@@ -92,6 +94,9 @@ import {
   Order,
   RedirectLinkData,
   AnyObject,
+  Roe,
+  Prices,
+  FioDomainDoublet,
 } from '../../types';
 import {
   BeforeSubmitData,
@@ -100,16 +105,76 @@ import {
   SignFioAddressItem,
 } from './types';
 import { CreateOrderActionData } from '../../redux/types';
+import MathOp from '../../util/math';
 
-const SIGN_TX_MAX_FEE_COEFFICIENT = 1.5;
+const SIGN_TX_MAX_FEE_COEFFICIENT = '1.5';
+
+const calculateTotalForOtherWallets = ({
+  cartItems,
+  fioWallets,
+  paymentWallet,
+  userDomains,
+  prices,
+  roe,
+}: {
+  cartItems: CartItem[];
+  fioWallets: FioWalletDoublet[];
+  paymentWallet: FioWalletDoublet;
+  userDomains: FioDomainDoublet[];
+  prices: Prices;
+  roe: Roe;
+}) => {
+  const hasNoComboSupportWallet = fioWallets.find(
+    wallet => !walletSupportsCombo(wallet),
+  );
+  if (!hasNoComboSupportWallet) {
+    return {
+      selectedPaymentWalletSupportsCombo: false,
+      altTotal: null,
+    };
+  }
+
+  const selectedPaymentWalletSupportsCombo = walletSupportsCombo(paymentWallet);
+
+  const {
+    groups: groupedCartItemsByPaymentWallet,
+  } = groupCartItemsByPaymentWallet(
+    paymentWallet?.publicKey,
+    selectedPaymentWalletSupportsCombo
+      ? cartItemsToOrderItems({
+          cartItems: cartItems ?? [],
+          prices: prices.nativeFio,
+          supportCombo: false,
+          roe,
+        }).map(({ nativeFio, domain, data }) => ({
+          costNativeFio: nativeFio,
+          domain,
+          type: data.type,
+          id: data.cartItemId,
+        }))
+      : cartItems,
+    fioWallets,
+    userDomains,
+  );
+
+  return {
+    selectedPaymentWalletSupportsCombo,
+    altTotal: totalCost(
+      groupedCartItemsByPaymentWallet.find(
+        it => it.signInFioWallet.publicKey === paymentWallet.publicKey,
+      )?.displayOrderItems ?? [],
+      roe,
+    ).costNativeFio,
+  };
+};
 
 export const useContext = (): {
-  cartItems: CartItem[];
+  displayOrderItems: CartItem[];
   isLoading?: boolean;
   walletBalancesAvailable: WalletBalancesItem;
   paymentWallet: FioWalletDoublet;
   paymentWalletPublicKey: string;
-  roe: number | null;
+  roe: Roe;
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
   paymentAssignmentWallets: FioWalletDoublet[];
@@ -198,6 +263,7 @@ export const useContext = (): {
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
+  const displayOrderItems = order?.displayOrderItems || [];
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
@@ -289,7 +355,7 @@ export const useContext = (): {
 
       let cartHasExpiredDomain = false;
 
-      const domains = cartItems
+      const domains = displayOrderItems
         .filter(cartItem => {
           const { domain, type } = cartItem;
           return (
@@ -358,7 +424,7 @@ export const useContext = (): {
     },
     [
       cartId,
-      cartItems,
+      displayOrderItems,
       dispatch,
       history,
       prices?.nativeFio,
@@ -399,7 +465,8 @@ export const useContext = (): {
   );
 
   const isFree =
-    !isEmpty(cartItems) && cartItems.every(cartItem => cartItem.isFree);
+    !isEmpty(displayOrderItems) &&
+    displayOrderItems.every(cartItem => cartItem.isFree);
 
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,
@@ -413,12 +480,14 @@ export const useContext = (): {
       ? 'Make Purchase'
       : PAYMENT_PROVIDER_PAYMENT_TITLE[paymentProvider];
 
+  // Group cart items by payment wallet,
+  // we need to know if there are items that can be paid only by other wallet in the account (fch with private domains)
   const {
     groups: groupedCartItemsByPaymentWallet,
     hasPublicCartItems,
   } = groupCartItemsByPaymentWallet(
     paymentWallet?.publicKey,
-    cartItems,
+    displayOrderItems,
     fioWallets,
     userDomains,
   );
@@ -430,22 +499,50 @@ export const useContext = (): {
     : undefined;
 
   const { costNativeFio: publicCartItemsCost } = totalCost(
-    publicCartItemsPaymentWallet?.cartItems ?? [],
+    publicCartItemsPaymentWallet?.displayOrderItems ?? [],
     roe,
   );
+  // We need to calculate the total for other wallets (that support combo or not)
+  // to know if we need to show them in the assignment dropdown
+  const { altTotal, selectedPaymentWalletSupportsCombo } =
+    hasPublicCartItems && paymentOption === PAYMENT_OPTIONS.FIO
+      ? calculateTotalForOtherWallets({
+          cartItems: cartItems ?? [],
+          fioWallets,
+          paymentWallet,
+          userDomains,
+          prices,
+          roe,
+        })
+      : { altTotal: null, selectedPaymentWalletSupportsCombo: false };
 
   const paymentWallets = useMemo(
     () =>
       fioWallets
         .filter(wallet => {
+          if (!wallet.available || !publicCartItemsCost) return false;
           if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
 
-          return wallet.available > publicCartItemsCost;
+          return new MathOp(wallet.available).gt(
+            selectedPaymentWalletSupportsCombo ===
+              walletSupportsCombo(wallet) || !altTotal
+              ? publicCartItemsCost
+              : altTotal,
+          );
         })
         .sort(
-          (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+          (a, b) =>
+            new MathOp(b.available).sub(a.available).toNumber() ||
+            a.name.localeCompare(b.name),
         ),
-    [fioWallets, isFree, paymentOption, publicCartItemsCost],
+    [
+      fioWallets,
+      isFree,
+      paymentOption,
+      publicCartItemsCost,
+      altTotal,
+      selectedPaymentWalletSupportsCombo,
+    ],
   );
 
   useEffect(() => {
@@ -473,13 +570,7 @@ export const useContext = (): {
         isFree,
       });
     },
-    [
-      paymentWalletPublicKey,
-      fioWallets,
-      orderParamsFromLocation,
-      cartItems,
-      isFree,
-    ],
+    [paymentWalletPublicKey, fioWallets, orderParamsFromLocation, isFree],
     isAuth &&
       order === null &&
       !orderNumberParam &&
@@ -617,10 +708,13 @@ export const useContext = (): {
           it => !!fioWalletsBalances.wallets[it.signInFioWallet.publicKey],
         )
         .map(it => {
-          const totalCostNativeFio = totalCost(it.cartItems, roe).costNativeFio;
+          const totalCostNativeFio = totalCost(it.displayOrderItems, roe)
+            .costNativeFio;
           const available =
             fioWalletsBalances.wallets[it.signInFioWallet.publicKey].available;
-          const notEnoughFio = available.nativeFio < totalCostNativeFio;
+          const notEnoughFio = new MathOp(available.nativeFio).lt(
+            totalCostNativeFio,
+          );
 
           return {
             ...it,
@@ -667,15 +761,17 @@ export const useContext = (): {
   ) => {
     const privateDomainList: { [domain: string]: boolean } = {};
 
-    for (const cartItem of cartItems) {
+    for (const displayOrderItem of displayOrderItems) {
       if (
-        userDomains.findIndex(({ name }) => name === cartItem.domain) === -1 &&
-        cartItem.domainType !== DOMAIN_TYPE.CUSTOM
+        userDomains.findIndex(
+          ({ name }) => name === displayOrderItem.domain,
+        ) === -1 &&
+        displayOrderItem.domainType !== DOMAIN_TYPE.CUSTOM
       ) {
         continue;
       }
 
-      privateDomainList[cartItem.domain] = false;
+      privateDomainList[displayOrderItem.domain] = false;
     }
 
     for (const domain of Object.keys(privateDomainList)) {
@@ -694,11 +790,11 @@ export const useContext = (): {
 
     const signTxItems: SignFioAddressItem[] = [];
 
-    for (const cartItem of cartItems) {
+    for (const displayOrderItem of displayOrderItems) {
       const includeCartItemTypes = [CART_ITEM_TYPE.ADDRESS];
 
       const domainWallet = userDomains.find(
-        ({ name }) => name === cartItem.domain,
+        ({ name }) => name === displayOrderItem.domain,
       );
 
       const paymentFioWallet = fioWallets.find(
@@ -714,14 +810,14 @@ export const useContext = (): {
       }
 
       if (
-        includeCartItemTypes.includes(cartItem.type) &&
-        privateDomainList[cartItem.domain]
+        includeCartItemTypes.includes(displayOrderItem.type) &&
+        privateDomainList[displayOrderItem.domain]
       ) {
         signTxItems.push({
           fioWallet: paymentFioWallet,
-          name: setFioName(cartItem.address, cartItem.domain),
+          name: setFioName(displayOrderItem.address, displayOrderItem.domain),
           ownerKey: paymentWalletPublicKey,
-          cartItem,
+          displayOrderItem,
         });
       }
     }
@@ -729,15 +825,14 @@ export const useContext = (): {
     if (signTxItems.length) {
       return setBeforeSubmitProps({
         fioWallet: paymentWallet,
-        fee: new MathOp(prices?.nativeFio?.address)
-          .mul(SIGN_TX_MAX_FEE_COEFFICIENT) // +50%
-          .round(0, 2)
-          .toNumber(),
+        fee: defaultMaxFee(prices?.nativeFio?.address, {
+          multiple: SIGN_TX_MAX_FEE_COEFFICIENT,
+        }) as string,
         submitData: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
           apis.orders
             .preparedTx(
-              cartItems.map(
+              displayOrderItems.map(
                 ({ address, domain, type, domainType }: CartItem) => ({
                   action: actionFromCartItem(
                     type,
@@ -767,7 +862,7 @@ export const useContext = (): {
   };
 
   return {
-    cartItems,
+    displayOrderItems,
     isLoading:
       fioLoading ||
       getOrderLoading ||

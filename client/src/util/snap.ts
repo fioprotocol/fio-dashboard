@@ -2,7 +2,6 @@ import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
 import { log } from './general';
-import { USER_PROFILE_TYPE } from '../constants/profile';
 
 export type GetSnapsResponse = Record<string, Snap>;
 
@@ -17,8 +16,9 @@ export type Snap = {
 export const connectSnap = async (
   snapId: string = defaultSnapOrigin,
   params: Record<'version' | string, unknown> = {},
+  provider?: MetaMaskInpageProvider,
 ) => {
-  await window.ethereum.request({
+  await (provider ?? window.ethereum).request({
     method: 'wallet_requestSnaps',
     params: {
       [snapId]: params,
@@ -33,9 +33,12 @@ export const getSnaps = async (
     method: 'wallet_getSnaps',
   })) as unknown) as GetSnapsResponse;
 
-export const getSnap = async (version?: string): Promise<Snap | undefined> => {
+export const getSnap = async (
+  provider?: MetaMaskInpageProvider,
+  version?: string,
+): Promise<Snap | undefined> => {
   try {
-    const snaps = await getSnaps();
+    const snaps = await getSnaps(provider);
 
     return Object.values(snaps).find(
       snap =>
@@ -48,9 +51,10 @@ export const getSnap = async (version?: string): Promise<Snap | undefined> => {
 };
 
 export const getPublicKey = async (
+  provider: MetaMaskInpageProvider,
   params: { derivationIndex?: number } = {},
-) => {
-  const res = await window.ethereum.request({
+): Promise<string> => {
+  const res = (await provider.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,
@@ -59,13 +63,16 @@ export const getPublicKey = async (
         params,
       },
     },
-  });
+  })) as string;
 
   return res;
 };
 
-export const signTxn = async (params: any) => {
-  const txn: Promise<string> = await window.ethereum.request({
+export const signTxn = async (
+  provider: MetaMaskInpageProvider,
+  params: any,
+): Promise<string> => {
+  const txn: string = (await provider.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,
@@ -74,16 +81,19 @@ export const signTxn = async (params: any) => {
         params,
       },
     },
-  });
+  })) as string;
 
   return txn;
 };
 
-export const signNonce = async (params: {
-  nonce: string;
-  derivationIndex?: number;
-}) => {
-  return await window.ethereum.request({
+export const signNonce = async (
+  provider: MetaMaskInpageProvider,
+  params: {
+    nonce: string;
+    derivationIndex?: number;
+  },
+): Promise<string> => {
+  return (await provider.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,
@@ -92,16 +102,19 @@ export const signNonce = async (params: {
         params,
       },
     },
-  });
+  })) as string;
 };
 
-export const decryptContent = async (params: {
-  content: string;
-  derivationIndex?: number;
-  encryptionPublicKey: string;
-  contentType: string;
-}) => {
-  return await window.ethereum.request({
+export const decryptContent = async (
+  provider: MetaMaskInpageProvider,
+  params: {
+    content: string;
+    derivationIndex?: number;
+    encryptionPublicKey: string;
+    contentType: string;
+  },
+) => {
+  return await provider.request({
     method: 'wallet_invokeSnap',
     params: {
       snapId: defaultSnapOrigin,
@@ -111,21 +124,4 @@ export const decryptContent = async (params: {
       },
     },
   });
-};
-
-export const getZeroIndexPublicKey = async (
-  userType: string,
-): Promise<string | null> => {
-  if (
-    window.ethereum?.isMetaMask &&
-    userType === USER_PROFILE_TYPE.ALTERNATIVE
-  ) {
-    const zeroDerivationIndexpublicKey = await getPublicKey({
-      derivationIndex: 0,
-    });
-
-    return zeroDerivationIndexpublicKey;
-  }
-
-  return null;
 };

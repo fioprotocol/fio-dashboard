@@ -15,10 +15,10 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     toggleMenuOpen,
     closeMenu,
     showLogin,
+    isMetaMask,
   } = props;
 
-  const isAlternativeEthereumWalletSetup =
-    window.ethereum?.isMetaMask || window.ethereum?.isOpera;
+  const isAlternativeEthereumWalletSetup = isMetaMask;
 
   if (isAuthenticated)
     return (

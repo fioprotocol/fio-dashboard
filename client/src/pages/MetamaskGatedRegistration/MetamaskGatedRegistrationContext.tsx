@@ -20,7 +20,6 @@ import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { validateFioAddress } from '../../util/fio';
 import { convertFioPrices } from '../../util/prices';
 import { log } from '../../util/general';
-import { getPublicKey } from '../../util/snap';
 import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
 import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
@@ -141,7 +140,6 @@ export const useContext = (): UseContext => {
   );
   const [fioHandle, setFioHandle] = useState<string | null>(null);
   const [loading, toggleLoading] = useState<boolean>(false);
-  const [publicKey, setPublicKey] = useState<string | null>(null);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -153,7 +151,7 @@ export const useContext = (): UseContext => {
     onLoginModalClose,
   } = useContextMetamaskLogin();
 
-  const isVerified = window.ethereum?.isMetaMask && !isMobileDeviceWithMetamask;
+  const isVerified = !isMobileDeviceWithMetamask;
   const userHasMetamaskFioHandleInCart = cartItems.find(
     cartItem => cartItem.domain === METAMASK_DOMAIN_NAME,
   );
@@ -255,7 +253,6 @@ export const useContext = (): UseContext => {
         dispatch(
           addItemToCart({
             item: cartItem,
-            publicKey,
             refCode,
             token: gatedToken,
           }),
@@ -269,36 +266,27 @@ export const useContext = (): UseContext => {
         toggleLoading(false);
       }
     },
-    [dispatch, history, prices.nativeFio, publicKey, refCode, roe],
+    [dispatch, history, prices.nativeFio, refCode, roe],
   );
 
-  const getFreeUserMetamaskAddresses = useCallback(
-    async (publicKey: string) => {
-      try {
-        return await apis.users.getFreeAddresses({ publicKey });
-      } catch (error) {
-        log.error(error);
-        setNotification(NOTIFICATIONS.GENERAL_ERROR);
-      }
-    },
-    [],
-  );
+  const getFreeUserMetamaskAddresses = useCallback(async () => {
+    try {
+      return await apis.users.getFreeAddresses();
+    } catch (error) {
+      log.error(error);
+      setNotification(NOTIFICATIONS.GENERAL_ERROR);
+    }
+  }, []);
 
   const handleSubmit = useCallback(
-    async ({
-      fioHandle,
-      publicKey,
-    }: {
-      fioHandle: string;
-      publicKey: string;
-    }) => {
+    async ({ fioHandle }: { fioHandle: string }) => {
       try {
         if (userHasMetamaskFioHandleInCart) {
           setNotification(NOTIFICATIONS.USER_HAS_METAMASK_FIO_HANDLE_IN_CART);
           return;
         }
 
-        const freeAddresses = await getFreeUserMetamaskAddresses(publicKey);
+        const freeAddresses = await getFreeUserMetamaskAddresses();
 
         if (
           freeAddresses.length &&
@@ -325,35 +313,17 @@ export const useContext = (): UseContext => {
     ],
   );
 
-  const getZeroDerivatedIndexPublicKey = useCallback(async () => {
-    try {
-      const zeroDerivationIndexpublicKey = await getPublicKey({
-        derivationIndex: 0,
-      });
-      setPublicKey(zeroDerivationIndexpublicKey);
-    } catch (error) {
-      log.error(error);
-      setNotification(NOTIFICATIONS.GENERAL_ERROR);
-    }
-  }, []);
-
   useEffect(() => {
     if (user) {
       if (user.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE) {
-        if (fioHandle && publicKey) {
-          handleSubmit({ fioHandle, publicKey });
+        if (fioHandle) {
+          handleSubmit({ fioHandle });
         }
       } else {
         setNotification(NOTIFICATIONS.NON_METAMASK_USER);
       }
     }
-  }, [fioHandle, publicKey, user, handleSubmit]);
-
-  useEffect(() => {
-    if (user && isVerified) {
-      getZeroDerivatedIndexPublicKey();
-    }
-  }, [getZeroDerivatedIndexPublicKey, isVerified, user]);
+  }, [fioHandle, user, handleSubmit]);
 
   const addressWidgetContent = {
     classNameContainer: classes.widgetContainer,

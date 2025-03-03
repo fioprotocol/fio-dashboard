@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 
 import '../db';
 
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import {
   Domain,
@@ -17,6 +17,7 @@ import {
   Var,
   PublicWalletData,
   ReferrerProfile,
+  User,
   Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
@@ -390,10 +391,10 @@ class OrdersJob extends CommonJob {
     const threshold = new MathOp(orderItem.price)
       .mul(0.25)
       .round(2, 1)
-      .toNumber();
+      .toString();
     this.postMessage(`threshold, ${threshold}`);
-    const topThreshold = new MathOp(orderItem.price).add(threshold).toNumber();
-    const bottomThreshold = new MathOp(orderItem.price).sub(threshold).toNumber();
+    const topThreshold = new MathOp(orderItem.price).add(threshold).toString();
+    const bottomThreshold = new MathOp(orderItem.price).sub(threshold).toString();
     this.postMessage(`topThreshold, ${topThreshold}`);
     this.postMessage(`bottomThreshold, ${bottomThreshold}`);
     if (
@@ -404,11 +405,12 @@ class OrdersJob extends CommonJob {
         .sub(currentPrice)
         .div(orderItem.price)
         .mul(100)
-        .toNumber();
+        .round(2, 1)
+        .toString();
       this.postMessage(`percentageChange, ${percentageChange}`);
       const priceChangePercentage = new MathOp(percentageChange).gt(0)
-        ? `-${percentageChange.toFixed(2)}`
-        : `+${new MathOp(percentageChange).abs().toFixed(2)}`;
+        ? `-${percentageChange}`
+        : `+${new MathOp(percentageChange).abs().toString()}`;
       this.postMessage(`priceChangePercentage, ${priceChangePercentage}`);
       const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
@@ -424,16 +426,26 @@ class OrdersJob extends CommonJob {
     auth,
     orderItem,
     fallbackFreeFioActor,
-    fallbackFreeFioPermision,
+    fallbackFreeFioPermission,
     processOrderItem,
     registeringDomainExistingInAppDomainsList,
-    publicKey,
+    allRefProfileDomains,
   }) {
-    const { id, domain, blockchainTransactionId, label, orderId, userId } = orderItem;
+    const {
+      id,
+      domain,
+      blockchainTransactionId,
+      label,
+      orderId,
+      userId,
+      freeId,
+      publicKey,
+    } = orderItem;
     this.postMessage(
       `START FREE REGISTRATION' : ${id}, ${domain}, ${blockchainTransactionId} ${label} ${orderId} ${userId} ${publicKey}`,
     );
-    if (!userId && !publicKey) {
+
+    if (!freeId) {
       logger.error(CANNOT_IDENTIFY_USER);
 
       await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
@@ -443,7 +455,7 @@ class OrdersJob extends CommonJob {
       return this.updateOrderStatus(orderId);
     }
 
-    const userHasFreeAddress = await FreeAddress.getItems({ publicKey, userId });
+    const userHasFreeAddress = await FreeAddress.getItems({ freeId: orderItem.freeId });
 
     const existingUsersFreeAddress =
       userHasFreeAddress &&
@@ -458,12 +470,44 @@ class OrdersJob extends CommonJob {
         (registeringDomainExistingInAppDomainsList.isFirstRegFree &&
           existingUsersFreeAddress))
     ) {
-      logger.error(USER_HAS_FREE_ERROR);
+      let allowFree = false;
+      // check if item in the order with other isFirstRegFree item
+      if (orderItem.code && orderItem.data && orderItem.data.isNoProfileFlow) {
+        const orderItems = await OrderItem.findAll({
+          raw: true,
+          where: {
+            orderId: orderItem.orderId,
+            id: { [Sequelize.Op.ne]: orderItem.id },
+          },
+        });
+        if (orderItems && orderItems.length > 0) {
+          allowFree = !!orderItems.find(otherOrderItem => {
+            if (
+              otherOrderItem.price !== '0' ||
+              otherOrderItem.action !== GenericAction.registerFioAddress
+            ) {
+              return false;
+            }
 
-      await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
-        errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
-      });
-      return this.updateOrderStatus(orderId);
+            const refProfileDomain = allRefProfileDomains.find(
+              refProfileDomain =>
+                refProfileDomain.code === orderItem.code &&
+                refProfileDomain.name === otherOrderItem.domain,
+            );
+
+            return refProfileDomain && refProfileDomain.isFirstRegFree;
+          });
+        }
+      }
+
+      if (!allowFree) {
+        logger.error(USER_HAS_FREE_ERROR);
+
+        await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+          errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+        });
+        return this.updateOrderStatus(orderId);
+      }
     }
 
     try {
@@ -477,8 +521,7 @@ class OrdersJob extends CommonJob {
 
         const freeAddressRecord = await new FreeAddress({
           name: fioName,
-          publicKey,
-          userId: orderItem.userId,
+          freeId: orderItem.freeId,
         });
 
         await freeAddressRecord.save();
@@ -499,8 +542,8 @@ class OrdersJob extends CommonJob {
           freeActor: fallbackFreeFioActor
             ? fallbackFreeFioActor
             : process.env.REG_FALLBACK_ACCOUNT,
-          freePermission: fallbackFreeFioPermision
-            ? fallbackFreeFioPermision
+          freePermission: fallbackFreeFioPermission
+            ? fallbackFreeFioPermission
             : process.env.REG_FALLBACK_PERMISSION,
         })();
       }
@@ -559,7 +602,7 @@ class OrdersJob extends CommonJob {
       orderId,
       status: Payment.STATUS.PENDING,
       eventStatus: PaymentEventLog.STATUS.PENDING,
-      price: FIOSDK.SUFToAmount(balanceDifference || fee),
+      price: fioApi.sufToAmount(balanceDifference || fee),
       currency: Payment.CURRENCY.FIO,
       data: { roe, sendingFioTokens: true },
     });
@@ -596,7 +639,7 @@ class OrdersJob extends CommonJob {
             action,
             orderId,
             spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-            price: FIOSDK.SUFToAmount(balanceDifference || fee),
+            price: fioApi.sufToAmount(balanceDifference || fee),
             currency: Payment.CURRENCY.FIO,
             data: {
               roe,
@@ -732,7 +775,7 @@ class OrdersJob extends CommonJob {
           fioName: domain,
           orderId,
           action: GenericAction.registerFioDomain,
-          price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
+          price: fioApi.sufToAmount(data.hasCustomDomainFee),
           currency: Payment.CURRENCY.FIO,
           data: { roe },
         });
@@ -777,7 +820,7 @@ class OrdersJob extends CommonJob {
         fioName: domain,
         orderId,
         action: GenericAction.registerFioDomain,
-        price: FIOSDK.SUFToAmount(data.hasCustomDomainFee),
+        price: fioApi.sufToAmount(data.hasCustomDomainFee),
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
         data: { roe, error },
@@ -902,11 +945,11 @@ class OrdersJob extends CommonJob {
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK,
       ) || {};
 
-    const { actor: freeFioActor, permission: freeFioPermision } =
+    const { actor: freeFioActor, permission: freeFioPermission } =
       freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE,
       ) || {};
-    const { actor: fallbackFreeFioActor, permission: fallbackFreeFioPermision } =
+    const { actor: fallbackFreeFioActor, permission: fallbackFreeFioPermission } =
       freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile =>
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK,
@@ -931,7 +974,6 @@ class OrdersJob extends CommonJob {
         freePermission,
         paidActor,
         paidPermission,
-        userId,
       } = orderItem;
 
       const hasSignedTx = data && !!data.signedTx;
@@ -957,7 +999,7 @@ class OrdersJob extends CommonJob {
         };
         const freeAuth = {
           actor: freeActor || freeFioActor,
-          permission: freePermission || freeFioPermision,
+          permission: freePermission || freeFioPermission,
         };
 
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
@@ -1010,10 +1052,10 @@ class OrdersJob extends CommonJob {
             auth: freeAuth,
             orderItem,
             fallbackFreeFioActor,
-            fallbackFreeFioPermision,
+            fallbackFreeFioPermission,
             registeringDomainExistingInAppDomainsList,
-            publicKey: data && data.publicKey,
             processOrderItem,
+            allRefProfileDomains,
           });
         }
 
@@ -1058,14 +1100,13 @@ class OrdersJob extends CommonJob {
 
         let partnerDomainOwner = false;
         if (
-          data &&
-          data.publicKey &&
+          ((data && data.isNoProfileFlow) ||
+            orderItem.userProfileType === User.USER_PROFILE_TYPE.ALTERNATIVE) &&
           domainOwner &&
           [METAMASK_DOMAIN_NAME].includes(domain)
         ) {
           const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
-            userId,
-            publicKey: data && data.publicKey,
+            freeId: orderItem.freeId,
           });
 
           const existingUsersFreeAddress =
@@ -1093,7 +1134,7 @@ class OrdersJob extends CommonJob {
         if (
           orderItem.processor === Payment.PROCESSOR.FIO &&
           !hasSignedTx &&
-          !partnerDomainOwner
+          !domainOwner
         ) {
           logger.error(NO_REQUIRED_SIGNED_TX);
 
@@ -1120,8 +1161,7 @@ class OrdersJob extends CommonJob {
             if (partnerDomainOwner) {
               const freeAddressRecord = new FreeAddress({
                 name: fioName,
-                publicKey: data.publicKey,
-                userId,
+                freeId: orderItem.freeId,
               });
               await freeAddressRecord.save();
             }

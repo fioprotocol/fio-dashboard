@@ -1,4 +1,4 @@
-import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import {
   BlockchainTransaction,
@@ -10,6 +10,7 @@ import {
   OrderItemStatus,
 } from '../models';
 
+import { fioApi } from '../external/fio.mjs';
 import { sendGTMEvent } from '../external/googleapi.mjs';
 import { sendSendinblueEvent } from './external/SendinblueEvent.mjs';
 
@@ -107,9 +108,9 @@ const sendAnalytics = async (orderData = null) => {
     if (isSuccess || isPartial) {
       data.items = regItems.map(regItem => ({
         item_name: regItem.type,
-        price: Number(regItem.costUsdc),
+        price: new MathOp(regItem.costUsdc).toNumber(),
       }));
-      data.value = Number(payment.regTotalCost.usdcTotal);
+      data.value = new MathOp(payment.regTotalCost.usdcTotal).toNumber();
     }
 
     if (isSuccess) {
@@ -140,9 +141,9 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${FIOSDK.SUFToAmount(
+  return `$${new MathOp(usdcPrice).round(2, 1).toString()} (${fioApi.sufToAmount(
     nativeAmount || 0,
-  ).toFixed(2)}) FIO`;
+  )}) FIO`;
 };
 
 const transformOrderItemsForEmail = orderItems =>
@@ -167,8 +168,8 @@ const transformOrderItemsForEmail = orderItems =>
         existsItem.data.hasCustomDomain = true;
         existsItem.nativeFio = new MathOp(existsItem.nativeFio)
           .add(item.nativeFio)
-          .toNumber();
-        existsItem.price = new MathOp(existsItem.price).add(item.price).toNumber();
+          .toString();
+        existsItem.price = new MathOp(existsItem.price).add(item.price).toString();
       } else if (FIO_ACTIONS_WITH_PERIOD.includes(item.action) && existsItem) {
         existsItem.period++;
         existsItem.blockchainTransactions = [
@@ -177,8 +178,8 @@ const transformOrderItemsForEmail = orderItems =>
         ];
         existsItem.nativeFio = new MathOp(existsItem.nativeFio)
           .add(item.nativeFio)
-          .toNumber();
-        existsItem.price = new MathOp(existsItem.price).add(item.price).toNumber();
+          .toString();
+        existsItem.price = new MathOp(existsItem.price).add(item.price).toString();
       } else {
         if (FIO_ACTIONS_WITH_PERIOD.includes(item.action)) {
           item.period = 1;
@@ -294,7 +295,9 @@ const createPurchaseConfirmationNotification = async order => {
         ],
       })
     ).map(item => item.get({ plain: true }));
-    const payment = (await Payment.getOrderPayment(order.id)).get({ plain: true });
+    const payment = (await Payment.getOrderPayment(order.id)).get({
+      plain: true,
+    });
     const succeedItemsFormatted = succeedItems.map(item => OrderItem.format(item));
     const paymentFormatted = Payment.format(payment);
 

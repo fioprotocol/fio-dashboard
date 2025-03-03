@@ -9,10 +9,11 @@ import { useSelector } from 'react-redux';
 import Navigation from '../../Navigation';
 import Loader from '../../Loader/Loader';
 
+import { useMetaMaskProvider } from '../../../hooks/useMetaMaskProvider';
+
 import { ROUTES } from '../../../constants/routes';
 
 import metamaskSrc from '../../../assets/images/metamask.svg';
-import operaSrc from '../../../assets/images/opera.svg';
 
 import classes from '../MainHeader.module.scss';
 import { USER_PROFILE_TYPE } from '../../../constants/profile';
@@ -100,6 +101,8 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
   } = props;
 
   const user = useSelector(userSelector);
+  const metaMaskProvider = useMetaMaskProvider();
+  const isMetaMask = !!metaMaskProvider;
 
   if (onlyAuth) {
     return (
@@ -126,13 +129,9 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
     );
   }
 
-  const isOperaWallet =
-    window.ethereum?.isOpera &&
-    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
   const isMetamaskWallet =
-    window.ethereum?.isMetaMask &&
-    user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
-  const isAlternativeWallet = isMetamaskWallet || isOperaWallet;
+    isMetaMask && user?.userProfileType === USER_PROFILE_TYPE.ALTERNATIVE;
+  const isAlternativeWallet = isMetamaskWallet;
 
   return (
     <div
@@ -176,13 +175,12 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
               className={classes.buttonIcon}
             />
           )}
-          {isOperaWallet && (
-            <img
+          {/* TODO: temporary hidden, import operaSrc from '../../../assets/images/opera.svg'; */}
+          {/* <img
               alt="Opera logo"
               src={operaSrc}
               className={classes.buttonIcon}
-            />
-          )}
+            /> */}
           <p className={classes.buttonText}>
             {isAlternativeWallet ? 'Disconnect' : 'Sign Out'}{' '}
           </p>

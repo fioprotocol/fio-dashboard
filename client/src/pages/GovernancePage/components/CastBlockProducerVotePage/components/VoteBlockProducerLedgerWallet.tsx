@@ -29,7 +29,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: SubmitData | null;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 export const VoteBlockProducerLedgerWallet: React.FC<Props> = props => {

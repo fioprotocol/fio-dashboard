@@ -14,6 +14,8 @@ import { ROUTES } from '../../constants/routes';
 import { CHAIN_CODES } from '../../constants/common';
 import { SOCIAL_MEDIA_LINKS } from '../../constants/socialMediaLinks';
 
+import MathOp from '../../util/math';
+
 import useQuery from '../../hooks/useQuery';
 
 import { extractLastValueFormUrl, isURL } from '../../util/general';
@@ -151,7 +153,10 @@ export const useContext = (): UseContextProps => {
       ).length;
 
       changeBundleCost(
-        Math.ceil(editedCount / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
+        new MathOp(editedCount)
+          .div(ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION)
+          .round(0, 3)
+          .toNumber(),
       );
       setSocialMediaLinksList(updatedArr);
     };

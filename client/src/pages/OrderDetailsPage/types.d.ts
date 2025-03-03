@@ -7,6 +7,7 @@ import {
   OrderDetailedTotalCost,
   PaymentProvider,
   PaymentStatus,
+  Roe,
 } from '../../types';
 
 export type OrderDetailsProps = {
@@ -27,8 +28,9 @@ export type PaymentInfo = {
   publicKey: string;
   orderNumber: string;
   paidWith?: string;
-  totalFioNativeCostPrice?: number;
+  totalFioNativeCostPrice?: string;
   isFree?: boolean;
+  roe?: Roe;
 };
 
 export type ContextProps = {

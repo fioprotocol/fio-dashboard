@@ -5,6 +5,7 @@ import {
   FeePrice,
   FioAddressDoublet,
   FioWalletDoublet,
+  Roe,
   WalletBalances,
 } from '../../types';
 
@@ -40,7 +41,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
   loading: boolean;
-  roe: number;
+  roe: Roe;
   feePrice: FeePrice;
   balance: WalletBalances;
   refreshBalance: (publicKey: string) => void;

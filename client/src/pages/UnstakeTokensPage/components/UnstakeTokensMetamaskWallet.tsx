@@ -7,14 +7,11 @@ import {
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import {
-  BUNDLES_TX_COUNT,
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-} from '../../../constants/fio';
+import { BUNDLES_TX_COUNT } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import { handleFioServerResponse } from '../../../util/fio';
-import MathOp from '../../../util/math';
+import { defaultMaxFee } from '../../../util/prices';
 import apis from '../../../api';
 
 import { StakeTokensValues } from '../types';
@@ -22,11 +19,11 @@ import { FioWalletDoublet } from '../../../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  fee: number;
+  fee: string;
   processing: boolean;
   submitData: StakeTokensValues;
   onSuccess: (result: {
-    fee_collected: number;
+    fee_collected: string;
     bundlesCollected: number;
   }) => void;
   onCancel: () => void;
@@ -50,13 +47,10 @@ export const UnstakeTokensMetamaskWallet: React.FC<Props> = props => {
     action: Action.unstake,
     account: Account.staking,
     data: {
-      amount: apis.fio.amountToSUF(Number(amount)),
+      amount: apis.fio.amountToSUF(amount),
       fio_address: fioAddress,
       tpid: apis.fio.tpid,
-      max_fee: new MathOp(fee)
-        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-        .round(0)
-        .toNumber(),
+      max_fee: defaultMaxFee(fee) as string,
     },
     derivationIndex: fioWallet?.data?.derivationIndex,
   };

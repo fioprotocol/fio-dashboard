@@ -64,6 +64,12 @@ export class User extends Base {
           type: DT.STRING,
           defaultValue: this.USER_PROFILE_TYPE.PRIMARY,
         },
+        freeId: {
+          type: DT.STRING,
+          allowNull: true,
+          defaultValue: null,
+          unique: true,
+        },
       },
       {
         sequelize,
@@ -77,11 +83,6 @@ export class User extends Base {
     this.hasMany(Nonce, { foreignKey: 'userId', sourceKey: 'id' });
     this.hasMany(Notification, { foreignKey: 'userId', sourceKey: 'id' });
     this.hasMany(Wallet, { foreignKey: 'userId', sourceKey: 'id', as: 'fioWallets' });
-    this.hasMany(FreeAddress, {
-      foreignKey: 'userId',
-      sourceKey: 'id',
-      as: 'freeAddresses',
-    });
     this.hasMany(NewDeviceTwoFactor, {
       foreignKey: 'userId',
       sourceKey: 'id',
@@ -124,7 +125,6 @@ export class User extends Base {
         'avatar',
         'location',
         'secretSet',
-        'freeAddresses',
         'fioWallets',
         'newDeviceTwoFactor',
         'refProfile',
@@ -135,6 +135,7 @@ export class User extends Base {
         'orders',
         'emailNotificationParams',
         'userProfileType',
+        'freeId',
       ],
     };
 
@@ -164,7 +165,6 @@ export class User extends Base {
     const user = await this.findByPk(id, {
       where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
       include: [
-        { model: FreeAddress, as: 'freeAddresses' },
         { model: Wallet, as: 'fioWallets' },
         {
           model: NewDeviceTwoFactor,
@@ -181,19 +181,10 @@ export class User extends Base {
     });
 
     if (!user) return null;
+    const userObj = user.json();
+    userObj.freeAddresses = await FreeAddress.getItems({ freeId: user.freeId });
 
-    const walletPublicKeys = user.fioWallets.map(wallet => wallet.publicKey);
-    const freeAddresses = await FreeAddress.findAll({
-      where: {
-        publicKey: {
-          [Op.in]: walletPublicKeys,
-        },
-      },
-    });
-
-    user.dataValues.freeAddresses = [...user.freeAddresses, ...freeAddresses];
-
-    return user;
+    return userObj;
   }
 
   static findDeletedUser() {
@@ -207,7 +198,6 @@ export class User extends Base {
   static async findUser(id) {
     const user = await this.findByPk(id, {
       include: [
-        { model: FreeAddress, as: 'freeAddresses' },
         { model: Wallet, as: 'fioWallets' },
         { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
         {
@@ -220,17 +210,6 @@ export class User extends Base {
 
     if (!user) return null;
 
-    const walletPublicKeys = user.fioWallets.map(wallet => wallet.publicKey);
-    const freeAddresses = await FreeAddress.findAll({
-      where: {
-        publicKey: {
-          [Op.in]: walletPublicKeys,
-        },
-      },
-    });
-
-    user.freeAddresses = [...user.freeAddresses, ...freeAddresses];
-
     // Need to get orders separately because of sequelize bad performance if user has a lot of orders
     const orders = await Order.findAll({ where: { userId: user.id } });
 
@@ -239,6 +218,8 @@ export class User extends Base {
     if (orders) {
       userObj.orders = orders;
     }
+
+    user.freeAddresses = await FreeAddress.getItems({ freeId: user.freeId });
 
     return userObj;
   }
