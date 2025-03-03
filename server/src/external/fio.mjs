@@ -110,6 +110,10 @@ class Fio {
     return this.publicFioSDK;
   }
 
+  accountHash(publicKey) {
+    return FIOSDK.accountHash(publicKey);
+  }
+
   getMasterPublicKey() {
     const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
       process.env.MASTER_FIOSDK_KEY,

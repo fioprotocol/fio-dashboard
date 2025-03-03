@@ -28,8 +28,7 @@ class TxCheckJob extends CommonJob {
   async execute() {
     await fioApi.getRawAbi();
 
-    const walletSdk = await fioApi.getPublicFioSDK();
-    // get transactions need to check if exists
+    // get transactions need to check if existsx
     const [items] = await BlockchainTransaction.checkIrreversibility();
 
     const bcTxOrderItems = items.reduce((acc, item) => {
@@ -75,23 +74,6 @@ class TxCheckJob extends CommonJob {
             case GenericAction.registerFioDomainAddress:
             case GenericAction.registerFioAddress:
             case GenericAction.registerFioDomain: {
-              let fioAddresses = [];
-              let fioDomains = [];
-              try {
-                const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
-                  (params && params.owner_fio_public_key) || publicKey,
-                );
-                fioAddresses = fio_addresses;
-                fioDomains = fio_domains;
-              } catch (error) {
-                if (error.code !== ERROR_CODES.NOT_FOUND) {
-                  throw error;
-                }
-
-                fioAddresses = [];
-                fioDomains = [];
-              }
-
               const isAddress =
                 action === GenericAction.registerFioAddress ||
                 action === GenericAction.registerFioDomainAddress;
@@ -100,15 +82,28 @@ class TxCheckJob extends CommonJob {
                 : domain;
 
               let found;
-              if (isAddress) {
-                found = fioAddresses.find(
-                  ({ fio_address }) =>
-                    fio_address.toLowerCase() === fioName.toLowerCase(),
+              let checkRes;
+              try {
+                let ownerAccount;
+                if (isAddress) {
+                  checkRes = await fioApi.getFioAddress(fioName);
+                  ownerAccount = checkRes.owner_account;
+                } else {
+                  checkRes = await fioApi.getFioDomain(fioName);
+                  ownerAccount = checkRes.account;
+                }
+
+                const { accountnm } = fioApi.accountHash(
+                  (params && params.owner_fio_public_key) || publicKey,
                 );
-              } else {
-                found = fioDomains.find(
-                  ({ fio_domain }) => fio_domain.toLowerCase() === fioName.toLowerCase(),
-                );
+
+                if (accountnm === ownerAccount) {
+                  found = true;
+                }
+              } catch (error) {
+                if (error.code !== ERROR_CODES.NOT_FOUND) {
+                  throw error;
+                }
               }
 
               if (found) status = BlockchainTransaction.STATUS.SUCCESS;
