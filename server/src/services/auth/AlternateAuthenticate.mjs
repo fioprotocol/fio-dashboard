@@ -3,7 +3,14 @@ import { generate } from './authToken';
 import Base from '../Base';
 import X from '../Exception';
 
-import { User, Notification, ReferrerProfile, Wallet, Cart } from '../../models';
+import {
+  User,
+  UserDevice,
+  Notification,
+  ReferrerProfile,
+  Wallet,
+  Cart,
+} from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
 import { AUTH_TYPE } from '../../tools.mjs';
@@ -77,6 +84,8 @@ export default class AuthAlternateAuthenticate extends Base {
         await Cart.updateGuestCartUser(user.id, this.context.guestId);
       }
 
+      await UserDevice.check(user, this.context.device);
+
       // todo: DASH-1254. Remove when no users left with no pub key set as freeId
       if (user.id === user.freeId) {
         await user.update({ freeId: publicKey });
@@ -122,6 +131,8 @@ export default class AuthAlternateAuthenticate extends Base {
     });
 
     await newWallet.save();
+
+    await UserDevice.add(user.id, this.context.device);
 
     const responseData = generateJwt(user.id);
 
