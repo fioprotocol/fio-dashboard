@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { RequestStatus } from '@fioprotocol/fiosdk';
+import { FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
@@ -175,7 +175,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
       if (receivedRequest) {
         setFioRequest(receivedRequest);
         setFioRecordType(FIO_RECORD_TYPES.RECEIVED);
-        if (receivedRequest.status !== RequestStatus.requested) {
+        if (receivedRequest.status !== FioRequestStatus.requested) {
           setError(
             `Your request is ${
               FIO_REQUEST_STATUS_TYPES_TITLES[receivedRequest.status]
@@ -188,7 +188,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (sentRequest) {
-        if (sentRequest.status === RequestStatus.sentToBlockchain) {
+        if (sentRequest.status === FioRequestStatus.sentToBlockchain) {
           setPaymentData(
             obtData.find(
               (item: FioRecord) => item.fioRequestId === fioRequestId,
