@@ -4,7 +4,15 @@ import Base from '../Base';
 import X from '../Exception';
 import { generate } from './authToken';
 
-import { User, Nonce, Notification, ReferrerProfile, Wallet, Cart } from '../../models';
+import {
+  User,
+  UserDevice,
+  Nonce,
+  Notification,
+  ReferrerProfile,
+  Wallet,
+  Cart,
+} from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
 import logger from '../../logger.mjs';
@@ -102,6 +110,8 @@ export default class AuthCreate extends Base {
 
           await newWallet.save();
         }
+
+        await UserDevice.add(user.id, this.context.device);
 
         const now = new Date();
         const responseData = {
@@ -210,11 +220,7 @@ export default class AuthCreate extends Base {
       await Cart.updateGuestCartUser(user.id, this.context.guestId);
     }
 
-    // todo: check if user has pending vouchers and if this login is executated after 2FA timeout
-    const newDeviceSignIn2faTimeout = false;
-    if (newDeviceSignIn2faTimeout) {
-      await emailSender.send(templates.deviceSignIn, user.email);
-    }
+    await UserDevice.check(user, this.context.device);
 
     return {
       data: responseData,
