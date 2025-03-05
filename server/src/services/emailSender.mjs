@@ -330,6 +330,88 @@ class EmailSender {
 <p>API daily limit of <b>${sendData.limit}</b> free FIO Handles has been reached for partner profile <b>${sendData.refProfileName}</b>, api key *<i>${sendData.lastApiToken}</i>.</p>`,
           text: `API daily limit of ${sendData.limit} free FIO Handles has been reached for partner profile ${sendData.refProfileName}, api key *${sendData.lastApiToken}.`,
         };
+
+      case templates.deviceApproveRequested:
+        return {
+          subject: `FIO App Device Approval Request`,
+          body: EmailTemplate.get(templates.common, {
+            ...sendData,
+            headerTitle: `New Sign In Device Request`,
+            html: `<p>Hi,</p>
+
+<p>An attempt was made to sign in to your account from a device we did not recognize.</p>
+
+<p>Since you have enabled the New Device Approval security feature on your account, that sign-in must be approved on the device you have previously signed in from.</p>
+
+<p>If you do not have access to that device, you can use the access code provided to you when you enabled New Device Approval security feature. If you do not have the access code you will have to wait 7 days before you will be able to sign in from an unknown device.</p>
+
+<b>If you did not initiate this sign-in attempt, your password may have been compromised and you should change it within the next 7 days to avoid unauthorized access.</b>
+
+<p>To do so, please sign in to your account and take these steps to ensure your account is safe:</p>
+
+<ul>
+    <li>Deny the request for access</li>
+    <li>Change your password</li>
+</ul>
+`,
+          }),
+          images: EmailTemplate.getInlineImages(templates.common),
+          text: `Hi,
+An attempt was made to sign in to your account from a device we did not recognize.
+
+Since you have enabled the New Device Approval security feature on your account, that sign-in must be approved on the device you have previously signed in from.
+
+If you do not have access to that device, you can use the access code provided to you when you enabled New Device Approval security feature. If you do not have the access code you will have to wait 7 days before you will be able to sign in from an unknown device.
+
+If you did not initiate this sign-in attempt, your password may have been compromised and you should change it within the next 7 days to avoid unauthorized access.
+
+To do so, please sign in to your account and take these steps to ensure your account is safe:
+• Deny the request for access
+• Change your password
+`,
+        };
+
+      case templates.deviceSignIn:
+        return {
+          subject: `FIO App Sign-in Attempt`,
+          body: EmailTemplate.get(templates.common, {
+            ...sendData,
+            headerTitle: `FIO App Sign-in Attempt`,
+            html: `<p>Hi,</p>
+
+<p>It looks like someone is trying to sign in to your FIO App account from a device we did not recognize.</p>
+
+<div>
+    <p><span>Device:</span> ${sendData.device}</p>
+    <p><span>Date and time:</span> ${sendData.date}</p>
+    <p><span>Location:</span> ${sendData.location}</p>
+    <p><span>Account email:</span> ${sendData.email}</p>
+</div>
+
+<p>If this was you, no further action is needed and you may disregard this email.</p>
+<p>If this sign-in attempt is unexpected and not you, please do the following:</p>
+
+<ul>
+    <li>Sign in to your account and change your password</li>
+</ul>
+`,
+          }),
+          images: EmailTemplate.getInlineImages(templates.common),
+          text: `Hi,
+
+It looks like someone is trying to sign in to your FIO App account from a device we did not recognize.
+
+Device: ${sendData.device}
+Date and time: ${sendData.date}
+Location: ${sendData.location}
+Account email: ${sendData.email}
+
+If this was you, no further action is needed and you may disregard this email.
+If this sign-in attempt is unexpected and not you, please do the following:
+
+• Sign in to your account and change your password
+`,
+        };
     }
 
     throw new Error(`There is no email template with such name - ${templateName}`);

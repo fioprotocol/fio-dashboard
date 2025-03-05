@@ -210,6 +210,12 @@ export default class AuthCreate extends Base {
       await Cart.updateGuestCartUser(user.id, this.context.guestId);
     }
 
+    // todo: check if user has pending vouchers and if this login is executated after 2FA timeout
+    const newDeviceSignIn2faTimeout = false;
+    if (newDeviceSignIn2faTimeout) {
+      await emailSender.send(templates.deviceSignIn, user.email);
+    }
+
     return {
       data: responseData,
     };
