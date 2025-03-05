@@ -20,7 +20,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: FioNameTransferValues | null;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 const FioNameTransferEdgeWallet: React.FC<Props> = props => {

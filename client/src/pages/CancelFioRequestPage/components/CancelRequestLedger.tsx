@@ -24,7 +24,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: FioRecordViewDecrypted | null;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 const CancelRequestLedger: React.FC<Props> = props => {

@@ -126,7 +126,7 @@ export default class OrderProcessPayment extends Base {
         try {
           const fioNativePrice = data.results.reduce((acc, regItem) => {
             try {
-              return new MathOp(acc || '0').sum(regItem.fee_collected).toString();
+              return new MathOp(acc || '0').add(regItem.fee_collected).toString();
             } catch (err) {
               logger.error(err);
             }

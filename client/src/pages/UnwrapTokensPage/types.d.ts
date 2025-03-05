@@ -1,7 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { FioAddressDoublet, FioWalletDoublet } from '../../types';
+import { FioAddressDoublet, FioWalletDoublet, Roe } from '../../types';
 import { FeePriceOptionItem } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
 import {
   ConnectProviderType,
@@ -47,6 +47,6 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
   loading: boolean;
-  roe: number;
+  roe: Roe;
   refreshWalletDataPublicKey: (publicKey: string) => void;
 }

@@ -3,9 +3,8 @@ import Sequelize from 'sequelize';
 import Base from './Base';
 
 import { User } from './User';
-import { Wallet } from './Wallet.mjs';
 
-const { DataTypes: DT, Op } = Sequelize;
+const { DataTypes: DT } = Sequelize;
 
 export class FreeAddress extends Base {
   static init(sequelize) {
@@ -13,105 +12,51 @@ export class FreeAddress extends Base {
       {
         id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
         name: { type: DT.STRING, allowNull: false },
-        publicKey: { type: DT.STRING },
-        userId: { type: DT.STRING, allowNull: true },
+        freeId: {
+          type: DT.STRING,
+          allowNull: true,
+          defaultValue: null,
+        },
       },
       {
         sequelize,
         tableName: 'free-addresses',
         paranoid: true,
+        indexes: [
+          {
+            fields: ['freeId'],
+            using: 'BTREE',
+          },
+        ],
       },
     );
   }
 
-  static associate() {
-    this.belongsTo(User, {
-      foreignKey: 'userId',
-      targetKey: 'id',
-      as: 'freeAddresses',
-    });
-  }
-
   static async getItems(params) {
-    const { userId, publicKey, ...otherParams } = params;
-    let where = { ...otherParams };
-    const usersPublicKeys = [];
-    const userIds = [];
-
-    if (userId) {
-      const wallets = await Wallet.list({ userId });
-      if (wallets && wallets.length > 0) {
-        for (const wallet of wallets) {
-          usersPublicKeys.push(wallet.publicKey);
-        }
-      }
-    }
+    const { userId, publicKey, freeId, name } = params;
+    const where = {};
+    if (name) where.name = name;
+    if (freeId) where.freeId = freeId;
 
     if (publicKey) {
-      if (!userId) {
-        const wallets = await Wallet.list({ publicKey });
-
-        if (wallets && wallets.length > 0) {
-          for (const wallet of wallets) {
-            userIds.push(wallet.userId);
-          }
-        }
-      }
-      usersPublicKeys.push(publicKey);
+      where.freeId = publicKey; // no profile flow
     }
 
-    if (userId && usersPublicKeys.length > 0) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { userId },
-          {
-            publicKey: {
-              [Op.in]: usersPublicKeys,
-            },
-          },
-        ],
-      };
-    } else if (userId && !usersPublicKeys.length) {
-      where = {
-        ...where,
-        userId,
-      };
-    } else if (!userId && usersPublicKeys.length > 0 && !userIds.length) {
-      where = {
-        ...where,
-        publicKey: {
-          [Op.in]: usersPublicKeys,
-        },
-      };
-    } else if (!userId && usersPublicKeys.length > 0 && userIds.length > 0) {
-      where = {
-        ...where,
-        [Op.or]: [
-          {
-            userId: {
-              [Op.in]: [...new Set(userIds)],
-            },
-          },
-          {
-            publicKey: {
-              [Op.in]: usersPublicKeys,
-            },
-          },
-        ],
-      };
+    if (userId) {
+      const { freeId } = await User.findOne({ where: { id: userId }, raw: true });
+      where.freeId = freeId;
     }
 
     return this.findAll({ where });
   }
 
-  static format({ id, name, publicKey, createdAt, userId }) {
+  static format({ id, name, publicKey, createdAt, freeId }) {
     return {
       id,
       name,
       publicKey,
       createdAt,
-      userId,
+      freeId,
     };
   }
 

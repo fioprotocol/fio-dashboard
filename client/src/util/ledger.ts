@@ -12,11 +12,13 @@ import {
   CANNOT_TRANSFER_ERROR_TITLE,
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  ERROR_MESSAGE_FOR_DECRYPT_CONTENT,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
   UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
   UNSUPPORTED_LEDGER_APP_VERSION_NAME,
 } from '../constants/errors';
 import { ROUTES } from '../constants/routes';
+import { CONFIRM_LEDGER_ACTIONS } from '../constants/common';
 
 const HARDENED = 0x80000000;
 
@@ -102,6 +104,12 @@ export const handleLedgerError = ({
       msg = CANNOT_UPDATE_FIO_HANDLE;
       title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
     }
+  }
+
+  if (action === CONFIRM_LEDGER_ACTIONS.DETAILED_FIO_REQUEST) {
+    msg = ERROR_MESSAGE_FOR_DECRYPT_CONTENT.message;
+    title = ERROR_MESSAGE_FOR_DECRYPT_CONTENT.title;
+    buttonText = 'Close';
   }
 
   showGenericErrorModal(msg, title, buttonText);

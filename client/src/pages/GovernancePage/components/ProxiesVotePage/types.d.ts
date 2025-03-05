@@ -4,7 +4,7 @@ export type SubmitData = {
   data: {
     actor: string;
     fio_address: string;
-    max_fee: number;
+    max_fee: string;
     proxy: string;
   };
 };

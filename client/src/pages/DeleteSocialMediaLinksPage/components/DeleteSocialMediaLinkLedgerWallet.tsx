@@ -23,7 +23,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: DeleteSocialMediaLinkValues;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 export const DeleteSocialMediaLinkLedgerWallet: React.FC<Props> = props => {

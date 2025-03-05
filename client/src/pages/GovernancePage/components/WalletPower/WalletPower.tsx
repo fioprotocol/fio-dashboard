@@ -9,7 +9,7 @@ import classes from './WalletPower.module.scss';
 export type WalletPowerProps = {
   className?: string;
   hasVioletFio?: boolean;
-  power: number;
+  power: string;
   label?: string;
   withLabel?: boolean;
 };

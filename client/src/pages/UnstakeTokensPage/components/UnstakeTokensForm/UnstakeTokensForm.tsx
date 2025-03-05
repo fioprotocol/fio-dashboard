@@ -2,8 +2,6 @@ import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Dropdown from '../../../../components/Input/Dropdown';
@@ -32,10 +30,10 @@ import { TransactionDetails } from '../../../../components/TransactionDetails/Tr
 const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
   const { loading, fioAddresses, fee, initialValues, balance } = props;
 
-  const walletStakedTokens = FIOSDK.SUFToAmount(
+  const walletStakedTokens = apis.fio.sufToAmount(
     balance?.staked?.nativeFio || 0,
   );
-  const walletAvailableTokens = balance?.available?.nativeFio || 0;
+  const walletAvailableTokens = balance?.available?.nativeFio || '0';
 
   // temporary added while fio stake api can't allow accounts without FIO Handles
   const renderFioAddressWarningBadge = () => {

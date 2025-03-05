@@ -10,18 +10,13 @@ import { InfoBadgeComponent } from '../../../InfoBadgeComponent/InfoBadgeCompone
 import classes from './ProxyVoteDetails.module.scss';
 
 type Props = {
-  power: number;
+  power: string;
   name: string;
   handle: string;
   hasDetails: boolean;
 };
 
-export const ProxyVoteDetails: FC<Props> = ({
-  power,
-  name,
-  handle,
-  hasDetails,
-}) => {
+export const ProxyVoteDetails: FC<Props> = ({ name, handle, hasDetails }) => {
   return (
     <>
       <InfoBadgeComponent

@@ -23,7 +23,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: EditSocialLinkValues;
   processing: boolean;
-  fee: number;
+  fee: string;
 };
 
 export const EditSocialMediaLinksLedgerWallet: React.FC<Props> = props => {

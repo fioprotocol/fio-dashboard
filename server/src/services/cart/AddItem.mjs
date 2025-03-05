@@ -2,10 +2,7 @@ import Base from '../Base.mjs';
 import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
-import { Domain } from '../../models/Domain.mjs';
-import { FreeAddress } from '../../models/FreeAddress.mjs';
 import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
-import { FioAccountProfile } from '../../models/FioAccountProfile.mjs';
 import { GatedRegistrtionTokens } from '../../models/GatedRegistrationTokens.mjs';
 
 import logger from '../../logger.mjs';
@@ -20,6 +17,8 @@ import { fioApi } from '../../external/fio.mjs';
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 import { checkPrices } from '../../utils/prices.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
+import { Domain } from '../../models/Domain.mjs';
 
 export default class AddItem extends Base {
   static get validationRules() {
@@ -40,7 +39,7 @@ export default class AddItem extends Base {
           },
         },
       ],
-      publicKey: ['string'],
+      publicKey: ['string'], // no profile flow
       token: ['string'],
       refCode: ['string'],
     };
@@ -80,6 +79,15 @@ export default class AddItem extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
+      if (!userId && !guestId) {
+        logger.error(`Error not authorized: userId - ${userId}, guestId - ${guestId}`);
+
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {},
+        });
+      }
+
       if (
         (type === CART_ITEM_TYPE.ADDRESS ||
           type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) &&
@@ -93,29 +101,39 @@ export default class AddItem extends Base {
         });
       }
 
+      let noProfileResolvedUser = null;
+      if (!userId && publicKey) {
+        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+          publicKey,
+          refCode,
+        );
+        noProfileResolvedUser = resolvedUser;
+      }
+
       const existingCart = await Cart.getActive({ userId, guestId });
 
       const { prices, roe, updatedAt } = existingCart
         ? existingCart.options
         : await Cart.getCartOptions({ options: {} });
 
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = refCode
-        ? await ReferrerProfile.getRefDomainsList({
-            refCode,
-          })
-        : [];
+      const {
+        userRefProfile,
+        domainsList,
+        freeDomainToOwner,
+        userHasFreeAddress,
+        noAuth,
+      } = await Cart.getDataForCartItemsUpdate({
+        refCode,
+        noProfileResolvedUser,
+        publicKey,
+        userId,
+        domain,
+      });
 
-      const freeDomainOwner = await FioAccountProfile.getDomainOwner(domain);
+      // do not allow refCode other than auth user has
+      if (userId) refCode = userRefProfile ? userRefProfile.code : null;
 
-      const userHasFreeAddress =
-        !publicKey && !userId ? [] : await FreeAddress.getItems({ publicKey, userId });
-
-      const refProfile = refCode
-        ? await ReferrerProfile.findOne({
-            where: { code: refCode },
-          })
-        : null;
+      const dashboardDomains = refCode ? await Domain.getDashboardDomains() : domainsList;
 
       const gatedRefProfiles = await ReferrerProfile.sequelize.query(
         `SELECT code FROM "referrer-profiles"
@@ -133,15 +151,9 @@ export default class AddItem extends Base {
         },
       );
 
-      const domainExistsInDashboardDomains = dashboardDomains.find(
+      const domainExists = dashboardDomains.find(
         dashboardDomain => dashboardDomain.name === domain,
       );
-
-      const domainExistsInRefProfile =
-        refProfile &&
-        refProfile.settings &&
-        refProfile.settings.domains &&
-        !!refProfile.settings.domains.find(refDomain => refDomain.name === domain);
 
       const isRefCodeEqualGatedRefProfile =
         refCode &&
@@ -149,10 +161,8 @@ export default class AddItem extends Base {
         !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
 
       if (
-        ((gatedRefProfiles.length &&
-          (isRefCodeEqualGatedRefProfile ||
-            (!domainExistsInDashboardDomains && !domainExistsInRefProfile))) ||
-          freeDomainOwner) &&
+        ((gatedRefProfiles.length && (isRefCodeEqualGatedRefProfile || !domainExists)) ||
+          freeDomainToOwner[domain]) &&
         type === CART_ITEM_TYPE.ADDRESS
       ) {
         const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
@@ -177,21 +187,19 @@ export default class AddItem extends Base {
       newItem = { ...newItem, ...costs };
 
       const handledFreeCartItem = handleFreeCartAddItem({
-        allRefProfileDomains,
         cartItems: existingCart ? existingCart.items : [],
-        dashboardDomains,
+        domainsList,
         item: newItem,
-        freeDomainOwner,
+        freeDomainToOwner,
         userHasFreeAddress,
-        refCode: refProfile && refProfile.code,
-        prices,
-        roe,
+        userRefCode: userRefProfile && userRefProfile.code,
+        noAuth,
       });
 
       if (!existingCart) {
         const cartFields = {
           items: [handledFreeCartItem],
-          publicKey,
+          publicKey: noProfileResolvedUser ? publicKey : null,
           options: {
             prices,
             roe,
@@ -230,7 +238,7 @@ export default class AddItem extends Base {
       await existingCart.update({
         items: handledCartItemsWithExistingFioHandleCustomDomain,
         userId,
-        publicKey,
+        publicKey: noProfileResolvedUser ? publicKey : null,
       });
 
       return {

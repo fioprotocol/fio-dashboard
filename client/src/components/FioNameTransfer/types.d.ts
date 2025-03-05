@@ -6,6 +6,7 @@ import {
   FioNameType,
   FioNameItemProps,
   FeePrice,
+  Roe,
 } from '../../types';
 
 export type FioNameTransferValues = {
@@ -24,7 +25,7 @@ export type ContainerOwnProps = {
 export type ContainerProps = {
   children?: React.ReactNode;
   feePrice: FeePrice;
-  roe: number;
+  roe: Roe;
   currentWallet: FioWalletDoublet;
   loading: boolean;
   refreshBalance: (publicKey: string) => void;

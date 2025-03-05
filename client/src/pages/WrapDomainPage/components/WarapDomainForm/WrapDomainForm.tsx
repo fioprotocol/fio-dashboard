@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { isMobile } from 'react-device-detect';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
@@ -11,6 +9,8 @@ import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBa
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
+
+import apis from '../../../../api';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
@@ -42,7 +42,7 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
       convertFioPrices(
         new MathOp(fee?.nativeFio || 0)
           .add(oracleFee?.nativeFio || 0)
-          .toNumber(),
+          .toString(),
         roe,
       ),
     );
@@ -105,9 +105,9 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
 
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText={`Not enough FIO. Balance: ${FIOSDK.SUFToAmount(
+              messageText={`Not enough FIO. Balance: ${apis.fio.sufToAmount(
                 fioWallet.available || 0,
-              ).toFixed(2)} FIO`}
+              )}`}
             />
 
             <SubmitButton

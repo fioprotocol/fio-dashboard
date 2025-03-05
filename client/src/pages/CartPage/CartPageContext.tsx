@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -28,7 +26,11 @@ import {
 } from '../../redux/registrations/selectors';
 import { refProfileInfo } from '../../redux/refProfile/selectors';
 
-import { handlePriceForMultiYearItems, totalCost } from '../../util/cart';
+import {
+  cartItemsToOrderItems,
+  handlePriceForMultiYearItems,
+  totalCost,
+} from '../../util/cart';
 import MathOp from '../../util/math';
 import {
   fireAnalyticsEvent,
@@ -44,6 +46,7 @@ import {
   CART_ITEM_TYPE,
   NOT_FOUND_CODE,
   REF_PROFILE_TYPE,
+  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import {
   NOT_FOUND_CART_BUTTON_TEXT,
@@ -65,6 +68,7 @@ import {
   IncomePrices,
   PaymentProvider,
   Prices,
+  Roe,
   WalletBalancesItem,
 } from '../../types';
 import { CreateOrderActionData } from '../../redux/types';
@@ -84,11 +88,11 @@ type UseContextReturnType = {
   disabled: boolean;
   paymentWalletPublicKey: string;
   prices: Prices;
-  roe: number;
+  roe: Roe;
   showExpiredDomainWarningBadge: boolean;
   totalCartAmount: string;
   totalCartUsdcAmount: string;
-  totalCartNativeAmount: number;
+  totalCartNativeAmount: string;
   userWallets: FioWalletDoublet[];
   walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
@@ -153,18 +157,48 @@ export const useContext = (): UseContextReturnType => {
   const {
     costNativeFio: totalCartNativeAmount,
     costUsdc: totalCartUsdcAmount,
-  } = (cartItems && totalCost(cartItems, roe)) || {};
+  } = totalCost(cartItems || [], roe);
 
-  const totalCartAmount = FIOSDK.SUFToAmount(totalCartNativeAmount).toFixed(2);
+  const totalCartAmount = apis.fio.sufToAmount(totalCartNativeAmount);
 
-  const hasLowBalance =
-    userWallets &&
-    userWallets.every(
-      wallet =>
-        wallet.available != null &&
-        totalCartNativeAmount &&
-        new MathOp(wallet.available).lte(totalCartNativeAmount),
+  const hasLowBalance = useCallback(() => {
+    const hasNoComboSupportWallet = userWallets.find(
+      wallet => wallet.from === WALLET_CREATED_FROM.LEDGER,
     );
+
+    let noComboTotal: string | undefined;
+    if (hasNoComboSupportWallet) {
+      const noComboTotalCost = totalCost(
+        cartItemsToOrderItems({
+          cartItems: cartItems || [],
+          prices: prices.nativeFio,
+          supportCombo: false,
+          roe,
+        }).map(({ nativeFio }) => ({
+          costNativeFio: nativeFio,
+          domain: '',
+          id: '',
+        })),
+        roe,
+      );
+      noComboTotal = noComboTotalCost.costNativeFio;
+    }
+
+    return (
+      totalCartNativeAmount &&
+      userWallets &&
+      userWallets.every(wallet =>
+        wallet.from !== WALLET_CREATED_FROM.LEDGER || !noComboTotal
+          ? wallet.available != null &&
+            totalCartNativeAmount &&
+            new MathOp(wallet.available).lte(totalCartNativeAmount)
+          : wallet.from === WALLET_CREATED_FROM.LEDGER &&
+            noComboTotal &&
+            wallet.available != null &&
+            new MathOp(wallet.available).lte(noComboTotal),
+      )
+    );
+  }, [userWallets, totalCartNativeAmount, cartItems, prices, roe]);
 
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
@@ -185,7 +219,7 @@ export const useContext = (): UseContextReturnType => {
   const recalculateBalance = (
     updatedPrices: IncomePrices,
   ): {
-    updatedTotalPrice: number;
+    updatedTotalPrice: string;
     updatedFree: string;
     updatedCostUsdc: string;
     updatedCartItems: CartItem[];
@@ -215,7 +249,7 @@ export const useContext = (): UseContextReturnType => {
         case CART_ITEM_TYPE.DOMAIN_RENEWAL:
           costNativeFio = new MathOp(updatedRenewFioDomainPrice)
             .mul(period)
-            .toNumber();
+            .toString();
           break;
         case CART_ITEM_TYPE.ADDRESS:
           costNativeFio = updatedFioAddressPrice;
@@ -262,7 +296,7 @@ export const useContext = (): UseContextReturnType => {
 
   const allowCheckout = async (): Promise<boolean> => {
     if (
-      totalCartNativeAmount > 0 ||
+      new MathOp(totalCartNativeAmount).gt(0) ||
       !cartItems.every(cartItem => cartItem.isFree)
     ) {
       try {
@@ -396,7 +430,7 @@ export const useContext = (): UseContextReturnType => {
     cartId,
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
-    hasLowBalance,
+    hasLowBalance: hasLowBalance(),
     loading: loading || loadingCart || walletsLoading,
     walletCount,
     isAffiliateEnabled,

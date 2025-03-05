@@ -31,7 +31,7 @@ export default class FreeAddressRegistered extends Base {
 
     const freeAddressRecord = new FreeAddress({
       name,
-      userId: user.id,
+      freeId: user.freeId,
     });
     await freeAddressRecord.save();
 

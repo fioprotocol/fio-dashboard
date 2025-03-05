@@ -1,14 +1,12 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { Cart } from '../../models/Cart.mjs';
-import { Domain } from '../../models/Domain.mjs';
-import { FreeAddress } from '../../models/FreeAddress.mjs';
-import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
+import { Cart } from '../../models';
 
 import logger from '../../logger.mjs';
 
-import { handleUsersFreeCartItems } from '../../utils/cart.mjs';
+import { handleFreeItems } from '../../utils/cart.mjs';
+import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
@@ -31,33 +29,42 @@ export default class HandleUsersFreeCartItems extends Base {
         };
       }
 
-      const dashboardDomains = await Domain.getDashboardDomains();
-      const allRefProfileDomains = refCode
-        ? await ReferrerProfile.getRefDomainsList({
-            refCode,
-          })
-        : [];
+      let noProfileResolvedUser = null;
+      if (!userId && publicKey) {
+        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+          publicKey,
+          refCode,
+        );
+        noProfileResolvedUser = resolvedUser;
+      }
 
-      const userHasFreeAddress =
-        !publicKey && !userId
-          ? []
-          : await FreeAddress.getItems({
-              publicKey,
-              userId,
-            });
-
-      const handledFreeCartItems = handleUsersFreeCartItems({
-        allRefProfileDomains,
-        cartItems: cart.items,
-        dashboardDomains,
+      const {
+        userRefProfile,
+        domainsList,
+        freeDomainToOwner,
         userHasFreeAddress,
+        noAuth,
+      } = await Cart.getDataForCartItemsUpdate({
         refCode,
+        noProfileResolvedUser,
+        publicKey,
+        userId,
+        items: cart.items,
+      });
+
+      const handledFreeCartItems = handleFreeItems({
+        cartItems: cart.items,
+        domainsList,
+        freeDomainToOwner,
+        userHasFreeAddress,
+        userRefCode: userRefProfile && userRefProfile.code,
+        noAuth,
       });
 
       await cart.update({
         items: handledFreeCartItems,
         userId,
-        publicKey,
+        publicKey: noProfileResolvedUser ? publicKey : null,
       });
 
       return {

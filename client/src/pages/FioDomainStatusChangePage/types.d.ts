@@ -6,6 +6,7 @@ import {
   FeePrice,
   WalletBalancesItem,
   FioNameItemProps,
+  Roe,
 } from '../../types';
 
 type LocationProps = {
@@ -42,7 +43,7 @@ export type ContainerProps = {
   children?: React.ReactNode;
   selectedFioDomain: FioNameItemProps;
   feePrice: FeePrice;
-  roe: number | null;
+  roe: Roe;
   fioWallet: FioWalletDoublet;
   loading: boolean;
   refreshBalance: (publicKey: string) => void;

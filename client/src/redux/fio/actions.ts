@@ -68,7 +68,7 @@ export const getOracleFees = (): CommonPromiseAction => ({
     GET_ORACLE_FEES_SUCCESS,
     GET_ORACLE_FEES_FAILURE,
   ],
-  promise: (api: Api) => api.fio.publicFioSDK.getOracleFees(),
+  promise: (api: Api) => api.fio.getOracleFees(),
 });
 
 export const setOracleFees = (fees: OracleFees): CommonAction => ({
@@ -95,7 +95,7 @@ export const getFee = (
     ) {
       return api.fio.getFeeFromTable(ENDPOINT_FEE_HASH[endpoint]);
     }
-    return api.fio.publicFioSDK.getFee(endpoint as EndPoint, fioAddress);
+    return api.fio.getFee(endpoint as EndPoint, fioAddress);
   },
   endpoint,
 });

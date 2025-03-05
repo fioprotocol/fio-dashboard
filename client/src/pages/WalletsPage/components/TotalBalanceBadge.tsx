@@ -122,7 +122,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
           />
         ) : null}
         {rewards?.nativeFio ||
-        (rewards?.nativeFio === 0 && staked?.nativeFio) ? (
+        (rewards?.nativeFio === '0' && staked?.nativeFio) ? (
           <Balance fio={rewards.fio} usdc={rewards.usdc} title="Rewards" />
         ) : null}
         {staked?.nativeFio ? (

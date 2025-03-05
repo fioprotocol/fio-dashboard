@@ -7,12 +7,13 @@ import { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 
 import { removeTrailingSlashFromUrl } from '../../../../util/general';
+import MathOp from '../../../../util/math';
 
 import { ROUTES } from '../../../../constants/routes';
 import config from '../../../../config';
 
 import { ResultsProps } from '../types';
-import { AnyType } from '../../../../types';
+import { AnyType, Roe } from '../../../../types';
 
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
@@ -28,13 +29,13 @@ type ResultsData = {
   chainCode: string;
   block_num?: number;
   publicAddress: string;
-  nativeFeeCollectedAmount: number;
+  nativeFeeCollectedAmount: string;
   other?: { transaction_id?: string } & AnyType;
   error?: string | null;
 };
 
 type WrapTokenResultsProps = {
-  roe: number;
+  roe: Roe;
   results: ResultsData;
 } & ResultsProps;
 
@@ -45,12 +46,11 @@ const WrapTokenResults: FC<WrapTokenResultsProps> = props => {
       chainCode,
       publicAddress,
       nativeFeeCollectedAmount,
-      amount,
+      amount: fioAmount,
       other: { transaction_id },
     },
   } = props;
 
-  const fioAmount = Number(amount);
   const usdcPrice = useConvertFioToUsdc({ fioAmount });
 
   return (
@@ -92,13 +92,13 @@ const WrapTokenResults: FC<WrapTokenResultsProps> = props => {
       <ResultDetails show={!!name} label="Domain Wrapped" value={name} />
 
       <ResultDetails
-        show={!!amount}
+        show={!!fioAmount && new MathOp(fioAmount).gt(0)}
         label="FIO Wrapped"
         value={
           <PriceComponent
             className={classes.priceValue}
-            costFio={fioAmount?.toString(10)}
-            costUsdc={usdcPrice?.toString(10)}
+            costFio={fioAmount}
+            costUsdc={usdcPrice}
           />
         }
       />

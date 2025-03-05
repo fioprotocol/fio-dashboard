@@ -41,6 +41,7 @@ import {
   fireAnalyticsEventDebounced,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
+import MathOp from '../../util/math';
 
 import { convertFioPrices, DEFAULT_FEE_PRICES } from '../../util/prices';
 
@@ -50,6 +51,7 @@ import {
   ContainedFlowQueryParams,
   FeePrice,
   Prices,
+  Roe,
 } from '../../types';
 import { refProfileCode } from '../refProfile/selectors';
 import { fees as feesSelector } from '../fio/selectors';
@@ -121,10 +123,13 @@ export function* updatePeriodItem(): Generator {
     const { period } = cartItem;
 
     if (newPeriod !== period) {
-      const periodDiff = Math.abs(period - newPeriod);
+      const periodDiff = new MathOp(period)
+        .sub(newPeriod)
+        .abs()
+        .toNumber();
 
       const prices: Prices = yield select(pricesSelector);
-      const roe: number = yield select(roeSelector);
+      const roe: Roe = yield select(roeSelector);
 
       fireAnalyticsEvent(
         newPeriod > period

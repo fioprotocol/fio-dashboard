@@ -4,18 +4,19 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { FIOSDK } from '@fioprotocol/fiosdk';
-
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import CommonBadge from '../../../components/Badges/CommonBadge/CommonBadge';
 import CopyTooltip from '../../../components/CopyTooltip';
 import Amount from '../../../components/common/Amount';
+
+import apis from '../../../api';
 
 import {
   copyToClipboard,
   commonFormatTime,
   truncateTextInMiddle,
 } from '../../../util/general';
+import MathOp from '../../../util/math';
 
 import { TransactionItemProps } from '../../../types';
 
@@ -28,7 +29,7 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
     copyToClipboard(txId);
   };
 
-  const isReceive = parseInt(nativeAmount, 10) > 0;
+  const isReceive = new MathOp(nativeAmount).gt(0);
 
   return (
     <div className={classes.badgeContainer}>
@@ -78,7 +79,7 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
             </a>
           </div>
           <div className={classes.amount}>
-            <Amount value={FIOSDK.SUFToAmount(nativeAmount || 0).toFixed(2)} />
+            <Amount value={apis.fio.sufToAmount(nativeAmount || 0)} />
             &nbsp;<span className={classes.currencyCode}>FIO</span>
           </div>
         </div>

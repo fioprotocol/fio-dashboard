@@ -1,5 +1,7 @@
 import Base from '../Base';
-import { Order } from '../../models';
+import { Order, OrderItem } from '../../models';
+
+import { getDisplayOrderItems } from '../../utils/cart.mjs';
 
 import X from '../Exception.mjs';
 
@@ -49,6 +51,12 @@ export default class OrdersActive extends Base {
           blockchainTransactions: [],
           orderItemStatus: {},
         })),
+        displayOrderItems: getDisplayOrderItems({
+          orderItems: order.OrderItems.map(orderItem =>
+            OrderItem.format(orderItem.get({ plain: true })),
+          ),
+          roe: order.roe,
+        }),
         payment: {
           id: payment.id,
           processor: payment.processor,

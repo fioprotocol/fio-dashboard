@@ -20,7 +20,7 @@ import classes from '../CheckoutPage.module.scss';
 import { CART_ITEM_TYPE } from '../../../constants/common';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
-  const { cart, roe, payment, ...rest } = props;
+  const { displayOrderItems, roe, payment, ...rest } = props;
   const {
     fioWallets,
     isNoProfileFlow,
@@ -29,7 +29,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
     hasPublicCartItems,
   } = rest;
 
-  const { costNativeFio, costFree } = totalCost(cart, roe);
+  const { costNativeFio, costFree } = totalCost(displayOrderItems, roe);
 
   const additionalTransactionDetails: AdditionalDetails[] = [];
 
@@ -45,10 +45,10 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
     <>
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Purchase Details</h6>
-        {!isEmpty(cart) &&
-          cart.map(item => {
+        {!isEmpty(displayOrderItems) &&
+          displayOrderItems.map(item => {
             const walletGroup = payWith.find(
-              it => !!it.cartItems.find(it => it.id === item.id),
+              it => !!it.displayOrderItems.find(it => it.id === item.id),
             );
 
             let error: string;
@@ -73,7 +73,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
         {payWith.length === 0 ? (
           <TransactionDetails
             valuePosition={VALUE_POSITIONS.RIGHT}
-            feeInFio={0}
+            feeInFio="0"
             amountInFio={costNativeFio}
             additional={additionalTransactionDetails}
           />
@@ -82,7 +82,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
             <TransactionDetails
               key={it.signInFioWallet.publicKey}
               valuePosition={VALUE_POSITIONS.LEFT}
-              feeInFio={0}
+              feeInFio="0"
               amountInFio={it.totalCostNativeFio}
               payWith={{
                 walletName: it.signInFioWallet.name,
@@ -104,7 +104,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
       )}
       <PaymentOptionComponent
         {...rest}
-        cart={cart}
+        displayOrderItems={displayOrderItems}
         costFree={costFree}
         totalCost={costNativeFio}
         payment={payment}

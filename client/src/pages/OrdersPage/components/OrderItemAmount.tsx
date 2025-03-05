@@ -3,10 +3,10 @@ import React from 'react';
 import { PriceComponent } from '../../../components/PriceComponent';
 
 import apis from '../../../api';
-import MathOp from '../../../util/math';
+import { Roe } from '../../../types';
 
 type AmountProps = {
-  roe: string;
+  roe: Roe;
   total: string;
 };
 
@@ -15,12 +15,7 @@ export const OrderItemAmount: React.FC<AmountProps> = props => {
 
   const isFree = total === '0' || total == null;
 
-  const costFio = apis.fio
-    .convertUsdcToFio(
-      new MathOp(total || 0).toNumber(),
-      roe && new MathOp(roe).toNumber(),
-    )
-    .toFixed(2);
+  const costFio = apis.fio.convertUsdcToFio(total || '0', roe);
 
   return <PriceComponent costFio={costFio} costUsdc={total} isFree={isFree} />;
 };

@@ -5,9 +5,8 @@ import { Account, Action, GenericAction } from '@fioprotocol/fiosdk';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
-import MathOp from '../../../util/math';
+import { defaultMaxFee } from '../../../util/prices';
 
-import { DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../../constants/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { TrxResponse } from '../../../api/fio';
 
@@ -22,8 +21,8 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   submitData: WrapDomainValues | null;
   processing: boolean;
-  fee?: number | null;
-  oracleFee?: number | null;
+  fee?: string | null;
+  oracleFee?: string | null;
 };
 
 const WrapDomainEdgeWallet: React.FC<Props> = props => {
@@ -50,10 +49,7 @@ const WrapDomainEdgeWallet: React.FC<Props> = props => {
           chain_code: data.chainCode,
           public_address: data.publicAddress,
           max_oracle_fee: oracleFee,
-          max_fee: new MathOp(fee)
-            .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-            .round(0)
-            .toNumber(),
+          max_fee: defaultMaxFee(fee) as string,
           tpid: apis.fio.tpid,
         },
       },

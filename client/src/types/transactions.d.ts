@@ -1,10 +1,10 @@
-import { FioWalletDoublet } from '../types';
+import { FioWalletDoublet, Roe } from '../types';
 
 export type HandleTransactionDetailsProps = {
   bundles?: number;
-  feeCollected?: number;
+  feeCollected?: string;
   remaningBundles?: number;
-  roe?: number;
+  roe?: Roe;
   shouldSubBundlesFromRemaining?: boolean;
   shouldSubFeesFromBalance?: boolean;
   transactionId?: string;

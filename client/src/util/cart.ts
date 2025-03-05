@@ -3,9 +3,12 @@ import { GenericAction } from '@fioprotocol/fiosdk';
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
+  CURRENCY_CODES,
+  WALLET_CREATED_FROM,
 } from '../constants/common';
 import { DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
+import { BC_TX_STATUSES } from '../constants/purchase';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
@@ -17,6 +20,7 @@ import {
   FioWalletDoublet,
   NativePrices,
   OrderItem,
+  Roe,
 } from '../types';
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
@@ -30,21 +34,26 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   );
 
 export type TotalCost = {
-  costNativeFio?: number;
+  costNativeFio: string;
   costFree?: string;
-  costFio?: string;
-  costUsdc?: string;
+  costFio: string;
+  costUsdc: string;
 };
 
-export const totalCost = (cartItems: CartItem[], roe: number): TotalCost => {
+export const totalCost = (cartItems: CartItem[], roe: Roe): TotalCost => {
   if (cartItems.length > 0 && cartItems.every(cartItem => cartItem.isFree))
-    return { costFree: 'FREE' };
+    return {
+      costFree: 'FREE',
+      costNativeFio: '0',
+      costFio: '0',
+      costUsdc: '0',
+    };
 
   const fioNativeTotal = cartItems
     .filter(cartItem => !cartItem.isFree)
-    .reduce<number>(
-      (acc, cartItem) => new MathOp(acc).add(cartItem.costNativeFio).toNumber(),
-      0,
+    .reduce<string>(
+      (acc, cartItem) => new MathOp(acc).add(cartItem.costNativeFio).toString(),
+      '0',
     );
 
   const { fio, usdc } = convertFioPrices(fioNativeTotal, roe);
@@ -129,19 +138,19 @@ export const handlePriceForMultiYearItems = ({
   includeAddress?: boolean;
   prices: NativePrices;
   period: number;
-}): number => {
+}): string => {
   const { domain, renewDomain, combo } = prices;
   const renewPeriod = new MathOp(period).sub(1).toNumber();
   const renewDomainNativeCost = new MathOp(renewDomain)
     .mul(renewPeriod)
-    .toNumber();
+    .toString();
   const multiDomainPrice = new MathOp(domain)
     .add(renewDomainNativeCost)
-    .toNumber();
+    .toString();
 
   if (includeAddress) {
     if (renewPeriod > 0) {
-      return new MathOp(combo).add(renewDomainNativeCost).toNumber();
+      return new MathOp(combo).add(renewDomainNativeCost).toString();
     } else {
       return combo;
     }
@@ -171,7 +180,7 @@ export type GroupedCartItem = {
 
 export type GroupedCartItemsByPaymentWallet<T extends GroupedCartItem> = {
   signInFioWallet: FioWalletDoublet;
-  cartItems: T[];
+  displayOrderItems: T[];
 };
 
 export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
@@ -181,7 +190,7 @@ export type GroupCartItemsByPaymentWalletResult<T extends GroupedCartItem> = {
 
 export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   defaultWalletPublicKey: string,
-  cartItems: T[],
+  displayOrderItems: T[],
   fioWallets: FioWalletDoublet[],
   userDomains: FioDomainDoublet[],
 ): GroupCartItemsByPaymentWalletResult<T> => {
@@ -204,28 +213,28 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
     if (!group) {
       group = {
         signInFioWallet,
-        cartItems: [],
+        displayOrderItems: [],
       };
       groups.push(group);
     }
 
-    group.cartItems.push(cartItem);
+    group.displayOrderItems.push(cartItem);
   };
 
-  for (const cartItem of cartItems) {
-    if (cartItem.type !== CART_ITEM_TYPE.ADDRESS) {
+  for (const displayOrderItem of displayOrderItems) {
+    if (displayOrderItem.type !== CART_ITEM_TYPE.ADDRESS) {
       hasPublicCartItems = true;
-      addToGroup(defaultOwnerWallet, cartItem);
+      addToGroup(defaultOwnerWallet, displayOrderItem);
       continue;
     }
 
     const addressDomain = userDomains.find(
-      domain => domain.name === cartItem.domain,
+      domain => domain.name === displayOrderItem.domain,
     );
 
     if (!addressDomain || addressDomain.isPublic) {
       hasPublicCartItems = true;
-      addToGroup(defaultOwnerWallet, cartItem);
+      addToGroup(defaultOwnerWallet, displayOrderItem);
       continue;
     }
 
@@ -233,8 +242,142 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
       wallet => wallet.publicKey === addressDomain.walletPublicKey,
     );
 
-    addToGroup(domainOwnerWallet, cartItem);
+    addToGroup(domainOwnerWallet, displayOrderItem);
   }
 
   return { groups, hasPublicCartItems };
+};
+
+export const walletSupportsCombo = (wallet: FioWalletDoublet) =>
+  wallet.from !== WALLET_CREATED_FROM.LEDGER;
+
+export const cartItemsToOrderItems = ({
+  cartItems,
+  prices,
+  supportCombo,
+  roe,
+}: {
+  cartItems: CartItem[];
+  prices: NativePrices;
+  supportCombo: boolean;
+  roe: Roe;
+}) => {
+  const orderItems: OrderItem[] = [];
+
+  for (const cartItem of cartItems) {
+    const {
+      address,
+      domain,
+      id,
+      isFree,
+      hasCustomDomainInCart,
+      period,
+      type,
+    } = cartItem;
+
+    const orderItem: OrderItem = {
+      id: '',
+      action: '',
+      createdAt: '',
+      nativeFio: '',
+      price: '',
+      priceCurrency: CURRENCY_CODES.USDC,
+      data: {
+        cartItemId: id,
+        type,
+      },
+      domain,
+      updatedAt: '',
+      blockchainTransactions: [],
+      orderItemStatus: {
+        txStatus: BC_TX_STATUSES.NONE,
+      },
+    };
+
+    const renewOrderItem: OrderItem = {
+      ...orderItem,
+      action: GenericAction.renewFioDomain,
+      address: null,
+      nativeFio: prices.renewDomain,
+      price: convertFioPrices(prices.renewDomain, roe).usdc,
+    };
+
+    const domainOrderItem: OrderItem = {
+      ...orderItem,
+      address: null,
+      action: GenericAction.registerFioDomain,
+      nativeFio: prices.domain,
+      price: convertFioPrices(prices.domain, roe).usdc,
+    };
+
+    switch (type) {
+      case CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN: {
+        const useComboAction = !hasCustomDomainInCart && supportCombo;
+
+        if (!supportCombo && !hasCustomDomainInCart) {
+          orderItems.push({
+            ...domainOrderItem,
+            data: { ...domainOrderItem.data, cartItemId: domain },
+          });
+          renewOrderItem.data = { ...renewOrderItem.data, cartItemId: domain };
+        }
+
+        orderItem.action = useComboAction
+          ? GenericAction.registerFioDomainAddress
+          : GenericAction.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = (useComboAction
+          ? prices.combo
+          : prices.address
+        ).toString();
+        orderItem.price = convertFioPrices(
+          useComboAction ? prices.combo : prices.address,
+          roe,
+        ).usdc;
+        orderItems.push(orderItem);
+
+        if (!hasCustomDomainInCart) {
+          for (let i = 1; i < Number(period); i++) {
+            orderItems.push(renewOrderItem);
+          }
+        }
+        break;
+      }
+      case CART_ITEM_TYPE.DOMAIN_RENEWAL: {
+        for (let i = 0; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
+        }
+        break;
+      }
+      case CART_ITEM_TYPE.ADD_BUNDLES:
+        orderItem.action = GenericAction.addBundledTransactions;
+        orderItem.address = address;
+        orderItem.nativeFio = prices.addBundles;
+        orderItem.price = convertFioPrices(prices.addBundles, roe).usdc;
+        orderItems.push(orderItem);
+        break;
+      case CART_ITEM_TYPE.ADDRESS: {
+        orderItem.action = GenericAction.registerFioAddress;
+        orderItem.address = address;
+        orderItem.nativeFio = isFree ? '0' : prices.address;
+        orderItem.price = isFree
+          ? '0'
+          : convertFioPrices(prices.address, roe).usdc;
+        orderItems.push(orderItem);
+        break;
+      }
+      case CART_ITEM_TYPE.DOMAIN: {
+        orderItems.push(domainOrderItem);
+
+        for (let i = 1; i < Number(period); i++) {
+          orderItems.push(renewOrderItem);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  return orderItems;
 };

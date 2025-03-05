@@ -5,8 +5,8 @@ import Amount from '../common/Amount';
 import { useConvertFioToUsdc } from '../../util/hooks';
 
 type Props = {
-  fioAmount?: number;
-  nativeAmount?: number;
+  fioAmount?: string;
+  nativeAmount?: string;
 };
 
 const ConvertedAmount: React.FC<Props> = props => {

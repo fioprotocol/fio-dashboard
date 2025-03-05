@@ -8,12 +8,13 @@ import {
 } from '../../types';
 
 export type PurchaseValues = {
-  cartItems: CartItem[];
+  displayOrderItems: CartItem[];
   prices: Prices;
   refProfileInfo: RefProfile | null;
 };
 
 export type PurchaseNowTypes = {
+  displayOrderItems: CartItem[];
   disabled?: boolean;
   onFinish: (results: RegistrationResult) => void;
 };
@@ -25,7 +26,7 @@ export type RegistrationType = {
   isFree: boolean;
   isCombo?: boolean;
   isCustomDomain?: boolean;
-  fee: number;
+  fee: string;
   fee_collected?: number;
   type: CartItemType;
   iteration?: number;

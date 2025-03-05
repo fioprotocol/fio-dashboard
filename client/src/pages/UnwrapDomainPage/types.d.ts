@@ -7,6 +7,7 @@ import {
   NetworkType,
 } from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 import { NtfsItems } from '../../hooks/externalWalletsConnection/useGetWrappedFioData';
+import { Roe } from '../../types';
 
 type MatchProps = {
   publicKey: string;
@@ -45,5 +46,5 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 
 export interface ContainerProps extends ContainerOwnProps {
   loading: boolean;
-  roe: number;
+  roe: Roe;
 }

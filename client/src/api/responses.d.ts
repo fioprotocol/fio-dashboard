@@ -17,6 +17,7 @@ import {
   FioApiUrls,
   OrderDetails,
   OrderItemsToCsv,
+  CartItem,
 } from '../types';
 
 export type DefaultSuccessResponse = { success: true };
@@ -44,7 +45,9 @@ export type AuthSignUpResponse = User;
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;
 export type AuthResendRecoveryResponse = DefaultSuccessResponse;
-export type AuthUpdateEmailResponse = DefaultSuccessResponse;
+export type AuthUpdateEmailResponse = DefaultSuccessResponse & {
+  newUsername?: string;
+};
 export type AuthCreateNewDeviceRequestResponse = null;
 export type AuthDeleteNewDeviceRequestResponse =
   | DefaultSuccessResponse
@@ -79,13 +82,13 @@ export type DomainsWatchlistListResponse = {
 export type FioRegPricesResponse = {
   pricing: {
     nativeFio: {
-      domain: number;
-      address: number;
-      combo: number;
-      renewDomain: number;
-      addBundles: number;
+      domain: string;
+      address: string;
+      combo: string;
+      renewDomain: string;
+      addBundles: string;
     };
-    usdtRoe: number;
+    usdtRoe: string;
   };
 };
 export type FioRegCaptchaResponse = {
@@ -188,6 +191,9 @@ export type UsersShowResponse = User;
 export type OrdersCreateResponse = Order;
 export type OrderGetResponse = OrderDetailed;
 export type OrdersUpdateResponse = DefaultSuccessResponse;
+export type OrdersUpdatePubKeyResponse = DefaultSuccessResponse & {
+  displayOrderItems: CartItem[];
+};
 export type UserOrdersListResponse = {
   data: {
     orders: UserOrderDetails;

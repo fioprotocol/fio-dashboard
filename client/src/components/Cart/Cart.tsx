@@ -41,7 +41,7 @@ type Props = {
   hasLowBalance: boolean;
   walletCount: number;
   totalCartAmount: string;
-  totalCartNativeAmount: number;
+  totalCartNativeAmount: string;
   walletBalancesAvailable: WalletBalancesItem;
   isPriceChanged: boolean;
   hasGetPricesError?: boolean;

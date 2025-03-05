@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Ecc } from '@fioprotocol/fiojs';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import {
   connectSnap,
@@ -12,6 +13,7 @@ import {
 } from '../util/snap';
 import { log } from '../util/general';
 import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
+import { useMetaMaskProvider } from '../hooks/useMetaMaskProvider';
 
 export type MetamaskSnapProps = {
   derivationIndex: number;
@@ -29,6 +31,7 @@ export type MetamaskSnapProps = {
   signature: string;
   signatureError: Error | null;
   signatureLoading: boolean;
+  metaMaskProvider: MetaMaskInpageProvider;
   clearDecryptResults: () => void;
   clearSignTx: () => void;
   clearSignNonceResults: () => void;
@@ -64,6 +67,8 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
   const [decryptLoading, toggleDecryptLoading] = useState<boolean>(false);
   const [derivationIndex, setDerivationIndex] = useState<number>(0);
 
+  const metaMaskProvider = useMetaMaskProvider();
+
   const clearSignTx = useCallback(() => {
     setSignedTxn(null);
     setSignedTxnError(null);
@@ -80,11 +85,17 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
           version = process.env.REACT_APP_SNAP_STRICT_VERSION;
         }
 
-        await connectSnap(defaultSnapOrigin, {
-          version,
-        });
+        await connectSnap(
+          defaultSnapOrigin,
+          {
+            version,
+          },
+          metaMaskProvider as MetaMaskInpageProvider,
+        );
 
-        const installedSnap = await getSnap();
+        const installedSnap = await getSnap(
+          metaMaskProvider as MetaMaskInpageProvider,
+        );
 
         setState(installedSnap);
       } catch (error) {
@@ -107,7 +118,10 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
   const getPublicKeyFromSnap = useCallback(
     async ({ derivationIndex }: { derivationIndex?: number }) => {
       try {
-        const publicKey = await getPublicKey({ derivationIndex });
+        const publicKey = await getPublicKey(
+          metaMaskProvider as MetaMaskInpageProvider,
+          { derivationIndex },
+        );
 
         setPublicKey(publicKey);
       } catch (error) {
@@ -122,7 +136,10 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
       setSignedTxnError(null);
       toggleSignedTxnLoading(true);
 
-      const signedTxn = await signTxn(params);
+      const signedTxn = await signTxn(
+        metaMaskProvider as MetaMaskInpageProvider,
+        params,
+      );
 
       setSignedTxn(signedTxn);
     } catch (error) {
@@ -151,7 +168,10 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
       try {
         clearSignNonceResults();
         toggleSignatureLoading(true);
-        const signature = await signNonce(params);
+        const signature = await signNonce(
+          metaMaskProvider as MetaMaskInpageProvider,
+          params,
+        );
         setSignature(signature);
         verifySignature({ signature, nonce: params.nonce });
       } catch (error) {
@@ -173,7 +193,10 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
     }) => {
       try {
         toggleDecryptLoading(true);
-        const decryptedContent = await decryptContent(params);
+        const decryptedContent = await decryptContent(
+          metaMaskProvider as MetaMaskInpageProvider,
+          params,
+        );
         setDecryptedContent(decryptedContent);
       } catch (error) {
         log.error(error);
@@ -226,5 +249,6 @@ export const MetamaskSnap = (): MetamaskSnapProps => {
     signSnapTxn,
     signNonceSnap,
     setDerivationIndex,
+    metaMaskProvider: metaMaskProvider as MetaMaskInpageProvider,
   };
 };

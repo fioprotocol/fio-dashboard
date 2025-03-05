@@ -9,6 +9,8 @@ import { CancelFioRequest } from './CancelFioRequest';
 import { CustomActionForm } from './CustomActionForm';
 import { DecryptContentFioRequestForm } from './DecryptContentFioRequestForm';
 import { DecryptContentObtDataForm } from './DecryptContentObtDataForm';
+import { EncryptContentFioRequestForm } from './EncryptContentFioRequestForm';
+import { EncryptContentObtDataForm } from './EncryptContentObtDataForm';
 import { RegisterFioHandle } from './RegisterFioHandle';
 import { RequestNewFunds } from './RequestNewFunds';
 import { RegisterFioDomain } from './RegisterFioDomain';
@@ -30,11 +32,14 @@ import {
   CUSTOM_ACTION_NAME,
   DECRYPT_FIO_REQUEST_CONTENT_NAME,
   DECRYPT_OBT_DATA_CONTENT_NAME,
+  ENCRYPT_FIO_REQUEST_CONTENT_NAME,
+  ENCRYPT_OBT_DATA_CONTENT_NAME,
 } from '../../constants';
+import { AnyType } from '../../../../../types';
 
 type Props = {
   action: string;
-  onSubmit: (values: any) => void;
+  onSubmit: (values: AnyType) => void;
 };
 
 export const FioActionForms: React.FC<Props> = props => {
@@ -85,6 +90,10 @@ export const FioActionForms: React.FC<Props> = props => {
       return <DecryptContentFioRequestForm onSubmit={onSubmit} />;
     case DECRYPT_OBT_DATA_CONTENT_NAME:
       return <DecryptContentObtDataForm onSubmit={onSubmit} />;
+    case ENCRYPT_FIO_REQUEST_CONTENT_NAME:
+      return <EncryptContentFioRequestForm onSubmit={onSubmit} />;
+    case ENCRYPT_OBT_DATA_CONTENT_NAME:
+      return <EncryptContentObtDataForm onSubmit={onSubmit} />;
     case CUSTOM_ACTION_NAME:
       return <CustomActionForm onSubmit={onSubmit} />;
     default:

@@ -48,12 +48,12 @@ const PAYMENT_METHODS = {
 };
 
 export const StripeForm: React.FC<{
-  cart: CartItemType[];
+  displayOrderItems: CartItemType[];
   onFinish: (success: boolean, data?: BeforeSubmitData) => void;
   beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   orderNumber: string;
   payment: Payment;
-}> = ({ cart, orderNumber, onFinish, beforeSubmit, payment }) => {
+}> = ({ displayOrderItems, orderNumber, onFinish, beforeSubmit, payment }) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -81,7 +81,7 @@ export const StripeForm: React.FC<{
 
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
-      getCartItemsDataForAnalytics(cart),
+      getCartItemsDataForAnalytics(displayOrderItems),
     );
 
     if (!stripe || !elements) {

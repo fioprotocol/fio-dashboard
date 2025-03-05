@@ -14,17 +14,17 @@ import { actionFromCartItem } from '../../util/cart';
 
 export type MakeRegistrationOrder = {
   fees: NativePrices;
-  cartItems?: CartItem[];
+  displayOrderItems?: CartItem[];
   isComboSupported?: boolean;
 };
 
 export const makeRegistrationOrder = ({
-  cartItems = [],
+  displayOrderItems = [],
   fees,
   isComboSupported = false,
 }: MakeRegistrationOrder): RegistrationType[] => {
   const registrations: RegistrationType[] = [];
-  const sortedCartItems = [...cartItems].sort(item =>
+  const sortedDisplayOrderItems = [...displayOrderItems].sort(item =>
     !!item.address &&
     item.domainType === DOMAIN_TYPE.CUSTOM &&
     !item.hasCustomDomainInCart
@@ -32,63 +32,60 @@ export const makeRegistrationOrder = ({
       : 1,
   );
 
-  for (const cartItem of sortedCartItems) {
+  for (const item of sortedDisplayOrderItems) {
     const isCombo =
-      cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
       isComboSupported &&
-      !cartItem.hasCustomDomainInCart;
+      !item.hasCustomDomainInCart;
 
     const registration: RegistrationType = {
-      cartItemId: cartItem.id,
-      fioName: setFioName(cartItem.address, cartItem.domain),
+      cartItemId: item.id,
+      fioName: setFioName(item.address, item.domain),
       isFree:
-        cartItem.isFree &&
-        (cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE ||
-          cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
-        !!cartItem.address &&
-        cartItem.type === CART_ITEM_TYPE.ADDRESS,
-      action: actionFromCartItem(cartItem.type, isCombo),
+        item.isFree &&
+        (item.domainType === DOMAIN_TYPE.ALLOW_FREE ||
+          item.domainType === DOMAIN_TYPE.PRIVATE) &&
+        !!item.address &&
+        item.type === CART_ITEM_TYPE.ADDRESS,
+      action: actionFromCartItem(item.type, isCombo),
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
-        cartItem.type,
+        item.type,
       )
-        ? cartItem.costNativeFio
-        : cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+        ? item.costNativeFio
+        : item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
           isComboSupported &&
-          !cartItem.hasCustomDomainInCart
+          !item.hasCustomDomainInCart
         ? fees?.combo
-        : cartItem.address
+        : item.address
         ? fees?.address
         : fees?.domain,
       isCombo,
       type:
-        !isCombo && cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+        !isCombo && item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
           ? CART_ITEM_TYPE.ADDRESS
-          : cartItem.type,
-      signInFioWallet: cartItem.signInFioWallet,
+          : item.type,
+      signInFioWallet: item.signInFioWallet,
     };
 
     if (
-      cartItem.isFree ||
-      cartItem.domainType === DOMAIN_TYPE.ALLOW_FREE ||
-      cartItem.domainType === DOMAIN_TYPE.PRIVATE ||
-      !cartItem.address
+      item.isFree ||
+      item.domainType === DOMAIN_TYPE.ALLOW_FREE ||
+      item.domainType === DOMAIN_TYPE.PRIVATE ||
+      !item.address
     ) {
       registrations.push(registration);
 
-      if (
-        CART_ITEM_TYPES_WITH_PERIOD.includes(cartItem.type) &&
-        cartItem.period > 1
-      ) {
-        for (let i = 1; i < cartItem.period; i++) {
+      if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1) {
+        for (let i = 1; i < item.period; i++) {
           registrations.push({
             action: GenericAction.renewFioDomain,
-            fioName: cartItem.domain,
-            cartItemId: cartItem.id,
+            fioName: item.domain,
+            cartItemId: item.id,
             fee: fees?.domain,
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             isFree: false,
             iteration: i,
-            signInFioWallet: cartItem.signInFioWallet,
+            signInFioWallet: item.signInFioWallet,
           });
         }
       }
@@ -96,39 +93,36 @@ export const makeRegistrationOrder = ({
     }
 
     if (
-      !!cartItem.address &&
+      !!item.address &&
       !isComboSupported &&
-      !cartItem.hasCustomDomainInCart &&
-      cartItem.domainType === DOMAIN_TYPE.CUSTOM
+      !item.hasCustomDomainInCart &&
+      item.domainType === DOMAIN_TYPE.CUSTOM
     ) {
       registrations.push({
         action: GenericAction.registerFioDomain,
-        fioName: cartItem.domain,
-        cartItemId: cartItem.id,
+        fioName: item.domain,
+        cartItemId: item.id,
         fee: fees?.domain,
         type: CART_ITEM_TYPE.DOMAIN,
         isFree: false,
         isCustomDomain: true,
-        signInFioWallet: cartItem.signInFioWallet,
+        signInFioWallet: item.signInFioWallet,
       });
     }
 
     registrations.push(registration);
 
-    if (
-      CART_ITEM_TYPES_WITH_PERIOD.includes(cartItem.type) &&
-      cartItem.period > 1
-    ) {
-      for (let i = 1; i < cartItem.period; i++) {
+    if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1) {
+      for (let i = 1; i < item.period; i++) {
         registrations.push({
-          fioName: cartItem.domain,
+          fioName: item.domain,
           action: GenericAction.renewFioDomain,
-          cartItemId: cartItem.id,
+          cartItemId: item.id,
           fee: fees?.domain,
           type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
           isFree: false,
           iteration: i,
-          signInFioWallet: cartItem.signInFioWallet,
+          signInFioWallet: item.signInFioWallet,
         });
       }
     }

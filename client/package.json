@@ -4,7 +4,8 @@
     "port": 3000,
     "fixWebpackChunksIssue": false,
     "include": [
-      "/twitter-handle"
+      "/twitter-handle",
+      "/ref"
     ],
     "puppeteerArgs": [
       "--no-sandbox",

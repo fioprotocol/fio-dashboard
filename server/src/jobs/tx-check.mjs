@@ -28,8 +28,7 @@ class TxCheckJob extends CommonJob {
   async execute() {
     await fioApi.getRawAbi();
 
-    const walletSdk = await fioApi.getPublicFioSDK();
-    // get transactions need to check if exists
+    // get transactions need to check if existsx
     const [items] = await BlockchainTransaction.checkIrreversibility();
 
     const bcTxOrderItems = items.reduce((acc, item) => {
@@ -75,9 +74,6 @@ class TxCheckJob extends CommonJob {
             case GenericAction.registerFioDomainAddress:
             case GenericAction.registerFioAddress:
             case GenericAction.registerFioDomain: {
-              const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
-                (params && params.owner_fio_public_key) || publicKey,
-              );
               const isAddress =
                 action === GenericAction.registerFioAddress ||
                 action === GenericAction.registerFioDomainAddress;
@@ -86,15 +82,28 @@ class TxCheckJob extends CommonJob {
                 : domain;
 
               let found;
-              if (isAddress) {
-                found = fio_addresses.find(
-                  ({ fio_address }) =>
-                    fio_address.toLowerCase() === fioName.toLowerCase(),
+              let checkRes;
+              try {
+                let ownerAccount;
+                if (isAddress) {
+                  checkRes = await fioApi.getFioAddress(fioName);
+                  ownerAccount = checkRes.owner_account;
+                } else {
+                  checkRes = await fioApi.getFioDomain(fioName);
+                  ownerAccount = checkRes.account;
+                }
+
+                const { accountnm } = fioApi.accountHash(
+                  (params && params.owner_fio_public_key) || publicKey,
                 );
-              } else {
-                found = fio_domains.find(
-                  ({ fio_domain }) => fio_domain.toLowerCase() === fioName.toLowerCase(),
-                );
+
+                if (accountnm === ownerAccount) {
+                  found = true;
+                }
+              } catch (error) {
+                if (error.code !== ERROR_CODES.NOT_FOUND) {
+                  throw error;
+                }
               }
 
               if (found) status = BlockchainTransaction.STATUS.SUCCESS;
@@ -104,10 +113,9 @@ class TxCheckJob extends CommonJob {
 
               if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
                 try {
-                  const resJson = await new FioHistory({
+                  const res = await new FioHistory({
                     fioHistoryUrls,
                   }).getTransaction({ transactionId: txId, maxRetries });
-                  const res = JSON.parse(resJson);
                   const txRegexpString = `Transaction ${txId} not found`;
                   const txRegexp = new RegExp(txRegexpString, 'i');
 
@@ -132,7 +140,7 @@ class TxCheckJob extends CommonJob {
                 btData.checkIteration > MAX_CHECK_TIMES &&
                 status !== BlockchainTransaction.STATUS.SUCCESS
               )
-                status = BlockchainTransaction.STATUS.EXPIRE;
+                status = BlockchainTransaction.STATUS.FAILED;
 
               break;
             }

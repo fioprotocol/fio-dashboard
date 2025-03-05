@@ -73,6 +73,8 @@ export const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
 export const TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS =
   'FIO Address NFTs are being burned';
 
+export const CANNOT_DECRYPT_CONTENT_ERROR = 'decrypt failed';
+
 export const CANNOT_TRANSFER_ERROR =
   'This Handle is not ready to be transferred. Please try again shortly.';
 export const CANNOT_UPDATE_FIO_HANDLE =
@@ -91,3 +93,9 @@ export const LOW_BUNDLES_TEXT = {
 };
 
 export const RATE_LIMIT_TYPE_ERROR = 'RATE_LIMIT';
+
+export const ERROR_MESSAGE_FOR_DECRYPT_CONTENT = {
+  title: 'Unable to Decrypt',
+  message:
+    'The information in this FIO Request or FIO Data could not be decrypted, likely because it was not encrypted correctly',
+};

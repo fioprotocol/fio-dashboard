@@ -19,7 +19,6 @@ import {
 import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
-  user as userSelector,
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../redux/profile/selectors';
 import {
@@ -46,7 +45,6 @@ import { convertFioPrices } from '../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 import apis from '../../api';
-import { getZeroIndexPublicKey } from '../../util/snap';
 
 import {
   DomainsArrItemType,
@@ -55,7 +53,7 @@ import {
   UseContextProps,
 } from './types';
 import { AdminDomain } from '../../api/responses';
-import { CartItem, Prices } from '../../types';
+import { CartItem, Prices, Roe } from '../../types';
 
 const ADDITIONAL_DOMAINS_COUNT_LIMIT = 12;
 const USER_DOMAINS_LIMIT = 3;
@@ -80,8 +78,8 @@ type HandledFioHandleType = {
   domain: string;
   costFio: string;
   costUsdc: string;
-  costNativeFio: number;
-  nativeFioAddressPrice: number;
+  costNativeFio: string;
+  nativeFioAddressPrice: string;
   domainType: string;
   isFree: boolean;
   isSelected: boolean;
@@ -112,7 +110,7 @@ const handleFCHItems = async ({
   hasFreeAddress: boolean;
   isAffiliateProfile: boolean;
   prices: Prices;
-  roe: number;
+  roe: Roe;
   usersFreeAddresses: { name: string }[];
   setError: (error: string) => void;
 }) => {
@@ -250,7 +248,7 @@ const handleSelectedDomain = ({
   domains: DomainsItemType[];
   hasFreeAddress: boolean;
   prices: Prices;
-  roe: number;
+  roe: Roe;
   usersFreeAddresses: { name: string }[];
 }) => {
   const {
@@ -345,7 +343,6 @@ export const useContext = (): UseContextProps => {
   const isAffiliateProfile = useSelector(isAffiliateProfileSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const user = useSelector(userSelector);
   const usersFreeAddresses = useSelector(usersFreeAddressesSelector);
 
   const dispatch = useDispatch();
@@ -434,7 +431,7 @@ export const useContext = (): UseContextProps => {
       setUsersItemsList(prevState =>
         isEqual(prevState, updatedState) ? prevState : updatedState,
       ),
-    [setUsersItemsList],
+    [],
   );
 
   const validateAddress = useCallback(
@@ -770,19 +767,14 @@ export const useContext = (): UseContextProps => {
 
   const onClick = useCallback(
     async (selectedItem: CartItem) => {
-      const metamaskUserPublicKey = await getZeroIndexPublicKey(
-        user?.userProfileType,
-      );
-
       dispatch(
         addItemToCart({
           item: selectedItem,
-          publicKey: metamaskUserPublicKey,
           refCode,
         }),
       );
     },
-    [dispatch, refCode, user?.userProfileType],
+    [dispatch, refCode],
   );
 
   useEffect(() => {

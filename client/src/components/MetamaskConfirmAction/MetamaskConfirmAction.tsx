@@ -19,6 +19,7 @@ import {
   CANNOT_TRANSFER_ERROR_TITLE,
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
+  ERROR_MESSAGE_FOR_DECRYPT_CONTENT,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
 } from '../../constants/errors';
 import { ROUTES } from '../../constants/routes';
@@ -84,7 +85,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     handleActionParams,
   } = props;
 
-  const { state, handleConnectClick } = MetamaskSnap();
+  const { state, metaMaskProvider, handleConnectClick } = MetamaskSnap();
 
   const [hasError, toggleHasError] = useState<boolean>(false);
   const [errorObj, setErrorObj] = useState<{
@@ -102,6 +103,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     try {
       setProcessing(true);
 
+      // todo: check if max_fee should be converted to number
       let uActionParams = actionParams;
       if (!uActionParams && handleActionParams) {
         uActionParams = handleActionParams(analyticsData, derivationIndex);
@@ -111,7 +113,10 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           const decryptedContents = [];
           for (const actionParamsItem of uActionParams) {
             if ('content' in actionParamsItem) {
-              const decryptedData = await decryptContent(actionParamsItem);
+              const decryptedData = await decryptContent(
+                metaMaskProvider,
+                actionParamsItem,
+              );
               decryptedContents.push({
                 decryptedData,
                 contentType: actionParamsItem.contentType,
@@ -123,7 +128,10 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         }
 
         if ('content' in uActionParams) {
-          const decryptedContent = await decryptContent(uActionParams);
+          const decryptedContent = await decryptContent(
+            metaMaskProvider,
+            uActionParams,
+          );
           onSuccess({
             decryptedData: decryptedContent,
             contentType: uActionParams.contentType,
@@ -137,7 +145,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         : [uActionParams];
 
       const apiUrl = await getApiUrl();
-      const signedTxnsResponse = await signTxn({
+      const signedTxnsResponse = await signTxn(metaMaskProvider, {
         actionParams: sendActionParams,
         apiUrl,
       });
@@ -272,6 +280,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           }
 
           setErrorObj({ message, title, buttonText });
+        }
+
+        if (isDecryptContent) {
+          setErrorObj({
+            message: ERROR_MESSAGE_FOR_DECRYPT_CONTENT.message,
+            title: ERROR_MESSAGE_FOR_DECRYPT_CONTENT.title,
+            buttonText: 'Close',
+          });
         }
 
         fireActionAnalyticsEventError(analyticAction);

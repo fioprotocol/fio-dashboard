@@ -74,11 +74,11 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     setProcessing(false);
   };
   const onSuccess = (
-    result: { fee_collected: number } | OnSuccessResponseResult,
+    result: { fee_collected: string } | OnSuccessResponseResult,
   ) => {
     setSubmitData(null);
 
-    let feeCollected: number;
+    let feeCollected: string;
 
     if ('fee_collected' in result) {
       feeCollected = result.fee_collected;

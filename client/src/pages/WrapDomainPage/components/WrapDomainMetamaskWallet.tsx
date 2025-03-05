@@ -7,12 +7,11 @@ import {
   OnSuccessResponseResult,
 } from '../../../components/MetamaskConfirmAction';
 
-import { DEFAULT_MAX_FEE_MULTIPLE_AMOUNT } from '../../../constants/fio';
 import { CONFIRM_METAMASK_ACTION } from '../../../constants/common';
 
 import apis from '../../../api';
-import MathOp from '../../../util/math';
 import { handleFioServerResponse } from '../../../util/fio';
+import { defaultMaxFee } from '../../../util/prices';
 
 import { FioWalletDoublet } from '../../../types';
 import { WrapDomainValues } from '../types';
@@ -21,11 +20,11 @@ type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
   submitData: WrapDomainValues;
-  oracleFee: number;
-  fee: number;
+  oracleFee: string;
+  fee: string;
   onSuccess: (result: {
-    fee_collected: number;
-    oracle_fee_collected: number;
+    fee_collected: string;
+    oracle_fee_collected: string;
     transaction_id: string;
   }) => void;
   onCancel: () => void;
@@ -57,10 +56,7 @@ export const WrapDomainMetamaskWallet: React.FC<Props> = props => {
       public_address: publicAddress,
       max_oracle_fee: oracleFee,
       tpid: apis.fio.tpid,
-      max_fee: new MathOp(fee)
-        .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-        .round(0)
-        .toNumber(),
+      max_fee: defaultMaxFee(fee) as string,
     },
     derivationIndex,
   };

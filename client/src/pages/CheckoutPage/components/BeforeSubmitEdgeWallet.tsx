@@ -7,18 +7,15 @@ import { GenericAction } from '@fioprotocol/fiosdk';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
+import { defaultMaxFee } from '../../../util/prices';
 import { log } from '../../../util/general';
-import MathOp from '../../../util/math';
 
 import {
   CART_ITEM_TYPE,
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
-import {
-  DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
-} from '../../../constants/fio';
+import { TRANSACTION_DEFAULT_OFFSET_EXPIRATION } from '../../../constants/fio';
 
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 import {
@@ -60,8 +57,9 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
       );
 
       const isComboRegistration =
-        !item.cartItem.hasCustomDomainInCart &&
-        item.cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+        !item.displayOrderItem.hasCustomDomainInCart &&
+        item.displayOrderItem.type ===
+          CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
@@ -73,14 +71,12 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
             {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
-              maxFee: new MathOp(
+              maxFee: defaultMaxFee(
                 isComboRegistration
                   ? prices.nativeFio.combo
                   : prices.nativeFio.address,
-              )
-                .mul(DEFAULT_MAX_FEE_MULTIPLE_AMOUNT)
-                .round(0)
-                .toNumber(),
+                { retNum: true },
+              ) as number,
               technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
