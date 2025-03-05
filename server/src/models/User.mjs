@@ -12,11 +12,11 @@ import { ReferrerProfile } from './ReferrerProfile';
 import { Order } from './Order';
 import { LockedFch } from './LockedFch.mjs';
 import { DomainsWatchlist } from './DomainsWatchlist.mjs';
+import { UserDevice } from './UserDevice.mjs';
 
 import { USER_STATUS, USER_PROFILE_TYPE } from '../config/constants';
 
 import { convertToNewDate } from '../utils/general.mjs';
-
 const { DataTypes: DT, Op } = Sequelize;
 
 export class User extends Base {
@@ -112,6 +112,11 @@ export class User extends Base {
       foreignKey: 'userId',
       sourceKey: 'id',
       as: 'domainsWatchlist',
+    });
+    this.hasMany(UserDevice, {
+      foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'userDevices',
     });
   }
 
