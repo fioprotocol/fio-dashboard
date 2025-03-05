@@ -2,6 +2,9 @@ import Base from '../Base';
 
 import { NewDeviceTwoFactor, User } from '../../models';
 
+import emailSender from '../emailSender.mjs';
+import { templates } from '../../emails/emailTemplate.mjs';
+
 export default class NewDeviceTwoFactorCreate extends Base {
   static get validationRules() {
     return {
@@ -36,6 +39,9 @@ export default class NewDeviceTwoFactorCreate extends Base {
     });
 
     await newDeviceTwoFactor.save();
+
+    await emailSender.send(templates.deviceApproveRequested, user.email);
+
     return { data: null };
   }
 

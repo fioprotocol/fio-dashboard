@@ -20,6 +20,9 @@ export const templates = {
   purchaseConfirmation: 'purchaseConfirmation',
   emailSenderErrorEmail: 'emailSenderErrorEmail',
   freeLimitReached: 'freeLimitReached',
+  deviceApproveRequested: 'deviceApproveRequested',
+  deviceSignIn: 'deviceSignIn',
+  common: 'common',
 };
 
 const FIO_LOGO_BASE64 =
