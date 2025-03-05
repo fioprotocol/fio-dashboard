@@ -1,6 +1,7 @@
 import superagent, { SuperAgentRequest } from 'superagent';
 
 import config from '../config';
+import { getDeviceInfo } from '../util/deviceInfo';
 
 import { ApisResponse } from './responses';
 
@@ -109,6 +110,10 @@ export default class ApiClient {
     if (params) req.query(params);
     if (body) req.send(body);
     req.withCredentials();
+
+    // Add device info to all requests
+    const deviceInfo = getDeviceInfo();
+    req.set('X-Device-Info', JSON.stringify(deviceInfo));
 
     if (isAdminService(url) && this.adminToken) {
       req.set('Authorization', `Bearer ${this.getAdminToken()}`);

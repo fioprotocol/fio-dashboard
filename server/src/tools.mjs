@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import jp from 'jsonpath';
 import bcrypt from 'bcrypt';
 import speakeasy from 'speakeasy';
@@ -6,6 +8,54 @@ import logger from './logger';
 import Exception from './services/Exception';
 
 const SALT_ROUND = 10;
+
+const getDeviceInfo = req => {
+  const createDeviceHash = deviceInfo => {
+    // Sort keys to ensure consistent hash regardless of property order
+    const sortedInfo = Object.keys(deviceInfo)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = deviceInfo[key];
+        return acc;
+      }, {});
+
+    // Create a string representation of the device info
+    const deviceString = JSON.stringify(sortedInfo);
+
+    // Create SHA-256 hash
+    return crypto
+      .createHash('sha256')
+      .update(deviceString)
+      .digest('hex');
+  };
+
+  const userAgent = req.headers['user-agent'];
+  let clientDeviceInfo = {};
+  try {
+    const deviceInfoHeader = req.headers['x-device-info'];
+    if (deviceInfoHeader) {
+      clientDeviceInfo = JSON.parse(deviceInfoHeader);
+    }
+  } catch (error) {
+    logger.error('Error parsing device info:', {
+      error,
+    });
+  }
+
+  const info = {
+    userAgent,
+    ip: getIpAddress(req),
+    ...clientDeviceInfo,
+  };
+
+  // Create device hash
+  const hash = createDeviceHash(info);
+
+  return {
+    info,
+    hash,
+  };
+};
 
 const cleanup = (data, paths, callback, replacer = () => '<secret>') =>
   Array.isArray(paths)
@@ -24,6 +74,7 @@ const defaultContextBuilder = req =>
     ipAddress: getIpAddress(req),
     userAgent: req.headers['user-agent'],
     referer: req.headers.referer,
+    device: getDeviceInfo(req),
   });
 
 export async function runService(service, { context = {}, params = {}, res }) {
@@ -239,7 +290,9 @@ export async function authCheck(req, res, next, { services, resolver, isOptional
     if (isOptional) {
       return next();
     }
-    return renderPromiseAsJson(req, res, Promise.reject(err), { token: '<secret>' });
+    return renderPromiseAsJson(req, res, Promise.reject(err), {
+      token: '<secret>',
+    });
   }
 
   const promise = runService(services[type], {
