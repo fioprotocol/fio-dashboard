@@ -40,6 +40,7 @@ export default class NewDeviceTwoFactorCreate extends Base {
 
     await newDeviceTwoFactor.save();
 
+    // todo: prevent of sending multiple emails when abusing the api route with random voucherIds
     await emailSender.send(templates.deviceApproveRequested, user.email);
 
     return { data: null };
