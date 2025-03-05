@@ -119,7 +119,7 @@
     "@emotion/styled": "11.10.5",
     "@fioprotocol/fio-sdk-lite": "1.0.1",
     "@fioprotocol/fiojs": "github:fioprotocol/fiojs#82de180a6781b7a654d21b5e33f624ef63848ead",
-    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#9b4cc0afacc7c2676a1097d309ad5e4d91228ae7",
+    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#676922dce8ee6c863f924a15c68de44b25b15bed",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
     "@fortawesome/free-brands-svg-icons": "5.15.4",
     "@fortawesome/free-regular-svg-icons": "5.15.4",

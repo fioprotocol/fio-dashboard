@@ -3,7 +3,7 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { Ecc, Serialize } from '@fioprotocol/fiojs';
 import { deserialize } from '@fioprotocol/fiojs/dist/encryption-fio';
 
-import { Action, ContentType, RequestStatus } from '@fioprotocol/fiosdk';
+import { Action, ContentType, FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
@@ -72,7 +72,10 @@ const RequestTokensLedgerWallet: React.FC<Props> = props => {
     );
 
     let paymentData = null;
-    if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
+    if (
+      itemData.status === FioRequestStatus.sentToBlockchain &&
+      paymentOtbData
+    ) {
       const paymentDecodedMessage = await appFio.decodeMessage({
         path: getPath(fioWallet.data.derivationIndex),
         publicKeyHex: Ecc.PublicKey(

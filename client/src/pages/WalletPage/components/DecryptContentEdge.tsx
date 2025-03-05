@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ContentType, RequestStatus } from '@fioprotocol/fiosdk';
+import { ContentType, FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
@@ -49,7 +49,7 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
   });
 
   let paymentData = null;
-  if (itemData.status === RequestStatus.sentToBlockchain && paymentOtbData) {
+  if (itemData.status === FioRequestStatus.sentToBlockchain && paymentOtbData) {
     const paymentDecryptedContent = decryptFioRequestData({
       data: paymentOtbData,
       walletKeys: {

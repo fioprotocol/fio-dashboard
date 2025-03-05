@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { RequestStatus } from '@fioprotocol/fiosdk';
+import { FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
@@ -164,7 +164,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
           to: resultsData.other.toFioAddress,
           payeeFioPublicKey: resultsData.other.payeeTokenPublicAddress,
           date: resultsData.other.block_time,
-          status: RequestStatus.requested,
+          status: FioRequestStatus.requested,
           fioTxType: FIO_RECORD_TYPES.SENT,
         },
         fioDecryptedContent: {

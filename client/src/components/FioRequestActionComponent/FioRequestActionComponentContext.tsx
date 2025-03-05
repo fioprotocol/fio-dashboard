@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { RequestStatus } from '@fioprotocol/fiosdk';
+import { FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
@@ -50,7 +50,7 @@ export const useContext = (): UseContextProps => {
         if (receivedFioRequest.length) {
           const lastRequest = receivedFioRequest.find(
             receivedFioRequestItem =>
-              receivedFioRequestItem.status === RequestStatus.requested,
+              receivedFioRequestItem.status === FioRequestStatus.requested,
           );
 
           if (lastRequest) {
