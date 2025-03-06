@@ -4,6 +4,7 @@ import {
   Cart,
   DomainsWatchlist,
   User,
+  UserDevice,
   Nonce,
   Notification,
   Wallet,
@@ -39,6 +40,7 @@ export default class UserDelete extends Base {
       await Wallet.destroy(destroyCondition);
       await NewDeviceTwoFactor.destroy(destroyCondition);
       await DomainsWatchlist.destroy(destroyCondition);
+      await UserDevice.destroy(destroyCondition);
 
       await Order.update(
         { userId: deletedUser.id },
