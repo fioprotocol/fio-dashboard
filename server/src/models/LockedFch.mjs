@@ -66,10 +66,11 @@ export class LockedFch extends Base {
     };
   }
 
-  static async deleteLockedFch(where) {
+  static async deleteLockedFch(where, opt = {}) {
     return await this.destroy({
       where,
       force: true,
+      ...opt,
     });
   }
 
