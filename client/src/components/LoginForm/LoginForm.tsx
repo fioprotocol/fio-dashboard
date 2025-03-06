@@ -17,6 +17,7 @@ import { LINKS } from '../../constants/labels';
 import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
+import { emailToUsername } from '../../utils';
 import useEffectOnce from '../../hooks/general';
 
 import { LastAuthData, LoginFailure, RefProfile } from '../../types';
@@ -126,10 +127,17 @@ const LoginForm: React.FC<Props> = props => {
       const voucherId = edgeLoginFailure.voucherId;
 
       if (voucherId && loginParams?.email && !showCodeModal) {
+        let loginId;
+        try {
+          loginId = apis.edge.getLoginId(emailToUsername(loginParams.email));
+        } catch (err) {
+          //
+        }
         apis.auth.createNewDeviceRequest({
           email: loginParams.email,
           deviceDescription,
           voucherId,
+          loginId,
         });
         autoLogin({
           voucherId,
