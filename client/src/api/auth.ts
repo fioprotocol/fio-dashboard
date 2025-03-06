@@ -107,14 +107,16 @@ export default class Auth extends Base {
   createNewDeviceRequest({
     email,
     voucherId,
+    loginId,
     deviceDescription,
   }: {
     email: string;
     voucherId: string;
+    loginId: string;
     deviceDescription: string;
   }): Promise<AuthCreateNewDeviceRequestResponse> {
     return this.apiClient.post('auth/new-device-two-factor', {
-      data: { email, voucherId, deviceDescription },
+      data: { email, voucherId, loginId, deviceDescription },
     });
   }
 
