@@ -6,7 +6,6 @@ import {
   BlockchainTransaction,
   BlockchainTransactionEventLog,
   LockedFch,
-  OrderItem,
   FioApiUrl,
   Var,
 } from '../models/index.mjs';
@@ -187,13 +186,14 @@ class TxCheckJob extends CommonJob {
                 },
               );
               if (status === BlockchainTransaction.STATUS.SUCCESS) {
-                const { address, domain } =
-                  (await OrderItem.findOne({ where: { id } })) || {};
-
-                if (address && domain)
-                  await LockedFch.deleteLockedFch({
-                    fch: fioApi.setFioName(address, domain),
-                  });
+                // todo: for now we have only 'twitter' domain fch that could be locked
+                if (domain === 'twitter')
+                  await LockedFch.deleteLockedFch(
+                    {
+                      fch: fioApi.setFioName(address, domain),
+                    },
+                    { transaction: t },
+                  );
               }
             });
           } catch (error) {

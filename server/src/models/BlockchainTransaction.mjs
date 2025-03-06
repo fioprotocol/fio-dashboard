@@ -125,7 +125,7 @@ export class BlockchainTransaction extends Base {
     });
   }
 
-  static checkIrreversibility() {
+  static checkIrreversibility(limit = 50) {
     return this.sequelize.query(`
       SELECT oi.id,
              oi.address,
@@ -145,7 +145,7 @@ export class BlockchainTransaction extends Base {
         INNER JOIN "blockchain-transactions" bt ON oi.id = bt."orderItemId"
         JOIN "orders" o ON oi."orderId" = o.id
       WHERE bt.status = ${this.STATUS.PENDING}
-      LIMIT 100
+      LIMIT ${limit}
    `);
   }
 
