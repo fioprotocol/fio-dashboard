@@ -16,7 +16,7 @@ import X from '../Exception.mjs';
 import { calculateCartTotalCost, cartItemsToOrderItems } from '../../utils/cart.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { checkPrices } from '../../utils/prices.mjs';
-
+import { ORDER_USER_TYPES } from '../../constants/order';
 export default class OrdersCreate extends Base {
   static get validationRules() {
     return {
@@ -41,7 +41,15 @@ export default class OrdersCreate extends Base {
               nested_object: {
                 gaClientId: 'string',
                 gaSessionId: 'string',
-                orderUserType: 'string',
+                orderUserType: [
+                  'string',
+                  {
+                    one_of: [
+                      ORDER_USER_TYPES.NO_PROFILE_FLOW,
+                      ORDER_USER_TYPES.DASHBOARD,
+                    ],
+                  },
+                ],
               },
             },
           },

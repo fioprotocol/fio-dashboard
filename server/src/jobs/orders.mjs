@@ -47,6 +47,7 @@ import {
 } from '../config/constants.js';
 
 import { METAMASK_DOMAIN_NAME, NON_VALID_FCH } from '../constants/fio.mjs';
+import { ORDER_USER_TYPES } from '../constants/order.mjs';
 
 import logger from '../logger.mjs';
 import {
@@ -412,12 +413,23 @@ class OrdersJob extends CommonJob {
         ? `-${percentageChange}`
         : `+${new MathOp(percentageChange).abs().toString()}`;
       this.postMessage(`priceChangePercentage, ${priceChangePercentage}`);
-      const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
-      await this.handleFail(orderItem, errorMessage);
-      await this.refundUser({ ...orderItem, roe: currentRoe });
+      if (
+        orderItem.data &&
+        orderItem.data.orderUserType === ORDER_USER_TYPES.PARTNER_API_CLIENT &&
+        new MathOp(orderItem.total).eq(1)
+      ) {
+        this.postMessage(
+          'Skipping price check for partner API because of min BitPay price',
+        );
+      } else {
+        const errorMessage = `PRICES_CHANGED on ${priceChangePercentage}% - (current/previous) - order price: $${currentPrice}/$${orderItem.price} - roe: ${currentRoe}/${orderItem.roe} - fee: ${fee}/${orderItem.nativeFio}.`;
 
-      throw new Error(errorMessage);
+        await this.handleFail(orderItem, errorMessage);
+        await this.refundUser({ ...orderItem, roe: currentRoe });
+
+        throw new Error(errorMessage);
+      }
     }
   }
 
