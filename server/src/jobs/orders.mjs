@@ -417,6 +417,7 @@ class OrdersJob extends CommonJob {
       if (
         orderItem.data &&
         orderItem.data.orderUserType === ORDER_USER_TYPES.PARTNER_API_CLIENT &&
+        orderItem.processor === Payment.PROCESSOR.BITPAY &&
         new MathOp(orderItem.total).eq(1)
       ) {
         this.postMessage(
