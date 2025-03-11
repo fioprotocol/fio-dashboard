@@ -28,7 +28,7 @@ import {
   generateSuccessResponse,
 } from '../../utils/publicApi';
 import {
-  normalizePriceForBitPayInTestNet,
+  normalizePriceForBitPay,
   prepareOrderWithFioPaymentForExecution,
 } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
@@ -305,9 +305,7 @@ export default class BuyAddress extends Base {
         : prices.combo
       : prices.domain;
     const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
-    const normalizedPriceUsdc = isFree
-      ? priceUsdc
-      : normalizePriceForBitPayInTestNet(priceUsdc);
+    const normalizedPriceUsdc = isFree ? priceUsdc : normalizePriceForBitPay(priceUsdc);
 
     let orderItem, order;
 

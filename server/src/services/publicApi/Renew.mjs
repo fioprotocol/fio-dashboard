@@ -15,7 +15,7 @@ import { getROE } from '../../external/roe.mjs';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
-import { normalizePriceForBitPayInTestNet } from '../../utils/payment.mjs';
+import { normalizePriceForBitPay } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import logger from '../../logger.mjs';
@@ -153,7 +153,7 @@ export default class Renew extends Base {
     const prices = await fioApi.getPrices();
     const nativeFio = address ? prices.addBundles : prices.renewDomain;
     const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
-    const normalizedPriceUsdc = normalizePriceForBitPayInTestNet(priceUsdc);
+    const normalizedPriceUsdc = normalizePriceForBitPay(priceUsdc);
 
     let orderItem, order;
 
