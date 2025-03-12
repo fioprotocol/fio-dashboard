@@ -42,14 +42,23 @@ const getDeviceInfo = req => {
     });
   }
 
-  const info = {
+  const { timezone, ...restOfClientDeviceInfo } = clientDeviceInfo;
+
+  // Prepare device info for hashing - exclude timezone
+  const deviceInfoForHash = {
     userAgent,
+    ...restOfClientDeviceInfo,
+  };
+
+  // Build complete device info including IP and timezone
+  const info = {
+    ...deviceInfoForHash,
     ip: getIpAddress(req),
-    ...clientDeviceInfo,
+    timezone,
   };
 
   // Create device hash
-  const hash = createDeviceHash(info);
+  const hash = createDeviceHash(deviceInfoForHash);
 
   return {
     info,
