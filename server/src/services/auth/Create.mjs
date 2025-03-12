@@ -220,7 +220,8 @@ export default class AuthCreate extends Base {
       await Cart.updateGuestCartUser(user.id, this.context.guestId);
     }
 
-    await UserDevice.check(user, this.context.device);
+    // Fire and forget - no need to await
+    UserDevice.check(user, this.context.device);
 
     return {
       data: responseData,
