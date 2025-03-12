@@ -84,7 +84,8 @@ export default class AuthAlternateAuthenticate extends Base {
         await Cart.updateGuestCartUser(user.id, this.context.guestId);
       }
 
-      await UserDevice.check(user, this.context.device);
+      // Fire and forget - no need to await
+      UserDevice.check(user, this.context.device);
 
       // todo: DASH-1254. Remove when no users left with no pub key set as freeId
       if (user.id === user.freeId) {
