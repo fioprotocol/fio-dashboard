@@ -14,6 +14,7 @@ const config = {
   userTokenName: process.env.REACT_APP_USER_TOKEN_NAME,
   guestTokenName: process.env.REACT_APP_GUEST_TOKEN_NAME,
   adminTokenName: process.env.REACT_APP_ADMIN_TOKEN_NAME,
+  deviceTokenName: process.env.REACT_APP_DEVICE_TOKEN_NAME,
   getTokensUrl: process.env.REACT_APP_GET_TOKENS_URL || defaultGetTokensUrl,
   wrapStatusPage:
     process.env.REACT_APP_WRAP_STATUS_PAGE_BASE_URL || defaultWrapPage,

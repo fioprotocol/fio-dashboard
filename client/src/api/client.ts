@@ -72,6 +72,14 @@ export default class ApiClient {
     window.localStorage.removeItem(config.adminTokenName);
   }
 
+  getDeviceToken(): string {
+    return window.localStorage.getItem(config.deviceTokenName);
+  }
+
+  setDeviceToken(token: string): void {
+    window.localStorage.setItem(config.deviceTokenName, token);
+  }
+
   get(url: string, params: Object = {}): Promise<ApisResponse> {
     return this._request({ url, method: 'get', params });
   }
@@ -113,7 +121,8 @@ export default class ApiClient {
 
     // Add device info to all requests
     const deviceInfo = getDeviceInfo();
-    req.set('X-Device-Info', JSON.stringify(deviceInfo));
+    const deviceToken = this.getDeviceToken();
+    req.set('X-Device-Info', JSON.stringify({ ...deviceInfo, deviceToken }));
 
     if (isAdminService(url) && this.adminToken) {
       req.set('Authorization', `Bearer ${this.getAdminToken()}`);
