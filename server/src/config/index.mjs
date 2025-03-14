@@ -11,6 +11,7 @@ export default {
   port: process.env.API_PORT,
   ws: process.env.WS_PORT,
   secret: process.env.HASH_SECRET,
+  deviceSecret: process.env.DEVICE_SECRET,
   jwt: {
     secret: process.env.JWT_SECRET,
     options: {

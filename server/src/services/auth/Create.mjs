@@ -67,6 +67,8 @@ export default class AuthCreate extends Base {
     });
 
     let user;
+    const device = this.context && this.context.device ? this.context.device : null;
+    let deviceToken = device && device.token ? device.token : null;
 
     if (userByEmail && userByUsername && userByEmail.id === userByUsername.id) {
       user = userByEmail;
@@ -111,7 +113,11 @@ export default class AuthCreate extends Base {
           await newWallet.save();
         }
 
-        await UserDevice.add(user.id, this.context.device);
+        const { token } = await UserDevice.add(user.id, this.context.device);
+
+        if (!deviceToken) {
+          deviceToken = token;
+        }
 
         const now = new Date();
         const responseData = {
@@ -120,6 +126,7 @@ export default class AuthCreate extends Base {
             new Date(EXPIRATION_TIME + now.getTime()),
           ),
           isSignUp: true,
+          deviceToken,
         };
 
         if (timeZone) {
@@ -220,11 +227,14 @@ export default class AuthCreate extends Base {
       await Cart.updateGuestCartUser(user.id, this.context.guestId);
     }
 
-    // Fire and forget - no need to await
-    UserDevice.check(user, this.context.device);
+    const { token } = await UserDevice.check(user, this.context.device);
+
+    if (!deviceToken) {
+      deviceToken = token;
+    }
 
     return {
-      data: responseData,
+      data: { ...responseData, deviceToken },
     };
   }
 

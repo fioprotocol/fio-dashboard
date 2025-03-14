@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 import jp from 'jsonpath';
 import bcrypt from 'bcrypt';
 import speakeasy from 'speakeasy';
@@ -10,25 +8,6 @@ import Exception from './services/Exception';
 const SALT_ROUND = 10;
 
 const getDeviceInfo = req => {
-  const createDeviceHash = deviceInfo => {
-    // Sort keys to ensure consistent hash regardless of property order
-    const sortedInfo = Object.keys(deviceInfo)
-      .sort()
-      .reduce((acc, key) => {
-        acc[key] = deviceInfo[key];
-        return acc;
-      }, {});
-
-    // Create a string representation of the device info
-    const deviceString = JSON.stringify(sortedInfo);
-
-    // Create SHA-256 hash
-    return crypto
-      .createHash('sha256')
-      .update(deviceString)
-      .digest('hex');
-  };
-
   const userAgent = req.headers['user-agent'];
   let clientDeviceInfo = {};
   try {
@@ -42,27 +21,18 @@ const getDeviceInfo = req => {
     });
   }
 
-  const { timezone, ...restOfClientDeviceInfo } = clientDeviceInfo;
+  const { deviceToken, ...restOfClientDeviceInfo } = clientDeviceInfo;
 
-  // Prepare device info for hashing - exclude timezone
-  const deviceInfoForHash = {
-    userAgent,
-    ...restOfClientDeviceInfo,
-  };
-
-  // Build complete device info including IP and timezone
+  // Build complete device info including IP and userAgent
   const info = {
-    ...deviceInfoForHash,
+    ...restOfClientDeviceInfo,
     ip: getIpAddress(req),
-    timezone,
+    userAgent,
   };
-
-  // Create device hash
-  const hash = createDeviceHash(deviceInfoForHash);
 
   return {
     info,
-    hash,
+    token: deviceToken,
   };
 };
 
