@@ -91,10 +91,10 @@ class TxCheckJob extends CommonJob {
                 let ownerAccount;
                 if (isAddress) {
                   checkRes = await fioApi.getFioAddress(fioName);
-                  ownerAccount = checkRes.owner_account;
+                  ownerAccount = checkRes && checkRes.owner_account;
                 } else {
                   checkRes = await fioApi.getFioDomain(fioName);
-                  ownerAccount = checkRes.account;
+                  ownerAccount = checkRes && checkRes.account;
                 }
 
                 const { accountnm } = fioApi.accountHash(
