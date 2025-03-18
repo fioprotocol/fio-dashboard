@@ -4,7 +4,7 @@ import uniqWith from 'lodash/uniqWith';
 
 import { FIO_ADDRESS_DELIMITER, PAYMENTS_STATUSES } from '../config/constants.js';
 import { BlockchainTransaction } from '../models/index.mjs';
-
+import { normalizeFioHandle } from './fio.mjs';
 const restoreKeyFromValue = (set, value) => {
   return Object.fromEntries(Object.entries(set).map(a => a.reverse()))[value];
 };
@@ -135,10 +135,10 @@ export const destructAddress = address => {
 
   if (address.includes(FIO_ADDRESS_DELIMITER)) {
     const [handle, domain] = address.split(FIO_ADDRESS_DELIMITER);
-    fioAddress = handle ? handle.toLowerCase() : handle;
-    fioDomain = domain ? domain.toLowerCase() : domain;
+    fioAddress = normalizeFioHandle(handle);
+    fioDomain = normalizeFioHandle(domain);
   } else {
-    fioDomain = address ? address.toLowerCase() : address;
+    fioDomain = normalizeFioHandle(address);
   }
 
   const type = fioAddress ? 'account' : 'domain';

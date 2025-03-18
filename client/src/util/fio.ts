@@ -355,3 +355,14 @@ export const checkIsDomainExpired = async (domainName: string) => {
 
   return expiration && isDomainExpired(domainName, expiration);
 };
+
+export const normalizeFioHandle = (fioHandle: string): string => {
+  if (!fioHandle) return null;
+
+  // Using 'let' to allow for future FIO Handle normalization rules
+  let normalizedFioHandle = fioHandle;
+
+  normalizedFioHandle = normalizedFioHandle.toLowerCase();
+
+  return normalizedFioHandle;
+};

@@ -19,6 +19,8 @@ import FioHistory from '../external/fio-history.mjs';
 import { FIO_ADDRESS_DELIMITER, ERROR_CODES, VARS_KEYS } from '../config/constants.js';
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 
+import { normalizeFioHandle } from '../utils/fio.mjs';
+
 import logger from '../logger.mjs';
 
 const MAX_CHECK_TIMES = 10;
@@ -51,8 +53,8 @@ class TxCheckJob extends CommonJob {
       for (const item of items) {
         const {
           id,
-          address,
-          domain,
+          address: itemAddress,
+          domain: itemDomain,
           action,
           btData = {},
           btId,
@@ -61,6 +63,9 @@ class TxCheckJob extends CommonJob {
           txId,
         } = item;
         this.postMessage(`Processing tx item id - ${id}`);
+
+        const address = normalizeFioHandle(itemAddress);
+        const domain = normalizeFioHandle(itemDomain);
 
         try {
           let status = BlockchainTransaction.STATUS.PENDING;

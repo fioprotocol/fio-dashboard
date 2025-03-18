@@ -13,6 +13,7 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
+import { normalizeFioHandle } from '../../util/fio';
 
 import classes from './AddressDomainFormContainer.module.scss';
 
@@ -37,7 +38,7 @@ export const AddressDomainFormContainer: React.FC<Props> = props => {
   );
 
   const queryParams = useQuery();
-  const initialValue = queryParams.get(queryParam);
+  const initialValue = normalizeFioHandle(queryParams.get(queryParam));
 
   useEffectOnce(() => {
     if (initialValue) {
