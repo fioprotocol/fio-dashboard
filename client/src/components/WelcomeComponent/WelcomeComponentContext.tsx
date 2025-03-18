@@ -27,6 +27,7 @@ import {
 
 import useEffectOnce from '../../hooks/general';
 import { log } from '../../util/general';
+import { normalizeFioHandle } from '../../util/fio';
 
 import { DefaultWelcomeComponentProps } from './types';
 import { ROUTES } from '../../constants/routes';
@@ -306,7 +307,7 @@ export const useContext = (
 
   const handleChangeFioAddress = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
-      setFioAddress(evt.target.value);
+      setFioAddress(normalizeFioHandle(evt.target.value));
     },
     [setFioAddress],
   );
