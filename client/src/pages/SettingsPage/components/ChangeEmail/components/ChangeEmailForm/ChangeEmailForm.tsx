@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 
@@ -13,9 +13,11 @@ import {
   ErrorBadge,
 } from '../../../../../../components/Input/ErrorBadge';
 
-import { FormValuesProps } from '../../types';
-
 import { formValidation } from '../../validation';
+
+import { ERROR_MESSAGES_BY_CODE } from '../../../../../../constants/errors';
+
+import { FormValuesProps } from '../../types';
 
 import classes from './ChangeEmailForm.module.scss';
 
@@ -23,16 +25,32 @@ type Props = {
   hasNoEmail: boolean;
   onSubmit: (values: FormValuesProps) => void;
   loading: boolean;
-  error?: boolean;
-  setError: (error: boolean) => void;
+  error?: (Error & { code?: string }) | null;
+  setError: (error: Error | null) => void;
 };
 
 const ChangeEmailForm: React.FC<Props> = props => {
   const { hasNoEmail, onSubmit, loading, error, setError } = props;
+  const formRef = useRef<any>(null);
 
   const onFieldChange = useCallback(() => {
-    setError(false);
+    setError(null);
   }, [setError]);
+
+  const errorMessage = error
+    ? ERROR_MESSAGES_BY_CODE[
+        error?.code as keyof typeof ERROR_MESSAGES_BY_CODE
+      ] || ERROR_MESSAGES_BY_CODE.GENERAL
+    : null;
+
+  // Reset form when there's an error or loading state changes
+  useEffect(() => {
+    if (formRef.current) {
+      if (error?.message || !loading) {
+        formRef.current.reset();
+      }
+    }
+  }, [error?.message, loading]);
 
   const renderForm = (formRenderProps: FormRenderProps<FormValuesProps>) => {
     const {
@@ -40,7 +58,10 @@ const ChangeEmailForm: React.FC<Props> = props => {
       validating,
       hasValidationErrors,
       submitting,
+      form,
     } = formRenderProps;
+
+    formRef.current = form;
 
     return (
       <>
@@ -60,8 +81,8 @@ const ChangeEmailForm: React.FC<Props> = props => {
           {error && (
             <div className={classes.error}>
               <ErrorBadge
-                error="Update email failed. Please try again or set another email."
-                hasError={error}
+                error={errorMessage}
+                hasError={!!error}
                 type={ERROR_UI_TYPE.TEXT}
                 color={COLOR_TYPE.WARN}
               />

@@ -28,6 +28,7 @@ import {
 
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
+import { EdgeWalletApiProvider } from '../../../../services/api/wallet/edge';
 
 import classes from './ChangeEmail.module.scss';
 
@@ -51,7 +52,7 @@ const ChangeEmail: React.FC<Props> = props => {
     newEmail: string;
     newUsername?: string;
   } | null>(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const [passwordModalError, setPasswordModalError] = useState<Error | null>(
     null,
   );
@@ -79,7 +80,7 @@ const ChangeEmail: React.FC<Props> = props => {
   }, [loading]);
 
   const onActionButtonClick = () => {
-    setError(false);
+    setError(null);
     toggleModal(true);
     setSubmitData(null);
   };
@@ -100,14 +101,14 @@ const ChangeEmail: React.FC<Props> = props => {
       toggleLoading(true);
 
       try {
-        const { account, keys, nonce } = await authenticateWallet({
-          authParams: {
-            username: user?.username,
-            password,
-          },
-          opt: {
-            logout: false,
-          },
+        const { walletApiProvider, nonce } = await authenticateWallet({
+          walletProviderName: password ? 'edge' : 'metamask',
+          authParams: password
+            ? {
+                username: user?.username,
+                password,
+              }
+            : { provider: metaMaskProvider },
         });
 
         let updateEmailResult = null;
@@ -130,12 +131,14 @@ const ChangeEmail: React.FC<Props> = props => {
 
           toggleLoading(false);
           setPasswordModalError(error);
+          setError(error);
+          setSubmitData(null);
         }
 
         if (updatedUsername && password && showPasswordModal) {
           try {
             await apis.edge.changeUsername({
-              account,
+              account: (walletApiProvider as EdgeWalletApiProvider).account,
               newUsername: updatedUsername,
               password,
             });
@@ -144,7 +147,7 @@ const ChangeEmail: React.FC<Props> = props => {
 
             updateEmailSuccess = false;
             try {
-              const nonce = await generateSignatures(keys);
+              const nonce = await generateSignatures(walletApiProvider);
               await apis.auth.updateEmail({
                 newEmail: user?.email,
                 newUsername: user?.username,
@@ -159,7 +162,7 @@ const ChangeEmail: React.FC<Props> = props => {
           }
         }
 
-        await account?.logout();
+        await walletApiProvider?.logout();
 
         if (updateEmailSuccess) {
           loadProfile();
@@ -170,27 +173,34 @@ const ChangeEmail: React.FC<Props> = props => {
           toggleSuccessModal(true);
         }
       } catch (err) {
-        if (err?.code) {
-          toggleLoading(false);
+        log.error(err);
+        setError(err);
+
+        toggleLoading(false);
+        setSubmitData(null);
+
+        if (err?.code && password) {
           setPasswordModalError(err);
           return;
         }
 
-        log.error(err);
-        setError(true);
-
-        toggleLoading(false);
-        setSubmitData(null);
         togglePasswordModal(false);
       }
     },
-    [loadProfile, showPasswordModal, submitData, user?.email, user?.username],
+    [
+      loadProfile,
+      showPasswordModal,
+      submitData,
+      user?.email,
+      user?.username,
+      metaMaskProvider,
+    ],
   );
 
   const handleChangeEmail = useCallback(
     async (values: FormValuesProps) => {
       const { newEmail } = values;
-      error && setError(false);
+      error && setError(null);
 
       if (isPrimaryProfile) {
         const newUsername = emailToUsername(newEmail);
@@ -198,7 +208,7 @@ const ChangeEmail: React.FC<Props> = props => {
         const { error: usernameError } = await usernameAvailable(newUsername);
 
         if (usernameError) {
-          setError(true);
+          setError(new Error(usernameError));
 
           toggleLoading(false);
           return { newEmail: 'This username is not available' };
