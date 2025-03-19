@@ -7,6 +7,7 @@ import config from '../config/index';
 import Base from './Base';
 
 import { User } from './User';
+import { Wallet } from './Wallet';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -51,6 +52,45 @@ export class Nonce extends Base {
       .createHmac('sha256', config.secret)
       .update(string)
       .digest('hex');
+  }
+
+  static async verify({ userId, challenge, signatures }) {
+    const nonce = await this.findOne({
+      where: {
+        userId,
+        value: challenge,
+      },
+      order: [['createdAt', 'DESC']],
+    });
+
+    if (!nonce || this.isExpired(nonce.createdAt)) {
+      nonce && this.isExpired(nonce.createdAt) && (await nonce.destroy());
+
+      return false;
+    }
+
+    let verified = false;
+    const wallets = await Wallet.findAll({
+      where: { userId },
+      raw: true,
+      attributes: ['publicKey'],
+    });
+    for (const wallet of wallets) {
+      for (const signature of signatures) {
+        verified = User.verify({
+          challenge: nonce.value,
+          publicKey: wallet.publicKey,
+          signature,
+        });
+        if (verified) break;
+      }
+
+      if (verified) break;
+    }
+
+    if (verified) await nonce.destroy();
+
+    return verified;
   }
 
   static format({ id, value, userId, User, createdAt }) {

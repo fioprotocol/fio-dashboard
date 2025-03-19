@@ -13,6 +13,7 @@ export class ActionLimit extends Base {
   static get ACTION() {
     return {
       SEND_RECOVERY_EMAIL: 'SEND_RECOVERY_EMAIL',
+      UPDATE_EMAIL: 'UPDATE_EMAIL',
     };
   }
 
