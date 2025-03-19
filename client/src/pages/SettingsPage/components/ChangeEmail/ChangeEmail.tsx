@@ -21,6 +21,10 @@ import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import apis from '../../../../api';
+import {
+  authenticateWallet,
+  generateSignatures,
+} from '../../../../services/api';
 
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
@@ -96,34 +100,66 @@ const ChangeEmail: React.FC<Props> = props => {
       toggleLoading(true);
 
       try {
-        const updateEmailResult = await apis.auth.updateEmail({
-          newEmail,
+        const { account, keys, nonce } = await authenticateWallet({
+          authParams: {
+            username: user?.username,
+            password,
+          },
+          opt: {
+            logout: false,
+          },
         });
 
-        let updateEmailSuccess = !!updateEmailResult;
-        const updatedUsername = updateEmailResult.newUsername;
+        let updateEmailResult = null;
+        let updateEmailSuccess = false;
+        let updatedUsername = '';
+
+        try {
+          updateEmailResult = await apis.auth.updateEmail({
+            newEmail,
+            nonce,
+          });
+
+          updateEmailSuccess = !!updateEmailResult;
+          updatedUsername = updateEmailResult.newUsername;
+        } catch (error) {
+          log.error('Update email error', error);
+
+          updateEmailSuccess = false;
+          updatedUsername = '';
+
+          toggleLoading(false);
+          setPasswordModalError(error);
+        }
 
         if (updatedUsername && password && showPasswordModal) {
           try {
             await apis.edge.changeUsername({
+              account,
               newUsername: updatedUsername,
               password,
-              username: user?.username,
             });
           } catch (error) {
             log.error('Change edge username error');
 
             updateEmailSuccess = false;
-
-            await apis.auth.updateEmail({
-              newEmail: user?.email,
-              newUsername: user?.username,
-            });
+            try {
+              const nonce = await generateSignatures(keys);
+              await apis.auth.updateEmail({
+                newEmail: user?.email,
+                newUsername: user?.username,
+                nonce,
+              });
+            } catch (error) {
+              log.error('Restore email error', error);
+            }
 
             toggleLoading(false);
             setPasswordModalError(error);
           }
         }
+
+        await account?.logout();
 
         if (updateEmailSuccess) {
           loadProfile();
@@ -134,6 +170,12 @@ const ChangeEmail: React.FC<Props> = props => {
           toggleSuccessModal(true);
         }
       } catch (err) {
+        if (err?.code) {
+          toggleLoading(false);
+          setPasswordModalError(err);
+          return;
+        }
+
         log.error(err);
         setError(true);
 

@@ -1,6 +1,6 @@
 import Base from './base';
 
-import { FioWalletDoublet, RefProfileDomain } from '../types';
+import { FioWalletDoublet, RefProfileDomain, Nonce } from '../types';
 import {
   AuthCheckRejectedResponse,
   AuthCreateNewDeviceRequestResponse,
@@ -63,6 +63,10 @@ export default class Auth extends Base {
     return this.apiClient.get('auth/nonce', { username });
   }
 
+  userNonce(): Promise<AuthNonceResponse> {
+    return this.apiClient.get('users/nonce');
+  }
+
   generateNonce(): Promise<AuthGenerateNonceResponse> {
     return this.apiClient.get('auth/generate-nonce');
   }
@@ -95,12 +99,14 @@ export default class Auth extends Base {
   updateEmail({
     newEmail,
     newUsername,
+    nonce,
   }: {
     newEmail: string;
     newUsername?: string;
+    nonce: Nonce;
   }): Promise<AuthUpdateEmailResponse> {
     return this.apiClient.post('users/update-email', {
-      data: { newEmail, newUsername },
+      data: { newEmail, newUsername, nonce },
     });
   }
 

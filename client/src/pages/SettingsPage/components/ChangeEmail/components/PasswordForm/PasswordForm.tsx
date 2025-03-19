@@ -15,13 +15,25 @@ import classes from './PasswordForm.module.scss';
 
 type Props = {
   loading: boolean;
-  error?: Error;
+  error?: Error & { code?: string };
   onChange: () => void;
   onSubmit: (values: { password: string }) => Promise<void>;
 };
 
+const errorMessages = {
+  AUTHENTICATION_FAILED:
+    'An error occurred. Please verify your credentials and try again.',
+  SERVER_ERROR: 'An error occurred. Please contact support or try again later.',
+  LIMIT_EXCEEDED: 'Too many requests. Please try again later.',
+};
+
 export const PasswordForm: React.FC<Props> = props => {
   const { error, loading, onChange, onSubmit } = props;
+
+  const errorMessage = error
+    ? errorMessages[error?.code as keyof typeof errorMessages] ||
+      errorMessages.SERVER_ERROR
+    : null;
 
   return (
     <Form onSubmit={onSubmit}>
@@ -46,8 +58,8 @@ export const PasswordForm: React.FC<Props> = props => {
               <div className={classes.error}>
                 <ErrorBadge
                   hasError={!!error}
-                  error="An error occurred. Please verify your credentials and try again."
-                  title="Try Again!"
+                  error={errorMessage}
+                  title="An error occurred"
                 />
               </div>
             )}
