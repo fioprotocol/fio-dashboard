@@ -1,7 +1,3 @@
-import { ExportToCsv } from 'export-to-csv';
-
-import { getPagePrintScreenDimensions } from '../util/screen';
-
 import {
   BC_TX_STATUS_LABELS,
   BC_TX_STATUSES,
@@ -12,12 +8,15 @@ import {
 import { ORDER_USER_TYPES_TITLE } from '../constants/order';
 
 import apis from '../api';
-
+import { getPagePrintScreenDimensions } from '../util/screen';
 import { transformOrderItemsPDF } from '../util/purchase';
-
+import config from '../config';
 import { formatDateToLocale } from '../helpers/stringFormatters';
 
-import { OrderDetails, OrderItemPdf } from '../types';
+import { log } from './general';
+import { CSVWriter } from './csvWriter';
+
+import { OrderDetails, OrderItemPdf, OrderListFilters } from '../types';
 
 const getFontFamilyStylesString = () => {
   const stylesheets = document.styleSheets;
@@ -105,73 +104,141 @@ export const generateOrderHtmlToPrint = ({
   `;
 };
 
-export const generateCSVOrderData = ({
-  orders,
-  orderItems,
-}: {
-  orders: OrderDetails[];
-  orderItems: OrderItemPdf[];
-}) => {
-  const currentDate = new Date();
+type OrdersExportConfig = {
+  filters: OrderListFilters;
+  ordersCount: number;
+  onProgress: (progress: number) => void;
+  onError: (error: Error) => void;
+};
 
-  new ExportToCsv({
-    showLabels: true,
-    filename: `OrdersList_Total-${
-      orders.length
-    }_${currentDate.getFullYear()}-${currentDate.getMonth() +
-      1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
-    headers: [
-      'Order ID',
-      'Type',
-      'Date',
-      'Partner Profile',
-      'User',
-      'Payment Type',
-      'Amount',
-      'Status',
-    ],
-  }).generateCsv(
-    orders.map((order: OrderDetails) => ({
-      number: order.number,
-      type: order.orderUserType
-        ? ORDER_USER_TYPES_TITLE[order.orderUserType]
-        : ORDER_USER_TYPES_TITLE.DASHBOARD,
-      item: order.createdAt ? formatDateToLocale(order.createdAt) : '',
-      refProfileName: order.refProfileName || 'FIO App',
-      userEmail: order.userEmail || order.userId,
-      paymentProcessor: PAYMENT_PROVIDER_LABEL[order.paymentProcessor] || 'N/A',
-      total: order.total || 0,
-      status: PURCHASE_RESULTS_STATUS_LABELS[order.status],
-    })),
-  );
+export const exportOrdersData = async ({
+  filters,
+  ordersCount,
+  onProgress,
+  onError,
+}: OrdersExportConfig) => {
+  let offset = 0;
+  let hasMoreData = true;
+  let processedOrders = 0;
+  let processedOrderItems = 0;
+  const FETCH_CHUNK_SIZE = config.exportOrdersCSVLimit;
 
-  new ExportToCsv({
-    showLabels: true,
-    filename: `ItemsList_Total-${
-      orderItems.length
-    }_${currentDate.getFullYear()}-${currentDate.getMonth() +
-      1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
-    headers: [
-      'Order ID',
-      'Item Type',
-      'Amount',
-      'FIO',
-      'Fee Collected',
-      'Status',
-    ],
-  }).generateCsv(
-    transformOrderItemsPDF(orderItems).map(orderItem => ({
-      number: orderItem.number,
-      itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
-      amount: `${orderItem.price} ${orderItem.priceCurrency}`,
-      fio:
-        orderItem.price === '0'
-          ? '0'
-          : apis.fio.sufToAmount(orderItem.nativeFio),
-      feeCollected: `${orderItem.feeCollected} FIO`,
-      status:
-        BC_TX_STATUS_LABELS[orderItem.txStatus] ||
-        BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE],
-    })),
-  );
+  try {
+    const currentDate = new Date()
+      .toISOString()
+      .slice(0, 16)
+      .replace('T', '_')
+      .replace(/:/g, '-');
+
+    // Create writers with proper headers
+    const ordersWriter = new CSVWriter({
+      filename: `OrdersList_${currentDate}`,
+      headers: [
+        'Order ID',
+        'Type',
+        'Date',
+        'Partner Profile',
+        'User',
+        'Payment Type',
+        'Amount',
+        'Status',
+      ],
+    });
+
+    const itemsWriter = new CSVWriter({
+      filename: `ItemsList_${currentDate}`,
+      headers: [
+        'Order ID',
+        'Item Type',
+        'Amount',
+        'FIO',
+        'Fee Collected',
+        'Status',
+      ],
+    });
+
+    // Continue with remaining chunks if there are more
+    while (hasMoreData) {
+      try {
+        const { orders = [], orderItems = [] } =
+          (await apis.admin.exportOrdersData({
+            filters,
+            offset,
+            limit: FETCH_CHUNK_SIZE,
+          })) || {};
+
+        if (orders.length) {
+          await processOrdersChunk(orders, ordersWriter);
+          await processOrderItemsChunk(orderItems, itemsWriter);
+
+          processedOrders += orders.length;
+          processedOrderItems += orderItems.length;
+
+          onProgress(Math.round((processedOrders / ordersCount) * 100));
+        }
+
+        if (orders.length < FETCH_CHUNK_SIZE || !orders.length) {
+          hasMoreData = false;
+        } else {
+          offset += FETCH_CHUNK_SIZE;
+        }
+      } catch (error) {
+        log.error(`Export error at offset ${offset}:`, error);
+        throw error;
+      }
+    }
+
+    // Update filenames with final counts before download
+    ordersWriter.updateFilename(
+      `OrdersList_Total-${processedOrders}_${currentDate}`,
+    );
+    itemsWriter.updateFilename(
+      `ItemsList_Total-${processedOrderItems}_${currentDate}`,
+    );
+
+    await ordersWriter.download();
+    await itemsWriter.download();
+  } catch (error) {
+    log.error('Export failed:', error);
+    onError(error);
+  }
+};
+
+const processOrdersChunk = async (
+  orders: OrderDetails[],
+  writer: CSVWriter,
+) => {
+  const mappedData = orders.map(order => ({
+    'Order ID': order.number,
+    Type: order.orderUserType
+      ? ORDER_USER_TYPES_TITLE[order.orderUserType]
+      : ORDER_USER_TYPES_TITLE.DASHBOARD,
+    Date: order.createdAt ? formatDateToLocale(order.createdAt) : '',
+    'Partner Profile': order.refProfileName || 'FIO App',
+    User: order.userEmail || order.userId,
+    'Payment Type': PAYMENT_PROVIDER_LABEL[order.paymentProcessor] || 'N/A',
+    Amount: order.total || 0,
+    Status: PURCHASE_RESULTS_STATUS_LABELS[order.status],
+  }));
+
+  await writer.appendRows(mappedData);
+};
+
+const processOrderItemsChunk = async (
+  orderItems: OrderItemPdf[],
+  writer: CSVWriter,
+) => {
+  const mappedData = transformOrderItemsPDF(orderItems).map(orderItem => ({
+    'Order ID': orderItem.number,
+    'Item Type': PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
+    Amount: `${orderItem.price} ${orderItem.priceCurrency}`,
+    FIO:
+      orderItem.price === '0' ? '0' : apis.fio.sufToAmount(orderItem.nativeFio),
+    'Fee Collected': `${orderItem.feeCollected} FIO`,
+    Status:
+      BC_TX_STATUS_LABELS[orderItem.txStatus] ||
+      BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE],
+  }));
+
+  await writer.appendRows(mappedData);
 };
