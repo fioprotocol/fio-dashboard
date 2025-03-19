@@ -1,20 +1,13 @@
-import { EdgeAccount } from 'edge-core-js';
-
-import { EdgeWalletsKeys, Nonce } from '../../types';
-
-export interface WalletAuthResult {
-  account: EdgeAccount;
-  keys: EdgeWalletsKeys;
-  nonce: Nonce;
-}
+import { Nonce, AnyObject } from '../../types';
 
 export interface WalletAuthParams {
-  account?: EdgeAccount;
-  authParams?: {
-    username: string;
-    password: string;
-  };
-  opt?: {
-    logout?: boolean;
-  };
+  walletProviderName: 'edge' | 'metamask';
+  authParams?: AnyObject;
+}
+
+export interface WalletApiProvider {
+  name: 'edge' | 'metamask';
+  authenticate: (authParams?: AnyObject) => Promise<void>;
+  generateSignatures: (challenge: string) => Promise<Nonce>;
+  logout: () => Promise<void>;
 }

@@ -11,6 +11,8 @@ import {
   ErrorBadge,
 } from '../../../../../../components/Input/ErrorBadge';
 
+import { ERROR_MESSAGES_BY_CODE } from '../../../../../../constants/errors';
+
 import classes from './PasswordForm.module.scss';
 
 type Props = {
@@ -20,19 +22,13 @@ type Props = {
   onSubmit: (values: { password: string }) => Promise<void>;
 };
 
-const errorMessages = {
-  AUTHENTICATION_FAILED:
-    'An error occurred. Please verify your credentials and try again.',
-  SERVER_ERROR: 'An error occurred. Please contact support or try again later.',
-  LIMIT_EXCEEDED: 'Too many requests. Please try again later.',
-};
-
 export const PasswordForm: React.FC<Props> = props => {
   const { error, loading, onChange, onSubmit } = props;
 
   const errorMessage = error
-    ? errorMessages[error?.code as keyof typeof errorMessages] ||
-      errorMessages.SERVER_ERROR
+    ? ERROR_MESSAGES_BY_CODE[
+        error?.code as keyof typeof ERROR_MESSAGES_BY_CODE
+      ] || ERROR_MESSAGES_BY_CODE.SERVER_ERROR
     : null;
 
   return (
