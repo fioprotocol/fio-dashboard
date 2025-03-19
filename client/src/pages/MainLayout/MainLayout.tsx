@@ -145,7 +145,7 @@ const MainLayout: React.FC<Props> = props => {
         <PageTitle link={LINKS[routeName]} />
       )}
 
-      {isLoading || !apiUrls.length ? (
+      {isLoading || (!isMaintenance && !apiUrls.length) ? (
         <>
           <MainHeader isMaintenance />
           <ContentContainer>
