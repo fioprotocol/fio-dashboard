@@ -26,6 +26,8 @@ const config = {
   sentryReplaysOnErrorSampleRate: Number(
     process.env.REACT_APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1,
   ),
+  exportOrdersCSVLimit:
+    Number(process.env.REACT_APP_EXPORT_ORDERS_CSV_LIMIT) || 10000,
 };
 
 export default config;

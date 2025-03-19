@@ -27,45 +27,26 @@ export default class ExportOrdersData extends Base {
           },
         },
       ],
+      limit: ['integer', { min_number: 0 }, { max_number: config.exportOrdersCSVLimit }],
+      offset: ['integer', { min_number: 0 }],
     };
   }
 
-  async execute({ filters }) {
-    let offset = 0;
-    let allOrders = [];
-    let allOrderItems = [];
-    let hasMoreData = true;
-    const batchSize = config.exportOrdersCSVLimit;
+  async execute({ filters, limit, offset }) {
+    const orders = await Order.listAll({
+      filters,
+      limit,
+      offset,
+    });
 
-    // Fetch orders and their items in batches
-    while (hasMoreData) {
-      const ordersBatch = await Order.listAll({
-        offset,
-        limit: batchSize,
-        filters,
-      });
-
-      if (!ordersBatch.length || ordersBatch.length < batchSize) {
-        hasMoreData = false;
-      }
-
-      // Get order items for current batch
-      if (ordersBatch.length > 0) {
-        const orderItemsBatch = await OrderItem.listAll({
-          ordersIds: ordersBatch.map(order => order.id),
-        });
-
-        allOrders = [...allOrders, ...ordersBatch];
-        allOrderItems = [...allOrderItems, ...orderItemsBatch];
-      }
-
-      offset += batchSize;
-    }
+    const orderItems = await OrderItem.listAll({
+      ordersIds: orders.map(order => order.id),
+    });
 
     return {
       data: {
-        orders: allOrders,
-        orderItems: allOrderItems,
+        orders,
+        orderItems,
       },
     };
   }
