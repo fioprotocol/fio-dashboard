@@ -70,9 +70,10 @@ export const showGenericSuccessModal = (
   message?: string,
   title?: string,
   buttonText?: string,
+  timeout?: number,
 ): CommonAction => ({
   type: SHOW_GENERIC_SUCCESS_MODAL,
-  data: { message, title, buttonText },
+  data: { message, title, buttonText, timeout },
 });
 
 export const CLOSE_GENERIC_SUCCESS_MODAL = `${prefix}/CLOSE_GENERIC_SUCCESS_MODAL`;

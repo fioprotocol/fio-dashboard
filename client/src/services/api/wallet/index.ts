@@ -23,6 +23,10 @@ export const authenticateWallet = async ({
 }> => {
   let walletApiProvider = null;
 
+  if (!walletProviderName && authParams) {
+    walletProviderName = authParams.password ? 'edge' : 'metamask';
+  }
+
   switch (walletProviderName) {
     case 'edge':
       walletApiProvider = edgeWalletProvider;
