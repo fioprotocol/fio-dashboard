@@ -14,7 +14,7 @@ export class CSVWriter {
     this.headers = headers;
   }
 
-  async appendRows(newRows: Record<string, AnyObject>[]) {
+  async appendRows(newRows: Record<string, AnyObject>[]): Promise<void> {
     // Add rows to current chunk
     this.currentChunk = [...this.currentChunk, ...newRows];
 
@@ -25,11 +25,11 @@ export class CSVWriter {
     }
   }
 
-  updateFilename(newFilename: string) {
+  updateFilename(newFilename: string): void {
     this.filename = newFilename;
   }
 
-  async download() {
+  async download(): Promise<void> {
     // Add the last chunk if it has any data
     if (this.currentChunk.length > 0) {
       this.chunks.push(this.currentChunk);

@@ -8,7 +8,7 @@ import useEffectOnce from './general';
 import { log } from '../util/general';
 import { getIsPageVisible } from '../util/screen';
 
-export default function useMaintenance() {
+export default function useMaintenance(): [boolean, boolean] {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
