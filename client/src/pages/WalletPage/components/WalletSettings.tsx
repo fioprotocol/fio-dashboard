@@ -20,6 +20,22 @@ import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
 import { LedgerCheckPublicAddress } from '../../../components/LedgerCheckPublicAddress/LedgerCheckPublicAddress';
 import { PublicAddressBadge } from './PublicAddressBadge';
+import { PriceComponent } from '../../../components/PriceComponent';
+
+import apis from '../../../api';
+import { authenticateWallet } from '../../../services/api/wallet';
+
+import { useMetaMaskProvider } from '../../../hooks/useMetaMaskProvider';
+
+import { updateWalletName } from '../../../redux/account/actions';
+import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../redux/modal/actions';
+
+import {
+  fioDomains as fioDomainsSelector,
+  fioAddresses as fioAddressesSelector,
+  fioWalletsBalances as fioWalletsBalancesSelector,
+} from '../../../redux/fio/selectors';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard, log } from '../../../util/general';
@@ -29,26 +45,15 @@ import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { LINKS } from '../../../constants/labels';
 import { USER_PROFILE_TYPE } from '../../../constants/profile';
 
-import apis from '../../../api';
-
-import { updateWalletName } from '../../../redux/account/actions';
-import { deleteWallet as deleteWalletAction } from '../../../redux/account/actions';
-import { showGenericErrorModal } from '../../../redux/modal/actions';
-
-import { FioWalletDoublet } from '../../../types';
+import { FioWalletDoublet, Nonce } from '../../../types';
 import {
   DeleteWalletFormValues,
   EditWalletNameValues,
   PasswordFormValues,
 } from '../types';
+import { EdgeWalletApiProvider } from '../../../services/api/wallet/edge';
 
 import classes from '../styles/WalletDetailsModal.module.scss';
-import {
-  fioDomains as fioDomainsSelector,
-  fioAddresses as fioAddressesSelector,
-  fioWalletsBalances as fioWalletsBalancesSelector,
-} from '../../../redux/fio/selectors';
-import { PriceComponent } from '../../../components/PriceComponent';
 
 type Props = {
   show: boolean;
@@ -66,6 +71,7 @@ const WalletSettings: React.FC<Props> = props => {
   const fioDomains = useSelector(fioDomainsSelector);
   const fioAddresses = useSelector(fioAddressesSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
+  const metaMaskProvider = useMetaMaskProvider();
 
   const balance = fioWalletsBalances?.wallets[fioWallet?.publicKey]?.total;
 
@@ -114,9 +120,9 @@ const WalletSettings: React.FC<Props> = props => {
     }
   };
 
-  const deleteWallet = async (publicKey: string) => {
+  const deleteWallet = async (publicKey: string, nonce: Nonce) => {
     try {
-      const res = await apis.account.deleteWallet(publicKey);
+      const res = await apis.account.deleteWallet(publicKey, nonce);
       if (res.success) {
         dispatch(deleteWalletAction({ publicKey }));
         history.push(ROUTES.TOKENS, { walletDeleted: true });
@@ -193,12 +199,27 @@ const WalletSettings: React.FC<Props> = props => {
     const { username, password } = currentDeleteValues || {};
 
     try {
+      const { walletApiProvider, nonce } = await authenticateWallet({
+        walletProviderName: isPrimaryUserProfileType ? 'edge' : 'metamask',
+        authParams: isPrimaryUserProfileType
+          ? {
+              username,
+              password,
+            }
+          : { provider: metaMaskProvider },
+      });
+
       if (isPrimaryUserProfileType && isEdgeWallet) {
-        const account = await apis.edge.login(username, password);
-        await apis.edge.deleteWallet(account, fioWallet.edgeId);
+        await apis.edge.deleteWallet(
+          (walletApiProvider as EdgeWalletApiProvider).account,
+          fioWallet.edgeId,
+        );
       }
 
-      await deleteWallet(fioWallet.publicKey);
+      await walletApiProvider.logout();
+
+      setCurrentDeleteValues(null);
+      await deleteWallet(fioWallet.publicKey, nonce);
     } catch (err) {
       setLoading({ ...loading, deleteWallet: false });
       log.error(err);
