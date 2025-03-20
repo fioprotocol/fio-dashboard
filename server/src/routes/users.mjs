@@ -20,7 +20,7 @@ import UsersNonce from '../services/users/Nonce.mjs';
 export default {
   alternativeUserVerification: makeServiceRunner(AlternativeUserVerification),
   create: makeServiceRunner(UsersCreate, req => req.body),
-  delete: makeServiceRunner(UsersDelete),
+  delete: makeServiceRunner(UsersDelete, req => req.body),
   info: makeServiceRunner(UsersInfo),
   detailedInfo: makeServiceRunner(UsersDetailedInfo, req => req.params),
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),

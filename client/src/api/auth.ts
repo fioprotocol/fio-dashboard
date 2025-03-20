@@ -217,7 +217,7 @@ export default class Auth extends Base {
     });
   }
 
-  deleteUser(): Promise<GenericStatusResponse> {
-    return this.apiClient.delete('users/me');
+  deleteUser(nonce: Nonce): Promise<GenericStatusResponse> {
+    return this.apiClient.delete('users/me', { nonce });
   }
 }

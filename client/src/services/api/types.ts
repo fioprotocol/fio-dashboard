@@ -1,7 +1,7 @@
 import { Nonce, AnyObject } from '../../types';
 
 export interface WalletAuthParams {
-  walletProviderName: 'edge' | 'metamask';
+  walletProviderName?: 'edge' | 'metamask';
   authParams?: AnyObject;
 }
 

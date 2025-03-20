@@ -436,7 +436,6 @@ export default class Edge extends Base {
   async deleteAccount(account: EdgeAccount): Promise<{ status: number }> {
     try {
       await account.deleteRemoteAccount();
-      await account.logout();
       return { status: 1 };
     } catch (e) {
       this.logError(e);
