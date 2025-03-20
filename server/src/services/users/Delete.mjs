@@ -96,7 +96,7 @@ export default class UserDelete extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['nonce'];
   }
 
   static get resultSecret() {
