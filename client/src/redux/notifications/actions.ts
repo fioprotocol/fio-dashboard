@@ -37,7 +37,7 @@ export const updateNotification = ({
   closeDate,
 }: {
   id: number;
-  closeDate: string;
+  closeDate: Date;
 }): CommonPromiseAction => ({
   types: [UPDATE_REQUEST, UPDATE_SUCCESS, UPDATE_FAILURE],
   promise: (api: Api) => api.notifications.update({ id, closeDate }),
@@ -67,7 +67,7 @@ export const addManual = (data: {
 
 export const removeManual = (data: {
   id: number;
-  closeDate: string;
+  closeDate: Date;
 }): CommonAction => ({
   type: MANUAL_REMOVE,
   data,
