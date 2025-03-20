@@ -12,7 +12,7 @@ export const BigDealComponent: React.FC = () => {
         Here are just a few points on why FIO Handles are special.
       </p>
       {SPECIAL_POINTS.map(point => (
-        <p className={classes.point}>
+        <p className={classes.point} key={point}>
           <img alt="check" src={CheckIconSrc} />
           <span>{point}</span>
         </p>
