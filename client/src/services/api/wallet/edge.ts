@@ -43,7 +43,9 @@ export const edgeWalletProvider: EdgeWalletApiProvider = {
     };
   },
   logout: async () => {
-    await edgeWalletProvider.account?.logout();
+    if (edgeWalletProvider.account && edgeWalletProvider.account.loggedIn) {
+      await edgeWalletProvider.account.logout();
+    }
     edgeWalletProvider.account = null;
   },
 };
