@@ -300,9 +300,12 @@ export const useContext = (
   ]);
 
   const handleGetFioAddress = useCallback(() => {
-    history.push(
-      `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress}`,
-    );
+    let routeString = `${ROUTES.FIO_ADDRESSES_SELECTION}`;
+
+    if (fioAddress) {
+      routeString += `?${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress}`;
+    }
+    history.push(routeString);
   }, [history, fioAddress]);
 
   const handleChangeFioAddress = useCallback(
