@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import MainHeader from '../../components/MainHeader';
-import Notifications from '../../components/Notifications';
+import { Notifications } from '../../components/Notifications';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';

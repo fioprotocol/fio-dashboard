@@ -9,9 +9,9 @@ import {
 } from '../redux/registrations/selectors';
 import { cartItems as cartItemsSelector } from '../redux/cart/selectors';
 
-import { ACTIONS } from '../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../components/Badge/Badge';
 import {
+  ACTIONS,
   NOTIFICATIONS_CONTENT,
   NOTIFICATIONS_CONTENT_TYPE,
 } from '../constants/notifications';

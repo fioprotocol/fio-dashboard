@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import MainHeader from '../MainHeader';
 import Navigation from '../Navigation';
 import { ContentContainer } from '../../../components/ContentContainer';
-import Notifications from '../../../components/Notifications';
+import { Notifications } from '../../../components/Notifications';
 import Footer from '../../../components/Footer';
 import GenericErrorModal from '../../../components/Modal/GenericErrorModal';
 
