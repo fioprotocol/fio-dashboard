@@ -4,6 +4,8 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 
 import LedgerConnect from '../../../../components/LedgerConnect';
 
+// import { authenticateWallet } from '../../../../services/api/wallet';
+
 import { getPubKeyFromLedger } from '../../../../util/ledger';
 import { log } from '../../../../util/general';
 
@@ -12,12 +14,19 @@ import {
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
+import {
+  FioWalletDoublet,
+  NewFioWalletDoublet,
+  Nonce,
+} from '../../../../types';
 import { CreateWalletValues } from '../../types';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
-  onWalletDataPrepared: (data: NewFioWalletDoublet) => void;
+  onWalletDataPrepared: (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => void;
   onOptionCancel: () => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
@@ -83,12 +92,31 @@ const CreateLedgerWallet: React.FC<Props> = props => {
     throw new Error('Try to reconnect your ledger device.');
   };
 
+  const onWalletCreated = async (walletData: NewFioWalletDoublet) => {
+    // todo: sign nonce using edge account or metamask
+
+    // const { walletApiProvider, nonce } = await authenticateWallet({
+    //   walletProviderName: isProfileTypePrimary ? 'edge' : 'metamask',
+    //   authParams,
+    // });
+
+    const nonce = {
+      challenge: '',
+      signatures: [''],
+    };
+
+    onWalletDataPrepared({
+      walletData,
+      nonce,
+    });
+  };
+
   return (
     <LedgerConnect
       action={CONFIRM_LEDGER_ACTIONS.CREATE_WALLET}
       data={values}
       onConnect={createLedgerWallet}
-      onSuccess={onWalletDataPrepared}
+      onSuccess={onWalletCreated}
       onCancel={onOptionCancel}
       setProcessing={setProcessing}
     />

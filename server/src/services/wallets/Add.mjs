@@ -1,6 +1,6 @@
 import Base from '../Base';
 
-import { Wallet } from '../../models';
+import { Wallet, Nonce } from '../../models';
 import X from '../Exception';
 
 export default class WalletsAdd extends Base {
@@ -18,10 +18,26 @@ export default class WalletsAdd extends Base {
           },
         },
       ],
+      nonce: [
+        'required',
+        {
+          nested_object: {
+            signatures: ['required', { list_of: 'string' }],
+            challenge: ['required', 'string'],
+          },
+        },
+      ],
     };
   }
 
-  async execute({ data: { name, edgeId, publicKey, from, data } }) {
+  async execute({ data: { name, edgeId, publicKey, from, data }, nonce }) {
+    if (!(await Nonce.verify({ ...nonce, userId: this.context.id }))) {
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {},
+      });
+    }
+
     if (await Wallet.findOneWhere({ userId: this.context.id, publicKey })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -63,7 +79,7 @@ export default class WalletsAdd extends Base {
   }
 
   static get paramsSecret() {
-    return ['data'];
+    return ['data', 'nonce'];
   }
 
   static get resultSecret() {
