@@ -7,10 +7,12 @@
   .field {
     width: 100%;
     margin-bottom: -15px !important;
+    label {
+      color: #fff;
+    }
   }
 
   .submitButton {
-    align-self: start;
     font-weight: bold !important;
   }
 
