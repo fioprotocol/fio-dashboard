@@ -2,6 +2,8 @@ import React from 'react';
 
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 
+import { authenticateWallet } from '../../../../services/api/wallet';
+
 import {
   CONFIRM_PIN_ACTIONS,
   DEFAULT_WALLET_OPTIONS,
@@ -10,11 +12,15 @@ import {
 } from '../../../../constants/common';
 
 import { CreateWalletValues } from '../../types';
-import { NewFioWalletDoublet } from '../../../../types';
+import { NewFioWalletDoublet, Nonce } from '../../../../types';
 import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
+import { EdgeWalletApiProvider } from '../../../../services/api/wallet/edge';
 
 type Props = {
-  onWalletDataPrepared: (data: NewFioWalletDoublet) => void;
+  onWalletDataPrepared: (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => void;
   onOptionCancel: () => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
@@ -41,11 +47,22 @@ const CreateEdgeWallet: React.FC<Props> = props => {
     );
     await newFioWallet.renameWallet(name);
 
+    const { walletApiProvider, nonce } = await authenticateWallet({
+      walletProviderName: 'edge',
+      authParams: { account: edgeAccount },
+    });
+
+    // todo: reset edge account, refactor to use logout() but do not logout from account
+    (walletApiProvider as EdgeWalletApiProvider).account = null;
+
     return {
-      edgeId: newFioWallet.id,
-      name: newFioWallet.name,
-      publicKey: newFioWallet.publicWalletInfo.keys.publicKey,
-      from: WALLET_CREATED_FROM.EDGE,
+      walletData: {
+        edgeId: newFioWallet.id,
+        name: newFioWallet.name,
+        publicKey: newFioWallet.publicWalletInfo.keys.publicKey,
+        from: WALLET_CREATED_FROM.EDGE,
+      },
+      nonce,
     };
   };
 

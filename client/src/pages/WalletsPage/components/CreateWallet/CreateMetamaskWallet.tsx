@@ -13,12 +13,20 @@ import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
+import {
+  FioWalletDoublet,
+  NewFioWalletDoublet,
+  Nonce,
+} from '../../../../types';
 import { CreateWalletValues } from '../../types';
+import { authenticateWallet } from '../../../../services/api/wallet';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
-  onWalletDataPrepared: (data: NewFioWalletDoublet) => void;
+  onWalletDataPrepared: (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
 };
@@ -52,13 +60,24 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
       },
     );
 
+    const { walletApiProvider, nonce } = await authenticateWallet({
+      walletProviderName: 'metamask',
+      authParams: { provider: metaMaskProvider },
+    });
+
+    await walletApiProvider.logout();
+    // todo: handle reject
+
     onWalletDataPrepared({
-      name: values.name,
-      publicKey,
-      from: WALLET_CREATED_FROM.METAMASK,
-      data: {
-        derivationIndex: nextDerivationIndex,
+      walletData: {
+        name: values.name,
+        publicKey,
+        from: WALLET_CREATED_FROM.METAMASK,
+        data: {
+          derivationIndex: nextDerivationIndex,
+        },
       },
+      nonce,
     });
 
     fireActionAnalyticsEvent(CONFIRM_METAMASK_ACTION.CREATE_WALLET, values);

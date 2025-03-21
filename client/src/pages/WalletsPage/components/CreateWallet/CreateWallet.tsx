@@ -29,7 +29,11 @@ import useEffectOnce from '../../../../hooks/general';
 import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import { CreateWalletValues } from '../../types';
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
+import {
+  FioWalletDoublet,
+  NewFioWalletDoublet,
+  Nonce,
+} from '../../../../types';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
@@ -115,8 +119,11 @@ export const CreateWallet: React.FC<Props> = props => {
     [isMetamaskWalletProvider],
   );
 
-  const onWalletDataPrepared = (walletData: NewFioWalletDoublet) => {
-    dispatch(addWallet(walletData));
+  const onWalletDataPrepared = async (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => {
+    dispatch(addWallet(data.walletData, data.nonce));
     setCreationType(null);
     setProcessing(false);
   };

@@ -26,8 +26,11 @@ export default class Account extends Base {
     });
   }
 
-  addWallet(data: NewFioWalletDoublet): Promise<AccountAddWalletsResponse> {
-    return this.apiClient.post('account/wallet', { data });
+  addWallet(
+    data: NewFioWalletDoublet,
+    nonce: Nonce,
+  ): Promise<AccountAddWalletsResponse> {
+    return this.apiClient.post('account/wallet', { data, nonce });
   }
 
   addMissingWallet(data: {
