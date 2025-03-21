@@ -44,8 +44,9 @@ import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { LINKS } from '../../../constants/labels';
 import { USER_PROFILE_TYPE } from '../../../constants/profile';
+import { ERROR_MESSAGES_BY_CODE } from '../../../constants/errors';
 
-import { FioWalletDoublet, Nonce } from '../../../types';
+import { FioWalletDoublet } from '../../../types';
 import {
   DeleteWalletFormValues,
   EditWalletNameValues,
@@ -91,9 +92,7 @@ const WalletSettings: React.FC<Props> = props => {
   });
   const [key, setKey] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [currentDeleteValues, setCurrentDeleteValues] = useState<
-    DeleteWalletFormValues
-  >();
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const isEdgeWallet = fioWallet?.from === WALLET_CREATED_FROM.EDGE;
   const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
@@ -111,21 +110,6 @@ const WalletSettings: React.FC<Props> = props => {
 
       if (res.success) {
         dispatch(updateWalletName({ publicKey: fioWallet.publicKey, name }));
-        onClose();
-      } else {
-        dispatch(showGenericErrorModal());
-      }
-    } catch (e) {
-      showGenericErrorModal();
-    }
-  };
-
-  const deleteWallet = async (publicKey: string, nonce: Nonce) => {
-    try {
-      const res = await apis.account.deleteWallet(publicKey, nonce);
-      if (res.success) {
-        dispatch(deleteWalletAction({ publicKey }));
-        history.push(ROUTES.TOKENS, { walletDeleted: true });
         onClose();
       } else {
         dispatch(showGenericErrorModal());
@@ -173,39 +157,14 @@ const WalletSettings: React.FC<Props> = props => {
     }
   };
 
-  const onDeleteConfirmModal = async (values: DeleteWalletFormValues) => {
+  const deleteWallet = async (values?: DeleteWalletFormValues) => {
     setLoading({ ...loading, deleteWallet: true });
-    try {
-      if (isPrimaryUserProfileType) {
-        const account = await apis.edge.login(values.username, values.password);
-        if (!account) throw new Error();
-        await account.logout();
-      }
-    } catch (e) {
-      return { password: 'Invalid Password' };
-    } finally {
-      setLoading({ ...loading, deleteWallet: false });
-    }
-
-    if (isPrimaryUserProfileType) {
-      setCurrentDeleteValues(values);
-    }
-    setShowDeleteConfirm(true);
-  };
-
-  const onDeleteConfirm = async () => {
-    setLoading({ ...loading, deleteWallet: true });
-
-    const { username, password } = currentDeleteValues || {};
 
     try {
       const { walletApiProvider, nonce } = await authenticateWallet({
         walletProviderName: isPrimaryUserProfileType ? 'edge' : 'metamask',
         authParams: isPrimaryUserProfileType
-          ? {
-              username,
-              password,
-            }
+          ? values
           : { provider: metaMaskProvider },
       });
 
@@ -218,12 +177,54 @@ const WalletSettings: React.FC<Props> = props => {
 
       await walletApiProvider.logout();
 
-      setCurrentDeleteValues(null);
-      await deleteWallet(fioWallet.publicKey, nonce);
+      try {
+        const res = await apis.account.deleteWallet(fioWallet.publicKey, nonce);
+        if (res.success) {
+          dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
+          history.push(ROUTES.TOKENS, { walletDeleted: true });
+          onClose();
+        } else {
+          dispatch(showGenericErrorModal());
+        }
+      } catch (e) {
+        showGenericErrorModal();
+      }
     } catch (err) {
       setLoading({ ...loading, deleteWallet: false });
       log.error(err);
+
+      throw err;
     }
+  };
+
+  const onDeleteConfirm = async () => {
+    if (isPrimaryUserProfileType) {
+      setShowPasswordModal(true);
+    } else {
+      try {
+        await deleteWallet();
+      } catch (error) {
+        log.error(error);
+
+        showGenericErrorModal();
+      }
+    }
+  };
+
+  const onDeletePasswordConfirm = async (values: DeleteWalletFormValues) => {
+    try {
+      await deleteWallet(values);
+    } catch (error) {
+      log.error(error);
+      return {
+        password:
+          ERROR_MESSAGES_BY_CODE[
+            error?.code as keyof typeof ERROR_MESSAGES_BY_CODE
+          ] || ERROR_MESSAGES_BY_CODE.SERVER_ERROR,
+      };
+    }
+
+    return {};
   };
 
   const onCancel = () => {
@@ -358,10 +359,17 @@ const WalletSettings: React.FC<Props> = props => {
                   : 'If you permanently delete your wallet, you will no longer have access to it from the FIO App.'
               }
             />
-            <DeleteWalletForm
+
+            <SubmitButton
+              className={classes.deleteWalletButton}
               loading={loading.deleteWallet}
-              isPrimaryUserProfileType={isPrimaryUserProfileType}
-              onSubmit={onDeleteConfirmModal}
+              hasSmallPaddings
+              hasSmallText
+              hasLowHeight
+              hasAutoWidth
+              withoutMargin
+              text="Delete Wallet"
+              onClick={() => setShowDeleteConfirm(true)}
             />
           </>
         )}
@@ -397,7 +405,7 @@ const WalletSettings: React.FC<Props> = props => {
       <DangerModal
         backdrop={false}
         loading={loading.deleteWallet}
-        show={showDeleteConfirm}
+        show={showDeleteConfirm && !showPasswordModal}
         onClose={() => setShowDeleteConfirm(false)}
         onActionButtonClick={onDeleteConfirm}
         buttonText="Yes, Delete This Wallet"
@@ -448,6 +456,24 @@ const WalletSettings: React.FC<Props> = props => {
           </>
         }
       />
+
+      <Modal
+        show={showPasswordModal}
+        onClose={() => !loading.deleteWallet && setShowPasswordModal(false)}
+        closeButton={true}
+        backdrop="static"
+        isDanger={true}
+      >
+        <>
+          <h3>Confirm Deletion</h3>
+          <p>Permanently delete this wallet</p>
+          <DeleteWalletForm
+            loading={loading.deleteWallet}
+            isPrimaryUserProfileType={isPrimaryUserProfileType}
+            onSubmit={onDeletePasswordConfirm}
+          />
+        </>
+      </Modal>
     </>
   );
 };
