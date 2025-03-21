@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -98,26 +98,68 @@ const WalletSettings: React.FC<Props> = props => {
   const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
   const isMetamaskWallet = fioWallet?.from === WALLET_CREATED_FROM.METAMASK;
 
-  const onEditSubmit = (values: EditWalletNameValues) => {
-    edit(values.name);
-  };
-
-  const edit = async (name: string) => {
-    try {
-      const res = await apis.account.updateWallet(fioWallet.publicKey, {
-        name,
-      });
-
-      if (res.success) {
-        dispatch(updateWalletName({ publicKey: fioWallet.publicKey, name }));
-        onClose();
-      } else {
+  const edit = useCallback(
+    async (name: string) => {
+      try {
+        const res = await apis.account.updateWallet(fioWallet.publicKey, {
+          name,
+        });
+        if (res.success) {
+          dispatch(updateWalletName({ publicKey: fioWallet.publicKey, name }));
+          onClose();
+        } else {
+          dispatch(showGenericErrorModal());
+        }
+      } catch (e) {
         dispatch(showGenericErrorModal());
       }
-    } catch (e) {
-      showGenericErrorModal();
-    }
-  };
+    },
+    [fioWallet.publicKey, dispatch, onClose],
+  );
+
+  const deleteWallet = useCallback(
+    async (values?: DeleteWalletFormValues) => {
+      try {
+        const { walletApiProvider, nonce } = await authenticateWallet({
+          walletProviderName: isPrimaryUserProfileType ? 'edge' : 'metamask',
+          authParams: isPrimaryUserProfileType
+            ? values
+            : { provider: metaMaskProvider },
+        });
+
+        if (isPrimaryUserProfileType && isEdgeWallet) {
+          await apis.edge.deleteWallet(
+            (walletApiProvider as EdgeWalletApiProvider).account,
+            fioWallet.edgeId,
+          );
+        }
+
+        await walletApiProvider.logout();
+
+        const res = await apis.account.deleteWallet(fioWallet.publicKey, nonce);
+        if (res.success) {
+          dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
+          history.push(ROUTES.TOKENS, { walletDeleted: true });
+          onClose();
+        } else {
+          dispatch(showGenericErrorModal());
+        }
+      } catch (err) {
+        log.error(err);
+        throw err;
+      }
+    },
+    [
+      isEdgeWallet,
+      fioWallet.publicKey,
+      fioWallet.edgeId,
+      isPrimaryUserProfileType,
+      metaMaskProvider,
+      dispatch,
+      history,
+      onClose,
+    ],
+  );
 
   useEffect(() => {
     setKey(null);
@@ -128,113 +170,92 @@ const WalletSettings: React.FC<Props> = props => {
     if (!show) setKey(null);
   }, [show]);
 
-  const onConfirm = async (values: PasswordFormValues) => {
-    setLoading({ ...loading, showPrivateKey: true });
+  const onEditSubmit = useCallback(
+    (values: EditWalletNameValues) => {
+      edit(values.name);
+    },
+    [edit],
+  );
 
-    const { username, password } = values;
-    let account;
-    try {
-      account = await apis.edge.login(username, password);
-      if (!account) throw new Error();
-    } catch (e) {
-      setLoading({ ...loading, showPrivateKey: false });
-      return { password: 'Invalid Password' };
-    }
+  const onConfirm = useCallback(
+    async (values: PasswordFormValues) => {
+      setLoading(prev => ({ ...prev, showPrivateKey: true }));
 
-    try {
-      const keys = await waitWalletKeys(account);
-      await waitForEdgeAccountStop(account);
-      if (keys[fioWallet.edgeId] != null && keys[fioWallet.edgeId].private) {
-        setKey(keys[fioWallet.edgeId].private);
+      const { username, password } = values;
+      let account;
+      try {
+        account = await apis.edge.login(username, password);
+        if (!account) throw new Error();
+      } catch (e) {
+        setLoading(prev => ({ ...prev, showPrivateKey: false }));
+        return { password: 'Invalid Password' };
       }
-
-      setLoading({ ...loading, showPrivateKey: false });
-
-      return {};
-    } catch (e) {
-      setLoading({ ...loading, showPrivateKey: false });
-      return { password: 'Something went wrong, please try again later' };
-    }
-  };
-
-  const deleteWallet = async (values?: DeleteWalletFormValues) => {
-    setLoading({ ...loading, deleteWallet: true });
-
-    try {
-      const { walletApiProvider, nonce } = await authenticateWallet({
-        walletProviderName: isPrimaryUserProfileType ? 'edge' : 'metamask',
-        authParams: isPrimaryUserProfileType
-          ? values
-          : { provider: metaMaskProvider },
-      });
-
-      if (isPrimaryUserProfileType && isEdgeWallet) {
-        await apis.edge.deleteWallet(
-          (walletApiProvider as EdgeWalletApiProvider).account,
-          fioWallet.edgeId,
-        );
-      }
-
-      await walletApiProvider.logout();
 
       try {
-        const res = await apis.account.deleteWallet(fioWallet.publicKey, nonce);
-        if (res.success) {
-          dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
-          history.push(ROUTES.TOKENS, { walletDeleted: true });
-          onClose();
-        } else {
-          dispatch(showGenericErrorModal());
+        const keys = await waitWalletKeys(account);
+        await waitForEdgeAccountStop(account);
+        if (keys[fioWallet.edgeId] != null && keys[fioWallet.edgeId].private) {
+          setKey(keys[fioWallet.edgeId].private);
         }
+
+        setLoading(prev => ({ ...prev, showPrivateKey: false }));
+
+        return {};
       } catch (e) {
-        showGenericErrorModal();
+        setLoading(prev => ({ ...prev, showPrivateKey: false }));
+        return { password: 'Something went wrong, please try again later' };
       }
-    } catch (err) {
-      setLoading({ ...loading, deleteWallet: false });
-      log.error(err);
+    },
+    [fioWallet.edgeId],
+  );
 
-      throw err;
-    }
-  };
-
-  const onDeleteConfirm = async () => {
+  const onDeleteConfirm = useCallback(async () => {
     if (isPrimaryUserProfileType) {
       setShowPasswordModal(true);
     } else {
+      setLoading(prev => ({ ...prev, deleteWallet: true }));
       try {
         await deleteWallet();
       } catch (error) {
         log.error(error);
 
-        showGenericErrorModal();
+        dispatch(showGenericErrorModal());
+      } finally {
+        setLoading(prev => ({ ...prev, deleteWallet: false }));
       }
     }
-  };
+  }, [isPrimaryUserProfileType, deleteWallet, dispatch]);
 
-  const onDeletePasswordConfirm = async (values: DeleteWalletFormValues) => {
-    try {
-      await deleteWallet(values);
-    } catch (error) {
-      log.error(error);
-      return {
-        password:
-          ERROR_MESSAGES_BY_CODE[
-            error?.code as keyof typeof ERROR_MESSAGES_BY_CODE
-          ] || ERROR_MESSAGES_BY_CODE.SERVER_ERROR,
-      };
-    }
+  const onDeletePasswordConfirm = useCallback(
+    async (values: DeleteWalletFormValues) => {
+      setLoading(prev => ({ ...prev, deleteWallet: true }));
+      try {
+        await deleteWallet(values);
+        setLoading(prev => ({ ...prev, deleteWallet: false }));
+      } catch (error) {
+        log.error(error);
+        setLoading(prev => ({ ...prev, deleteWallet: false }));
+        return {
+          password:
+            ERROR_MESSAGES_BY_CODE[
+              error?.code as keyof typeof ERROR_MESSAGES_BY_CODE
+            ] || ERROR_MESSAGES_BY_CODE.SERVER_ERROR,
+        };
+      }
 
-    return {};
-  };
+      return {};
+    },
+    [deleteWallet],
+  );
 
-  const onCancel = () => {
+  const onCancel = useCallback(() => {
     if (
       !loading.showPrivateKey &&
       !loading.deleteWallet &&
       !loading.updateWalletName
     )
       onClose();
-  };
+  }, [loading, onClose]);
 
   const renderKey = () => {
     if (key != null) {
@@ -439,9 +460,9 @@ const WalletSettings: React.FC<Props> = props => {
             <br />
             <span className={classes.deleteSecondText}>
               {isLedgerWallet ? (
-                'However, this wallet’s private keys are stored on your Ledger device and can be import again at any time.'
+                "However, this wallet's private keys are stored on your Ledger device and can be import again at any time."
               ) : isMetamaskWallet ? (
-                'However, this wallet’s private keys are stored on your MetaMask wallet and can be import again at any time.'
+                "However, this wallet's private keys are stored on your MetaMask wallet and can be import again at any time."
               ) : (
                 <>
                   Please make sure that you have recorded your private keys for
