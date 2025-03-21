@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-import classnames from 'classnames';
-
+import PrivateKeyDisplay from './WalletSettings/KeyDisplay';
 import Modal from '../../../components/Modal/Modal';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
-import CopyTooltip from '../../../components/CopyTooltip';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import PasswordForm from './PasswordForm';
 import DeleteWalletForm from './DeleteWalletForm';
@@ -16,7 +12,6 @@ import EditWalletNameForm from './EditWalletNameForm';
 import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 import PageTitle from '../../../components/PageTitle/PageTitle';
 
-import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import DangerModal from '../../../components/Modal/DangerModal';
 import { LedgerCheckPublicAddress } from '../../../components/LedgerCheckPublicAddress/LedgerCheckPublicAddress';
 import { PublicAddressBadge } from './PublicAddressBadge';
@@ -38,8 +33,9 @@ import {
 } from '../../../redux/fio/selectors';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
-import { copyToClipboard, log } from '../../../util/general';
+import { log } from '../../../util/general';
 
+import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { LINKS } from '../../../constants/labels';
@@ -257,42 +253,7 @@ const WalletSettings: React.FC<Props> = props => {
       onClose();
   }, [loading, onClose]);
 
-  const renderKey = () => {
-    if (key != null) {
-      const onCopy = () => {
-        copyToClipboard(key);
-      };
-
-      return (
-        <>
-          <div className={classes.privateKeyLabel}>
-            This is your private key
-          </div>
-
-          <Badge type={BADGE_TYPES.WHITE} show={true}>
-            <div className={classes.publicAddressContainer}>
-              <div className={classnames(classes.publicKey, 'sentry-mask')}>
-                {key}
-              </div>
-            </div>
-          </Badge>
-
-          <div className={classes.actionButtons}>
-            <CopyTooltip>
-              <Button onClick={onCopy} className={classes.iconContainer}>
-                <ContentCopyIcon className={classes.icon} />
-              </Button>
-            </CopyTooltip>
-          </div>
-        </>
-      );
-    }
-
-    return null;
-  };
-
   const renderPasswordForm = () => {
-    if (key != null) return null;
     return (
       <>
         <h6 className={classes.settingTitle}>Show Private Key</h6>
@@ -309,7 +270,6 @@ const WalletSettings: React.FC<Props> = props => {
   };
 
   const renderNameForm = () => {
-    if (key != null) return null;
     return (
       <>
         <h6 className={classes.settingTitle}>Edit Wallet Name</h6>
@@ -323,8 +283,6 @@ const WalletSettings: React.FC<Props> = props => {
   };
 
   const renderPublicKey = () => {
-    if (key != null) return null;
-
     return (
       <>
         <h6 className={classes.settingTitle}>FIO Public Address</h6>
@@ -343,17 +301,7 @@ const WalletSettings: React.FC<Props> = props => {
     );
   };
 
-  const renderCancel = () => {
-    if (key != null)
-      return (
-        <SubmitButton onClick={onCancel} text="Close" withBottomMargin={true} />
-      );
-
-    return;
-  };
-
   const renderDeleteWalletForm = () => {
-    if (key != null) return null;
     return (
       <>
         <h6 className={classes.settingTitle}>Delete Wallet</h6>
@@ -398,6 +346,30 @@ const WalletSettings: React.FC<Props> = props => {
     );
   };
 
+  const renderContent = () => {
+    if (key) {
+      return (
+        <>
+          <PrivateKeyDisplay value={key} />
+          <SubmitButton
+            onClick={onCancel}
+            text="Close"
+            withBottomMargin={true}
+          />
+        </>
+      );
+    }
+
+    return (
+      <>
+        {renderNameForm()}
+        {renderPublicKey()}
+        {!isLedgerWallet && !isMetamaskWallet && renderPasswordForm()}
+        {renderDeleteWalletForm()}
+      </>
+    );
+  };
+
   return (
     <>
       <PageTitle link={LINKS.FIO_WALLET_DETAILS} isVirtualPage />
@@ -414,12 +386,7 @@ const WalletSettings: React.FC<Props> = props => {
             <b>Wallet Settings </b>
             <span>{isLedgerWallet && <LedgerBadge />}</span>
           </h3>
-          {renderNameForm()}
-          {renderPublicKey()}
-          {!isLedgerWallet && !isMetamaskWallet && renderPasswordForm()}
-          {renderKey()}
-          {renderCancel()}
-          {renderDeleteWalletForm()}
+          {renderContent()}
         </div>
       </Modal>
 
