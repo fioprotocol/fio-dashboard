@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
+import { MetaMaskInpageProvider } from '@metamask/providers';
+import { EdgeAccount } from 'edge-core-js';
 
 import LedgerConnect from '../../../../components/LedgerConnect';
+import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 
-// import { authenticateWallet } from '../../../../services/api/wallet';
+import { authenticateWallet } from '../../../../services/api/wallet';
 
 import { getPubKeyFromLedger } from '../../../../util/ledger';
 import { log } from '../../../../util/general';
 
 import {
   CONFIRM_LEDGER_ACTIONS,
+  CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 
@@ -23,23 +27,33 @@ import { CreateWalletValues } from '../../types';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
+  values: CreateWalletValues;
+  metaMaskProvider: MetaMaskInpageProvider | null;
+  processing: boolean;
   onWalletDataPrepared: (data: {
     walletData: NewFioWalletDoublet;
     nonce: Nonce;
   }) => void;
   onOptionCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  values: CreateWalletValues;
 };
 
 const CreateLedgerWallet: React.FC<Props> = props => {
   const {
-    onWalletDataPrepared,
     fioWallets,
     values,
+    metaMaskProvider,
+    onWalletDataPrepared,
     onOptionCancel,
     setProcessing,
   } = props;
+
+  const [edgeConfirm, setEdgeConfirm] = useState(false);
+  const [confirmProcessing, setConfirmProcessing] = useState(false);
+  const [
+    ledgerWalletData,
+    setLedgerWalletData,
+  ] = useState<NewFioWalletDoublet | null>(null);
 
   const createLedgerWallet = async (appFio: LedgerFioApp) => {
     let publicKey = '';
@@ -92,34 +106,97 @@ const CreateLedgerWallet: React.FC<Props> = props => {
     throw new Error('Try to reconnect your ledger device.');
   };
 
-  const onWalletCreated = async (walletData: NewFioWalletDoublet) => {
-    // todo: sign nonce using edge account or metamask
+  const signNonce = useCallback(
+    async (
+      data: {
+        edgeAccount?: EdgeAccount | null;
+        metaMaskProvider?: MetaMaskInpageProvider;
+        data?: NewFioWalletDoublet;
+      } = {},
+    ) => {
+      console.log('signNonce data', data);
+      const { edgeAccount, metaMaskProvider, data: walletData } = data;
+      if (!edgeAccount && !metaMaskProvider) {
+        throw new Error('Auth failed');
+      }
 
-    // const { walletApiProvider, nonce } = await authenticateWallet({
-    //   walletProviderName: isProfileTypePrimary ? 'edge' : 'metamask',
-    //   authParams,
-    // });
+      const { walletApiProvider, nonce } = await authenticateWallet({
+        walletProviderName:
+          edgeAccount && !metaMaskProvider ? 'edge' : 'metamask',
+        authParams:
+          edgeAccount && !metaMaskProvider
+            ? { account: edgeAccount }
+            : { provider: metaMaskProvider },
+      });
 
-    const nonce = {
-      challenge: '',
-      signatures: [''],
-    };
+      await walletApiProvider.logout(
+        edgeAccount ? { fromEdgeConfirm: true } : {},
+      );
 
-    onWalletDataPrepared({
-      walletData,
-      nonce,
-    });
-  };
+      return { walletData, nonce };
+    },
+    [],
+  );
+
+  const onWalletCreated = useCallback(
+    async (walletData: NewFioWalletDoublet) => {
+      if (metaMaskProvider) {
+        const { nonce } = await signNonce({
+          metaMaskProvider,
+        });
+        if (!nonce) {
+          return onOptionCancel();
+        }
+        onWalletDataPrepared({ walletData, nonce });
+      } else {
+        setLedgerWalletData(walletData);
+        setEdgeConfirm(true);
+      }
+    },
+    [metaMaskProvider, signNonce, onOptionCancel, onWalletDataPrepared],
+  );
+
+  const onEdgeConfirmSuccess = useCallback(
+    (result: { walletData: NewFioWalletDoublet; nonce: Nonce }) => {
+      setLedgerWalletData(null);
+      setEdgeConfirm(false);
+      onWalletDataPrepared({
+        walletData: {
+          name: result.walletData.name,
+          publicKey: result.walletData.publicKey,
+          from: WALLET_CREATED_FROM.LEDGER,
+          data: result.walletData.data,
+          edgeId: '',
+        },
+        nonce: result.nonce,
+      });
+    },
+    [onWalletDataPrepared],
+  );
 
   return (
-    <LedgerConnect
-      action={CONFIRM_LEDGER_ACTIONS.CREATE_WALLET}
-      data={values}
-      onConnect={createLedgerWallet}
-      onSuccess={onWalletCreated}
-      onCancel={onOptionCancel}
-      setProcessing={setProcessing}
-    />
+    <>
+      {edgeConfirm && ledgerWalletData ? (
+        <EdgeConfirmAction
+          action={CONFIRM_PIN_ACTIONS.SIGN_NONCE}
+          data={ledgerWalletData}
+          processing={confirmProcessing}
+          submitAction={signNonce}
+          onSuccess={onEdgeConfirmSuccess}
+          onCancel={onOptionCancel}
+          setProcessing={setConfirmProcessing}
+          edgeAccountLogoutBefore={false}
+        />
+      ) : null}
+      <LedgerConnect
+        action={CONFIRM_LEDGER_ACTIONS.CREATE_WALLET}
+        data={values}
+        onConnect={createLedgerWallet}
+        onSuccess={onWalletCreated}
+        onCancel={onOptionCancel}
+        setProcessing={setProcessing}
+      />
+    </>
   );
 };
 

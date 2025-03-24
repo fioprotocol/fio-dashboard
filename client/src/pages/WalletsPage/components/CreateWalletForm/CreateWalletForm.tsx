@@ -37,6 +37,7 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
               type="checkbox"
               component={Input}
               label="Use Ledger Hardware Wallet"
+              disabled={loading}
             />
             <div className={classes.checkboxContent}>
               <p className={classes.checkboxText}>

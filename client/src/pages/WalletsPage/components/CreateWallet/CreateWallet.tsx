@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -139,6 +140,8 @@ export const CreateWallet: React.FC<Props> = props => {
     }
   }, [addWalletLoading, onClose, processing]);
 
+  console.log('processing', processing);
+  console.log('addWalletLoading', addWalletLoading);
   return (
     <>
       {creationType === WALLET_CREATED_FROM.EDGE ? (
@@ -158,6 +161,12 @@ export const CreateWallet: React.FC<Props> = props => {
           values={currentValues}
           onWalletDataPrepared={onWalletDataPrepared}
           onOptionCancel={onOptionCancel}
+          metaMaskProvider={
+            isMetamaskWalletProvider
+              ? (metaMaskProvider as MetaMaskInpageProvider)
+              : null
+          }
+          processing={processing}
           {...props}
         />
       ) : null}
@@ -166,6 +175,7 @@ export const CreateWallet: React.FC<Props> = props => {
           setProcessing={setProcessing}
           values={currentValues}
           onWalletDataPrepared={onWalletDataPrepared}
+          onOptionCancel={onOptionCancel}
           {...props}
         />
       ) : null}

@@ -1,17 +1,18 @@
 import React from 'react';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 
+import { authenticateWallet } from '../../../../services/api/wallet';
+
 import {
   CONFIRM_METAMASK_ACTION,
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 
 import { getPublicKey } from '../../../../util/snap';
+import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
 import useEffectOnce from '../../../../hooks/general';
 import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
-
-import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 
 import {
   FioWalletDoublet,
@@ -19,7 +20,6 @@ import {
   Nonce,
 } from '../../../../types';
 import { CreateWalletValues } from '../../types';
-import { authenticateWallet } from '../../../../services/api/wallet';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
@@ -27,12 +27,19 @@ type Props = {
     walletData: NewFioWalletDoublet;
     nonce: Nonce;
   }) => void;
+  onOptionCancel: () => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
 };
 
 export const CreateMetamaskWallet: React.FC<Props> = props => {
-  const { onWalletDataPrepared, fioWallets, values, setProcessing } = props;
+  const {
+    onWalletDataPrepared,
+    fioWallets,
+    values,
+    setProcessing,
+    onOptionCancel,
+  } = props;
 
   const metaMaskProvider = useMetaMaskProvider();
 
@@ -60,25 +67,29 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
       },
     );
 
-    const { walletApiProvider, nonce } = await authenticateWallet({
-      walletProviderName: 'metamask',
-      authParams: { provider: metaMaskProvider },
-    });
+    try {
+      const { walletApiProvider, nonce } = await authenticateWallet({
+        walletProviderName: 'metamask',
+        authParams: { provider: metaMaskProvider },
+      });
 
-    await walletApiProvider.logout();
-    // todo: handle reject
+      await walletApiProvider.logout();
 
-    onWalletDataPrepared({
-      walletData: {
-        name: values.name,
-        publicKey,
-        from: WALLET_CREATED_FROM.METAMASK,
-        data: {
-          derivationIndex: nextDerivationIndex,
+      onWalletDataPrepared({
+        walletData: {
+          name: values.name,
+          publicKey,
+          from: WALLET_CREATED_FROM.METAMASK,
+          data: {
+            derivationIndex: nextDerivationIndex,
+          },
         },
-      },
-      nonce,
-    });
+        nonce,
+      });
+    } catch (err) {
+      setProcessing(false);
+      return onOptionCancel();
+    }
 
     fireActionAnalyticsEvent(CONFIRM_METAMASK_ACTION.CREATE_WALLET, values);
 

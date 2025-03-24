@@ -52,8 +52,9 @@ const CreateEdgeWallet: React.FC<Props> = props => {
       authParams: { account: edgeAccount },
     });
 
-    // todo: reset edge account, refactor to use logout() but do not logout from account
-    (walletApiProvider as EdgeWalletApiProvider).account = null;
+    await (walletApiProvider as EdgeWalletApiProvider).logout({
+      fromEdgeConfirm: true,
+    });
 
     return {
       walletData: {
