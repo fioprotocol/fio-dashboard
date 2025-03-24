@@ -3,6 +3,8 @@ import Base from '../Base';
 import { User, Wallet } from '../../models';
 import X from '../Exception';
 
+import logger from '../../logger.mjs';
+
 export default class WalletsAddMissing extends Base {
   static get validationRules() {
     return {
@@ -29,38 +31,41 @@ export default class WalletsAddMissing extends Base {
     });
 
     if (!user) {
-      // leave for debug reasons
-      // eslint-disable-next-line no-console
-      console.error('WalletsAddMissing: username not found');
+      logger.error('WalletsAddMissing: username not found');
       throw new X({
         code: 'AUTHENTICATION_FAILED',
         fields: {},
       });
     }
 
-    if (await Wallet.findOneWhere({ userId: user.id, publicKey })) {
-      // leave for debug reasons
-      // eslint-disable-next-line no-console
-      console.error('WalletsAddMissing: public key and user id pair not unique');
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: {},
-      });
-    }
-
-    const deletedWallet = await Wallet.findOne({
-      where: { userId: user.id, edgeId: edgeId || null, publicKey },
+    const userWallets = await Wallet.findAll({
+      raw: true,
+      where: { userId: user.id },
       paranoid: false,
     });
 
-    if (deletedWallet) {
-      await deletedWallet.restore();
-      deletedWallet.name = name;
-      await deletedWallet.save();
+    if (userWallets.some(wallet => wallet.deletedAt === null)) {
+      logger.error('WalletsAddMissing: auth wallet exists');
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {},
+      });
+    }
 
-      return {
-        data: { success: true },
-      };
+    if (userWallets.find(wallet => wallet.missing)) {
+      logger.error('WalletsAddMissing: missing wallet already exists');
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {},
+      });
+    }
+
+    if (userWallets.find(wallet => wallet.publicKey === publicKey)) {
+      logger.error('WalletsAddMissing: public key and user id pair not unique');
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {},
+      });
     }
 
     const newWallet = new Wallet({
@@ -69,13 +74,17 @@ export default class WalletsAddMissing extends Base {
       publicKey,
       userId: user.id,
       from,
+      missing: true,
+      deletedAt: new Date(),
     });
 
     await newWallet.save();
 
-    return {
-      data: { success: true },
-    };
+    logger.info('WalletsAddMissing: missing wallet created');
+    throw new X({
+      code: 'AUTHENTICATION_FAILED',
+      fields: {},
+    });
   }
 
   static get paramsSecret() {
