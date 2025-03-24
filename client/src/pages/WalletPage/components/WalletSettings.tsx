@@ -55,13 +55,13 @@ import classes from '../styles/WalletDetailsModal.module.scss';
 type Props = {
   show: boolean;
   fioWallet: FioWalletDoublet;
-  fioWalletsAmount: number;
+  walletsSafeDeleteAmount: number;
   userType: string;
   onClose: () => void;
 };
 
 const WalletSettings: React.FC<Props> = props => {
-  const { show, fioWallet, fioWalletsAmount, userType, onClose } = props;
+  const { show, fioWallet, walletsSafeDeleteAmount, userType, onClose } = props;
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -305,7 +305,7 @@ const WalletSettings: React.FC<Props> = props => {
     return (
       <>
         <h6 className={classes.settingTitle}>Delete Wallet</h6>
-        {fioWalletsAmount === 1 && !isLedgerWallet ? (
+        {walletsSafeDeleteAmount === 0 && !isLedgerWallet ? (
           <InfoBadge
             className={classes.infoBadge}
             show={true}

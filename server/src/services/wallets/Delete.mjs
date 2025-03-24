@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 
 import { Wallet, PublicWalletData, Nonce } from '../../models';
@@ -39,6 +41,22 @@ export default class WalletsDelete extends Base {
         code: 'AUTHENTICATION_FAILED',
         fields: {},
       });
+    }
+
+    if (wallet.from !== Wallet.CREATED_FROM.LEDGER) {
+      const wallets = await Wallet.list({
+        userId: this.context.id,
+        from: { [Sequelize.Op.ne]: Wallet.CREATED_FROM.LEDGER },
+      });
+
+      if (wallets.length < 2) {
+        throw new X({
+          code: 'FORBIDDEN',
+          fields: {
+            publicKey: 'FORBIDDEN',
+          },
+        });
+      }
     }
 
     const publicWalletData = await PublicWalletData.findOne({
