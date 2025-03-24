@@ -6,6 +6,8 @@ import ImportWalletForm from './components/ImportWalletForm';
 import CancelConfirmModal from './components/CancelConfirmModal';
 import CancelButton from '../../components/common/CancelButton/CancelButton';
 
+import { authenticateWallet } from '../../services/api/wallet';
+
 import {
   CONFIRM_PIN_ACTIONS,
   DEFAULT_WALLET_OPTIONS,
@@ -17,7 +19,8 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
 import { ContainerProps, ImportWalletValues } from './types';
-import { NewFioWalletDoublet } from '../../types';
+import { NewFioWalletDoublet, Nonce } from '../../types';
+import { EdgeWalletApiProvider } from '../../services/api/wallet/edge';
 
 import { validate } from './validation';
 
@@ -61,11 +64,23 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
       importText: privateSeed,
     });
 
+    const { walletApiProvider, nonce } = await authenticateWallet({
+      walletProviderName: 'edge',
+      authParams: { account: edgeAccount },
+    });
+
+    await (walletApiProvider as EdgeWalletApiProvider).logout({
+      fromEdgeConfirm: true,
+    });
+
     return {
-      edgeId: newWallet?.id,
-      name,
-      publicKey: newWallet?.publicWalletInfo.keys.publicKey,
-      from: WALLET_CREATED_FROM.EDGE,
+      walletData: {
+        edgeId: newWallet?.id,
+        name,
+        publicKey: newWallet?.publicWalletInfo.keys.publicKey,
+        from: WALLET_CREATED_FROM.EDGE,
+      },
+      nonce,
     };
   };
 
@@ -89,11 +104,14 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
 
     return {};
   };
-  const onSuccess = (walletData: NewFioWalletDoublet) => {
+  const onSuccess = (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => {
     setCurrentValues(null);
     setProcessing(false);
-    setPublicKey(walletData.publicKey);
-    addWallet(walletData);
+    setPublicKey(data.walletData.publicKey);
+    addWallet(data.walletData, data.nonce);
   };
   const onPinCancel = () => {
     setCurrentValues(null);

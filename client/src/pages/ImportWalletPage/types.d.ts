@@ -1,7 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../types';
+import { FioWalletDoublet, NewFioWalletDoublet, Nonce } from '../../types';
 
 export interface ContainerProps extends RouteComponentProps {
   children?: React.ReactNode;
@@ -9,7 +9,7 @@ export interface ContainerProps extends RouteComponentProps {
   noProfileLoaded?: boolean;
   loading: boolean;
   addWalletLoading: boolean;
-  addWallet: (wallet: NewFioWalletDoublet) => void;
+  addWallet: (walletData: NewFioWalletDoublet, nonce: Nonce) => void;
   showGenericErrorModal: (
     message?: string,
     title?: string,
