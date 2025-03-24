@@ -121,7 +121,7 @@ const WalletPage: React.FC = () => {
     fioWalletBalance,
     fioWalletData,
     fioWalletTxHistory,
-    fioWalletsAmount,
+    walletsSafeDeleteAmount,
     hasNoTransactions,
     isOpenLockedList,
     showWalletSettings,
@@ -163,7 +163,7 @@ const WalletPage: React.FC = () => {
       <WalletSettings
         show={showWalletSettings}
         fioWallet={fioWallet}
-        fioWalletsAmount={fioWalletsAmount}
+        walletsSafeDeleteAmount={walletsSafeDeleteAmount}
         onClose={onShowPrivateModalClose}
         userType={userType}
       />
