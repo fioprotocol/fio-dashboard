@@ -42,8 +42,12 @@ export const edgeWalletProvider: EdgeWalletApiProvider = {
         : [],
     };
   },
-  logout: async () => {
-    if (edgeWalletProvider.account && edgeWalletProvider.account.loggedIn) {
+  logout: async (options: { fromEdgeConfirm?: boolean } = {}) => {
+    if (
+      edgeWalletProvider.account &&
+      edgeWalletProvider.account.loggedIn &&
+      !options.fromEdgeConfirm
+    ) {
       await edgeWalletProvider.account.logout();
     }
     edgeWalletProvider.account = null;

@@ -9,5 +9,5 @@ export interface WalletApiProvider {
   name: 'edge' | 'metamask';
   authenticate: (authParams?: AnyObject) => Promise<void>;
   generateSignatures: (challenge: string) => Promise<Nonce>;
-  logout: () => Promise<void>;
+  logout: (options?: AnyObject) => Promise<void>;
 }
