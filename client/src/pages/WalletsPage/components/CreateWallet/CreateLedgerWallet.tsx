@@ -34,7 +34,7 @@ type Props = {
     walletData: NewFioWalletDoublet;
     nonce: Nonce;
   }) => void;
-  onOptionCancel: () => void;
+  onOptionCancel: (err?: Error | string) => void;
   setProcessing: (processing: boolean) => void;
 };
 

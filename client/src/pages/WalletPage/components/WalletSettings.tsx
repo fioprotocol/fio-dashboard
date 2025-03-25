@@ -31,6 +31,7 @@ import {
   fioAddresses as fioAddressesSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../../redux/fio/selectors';
+import { showGenericError as showGenericErrorSelector } from '../../../redux/modal/selectors';
 
 import { waitWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { log } from '../../../util/general';
@@ -68,6 +69,7 @@ const WalletSettings: React.FC<Props> = props => {
   const fioDomains = useSelector(fioDomainsSelector);
   const fioAddresses = useSelector(fioAddressesSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
+  const showGenericError = useSelector(showGenericErrorSelector);
   const metaMaskProvider = useMetaMaskProvider();
 
   const balance = fioWalletsBalances?.wallets[fioWallet?.publicKey]?.total;
@@ -395,7 +397,7 @@ const WalletSettings: React.FC<Props> = props => {
       <DangerModal
         backdrop={false}
         loading={loading.deleteWallet}
-        show={showDeleteConfirm && !showPasswordModal}
+        show={showDeleteConfirm && !showPasswordModal && !showGenericError}
         onClose={() => setShowDeleteConfirm(false)}
         onActionButtonClick={onDeleteConfirm}
         buttonText="Yes, Delete This Wallet"

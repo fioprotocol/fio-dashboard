@@ -12,6 +12,7 @@ import {
   addWallet,
   resetAddWalletSuccess,
 } from '../../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
 import { fioWallets as fioWalletsSelector } from '../../../../redux/fio/selectors';
 import { addWalletLoading as addWalletLoadingSelector } from '../../../../redux/account/selectors';
@@ -129,10 +130,17 @@ export const CreateWallet: React.FC<Props> = props => {
     setProcessing(false);
   };
 
-  const onOptionCancel = useCallback(() => {
-    setCreationType(null);
-    setProcessing(false);
-  }, []);
+  const onOptionCancel = useCallback(
+    (err?: Error | string) => {
+      setCreationType(null);
+      setProcessing(false);
+
+      if (err) {
+        dispatch(showGenericErrorModal());
+      }
+    },
+    [dispatch],
+  );
 
   const onModalClose = useCallback(() => {
     if (!processing && !addWalletLoading) {
@@ -140,8 +148,6 @@ export const CreateWallet: React.FC<Props> = props => {
     }
   }, [addWalletLoading, onClose, processing]);
 
-  console.log('processing', processing);
-  console.log('addWalletLoading', addWalletLoading);
   return (
     <>
       {creationType === WALLET_CREATED_FROM.EDGE ? (
