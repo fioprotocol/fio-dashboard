@@ -16,9 +16,9 @@ export default class WalletsUpdateList extends Base {
               'required',
               {
                 list_of_objects: {
-                  edgeId: 'string',
+                  edgeId: ['string', 'edge_wallet_id'],
                   name: 'string',
-                  publicKey: 'string',
+                  publicKey: ['string', 'fio_public_key'],
                 },
               },
             ],
@@ -44,7 +44,7 @@ export default class WalletsUpdateList extends Base {
     const updateWallets = async () => {
       const wallets = await Wallet.list({ userId: this.context.id }, false);
       for (const { edgeId, name, publicKey } of fioWallets) {
-        if (!edgeId) continue;
+        if (!edgeId || !publicKey) continue;
 
         const wallet = wallets.find(({ edgeId: itemEdgeId }) => edgeId === itemEdgeId);
         if (wallet) {
