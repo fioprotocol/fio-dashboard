@@ -69,7 +69,7 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
 
     try {
       const { walletApiProvider, nonce } = await authenticateWallet({
-        walletProviderName: 'metamask',
+        walletProviderName: WALLET_CREATED_FROM.METAMASK,
         authParams: { provider: metaMaskProvider },
       });
 

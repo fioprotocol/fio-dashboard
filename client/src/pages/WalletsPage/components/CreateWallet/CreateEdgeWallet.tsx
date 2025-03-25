@@ -48,7 +48,7 @@ const CreateEdgeWallet: React.FC<Props> = props => {
     await newFioWallet.renameWallet(name);
 
     const { walletApiProvider, nonce } = await authenticateWallet({
-      walletProviderName: 'edge',
+      walletProviderName: WALLET_CREATED_FROM.EDGE,
       authParams: { account: edgeAccount },
     });
 

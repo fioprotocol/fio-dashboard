@@ -65,7 +65,7 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
     });
 
     const { walletApiProvider, nonce } = await authenticateWallet({
-      walletProviderName: 'edge',
+      walletProviderName: WALLET_CREATED_FROM.EDGE,
       authParams: { account: edgeAccount },
     });
 

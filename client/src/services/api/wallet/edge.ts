@@ -5,6 +5,8 @@ import { waitWalletKeys } from '../../../util/edge';
 
 import apis from '../../../api';
 
+import { WALLET_CREATED_FROM } from '../../../constants/common';
+
 import { WalletApiProvider } from '../types';
 import { Nonce } from '../../../types';
 
@@ -18,7 +20,7 @@ export interface EdgeWalletApiProvider extends WalletApiProvider {
 }
 
 export const edgeWalletProvider: EdgeWalletApiProvider = {
-  name: 'edge',
+  name: WALLET_CREATED_FROM.EDGE,
   account: null,
   authenticate: async ({ account, username, password }) => {
     if (!account) {

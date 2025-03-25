@@ -114,7 +114,6 @@ const CreateLedgerWallet: React.FC<Props> = props => {
         data?: NewFioWalletDoublet;
       } = {},
     ) => {
-      console.log('signNonce data', data);
       const { edgeAccount, metaMaskProvider, data: walletData } = data;
       if (!edgeAccount && !metaMaskProvider) {
         throw new Error('Auth failed');
@@ -122,7 +121,9 @@ const CreateLedgerWallet: React.FC<Props> = props => {
 
       const { walletApiProvider, nonce } = await authenticateWallet({
         walletProviderName:
-          edgeAccount && !metaMaskProvider ? 'edge' : 'metamask',
+          edgeAccount && !metaMaskProvider
+            ? WALLET_CREATED_FROM.EDGE
+            : WALLET_CREATED_FROM.METAMASK,
         authParams:
           edgeAccount && !metaMaskProvider
             ? { account: edgeAccount }

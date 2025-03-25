@@ -11,7 +11,10 @@ import ModalUIComponent from '../ModalUIComponent';
 import ChangeEmailForm from './components/ChangeEmailForm/ChangeEmailForm';
 import { PasswordForm } from './components/PasswordForm';
 
-import { CONFIRM_METAMASK_ACTION } from '../../../../constants/common';
+import {
+  CONFIRM_METAMASK_ACTION,
+  WALLET_CREATED_FROM,
+} from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 
 import { log } from '../../../../util/general';
@@ -102,7 +105,9 @@ const ChangeEmail: React.FC<Props> = props => {
 
       try {
         const { walletApiProvider, nonce } = await authenticateWallet({
-          walletProviderName: password ? 'edge' : 'metamask',
+          walletProviderName: password
+            ? WALLET_CREATED_FROM.EDGE
+            : WALLET_CREATED_FROM.METAMASK,
           authParams: password
             ? {
                 username: user?.username,

@@ -16,6 +16,7 @@ import { log } from '../../../../util/general';
 import { ROUTES } from '../../../../constants/routes';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
 import { ERROR_MESSAGES_BY_CODE } from '../../../../constants/errors';
+import { WALLET_CREATED_FROM } from '../../../../constants/common';
 
 import { User } from '../../../../types';
 import { EdgeWalletApiProvider } from '../../../../services/api/wallet/edge';
@@ -76,7 +77,9 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
       setDeletingAccount(true);
       try {
         const { walletApiProvider, nonce } = await authenticateWallet({
-          walletProviderName: isProfileTypePrimary ? 'edge' : 'metamask',
+          walletProviderName: isProfileTypePrimary
+            ? WALLET_CREATED_FROM.EDGE
+            : WALLET_CREATED_FROM.METAMASK,
           authParams,
         });
 
