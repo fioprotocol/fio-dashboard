@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
+import { FormApi } from 'final-form';
 
 import SubmitButton from '../../../../../../components/common/SubmitButton/SubmitButton';
 import Input, {
@@ -31,7 +32,7 @@ type Props = {
 
 const ChangeEmailForm: React.FC<Props> = props => {
   const { hasNoEmail, onSubmit, loading, error, setError } = props;
-  const formRef = useRef<any>(null);
+  const formRef = useRef<FormApi<FormValuesProps>>(null);
 
   const onFieldChange = useCallback(() => {
     setError(null);
