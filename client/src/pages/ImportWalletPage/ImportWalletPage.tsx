@@ -58,15 +58,15 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
   const importWallet = async ({ edgeAccount, data }: SubmitActionParams) => {
     const { privateSeed, name } = data;
 
+    const { walletApiProvider, nonce } = await authenticateWallet({
+      walletProviderName: WALLET_CREATED_FROM.EDGE,
+      authParams: { account: edgeAccount },
+    });
+
     const newWallet = await edgeAccount.createCurrencyWallet(FIO_WALLET_TYPE, {
       ...DEFAULT_WALLET_OPTIONS,
       name,
       importText: privateSeed,
-    });
-
-    const { walletApiProvider, nonce } = await authenticateWallet({
-      walletProviderName: WALLET_CREATED_FROM.EDGE,
-      authParams: { account: edgeAccount },
     });
 
     await (walletApiProvider as EdgeWalletApiProvider).logout({

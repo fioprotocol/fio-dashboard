@@ -27,7 +27,7 @@ type Props = {
     walletData: NewFioWalletDoublet;
     nonce: Nonce;
   }) => void;
-  onOptionCancel: () => void;
+  onOptionCancel: (err?: Error | string) => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
 };
@@ -88,7 +88,7 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
       });
     } catch (err) {
       setProcessing(false);
-      return onOptionCancel();
+      return onOptionCancel(err);
     }
 
     fireActionAnalyticsEvent(CONFIRM_METAMASK_ACTION.CREATE_WALLET, values);

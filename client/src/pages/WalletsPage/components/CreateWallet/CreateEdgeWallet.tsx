@@ -21,7 +21,7 @@ type Props = {
     walletData: NewFioWalletDoublet;
     nonce: Nonce;
   }) => void;
-  onOptionCancel: () => void;
+  onOptionCancel: (err?: Error | string) => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
   processing: boolean;
@@ -41,16 +41,17 @@ const CreateEdgeWallet: React.FC<Props> = props => {
     data,
   }: SubmitActionParams) => {
     const { name } = data;
-    const newFioWallet = await edgeAccount.createCurrencyWallet(
-      FIO_WALLET_TYPE,
-      { ...DEFAULT_WALLET_OPTIONS, name },
-    );
-    await newFioWallet.renameWallet(name);
 
     const { walletApiProvider, nonce } = await authenticateWallet({
       walletProviderName: WALLET_CREATED_FROM.EDGE,
       authParams: { account: edgeAccount },
     });
+
+    const newFioWallet = await edgeAccount.createCurrencyWallet(
+      FIO_WALLET_TYPE,
+      { ...DEFAULT_WALLET_OPTIONS, name },
+    );
+    await newFioWallet.renameWallet(name);
 
     await (walletApiProvider as EdgeWalletApiProvider).logout({
       fromEdgeConfirm: true,
