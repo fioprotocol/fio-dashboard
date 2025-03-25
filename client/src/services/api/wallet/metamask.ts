@@ -2,6 +2,8 @@ import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { signNonce } from '../../../util/snap';
 
+import { WALLET_CREATED_FROM } from '../../../constants/common';
+
 import { WalletApiProvider } from '../types';
 import { Nonce } from '../../../types';
 
@@ -13,7 +15,7 @@ export interface MetaMaskWalletApiProvider extends WalletApiProvider {
 }
 
 export const metaMaskWalletProvider: MetaMaskWalletApiProvider = {
-  name: 'metamask',
+  name: WALLET_CREATED_FROM.METAMASK,
   provider: null,
   authenticate: async ({ provider }) => {
     metaMaskWalletProvider.provider = provider;

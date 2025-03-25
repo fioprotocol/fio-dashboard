@@ -1,10 +1,12 @@
 import apis from '../../../api';
 
-import { WalletAuthParams, WalletApiProvider } from '../types';
-import { Nonce } from '../../../types';
-
 import { edgeWalletProvider } from './edge';
 import { metaMaskWalletProvider } from './metamask';
+
+import { WALLET_CREATED_FROM } from '../../../constants/common';
+
+import { WalletAuthParams, WalletApiProvider } from '../types';
+import { Nonce } from '../../../types';
 
 export const generateSignatures = async (
   walletApiProvider: WalletApiProvider,
@@ -24,14 +26,16 @@ export const authenticateWallet = async ({
   let walletApiProvider = null;
 
   if (!walletProviderName && authParams) {
-    walletProviderName = authParams.password ? 'edge' : 'metamask';
+    walletProviderName = authParams.password
+      ? WALLET_CREATED_FROM.EDGE
+      : WALLET_CREATED_FROM.METAMASK;
   }
 
   switch (walletProviderName) {
-    case 'edge':
+    case WALLET_CREATED_FROM.EDGE:
       walletApiProvider = edgeWalletProvider;
       break;
-    case 'metamask':
+    case WALLET_CREATED_FROM.METAMASK:
       walletApiProvider = metaMaskWalletProvider;
       break;
   }

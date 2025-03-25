@@ -117,7 +117,9 @@ const WalletSettings: React.FC<Props> = props => {
     async (values?: DeleteWalletFormValues) => {
       try {
         const { walletApiProvider, nonce } = await authenticateWallet({
-          walletProviderName: isPrimaryUserProfileType ? 'edge' : 'metamask',
+          walletProviderName: isPrimaryUserProfileType
+            ? WALLET_CREATED_FROM.EDGE
+            : WALLET_CREATED_FROM.METAMASK,
           authParams: isPrimaryUserProfileType
             ? values
             : { provider: metaMaskProvider },
