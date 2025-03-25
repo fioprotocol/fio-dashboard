@@ -15,6 +15,7 @@ export class ActionLimit extends Base {
       SEND_RECOVERY_EMAIL: 'SEND_RECOVERY_EMAIL',
       UPDATE_EMAIL: 'UPDATE_EMAIL',
       USER_NONCE: 'USER_NONCE',
+      WALLET_LIST_UPDATE: 'WALLET_LIST_UPDATE',
     };
   }
 
