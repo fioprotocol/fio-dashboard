@@ -6,6 +6,7 @@ import { EdgeAccount } from 'edge-core-js';
 
 import LedgerConnect from '../../../../components/LedgerConnect';
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
+import FullScreenLoader from '../../../../components/common/FullScreenLoader/FullScreenLoader';
 
 import { authenticateWallet } from '../../../../services/api/wallet';
 
@@ -142,19 +143,32 @@ const CreateLedgerWallet: React.FC<Props> = props => {
   const onWalletCreated = useCallback(
     async (walletData: NewFioWalletDoublet) => {
       if (metaMaskProvider) {
-        const { nonce } = await signNonce({
-          metaMaskProvider,
-        });
-        if (!nonce) {
-          return onOptionCancel();
+        try {
+          setConfirmProcessing(true);
+          const { nonce } = await signNonce({
+            metaMaskProvider,
+          });
+          if (!nonce) {
+            throw new Error('Sign nonce failed');
+          }
+          onWalletDataPrepared({ walletData, nonce });
+        } catch (err) {
+          setProcessing(false);
+          setConfirmProcessing(false);
+          return onOptionCancel(err?.code === -32603 ? null : err);
         }
-        onWalletDataPrepared({ walletData, nonce });
       } else {
         setLedgerWalletData(walletData);
         setEdgeConfirm(true);
       }
     },
-    [metaMaskProvider, signNonce, onOptionCancel, onWalletDataPrepared],
+    [
+      metaMaskProvider,
+      signNonce,
+      onOptionCancel,
+      onWalletDataPrepared,
+      setProcessing,
+    ],
   );
 
   const onEdgeConfirmSuccess = useCallback(
@@ -189,6 +203,7 @@ const CreateLedgerWallet: React.FC<Props> = props => {
           edgeAccountLogoutBefore={false}
         />
       ) : null}
+      {!edgeConfirm && confirmProcessing ? <FullScreenLoader /> : null}
       <LedgerConnect
         action={CONFIRM_LEDGER_ACTIONS.CREATE_WALLET}
         data={values}
