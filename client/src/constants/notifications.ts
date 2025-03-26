@@ -63,3 +63,11 @@ export const getDefaultContent = (contentType: string, key: string): string => {
 
   return '';
 };
+
+export const ACTIONS = {
+  CART_TIMEOUT: 'CART_TIMEOUT',
+  CART_PRICES_CHANGED: 'CART_PRICES_CHANGED',
+  EMAIL_CONFIRM: 'EMAIL_CONFIRM',
+  RESET_ADMIN_USER_PASSWORD: 'RESET_ADMIN_USER_PASSWORD',
+  DELETE_ADMIN_USER_SUCCESS: 'DELETE_ADMIN_USER_SUCCESS',
+};

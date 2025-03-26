@@ -7,6 +7,7 @@ import {
   whereLastRow,
   whereOneOf,
 } from '../../utils/publicApi.mjs';
+import { normalizeFioHandle } from '../../utils/fio.mjs';
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import {
@@ -65,11 +66,11 @@ export default class Summary extends Base {
     const orderItemWhere = {};
 
     if (address) {
-      orderItemWhere.address = address.toLowerCase();
+      orderItemWhere.address = normalizeFioHandle(address);
     }
 
     if (domain) {
-      orderItemWhere.domain = domain.toLowerCase();
+      orderItemWhere.domain = normalizeFioHandle(domain);
     }
 
     if (type) {

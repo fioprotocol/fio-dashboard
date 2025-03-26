@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { RequestStatus } from '@fioprotocol/fiosdk';
+import { FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import FioRecordDetailedActionButtons from './FioRecordDetailedActionButtons';
 import FioRecordPendingActionButtons from './FioRecordPendingActionButtons';
@@ -64,7 +64,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
 
   const renderActionButtons = () =>
     !!selectedAddress &&
-    fioRecordDecrypted.fioRecord.status === RequestStatus.requested &&
+    fioRecordDecrypted.fioRecord.status === FioRequestStatus.requested &&
     fioRecordType === FIO_RECORD_TYPES.RECEIVED ? (
       <FioRecordDetailedActionButtons
         fioRecordDecrypted={fioRecordDecrypted}
@@ -74,7 +74,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
       />
     ) : (
       !!selectedAddress &&
-      fioRecordDecrypted.fioRecord.status === RequestStatus.requested &&
+      fioRecordDecrypted.fioRecord.status === FioRequestStatus.requested &&
       fioRecordType === FIO_RECORD_TYPES.SENT && (
         <FioRecordPendingActionButtons
           fioRecordDecrypted={fioRecordDecrypted}
@@ -94,7 +94,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
       />
       {!isLoading &&
         error &&
-        fioRecordDecrypted.fioRecord.status === RequestStatus.requested &&
+        fioRecordDecrypted.fioRecord.status === FioRequestStatus.requested &&
         ((fioRecordType === FIO_RECORD_TYPES.RECEIVED &&
           fioRecordDecrypted?.fioRecord?.to) ||
           (fioRecordType === FIO_RECORD_TYPES.SENT &&

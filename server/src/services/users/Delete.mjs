@@ -4,6 +4,7 @@ import {
   Cart,
   DomainsWatchlist,
   User,
+  UserDevice,
   Nonce,
   Notification,
   Wallet,
@@ -12,7 +13,21 @@ import {
 } from '../../models';
 
 export default class UserDelete extends Base {
-  async execute() {
+  static get validationRules() {
+    return {
+      nonce: [
+        'required',
+        {
+          nested_object: {
+            signatures: ['required', { list_of: 'string' }],
+            challenge: ['required', 'string'],
+          },
+        },
+      ],
+    };
+  }
+
+  async execute({ nonce }) {
     const user = await User.findActive(this.context.id);
     const deletedUser = await User.findDeletedUser();
 
@@ -22,6 +37,13 @@ export default class UserDelete extends Base {
         fields: {
           id: 'NOT_FOUND',
         },
+      });
+    }
+
+    if (!(await Nonce.verify({ ...nonce, userId: this.context.id }))) {
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {},
       });
     }
 
@@ -39,6 +61,7 @@ export default class UserDelete extends Base {
       await Wallet.destroy(destroyCondition);
       await NewDeviceTwoFactor.destroy(destroyCondition);
       await DomainsWatchlist.destroy(destroyCondition);
+      await UserDevice.destroy(destroyCondition);
 
       await Order.update(
         { userId: deletedUser.id },
@@ -60,7 +83,11 @@ export default class UserDelete extends Base {
         },
       );
 
-      await User.destroy({ where: { id: user.id }, force: true, transaction: t });
+      await User.destroy({
+        where: { id: user.id },
+        force: true,
+        transaction: t,
+      });
     });
 
     return {
@@ -69,7 +96,7 @@ export default class UserDelete extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['nonce'];
   }
 
   static get resultSecret() {

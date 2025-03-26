@@ -15,11 +15,12 @@ import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
 import UsersSendEvent from '../services/users/SendEvent';
 import UsersDelete from '../services/users/Delete';
+import UsersNonce from '../services/users/Nonce.mjs';
 
 export default {
   alternativeUserVerification: makeServiceRunner(AlternativeUserVerification),
   create: makeServiceRunner(UsersCreate, req => req.body),
-  delete: makeServiceRunner(UsersDelete),
+  delete: makeServiceRunner(UsersDelete, req => req.body),
   info: makeServiceRunner(UsersInfo),
   detailedInfo: makeServiceRunner(UsersDetailedInfo, req => req.params),
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),
@@ -35,4 +36,5 @@ export default {
   activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
   updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
   sendEvent: makeServiceRunner(UsersSendEvent, req => req.body),
+  nonce: makeServiceRunner(UsersNonce),
 };

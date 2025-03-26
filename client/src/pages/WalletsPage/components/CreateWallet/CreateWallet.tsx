@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,6 +12,7 @@ import {
   addWallet,
   resetAddWalletSuccess,
 } from '../../../../redux/account/actions';
+import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
 import { fioWallets as fioWalletsSelector } from '../../../../redux/fio/selectors';
 import { addWalletLoading as addWalletLoadingSelector } from '../../../../redux/account/selectors';
@@ -29,7 +31,11 @@ import useEffectOnce from '../../../../hooks/general';
 import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import { CreateWalletValues } from '../../types';
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
+import {
+  FioWalletDoublet,
+  NewFioWalletDoublet,
+  Nonce,
+} from '../../../../types';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
@@ -115,16 +121,26 @@ export const CreateWallet: React.FC<Props> = props => {
     [isMetamaskWalletProvider],
   );
 
-  const onWalletDataPrepared = (walletData: NewFioWalletDoublet) => {
-    dispatch(addWallet(walletData));
+  const onWalletDataPrepared = async (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => {
+    dispatch(addWallet(data.walletData, data.nonce));
     setCreationType(null);
     setProcessing(false);
   };
 
-  const onOptionCancel = useCallback(() => {
-    setCreationType(null);
-    setProcessing(false);
-  }, []);
+  const onOptionCancel = useCallback(
+    (err?: Error | string) => {
+      setCreationType(null);
+      setProcessing(false);
+
+      if (err) {
+        dispatch(showGenericErrorModal());
+      }
+    },
+    [dispatch],
+  );
 
   const onModalClose = useCallback(() => {
     if (!processing && !addWalletLoading) {
@@ -151,6 +167,12 @@ export const CreateWallet: React.FC<Props> = props => {
           values={currentValues}
           onWalletDataPrepared={onWalletDataPrepared}
           onOptionCancel={onOptionCancel}
+          metaMaskProvider={
+            isMetamaskWalletProvider
+              ? (metaMaskProvider as MetaMaskInpageProvider)
+              : null
+          }
+          processing={processing}
           {...props}
         />
       ) : null}
@@ -159,6 +181,7 @@ export const CreateWallet: React.FC<Props> = props => {
           setProcessing={setProcessing}
           values={currentValues}
           onWalletDataPrepared={onWalletDataPrepared}
+          onOptionCancel={onOptionCancel}
           {...props}
         />
       ) : null}

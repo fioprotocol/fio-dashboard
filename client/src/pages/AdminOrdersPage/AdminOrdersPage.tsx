@@ -45,10 +45,8 @@ import {
   DateRangeConditions,
   dateRangeConditions,
 } from '../../util/date';
-import { log, truncateTextInMiddle } from '../../util/general';
-import { generateCSVOrderData } from '../../util/order';
-
-import apis from '../../api';
+import { truncateTextInMiddle } from '../../util/general';
+import { exportOrdersData } from '../../util/order';
 
 type Props = {
   loading: boolean;
@@ -74,6 +72,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
     getOrder,
     showGenericErrorModal,
     orderItem,
+    ordersCount,
   } = props;
 
   const location = useLocation<{ orderId?: string }>();
@@ -95,6 +94,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
   );
   const [showDatePicker, toggleShowDatePicker] = useState<boolean>(false);
   const [isExporting, toggleIsExporting] = useState<boolean>(false);
+  const [exportProgress, setExportProgress] = useState<number>(0);
 
   const openDatePicker = useCallback(() => {
     toggleShowDatePicker(true);
@@ -202,19 +202,18 @@ const AdminOrdersPage: React.FC<Props> = props => {
 
   const handleExportOrderData = useCallback(async () => {
     toggleIsExporting(true);
+    setExportProgress(0);
 
-    try {
-      const { orders = [], orderItems = [] } =
-        (await apis.admin.exportOrdersData({ filters })) || {};
+    await exportOrdersData({
+      filters,
+      ordersCount,
+      onProgress: setExportProgress,
+      onError: () => showGenericErrorModal(),
+    });
 
-      generateCSVOrderData({ orders, orderItems });
-    } catch (error) {
-      log.error(error);
-      showGenericErrorModal();
-    } finally {
-      toggleIsExporting(false);
-    }
-  }, [filters, showGenericErrorModal]);
+    toggleIsExporting(false);
+    setExportProgress(0);
+  }, [filters, ordersCount, showGenericErrorModal]);
 
   useEffectOnce(
     () => {
@@ -227,26 +226,34 @@ const AdminOrdersPage: React.FC<Props> = props => {
   return (
     <>
       <div className={classes.tableContainer}>
-        <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className={classes.headerContainer}>
           <div className="mr-4">
             <Button
               onClick={handleExportOrderData}
               disabled={isExporting}
-              className="mb-4 d-flex flex-direction-row align-items-center"
+              className={classes.exportButton}
             >
-              <FontAwesomeIcon icon="download" className="mr-2" />{' '}
               {isExporting ? (
-                <>
-                  <span className="mr-3">Exporting...</span>
-                  <Loader isWhite hasInheritFontSize hasSmallSize />
-                </>
+                <div className={classes.exportProgress}>
+                  <FontAwesomeIcon icon="download" className="mr-2" />
+                  <span>Exporting...</span>
+                  {exportProgress > 0 && (
+                    <span className="ml-1">({exportProgress}%)</span>
+                  )}
+                  <div className="ml-2">
+                    <Loader isWhite hasInheritFontSize hasSmallSize />
+                  </div>
+                </div>
               ) : (
-                'Export'
+                <>
+                  <FontAwesomeIcon icon="download" className="mr-2" />
+                  Export
+                </>
               )}
             </Button>
           </div>
 
-          <div className="d-flex">
+          <div className={classes.filtersContainer}>
             <div className="d-flex align-items-center mr-2">
               Filter Amount:&nbsp;
               <CustomDropdown

@@ -147,6 +147,12 @@
 
     @include sf-pro-display-medium;
   }
+
+  .deleteWalletButton {
+    margin-top: 20px;
+    align-self: start;
+    font-weight: bold !important;
+  }
 }
 
 .walletTextInModal {

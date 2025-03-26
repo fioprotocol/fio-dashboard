@@ -4,7 +4,7 @@ import X from '../Exception';
 import emailSender from '../emailSender';
 import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
 
-import { User, Notification, ReferrerProfile, Wallet } from '../../models';
+import { User, UserDevice, Notification, ReferrerProfile, Wallet } from '../../models';
 import logger from '../../logger.mjs';
 
 export default class UsersCreate extends Base {
@@ -76,6 +76,8 @@ export default class UsersCreate extends Base {
 
         await newWallet.save();
       }
+
+      await UserDevice.add(user.id, this.context.device);
 
       return {
         data: user.json(),

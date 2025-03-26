@@ -3,7 +3,14 @@ import { generate } from './authToken';
 import Base from '../Base';
 import X from '../Exception';
 
-import { User, Notification, ReferrerProfile, Wallet, Cart } from '../../models';
+import {
+  User,
+  UserDevice,
+  Notification,
+  ReferrerProfile,
+  Wallet,
+  Cart,
+} from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
 import { AUTH_TYPE } from '../../tools.mjs';
@@ -42,6 +49,9 @@ export default class AuthAlternateAuthenticate extends Base {
       });
     }
 
+    const device = this.context && this.context.device ? this.context.device : null;
+    let deviceToken = device && device.token ? device.token : null;
+
     const generateJwt = userId => {
       const now = new Date();
       return {
@@ -77,13 +87,18 @@ export default class AuthAlternateAuthenticate extends Base {
         await Cart.updateGuestCartUser(user.id, this.context.guestId);
       }
 
+      const { token } = await UserDevice.check(user, this.context.device);
+
+      if (!deviceToken) {
+        deviceToken = token;
+      }
       // todo: DASH-1254. Remove when no users left with no pub key set as freeId
       if (user.id === user.freeId) {
         await user.update({ freeId: publicKey });
       }
 
       return {
-        data: responseData,
+        data: { ...responseData, deviceToken },
       };
     }
 
@@ -123,6 +138,11 @@ export default class AuthAlternateAuthenticate extends Base {
 
     await newWallet.save();
 
+    const { token } = await UserDevice.add(user.id, this.context.device);
+
+    if (!deviceToken) {
+      deviceToken = token;
+    }
     const responseData = generateJwt(user.id);
 
     if (this.context.guestId) {
@@ -130,7 +150,7 @@ export default class AuthAlternateAuthenticate extends Base {
     }
 
     return {
-      data: { ...responseData, isSignUp: true },
+      data: { ...responseData, deviceToken, isSignUp: true },
     };
   }
 

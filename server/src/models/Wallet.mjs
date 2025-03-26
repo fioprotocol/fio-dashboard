@@ -27,6 +27,7 @@ export class Wallet extends Base {
           defaultValue: Wallet.CREATED_FROM.EDGE,
         },
         failedSyncedWithEdge: { type: DT.BOOLEAN, defaultValue: false },
+        missing: { type: DT.BOOLEAN, defaultValue: false },
       },
       {
         sequelize,

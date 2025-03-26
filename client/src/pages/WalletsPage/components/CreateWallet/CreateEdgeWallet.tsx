@@ -2,6 +2,8 @@ import React from 'react';
 
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 
+import { authenticateWallet } from '../../../../services/api/wallet';
+
 import {
   CONFIRM_PIN_ACTIONS,
   DEFAULT_WALLET_OPTIONS,
@@ -10,12 +12,16 @@ import {
 } from '../../../../constants/common';
 
 import { CreateWalletValues } from '../../types';
-import { NewFioWalletDoublet } from '../../../../types';
+import { NewFioWalletDoublet, Nonce } from '../../../../types';
 import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
+import { EdgeWalletApiProvider } from '../../../../services/api/wallet/edge';
 
 type Props = {
-  onWalletDataPrepared: (data: NewFioWalletDoublet) => void;
-  onOptionCancel: () => void;
+  onWalletDataPrepared: (data: {
+    walletData: NewFioWalletDoublet;
+    nonce: Nonce;
+  }) => void;
+  onOptionCancel: (err?: Error | string) => void;
   setProcessing: (processing: boolean) => void;
   values: CreateWalletValues;
   processing: boolean;
@@ -35,17 +41,30 @@ const CreateEdgeWallet: React.FC<Props> = props => {
     data,
   }: SubmitActionParams) => {
     const { name } = data;
+
+    const { walletApiProvider, nonce } = await authenticateWallet({
+      walletProviderName: WALLET_CREATED_FROM.EDGE,
+      authParams: { account: edgeAccount },
+    });
+
     const newFioWallet = await edgeAccount.createCurrencyWallet(
       FIO_WALLET_TYPE,
       { ...DEFAULT_WALLET_OPTIONS, name },
     );
     await newFioWallet.renameWallet(name);
 
+    await (walletApiProvider as EdgeWalletApiProvider).logout({
+      fromEdgeConfirm: true,
+    });
+
     return {
-      edgeId: newFioWallet.id,
-      name: newFioWallet.name,
-      publicKey: newFioWallet.publicWalletInfo.keys.publicKey,
-      from: WALLET_CREATED_FROM.EDGE,
+      walletData: {
+        edgeId: newFioWallet.id,
+        name: newFioWallet.name,
+        publicKey: newFioWallet.publicWalletInfo.keys.publicKey,
+        from: WALLET_CREATED_FROM.EDGE,
+      },
+      nonce,
     };
   };
 

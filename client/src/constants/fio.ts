@@ -3,7 +3,7 @@ import {
   Action,
   EndPoint,
   GenericAction,
-  RequestStatus,
+  FioRequestStatus,
 } from '@fioprotocol/fiosdk';
 
 export const ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION = 5;
@@ -42,10 +42,10 @@ export enum AdditionalAction {
 export type DashboardAction = AdditionalAction | GenericAction;
 
 export const FIO_REQUEST_STATUS_TYPES_TITLES: { [key: string]: string } = {
-  [RequestStatus.rejected]: 'REJECTED',
-  [RequestStatus.sentToBlockchain]: 'PAID',
-  [RequestStatus.requested]: 'PENDING',
-  [RequestStatus.canceled]: 'CANCELED',
+  [FioRequestStatus.rejected]: 'REJECTED',
+  [FioRequestStatus.sentToBlockchain]: 'PAID',
+  [FioRequestStatus.requested]: 'PENDING',
+  [FioRequestStatus.canceled]: 'CANCELED',
 };
 
 export const BUNDLES_TX_COUNT = {

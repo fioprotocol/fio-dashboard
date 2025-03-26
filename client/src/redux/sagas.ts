@@ -28,10 +28,6 @@ import {
   setContainedFlowToInitStep,
 } from './containedFlow/sagas';
 import {
-  clearGenericModalError,
-  clearGenericModalSuccess,
-} from './modal/sagas';
-import {
   addFioWalletSuccess,
   setBalancesService,
   setFeesService,
@@ -55,8 +51,6 @@ export default function* rootSaga(history: History, api: Api) {
     edgeLoginSuccess(),
     edgePinUpdateSuccess(),
     notify(history),
-    clearGenericModalError(),
-    clearGenericModalSuccess(),
     containedFlowActionSuccess(),
     containedFlowResultsClose(),
     setContainedFlowToInitStep(),

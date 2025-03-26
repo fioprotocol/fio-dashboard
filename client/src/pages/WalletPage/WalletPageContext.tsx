@@ -27,6 +27,7 @@ import {
 } from '../../components/WelcomeComponent/constants';
 import { WALLET_TABS_LIST } from './components/WalletTabs';
 import { FIO_RECORD_TYPES } from './constants';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import { DEFAULT_BALANCES } from '../../util/prices';
 
@@ -50,7 +51,7 @@ type UseContextProps = {
   fioWalletBalance: WalletBalances;
   fioWalletData: FioWalletData;
   fioWalletTxHistory: FioWalletTxHistory;
-  fioWalletsAmount: number;
+  walletsSafeDeleteAmount: number;
   hasNoTransactions: boolean;
   isOpenLockedList: boolean;
   showWalletSettings: boolean;
@@ -249,7 +250,9 @@ export const useContext = (): UseContextProps => {
     fioWalletBalance,
     fioWalletData,
     fioWalletTxHistory,
-    fioWalletsAmount: fioWallets?.length,
+    walletsSafeDeleteAmount:
+      fioWallets.filter(({ from }) => from !== WALLET_CREATED_FROM.LEDGER)
+        .length - 1,
     hasNoTransactions,
     isOpenLockedList,
     showWalletSettings,

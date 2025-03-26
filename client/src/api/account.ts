@@ -1,7 +1,7 @@
 import { FioSentItem } from '@fioprotocol/fiosdk';
 
 import Base from './base';
-import { FioWalletDoublet, NewFioWalletDoublet } from '../types';
+import { FioWalletDoublet, NewFioWalletDoublet, Nonce } from '../types';
 import {
   AccountAddWalletsResponse,
   AccountGetWalletsResponse,
@@ -26,8 +26,11 @@ export default class Account extends Base {
     });
   }
 
-  addWallet(data: NewFioWalletDoublet): Promise<AccountAddWalletsResponse> {
-    return this.apiClient.post('account/wallet', { data });
+  addWallet(
+    data: NewFioWalletDoublet,
+    nonce: Nonce,
+  ): Promise<AccountAddWalletsResponse> {
+    return this.apiClient.post('account/wallet', { data, nonce });
   }
 
   addMissingWallet(data: {
@@ -44,8 +47,13 @@ export default class Account extends Base {
     return this.apiClient.post(`account/wallet/update/${publicKey}`, { data });
   }
 
-  deleteWallet(publicKey: string): Promise<AccountDeleteWalletResponse> {
-    return this.apiClient.delete(`account/wallet/${publicKey}`);
+  deleteWallet(
+    publicKey: string,
+    nonce: Nonce,
+  ): Promise<AccountDeleteWalletResponse> {
+    return this.apiClient.delete(`account/wallet/${publicKey}`, {
+      data: { nonce },
+    });
   }
 
   validateWalletImport(

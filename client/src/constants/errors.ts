@@ -99,3 +99,19 @@ export const ERROR_MESSAGE_FOR_DECRYPT_CONTENT = {
   message:
     'The information in this FIO Request or FIO Data could not be decrypted, likely because it was not encrypted correctly',
 };
+
+export const ERROR_MESSAGES_BY_CODE = {
+  AUTHENTICATION_FAILED:
+    'An error occurred. Please verify your credentials and try again.',
+  SERVER_ERROR: 'An error occurred. Please contact support or try again later.',
+  LIMIT_EXCEEDED: 'Too many requests. Please try again later.',
+  GENERAL: 'Update email failed. Please try again or set another email.',
+};
+
+export const METAMASK_ERRORS_CODE = {
+  REJECTED: -32603,
+};
+
+export const WALLET_API_PROVIDER_ERRORS_CODE = {
+  REJECTED: 'REJECTED',
+};

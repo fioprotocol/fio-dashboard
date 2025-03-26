@@ -7,6 +7,35 @@ import Exception from './services/Exception';
 
 const SALT_ROUND = 10;
 
+const getDeviceInfo = req => {
+  const userAgent = req.headers['user-agent'];
+  let clientDeviceInfo = {};
+  try {
+    const deviceInfoHeader = req.headers['x-device-info'];
+    if (deviceInfoHeader) {
+      clientDeviceInfo = JSON.parse(deviceInfoHeader);
+    }
+  } catch (error) {
+    logger.error('Error parsing device info:', {
+      error,
+    });
+  }
+
+  const { deviceToken, ...restOfClientDeviceInfo } = clientDeviceInfo;
+
+  // Build complete device info including IP and userAgent
+  const info = {
+    ...restOfClientDeviceInfo,
+    ip: getIpAddress(req),
+    userAgent,
+  };
+
+  return {
+    info,
+    token: deviceToken,
+  };
+};
+
 const cleanup = (data, paths, callback, replacer = () => '<secret>') =>
   Array.isArray(paths)
     ? paths.reduce((acc, path) => {
@@ -24,6 +53,7 @@ const defaultContextBuilder = req =>
     ipAddress: getIpAddress(req),
     userAgent: req.headers['user-agent'],
     referer: req.headers.referer,
+    device: getDeviceInfo(req),
   });
 
 export async function runService(service, { context = {}, params = {}, res }) {
@@ -239,7 +269,9 @@ export async function authCheck(req, res, next, { services, resolver, isOptional
     if (isOptional) {
       return next();
     }
-    return renderPromiseAsJson(req, res, Promise.reject(err), { token: '<secret>' });
+    return renderPromiseAsJson(req, res, Promise.reject(err), {
+      token: '<secret>',
+    });
   }
 
   const promise = runService(services[type], {

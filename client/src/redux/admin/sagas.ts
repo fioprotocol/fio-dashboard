@@ -6,9 +6,11 @@ import {
 } from './actions';
 import { addManual as createNotification } from '../notifications/actions';
 
-import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
+import {
+  ACTIONS,
+  NOTIFICATIONS_CONTENT_TYPE,
+} from '../../constants/notifications';
 import { ADMIN_ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';

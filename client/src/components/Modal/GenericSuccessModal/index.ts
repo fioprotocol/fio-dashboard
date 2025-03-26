@@ -3,7 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../../utils';
 
-import { closeGenericSuccessModal } from '../../../redux/modal/actions';
+import {
+  closeGenericSuccessModal,
+  clearGenericSuccessData,
+} from '../../../redux/modal/actions';
 import {
   genericSuccessData,
   showGenericSuccess,
@@ -18,6 +21,7 @@ const reduxConnect = connect(
   }),
   {
     closeGenericSuccessModal,
+    clearGenericSuccessData,
   },
 );
 

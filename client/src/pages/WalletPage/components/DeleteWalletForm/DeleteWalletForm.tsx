@@ -36,12 +36,11 @@ const DeleteWalletForm: React.FC<{
 
               <div className={classes.field}>
                 <Field
-                  label="Permanently delete this wallet"
                   name="password"
                   type="password"
                   placeholder="Enter Your Password"
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  errorColor={COLOR_TYPE.WARN}
+                  errorColor={COLOR_TYPE.WHITE}
                   component={Input}
                   disabled={loading}
                 />
@@ -50,7 +49,6 @@ const DeleteWalletForm: React.FC<{
           )}
 
           <SubmitButton
-            className={classes.submitButton}
             disabled={
               isPrimaryUserProfileType &&
               (formRenderProps.hasValidationErrors ||
@@ -63,6 +61,7 @@ const DeleteWalletForm: React.FC<{
             hasLowHeight
             hasAutoWidth
             withoutMargin
+            isBlack
             text="Delete Wallet"
           />
         </form>

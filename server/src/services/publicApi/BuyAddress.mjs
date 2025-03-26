@@ -32,7 +32,7 @@ import {
   prepareOrderWithFioPaymentForExecution,
 } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
-import { isDomainExpired } from '../../utils/fio.mjs';
+import { isDomainExpired, normalizeFioHandle } from '../../utils/fio.mjs';
 import { handleRefProfileApiTokenAndLegacyHash } from '../../utils/referrer-profile.mjs';
 
 import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
@@ -109,12 +109,12 @@ export default class BuyAddress extends Base {
       }
     }
 
-    const lowerCasedAddress = address ? address.toLowerCase() : address;
-    const { type, fioAddress, fioDomain } = destructAddress(lowerCasedAddress);
+    const normalizedFioHandle = normalizeFioHandle(address);
+    const { type, fioAddress, fioDomain } = destructAddress(normalizedFioHandle);
 
     try {
       fioAddress
-        ? FIOSDK.isFioAddressValid(lowerCasedAddress)
+        ? FIOSDK.isFioAddressValid(normalizedFioHandle)
         : FIOSDK.isFioDomainValid(fioDomain);
 
       if (fioAddress && !(await fioApi.validateFioAddress(fioAddress, fioDomain))) {
@@ -161,7 +161,7 @@ export default class BuyAddress extends Base {
 
     if (type === 'account') {
       const addressFromChain = await fioApi
-        .getFioAddress(lowerCasedAddress)
+        .getFioAddress(normalizedFioHandle)
         .then(formatChainAddress);
 
       if (addressFromChain) {
@@ -175,7 +175,7 @@ export default class BuyAddress extends Base {
       const isRegistrationAddressExist = await this.isSameAccountRegistrationExist(
         publicKey,
         refProfile,
-        lowerCasedAddress,
+        normalizedFioHandle,
       );
 
       if (isRegistrationAddressExist) {

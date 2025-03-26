@@ -4,7 +4,11 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 import { PaymentButton } from './components/PaymentButton';
-import { BitPayButtonText, BITPAY_LOGO_WIDTH } from '../BitPayButton';
+import {
+  BitPayButtonText,
+  BITPAY_LOGO_WIDTH,
+  BitPayCurrencies,
+} from '../BitPayButton';
 
 import MathOp from '../../util/math';
 
@@ -100,6 +104,7 @@ const PAYMENT_OPTIONS_PROPS = {
       (formsOfPayment && !formsOfPayment.bitpay) ||
       !totalCartUsdcAmount ||
       (totalCartUsdcAmount && new MathOp(totalCartUsdcAmount).lte(1)),
+    underButton: <BitPayCurrencies width={BITPAY_LOGO_WIDTH.currencies} />,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };

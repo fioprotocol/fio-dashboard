@@ -1,6 +1,7 @@
 import '../db';
 import {
   OrderItem,
+  OrderItemStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
   FioApiUrl,
@@ -75,6 +76,7 @@ class MissedTransactions extends CommonJob {
         publicKey,
         blockchainTransactionId,
         orderItemId,
+        orderItemStatusId,
         orderId,
         paymentProcessor,
       } = order;
@@ -183,6 +185,7 @@ class MissedTransactions extends CommonJob {
           await BlockchainTransaction.sequelize.transaction(async t => {
             const bcTxExists = await BlockchainTransaction.findOne({
               where: { txId: trx_id },
+              transaction: t,
             });
             if (!bcTxExists) {
               if (blockchainTransactionId) {
@@ -197,6 +200,17 @@ class MissedTransactions extends CommonJob {
                   {
                     where: {
                       id: blockchainTransactionId,
+                    },
+                    transaction: t,
+                  },
+                );
+                await OrderItemStatus.update(
+                  {
+                    txStatus: BlockchainTransaction.STATUS.SUCCESS,
+                  },
+                  {
+                    where: {
+                      id: orderItemStatusId,
                     },
                     transaction: t,
                   },
@@ -223,6 +237,19 @@ class MissedTransactions extends CommonJob {
                     blockchainTransactionId: bcTx.id,
                   },
                   { transaction: t },
+                );
+
+                await OrderItemStatus.update(
+                  {
+                    txStatus: BlockchainTransaction.STATUS.SUCCESS,
+                    blockchainTransactionId: bcTx.id,
+                  },
+                  {
+                    where: {
+                      id: orderItemStatusId,
+                    },
+                    transaction: t,
+                  },
                 );
               }
               logger.info(
