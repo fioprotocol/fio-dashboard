@@ -18,6 +18,7 @@ import {
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
+import { WALLET_API_PROVIDER_ERRORS_CODE } from '../../../../constants/errors';
 
 import {
   FioWalletDoublet,
@@ -155,7 +156,9 @@ const CreateLedgerWallet: React.FC<Props> = props => {
         } catch (err) {
           setProcessing(false);
           setConfirmProcessing(false);
-          return onOptionCancel(err?.code === -32603 ? null : err);
+          return onOptionCancel(
+            err?.code === WALLET_API_PROVIDER_ERRORS_CODE.REJECTED ? null : err,
+          );
         }
       } else {
         setLedgerWalletData(walletData);

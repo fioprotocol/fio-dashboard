@@ -16,6 +16,7 @@ import {
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
+import { WALLET_API_PROVIDER_ERRORS_CODE } from '../../../../constants/errors';
 
 import { log } from '../../../../util/general';
 import { emailToUsername } from '../../../../utils';
@@ -179,14 +180,17 @@ const ChangeEmail: React.FC<Props> = props => {
         }
       } catch (err) {
         log.error(err);
-        setError(err);
 
         toggleLoading(false);
         setSubmitData(null);
 
-        if (err?.code && password) {
-          setPasswordModalError(err);
-          return;
+        if (err?.code !== WALLET_API_PROVIDER_ERRORS_CODE.REJECTED) {
+          setError(err);
+
+          if (err?.code && password) {
+            setPasswordModalError(err);
+            return;
+          }
         }
 
         togglePasswordModal(false);
