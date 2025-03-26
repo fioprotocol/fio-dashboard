@@ -77,10 +77,10 @@ export default class UsersCreate extends Base {
         await newWallet.save();
       }
 
-      await UserDevice.add(user.id, this.context.device);
+      const { token } = await UserDevice.add(user.id, this.context.device);
 
       return {
-        data: user.json(),
+        data: { ...user.json(), deviceToken: token },
       };
     } catch (error) {
       logger.error(email, username, error);

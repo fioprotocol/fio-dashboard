@@ -41,7 +41,7 @@ export type AuthLoginResponse = {
 };
 export type AuthNonceResponse = { nonce: string };
 export type AuthGenerateNonceResponse = { nonce: string };
-export type AuthSignUpResponse = User;
+export type AuthSignUpResponse = User & { deviceToken?: string };
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;
 export type AuthResendRecoveryResponse = DefaultSuccessResponse;

@@ -174,7 +174,14 @@ export const signup = (data: {
   addEmailToPromoList: boolean;
 }): CommonPromiseAction => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
-  promise: (api: Api) => api.auth.signup(data),
+  promise: async (api: Api) => {
+    const response = await api.auth.signup(data);
+    if (response.deviceToken) {
+      api.client.setDeviceToken(response.deviceToken);
+    }
+
+    return response;
+  },
   fioWallets: data.fioWallets,
 });
 
