@@ -7,6 +7,7 @@ import {
   CONFIRM_METAMASK_ACTION,
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
+import { WALLET_API_PROVIDER_ERRORS_CODE } from '../../../../constants/errors';
 
 import { getPublicKey } from '../../../../util/snap';
 import { fireActionAnalyticsEvent } from '../../../../util/analytics';
@@ -88,7 +89,9 @@ export const CreateMetamaskWallet: React.FC<Props> = props => {
       });
     } catch (err) {
       setProcessing(false);
-      return onOptionCancel(err);
+      return onOptionCancel(
+        err?.code === WALLET_API_PROVIDER_ERRORS_CODE.REJECTED ? null : err,
+      );
     }
 
     fireActionAnalyticsEvent(CONFIRM_METAMASK_ACTION.CREATE_WALLET, values);

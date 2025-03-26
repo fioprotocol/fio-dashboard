@@ -107,3 +107,11 @@ export const ERROR_MESSAGES_BY_CODE = {
   LIMIT_EXCEEDED: 'Too many requests. Please try again later.',
   GENERAL: 'Update email failed. Please try again or set another email.',
 };
+
+export const METAMASK_ERRORS_CODE = {
+  REJECTED: -32603,
+};
+
+export const WALLET_API_PROVIDER_ERRORS_CODE = {
+  REJECTED: 'REJECTED',
+};

@@ -41,7 +41,10 @@ import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { LINKS } from '../../../constants/labels';
 import { USER_PROFILE_TYPE } from '../../../constants/profile';
-import { ERROR_MESSAGES_BY_CODE } from '../../../constants/errors';
+import {
+  ERROR_MESSAGES_BY_CODE,
+  WALLET_API_PROVIDER_ERRORS_CODE,
+} from '../../../constants/errors';
 
 import { FioWalletDoublet } from '../../../types';
 import {
@@ -218,8 +221,9 @@ const WalletSettings: React.FC<Props> = props => {
         await deleteWallet();
       } catch (error) {
         log.error(error);
-
-        dispatch(showGenericErrorModal());
+        if (error?.code !== WALLET_API_PROVIDER_ERRORS_CODE.REJECTED) {
+          dispatch(showGenericErrorModal());
+        }
       } finally {
         setLoading(prev => ({ ...prev, deleteWallet: false }));
       }

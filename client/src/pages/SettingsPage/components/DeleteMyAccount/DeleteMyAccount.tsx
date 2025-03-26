@@ -15,7 +15,10 @@ import { log } from '../../../../util/general';
 
 import { ROUTES } from '../../../../constants/routes';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
-import { ERROR_MESSAGES_BY_CODE } from '../../../../constants/errors';
+import {
+  ERROR_MESSAGES_BY_CODE,
+  WALLET_API_PROVIDER_ERRORS_CODE,
+} from '../../../../constants/errors';
 import { WALLET_CREATED_FROM } from '../../../../constants/common';
 
 import { User } from '../../../../types';
@@ -122,7 +125,10 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
         });
       } catch (error) {
         toggleConfirmationModal(false);
-        showGenericErrorModal();
+
+        if (error?.code !== WALLET_API_PROVIDER_ERRORS_CODE.REJECTED) {
+          showGenericErrorModal();
+        }
       }
     }
   }, [deleteAccount, isProfileTypePrimary, metaMaskProvider]);
