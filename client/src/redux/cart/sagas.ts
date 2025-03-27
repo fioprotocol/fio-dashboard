@@ -23,9 +23,9 @@ import {
   HANDLE_DOMAIN_RENEW,
   UPDATE_CART_ITEM_PERIOD_SUCCESS,
 } from './actions';
-import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import {
+  ACTIONS,
   NOTIFICATIONS_CONTENT,
   NOTIFICATIONS_CONTENT_TYPE,
 } from '../../constants/notifications';

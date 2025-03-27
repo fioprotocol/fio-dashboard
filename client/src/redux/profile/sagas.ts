@@ -78,6 +78,8 @@ import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
     api.client.setToken(action.data.jwt);
+    action.data.deviceToken &&
+      api.client.setDeviceToken(action.data.deviceToken);
     const hasRedirectTo: {
       pathname: string;
       state: object;
@@ -165,6 +167,8 @@ export function* guestLoginSuccess(api: Api): Generator {
 export function* alternateLoginSuccess(history: History, api: Api): Generator {
   yield takeEvery(ALTERNATE_LOGIN_SUCCESS, function*(action: Action) {
     api.client.setToken(action.data.jwt);
+    action.data.deviceToken &&
+      api.client.setDeviceToken(action.data.deviceToken);
     const hasRedirectTo: {
       pathname: string;
       state: object;

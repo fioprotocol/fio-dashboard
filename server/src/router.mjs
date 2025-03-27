@@ -46,6 +46,7 @@ router.get('/admin-auth/reset-password/check', routes.auth.adminResetPasswordChe
 
 router.get('/users/me', checkUserAuth, routes.users.info);
 router.delete('/users/me', checkUserAuth, routes.users.delete);
+router.get('/users/nonce', checkUserAuth, routes.users.nonce);
 router.get('/users/:id', checkAdminAuth, routes.users.show);
 router.post('/users', routes.users.create);
 router.post('/users/setRecovery', checkUserAuth, routes.users.setRecovery);

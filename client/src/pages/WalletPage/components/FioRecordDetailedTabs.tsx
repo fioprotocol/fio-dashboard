@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RequestStatus } from '@fioprotocol/fiosdk';
+import { FioRequestStatus } from '@fioprotocol/fiosdk';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
@@ -60,7 +60,7 @@ const FioRecordDetailedTabs: React.FC<Props> = props => {
   const { fioRecordDecrypted } = props;
   if (!fioRecordDecrypted) return null;
 
-  if (fioRecordDecrypted.fioRecord.status !== RequestStatus.sentToBlockchain)
+  if (fioRecordDecrypted.fioRecord.status !== FioRequestStatus.sentToBlockchain)
     return (
       <>
         <h5 className={classes.subtitle}>{DetailedTabsList[0].title}</h5>

@@ -11,8 +11,12 @@ import ModalUIComponent from '../ModalUIComponent';
 import ChangeEmailForm from './components/ChangeEmailForm/ChangeEmailForm';
 import { PasswordForm } from './components/PasswordForm';
 
-import { CONFIRM_METAMASK_ACTION } from '../../../../constants/common';
+import {
+  CONFIRM_METAMASK_ACTION,
+  WALLET_CREATED_FROM,
+} from '../../../../constants/common';
 import { USER_PROFILE_TYPE } from '../../../../constants/profile';
+import { WALLET_API_PROVIDER_ERRORS_CODE } from '../../../../constants/errors';
 
 import { log } from '../../../../util/general';
 import { emailToUsername } from '../../../../utils';
@@ -21,9 +25,14 @@ import { fireActionAnalyticsEvent } from '../../../../util/analytics';
 import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import apis from '../../../../api';
+import {
+  authenticateWallet,
+  generateSignatures,
+} from '../../../../services/api';
 
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
+import { EdgeWalletApiProvider } from '../../../../services/api/wallet/edge';
 
 import classes from './ChangeEmail.module.scss';
 
@@ -47,7 +56,7 @@ const ChangeEmail: React.FC<Props> = props => {
     newEmail: string;
     newUsername?: string;
   } | null>(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const [passwordModalError, setPasswordModalError] = useState<Error | null>(
     null,
   );
@@ -75,7 +84,7 @@ const ChangeEmail: React.FC<Props> = props => {
   }, [loading]);
 
   const onActionButtonClick = () => {
-    setError(false);
+    setError(null);
     toggleModal(true);
     setSubmitData(null);
   };
@@ -96,34 +105,70 @@ const ChangeEmail: React.FC<Props> = props => {
       toggleLoading(true);
 
       try {
-        const updateEmailResult = await apis.auth.updateEmail({
-          newEmail,
+        const { walletApiProvider, nonce } = await authenticateWallet({
+          walletProviderName: password
+            ? WALLET_CREATED_FROM.EDGE
+            : WALLET_CREATED_FROM.METAMASK,
+          authParams: password
+            ? {
+                username: user?.username,
+                password,
+              }
+            : { provider: metaMaskProvider },
         });
 
-        let updateEmailSuccess = !!updateEmailResult;
-        const updatedUsername = updateEmailResult.newUsername;
+        let updateEmailResult = null;
+        let updateEmailSuccess = false;
+        let updatedUsername = '';
+
+        try {
+          updateEmailResult = await apis.auth.updateEmail({
+            newEmail,
+            nonce,
+          });
+
+          updateEmailSuccess = !!updateEmailResult;
+          updatedUsername = updateEmailResult.newUsername;
+        } catch (error) {
+          log.error('Update email error', error);
+
+          updateEmailSuccess = false;
+          updatedUsername = '';
+
+          toggleLoading(false);
+          setPasswordModalError(error);
+          setError(error);
+          setSubmitData(null);
+        }
 
         if (updatedUsername && password && showPasswordModal) {
           try {
             await apis.edge.changeUsername({
+              account: (walletApiProvider as EdgeWalletApiProvider).account,
               newUsername: updatedUsername,
               password,
-              username: user?.username,
             });
           } catch (error) {
             log.error('Change edge username error');
 
             updateEmailSuccess = false;
-
-            await apis.auth.updateEmail({
-              newEmail: user?.email,
-              newUsername: user?.username,
-            });
+            try {
+              const nonce = await generateSignatures(walletApiProvider);
+              await apis.auth.updateEmail({
+                newEmail: user?.email,
+                newUsername: user?.username,
+                nonce,
+              });
+            } catch (error) {
+              log.error('Restore email error', error);
+            }
 
             toggleLoading(false);
             setPasswordModalError(error);
           }
         }
+
+        await walletApiProvider?.logout();
 
         if (updateEmailSuccess) {
           loadProfile();
@@ -135,20 +180,36 @@ const ChangeEmail: React.FC<Props> = props => {
         }
       } catch (err) {
         log.error(err);
-        setError(true);
 
         toggleLoading(false);
         setSubmitData(null);
+
+        if (err?.code !== WALLET_API_PROVIDER_ERRORS_CODE.REJECTED) {
+          setError(err);
+
+          if (err?.code && password) {
+            setPasswordModalError(err);
+            return;
+          }
+        }
+
         togglePasswordModal(false);
       }
     },
-    [loadProfile, showPasswordModal, submitData, user?.email, user?.username],
+    [
+      loadProfile,
+      showPasswordModal,
+      submitData,
+      user?.email,
+      user?.username,
+      metaMaskProvider,
+    ],
   );
 
   const handleChangeEmail = useCallback(
     async (values: FormValuesProps) => {
       const { newEmail } = values;
-      error && setError(false);
+      error && setError(null);
 
       if (isPrimaryProfile) {
         const newUsername = emailToUsername(newEmail);
@@ -156,7 +217,7 @@ const ChangeEmail: React.FC<Props> = props => {
         const { error: usernameError } = await usernameAvailable(newUsername);
 
         if (usernameError) {
-          setError(true);
+          setError(new Error(usernameError));
 
           toggleLoading(false);
           return { newEmail: 'This username is not available' };

@@ -3,6 +3,7 @@ import React from 'react';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import bitPayLogoSrc from '../../assets/images/bitpay-logo-white.png';
+import bitPayCurrenciesSrc from '../../assets/images/bp-btn-pay-currencies.svg';
 
 import { ClickEventTypes } from '../../types';
 
@@ -23,6 +24,7 @@ type ButtonTextProps = {
 export const BITPAY_LOGO_WIDTH = {
   default: '86px',
   hasLowHeight: '65px',
+  currencies: '120px',
 } as const;
 
 export const BitPayButtonText: React.FC<ButtonTextProps> = props => {
@@ -41,16 +43,32 @@ export const BitPayButtonText: React.FC<ButtonTextProps> = props => {
     </div>
   );
 };
+export const BitPayCurrencies: React.FC<ButtonTextProps> = props => {
+  const { width } = props;
+  return (
+    <img
+      src={bitPayCurrenciesSrc}
+      alt="Currencies"
+      className=""
+      width={width}
+    />
+  );
+};
 
 export const BitPayButton: React.FC<Props> = props => {
   const buttonTextDimensions =
     BITPAY_LOGO_WIDTH[props.bitPayButtonSize] || BITPAY_LOGO_WIDTH.default;
 
   return (
-    <SubmitButton
-      {...props}
-      text={<BitPayButtonText width={buttonTextDimensions} />}
-      isCobalt
-    />
+    <div>
+      <SubmitButton
+        {...props}
+        text={<BitPayButtonText width={buttonTextDimensions} />}
+        isCobalt
+      />
+      <div className="flex-1 d-flex justify-content-center align-items-center mt-2">
+        <BitPayCurrencies width={BITPAY_LOGO_WIDTH.currencies} />
+      </div>
+    </div>
   );
 };

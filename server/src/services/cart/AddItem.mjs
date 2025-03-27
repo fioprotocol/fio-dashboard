@@ -18,6 +18,7 @@ import { fioApi } from '../../external/fio.mjs';
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 import { checkPrices } from '../../utils/prices.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
+import { normalizeFioHandle } from '../../utils/fio.mjs';
 import { Domain } from '../../models/Domain.mjs';
 
 export default class AddItem extends Base {
@@ -59,9 +60,9 @@ export default class AddItem extends Base {
     } = item;
 
     return {
-      id,
-      address,
-      domain,
+      id: normalizeFioHandle(id),
+      address: normalizeFioHandle(address),
+      domain: normalizeFioHandle(domain),
       domainType,
       isFree,
       isWatchedDomain,

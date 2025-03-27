@@ -304,6 +304,11 @@ export type PinConfirmation = {
   error?: string | (Error & { wait?: number });
 };
 
+export type Nonce = {
+  challenge: string;
+  signatures: string[];
+};
+
 export type FeePrice = {
   nativeFio: string | null;
   fio: string;

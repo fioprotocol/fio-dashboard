@@ -4,6 +4,7 @@ import {
   makeEdgeContext,
 } from 'edge-core-js';
 import plugins from 'edge-currency-accountbased';
+import { base64 } from 'rfc4648';
 import {
   EdgeAccount,
   EdgeAccountOptions,
@@ -16,6 +17,25 @@ import { handleEdgeKI } from './middleware/edge';
 import { log } from '../util/general';
 import Base from './base';
 import { sleep } from '../utils';
+
+interface EdgeInternalStuff {
+  _ai: {
+    props: {
+      state: {
+        login: {
+          stashes: Array<{
+            username: string;
+            loginId: Uint8Array;
+          }>;
+        };
+      };
+    };
+  };
+}
+
+interface EdgeContextWithInternal extends EdgeContext {
+  $internalStuff: EdgeInternalStuff;
+}
 
 const NO_EDGE_CONTEXT_MESSAGE = 'Edge Context is not initialised';
 const DEFAULT_WALLET_DELETE_TIMEOUT = 5000;
@@ -245,16 +265,15 @@ export default class Edge extends Base {
   }
 
   async changeUsername({
+    account,
     newUsername,
     password,
-    username,
   }: {
+    account: EdgeAccount;
     newUsername: string;
     password: string;
-    username: string;
   }): Promise<{ status: number }> {
     try {
-      const account = await this.login(username, password);
       const results: { status: number } = { status: 0 };
 
       if (account) {
@@ -262,8 +281,6 @@ export default class Edge extends Base {
 
         // change username method doesn't return anything, so to be sure that new username was successfully changed we check if username available
         const isNewUsernameSet = await this.usernameAvailable(newUsername);
-
-        await account.logout();
 
         if (isNewUsernameSet) {
           results.status = 1;
@@ -316,6 +333,24 @@ export default class Edge extends Base {
     }
 
     throw new Error('No recovery key found');
+  }
+
+  getLoginId(username: string): string {
+    try {
+      this.validateEdgeContext();
+      const localUser = (this
+        .edgeContext as EdgeContextWithInternal).$internalStuff._ai.props.state.login.stashes.find(
+        ({ username: localUsername }) => localUsername === username,
+      );
+      if (localUser?.loginId) {
+        return base64.stringify(localUser.loginId);
+      }
+    } catch (e) {
+      this.logError(e);
+      throw e;
+    }
+
+    throw new Error('No loginId found');
   }
 
   async disableRecovery(account: EdgeAccount): Promise<{ status: number }> {
@@ -402,6 +437,7 @@ export default class Edge extends Base {
     try {
       await account.deleteRemoteAccount();
       await account.logout();
+      await this.edgeContext.forgetAccount(account.rootLoginId);
       return { status: 1 };
     } catch (e) {
       this.logError(e);

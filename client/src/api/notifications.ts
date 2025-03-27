@@ -28,7 +28,7 @@ export default class Notifications extends Base {
 
   update(data: {
     id: number;
-    closeDate: string;
+    closeDate: Date;
   }): Promise<NotificationsUpdateResponse> {
     return this.apiClient.put('notifications', { data });
   }

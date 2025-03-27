@@ -27,8 +27,8 @@ const reduxConnect = connect(
     closeSuccessModal: () => {
       dispatch(closeGenericSuccessModal());
     },
-    showSuccessModal: (message: string, title: string) => {
-      dispatch(showGenericSuccessModal(message, title));
+    showSuccessModal: (message: string, title: string, timeout?: number) => {
+      dispatch(showGenericSuccessModal(message, title, undefined, timeout));
     },
     showGenericErrorModal: () => {
       dispatch(showGenericErrorModal());

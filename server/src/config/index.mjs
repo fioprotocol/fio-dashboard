@@ -11,6 +11,7 @@ export default {
   port: process.env.API_PORT,
   ws: process.env.WS_PORT,
   secret: process.env.HASH_SECRET,
+  deviceSecret: process.env.DEVICE_SECRET,
   jwt: {
     secret: process.env.JWT_SECRET,
     options: {
@@ -55,6 +56,10 @@ export default {
     fioDashUsernameDelimiter: `.fio.dash.${process.env.EDGE_ACC_DELIMITER || ''}`,
   },
   exportOrdersCSVLimit: Number(process.env.EXPORT_ORDERS_CSV_LIMIT),
+  edge: {
+    loginApiKey: process.env.EDGE_LOGIN_API_KEY,
+    loginApiUrl: process.env.EDGE_LOGIN_API_URL,
+  },
 
   ...dbConfig,
 };

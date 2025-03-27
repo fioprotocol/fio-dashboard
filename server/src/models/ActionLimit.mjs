@@ -13,6 +13,9 @@ export class ActionLimit extends Base {
   static get ACTION() {
     return {
       SEND_RECOVERY_EMAIL: 'SEND_RECOVERY_EMAIL',
+      UPDATE_EMAIL: 'UPDATE_EMAIL',
+      USER_NONCE: 'USER_NONCE',
+      WALLET_LIST_UPDATE: 'WALLET_LIST_UPDATE',
     };
   }
 
@@ -96,12 +99,11 @@ export class ActionLimit extends Base {
     });
   }
 
-  static async executeWithinLimit(
-    userId,
-    action,
-    callback,
-    { maxCount = ACTION_LIMIT, hours = ACTION_LIMIT_HOURS } = {},
-  ) {
+  static async executeWithinLimit(userId, action, callback, options = {}) {
+    let { maxCount, hours } = options;
+    maxCount = maxCount ? maxCount : ACTION_LIMIT;
+    hours = hours ? hours : ACTION_LIMIT_HOURS;
+
     const existing = await this.getByAction(userId, action, hours);
 
     if (existing && existing.count >= maxCount) {

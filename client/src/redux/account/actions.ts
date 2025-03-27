@@ -1,5 +1,5 @@
 import { Api } from '../../api';
-import { FioWalletDoublet, NewFioWalletDoublet } from '../../types';
+import { FioWalletDoublet, NewFioWalletDoublet, Nonce } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'account';
@@ -20,22 +20,22 @@ export const ADD_WALLET_REQUEST = `${prefix}/ADD_WALLET_REQUEST`;
 export const ADD_WALLET_SUCCESS = `${prefix}/ADD_WALLET_SUCCESS`;
 export const ADD_WALLET_FAILURE = `${prefix}/ADD_WALLET_FAILURE`;
 
-export const addWallet = ({
-  name,
-  publicKey,
-  edgeId,
-  from,
-  data,
-}: NewFioWalletDoublet): CommonPromiseAction => ({
+export const addWallet = (
+  { name, publicKey, edgeId, from, data }: NewFioWalletDoublet,
+  nonce: Nonce,
+): CommonPromiseAction => ({
   types: [ADD_WALLET_REQUEST, ADD_WALLET_SUCCESS, ADD_WALLET_FAILURE],
   promise: (api: Api) =>
-    api.account.addWallet({
-      name,
-      publicKey,
-      edgeId,
-      from,
-      data,
-    }),
+    api.account.addWallet(
+      {
+        name,
+        publicKey,
+        edgeId,
+        from,
+        data,
+      },
+      nonce,
+    ),
 });
 
 export const RESET_ADD_WALLET_SUCCESS = `${prefix}/RESET_ADD_WALLET_SUCCESS`;

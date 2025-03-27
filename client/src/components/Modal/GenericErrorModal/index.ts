@@ -3,7 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../../utils';
 
-import { closeGenericErrorModal } from '../../../redux/modal/actions';
+import {
+  closeGenericErrorModal,
+  clearGenericErrorData,
+} from '../../../redux/modal/actions';
 import {
   genericErrorData,
   showGenericError,
@@ -18,6 +21,7 @@ const reduxConnect = connect(
   }),
   {
     closeGenericErrorModal,
+    clearGenericErrorData,
   },
 );
 

@@ -1,18 +1,28 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import DangerModal from '../../../../components/Modal/DangerModal';
 import Modal from '../../../../components/Modal/Modal';
 import SecurityItem from '../SecurityItem';
 import PasswordForm, { PasswordFormValues } from './PasswordForm';
 
-import { ROUTES } from '../../../../constants/routes';
-import { USER_PROFILE_TYPE } from '../../../../constants/profile';
+import { useMetaMaskProvider } from '../../../../hooks/useMetaMaskProvider';
 
 import apis from '../../../../api';
+import { authenticateWallet } from '../../../../services/api/wallet';
 import { log } from '../../../../util/general';
 
+import { ROUTES } from '../../../../constants/routes';
+import { USER_PROFILE_TYPE } from '../../../../constants/profile';
+import {
+  ERROR_MESSAGES_BY_CODE,
+  WALLET_API_PROVIDER_ERRORS_CODE,
+} from '../../../../constants/errors';
+import { WALLET_CREATED_FROM } from '../../../../constants/common';
+
 import { User } from '../../../../types';
+import { EdgeWalletApiProvider } from '../../../../services/api/wallet/edge';
 
 import classes from '../../styles/DeleteMyAccount.module.scss';
 
@@ -31,20 +41,20 @@ type DeleteMyAccountProps = {
   username: string;
   logout: () => void;
   closeSuccessModal: () => void;
-  showSuccessModal: (m: string, t: string) => void;
+  showSuccessModal: (m: string, t: string, tm?: number) => void;
   showGenericErrorModal: () => void;
 };
 
-const SUCCESS_MODAL_TIMEOUT_MS = 2000;
+const SUCCESS_MODAL_TIMEOUT_MS = 5000;
 
 const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
   user,
   username,
   logout,
-  closeSuccessModal,
   showSuccessModal,
   showGenericErrorModal,
 }) => {
+  const metaMaskProvider = useMetaMaskProvider();
   const [showConfirmationModal, toggleConfirmationModal] = useState(false);
   const [showPasswordModal, togglePasswordModal] = useState(false);
   const [checkingPassword, setCheckingPassword] = useState(false);
@@ -61,40 +71,67 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
     toggleConfirmationModal(false);
   }, []);
 
-  const onDeleteConfirmed = useCallback(async () => {
-    toggleConfirmationModal(false);
-    if (isProfileTypePrimary) {
-      togglePasswordModal(true);
-    } else {
+  const deleteAccount = useCallback(
+    async (authParams: {
+      username?: string;
+      password?: string;
+      provider?: MetaMaskInpageProvider;
+    }) => {
       setDeletingAccount(true);
-
       try {
-        await apis.auth.deleteUser();
+        const { walletApiProvider, nonce } = await authenticateWallet({
+          walletProviderName: isProfileTypePrimary
+            ? WALLET_CREATED_FROM.EDGE
+            : WALLET_CREATED_FROM.METAMASK,
+          authParams,
+        });
+
+        await apis.auth.deleteUser(nonce);
+
+        if (isProfileTypePrimary) {
+          await apis.edge.deleteAccount(
+            (walletApiProvider as EdgeWalletApiProvider).account,
+          );
+        }
+
+        await walletApiProvider.logout();
 
         showSuccessModal(
           ITEM_PROPS.successModalSubtitle,
           ITEM_PROPS.successModalTitle,
+          SUCCESS_MODAL_TIMEOUT_MS,
         );
 
-        logout();
-
-        setTimeout(() => {
-          closeSuccessModal();
-        }, SUCCESS_MODAL_TIMEOUT_MS);
-      } catch (error) {
-        log.error(error);
-        showGenericErrorModal();
-      } finally {
         setDeletingAccount(false);
+        logout();
+      } catch (error) {
+        setDeletingAccount(false);
+        log.error(error);
+
+        throw error;
+      }
+    },
+    [isProfileTypePrimary, logout, showGenericErrorModal, showSuccessModal],
+  );
+
+  const onDeleteConfirmed = useCallback(async () => {
+    if (isProfileTypePrimary) {
+      toggleConfirmationModal(false);
+      togglePasswordModal(true);
+    } else {
+      try {
+        await deleteAccount({
+          provider: metaMaskProvider as MetaMaskInpageProvider,
+        });
+      } catch (error) {
+        toggleConfirmationModal(false);
+
+        if (error?.code !== WALLET_API_PROVIDER_ERRORS_CODE.REJECTED) {
+          showGenericErrorModal();
+        }
       }
     }
-  }, [
-    closeSuccessModal,
-    isProfileTypePrimary,
-    logout,
-    showGenericErrorModal,
-    showSuccessModal,
-  ]);
+  }, [deleteAccount, isProfileTypePrimary, metaMaskProvider]);
 
   const onClosePasswordModal = useCallback(() => {
     togglePasswordModal(false);
@@ -102,38 +139,33 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
 
   const onFormSubmit = async (values: PasswordFormValues) => {
     setCheckingPassword(true);
-    const { username, password } = values;
-    let account;
-    try {
-      account = await apis.edge.login(username, password);
-      if (!account) throw new Error();
-    } catch (e) {
-      return { password: 'Invalid Password' };
-    } finally {
-      setCheckingPassword(false);
-    }
 
-    setDeletingAccount(true);
     try {
-      await apis.auth.deleteUser();
-      await apis.edge.deleteAccount(account);
-      togglePasswordModal(false);
-      showSuccessModal(
-        ITEM_PROPS.successModalSubtitle,
-        ITEM_PROPS.successModalTitle,
-      );
-      logout();
-      setTimeout(() => {
-        closeSuccessModal();
-      }, SUCCESS_MODAL_TIMEOUT_MS);
-    } catch (e) {
-      return { password: 'Something went wrong, please try again later' };
-    } finally {
-      setDeletingAccount(false);
+      await deleteAccount(values);
+    } catch (error) {
+      log.error(error);
+
+      setCheckingPassword(false);
+      if (!error.code) showGenericErrorModal();
+
+      return {
+        password:
+          ERROR_MESSAGES_BY_CODE[
+            error?.code as keyof typeof ERROR_MESSAGES_BY_CODE
+          ] || ERROR_MESSAGES_BY_CODE.SERVER_ERROR,
+      };
     }
 
     return {};
   };
+
+  useEffect(() => {
+    return () => {
+      setDeletingAccount(false);
+      toggleConfirmationModal(false);
+      togglePasswordModal(false);
+    };
+  }, []);
 
   const renderDangerNotice = () => (
     <p className={classes.dangerNotice}>

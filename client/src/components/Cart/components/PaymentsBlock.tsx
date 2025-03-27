@@ -93,7 +93,7 @@ const PaymentsBlock: React.FC<Props> = props => {
   }
 
   if (
-    !hasLowBalance &&
+    hasLowBalance &&
     !isFree &&
     !loading &&
     cartItems.length &&

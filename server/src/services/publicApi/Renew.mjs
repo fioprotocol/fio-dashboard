@@ -19,7 +19,7 @@ import { normalizePriceForBitPay } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import logger from '../../logger.mjs';
-
+import { normalizeFioHandle } from '../../utils/fio.mjs';
 export default class Renew extends Base {
   async execute(args) {
     try {
@@ -64,9 +64,9 @@ export default class Renew extends Base {
       });
     }
 
-    const lowerCasedAddress = address ? address.toLowerCase() : address;
+    const normalizedFioHandle = normalizeFioHandle(address);
 
-    const { type, fioAddress, fioDomain } = destructAddress(lowerCasedAddress);
+    const { type, fioAddress, fioDomain } = destructAddress(normalizedFioHandle);
 
     const addressCantBeRenewedRes = {
       error: `${type} not registered`,
@@ -76,7 +76,7 @@ export default class Renew extends Base {
 
     try {
       fioAddress
-        ? FIOSDK.isFioAddressValid(lowerCasedAddress)
+        ? FIOSDK.isFioAddressValid(normalizedFioHandle)
         : FIOSDK.isFioDomainValid(fioDomain);
     } catch (e) {
       return generateErrorResponse(this.res, {
@@ -89,7 +89,7 @@ export default class Renew extends Base {
     if (!publicKey) {
       if (type === 'account') {
         try {
-          publicKey = await fioApi.getPublicAddressByFioAddress(lowerCasedAddress);
+          publicKey = await fioApi.getPublicAddressByFioAddress(normalizedFioHandle);
         } catch (e) {
           return generateErrorResponse(this.res, addressCantBeRenewedRes);
         }
@@ -128,7 +128,7 @@ export default class Renew extends Base {
     }
 
     const isAccountCouldBeRenewed = await fioApi.isAccountCouldBeRenewed(
-      lowerCasedAddress,
+      normalizedFioHandle,
     );
 
     if (!isAccountCouldBeRenewed) {

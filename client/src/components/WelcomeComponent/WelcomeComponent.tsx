@@ -81,7 +81,7 @@ export const WelcomeComponent: FC<Props> = props => {
                   <input
                     className={classes.input}
                     placeholder="Enter your handle name"
-                    value={fioAddress}
+                    value={fioAddress || ''}
                     onChange={handleChangeFioAddress}
                   />
                 </div>

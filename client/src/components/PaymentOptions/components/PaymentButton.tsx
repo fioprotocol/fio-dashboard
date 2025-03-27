@@ -17,6 +17,7 @@ export type PaymentButtonProps = {
   afterTextIcon?: React.ReactNode | null;
   loading: boolean;
   onClick: () => void;
+  underButton?: React.ReactNode | null;
 };
 
 export const PaymentButton: React.FC<PaymentButtonProps> = props => {
@@ -30,28 +31,34 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
     afterTextIcon,
     loading,
     onClick,
+    underButton = null,
   } = props;
 
   if (hideButton) return null;
 
   return (
-    <Button
-      className={classnames(
-        classes.button,
-        hasCobaltBackground && classes.hasCobaltBackground,
-        isTextCentered && classes.isTextCentered,
-      )}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {icon && <div className="mr-2">{icon}</div>}
-      <div className={classes.buttonText}>{buttonText}</div>
-      {afterTextIcon && <div className="ml-2">{afterTextIcon}</div>}
-      {loading && (
-        <div>
-          <Loader isWhite hasSmallSize />
-        </div>
-      )}
-    </Button>
+    <>
+      <Button
+        className={classnames(
+          classes.button,
+          hasCobaltBackground && classes.hasCobaltBackground,
+          isTextCentered && classes.isTextCentered,
+        )}
+        onClick={onClick}
+        disabled={disabled}
+      >
+        {icon && <div className="mr-2">{icon}</div>}
+        <div className={classes.buttonText}>{buttonText}</div>
+        {afterTextIcon && <div className="ml-2">{afterTextIcon}</div>}
+        {loading && (
+          <div>
+            <Loader isWhite hasSmallSize />
+          </div>
+        )}
+      </Button>
+      {underButton ? (
+        <div className={classes.underButton}>{underButton}</div>
+      ) : null}
+    </>
   );
 };

@@ -51,3 +51,14 @@ export const handleExpiredDomains = async ({ domainsList }) => {
   }
   return domainsList;
 };
+
+export const normalizeFioHandle = fioHandle => {
+  if (!fioHandle) return null;
+
+  // Using 'let' to allow for future FIO Handle normalization rules
+  let normalizedFioHandle = fioHandle;
+
+  normalizedFioHandle = normalizedFioHandle.toLowerCase();
+
+  return normalizedFioHandle;
+};

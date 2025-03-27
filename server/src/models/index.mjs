@@ -32,6 +32,7 @@ export const {
   SearchTerm,
   TokenCode,
   User,
+  UserDevice,
   Username,
   Var,
   Wallet,

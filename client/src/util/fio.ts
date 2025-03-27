@@ -3,7 +3,7 @@ import {
   allRules,
   validate,
   RawRequest,
-  RequestStatus,
+  FioRequestStatus,
   Action,
 } from '@fioprotocol/fiosdk';
 
@@ -182,10 +182,10 @@ export const statusBadgeColours = (
   isRose: boolean;
   isYellowGreen: boolean;
 } => ({
-  isBlue: RequestStatus.sentToBlockchain === status,
-  isOrange: RequestStatus.rejected === status,
-  isRose: RequestStatus.requested === status,
-  isYellowGreen: RequestStatus.canceled === status,
+  isBlue: FioRequestStatus.sentToBlockchain === status,
+  isOrange: FioRequestStatus.rejected === status,
+  isRose: FioRequestStatus.requested === status,
+  isYellowGreen: FioRequestStatus.canceled === status,
 });
 
 export const isFioChain = (chain: string): boolean => chain === CHAIN_CODES.FIO;
@@ -354,4 +354,15 @@ export const checkIsDomainExpired = async (domainName: string) => {
   const expiration = await getDomainExpiration(domainName);
 
   return expiration && isDomainExpired(domainName, expiration);
+};
+
+export const normalizeFioHandle = (fioHandle: string): string => {
+  if (!fioHandle) return null;
+
+  // Using 'let' to allow for future FIO Handle normalization rules
+  let normalizedFioHandle = fioHandle;
+
+  normalizedFioHandle = normalizedFioHandle.toLowerCase();
+
+  return normalizedFioHandle;
 };

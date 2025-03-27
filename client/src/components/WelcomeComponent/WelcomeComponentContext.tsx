@@ -27,6 +27,7 @@ import {
 
 import useEffectOnce from '../../hooks/general';
 import { log } from '../../util/general';
+import { normalizeFioHandle } from '../../util/fio';
 
 import { DefaultWelcomeComponentProps } from './types';
 import { ROUTES } from '../../constants/routes';
@@ -299,14 +300,17 @@ export const useContext = (
   ]);
 
   const handleGetFioAddress = useCallback(() => {
-    history.push(
-      `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress}`,
-    );
+    let routeString = `${ROUTES.FIO_ADDRESSES_SELECTION}`;
+
+    if (fioAddress) {
+      routeString += `?${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress}`;
+    }
+    history.push(routeString);
   }, [history, fioAddress]);
 
   const handleChangeFioAddress = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
-      setFioAddress(evt.target.value);
+      setFioAddress(normalizeFioHandle(evt.target.value));
     },
     [setFioAddress],
   );
