@@ -378,6 +378,15 @@ export class Order extends Base {
       where: orderWhere,
       include: [{ model: User, where: userWhere, required: true }, ReferrerProfile],
     });
+    if (!orderInst) {
+      logger.error(
+        `orderInfo. Order not found: ${orderId}, orderWhere: ${JSON.stringify(
+          orderWhere,
+        )}, userWhere: ${JSON.stringify(userWhere)}`,
+      );
+
+      return null;
+    }
     const orderItems = await OrderItem.findAll({
       where: { orderId },
       include: [
