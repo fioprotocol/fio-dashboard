@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactDOMServer from 'react-dom/server';
 
@@ -63,10 +63,11 @@ export const useContext = (): OrdersPageProps => {
   const isDesktop = useCheckIfDesktop();
   const hasMoreOrders = totalOrdersCount - ordersList.length > 0;
 
-  const getMoreOrders = () => {
+  const getMoreOrders = useCallback(() => {
     if (!userId && !publicKey) {
       return;
     }
+
     dispatch(
       getUserOrdersList({
         limit: ORDERS_ITEMS_LIMIT,
@@ -75,7 +76,7 @@ export const useContext = (): OrdersPageProps => {
       }),
     );
     setOffset(offset + ORDERS_ITEMS_LIMIT);
-  };
+  }, [dispatch, offset, publicKey, userId]);
 
   const getOrder = async (orderId: string) => {
     const orderItem = ordersList.find(it => it.id === orderId);
@@ -90,51 +91,51 @@ export const useContext = (): OrdersPageProps => {
 
   useEffectOnce(getMoreOrders, [dispatch, offset], !!userId || !!publicKey);
 
-  const onDownloadClick = async (data: {
-    orderId: string;
-    orderNumber: string;
-    togglePdfLoading: (loading: boolean) => void;
-  }) => {
-    const { orderId, orderNumber, togglePdfLoading } = data;
-    try {
-      togglePdfLoading(true);
-      const orderItemToPrint = await getOrder(orderId);
+  const onDownloadClick = useCallback(
+    async (data: {
+      orderId: string;
+      orderNumber: string;
+      togglePdfLoading: (loading: boolean) => void;
+    }) => {
+      const { orderId, orderNumber, togglePdfLoading } = data;
+      try {
+        togglePdfLoading(true);
 
-      fireInvoiceAnalytics();
+        fireInvoiceAnalytics();
 
-      const componentHtml = ReactDOMServer.renderToString(
-        <OrderDetailedPdf orderItem={orderItemToPrint} />,
-      );
+        const orderItem = ordersList.find(it => it.id === orderId);
 
-      const preparedPageToPrint = generateOrderHtmlToPrint({
-        componentHtml,
-        orderNumber,
-      });
+        // Get user's timezone
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const pdfData = await apis.generatePdfFile.generatePdf(
-        preparedPageToPrint,
-      );
+        const pdfData = await apis.generatePdfFile.generateOrderPdf({
+          orderId,
+          publicKey: orderItem.publicKey,
+          timezone: userTimezone, // Send user's timezone
+        });
 
-      const binaryString = window.atob(pdfData);
-      const binaryLen = binaryString.length;
-      const bytes = new Uint8Array(binaryLen);
-      for (let i = 0; i < binaryLen; i++) {
-        const ascii = binaryString.charCodeAt(i);
-        bytes[i] = ascii;
+        const binaryString = window.atob(pdfData);
+        const binaryLen = binaryString.length;
+        const bytes = new Uint8Array(binaryLen);
+        for (let i = 0; i < binaryLen; i++) {
+          const ascii = binaryString.charCodeAt(i);
+          bytes[i] = ascii;
+        }
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `FIO-App-order-${orderNumber}.pdf`;
+        a.click();
+
+        togglePdfLoading(false);
+      } catch (err) {
+        togglePdfLoading(false);
+        log.error(err);
       }
-      const blob = new Blob([bytes], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `FIO-App-order-${orderNumber}.pdf`;
-      a.click();
-
-      togglePdfLoading(false);
-    } catch (err) {
-      togglePdfLoading(false);
-      log.error(err);
-    }
-  };
+    },
+    [ordersList],
+  );
 
   const onPrintClick = async (orderId: string, orderNumber: string) => {
     try {

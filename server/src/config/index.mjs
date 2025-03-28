@@ -22,6 +22,7 @@ export default {
   mainUrl: process.env.BASE_URL,
   adminUrl: process.env.ADMIN_BASE_URL,
   supportLink: process.env.FIOPROTOCOL_SUPPORT_LINK,
+  fioBlocksTxUrl: process.env.FIO_BLOCKS_TX_URL,
   mail: {
     from: process.env.MAILER_FROM,
     transport: process.env.MAILER_TRANSPORT,
