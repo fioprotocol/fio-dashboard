@@ -190,7 +190,6 @@ export class Order extends Base {
   }
 
   static async list({
-    guestId,
     userId,
     search,
     offset,
@@ -222,7 +221,7 @@ export class Order extends Base {
     }
 
     // do not get orders created by primary|alternate users
-    if (!userId && !guestId) {
+    if (!userId) {
       userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
     }
 

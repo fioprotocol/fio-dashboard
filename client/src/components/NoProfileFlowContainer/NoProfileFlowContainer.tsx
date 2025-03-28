@@ -10,9 +10,13 @@ import { useContext } from './NoProfileFlowContainerContext';
 import { ROUTES } from '../../constants/routes';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
 
+import { RefProfile } from '../../types';
+
 import classes from './NoProfileFlowContainer.module.scss';
 
-type Props = {};
+type Props = {
+  publicKey?: string;
+};
 
 export const NoProfileFlowContainer: React.FC<Props> = props => {
   const { children } = props;
@@ -47,12 +51,31 @@ export const NoProfileFlowContainer: React.FC<Props> = props => {
           verificationParams={verificationParams}
         />
       ) : (
-        React.cloneElement(children as React.ReactElement, {
-          refProfile,
-          publicKey,
-        })
+        <PublicKeyProvider publicKey={publicKey} refProfile={refProfile}>
+          {children}
+        </PublicKeyProvider>
       )}
       <RefFioHandleBanner domainName={domainName} />
     </div>
   );
+};
+
+interface PublicKeyProviderProps {
+  publicKey: string;
+  refProfile: RefProfile;
+  children: React.ReactNode;
+}
+
+const PublicKeyProvider: React.FC<PublicKeyProviderProps> = ({
+  publicKey,
+  refProfile,
+  children,
+}) => {
+  if (React.isValidElement(children) && typeof children.type !== 'string') {
+    return React.cloneElement(children as React.ReactElement, {
+      publicKey,
+      refProfile,
+    });
+  }
+  return <>{children}</>;
 };

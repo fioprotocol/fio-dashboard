@@ -1,7 +1,7 @@
 import { makeServiceRunner } from '../tools';
 
-import GeneratePdfFile from '../services/generate-pdf';
+import GenerateOrderPdf from '../services/orders/GenerateOrderPdf';
 
 export default {
-  create: makeServiceRunner(GeneratePdfFile, req => req.body),
+  createOrderPdf: makeServiceRunner(GenerateOrderPdf, req => req.body),
 };

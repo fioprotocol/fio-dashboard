@@ -67,7 +67,10 @@ export const OrderItemActions: React.FC<Props> = props => {
         <Loader className={classes.loader} />
       ) : (
         <FileDownloadIcon
-          className={classes.icon}
+          className={classnames(
+            classes.icon,
+            disablePdfButton && classes.disabledButton,
+          )}
           onClick={handleDownloadClick}
         />
       )}

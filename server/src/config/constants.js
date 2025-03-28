@@ -145,7 +145,7 @@ const DAY_MS = HOUR_MS * 24; // 1 day
 const PRINT_SCREEN_PARAMS = {
   default: {
     width: '1275px',
-    height: '1803px',
+    height: '1700px',
   },
 };
 

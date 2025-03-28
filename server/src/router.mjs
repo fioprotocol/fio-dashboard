@@ -212,7 +212,11 @@ router.post('/payments/cancel', checkUserAuth, routes.payments.cancel);
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 router.get('/selected-chain-codes', routes.chainCodes.selectedList);
 
-router.post('/generate-pdf', routes.generatePdf.create);
+router.post(
+  '/generate-order-pdf',
+  checkUserOrGuestOptionalAuth,
+  routes.generatePdf.createOrderPdf,
+);
 
 router.post('/verify-twitter', routes.twitter.verify);
 router.get('/verify-abstract-email', routes.external.abstractEmailVerification);

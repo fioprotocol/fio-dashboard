@@ -11,7 +11,7 @@ export default class OrdersList extends Base {
     return {
       offset: ['integer', { min_number: 0 }],
       limit: ['integer', { min_number: 0 }, { max_number: MAX_LIMIT }],
-      publicKey: 'string',
+      publicKey: ['string', 'fio_public_key'],
     };
   }
 
