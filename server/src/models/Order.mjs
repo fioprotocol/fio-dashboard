@@ -190,7 +190,6 @@ export class Order extends Base {
   }
 
   static async list({
-    guestId,
     userId,
     search,
     offset,
@@ -222,7 +221,7 @@ export class Order extends Base {
     }
 
     // do not get orders created by primary|alternate users
-    if (!userId && !guestId) {
+    if (!userId) {
       userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
     }
 
@@ -378,6 +377,15 @@ export class Order extends Base {
       where: orderWhere,
       include: [{ model: User, where: userWhere, required: true }, ReferrerProfile],
     });
+    if (!orderInst) {
+      logger.error(
+        `orderInfo. Order not found: ${orderId}, orderWhere: ${JSON.stringify(
+          orderWhere,
+        )}, userWhere: ${JSON.stringify(userWhere)}`,
+      );
+
+      return null;
+    }
     const orderItems = await OrderItem.findAll({
       where: { orderId },
       include: [

@@ -1,7 +1,19 @@
 import Base from './base';
 
 export default class GeneratePdfFile extends Base {
-  generatePdf(htmlString: string): Promise<string> {
-    return this.apiClient.post('generate-pdf', { data: htmlString });
+  generateOrderPdf({
+    orderId,
+    publicKey,
+    timezone,
+  }: {
+    orderId: string;
+    publicKey?: string;
+    timezone?: string;
+  }): Promise<string> {
+    return this.apiClient.post('generate-order-pdf', {
+      orderId,
+      publicKey,
+      timezone,
+    });
   }
 }
