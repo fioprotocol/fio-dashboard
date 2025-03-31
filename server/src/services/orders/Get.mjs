@@ -9,7 +9,7 @@ export default class OrdersGet extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
-      publicKey: ['required', 'string'],
+      publicKey: ['string', 'fio_public_key'],
     };
   }
   async execute({ id, publicKey }) {
@@ -31,7 +31,7 @@ export default class OrdersGet extends Base {
     }
 
     // do not get orders created by primary|alternate users
-    if (!userId && !guestId) {
+    if (!userId) {
       userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
     }
 
