@@ -24,6 +24,7 @@ export default class CreateCartFromOrder extends Base {
       const detailedOrder = await Order.orderInfo(orderId, {
         useFormatDetailed: true,
         onlyOrderPayment: true,
+        removePaymentData: true,
         orderWhere: {
           userId,
         },

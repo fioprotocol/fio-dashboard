@@ -115,13 +115,12 @@ export default class WsStatus extends WsBase {
             ) {
               await BitPay.getInvoiceWebHook(order.payment.paymentData.webhookData.id);
             }
-            this.messageData.results = order;
 
-            delete this.messageData.results.data;
-            delete this.messageData.results.user;
-            if (this.messageData.results.payment) {
-              delete this.messageData.results.payment.paymentData;
+            if (order.payment) {
+              delete order.payment.paymentData;
             }
+
+            this.messageData.results = order;
           } catch (e) {
             logger.error(`WS ERROR. Order items set. ${orderId}. ${e}`);
           }
