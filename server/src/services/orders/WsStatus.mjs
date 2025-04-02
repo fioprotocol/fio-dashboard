@@ -1,6 +1,14 @@
+import Sequelize from 'sequelize';
+
 import WsBase from '../WsBase';
 
-import { Order, OrderItemStatus, Payment, BlockchainTransaction } from '../../models';
+import {
+  Order,
+  OrderItemStatus,
+  Payment,
+  BlockchainTransaction,
+  User,
+} from '../../models';
 
 import BitPay from '../../external/payment-processor/bitpay.mjs';
 
@@ -31,12 +39,43 @@ export default class WsStatus extends WsBase {
   }
 
   async watch({ data: { orderNumber } }) {
+    const userId = this.context.id;
+
+    const where = {
+      number: orderNumber,
+    };
+
+    const userWhere = {
+      userProfileType: {
+        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+      },
+    };
+    if (userId) {
+      where.userId = userId;
+      userWhere.id = userId;
+    }
+
+    // do not get orders created by primary|alternate users
+    if (!userId) {
+      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
+    }
+
     try {
       const { id: orderId } =
-        (await Order.findOne({ where: { number: orderNumber } })) || {};
+        (await Order.findOne({
+          raw: true,
+          where,
+          include: [{ model: User, where: userWhere, required: true }],
+        })) || {};
 
-      if (!orderId)
-        throw new Error(`Can't find order id for order number ${orderNumber}`);
+      if (!orderId) {
+        logger.error(
+          `WS ERROR. Order status. Can't find order id for order number ${orderNumber}.`,
+        );
+        this.send(JSON.stringify({ error: 'NOT_FOUND' }));
+        return this.onClose();
+      }
+
       // Update Order status
       try {
         const items = await OrderItemStatus.getAllItemsStatuses(orderId);
@@ -55,6 +94,8 @@ export default class WsStatus extends WsBase {
       const order = await Order.orderInfo(orderId, {
         useFormatDetailed: true,
         onlyOrderPayment: true,
+        orderWhere: where,
+        userWhere,
       });
 
       try {
@@ -74,6 +115,11 @@ export default class WsStatus extends WsBase {
             ) {
               await BitPay.getInvoiceWebHook(order.payment.paymentData.webhookData.id);
             }
+
+            if (order.payment) {
+              delete order.payment.paymentData;
+            }
+
             this.messageData.results = order;
           } catch (e) {
             logger.error(`WS ERROR. Order items set. ${orderId}. ${e}`);
@@ -83,9 +129,6 @@ export default class WsStatus extends WsBase {
             data: this.messageData,
           });
 
-          delete data.data;
-          delete data.user;
-
           this.send(data);
         }
       } catch (e) {
@@ -93,6 +136,7 @@ export default class WsStatus extends WsBase {
       }
     } catch (e) {
       logger.error(`WS ERROR. Order items get. ${e}`);
+      return this.onError();
     }
   }
 

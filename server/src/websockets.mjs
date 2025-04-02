@@ -4,11 +4,11 @@ import omit from 'lodash/omit';
 
 import { WebSocketServer } from 'ws';
 
-import AuthCheck from './services/auth/Check.mjs';
+import AuthCheckResolver from './services/auth/CheckResolver.mjs';
 import Exception from './services/Exception.mjs';
 import WsOrderStatus from './services/orders/WsStatus.mjs';
 
-import { runService, runWsService } from './tools.mjs';
+import { runService, runWsService, AUTH_TYPE } from './tools.mjs';
 import logger from './logger.mjs';
 import X from './services/Exception.mjs';
 
@@ -18,9 +18,11 @@ const WS_ENDPOINTS = {
 };
 
 const checkAuth = async token => {
-  return runService(AuthCheck, {
-    params: { token: `Bearer ${token}` },
+  const { payload } = await runService(AuthCheckResolver, {
+    params: { token: `Bearer ${token}`, supportedTypes: [AUTH_TYPE.USER] },
   });
+
+  return { id: payload.id };
 };
 
 const runWs = async (service, wsConnection, context, params, isPrivate = true) => {
