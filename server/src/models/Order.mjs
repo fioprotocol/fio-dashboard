@@ -371,7 +371,13 @@ export class Order extends Base {
 
   static async orderInfo(
     orderId,
-    { useFormatDetailed, onlyOrderPayment, userWhere, orderWhere } = {},
+    {
+      useFormatDetailed,
+      onlyOrderPayment,
+      removePaymentData,
+      userWhere,
+      orderWhere,
+    } = {},
   ) {
     const orderInst = await this.findByPk(orderId, {
       where: orderWhere,
@@ -410,7 +416,16 @@ export class Order extends Base {
     orderObj.Payments = payments.map(payment => payment.get({ plain: true }));
 
     if (useFormatDetailed) {
-      return this.formatDetailed(orderObj);
+      const detailedOrder = await this.formatDetailed(orderObj);
+
+      delete detailedOrder.data;
+      delete detailedOrder.user;
+
+      if (removePaymentData && detailedOrder.payment) {
+        delete detailedOrder.payment.paymentData;
+      }
+
+      return detailedOrder;
     } else {
       const order = this.format(orderObj);
 
