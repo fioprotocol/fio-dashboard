@@ -69,6 +69,7 @@ export default class GenerateOrderPdf extends Base {
       const order = await Order.orderInfo(orderId, {
         useFormatDetailed: true,
         onlyOrderPayment: true,
+        removePaymentData: true,
         userWhere,
         orderWhere: where,
       });
@@ -79,9 +80,6 @@ export default class GenerateOrderPdf extends Base {
             id: 'NOT_FOUND',
           },
         });
-
-      delete order.data;
-      delete order.user;
 
       if (!userId && order.guestId !== guestId) {
         delete order.payment;

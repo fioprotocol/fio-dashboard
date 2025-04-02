@@ -53,7 +53,7 @@ export const useContext = (): ContextProps => {
 
   useWebsocket({
     endpoint: WS_ENDPOINTS.ORDER_STATUS,
-    params: { orderNumber, isNoProfileFlow },
+    params: { orderNumber, ...(isNoProfileFlow && { isNoProfileFlow: true }) },
     onMessage: onStatusUpdate,
   });
 
