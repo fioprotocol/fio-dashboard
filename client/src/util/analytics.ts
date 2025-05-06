@@ -36,8 +36,10 @@ export const getGAClientId = () => {
 export const getGASessionId = () => {
   const gaId = process.env.REACT_APP_GOOGLE_ANALYTICS_ID?.split('-')[1];
   const gaSessionId = Cookies.get(`_ga_${gaId}`);
+  const gaSessionParam =
+    gaSessionId.split('GS1.1.')[1] || gaSessionId.split('GS2.1.')[1];
 
-  if (gaSessionId) return gaSessionId.split('GS1.1.')[1].split('.')[0];
+  if (gaSessionParam) return gaSessionParam.split('.')[0];
   return null;
 };
 
