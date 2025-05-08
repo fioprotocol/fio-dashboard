@@ -17,7 +17,8 @@ const PrivacyPolicyPage: React.FC = () => {
         <strong>INTRODUCTION</strong>
       </h4>
       <p>
-        This privacy notice for&nbsp;FIO (BVI), Ltd&nbsp;("<strong>FIO</strong>
+        This privacy notice for&nbsp;Foundation for Interwallet
+        Operability&nbsp;("<strong>FIO</strong>
         ," "<strong>we</strong>," "<strong>us</strong>," or "
         <strong>our</strong>"), describes how and why we might collect, store,
         use, and/or share ("<strong>process</strong>") your information when you
@@ -78,9 +79,9 @@ const PrivacyPolicyPage: React.FC = () => {
       <p>
         <strong>What personal information do we process?</strong>&nbsp;When you
         visit, use, or navigate our Services, we may process personal
-        information depending on how you interact with&nbsp;FIO (BVI),
-        Ltd&nbsp;and the Services, the choices you make, and the products and
-        features you use. Click&nbsp;
+        information depending on how you interact with&nbsp;Foundation for
+        Interwallet Operability&nbsp;and the Services, the choices you make, and
+        the products and features you use. Click&nbsp;
         <AnchorComponent to="PrivacyPolicy-1" title="#1">
           here
         </AnchorComponent>
@@ -156,8 +157,9 @@ const PrivacyPolicyPage: React.FC = () => {
         applicable data protection laws.
       </p>
       <p>
-        Want to learn more about what&nbsp;FIO (BVI), Ltd&nbsp;does with any
-        information we collect? Review the notice in full below.
+        Want to learn more about what&nbsp;Foundation for Interwallet
+        Operability&nbsp;does with any information we collect? Review the notice
+        in full below.
       </p>
       <h4 className={classes.header} id="PrivacyPolicy-0">
         <strong>0. TABLE OF CONTENTS</strong>
@@ -1361,8 +1363,8 @@ const PrivacyPolicyPage: React.FC = () => {
         personal information.
       </p>
       <p>
-        FIO (BVI), Ltd&nbsp;does not sell any personal information to third
-        parties for a business or commercial purpose.
+        Foundation for Interwallet Operability&nbsp;does not sell any personal
+        information to third parties for a business or commercial purpose.
       </p>
       <p>
         The categories of third parties to whom we disclosed personal
