@@ -18,17 +18,17 @@ const TermsOfServicePage: React.FC = () => {
         <p>
           These Terms of Service constitute a legally binding agreement made
           between you, whether personally or on behalf of an entity (“you”) and
-          FIO (BVI), Ltd ("FIO", “we”, “us”, or “our”), concerning your access
-          to and use of the{' '}
+          Foundation for Interwallet Operability ("FIO", “we”, “us”, or “our”),
+          concerning your access to and use of the{' '}
           <a href="/" title={process.env.REACT_APP_BASE_URL}>
             {process.env.REACT_APP_BASE_URL?.slice(0, -1)}
           </a>{' '}
           website as well as any other media form, media channel, mobile website
           or mobile application related, linked, or otherwise connected thereto
-          (collectively, the “Site”). We are registered in British Virgin
-          Islands and have our registered office at c/o SHRM Trustees (BVI)
-          Limited Trinity Chambers, P.O. Box 4301 Road Town, Tortola, British
-          Virgin Islands. You agree that by accessing the Site, you have read,
+          (collectively, the “Site”). We are registered in Cayman Islands and
+          have our registered office at c/o Leeward Management Limited P.O. Box
+          144, 3119 9 Forum Lane, Camana Bay George Town, Grand Cayman KY1-9006
+          Cayman Islands. You agree that by accessing the Site, you have read,
           understood, and agreed to be bound by all of these Terms of Service.
           IF YOU DO NOT AGREE WITH ALL OF THESE TERMS OF SERVICE, THEN YOU ARE
           EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST DISCONTINUE USE
