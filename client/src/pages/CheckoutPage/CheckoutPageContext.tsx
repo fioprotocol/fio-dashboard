@@ -80,6 +80,7 @@ import {
   NOT_FOUND_CART_MESSAGE,
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
+import { CAPTCHA_ERRORS_CODE } from '../../constants/errors';
 
 import {
   RegistrationResult,
@@ -740,6 +741,15 @@ export const useContext = (): {
         captcha: results.captcha,
       });
     } catch (err) {
+      if (err.code === CAPTCHA_ERRORS_CODE.VERIFICATION_FAILED) {
+        const message =
+          'We could not verify your CAPTCHA response. Please try again.';
+        const title = 'CAPTCHA Verification Failed';
+        const buttonText = 'Try Again';
+
+        return dispatch(showGenericErrorModal(message, title, buttonText));
+      }
+
       return dispatch(showGenericErrorModal());
     } finally {
       dispatch(setProcessing(false));

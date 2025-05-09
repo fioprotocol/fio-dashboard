@@ -1,46 +1,53 @@
-import Geetest from 'gt3-sdk';
+import fetch from 'node-fetch';
 
-const captcha = new Geetest({
-  geetest_id: process.env.GEETEST_ID,
-  geetest_key: process.env.GEETEST_KEY,
-});
+import logger from '../logger.mjs';
 
-export const registerCaptcha = () =>
-  new Promise((resolve, reject) => {
-    captcha.register(null, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
+const LEMIN_API_BASE_URL = 'https://api.leminnow.com/';
+const LEMIN_CROPPED_CAPTCHA_PREFIX = 'captcha/v1/cropped';
 
-      if (!data.success) {
-        resolve(data);
-      } else {
-        // todo:
-        resolve(data);
-      }
-    });
-  });
+export const registerCaptcha = async () => {
+  try {
+    // Lemin captcha initialization doesn't require server-side register call
+    // We just return the success response with captchaId from environment
+    return {
+      success: true,
+      captchaId: process.env.LEMIN_CAPTCHA_ID,
+    };
+  } catch (error) {
+    logger.error('Error initializing Lemin captcha:', error);
+    throw error;
+  }
+};
 
 export const validate = async params => {
-  const { geetest_challenge, geetest_validate, geetest_seccode } = params;
-  if (!geetest_challenge || !geetest_validate || !geetest_seccode) return false;
-  return new Promise((resolve, reject) => {
-    captcha.validate(
-      false,
+  const { challenge_id, answer } = params;
+  if (!challenge_id || !answer) return false;
+
+  try {
+    // Call Lemin validation API
+    const response = await fetch(
+      `${LEMIN_API_BASE_URL}${LEMIN_CROPPED_CAPTCHA_PREFIX}/validate`,
       {
-        geetest_challenge,
-        geetest_validate,
-        geetest_seccode,
-      },
-      (err, success) => {
-        if (err) {
-          return reject(err);
-        } else if (!success) {
-          return resolve(false);
-        } else {
-          return resolve(true);
-        }
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          private_key: process.env.LEMIN_PRIVATE_KEY,
+          challenge_id,
+          answer,
+        }),
       },
     );
-  });
+
+    const result = await response.json();
+    if (!result.success) {
+      logger.error('Captcha validation failed', result);
+    }
+    // Lemin returns { success: true } when validation is successful
+    return result.success === true;
+  } catch (error) {
+    logger.error('Error validating Lemin captcha:', error);
+    return false;
+  }
 };

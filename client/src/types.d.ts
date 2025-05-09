@@ -153,9 +153,8 @@ export type PaymentStatus = typeof PAYMENT_RESULTS_STATUS[keyof typeof PAYMENT_R
 export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
 
 export type VerifyParams = {
-  geetest_challenge: string;
-  geetest_validate: string;
-  geetest_seccode: string;
+  challenge_id: string;
+  answer: string;
 };
 
 export type RegistrationResult = {

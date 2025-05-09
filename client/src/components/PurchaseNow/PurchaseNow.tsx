@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import WalletAction from '../WalletAction/WalletAction';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { PurchaseMetamaskWallet } from './components/PurchaseMetamaskWallet';
+import LeminCaptcha from '../LeminCaptcha/LeminCaptcha';
 
 import { setProcessing } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
@@ -44,15 +45,7 @@ import {
   groupCartItemsByPaymentWallet,
 } from '../../util/cart';
 import api from '../../api';
-import {
-  GEETESET_SCRIPT_LOADING_ERROR,
-  initCaptcha,
-  verifyCaptcha,
-} from '../../helpers/captcha';
 import { log } from '../../util/general';
-
-// Loads captcha files, DO NOT REMOVE
-import '../../helpers/gt-sdk';
 
 import {
   PurchaseValues,
@@ -62,8 +55,6 @@ import {
 import { AnyType, RegistrationResult, VerifyParams } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
-
-type CaptchaResult = { success: boolean; verifyParams: VerifyParams };
 
 export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const { displayOrderItems, onFinish, disabled = false } = props;
@@ -77,9 +68,8 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const [submitData, setSubmitData] = useState<PurchaseValues | null>(null);
   const t0 = performance.now();
   const [captchaResolving, toggleCaptchaResolving] = useState<boolean>(false);
-  const [captchaResult, setCaptchaResult] = useState<CaptchaResult | null>(
-    null,
-  );
+  const [captchaResult, setCaptchaResult] = useState<VerifyParams | null>(null);
+  const [captchaId, setCaptchaId] = useState<string | null>(null);
 
   const dispatch = useDispatch();
 
@@ -109,31 +99,29 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
     try {
       toggleCaptchaResolving(true);
 
-      const data = await api.fioReg.initCaptcha();
-      const captchaObj = await initCaptcha(data);
-      const verifyCaptchaResult = await verifyCaptcha(captchaObj);
+      const initCaptchaResponse = await api.fioReg.initCaptcha();
 
-      setCaptchaResult(verifyCaptchaResult);
+      if (!initCaptchaResponse?.captchaId) {
+        throw new Error('Captcha ID not provided');
+      }
+
+      setCaptchaId(initCaptchaResponse?.captchaId);
     } catch (error) {
       log.error('Check Captcha error', error);
+      setWaiting(false);
 
-      if (error === GEETESET_SCRIPT_LOADING_ERROR) {
-        const message =
-          'Cannot load captcha. If you are using incognito mode in the browser, please check permissions and enable loading third-party scripts. And try again.';
-        const title = 'Captcha load fail';
-        const buttonText = 'Close';
-
-        dispatch(showGenericErrorModal(message, title, buttonText));
-      } else if (typeof error === 'undefined' || error === 'undefined') {
-        log.info('Skip captcha error');
-      } else {
-        dispatch(showGenericErrorModal());
-      }
+      dispatch(showGenericErrorModal());
     } finally {
       toggleCaptchaResolving(false);
-      setWaiting(false);
     }
   }, [dispatch]);
+
+  const closeCaptcha = useCallback(() => {
+    setCaptchaId(null);
+    setCaptchaResult(null);
+    setWaiting(false);
+    toggleCaptchaResolving(false);
+  }, []);
 
   const onProcessingEnd = useCallback(
     (results: RegistrationResult) => {
@@ -148,6 +136,8 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
   const execRegistration = useCallback(
     captchaVerifyParams => {
       setProcessingDispatched(true);
+      setCaptchaResult(null);
+      setCaptchaId(null);
       onProcessingEnd({
         errors: [],
         registered: [],
@@ -162,25 +152,18 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
 
   useEffect(() => {
     if (captchaResult) {
-      const { success, verifyParams } = captchaResult;
+      const { answer, challenge_id } = captchaResult;
 
-      if (success && isWaiting) {
-        execRegistration(verifyParams);
-        setCaptchaResult(null);
+      if (answer && challenge_id && isWaiting) {
+        execRegistration(captchaResult);
       }
 
-      if (success === false) {
+      if (!answer || !challenge_id) {
         setProcessingDispatched(false);
         setWaiting(false);
       }
     }
-  }, [
-    captchaResult,
-    isWaiting,
-    execRegistration,
-    onProcessingEnd,
-    setProcessingDispatched,
-  ]);
+  }, [captchaResult, isWaiting, execRegistration, setProcessingDispatched]);
 
   const purchase = () => {
     fireAnalyticsEvent(
@@ -242,10 +225,16 @@ export const PurchaseNow: FC<PurchaseNowTypes> = props => {
         MetamaskActionWallet={PurchaseMetamaskWallet}
         LedgerActionWallet={PurchaseLedgerWallet}
       />
+      <LeminCaptcha
+        captchaId={captchaId}
+        onClose={closeCaptcha}
+        setCaptchaResult={setCaptchaResult}
+        loading={isProcessing}
+      />
       <SubmitButton
         onClick={purchase}
         disabled={captchaResolving || disabled}
-        loading={isWaiting || captchaResolving}
+        loading={isWaiting || captchaResolving || isProcessing}
         text="Purchase Now"
       />
       {captchaResult && isProcessing && (
