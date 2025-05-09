@@ -4,9 +4,7 @@ declare namespace JSX {
     'lottie-player': any;
   }
 }
-
 interface Window {
-  initGeetest?: any;
   ethereum?: any;
   bitpay: any;
   fioCorsFixfetch: (
