@@ -93,9 +93,7 @@ export type FioRegPricesResponse = {
 };
 export type FioRegCaptchaResponse = {
   success: boolean;
-  gt?: string;
-  challenge?: string;
-  new_captcha?: number;
+  captchaId?: string;
   error?: string;
 };
 export type FioRegApiUrlsResponse = string[];
