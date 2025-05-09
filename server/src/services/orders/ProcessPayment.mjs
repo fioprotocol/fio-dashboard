@@ -43,9 +43,8 @@ export default class OrderProcessPayment extends Base {
             },
             captcha: {
               nested_object: {
-                geetest_challenge: 'string',
-                geetest_validate: 'string',
-                geetest_seccode: 'string',
+                challenge_id: 'string',
+                answer: 'string',
               },
             },
           },
@@ -95,7 +94,9 @@ export default class OrderProcessPayment extends Base {
 
         if (orderItem && itemData) {
           await OrderItem.update(
-            { data: { ...(orderItem.data ? orderItem.data : {}), ...itemData } },
+            {
+              data: { ...(orderItem.data ? orderItem.data : {}), ...itemData },
+            },
             { where: { id: orderItem.id } },
           );
           processedOrderItems.push(orderItem.id);
@@ -104,20 +105,11 @@ export default class OrderProcessPayment extends Base {
 
       if (order.Payments[0].processor === Payment.PROCESSOR.FIO) {
         if (order.total === '0' && order.OrderItems.every(({ price }) => price === '0')) {
-          if (!data.captcha) {
+          if (!data.captcha || !(await validate(data.captcha))) {
             throw new X({
-              code: 'NOT_FOUND',
+              code: 'VERIFICATION_FAILED',
               fields: {
-                code: 'NOT_FOUND',
-              },
-            });
-          }
-
-          if (!(await validate(data.captcha))) {
-            throw new X({
-              code: 'NOT_FOUND',
-              fields: {
-                code: 'NOT_FOUND',
+                code: 'VERIFICATION_FAILED',
               },
             });
           }
