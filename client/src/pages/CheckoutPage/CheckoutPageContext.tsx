@@ -264,7 +264,9 @@ export const useContext = (): {
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
-  const displayOrderItems = order?.displayOrderItems || [];
+  const displayOrderItems = useMemo(() => order?.displayOrderItems || [], [
+    order,
+  ]);
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
@@ -393,7 +395,9 @@ export const useContext = (): {
       }
 
       try {
-        result = await apis.orders.create(orderParams);
+        void (await apis.orders.create(orderParams)); //We don't need the result of the create order
+
+        result = await apis.orders.getActive();
       } catch (e) {
         log.error(e);
         setOrderError(e);
@@ -423,16 +427,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [
-      cartId,
-      displayOrderItems,
-      dispatch,
-      history,
-      prices?.nativeFio,
-      refCode,
-      roe,
-      setWallet,
-    ],
+    [cartId, displayOrderItems, dispatch, history, refCode, setWallet],
   );
 
   const cancelOrder = useCallback(
@@ -466,8 +461,10 @@ export const useContext = (): {
   );
 
   const isFree =
-    !isEmpty(displayOrderItems) &&
-    displayOrderItems.every(cartItem => cartItem.isFree);
+    !order && !getOrderLoading // get free items from cart when free order is not created yet
+      ? !isEmpty(cartItems) && cartItems.every(cartItem => cartItem.isFree)
+      : !isEmpty(displayOrderItems) &&
+        displayOrderItems.every(displayOrderItem => displayOrderItem.isFree);
 
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,
