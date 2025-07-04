@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, WheelEvent } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  WheelEvent,
+  useCallback,
+} from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps, useForm } from 'react-final-form';
 import { Button } from 'react-bootstrap';
@@ -91,24 +97,27 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const initRef = useRef(false);
 
   // todo: extent formula to use currencyCode
-  const relationFormula = (val: string, isReverse: boolean = false) => {
-    let valueToExchange;
-    if (val) {
-      try {
-        valueToExchange = new MathOp(val).toString();
-      } catch (error) {
-        //
+  const relationFormula = useCallback(
+    (val: string, isReverse: boolean = false) => {
+      let valueToExchange;
+      if (val) {
+        try {
+          valueToExchange = new MathOp(val).toString();
+        } catch (error) {
+          //
+        }
       }
-    }
 
-    if (!valueToExchange) return '';
-    valueToExchange = !isReverse
-      ? apis.fio.amountToSUF(valueToExchange)
-      : valueToExchange;
-    return !isReverse
-      ? apis.fio.convertFioToUsdc(valueToExchange, roe)
-      : apis.fio.convertUsdcToFio(valueToExchange, roe);
-  };
+      if (!valueToExchange) return '';
+      valueToExchange = !isReverse
+        ? apis.fio.amountToSUF(valueToExchange)
+        : valueToExchange;
+      return !isReverse
+        ? apis.fio.convertFioToUsdc(valueToExchange, roe)
+        : apis.fio.convertUsdcToFio(valueToExchange, roe);
+    },
+    [roe],
+  );
 
   const { value, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
