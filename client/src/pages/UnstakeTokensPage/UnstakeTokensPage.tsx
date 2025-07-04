@@ -75,8 +75,8 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
     setStakeTokensData(null);
     setProcessing(false);
     setResultsData({
-      feeCollected: convertFioPrices(res.fee_collected, roe),
-      bundlesCollected: res.bundlesCollected,
+      feeCollected: convertFioPrices(res?.fee_collected, roe),
+      bundlesCollected: res?.bundlesCollected,
       name: fioWallet.publicKey,
       publicKey: fioWallet.publicKey,
       other: {

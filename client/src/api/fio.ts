@@ -193,10 +193,7 @@ export default class Fio {
   };
 
   sufToAmount = (suf: number | string): string =>
-    new MathOp(suf)
-      .div(FIOSDK.SUFUnit)
-      .round(2, 1)
-      .toString();
+    new MathOp(suf).div(FIOSDK.SUFUnit).toString();
 
   createPrivateKeyMnemonic = async (mnemonic: string): Promise<string> => {
     const { fioKey } = await FIOSDK.createPrivateKeyMnemonic(mnemonic);
