@@ -76,6 +76,14 @@ class OrdersJob extends CommonJob {
     this.feesJson = {};
   }
 
+  async getFioApiBaseUrls({ prefix }) {
+    const baseUrls = await fioApi.getFioApiBaseUrls();
+
+    logger.info(`FIO API URL ${prefix}: ${baseUrls}`);
+
+    return baseUrls;
+  }
+
   async getFeeForAction(action, forceUpdate = false) {
     let fee = null;
 
@@ -468,7 +476,9 @@ class OrdersJob extends CommonJob {
       return this.updateOrderStatus(orderId);
     }
 
-    const userHasFreeAddress = await FreeAddress.getItems({ freeId: orderItem.freeId });
+    const userHasFreeAddress = await FreeAddress.getItems({
+      freeId: orderItem.freeId,
+    });
 
     const existingUsersFreeAddress =
       userHasFreeAddress &&
@@ -598,7 +608,10 @@ class OrdersJob extends CommonJob {
 
   async enableCheckBalanceNotificationCreate(currentWallet) {
     await currentWallet.update({
-      data: { ...currentWallet.data, isChangeBalanceNotificationCreateStopped: false },
+      data: {
+        ...currentWallet.data,
+        isChangeBalanceNotificationCreateStopped: false,
+      },
     });
   }
 
@@ -624,12 +637,17 @@ class OrdersJob extends CommonJob {
       where: { publicKey: data.signingWalletPubKey || orderItem.publicKey },
     });
 
+    await this.getFioApiBaseUrls({ prefix: '(submitSignedTx)' });
+
     if (!isFIO) {
       // Send tokens to customer
 
       if (currentWallet) {
         await currentWallet.update({
-          data: { ...currentWallet.data, isChangeBalanceNotificationCreateStopped: true },
+          data: {
+            ...currentWallet.data,
+            isChangeBalanceNotificationCreateStopped: true,
+          },
         });
       }
 
@@ -793,6 +811,8 @@ class OrdersJob extends CommonJob {
           data: { roe },
         });
 
+        await this.getFioApiBaseUrls({ prefix: '(handleCustomDomain)' });
+
         const result = await fioApi.executeAction(
           GenericAction.registerFioDomain,
           fioApi.getActionParams({
@@ -873,6 +893,8 @@ class OrdersJob extends CommonJob {
           errorMessage: `RenewDomain has been canceled because domain - ${orderItem.domain} - from this order has not been registered`,
         });
       }
+
+      await this.getFioApiBaseUrls({ prefix: '(executeOrderItemAction)' });
 
       result = await fioApi.executeAction(
         action,
@@ -1043,7 +1065,7 @@ class OrdersJob extends CommonJob {
         this.postMessage(`!price || price === "0", ${!price || price === '0'}`);
         this.postMessage(
           `registeringDomainExistingInAppDomainsList,
-          ${registeringDomainExistingInAppDomainsList}`,
+          ${JSON.stringify(registeringDomainExistingInAppDomainsList, null, 4)}`,
         );
         this.postMessage(
           `action === GenericAction.registerFioAddress,
