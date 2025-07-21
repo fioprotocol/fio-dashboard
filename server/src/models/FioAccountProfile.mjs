@@ -152,6 +152,38 @@ export class FioAccountProfile extends Base {
     );
   }
 
+  static async getFreeItems() {
+    const freeFioAccountProfiles =
+      (await this.findAll({
+        order: [['createdAt', 'DESC']],
+        where: {
+          accountType: {
+            [Op.or]: [FIO_ACCOUNT_TYPES.FREE, FIO_ACCOUNT_TYPES.FREE_FALLBACK],
+          },
+        },
+      })) || [];
+
+    return freeFioAccountProfiles.map(freeFioAccountProfile =>
+      this.format(freeFioAccountProfile),
+    );
+  }
+
+  static async getPaidItems() {
+    const paidFioAccountProfiles =
+      (await this.findAll({
+        order: [['createdAt', 'DESC']],
+        where: {
+          accountType: {
+            [Op.or]: [FIO_ACCOUNT_TYPES.PAID, FIO_ACCOUNT_TYPES.PAID_FALLBACK],
+          },
+        },
+      })) || [];
+
+    return paidFioAccountProfiles.map(paidFioAccountProfile =>
+      this.format(paidFioAccountProfile),
+    );
+  }
+
   static accountsProfilesCount() {
     return this.count();
   }
