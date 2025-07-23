@@ -61,6 +61,33 @@ export default {
     loginApiKey: process.env.EDGE_LOGIN_API_KEY,
     loginApiUrl: process.env.EDGE_LOGIN_API_URL,
   },
+  cronJobs: {
+    apiUrlsInterval: process.env.API_URLS_JOB_CRON,
+    cartCloseTimeout: process.env.CART_JOB_CLOSE_TIMEOUT,
+    cartInterval: process.env.CART_JOB_INTERVAL,
+    domainsExpirationCloseTimeout: process.env.DOMAINS_EXPIRATION_JOB_CLOSE_TIMEOUT,
+    domainsExpirationInterval: process.env.DOMAINS_EXPIRATION_JOB_INTERVAL,
+    emailsInterval: process.env.EMAILS_JOB_INTERVAL,
+    emailsTimeout: process.env.EMAILS_JOB_TIMEOUT,
+    gatedRegistrationTokensCloseTimeout:
+      process.env.GATED_REGISTRATION_TOKENS_JOB_CLOSE_TIMEOUT,
+    gatedRegistrationTokensInterval: process.env.GATED_REGISTRATION_TOKENS_JOB_INTERVAL,
+    jobsList: process.env.JOB_LIST,
+    missedBcTxsCloseTimeout: process.env.MISSED_BC_TXS_JOB_CLOSE_TIMEOUT,
+    missedBcTxsInterval: process.env.MISSED_BC_TXS_JOB_INTERVAL,
+    ordersInterval: process.env.ORDERS_JOB_INTERVAL,
+    paymentsCloseTimeout: process.env.PAYMENTS_JOB_CLOSE_TIMEOUT,
+    paymentsInterval: process.env.PAYMENTS_JOB_INTERVAL,
+    retryForkedTransactions: process.env.RETRY_FORKED_TRANSACTIONS_JOB_INTERVAL,
+    retryForkedTransactionsCloseTimeout:
+      process.env.RETRY_FORKED_TRANSACTIONS_JOB_CLOSE_TIMEOUT,
+    retryForkedTransactionsMaxMinutes: process.env.RETRY_FORKED_TRANSACTIONS_MAX_MINUTES,
+    retryForkedTransactionsMinMinutes: process.env.RETRY_FORKED_TRANSACTIONS_MIN_MINUTES,
+    walletDataCloseTimeout: process.env.WALLET_DATA_JOB_CLOSE_TIMEOUT,
+    walletDataInterval: process.env.WALLET_DATA_JOB_INTERVAL,
+    wrapStatusCloseTimeout: process.env.WRAP_STATUS_JOB_CLOSE_TIMEOUT,
+    wrapStatusInterval: process.env.WRAP_STATUS_JOB_INTERVAL,
+  },
 
   ...dbConfig,
 };
