@@ -1,5 +1,8 @@
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import '../db';
 import {
+  FioAccountProfile,
   OrderItem,
   OrderItemStatus,
   BlockchainTransaction,
@@ -79,11 +82,17 @@ class MissedTransactions extends CommonJob {
         orderItemStatusId,
         orderId,
         paymentProcessor,
+        total,
       } = order;
+
+      logger.info(`${loggerPrefix} Order: ${orderId}, orderItemId: ${orderItemId}`);
 
       const fioName = fioApi.setFioName(address, domain);
 
       let txPublicKey = publicKey;
+      let foundActor = null;
+
+      const accountsList = [];
 
       if (data && data.signingWalletPubKey) {
         txPublicKey = data.signingWalletPubKey;
@@ -92,23 +101,38 @@ class MissedTransactions extends CommonJob {
         paymentProcessor === Payment.PROCESSOR.BITPAY
       ) {
         txPublicKey = fioApi.getMasterPublicKey();
+
+        const dashboardAccountActions = await FioAccountProfile.getPaidItems();
+
+        if (dashboardAccountActions && dashboardAccountActions.length > 0) {
+          accountsList.push(...dashboardAccountActions.map(account => account.actor));
+        }
+      } else if (
+        paymentProcessor === Payment.PROCESSOR.FIO &&
+        action === GenericAction.registerFioAddress &&
+        !total
+      ) {
+        const dashboardAccountActions = await FioAccountProfile.getFreeItems();
+
+        if (dashboardAccountActions && dashboardAccountActions.length > 0) {
+          accountsList.push(...dashboardAccountActions.map(account => account.actor));
+        }
       }
 
       const actor = await fioApi.getActor(txPublicKey);
+      if (actor) {
+        accountsList.unshift(actor);
+      }
+
+      // Remove duplicates from accountsList
+      const uniqueAccountsList = [...new Set(accountsList)];
+      accountsList.length = 0;
+      accountsList.push(...uniqueAccountsList);
 
       const afterTimeForSearch = new Date(createdAt).toISOString();
 
       try {
         let addressTransactionHistory = null;
-
-        const searchTxParams = {
-          account: actor,
-          limit: Number(fioHistoryLimit),
-          simple: false,
-          noBinary: true,
-          sort: 'desc',
-          after: afterTimeForSearch,
-        };
 
         const findMissedTxInAccountHistoryActions = async params => {
           const accountHistoryActions = await fioHistory.requestHistoryActions({
@@ -136,6 +160,9 @@ class MissedTransactions extends CommonJob {
                 const lastActionItem =
                   accountHistoryActions.actions[accountHistoryActions.actions.length - 1];
 
+                logger.info(
+                  `${loggerPrefix} Get More Items before: ${lastActionItem.timestamp}`,
+                );
                 await sleep(SECOND_MS);
                 await findMissedTxInAccountHistoryActions({
                   ...params,
@@ -146,7 +173,25 @@ class MissedTransactions extends CommonJob {
           }
         };
 
-        await findMissedTxInAccountHistoryActions(searchTxParams);
+        for (const account of accountsList) {
+          logger.info(`${loggerPrefix} Getting for account: ${account}`);
+          const searchTxParams = {
+            account,
+            limit: Number(fioHistoryLimit),
+            simple: false,
+            noBinary: true,
+            sort: 'desc',
+            after: afterTimeForSearch,
+          };
+
+          await findMissedTxInAccountHistoryActions(searchTxParams);
+
+          if (addressTransactionHistory) {
+            foundActor = account;
+            logger.info(`${loggerPrefix} Found Actor: ${foundActor}`);
+            break;
+          }
+        }
 
         if (!addressTransactionHistory) {
           logger.error(
@@ -175,7 +220,7 @@ class MissedTransactions extends CommonJob {
             transactionData &&
             transactionData.actions &&
             transactionData.actions.find(
-              ({ act }) => act.name === 'transfer' && act.data.from === actor,
+              ({ act }) => act.name === 'transfer' && act.data.from === foundActor,
             );
 
           if (feeCollectedAction && feeCollectedAction.act.data.amount) {

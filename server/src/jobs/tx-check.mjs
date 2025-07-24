@@ -26,6 +26,40 @@ import logger from '../logger.mjs';
 const MAX_CHECK_TIMES = 10;
 
 class TxCheckJob extends CommonJob {
+  async isTxExpired({ txId, itemId }) {
+    const maxRetries = Number(await Var.getValByKey(VARS_KEYS.DEFAULT_MAX_RETRIES));
+
+    try {
+      const fioHistoryUrls = await FioApiUrl.getApiUrls({
+        type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
+      });
+
+      logger.info('fioHistoryUrls', fioHistoryUrls);
+
+      const res = await new FioHistory({
+        fioHistoryUrls,
+      }).getTransaction({ transactionId: txId, maxRetries });
+
+      logger.info(`TX ${txId} - ITEM ID ${itemId} EXECUTED: ${res && res.executed}`);
+
+      const txRegexpString = `Transaction ${txId} not found`;
+      const txRegexp = new RegExp(txRegexpString, 'i');
+
+      if (
+        res.code &&
+        res.code === ERROR_CODES.RANGE_NOT_SATISFIABLE &&
+        res.error &&
+        res.error.details &&
+        res.error.details.find(details => !!details.message.match(txRegexp))
+      ) {
+        return BlockchainTransaction.STATUS.EXPIRE;
+      }
+
+      return null;
+    } catch (error) {
+      logger.error(`TX ITEM GET HISTORY ERROR ${itemId} - txId: ${txId}`, error);
+    }
+  }
   async execute() {
     await fioApi.getRawAbi();
 
@@ -38,12 +72,6 @@ class TxCheckJob extends CommonJob {
 
       return acc;
     }, {});
-
-    const fioHistoryUrls = await FioApiUrl.getApiUrls({
-      type: FIO_API_URLS_TYPES.DASHBOARD_HISTORY_URL,
-    });
-
-    const maxRetries = Number(await Var.getValByKey(VARS_KEYS.DEFAULT_MAX_RETRIES));
 
     const processTxItems = items => async () => {
       if (this.isCancelled) return false;
@@ -72,9 +100,27 @@ class TxCheckJob extends CommonJob {
 
           switch (action) {
             case GenericAction.renewFioDomain:
-            case GenericAction.addBundledTransactions:
-              status = BlockchainTransaction.STATUS.SUCCESS;
+            case GenericAction.addBundledTransactions: {
+              status = await this.isTxExpired({
+                txId,
+                itemId: item ? item.id : null,
+              });
+
+              if (!btData.checkIteration) btData.checkIteration = 0;
+              ++btData.checkIteration;
+
+              if (status !== BlockchainTransaction.STATUS.EXPIRE) {
+                status = BlockchainTransaction.STATUS.SUCCESS;
+              }
+
+              if (
+                btData.checkIteration > MAX_CHECK_TIMES &&
+                status !== BlockchainTransaction.STATUS.SUCCESS
+              )
+                status = BlockchainTransaction.STATUS.FAILED;
+
               break;
+            }
             case GenericAction.registerFioDomainAddress:
             case GenericAction.registerFioAddress:
             case GenericAction.registerFioDomain: {
@@ -89,6 +135,9 @@ class TxCheckJob extends CommonJob {
               let checkRes;
               try {
                 let ownerAccount;
+                const baseUrls = await fioApi.getFioApiBaseUrls();
+                logger.info(`TX ITEM PROCESSING - BASE URLS: ${baseUrls}`);
+
                 if (isAddress) {
                   checkRes = await fioApi.getFioAddress(fioName);
                   ownerAccount = checkRes && checkRes.owner_account;
@@ -101,6 +150,9 @@ class TxCheckJob extends CommonJob {
                   (params && params.owner_fio_public_key) || publicKey,
                 );
 
+                logger.info(`TX ITEM PROCESSING - OWNER ACCOUNT: ${ownerAccount}`);
+                logger.info(`TX ITEM PROCESSING - ACCOUNTNM: ${accountnm}`);
+
                 if (accountnm === ownerAccount) {
                   found = true;
                 }
@@ -110,34 +162,18 @@ class TxCheckJob extends CommonJob {
                 }
               }
 
+              logger.info(`TX ITEM PROCESSING - FOUND: ${found}`);
+
               if (found) status = BlockchainTransaction.STATUS.SUCCESS;
 
               if (!btData.checkIteration) btData.checkIteration = 0;
               ++btData.checkIteration;
 
               if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
-                try {
-                  const res = await new FioHistory({
-                    fioHistoryUrls,
-                  }).getTransaction({ transactionId: txId, maxRetries });
-                  const txRegexpString = `Transaction ${txId} not found`;
-                  const txRegexp = new RegExp(txRegexpString, 'i');
-
-                  if (
-                    res.code &&
-                    res.code === ERROR_CODES.RANGE_NOT_SATISFIABLE &&
-                    res.error &&
-                    res.error.details &&
-                    res.error.details.find(details => !!details.message.match(txRegexp))
-                  ) {
-                    status = BlockchainTransaction.STATUS.EXPIRE;
-                  }
-                } catch (error) {
-                  logger.error(
-                    `TX ITEM GET HISTORY ERROR ${item.id} - txId: ${txId}`,
-                    error,
-                  );
-                }
+                status = await this.isTxExpired({
+                  txId,
+                  itemId: item ? item.id : null,
+                });
               }
 
               if (

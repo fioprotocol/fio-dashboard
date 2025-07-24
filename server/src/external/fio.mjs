@@ -110,6 +110,11 @@ class Fio {
     return this.publicFioSDK;
   }
 
+  async getFioApiBaseUrls() {
+    const currentFioSDKInstance = await this.getPublicFioSDK();
+    return currentFioSDKInstance.config && currentFioSDKInstance.config.baseUrls;
+  }
+
   accountHash(publicKey) {
     return FIOSDK.accountHash(publicKey);
   }
