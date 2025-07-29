@@ -110,11 +110,6 @@ class Fio {
     return this.publicFioSDK;
   }
 
-  async getFioApiBaseUrls() {
-    const currentFioSDKInstance = await this.getPublicFioSDK();
-    return currentFioSDKInstance.config && currentFioSDKInstance.config.baseUrls;
-  }
-
   accountHash(publicKey) {
     return FIOSDK.accountHash(publicKey);
   }
@@ -126,14 +121,21 @@ class Fio {
     return masterPubKey;
   }
 
-  async getMasterFioSDK() {
+  async getMasterFioSDK({ currentBaseUrl = null }) {
     if (!this.masterFioSDK) {
       const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
         process.env.MASTER_FIOSDK_KEY,
       );
-      const apiUrls = await FioApiUrl.getApiUrls({
+      let apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
+
+      // This is for the case when we have a forked transaction and we need to skip the same base url if it is already used.
+      // But if it is only 1 url, we need to use it.
+      if (currentBaseUrl && apiUrls.length > 1) {
+        apiUrls = apiUrls.filter(url => url !== currentBaseUrl);
+      }
+
       const validApiUrls = await this.checkUrls(apiUrls);
       this.masterFioSDK = new FIOSDK({
         privateKey: process.env.MASTER_FIOSDK_KEY,
@@ -340,7 +342,14 @@ class Fio {
     return new MathOp(fee).toString();
   }
 
-  async executeAction(action, params, auth = {}, keys = {}) {
+  async executeAction({
+    action,
+    params,
+    auth = {},
+    keys = {},
+    returnBaseUrl = false,
+    currentBaseUrl = null,
+  }) {
     if (keys.private) {
       // todo: set new sdk and use it
     }
@@ -361,7 +370,8 @@ class Fio {
         params.actor = auth.actor;
         params.permission = auth.permission;
       }
-      const fioSdk = await this.getMasterFioSDK();
+
+      const fioSdk = await this.getMasterFioSDK({ currentBaseUrl });
       logger.info('PARAMS', params);
       logger.info('account', FIO_ACCOUNT_NAMES[action]);
       logger.info('action', FIO_ACTION_NAMES[action]);
@@ -379,6 +389,7 @@ class Fio {
       return await fioSdk.executePreparedTrx(
         FIO_ACTIONS_TO_END_POINT_MAP[action],
         preparedTrx,
+        returnBaseUrl,
       );
     } catch (err) {
       this.logError('EXECUTE ACTION ERROR', err);
@@ -395,13 +406,14 @@ class Fio {
     }
   }
 
-  async executeTx(action, signedTx) {
+  async executeTx({ action, signedTx, currentBaseUrl = null }) {
     try {
-      const fioSdk = await this.getMasterFioSDK();
+      const fioSdk = await this.getMasterFioSDK({ currentBaseUrl });
 
       return await fioSdk.executePreparedTrx(
         FIO_ACTIONS_TO_END_POINT_MAP[action],
         signedTx,
+        true,
       );
     } catch (err) {
       this.logError(err);

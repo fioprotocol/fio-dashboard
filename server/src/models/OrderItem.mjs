@@ -219,7 +219,8 @@ export class OrderItem extends Base {
           fapfree.actor as "freeActor",
           fapfree.permission as "freePermission",
           fappaid.actor as "paidActor",
-          fappaid.permission as "paidPermission"
+          fappaid.permission as "paidPermission",
+          bt."baseUrl"
         FROM "order-items" oi
           INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
           INNER JOIN orders o ON o.id = oi."orderId"
@@ -229,6 +230,7 @@ export class OrderItem extends Base {
           LEFT JOIN "referrer-profiles" drp ON drp.id = o."refProfileId"
           LEFT JOIN "fio-account-profiles" fapfree ON fapfree.id = rp."freeFioAccountProfileId"
           LEFT JOIN "fio-account-profiles" fappaid ON fappaid.id = rp."paidFioAccountProfileId"
+          LEFT JOIN "blockchain-transactions" bt ON ois."blockchainTransactionId" = bt.id
         WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
           AND ois."txStatus" = ${status}
         ORDER BY oi.id
@@ -261,6 +263,7 @@ export class OrderItem extends Base {
           blockTime: tx.block_time ? tx.block_time + 'Z' : new Date(),
           status: BlockchainTransaction.STATUS.PENDING,
           feeCollected: tx.fee_collected,
+          baseUrl: tx.baseUrl,
         },
         {
           where: {

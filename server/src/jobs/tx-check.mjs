@@ -89,6 +89,7 @@ class TxCheckJob extends CommonJob {
           params,
           publicKey,
           txId,
+          baseUrl,
         } = item;
         this.postMessage(`Processing tx item id - ${id}`);
 
@@ -135,8 +136,8 @@ class TxCheckJob extends CommonJob {
               let checkRes;
               try {
                 let ownerAccount;
-                const baseUrls = await fioApi.getFioApiBaseUrls();
-                logger.info(`TX ITEM PROCESSING - BASE URLS: ${baseUrls}`);
+
+                logger.info(`TX ITEM PROCESSING - BASE URL: ${baseUrl}`);
 
                 if (isAddress) {
                   checkRes = await fioApi.getFioAddress(fioName);

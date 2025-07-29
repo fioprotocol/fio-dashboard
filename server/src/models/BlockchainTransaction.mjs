@@ -76,6 +76,7 @@ export class BlockchainTransaction extends Base {
         },
         data: { type: DT.JSON, comment: 'Any additional data' },
         feeCollected: { type: DT.BIGINT },
+        baseUrl: { type: DT.STRING, comment: 'FIO node url' },
       },
       {
         sequelize,
@@ -140,7 +141,8 @@ export class BlockchainTransaction extends Base {
              bt."blockTime",
              bt.data as "btData",
              bt.id AS "btId",
-             bt."txId"
+             bt."txId",
+             bt."baseUrl"
       FROM "order-items" oi
         INNER JOIN "blockchain-transactions" bt ON oi.id = bt."orderItemId"
         JOIN "orders" o ON oi."orderId" = o.id
@@ -180,6 +182,7 @@ export class BlockchainTransaction extends Base {
     createdBy,
     blockTime,
     feeCollected,
+    baseUrl,
   }) {
     return {
       id,
@@ -191,6 +194,7 @@ export class BlockchainTransaction extends Base {
       createdBy,
       blockTime,
       feeCollected,
+      baseUrl,
     };
   }
 }

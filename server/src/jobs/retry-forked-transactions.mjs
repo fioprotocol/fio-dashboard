@@ -68,7 +68,8 @@ class RetryForkedTransactionsJob extends CommonJob {
         oi.domain,
         bt."txId" as "transactionId",
         bt.id as "blockchainTransactionId",
-        bt."createdAt" as "transactionCreatedAt"
+        bt."createdAt" as "transactionCreatedAt",
+        bt."baseUrl"
       FROM orders o
       INNER JOIN "order-items" oi ON o.id = oi."orderId"
       INNER JOIN "order-items-status" ois ON oi.id = ois."orderItemId"
@@ -214,7 +215,7 @@ class RetryForkedTransactionsJob extends CommonJob {
     // Log for monitoring system to track specific affected orders
     missingTransactions.forEach(tx => {
       this.postMessage(
-        `FORKED_TRANSACTIONS_DETECTED orderId=${tx.orderId} orderItemId=${tx.orderItemId}`,
+        `FORKED_TRANSACTIONS_DETECTED orderId=${tx.orderId} orderItemId=${tx.orderItemId} by ${tx.baseUrl}`,
       );
     });
 
