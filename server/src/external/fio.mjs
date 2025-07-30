@@ -71,6 +71,15 @@ const PRICE_ACTIONS = {
   [REQUIRED_PRICE_FIELDS_NAMES.ADD_BUNDLES]: GenericAction.addBundledTransactions,
 };
 
+const FEE_ACTIONS = {
+  [GenericAction.registerFioAddress]: GenericAction.registerFioAddress,
+  [GenericAction.registerFioDomain]: GenericAction.registerFioDomain,
+  [GenericAction.registerFioDomainAddress]: GenericAction.registerFioDomainAddress,
+  [GenericAction.renewFioDomain]: GenericAction.renewFioDomain,
+  [GenericAction.addBundledTransactions]: GenericAction.addBundledTransactions,
+  [GenericAction.transferTokens]: GenericAction.transferTokens,
+};
+
 class Fio {
   async checkUrls(apiUrls) {
     const checkedUrls = [];
@@ -340,6 +349,117 @@ class Fio {
     });
 
     return new MathOp(fee).toString();
+  }
+
+  async getAllFees({ forceUpdate = false, feesVar = null }) {
+    let fees;
+
+    // Use provided feesVar or fetch from database
+    const dbFeesVar = feesVar || (await Var.getByKey(FEES_VAR_KEY));
+    const dataBaseFees =
+      dbFeesVar && dbFeesVar.value ? JSON.parse(dbFeesVar.value) : null;
+
+    if (!forceUpdate) {
+      if (
+        dbFeesVar &&
+        !Var.updateRequired(dbFeesVar.updatedAt, FEES_UPDATE_TIMEOUT_SEC)
+      ) {
+        try {
+          fees = dataBaseFees;
+          // eslint-disable-next-line no-empty
+        } catch (e) {}
+      }
+    }
+
+    try {
+      if (!fees || (fees && Object.values(FEE_ACTIONS).some(action => !fees[action]))) {
+        const feeResults = await Promise.allSettled(
+          Object.entries(FEE_ACTIONS).map(async ([, action]) =>
+            this.getFee(action)
+              .then(fee => ({ fee, action }))
+              .catch(error =>
+                Promise.reject({
+                  message: error.message || 'Unknown error',
+                  stack: error.stack,
+                  ...error,
+                  action,
+                }),
+              ),
+          ),
+        );
+
+        logger.info(
+          `SUCCESS FEES FROM FIO SERVER: ${feeResults
+            .filter(({ status }) => status === 'fulfilled')
+            .map(({ value }) => ` ${value.action}: ${value.fee}`)}`,
+        );
+
+        if (feeResults.some(({ status }) => status === 'rejected')) {
+          logger.info(
+            `FAILED FEES FROM FIO SERVER ${feeResults
+              .filter(({ status }) => status === 'rejected')
+              .map(({ reason: { action, message } }) => ` ${action}: ${message}`)}`,
+          );
+        }
+
+        const processedFeesResults = feeResults.map(
+          ({
+            status,
+            value: { fee, action } = {},
+            reason: { action: reasonAction } = {},
+          }) => {
+            if (status === 'fulfilled') {
+              if (fee)
+                return {
+                  fee,
+                  action,
+                };
+
+              if (!fee && dataBaseFees && dataBaseFees[action]) {
+                logger.info(
+                  `FEE for ${action} is absent set fallback fee to: ${dataBaseFees[action]}`,
+                );
+                return {
+                  fee: dataBaseFees[action],
+                  action,
+                };
+              }
+
+              throw new Error(
+                `Failed to get fee for ${action} action and no fallback available.`,
+              );
+            }
+
+            if (status === 'rejected') {
+              if (dataBaseFees && dataBaseFees[reasonAction]) {
+                logger.info(
+                  `Get FEE for ${reasonAction} has an error set fallback fee to: ${dataBaseFees[reasonAction]}`,
+                );
+                return {
+                  fee: dataBaseFees[reasonAction],
+                  action: reasonAction,
+                };
+              }
+
+              throw new Error(
+                `Failed to set fallback fee for errored ${reasonAction} action.`,
+              );
+            }
+          },
+        );
+
+        fees = processedFeesResults.reduce(
+          (acc, { fee, action }) => ({ ...acc, [action]: fee }),
+          {},
+        );
+
+        await Var.setValue(FEES_VAR_KEY, JSON.stringify(fees));
+      }
+    } catch (e) {
+      logger.error('Get Fees Error: ', e);
+    }
+
+    return fees;
   }
 
   async executeAction({
