@@ -71,6 +71,15 @@ const PRICE_ACTIONS = {
   [REQUIRED_PRICE_FIELDS_NAMES.ADD_BUNDLES]: GenericAction.addBundledTransactions,
 };
 
+const FEE_ACTIONS = {
+  [GenericAction.registerFioAddress]: GenericAction.registerFioAddress,
+  [GenericAction.registerFioDomain]: GenericAction.registerFioDomain,
+  [GenericAction.registerFioDomainAddress]: GenericAction.registerFioDomainAddress,
+  [GenericAction.renewFioDomain]: GenericAction.renewFioDomain,
+  [GenericAction.addBundledTransactions]: GenericAction.addBundledTransactions,
+  [GenericAction.transferTokens]: GenericAction.transferTokens,
+};
+
 class Fio {
   async checkUrls(apiUrls) {
     const checkedUrls = [];
@@ -110,11 +119,6 @@ class Fio {
     return this.publicFioSDK;
   }
 
-  async getFioApiBaseUrls() {
-    const currentFioSDKInstance = await this.getPublicFioSDK();
-    return currentFioSDKInstance.config && currentFioSDKInstance.config.baseUrls;
-  }
-
   accountHash(publicKey) {
     return FIOSDK.accountHash(publicKey);
   }
@@ -126,14 +130,21 @@ class Fio {
     return masterPubKey;
   }
 
-  async getMasterFioSDK() {
+  async getMasterFioSDK({ currentBaseUrl = null }) {
     if (!this.masterFioSDK) {
       const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
         process.env.MASTER_FIOSDK_KEY,
       );
-      const apiUrls = await FioApiUrl.getApiUrls({
+      let apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
+
+      // This is for the case when we have a forked transaction and we need to skip the same base url if it is already used.
+      // But if it is only 1 url, we need to use it.
+      if (currentBaseUrl && apiUrls.length > 1) {
+        apiUrls = apiUrls.filter(url => url !== currentBaseUrl);
+      }
+
       const validApiUrls = await this.checkUrls(apiUrls);
       this.masterFioSDK = new FIOSDK({
         privateKey: process.env.MASTER_FIOSDK_KEY,
@@ -340,7 +351,125 @@ class Fio {
     return new MathOp(fee).toString();
   }
 
-  async executeAction(action, params, auth = {}, keys = {}) {
+  async getAllFees({ forceUpdate = false, feesVar = null }) {
+    let fees;
+
+    // Use provided feesVar or fetch from database
+    const dbFeesVar = feesVar || (await Var.getByKey(FEES_VAR_KEY));
+    const dataBaseFees =
+      dbFeesVar && dbFeesVar.value ? JSON.parse(dbFeesVar.value) : null;
+
+    if (!forceUpdate) {
+      if (
+        dbFeesVar &&
+        !Var.updateRequired(dbFeesVar.updatedAt, FEES_UPDATE_TIMEOUT_SEC)
+      ) {
+        try {
+          fees = dataBaseFees;
+          // eslint-disable-next-line no-empty
+        } catch (e) {}
+      }
+    }
+
+    try {
+      if (!fees || (fees && Object.values(FEE_ACTIONS).some(action => !fees[action]))) {
+        const feeResults = await Promise.allSettled(
+          Object.entries(FEE_ACTIONS).map(async ([, action]) =>
+            this.getFee(action)
+              .then(fee => ({ fee, action }))
+              .catch(error =>
+                Promise.reject({
+                  message: error.message || 'Unknown error',
+                  stack: error.stack,
+                  ...error,
+                  action,
+                }),
+              ),
+          ),
+        );
+
+        logger.info(
+          `SUCCESS FEES FROM FIO SERVER: ${feeResults
+            .filter(({ status }) => status === 'fulfilled')
+            .map(({ value }) => ` ${value.action}: ${value.fee}`)}`,
+        );
+
+        if (feeResults.some(({ status }) => status === 'rejected')) {
+          logger.info(
+            `FAILED FEES FROM FIO SERVER ${feeResults
+              .filter(({ status }) => status === 'rejected')
+              .map(({ reason: { action, message } }) => ` ${action}: ${message}`)}`,
+          );
+        }
+
+        const processedFeesResults = feeResults.map(
+          ({
+            status,
+            value: { fee, action } = {},
+            reason: { action: reasonAction } = {},
+          }) => {
+            if (status === 'fulfilled') {
+              if (fee)
+                return {
+                  fee,
+                  action,
+                };
+
+              if (!fee && dataBaseFees && dataBaseFees[action]) {
+                logger.info(
+                  `FEE for ${action} is absent set fallback fee to: ${dataBaseFees[action]}`,
+                );
+                return {
+                  fee: dataBaseFees[action],
+                  action,
+                };
+              }
+
+              throw new Error(
+                `Failed to get fee for ${action} action and no fallback available.`,
+              );
+            }
+
+            if (status === 'rejected') {
+              if (dataBaseFees && dataBaseFees[reasonAction]) {
+                logger.info(
+                  `Get FEE for ${reasonAction} has an error set fallback fee to: ${dataBaseFees[reasonAction]}`,
+                );
+                return {
+                  fee: dataBaseFees[reasonAction],
+                  action: reasonAction,
+                };
+              }
+
+              throw new Error(
+                `Failed to set fallback fee for errored ${reasonAction} action.`,
+              );
+            }
+          },
+        );
+
+        fees = processedFeesResults.reduce(
+          (acc, { fee, action }) => ({ ...acc, [action]: fee }),
+          {},
+        );
+
+        await Var.setValue(FEES_VAR_KEY, JSON.stringify(fees));
+      }
+    } catch (e) {
+      logger.error('Get Fees Error: ', e);
+    }
+
+    return fees;
+  }
+
+  async executeAction({
+    action,
+    params,
+    auth = {},
+    keys = {},
+    returnBaseUrl = false,
+    currentBaseUrl = null,
+  }) {
     if (keys.private) {
       // todo: set new sdk and use it
     }
@@ -361,7 +490,8 @@ class Fio {
         params.actor = auth.actor;
         params.permission = auth.permission;
       }
-      const fioSdk = await this.getMasterFioSDK();
+
+      const fioSdk = await this.getMasterFioSDK({ currentBaseUrl });
       logger.info('PARAMS', params);
       logger.info('account', FIO_ACCOUNT_NAMES[action]);
       logger.info('action', FIO_ACTION_NAMES[action]);
@@ -379,6 +509,7 @@ class Fio {
       return await fioSdk.executePreparedTrx(
         FIO_ACTIONS_TO_END_POINT_MAP[action],
         preparedTrx,
+        returnBaseUrl,
       );
     } catch (err) {
       this.logError('EXECUTE ACTION ERROR', err);
@@ -395,13 +526,14 @@ class Fio {
     }
   }
 
-  async executeTx(action, signedTx) {
+  async executeTx({ action, signedTx, currentBaseUrl = null }) {
     try {
-      const fioSdk = await this.getMasterFioSDK();
+      const fioSdk = await this.getMasterFioSDK({ currentBaseUrl });
 
       return await fioSdk.executePreparedTrx(
         FIO_ACTIONS_TO_END_POINT_MAP[action],
         signedTx,
+        true,
       );
     } catch (err) {
       this.logError(err);

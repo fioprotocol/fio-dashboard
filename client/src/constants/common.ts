@@ -675,6 +675,10 @@ export const CART_ITEM_PERIOD_OPTIONS = [
     id: '3',
     name: '3 Years',
   },
+  {
+    id: '10',
+    name: '10 Years',
+  },
 ];
 
 export const DEFAULT_BUNDLE_SET_VALUE = 1;

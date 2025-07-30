@@ -21,6 +21,7 @@ import { VARS_KEYS } from '../config/constants.js';
 import logger from '../logger.mjs';
 
 const ORDER_SUCCESS_STATUS = Order.STATUS.SUCCESS;
+const ORDER_PARTIALLY_SUCCESS_STATUS = Order.STATUS.PARTIALLY_SUCCESS;
 const TX_SUCCESS_STATUS = BlockchainTransaction.STATUS.SUCCESS;
 
 class RetryForkedTransactionsJob extends CommonJob {
@@ -47,13 +48,13 @@ class RetryForkedTransactionsJob extends CommonJob {
     const minMinutes = parseInt(config.cronJobs.retryForkedTransactionsMinMinutes) || 5;
     const maxMinutes = parseInt(config.cronJobs.retryForkedTransactionsMaxMinutes) || 10;
 
-    // Calculate time range
-    const maxTime = new Date(Date.now() - minMinutes * 60 * 1000);
-    const minTime = new Date(Date.now() - maxMinutes * 60 * 1000);
+    // Calculate time range in UTC
+    const now = Date.now();
+    // minTime should be older (further back), maxTime should be newer (more recent)
+    const minTime = new Date(now - maxMinutes * 60 * 1000).toISOString(); // older time (further back)
+    const maxTime = new Date(now - minMinutes * 60 * 1000).toISOString(); // newer time (more recent)
 
-    this.postMessage(
-      `Checking transactions between ${minTime.toISOString()} and ${maxTime.toISOString()}`,
-    );
+    this.postMessage(`Checking transactions between ${minTime} and ${maxTime}`);
 
     // Query for successful orders with successful transaction status in the time range
     const [results] = await OrderItem.sequelize.query(
@@ -63,21 +64,17 @@ class RetryForkedTransactionsJob extends CommonJob {
         o.number as "orderNumber",
         o."createdAt" as "orderCreatedAt",
         oi.id as "orderItemId",
-        oi.action as "orderItemAction",
-        oi.address,
-        oi.domain,
         bt."txId" as "transactionId",
-        bt.id as "blockchainTransactionId",
-        bt."createdAt" as "transactionCreatedAt"
+        bt."baseUrl"
       FROM orders o
       INNER JOIN "order-items" oi ON o.id = oi."orderId"
       INNER JOIN "order-items-status" ois ON oi.id = ois."orderItemId"
       INNER JOIN "blockchain-transactions" bt ON ois."blockchainTransactionId" = bt.id
       WHERE 
-        o.status = $1
-        AND ois."txStatus" = $2
-        AND bt."createdAt" >= $3
-        AND bt."createdAt" <= $4
+        (o.status = $1 OR o.status = $2)
+        AND ois."txStatus" = $3
+        AND bt."updatedAt" >= $4
+        AND bt."updatedAt" <= $5
         AND bt."txId" IS NOT NULL
         AND bt."txId" != ''
         AND o."deletedAt" IS NULL
@@ -85,7 +82,13 @@ class RetryForkedTransactionsJob extends CommonJob {
       ORDER BY o."createdAt" DESC
     `,
       {
-        bind: [ORDER_SUCCESS_STATUS, TX_SUCCESS_STATUS, minTime, maxTime],
+        bind: [
+          ORDER_SUCCESS_STATUS,
+          ORDER_PARTIALLY_SUCCESS_STATUS,
+          TX_SUCCESS_STATUS,
+          minTime,
+          maxTime,
+        ],
       },
     );
 
@@ -143,14 +146,9 @@ class RetryForkedTransactionsJob extends CommonJob {
             return {
               orderId: row.orderId,
               orderNumber: row.orderNumber,
-              orderCreatedAt: row.orderCreatedAt,
               orderItemId: row.orderItemId,
-              orderItemAction: row.orderItemAction,
-              address: row.address,
-              domain: row.domain,
               transactionId: row.transactionId,
-              blockchainTransactionId: row.blockchainTransactionId,
-              transactionCreatedAt: row.transactionCreatedAt,
+              baseUrl: row.baseUrl,
               error:
                 (fioHistoryResult && fioHistoryResult.error) ||
                 'Transaction not found in chain',
@@ -169,14 +167,9 @@ class RetryForkedTransactionsJob extends CommonJob {
           return {
             orderId: row.orderId,
             orderNumber: row.orderNumber,
-            orderCreatedAt: row.orderCreatedAt,
             orderItemId: row.orderItemId,
-            orderItemAction: row.orderItemAction,
-            address: row.address,
-            domain: row.domain,
             transactionId: row.transactionId,
-            blockchainTransactionId: row.blockchainTransactionId,
-            transactionCreatedAt: row.transactionCreatedAt,
+            baseUrl: row.baseUrl,
             error: error.message || 'Unknown error',
           };
         }
@@ -214,7 +207,7 @@ class RetryForkedTransactionsJob extends CommonJob {
     // Log for monitoring system to track specific affected orders
     missingTransactions.forEach(tx => {
       this.postMessage(
-        `FORKED_TRANSACTIONS_DETECTED orderId=${tx.orderId} orderItemId=${tx.orderItemId}`,
+        `FORKED_TRANSACTIONS_DETECTED orderId=${tx.orderId} orderItemId=${tx.orderItemId} by ${tx.baseUrl}`,
       );
     });
 

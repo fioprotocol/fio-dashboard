@@ -74,19 +74,13 @@ class OrdersJob extends CommonJob {
   constructor() {
     super();
     this.feesJson = {};
-  }
-
-  async getFioApiBaseUrls({ prefix }) {
-    const baseUrls = await fioApi.getFioApiBaseUrls();
-
-    logger.info(`FIO API URL ${prefix}: ${baseUrls}`);
-
-    return baseUrls;
+    this.feesUpdatedAt = null;
   }
 
   async getFeeForAction(action, forceUpdate = false) {
     let fee = null;
 
+    // Check local cache first
     if (
       this.feesUpdatedAt &&
       !Var.updateRequired(this.feesUpdatedAt, FEES_UPDATE_TIMEOUT_SEC) &&
@@ -94,17 +88,22 @@ class OrdersJob extends CommonJob {
       !forceUpdate
     ) {
       fee = this.feesJson[action];
+      this.postMessage(`Fees (cached): ${JSON.stringify({ action, fee })}`);
     } else {
+      // Get all fees and update local cache
       try {
-        fee = await fioApi.getFee(action);
+        const fees = await fioApi.getAllFees({ forceUpdate });
+        if (fees) {
+          this.feesJson = fees;
+          this.feesUpdatedAt = new Date();
+          fee = fees[action];
+        }
+        this.postMessage(`Fees (updated): ${JSON.stringify({ action, fee })}`);
       } catch (error) {
         logger.error(`GET FEE FOR ACTION ${action} FAILED: `, error);
+        // Fallback to cached value if available
+        fee = this.feesJson[action] || null;
       }
-
-      this.postMessage(`Fees: ${JSON.stringify({ action, fee })}`);
-      this.feesJson[action] = fee;
-      this.feesUpdatedAt = new Date();
-      await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
     }
 
     return fee;
@@ -343,14 +342,16 @@ class OrdersJob extends CommonJob {
           break;
         }
         default:
-          refundTx = await fioApi.executeAction(
-            GenericAction.transferTokens,
-            fioApi.getActionParams({
+          refundTx = await fioApi.executeAction({
+            action: GenericAction.transferTokens,
+            params: fioApi.getActionParams({
               ...orderItemProps,
               amount: nativePrice,
               action: GenericAction.transferTokens,
             }),
-          );
+            returnBaseUrl: true,
+            currentBaseUrl: orderItemProps.baseUrl,
+          });
       }
 
       if (refundTx.transaction_id || refundTx.id) {
@@ -359,7 +360,11 @@ class OrdersJob extends CommonJob {
         await PaymentEventLog.create({
           status: PaymentEventLog.STATUS.SUCCESS,
           statusNotes: `${statusNotes}. (${refundTx.transaction_id || refundTx.id})`,
-          data: { fioTxId: refundTx.transaction_id, txId: refundTx.id },
+          data: {
+            fioTxId: refundTx.transaction_id,
+            txId: refundTx.id,
+            baseUrl: refundTx.baseUrl,
+          },
           paymentId: refundPayment.id,
         });
 
@@ -637,8 +642,6 @@ class OrdersJob extends CommonJob {
       where: { publicKey: data.signingWalletPubKey || orderItem.publicKey },
     });
 
-    await this.getFioApiBaseUrls({ prefix: '(submitSignedTx)' });
-
     if (!isFIO) {
       // Send tokens to customer
 
@@ -652,15 +655,17 @@ class OrdersJob extends CommonJob {
       }
 
       try {
-        const transferRes = await fioApi.executeAction(
-          GenericAction.transferTokens,
-          fioApi.getActionParams({
+        const transferRes = await fioApi.executeAction({
+          action: GenericAction.transferTokens,
+          params: fioApi.getActionParams({
             publicKey: data.signingWalletPubKey || orderItem.publicKey,
             amount: balanceDifference || fee,
             action: GenericAction.transferTokens,
           }),
           auth,
-        );
+          returnBaseUrl: true,
+          currentBaseUrl: orderItem.baseUrl,
+        });
 
         if (!transferRes.transaction_id) {
           const transferError = fioApi.checkTxError(transferRes);
@@ -737,7 +742,11 @@ class OrdersJob extends CommonJob {
       });
     }
 
-    const result = await fioApi.executeTx(orderItem.action, data.signedTx);
+    const result = await fioApi.executeTx({
+      action: orderItem.action,
+      signedTx: data.signedTx,
+      currentBaseUrl: orderItem.baseUrl,
+    });
 
     if (!result.transaction_id) {
       const { notes } = fioApi.checkTxError(result);
@@ -811,11 +820,9 @@ class OrdersJob extends CommonJob {
           data: { roe },
         });
 
-        await this.getFioApiBaseUrls({ prefix: '(handleCustomDomain)' });
-
-        const result = await fioApi.executeAction(
-          GenericAction.registerFioDomain,
-          fioApi.getActionParams({
+        const result = await fioApi.executeAction({
+          action: GenericAction.registerFioDomain,
+          params: fioApi.getActionParams({
             action: GenericAction.registerFioDomain,
             domain,
             publicKey: orderItem.publicKey,
@@ -823,7 +830,9 @@ class OrdersJob extends CommonJob {
             tpid: orderItem.affiliateTpid,
           }),
           auth,
-        );
+          returnBaseUrl: true,
+          currentBaseUrl: orderItem.baseUrl,
+        });
 
         if (result.transaction_id) {
           const bcTx = await BlockchainTransaction.create({
@@ -834,6 +843,7 @@ class OrdersJob extends CommonJob {
             status: BlockchainTransaction.STATUS.SUCCESS,
             orderItemId: orderItem.id,
             feeCollected: result.fee_collected,
+            baseUrl: result.baseUrl,
           });
 
           await BlockchainTransactionEventLog.create({
@@ -894,11 +904,9 @@ class OrdersJob extends CommonJob {
         });
       }
 
-      await this.getFioApiBaseUrls({ prefix: '(executeOrderItemAction)' });
-
-      result = await fioApi.executeAction(
+      result = await fioApi.executeAction({
         action,
-        fioApi.getActionParams({
+        params: fioApi.getActionParams({
           ...orderItem,
           tpid:
             action === GenericAction.registerFioAddress ||
@@ -909,7 +917,9 @@ class OrdersJob extends CommonJob {
           fee: await this.getFeeForAction(action),
         }),
         auth,
-      );
+        returnBaseUrl: true,
+        currentBaseUrl: orderItem.baseUrl,
+      });
 
       // No tx id. Refund order payment for fio action.
       if (!result.transaction_id && !disableRefund)
@@ -953,7 +963,9 @@ class OrdersJob extends CommonJob {
     const dashboardDomains = await Domain.getDashboardDomains();
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
-    this.feesJson = feesVar ? JSON.parse(feesVar.value) : {};
+    // Initialize fees using getAllFees with the already fetched feesVar
+    const initialFees = await fioApi.getAllFees({ forceUpdate: false, feesVar });
+    this.feesJson = initialFees || (feesVar ? JSON.parse(feesVar.value) : {});
     this.feesUpdatedAt = feesVar ? feesVar.updatedAt : null;
 
     const {

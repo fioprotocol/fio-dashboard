@@ -73,6 +73,7 @@ export default class UpdateItemPeriod extends Base {
       const updatedMultiYearPrice = handlePriceForMultiYearItems({
         includeAddress:
           existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+        onlyRenew: existingCartItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
         period,
         prices,
         roe,
