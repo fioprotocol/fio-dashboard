@@ -74,11 +74,13 @@ class OrdersJob extends CommonJob {
   constructor() {
     super();
     this.feesJson = {};
+    this.feesUpdatedAt = null;
   }
 
   async getFeeForAction(action, forceUpdate = false) {
     let fee = null;
 
+    // Check local cache first
     if (
       this.feesUpdatedAt &&
       !Var.updateRequired(this.feesUpdatedAt, FEES_UPDATE_TIMEOUT_SEC) &&
@@ -86,17 +88,22 @@ class OrdersJob extends CommonJob {
       !forceUpdate
     ) {
       fee = this.feesJson[action];
+      this.postMessage(`Fees (cached): ${JSON.stringify({ action, fee })}`);
     } else {
+      // Get all fees and update local cache
       try {
-        fee = await fioApi.getFee(action);
+        const fees = await fioApi.getAllFees({ forceUpdate });
+        if (fees) {
+          this.feesJson = fees;
+          this.feesUpdatedAt = new Date();
+          fee = fees[action];
+        }
+        this.postMessage(`Fees (updated): ${JSON.stringify({ action, fee })}`);
       } catch (error) {
         logger.error(`GET FEE FOR ACTION ${action} FAILED: `, error);
+        // Fallback to cached value if available
+        fee = this.feesJson[action] || null;
       }
-
-      this.postMessage(`Fees: ${JSON.stringify({ action, fee })}`);
-      this.feesJson[action] = fee;
-      this.feesUpdatedAt = new Date();
-      await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
     }
 
     return fee;
@@ -956,7 +963,9 @@ class OrdersJob extends CommonJob {
     const dashboardDomains = await Domain.getDashboardDomains();
     const allRefProfileDomains = await ReferrerProfile.getRefDomainsList();
 
-    this.feesJson = feesVar ? JSON.parse(feesVar.value) : {};
+    // Initialize fees using getAllFees with the already fetched feesVar
+    const initialFees = await fioApi.getAllFees({ forceUpdate: false, feesVar });
+    this.feesJson = initialFees || (feesVar ? JSON.parse(feesVar.value) : {});
     this.feesUpdatedAt = feesVar ? feesVar.updatedAt : null;
 
     const {
