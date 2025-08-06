@@ -15,12 +15,10 @@ export default class FioHistory {
 
     for (const url of this.historyNodeUrls) {
       try {
-        const result = await fetchWithRateLimit({
+        const data = await fetchWithRateLimit({
           url: `${url}history/get_actions?${queryString}`,
           maxRetries,
         });
-
-        const data = await result.json();
 
         return data;
       } catch (err) {
@@ -42,12 +40,10 @@ export default class FioHistory {
       const isLastUrl = i === this.historyNodeUrls.length - 1;
 
       try {
-        const result = await fetchWithRateLimit({
+        const data = await fetchWithRateLimit({
           url: `${url}history/get_transaction?${queryString}`,
           maxRetries,
         });
-
-        const data = await result.json();
 
         // If we have data and executed is true, return immediately
         if (data && data.executed !== false) {

@@ -47,12 +47,36 @@ export const fetchWithRateLimit = async ({
     try {
       const response = await fetch(targetUrl, options);
 
-      if (response.ok) return response;
+      if (response.ok) {
+        // For successful responses, check content-type to handle HTML error pages
+        const contentType = response.headers.get('content-type');
 
-      if (response.status === HTTP_CODES.TOO_MANY_REQUESTS) {
+        if (!contentType || !contentType.includes('application/json')) {
+          // Server returned non-JSON response (likely HTML error page even with 200 status)
+          const responseText = await response.text();
+          logger.warn(
+            `Non-JSON response from ${targetUrl}. Content-Type: ${contentType ||
+              'unknown'}`,
+          );
+          logger.warn(`Response body preview: ${responseText.substring(0, 200)}...`);
+
+          throw new Error(
+            `Non-JSON response from server. Content-Type: ${contentType || 'unknown'}`,
+          );
+        }
+
+        // Parse JSON and return the data directly (FIO APIs always return JSON)
+        return await response.json();
+      }
+
+      // Handle rate limiting for both 429 (Too Many Requests) and 503 (Service Unavailable)
+      if (
+        response.status === HTTP_CODES.TOO_MANY_REQUESTS ||
+        response.status === HTTP_CODES.SERVICE_UNAVAILABLE
+      ) {
         if (retries > maxRetries) {
           throw new Error(
-            `${RATE_LIMIT_TYPE_ERROR}: Max retries (${maxRetries}) reached`,
+            `${RATE_LIMIT_TYPE_ERROR}: Max retries (${maxRetries}) reached for status ${response.status}`,
           );
         }
 
@@ -61,7 +85,7 @@ export const fetchWithRateLimit = async ({
           retries === maxRetries ? MINUTE_MS : SECOND_MS * Math.pow(2, retries - 1); // Exponential backoff
 
         logger.info(
-          `RATE LIMIT FOR URL: ${targetUrl} ${
+          `RATE LIMIT (${response.status}) FOR URL: ${targetUrl} ${
             options ? `OPTIONS: ${JSON.stringify(options)}` : ''
           }`,
         );
