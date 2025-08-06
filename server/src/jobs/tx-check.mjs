@@ -266,7 +266,40 @@ class TxCheckJob extends CommonJob {
 
     const methods = Object.values(bcTxOrderItems).map(items => processTxItems(items));
 
-    await this.executeActions(methods);
+    // Process methods in chunks to avoid rate limiting
+    const CHUNK_SIZE = 10;
+    const CHUNK_DELAY_MS = 500;
+
+    this.postMessage(
+      `Processing ${methods.length} order groups in chunks of ${CHUNK_SIZE}`,
+    );
+
+    for (let i = 0; i < methods.length; i += CHUNK_SIZE) {
+      // Check if job has been cancelled
+      if (this.isCancelled) {
+        this.postMessage('Job cancelled during chunk processing');
+        return false;
+      }
+
+      const chunk = methods.slice(i, i + CHUNK_SIZE);
+      const chunkNumber = Math.floor(i / CHUNK_SIZE) + 1;
+      const totalChunks = Math.ceil(methods.length / CHUNK_SIZE);
+
+      this.postMessage(
+        `Processing chunk ${chunkNumber}/${totalChunks} (${chunk.length} order groups)`,
+      );
+
+      // Process all methods in this chunk in parallel
+      await Promise.all(chunk.map(method => method()));
+
+      // Add delay between chunks to avoid rate limiting (except for the last chunk)
+      if (i + CHUNK_SIZE < methods.length) {
+        this.postMessage(`Waiting ${CHUNK_DELAY_MS}ms before next chunk...`);
+        await new Promise(resolve => setTimeout(resolve, CHUNK_DELAY_MS));
+      }
+    }
+
+    this.postMessage('All order groups processed successfully');
 
     this.finish();
   }
