@@ -95,11 +95,31 @@ export const fetchWithRateLimit = async ({
         return makeRequest({ targetUrl });
       }
 
-      const responseJSON = response ? await response.json() : null;
+      // For error responses, also check content-type before JSON parsing
+      let responseJSON = null;
+      const contentType = response.headers.get('content-type');
+
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          responseJSON = await response.json();
+        } catch (jsonError) {
+          // JSON parsing failed even though content-type said JSON
+          responseJSON = null;
+        }
+      } else {
+        // Server returned HTML or other non-JSON error page
+        const responseText = await response.text();
+        logger.warn(
+          `Non-JSON error response from ${targetUrl}. Status: ${
+            response.status
+          }, Content-Type: ${contentType || 'unknown'}`,
+        );
+        logger.warn(`Error response body preview: ${responseText.substring(0, 200)}...`);
+      }
 
       throw new Error(
         `HTTP error! status: ${response.status}, response: ${
-          responseJSON ? JSON.stringify(responseJSON, null, 4) : 'N/A'
+          responseJSON ? JSON.stringify(responseJSON, null, 4) : 'Non-JSON response'
         }`,
       );
     } catch (error) {
