@@ -83,6 +83,7 @@ export default {
       process.env.RETRY_FORKED_TRANSACTIONS_JOB_CLOSE_TIMEOUT,
     retryForkedTransactionsMaxMinutes: process.env.RETRY_FORKED_TRANSACTIONS_MAX_MINUTES,
     retryForkedTransactionsMinMinutes: process.env.RETRY_FORKED_TRANSACTIONS_MIN_MINUTES,
+    fioHistorySearchWindowMinutes: process.env.FIO_HISTORY_SEARCH_WINDOW_MINUTES,
     walletDataCloseTimeout: process.env.WALLET_DATA_JOB_CLOSE_TIMEOUT,
     walletDataInterval: process.env.WALLET_DATA_JOB_INTERVAL,
     wrapStatusCloseTimeout: process.env.WRAP_STATUS_JOB_CLOSE_TIMEOUT,
