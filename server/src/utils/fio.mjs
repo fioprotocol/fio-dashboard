@@ -11,7 +11,7 @@ import MathOp from '../services/math.mjs';
 import config from '../config/index.mjs';
 import logger from '../logger.mjs';
 
-import { Payment } from '../models/payment.mjs';
+import { Payment } from '../models/Payment.mjs';
 import { FioAccountProfile } from '../models/FioAccountProfile.mjs';
 
 export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
