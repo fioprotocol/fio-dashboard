@@ -14,14 +14,13 @@ import { Var } from '../models/Var.mjs';
 import CommonJob from './job.mjs';
 
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
-import { SECOND_MS, VARS_KEYS } from '../config/constants';
+import { VARS_KEYS } from '../config/constants';
 
-import { fioApi, FIO_ACTION_NAMES } from '../external/fio.mjs';
+import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
-import MathOp from '../services/math.mjs';
+import { searchTransactionInHistory } from '../utils/fio.mjs';
 
 import logger from '../logger.mjs';
-import { sleep } from '../tools.mjs';
 
 const loggerPrefix = 'BC TX';
 
@@ -132,65 +131,26 @@ class MissedTransactions extends CommonJob {
       const afterTimeForSearch = new Date(createdAt).toISOString();
 
       try {
-        let addressTransactionHistory = null;
-
-        const findMissedTxInAccountHistoryActions = async params => {
-          const accountHistoryActions = await fioHistory.requestHistoryActions({
-            params,
-          });
-
-          if (accountHistoryActions) {
-            if (accountHistoryActions.actions) {
-              const foundMissedTx = accountHistoryActions.actions.find(
-                ({ act }) =>
-                  act.name === FIO_ACTION_NAMES[action] &&
-                  act.data &&
-                  (act.data.fio_address === fioName || act.data.fio_domain === fioName),
-              );
-
-              if (foundMissedTx) {
-                addressTransactionHistory = foundMissedTx;
-              } else if (
-                // Keep search for missed transaction if not found on results and there are more actions for that account
-                !foundMissedTx &&
-                new MathOp(accountHistoryActions.total.value).gt(
-                  accountHistoryActions.actions.length,
-                )
-              ) {
-                const lastActionItem =
-                  accountHistoryActions.actions[accountHistoryActions.actions.length - 1];
-
-                logger.info(
-                  `${loggerPrefix} Get More Items before: ${lastActionItem.timestamp}`,
-                );
-                await sleep(SECOND_MS);
-                await findMissedTxInAccountHistoryActions({
-                  ...params,
-                  before: lastActionItem.timestamp,
-                });
-              }
-            }
-          }
-        };
-
-        for (const account of accountsList) {
-          logger.info(`${loggerPrefix} Getting for account: ${account}`);
-          const searchTxParams = {
-            account,
+        // Search for transaction using utility function
+        const addressTransactionHistory = await searchTransactionInHistory({
+          fioHistory,
+          action,
+          fioName,
+          domain: domain,
+          accountsList,
+          searchParams: {
             limit: Number(fioHistoryLimit),
             simple: false,
             noBinary: true,
             sort: 'desc',
             after: afterTimeForSearch,
-          };
+          },
+          loggerPrefix,
+        });
 
-          await findMissedTxInAccountHistoryActions(searchTxParams);
-
-          if (addressTransactionHistory) {
-            foundActor = account;
-            logger.info(`${loggerPrefix} Found Actor: ${foundActor}`);
-            break;
-          }
+        if (addressTransactionHistory) {
+          foundActor = accountsList[0]; // Use first account since utility already found the transaction
+          logger.info(`${loggerPrefix} Found Actor: ${foundActor}`);
         }
 
         if (!addressTransactionHistory) {
