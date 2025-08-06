@@ -15,7 +15,8 @@ import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
 import CommonJob from './job.mjs';
 import config from '../config/index.mjs';
-import { searchTransactionInHistory } from '../utils/fio.mjs';
+import { searchTransactionInHistory, buildAccountsListForSearch } from '../utils/fio.mjs';
+import { fetchWithRateLimit } from '../utils/general.mjs';
 
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 import { VARS_KEYS, ERROR_CODES } from '../config/constants.js';
@@ -78,23 +79,30 @@ class RetryForkedTransactionsJob extends CommonJob {
     return false;
   }
 
-  async findTransactionInHistory(orderItem, blockchainTransaction) {
-    const { action, address, domain } = orderItem;
+  async findTransactionInHistory({ orderItem, blockchainTransaction }) {
+    const {
+      action,
+      address,
+      domain,
+      publicKey,
+      data,
+      paymentProcessor,
+      total,
+    } = orderItem;
     const fioName = fioApi.setFioName(address, domain);
 
     const afterTimeForSearch = new Date(blockchainTransaction.createdAt).toISOString();
 
     const fioHistoryLimit = Number(await Var.getValByKey(VARS_KEYS.FIO_HISTORY_LIMIT));
 
-    // Get accounts to search - similar to get-missed-bc-txs.mjs logic
-    const accountsList = [];
-
-    // For these actions, we typically use master public key
-    const txPublicKey = fioApi.getMasterPublicKey();
-    const actor = await fioApi.getActor(txPublicKey);
-    if (actor) {
-      accountsList.push(actor);
-    }
+    // Get accounts to search using the centralized utility with actual order data
+    const accountsList = await buildAccountsListForSearch({
+      publicKey,
+      data,
+      paymentProcessor,
+      action,
+      total,
+    });
 
     // Use the utility function to search for the transaction
     const foundTransaction = await searchTransactionInHistory({
@@ -131,17 +139,25 @@ class RetryForkedTransactionsJob extends CommonJob {
     // Query for successful orders with successful transaction status in the time range
     const [results] = await OrderItem.sequelize.query(
       `
-      SELECT DISTINCT
+      SELECT
         o.id as "orderId",
         o.number as "orderNumber",
+        o."publicKey",
+        o.total as "total",
         o."createdAt" as "orderCreatedAt",
         oi.id as "orderItemId",
+        oi."action",
+        oi.address as "address",
+        oi.domain as "domain",
+        oi.data,
         bt."txId" as "transactionId",
-        bt."baseUrl"
+        bt."baseUrl",
+        p.processor as "paymentProcessor"
       FROM orders o
       INNER JOIN "order-items" oi ON o.id = oi."orderId"
       INNER JOIN "order-items-status" ois ON oi.id = ois."orderItemId"
       INNER JOIN "blockchain-transactions" bt ON ois."blockchainTransactionId" = bt.id
+      LEFT JOIN "payments" p on p."orderId" = o.id
       WHERE 
         (o.status = $1 OR o.status = $2)
         AND ois."txStatus" = $3
@@ -201,35 +217,90 @@ class RetryForkedTransactionsJob extends CommonJob {
           checkedCount++;
           const currentCount = checkedCount;
 
-          // Check if transaction exists in FIO chain
+          // Check if transaction exists in FIO chain with proper multi-server logic
           const maxRetries =
             Number(await Var.getValByKey(VARS_KEYS.DEFAULT_MAX_RETRIES)) || 3;
-          const fioHistoryResult = await this.fioHistory.getTransaction({
-            transactionId: row.transactionId,
-            maxRetries,
-          });
 
-          // If transaction doesn't exist or has error, it's missing
-          if (!fioHistoryResult || !fioHistoryResult.executed) {
+          let transactionFound = false;
+          let lastError = null;
+          let serversChecked = 0;
+          let executedFalseCount = 0;
+
+          // Get all FIO history URLs to check manually
+          const fioHistoryUrls = this.fioHistory.historyNodeUrls;
+
+          for (const url of fioHistoryUrls) {
+            try {
+              serversChecked++;
+              this.postMessage(
+                `Checking transaction ${row.transactionId} on server ${serversChecked}/${fioHistoryUrls.length}: ${url}`,
+              );
+
+              const result = await fetchWithRateLimit({
+                url: `${url}history/get_transaction?id=${row.transactionId}&block_hint=0`,
+                maxRetries,
+              });
+
+              // If any server says executed: true, transaction exists - success!
+              if (result && result.executed === true) {
+                this.postMessage(
+                  `✅ Transaction found ${currentCount}/${results.length}: ${row.transactionId} (executed: true on ${url})`,
+                );
+                transactionFound = true;
+                break; // Found it, no need to check other servers
+              } else if (result && result.executed === false) {
+                executedFalseCount++;
+                this.postMessage(
+                  `⚠️ Transaction ${row.transactionId} has executed: false on server ${serversChecked}/${fioHistoryUrls.length}`,
+                );
+                // Continue to next server
+              } else {
+                // Unexpected response format
+                this.postMessage(
+                  `⚠️ Unexpected response format for transaction ${row.transactionId} from ${url}`,
+                );
+              }
+            } catch (error) {
+              lastError = error;
+              this.postMessage(
+                `❌ Error checking transaction ${row.transactionId} on server ${serversChecked}/${fioHistoryUrls.length}: ${error.message}`,
+              );
+
+              // If this is the last server and it failed, we'll treat as not executed
+              if (serversChecked === fioHistoryUrls.length) {
+                this.postMessage(
+                  `⚠️ Last server failed for transaction ${row.transactionId}, treating as not executed`,
+                );
+              }
+              // Continue to next server unless this was the last one
+            }
+          }
+
+          if (transactionFound) {
+            // At least one server confirmed executed: true
+            return null; // Transaction found, not missing
+          } else {
+            // All servers said executed: false OR last server failed with error
+            const reason =
+              lastError && serversChecked === fioHistoryUrls.length
+                ? `Last server failed: ${lastError.message}`
+                : `All ${executedFalseCount} servers reported executed: false`;
+
             this.postMessage(
-              `❌ Missing transaction ${currentCount}/${results.length}: ${row.transactionId} (Order: ${row.orderNumber})`,
+              `❌ Missing transaction ${currentCount}/${results.length}: ${row.transactionId} (${reason})`,
             );
 
             return {
               orderId: row.orderId,
               orderNumber: row.orderNumber,
               orderItemId: row.orderItemId,
+              address: row.address,
+              domain: row.domain,
+              action: row.action,
               transactionId: row.transactionId,
               baseUrl: row.baseUrl,
-              error:
-                (fioHistoryResult && fioHistoryResult.error) ||
-                'Transaction not found in chain',
+              error: reason,
             };
-          } else {
-            this.postMessage(
-              `✅ Transaction found ${currentCount}/${results.length}: ${row.transactionId}`,
-            );
-            return null; // Transaction found, not missing
           }
         } catch (error) {
           // If we get an error here, it means all servers failed or there are genuine issues
@@ -279,7 +350,10 @@ class RetryForkedTransactionsJob extends CommonJob {
     // Log for monitoring system to track specific affected orders
     missingTransactions.forEach(tx => {
       this.postMessage(
-        `FORKED_TRANSACTIONS_DETECTED orderId=${tx.orderId} orderItemId=${tx.orderItemId} by ${tx.baseUrl}`,
+        `FORKED_TRANSACTIONS_DETECTED order=${tx.orderNumber} item=${fioApi.setFioName(
+          tx.address,
+          tx.domain,
+        )} action=${tx.action} by ${tx.baseUrl}`,
       );
     });
 
@@ -389,10 +463,10 @@ class RetryForkedTransactionsJob extends CommonJob {
             );
 
             // Search for the transaction in FIO history
-            const foundTransaction = await this.findTransactionInHistory(
-              item,
+            const foundTransaction = await this.findTransactionInHistory({
+              orderItem: item,
               blockchainTransaction,
-            );
+            });
 
             if (foundTransaction) {
               const {

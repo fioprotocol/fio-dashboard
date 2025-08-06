@@ -1,3 +1,5 @@
+import { GenericAction } from '@fioprotocol/fiosdk';
+
 import { FIO_ADDRESS_DELIMITER } from '../config/constants';
 import { DOMAIN_EXP_DEBUG_AFFIX, DOMAIN_EXP_IN_30_DAYS } from '../constants/fio.mjs';
 import { SECOND_MS } from '../config/constants.js';
@@ -8,6 +10,9 @@ import { sleep } from '../tools.mjs';
 import MathOp from '../services/math.mjs';
 import config from '../config/index.mjs';
 import logger from '../logger.mjs';
+
+import { Payment } from '../models/payment.mjs';
+import { FioAccountProfile } from '../models/FioAccountProfile.mjs';
 
 export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 
@@ -263,4 +268,67 @@ export const searchTransactionInHistory = async ({
     // The calling code should handle null responses appropriately
     return null;
   }
+};
+
+/**
+ * Build accounts list for transaction searching based on order item data
+ * @param {Object} params - Parameters for building accounts list
+ * @param {string} [params.publicKey] - Order public key
+ * @param {Object} [params.data] - Order item data (may contain signingWalletPubKey)
+ * @param {string} [params.paymentProcessor] - Payment processor type
+ * @param {string} [params.action] - FIO action type
+ * @param {number} [params.total] - Order total amount
+ * @returns {Promise<Array<string>>} - Array of unique account actors to search
+ */
+export const buildAccountsListForSearch = async ({
+  publicKey = null,
+  data = null,
+  paymentProcessor = null,
+  action = null,
+  total = null,
+}) => {
+  const accountsList = [];
+  let txPublicKey = publicKey;
+
+  // Use the same logic as get-missed-bc-txs.mjs
+  if (data && data.signingWalletPubKey) {
+    txPublicKey = data.signingWalletPubKey;
+  } else if (paymentProcessor) {
+    if (
+      paymentProcessor === Payment.PROCESSOR.STRIPE ||
+      paymentProcessor === Payment.PROCESSOR.BITPAY
+    ) {
+      txPublicKey = fioApi.getMasterPublicKey();
+
+      const dashboardAccountActions = await FioAccountProfile.getPaidItems();
+
+      if (dashboardAccountActions && dashboardAccountActions.length > 0) {
+        accountsList.push(...dashboardAccountActions.map(account => account.actor));
+      }
+    } else if (
+      paymentProcessor === Payment.PROCESSOR.FIO &&
+      action === GenericAction.registerFioAddress &&
+      !total
+    ) {
+      const dashboardAccountActions = await FioAccountProfile.getFreeItems();
+
+      if (dashboardAccountActions && dashboardAccountActions.length > 0) {
+        accountsList.push(...dashboardAccountActions.map(account => account.actor));
+      }
+    }
+  }
+
+  // If no specific txPublicKey was determined, use master public key as fallback
+  if (!txPublicKey) {
+    txPublicKey = fioApi.getMasterPublicKey();
+  }
+
+  // Get actor for the determined public key
+  const actor = await fioApi.getActor(txPublicKey);
+  if (actor) {
+    accountsList.unshift(actor); // Add to front as primary account
+  }
+
+  // Remove duplicates and return
+  return [...new Set(accountsList)];
 };

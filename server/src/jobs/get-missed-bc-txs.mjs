@@ -1,14 +1,10 @@
-import { GenericAction } from '@fioprotocol/fiosdk';
-
 import '../db';
 import {
-  FioAccountProfile,
   OrderItem,
   OrderItemStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
   FioApiUrl,
-  Payment,
 } from '../models/index.mjs';
 import { Var } from '../models/Var.mjs';
 import CommonJob from './job.mjs';
@@ -18,7 +14,7 @@ import { VARS_KEYS } from '../config/constants';
 
 import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
-import { searchTransactionInHistory } from '../utils/fio.mjs';
+import { searchTransactionInHistory, buildAccountsListForSearch } from '../utils/fio.mjs';
 
 import logger from '../logger.mjs';
 
@@ -88,45 +84,14 @@ class MissedTransactions extends CommonJob {
 
       const fioName = fioApi.setFioName(address, domain);
 
-      let txPublicKey = publicKey;
-      let foundActor = null;
-
-      const accountsList = [];
-
-      if (data && data.signingWalletPubKey) {
-        txPublicKey = data.signingWalletPubKey;
-      } else if (
-        paymentProcessor === Payment.PROCESSOR.STRIPE ||
-        paymentProcessor === Payment.PROCESSOR.BITPAY
-      ) {
-        txPublicKey = fioApi.getMasterPublicKey();
-
-        const dashboardAccountActions = await FioAccountProfile.getPaidItems();
-
-        if (dashboardAccountActions && dashboardAccountActions.length > 0) {
-          accountsList.push(...dashboardAccountActions.map(account => account.actor));
-        }
-      } else if (
-        paymentProcessor === Payment.PROCESSOR.FIO &&
-        action === GenericAction.registerFioAddress &&
-        !total
-      ) {
-        const dashboardAccountActions = await FioAccountProfile.getFreeItems();
-
-        if (dashboardAccountActions && dashboardAccountActions.length > 0) {
-          accountsList.push(...dashboardAccountActions.map(account => account.actor));
-        }
-      }
-
-      const actor = await fioApi.getActor(txPublicKey);
-      if (actor) {
-        accountsList.unshift(actor);
-      }
-
-      // Remove duplicates from accountsList
-      const uniqueAccountsList = [...new Set(accountsList)];
-      accountsList.length = 0;
-      accountsList.push(...uniqueAccountsList);
+      // Get accounts to search using the centralized utility
+      const accountsList = await buildAccountsListForSearch({
+        publicKey,
+        data,
+        paymentProcessor,
+        action,
+        total,
+      });
 
       const afterTimeForSearch = new Date(createdAt).toISOString();
 
@@ -148,6 +113,7 @@ class MissedTransactions extends CommonJob {
           loggerPrefix,
         });
 
+        let foundActor = null;
         if (addressTransactionHistory) {
           foundActor = accountsList[0]; // Use first account since utility already found the transaction
           logger.info(`${loggerPrefix} Found Actor: ${foundActor}`);
