@@ -118,8 +118,9 @@ export const searchTransactionInHistory = async ({
       ).toISOString();
 
       // End time configurable via env var (in minutes), default 3 hours (180 minutes)
-      const searchWindowMinutes =
-        parseInt(config.cronJobs.fioHistorySearchWindowMinutes) || 180;
+      const searchWindowMinutes = config.cronJobs.fioHistorySearchWindowMinutes
+        ? parseInt(config.cronJobs.fioHistorySearchWindowMinutes)
+        : 180;
       const searchEndTime = new Date(
         new Date(blockchainTransaction.createdAt).getTime() +
           searchWindowMinutes * 60 * 1000,
