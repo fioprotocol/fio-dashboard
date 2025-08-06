@@ -98,128 +98,169 @@ export const searchTransactionInHistory = async ({
 }) => {
   let foundTransaction = null;
 
-  // Create a more precise time window if blockchain transaction info is available
-  let adjustedSearchParams = { ...searchParams };
-  let usingPreciseTimeWindow = false;
-  if (
-    blockchainTransaction &&
-    blockchainTransaction.createdAt &&
-    blockchainTransaction.updatedAt
-  ) {
-    // Start searching from 5 minutes before createdAt to catch transactions that might be slightly earlier
-    const searchStartTime = new Date(
-      new Date(blockchainTransaction.createdAt).getTime() - 5 * 60 * 1000,
-    ).toISOString();
+  try {
+    // Create a more precise time window if blockchain transaction info is available
+    let adjustedSearchParams = { ...searchParams };
+    let usingPreciseTimeWindow = false;
+    if (
+      blockchainTransaction &&
+      blockchainTransaction.createdAt &&
+      blockchainTransaction.updatedAt
+    ) {
+      // Start searching from 5 minutes before createdAt to catch transactions that might be slightly earlier
+      const searchStartTime = new Date(
+        new Date(blockchainTransaction.createdAt).getTime() - 5 * 60 * 1000,
+      ).toISOString();
 
-    // End time configurable via env var (in minutes), default 3 hours (180 minutes)
-    const searchWindowMinutes =
-      parseInt(config.cronJobs.fioHistorySearchWindowMinutes) || 180;
-    const searchEndTime = new Date(
-      new Date(blockchainTransaction.createdAt).getTime() +
-        searchWindowMinutes * 60 * 1000,
-    ).toISOString();
+      // End time configurable via env var (in minutes), default 3 hours (180 minutes)
+      const searchWindowMinutes =
+        parseInt(config.cronJobs.fioHistorySearchWindowMinutes) || 180;
+      const searchEndTime = new Date(
+        new Date(blockchainTransaction.createdAt).getTime() +
+          searchWindowMinutes * 60 * 1000,
+      ).toISOString();
 
-    adjustedSearchParams = {
-      ...searchParams,
-      after: searchStartTime,
-      before: searchEndTime,
-    };
-    usingPreciseTimeWindow = true;
+      adjustedSearchParams = {
+        ...searchParams,
+        after: searchStartTime,
+        before: searchEndTime,
+      };
+      usingPreciseTimeWindow = true;
 
-    if (loggerPrefix) {
-      logger.info(
-        `${loggerPrefix} Using precise time window: ${searchStartTime} to ${searchEndTime} (${searchWindowMinutes} min window)`,
-      );
+      if (loggerPrefix) {
+        logger.info(
+          `${loggerPrefix} Using precise time window: ${searchStartTime} to ${searchEndTime} (${searchWindowMinutes} min window)`,
+        );
+      }
     }
-  }
 
-  const findMissedTxInAccountHistoryActions = async params => {
-    const accountHistoryActions = await fioHistory.requestHistoryActions({
-      params,
-    });
+    const findMissedTxInAccountHistoryActions = async params => {
+      try {
+        const accountHistoryActions = await fioHistory.requestHistoryActions({
+          params,
+        });
 
-    if (accountHistoryActions && accountHistoryActions.actions) {
-      const foundMissedTx = accountHistoryActions.actions.find(
-        ({ act }) =>
-          act.name === FIO_ACTION_NAMES[action] &&
-          act.data &&
-          (act.data.fio_address === fioName ||
-            act.data.fio_domain === (domain || fioName)),
-      );
+        // Validate response structure
+        if (!accountHistoryActions || !Array.isArray(accountHistoryActions.actions)) {
+          if (loggerPrefix) {
+            logger.warn(
+              `${loggerPrefix} Invalid response structure from history API: ${JSON.stringify(
+                accountHistoryActions,
+              )}`,
+            );
+          }
+          return;
+        }
 
-      if (foundMissedTx) {
-        foundTransaction = foundMissedTx;
-      } else if (
-        !foundMissedTx &&
-        new MathOp(accountHistoryActions.total.value).gt(
-          accountHistoryActions.actions.length,
-        )
-      ) {
-        const lastActionItem =
-          accountHistoryActions.actions[accountHistoryActions.actions.length - 1];
+        const foundMissedTx = accountHistoryActions.actions.find(
+          ({ act }) =>
+            act &&
+            act.name === FIO_ACTION_NAMES[action] &&
+            act.data &&
+            (act.data.fio_address === fioName ||
+              act.data.fio_domain === (domain || fioName)),
+        );
 
+        if (foundMissedTx) {
+          foundTransaction = foundMissedTx;
+        } else if (
+          !foundMissedTx &&
+          accountHistoryActions.total &&
+          accountHistoryActions.total.value &&
+          new MathOp(accountHistoryActions.total.value).gt(
+            accountHistoryActions.actions.length,
+          )
+        ) {
+          const lastActionItem =
+            accountHistoryActions.actions[accountHistoryActions.actions.length - 1];
+
+          if (lastActionItem && lastActionItem.timestamp) {
+            if (loggerPrefix) {
+              logger.info(
+                `${loggerPrefix} Get More Items before: ${lastActionItem.timestamp}`,
+              );
+            }
+            await sleep(SECOND_MS);
+            await findMissedTxInAccountHistoryActions({
+              ...params,
+              before: lastActionItem.timestamp,
+            });
+          }
+        }
+      } catch (error) {
+        // Log error but don't crash the search - try next account or fallback
         if (loggerPrefix) {
-          logger.info(
-            `${loggerPrefix} Get More Items before: ${lastActionItem.timestamp}`,
+          logger.warn(
+            `${loggerPrefix} API error in findMissedTxInAccountHistoryActions for account ${params.account}: ${error.message}`,
           );
         }
-        await sleep(SECOND_MS);
-        await findMissedTxInAccountHistoryActions({
-          ...params,
-          before: lastActionItem.timestamp,
-        });
+
+        // For any error from fetchWithRateLimit, continue to next account/fallback
+        // Don't treat as "not found" - these are infrastructure issues
       }
-    }
-  };
-
-  for (const account of accountsList) {
-    if (loggerPrefix) {
-      logger.info(`${loggerPrefix} Getting for account: ${account}`);
-    }
-
-    const accountSearchParams = {
-      account,
-      ...adjustedSearchParams,
     };
 
-    await findMissedTxInAccountHistoryActions(accountSearchParams);
-
-    if (foundTransaction) {
-      break;
-    }
-  }
-
-  // If we used a precise time window and didn't find anything, fallback to broader search
-  if (!foundTransaction && usingPreciseTimeWindow) {
-    if (loggerPrefix) {
-      logger.info(
-        `${loggerPrefix} Precise time window search failed, falling back to broader search`,
-      );
-    }
-
-    // Fallback to original search parameters (broader time range)
+    // Search through all accounts
     for (const account of accountsList) {
+      if (!account) continue; // Skip invalid accounts
+
       if (loggerPrefix) {
-        logger.info(`${loggerPrefix} Fallback search for account: ${account}`);
+        logger.info(`${loggerPrefix} Getting for account: ${account}`);
       }
 
-      const fallbackSearchParams = {
+      const accountSearchParams = {
         account,
-        ...searchParams, // Use original search params (broader range)
+        ...adjustedSearchParams,
       };
 
-      await findMissedTxInAccountHistoryActions(fallbackSearchParams);
+      await findMissedTxInAccountHistoryActions(accountSearchParams);
 
       if (foundTransaction) {
-        if (loggerPrefix) {
-          logger.info(
-            `${loggerPrefix} Found transaction in fallback search for account: ${account}`,
-          );
-        }
         break;
       }
     }
-  }
 
-  return foundTransaction;
+    // If we used a precise time window and didn't find anything, fallback to broader search
+    if (!foundTransaction && usingPreciseTimeWindow) {
+      if (loggerPrefix) {
+        logger.info(
+          `${loggerPrefix} Precise time window search failed, falling back to broader search`,
+        );
+      }
+
+      // Fallback to original search parameters (broader time range)
+      for (const account of accountsList) {
+        if (!account) continue; // Skip invalid accounts
+
+        if (loggerPrefix) {
+          logger.info(`${loggerPrefix} Fallback search for account: ${account}`);
+        }
+
+        const fallbackSearchParams = {
+          account,
+          ...searchParams, // Use original search params (broader range)
+        };
+
+        await findMissedTxInAccountHistoryActions(fallbackSearchParams);
+
+        if (foundTransaction) {
+          if (loggerPrefix) {
+            logger.info(
+              `${loggerPrefix} Found transaction in fallback search for account: ${account}`,
+            );
+          }
+          break;
+        }
+      }
+    }
+
+    return foundTransaction;
+  } catch (error) {
+    // Top-level error handling
+    logger.error(`${loggerPrefix} Critical error in searchTransactionInHistory:`, error);
+
+    // Return null instead of throwing to prevent job crashes
+    // The calling code should handle null responses appropriately
+    return null;
+  }
 };

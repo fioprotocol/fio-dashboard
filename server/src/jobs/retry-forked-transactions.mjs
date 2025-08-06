@@ -232,18 +232,18 @@ class RetryForkedTransactionsJob extends CommonJob {
             return null; // Transaction found, not missing
           }
         } catch (error) {
+          // If we get an error here, it means all servers failed or there are genuine issues
+          // Don't treat as "missing transaction" to avoid incorrect resets
           this.postMessage(
-            `Error checking transaction ${row.transactionId}: ${error.message}`,
+            `⚠️ Skipping transaction ${row.transactionId} due to API infrastructure error: ${error.message}`,
           );
 
-          return {
-            orderId: row.orderId,
-            orderNumber: row.orderNumber,
-            orderItemId: row.orderItemId,
-            transactionId: row.transactionId,
-            baseUrl: row.baseUrl,
-            error: error.message || 'Unknown error',
-          };
+          logger.warn(
+            `API infrastructure error checking transaction ${row.transactionId}, skipping to avoid incorrect reset:`,
+            error,
+          );
+
+          return null; // Skip this transaction, don't treat as missing
         }
       });
 
