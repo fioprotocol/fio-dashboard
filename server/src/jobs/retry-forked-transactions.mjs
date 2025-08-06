@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import '../db';
 import {
@@ -14,9 +15,10 @@ import { fioApi } from '../external/fio.mjs';
 import FioHistory from '../external/fio-history.mjs';
 import CommonJob from './job.mjs';
 import config from '../config/index.mjs';
+import { searchTransactionInHistory } from '../utils/fio.mjs';
 
 import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
-import { VARS_KEYS } from '../config/constants.js';
+import { VARS_KEYS, ERROR_CODES } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -42,6 +44,76 @@ class RetryForkedTransactionsJob extends CommonJob {
 
     this.postMessage(`Using FIO History URLs: ${fioHistoryUrls.join(', ')}`);
     this.fioHistory = new FioHistory({ fioHistoryUrls });
+  }
+
+  async checkFioNameExistsInChain(orderItem) {
+    const { action, address, domain } = orderItem;
+
+    try {
+      const isAddress =
+        action === GenericAction.registerFioAddress ||
+        action === GenericAction.registerFioDomainAddress ||
+        action === GenericAction.addBundledTransactions;
+
+      const isDomain =
+        action === GenericAction.registerFioDomain ||
+        action === GenericAction.renewFioDomain;
+
+      if (isAddress && address && domain) {
+        const fioName = fioApi.setFioName(address, domain);
+        const addressData = await fioApi.getFioAddress(fioName);
+        return !!addressData;
+      } else if (isDomain && domain) {
+        const domainData = await fioApi.getFioDomain(domain);
+        return !!domainData;
+      }
+    } catch (error) {
+      if (error.code === ERROR_CODES.NOT_FOUND) {
+        return false; // Name/domain doesn't exist in chain
+      }
+      // Re-throw unexpected errors
+      throw error;
+    }
+
+    return false;
+  }
+
+  async findTransactionInHistory(orderItem, blockchainTransaction) {
+    const { action, address, domain } = orderItem;
+    const fioName = fioApi.setFioName(address, domain);
+
+    const afterTimeForSearch = new Date(blockchainTransaction.createdAt).toISOString();
+
+    const fioHistoryLimit = Number(await Var.getValByKey(VARS_KEYS.FIO_HISTORY_LIMIT));
+
+    // Get accounts to search - similar to get-missed-bc-txs.mjs logic
+    const accountsList = [];
+
+    // For these actions, we typically use master public key
+    const txPublicKey = fioApi.getMasterPublicKey();
+    const actor = await fioApi.getActor(txPublicKey);
+    if (actor) {
+      accountsList.push(actor);
+    }
+
+    // Use the utility function to search for the transaction
+    const foundTransaction = await searchTransactionInHistory({
+      fioHistory: this.fioHistory,
+      action,
+      fioName,
+      domain,
+      accountsList,
+      searchParams: {
+        limit: Number(fioHistoryLimit),
+        simple: false,
+        noBinary: true,
+        sort: 'desc',
+        after: afterTimeForSearch,
+      },
+      blockchainTransaction, // Pass the blockchain transaction for precise time window
+    });
+
+    return foundTransaction;
   }
 
   async findMissingTransactions() {
@@ -247,92 +319,289 @@ class RetryForkedTransactionsJob extends CommonJob {
         return;
       }
 
-      this.postMessage(`Found ${orderItems.length} order items to reset`);
+      this.postMessage(`Found ${orderItems.length} order items to process`);
 
-      const orderItemIds = orderItems.map(item => item.id);
+      // Separate order items based on whether they exist in the chain
+      const itemsExistingInChain = [];
+      const itemsNotExistingInChain = [];
 
-      // Update blockchain-transactions table to set txId to NULL
-      const updatedTxCount = await BlockchainTransaction.update(
-        { txId: null },
-        {
-          where: {
-            orderItemId: {
-              [Op.in]: orderItemIds,
-            },
-          },
-          transaction,
-        },
-      );
-
-      this.postMessage(`Updated ${updatedTxCount[0]} blockchain transaction records`);
-
-      // Process FIO handles and delete from free-addresses
-      const fioHandlesToDelete = [];
       for (const orderItem of orderItems) {
-        const { address, domain } = orderItem;
-
-        // Only process items with both address and domain (full FIO handles)
-        if (address && domain) {
-          const fioHandle = fioApi.setFioName(address, domain);
-          fioHandlesToDelete.push(fioHandle);
+        try {
+          const existsInChain = await this.checkFioNameExistsInChain(orderItem);
+          if (existsInChain) {
+            itemsExistingInChain.push(orderItem);
+            this.postMessage(
+              `FIO name already exists in chain for order item ${orderItem.id}: ${orderItem.address}@${orderItem.domain}`,
+            );
+          } else {
+            itemsNotExistingInChain.push(orderItem);
+          }
+        } catch (error) {
+          logger.error(
+            `Error checking FIO name existence for order item ${orderItem.id}:`,
+            error,
+          );
+          // If we can't check, treat as not existing to be safe
+          itemsNotExistingInChain.push(orderItem);
         }
       }
 
-      if (fioHandlesToDelete.length > 0) {
-        const deletedFreeAddressCount = await FreeAddress.destroy({
-          where: {
-            name: {
-              [Op.in]: fioHandlesToDelete,
+      this.postMessage(
+        `${itemsExistingInChain.length} items exist in chain, ${itemsNotExistingInChain.length} items don't exist`,
+      );
+
+      // For items that exist in chain: handle renewFioDomain and addBundledTransactions specially
+      if (itemsExistingInChain.length > 0) {
+        const specialActionItems = [];
+        const regularExistingItems = [];
+
+        // Separate items that need special handling
+        for (const item of itemsExistingInChain) {
+          if (
+            item.action === GenericAction.renewFioDomain ||
+            item.action === GenericAction.addBundledTransactions
+          ) {
+            specialActionItems.push(item);
+          } else {
+            regularExistingItems.push(item);
+          }
+        }
+
+        // Handle special actions (renewFioDomain, addBundledTransactions)
+        const itemsToMarkAsSuccess = [];
+        const itemsToFullyReset = [];
+
+        for (const item of specialActionItems) {
+          try {
+            // Get the blockchain transaction for this item
+            const blockchainTransaction =
+              item.BlockchainTransactions && item.BlockchainTransactions[0];
+            if (!blockchainTransaction) {
+              this.postMessage(
+                `No blockchain transaction found for order item ${item.id}, adding to full reset`,
+              );
+              itemsToFullyReset.push(item);
+              continue;
+            }
+
+            this.postMessage(
+              `Searching for transaction in history for order item ${item.id} (${item.action})`,
+            );
+
+            // Search for the transaction in FIO history
+            const foundTransaction = await this.findTransactionInHistory(
+              item,
+              blockchainTransaction,
+            );
+
+            if (foundTransaction) {
+              const {
+                block_num,
+                timestamp,
+                trx_id,
+                act: { data: { max_fee: paramsMaxFee } = {} } = {},
+              } = foundTransaction;
+
+              this.postMessage(
+                `Found transaction in history for order item ${item.id}: ${trx_id}`,
+              );
+
+              // Get the actual fee collected
+              let max_fee = paramsMaxFee;
+              const maxRetries =
+                Number(await Var.getValByKey(VARS_KEYS.DEFAULT_MAX_RETRIES)) || 3;
+
+              if (trx_id) {
+                const transactionData = await this.fioHistory.getTransaction({
+                  transactionId: trx_id,
+                  maxRetries,
+                });
+
+                const feeCollectedAction =
+                  transactionData &&
+                  transactionData.actions &&
+                  transactionData.actions.find(
+                    ({ act }) => act.name === 'transfer' && act.data.from,
+                  );
+
+                if (feeCollectedAction && feeCollectedAction.act.data.amount) {
+                  max_fee = fioApi.amountToSUF(feeCollectedAction.act.data.amount);
+                }
+
+                // Update blockchain transaction with found data
+                await BlockchainTransaction.update(
+                  {
+                    status: BlockchainTransaction.STATUS.SUCCESS,
+                    feeCollected: max_fee,
+                    blockTime: timestamp ? timestamp + 'Z' : new Date(),
+                    blockNum: block_num,
+                    txId: trx_id,
+                  },
+                  {
+                    where: { id: blockchainTransaction.id },
+                    transaction,
+                  },
+                );
+
+                // Update order item status
+                const orderItemStatus = item.OrderItemStatus && item.OrderItemStatus[0];
+                if (orderItemStatus) {
+                  await OrderItemStatus.update(
+                    {
+                      txStatus: BlockchainTransaction.STATUS.SUCCESS,
+                    },
+                    {
+                      where: { id: orderItemStatus.id },
+                      transaction,
+                    },
+                  );
+                }
+
+                itemsToMarkAsSuccess.push(item);
+                this.postMessage(
+                  `Marked order item ${item.id} as successful with transaction ${trx_id}`,
+                );
+              }
+            } else {
+              this.postMessage(
+                `Transaction not found in history for order item ${item.id}, adding to full reset`,
+              );
+              itemsToFullyReset.push(item);
+            }
+          } catch (error) {
+            logger.error(
+              `Error searching transaction history for order item ${item.id}:`,
+              error,
+            );
+            this.postMessage(
+              `Error searching for order item ${item.id}, adding to full reset`,
+            );
+            itemsToFullyReset.push(item);
+          }
+        }
+
+        // Handle regular existing items (just clear txId)
+        if (regularExistingItems.length > 0) {
+          const regularItemIds = regularExistingItems.map(item => item.id);
+
+          const updatedRegularTxCount = await BlockchainTransaction.update(
+            { txId: null },
+            {
+              where: {
+                orderItemId: {
+                  [Op.in]: regularItemIds,
+                },
+              },
+              transaction,
             },
-          },
-          transaction,
-        });
+          );
+
+          this.postMessage(
+            `Cleared txId for ${updatedRegularTxCount[0]} regular blockchain transactions (items exist in chain)`,
+          );
+        }
+
+        // Add items that couldn't be found to the full reset list
+        if (itemsToFullyReset.length > 0) {
+          itemsNotExistingInChain.push(...itemsToFullyReset);
+        }
 
         this.postMessage(
-          `Deleted ${deletedFreeAddressCount} records from free-addresses table`,
+          `Special action results: ${itemsToMarkAsSuccess.length} marked as successful, ${itemsToFullyReset.length} added to full reset`,
         );
-      } else {
-        this.postMessage('No full FIO handles found to delete from free-addresses');
       }
 
-      // Update order-items-status to set txStatus to READY (only reset transaction status, keep payment status)
-      const updatedStatusCount = await OrderItemStatus.update(
-        { txStatus: BlockchainTransaction.STATUS.READY },
-        {
-          where: {
-            orderItemId: {
-              [Op.in]: orderItemIds,
+      // For items that don't exist in chain: do full reset
+      if (itemsNotExistingInChain.length > 0) {
+        const nonExistingItemIds = itemsNotExistingInChain.map(item => item.id);
+
+        // Update blockchain-transactions table to set txId to NULL
+        const updatedTxCount = await BlockchainTransaction.update(
+          { txId: null },
+          {
+            where: {
+              orderItemId: {
+                [Op.in]: nonExistingItemIds,
+              },
             },
+            transaction,
           },
-          transaction,
-        },
-      );
+        );
 
-      this.postMessage(`Updated ${updatedStatusCount[0]} order item status records`);
+        this.postMessage(
+          `Updated ${updatedTxCount[0]} blockchain transaction records (full reset)`,
+        );
 
-      // Update blockchain-transactions status to 1
-      const updatedBtStatusCount = await BlockchainTransaction.update(
-        { status: BlockchainTransaction.STATUS.READY },
-        {
-          where: {
-            orderItemId: {
-              [Op.in]: orderItemIds,
+        // Process FIO handles and delete from free-addresses
+        const fioHandlesToDelete = [];
+        for (const orderItem of itemsNotExistingInChain) {
+          const { address, domain } = orderItem;
+
+          // Only process items with both address and domain (full FIO handles)
+          if (address && domain) {
+            const fioHandle = fioApi.setFioName(address, domain);
+            fioHandlesToDelete.push(fioHandle);
+          }
+        }
+
+        if (fioHandlesToDelete.length > 0) {
+          const deletedFreeAddressCount = await FreeAddress.destroy({
+            where: {
+              name: {
+                [Op.in]: fioHandlesToDelete,
+              },
             },
-          },
-          transaction,
-        },
-      );
+            transaction,
+          });
 
-      this.postMessage(
-        `Updated ${updatedBtStatusCount[0]} blockchain transaction status records`,
-      );
+          this.postMessage(
+            `Deleted ${deletedFreeAddressCount} records from free-addresses table`,
+          );
+        } else {
+          this.postMessage('No full FIO handles found to delete from free-addresses');
+        }
+
+        // Update order-items-status to set txStatus to READY (only reset transaction status, keep payment status)
+        const updatedStatusCount = await OrderItemStatus.update(
+          { txStatus: BlockchainTransaction.STATUS.READY },
+          {
+            where: {
+              orderItemId: {
+                [Op.in]: nonExistingItemIds,
+              },
+            },
+            transaction,
+          },
+        );
+
+        this.postMessage(
+          `Updated ${updatedStatusCount[0]} order item status records (full reset)`,
+        );
+
+        // Update blockchain-transactions status to 1
+        const updatedBtStatusCount = await BlockchainTransaction.update(
+          { status: BlockchainTransaction.STATUS.READY },
+          {
+            where: {
+              orderItemId: {
+                [Op.in]: nonExistingItemIds,
+              },
+            },
+            transaction,
+          },
+        );
+
+        this.postMessage(
+          `Updated ${updatedBtStatusCount[0]} blockchain transaction status records (full reset)`,
+        );
+      }
 
       // Commit transaction
       await transaction.commit();
 
       this.postMessage('✅ Order items reset completed successfully!');
       this.postMessage(
-        `Summary: ${orderItems.length} order items processed, ${updatedTxCount[0]} blockchain transactions updated, ${fioHandlesToDelete.length} free addresses deleted`,
+        `Summary: ${orderItems.length} order items processed, ${itemsExistingInChain.length} items exist in chain (txId cleared only), ${itemsNotExistingInChain.length} items fully reset`,
       );
     } catch (error) {
       logger.error('Error during reset process:', error);
