@@ -49,9 +49,19 @@ export default {
   wrap: {
     ethBaseUrl: process.env.WRAP_STATUS_PAGE_ETH_INFURA_BASE_URL,
     infuraBaseUrl: process.env.WRAP_STATUS_PAGE_POLYGON_INFURA_BASE_URL,
+    infuraApiKey: process.env.INFURA_API_KEY,
     fioNftPolygonContract: process.env.WRAP_STATUS_PAGE_FIO_NFT_POLYGON_CONTRACT,
     fioTokenEthContract: process.env.WRAP_STATUS_PAGE_FIO_TOKEN_ETH_CONTRACT,
     fioHistoryOffset: process.env.WRAP_STATUS_PAGE_FIO_HISTORY_OFFSET,
+    fioHistoryV2Offset: process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_OFFSET,
+    blocksRangeLimitPoly: parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY),
+    blocksRangeLimitEth: parseInt(process.env.BLOCKS_RANGE_LIMIT_ETH),
+    oracleVotesLogsLimit: parseInt(process.env.ORACLE_VOTES_LOGS_LIMIT),
+    fioHistoryV2: {
+      maxRetries: parseInt(process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_MAX_RETRIES),
+      chunkSize: parseInt(process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_CHUNK_SIZE),
+      chunkDelayMs: parseInt(process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_CHUNK_DELAY_MS),
+    },
   },
   user: {
     fioDashUsernameDelimiter: `.fio.dash.${process.env.EDGE_ACC_DELIMITER || ''}`,
