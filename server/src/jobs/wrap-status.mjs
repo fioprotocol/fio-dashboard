@@ -703,11 +703,9 @@ class WrapStatusJob extends CommonJob {
             }
             const queryString = new URLSearchParams(params).toString();
 
-            const res = await fetchWithRateLimit({
+            response = await fetchWithRateLimit({
               url: `${url}history/get_actions?${queryString}`,
             });
-
-            response = res.json();
             break;
           } catch (error) {
             this.postMessage(`Failed to fetch from ${url}: ${error.message}`);
