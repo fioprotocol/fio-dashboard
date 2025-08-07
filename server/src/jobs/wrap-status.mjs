@@ -49,9 +49,93 @@ const UNWRAP_RETRIES_LIMIT = 5;
 const UNWRAP_APPROVED_COUNT = 3;
 
 class WrapStatusJob extends CommonJob {
+  constructor() {
+    super();
+    this.defaultMaxRetries = config.wrap.fioHistoryV2.maxRetries;
+    this.chunkSize = config.wrap.fioHistoryV2.chunkSize;
+    this.chunkDelay = config.wrap.fioHistoryV2.chunkDelayMs;
+  }
+
   handleErrorMessage(message) {
     // eslint-disable-next-line no-console
     console.log(message);
+  }
+
+  /**
+   * Process requests in chunks to balance performance and rate limiting
+   * @param {Array} items - Array of items to process
+   * @param {Function} processingFn - Function to process each item
+   * @param {Object} options - Configuration options
+   */
+  async processInChunks(items, processingFn, options = {}) {
+    const {
+      chunkSize = this.chunkSize,
+      chunkDelay = this.chunkDelay,
+      logPrefix = '',
+    } = options;
+
+    if (!items || items.length === 0) {
+      return [];
+    }
+
+    const results = [];
+    const chunks = [];
+
+    // Split items into chunks
+    for (let i = 0; i < items.length; i += chunkSize) {
+      chunks.push(items.slice(i, i + chunkSize));
+    }
+
+    this.postMessage(
+      `${logPrefix}Processing ${items.length} items in ${chunks.length} chunks of ${chunkSize}`,
+    );
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      const chunkStartTime = Date.now();
+
+      try {
+        // Process all items in the current chunk in parallel
+        const chunkResults = await Promise.allSettled(
+          chunk.map((item, chunkIndex) => {
+            const globalIndex = i * chunkSize + chunkIndex;
+            return processingFn(item, globalIndex);
+          }),
+        );
+
+        // Collect successful results and log failures
+        chunkResults.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            results.push(result.value);
+          } else {
+            const errorMessage =
+              result.reason && result.reason.message
+                ? result.reason.message
+                : result.reason;
+            this.postMessage(
+              `${logPrefix}Failed to process item ${i * chunkSize +
+                index}: ${errorMessage}`,
+            );
+          }
+        });
+
+        const chunkDuration = Date.now() - chunkStartTime;
+        this.postMessage(
+          `${logPrefix}Processed chunk ${i + 1}/${chunks.length} (${
+            chunk.length
+          } items) in ${chunkDuration}ms`,
+        );
+
+        // Add delay between chunks to prevent overwhelming the API
+        if (i < chunks.length - 1 && chunkDelay > 0) {
+          await sleep(chunkDelay);
+        }
+      } catch (error) {
+        this.postMessage(`${logPrefix}Error processing chunk ${i + 1}: ${error.message}`);
+      }
+    }
+
+    return results;
   }
 
   async getActionUrls() {
@@ -68,8 +152,8 @@ class WrapStatusJob extends CommonJob {
 
   // example of getting all POLYGON smart contract events
   async test() {
-    const web3 = new Web3(`${config.wrap.infuraBaseUrl}${process.env.INFURA_API_KEY}`);
-    const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
+    const web3 = new Web3(`${config.wrap.infuraBaseUrl}${config.wrap.infuraApiKey}`);
+    const blocksRangeLimit = config.wrap.blocksRangeLimitPoly;
 
     const fioNftContractOnPolygonChain = new web3.eth.Contract(
       WRAPPED_DOMAIN_ABI,
@@ -135,8 +219,8 @@ class WrapStatusJob extends CommonJob {
     const logPrefix = `Get POLYGON Logs, isWrap: ${isWrap}, isBurn: ${isBurn} --> `;
 
     try {
-      const web3 = new Web3(`${config.wrap.infuraBaseUrl}${process.env.INFURA_API_KEY}`);
-      const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
+      const web3 = new Web3(`${config.wrap.infuraBaseUrl}${config.wrap.infuraApiKey}`);
+      const blocksRangeLimit = config.wrap.blocksRangeLimitPoly;
 
       const fioNftContractOnPolygonChain = new web3.eth.Contract(
         WRAPPED_DOMAIN_ABI,
@@ -376,8 +460,8 @@ class WrapStatusJob extends CommonJob {
   async getEthLogs(isWrap = false) {
     const logPrefix = `Get ETH Logs, isWrap: ${isWrap} --> `;
     try {
-      const web3 = new Web3(`${config.wrap.ethBaseUrl}${process.env.INFURA_API_KEY}`);
-      const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_ETH);
+      const web3 = new Web3(`${config.wrap.ethBaseUrl}${config.wrap.infuraApiKey}`);
+      const blocksRangeLimit = config.wrap.blocksRangeLimitEth;
 
       const fioTokenContractOnEthChain = new web3.eth.Contract(
         WRAPPED_TOKEN_ABI,
@@ -580,7 +664,7 @@ class WrapStatusJob extends CommonJob {
           ((await WrapStatusFioUnwrapNftsOravotes.count()) || 0) +
           ((await WrapStatusFioUnwrapTokensOravotes.count()) || 0);
 
-        const defaultLimit = parseInt(process.env.ORACLE_VOTES_LOGS_LIMIT);
+        const defaultLimit = config.wrap.oracleVotesLogsLimit;
 
         this.postMessage(logPrefix + `Starting from position: ${startPosition}`);
 
@@ -689,7 +773,7 @@ class WrapStatusJob extends CommonJob {
         return response;
       };
 
-      const getFioActionsV2Logs = async params => {
+      const getFioActionsV2Logs = async (params, maxRetries = this.defaultMaxRetries) => {
         const urls = this.fioHistoryV2Urls;
         let response = null;
         for (const url of urls) {
@@ -705,6 +789,7 @@ class WrapStatusJob extends CommonJob {
 
             response = await fetchWithRateLimit({
               url: `${url}history/get_actions?${queryString}`,
+              maxRetries,
             });
             break;
           } catch (error) {
@@ -715,14 +800,18 @@ class WrapStatusJob extends CommonJob {
         return response;
       };
 
-      const getFioDeltasLogs = async params => {
+      const getFioDeltasLogs = async (params, maxRetries = this.defaultMaxRetries) => {
         const urls = this.fioHistoryV2Urls;
         let response = null;
 
         for (const url of urls) {
           try {
-            const res = await superagent.get(`${url}history/get_deltas`).query(params);
-            response = res.body;
+            const queryString = new URLSearchParams(params).toString();
+            response = await fetchWithRateLimit({
+              url: `${url}history/get_deltas?${queryString}`,
+              maxRetries,
+            });
+            break;
           } catch (error) {
             this.postMessage(`Failed to fetch from V2 ${url}: ${error.message}`);
           }
@@ -735,9 +824,7 @@ class WrapStatusJob extends CommonJob {
         this.postMessage(`${logPrefix} Searching for Burned Domains`);
 
         const unprocessedBurnedDomainsList = [];
-        const DEFAULT_V2_ITEMS_LIMIT_PER_REQUEST = parseInt(
-          process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_OFFSET,
-        );
+        const DEFAULT_V2_ITEMS_LIMIT_PER_REQUEST = config.wrap.fioHistoryV2Offset;
 
         const after = lastProcessedBlockNumber;
         const before = chainInfo.last_irreversible_block_num;
@@ -780,8 +867,6 @@ class WrapStatusJob extends CommonJob {
                     ? lastDeltasItem.block_num - 1
                     : lastDeltasItem.block_num;
               }
-              // Add 1 second timeout to avoid 429 Too many requests error
-              await sleep(SECOND_MS);
 
               await getFioBurnedDomainsLogsAll({ params });
             }
@@ -793,44 +878,51 @@ class WrapStatusJob extends CommonJob {
         });
 
         // Find transaction id for specific action by block number. Because it is not presented on deltas v2.
-        for (let i = 0; i < unprocessedBurnedDomainsList.length; i++) {
-          const unprocessedBurnDomainItem = unprocessedBurnedDomainsList[i];
-          const previousUnprocessedBurnDomainItem =
-            i > 0 ? unprocessedBurnedDomainsList[i - 1] : null;
+        const processedBurnedDomains = await this.processInChunks(
+          unprocessedBurnedDomainsList,
+          async (unprocessedBurnDomainItem, index) => {
+            const previousItem =
+              index > 0 ? unprocessedBurnedDomainsList[index - 1] : null;
 
-          if (
-            previousUnprocessedBurnDomainItem &&
-            unprocessedBurnDomainItem.block_num ===
-              previousUnprocessedBurnDomainItem.block_num
-          ) {
-            // if blocknumbers are the same we need to wait around 3 seconds to fetch block data again. If not wait returns empty object.
-            await sleep(SECOND_MS * 3);
-          }
-          const blockData = await getBlockTransactions(
-            unprocessedBurnDomainItem.block_num,
-          );
+            // If same block number as previous, add a delay to ensure block data is available
+            if (
+              previousItem &&
+              unprocessedBurnDomainItem.block_num === previousItem.block_num
+            ) {
+              await sleep(SECOND_MS * 3);
+            }
 
-          if (blockData && blockData.transactions && blockData.transactions.length) {
-            const burnedDomainAction = blockData.transactions.find(
-              ({ trx }) =>
-                trx.id &&
-                trx.transaction &&
-                trx.transaction.actions &&
-                !!trx.transaction.actions.find(
-                  ({ name, data }) =>
-                    (name === 'burndomain' || name === 'burnexpired') &&
-                    new MathOp(data.offset).eq(unprocessedBurnDomainItem.data.id),
-                ),
+            const blockData = await getBlockTransactions(
+              unprocessedBurnDomainItem.block_num,
             );
 
-            if (burnedDomainAction) {
-              unprocessedBurnDomainItem.trx_id = burnedDomainAction.trx.id;
+            if (blockData && blockData.transactions && blockData.transactions.length) {
+              const burnedDomainAction = blockData.transactions.find(
+                ({ trx }) =>
+                  trx.id &&
+                  trx.transaction &&
+                  trx.transaction.actions &&
+                  !!trx.transaction.actions.find(
+                    ({ name, data }) =>
+                      (name === 'burndomain' || name === 'burnexpired') &&
+                      new MathOp(data.offset).eq(unprocessedBurnDomainItem.data.id),
+                  ),
+              );
+
+              if (burnedDomainAction) {
+                unprocessedBurnDomainItem.trx_id = burnedDomainAction.trx.id;
+              }
             }
-          }
-        }
+
+            return unprocessedBurnDomainItem;
+          },
+          {
+            logPrefix: `${logPrefix}Burned Domains Processing: `,
+          },
+        );
 
         const seenTrxIds = new Set();
-        const unprocessedBurnedDomainsListNonDuplicate = unprocessedBurnedDomainsList.filter(
+        const unprocessedBurnedDomainsListNonDuplicate = processedBurnedDomains.filter(
           item => {
             if (seenTrxIds.has(item.trx_id)) {
               return false;
@@ -858,8 +950,6 @@ class WrapStatusJob extends CommonJob {
             new MathOp(actionLogs.total.value).gt(actionLogs.actions.length)
           ) {
             const lastActionLogItem = actionLogs.actions[actionLogs.actions.length - 1];
-            // Add 1 second timeout to decrease 429 Too many requests error
-            await sleep(SECOND_MS);
 
             return await getFioActionLogsAll({
               params: { ...params, toBlockNum: lastActionLogItem.block_num },
