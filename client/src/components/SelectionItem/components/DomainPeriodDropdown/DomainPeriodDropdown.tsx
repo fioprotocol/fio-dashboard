@@ -2,7 +2,12 @@ import React from 'react';
 
 import CustomDropdown from '../../../CustomDropdown';
 
-import { CART_ITEM_PERIOD_OPTIONS } from '../../../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
+} from '../../../../constants/common';
+
+import classes from './DomainPeriodDropdown.module.scss';
 
 type Props = {
   id: string;
@@ -22,11 +27,13 @@ export const DomainPeriodDropdown: React.FC<Props> = props => {
       <CustomDropdown
         value={period?.toString()}
         options={CART_ITEM_PERIOD_OPTIONS}
+        defaultOptionValue={DEFAULT_CART_ITEM_PERIOD_OPTION}
         onChange={onChange}
         isDark
         withoutMarginBottom
-        fitContentWidth
         hasAutoWidth
+        placeholderClassNames={classes.placeholder}
+        controlClassNames={classes.control}
       />
     </div>
   );
