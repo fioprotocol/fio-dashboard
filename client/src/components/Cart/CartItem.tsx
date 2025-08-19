@@ -116,6 +116,7 @@ const CartItem: React.FC<Props> = props => {
                 options={CART_ITEM_PERIOD_OPTIONS}
                 onChange={onPeriodChange}
                 isDark
+                placeholderClassNames={classes.placeholder}
               />
             </div>
           )}
