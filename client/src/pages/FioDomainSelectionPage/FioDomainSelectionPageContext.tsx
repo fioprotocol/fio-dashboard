@@ -13,7 +13,10 @@ import {
 } from '../../redux/registrations/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS_IDS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { DOMAIN_ALREADY_EXISTS } from '../../constants/errors';
 
@@ -26,11 +29,12 @@ import {
   validateFioDomain,
 } from '../../util/fio';
 import MathOp from '../../util/math';
+import { handlePriceForMultiYearItems } from '../../util/cart';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { SearchTerm } from '../../api/responses';
 import { SelectedItemProps } from '../FioAddressSelectionPage/types';
-import { CartItem, Roe } from '../../types';
+import { CartItem, NativePrices, Roe } from '../../types';
 
 const DEFAULT_ADDITIONAL_ITEMS_COUNT = 5;
 
@@ -48,12 +52,12 @@ export type UseContextProps = {
 const handleDomainItem = async ({
   domainItem,
   cartItemsJSON,
-  nativeFioDomainPrice,
+  prices,
   roe,
 }: {
   domainItem: { name: string; rank?: number };
   cartItemsJSON: string;
-  nativeFioDomainPrice: string;
+  prices: NativePrices;
   roe: Roe;
 }) => {
   const { name, rank } = domainItem;
@@ -62,8 +66,15 @@ const handleDomainItem = async ({
   const existingCartItem = parsedCartItems.find(cartItem =>
     checkIsDomainItemExistsOnCart(name, cartItem),
   );
-  const period = existingCartItem ? Number(existingCartItem.period) : 1;
-  const costNativeFio = new MathOp(nativeFioDomainPrice).mul(period).toString();
+  const period = existingCartItem
+    ? Number(existingCartItem.period)
+    : parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS);
+
+  const costNativeFio = handlePriceForMultiYearItems({
+    prices,
+    period,
+    includeAddress: existingCartItem?.type === CART_ITEM_TYPE.ADDRESS,
+  });
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
 
@@ -77,7 +88,7 @@ const handleDomainItem = async ({
     domain: name,
     costFio: fio,
     costUsdc: usdc,
-    costNativeFio: nativeFioDomainPrice,
+    costNativeFio,
     domainType: DOMAIN_TYPE.CUSTOM,
     isSelected: !!existingCartItem,
     isExist: isDomainExist,
@@ -90,12 +101,12 @@ const handleDomainItem = async ({
 const validateDomainItems = async ({
   domainArr,
   cartItemsJSON,
-  nativeFioDomainPrice,
+  prices,
   roe,
 }: {
   domainArr: Partial<SearchTerm> & { name: string }[];
   cartItemsJSON: string;
-  nativeFioDomainPrice: string;
+  prices: NativePrices;
   roe: Roe;
 }) =>
   (
@@ -107,7 +118,7 @@ const validateDomainItems = async ({
           return await handleDomainItem({
             domainItem: domain,
             cartItemsJSON,
-            nativeFioDomainPrice,
+            prices,
             roe,
           });
 
@@ -137,10 +148,6 @@ export const useContext = () => {
     SelectedItemProps[]
   >([]);
   const [previousDomainValue, setPreviousDomainValue] = useState<string>(null);
-
-  const {
-    nativeFio: { domain: nativeFioDomainPrice },
-  } = prices;
 
   const cartItemsJSON = JSON.stringify(cartItems);
   const prefixesListJSON = JSON.stringify(prefixesList);
@@ -274,7 +281,7 @@ export const useContext = () => {
           name: domain,
         },
         cartItemsJSON,
-        nativeFioDomainPrice,
+        prices: prices?.nativeFio,
         roe,
       });
 
@@ -313,13 +320,13 @@ export const useContext = () => {
       const validatedPrefixedItems = await validateDomainItems({
         domainArr: prefixedDomains,
         cartItemsJSON,
-        nativeFioDomainPrice,
+        prices: prices?.nativeFio,
         roe,
       });
       const validatedPostfixedItems = await validateDomainItems({
         domainArr: postfixedDomains,
         cartItemsJSON,
-        nativeFioDomainPrice,
+        prices: prices?.nativeFio,
         roe,
       });
 
@@ -343,10 +350,10 @@ export const useContext = () => {
     },
     [
       cartItemsJSON,
-      nativeFioDomainPrice,
       postfixesListJSON,
       prefixesListJSON,
       previousDomainValue,
+      prices?.nativeFio,
       roe,
     ],
   );

@@ -8,10 +8,7 @@ import { Account, EndPoint, GenericAction } from '@fioprotocol/fiosdk';
 import { getFee, toggleExpiredDomainBadge } from '../../redux/fio/actions';
 import { addItem as addItemToCart } from '../../redux/cart/actions';
 
-import {
-  fees as feesSelector,
-  showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector,
-} from '../../redux/fio/selectors';
+import { showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector } from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import {
   prices as pricesSelector,
@@ -22,7 +19,7 @@ import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
 
-import { DEFAULT_FEE_PRICES, convertFioPrices } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
@@ -33,12 +30,14 @@ import {
   isDomainWillExpireIn30Days,
 } from '../../util/fio';
 import { log } from '../../util/general';
+import { handlePriceForMultiYearItems } from '../../util/cart';
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
 
 import {
   CART_ITEM_TYPE,
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_PERIOD_OPTIONS_IDS,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
@@ -105,7 +104,6 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const cartItems = useSelector(cartItemsSelector);
-  const fees = useSelector(feesSelector);
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
@@ -160,9 +158,6 @@ export const useContext = (): UseContextProps => {
   const cartItemsJSON = JSON.stringify(cartItems);
   const fioDomainsJSON = JSON.stringify(fioDomains);
 
-  const renewDomainFeePrice =
-    fees[EndPoint.renewFioDomain] || DEFAULT_FEE_PRICES;
-
   const {
     nativeFio: { domain: nativeFioDomainPrice },
   } = prices;
@@ -171,14 +166,26 @@ export const useContext = (): UseContextProps => {
 
   const renewDomain = useCallback(
     (domain: string, isWatchedDomain = false) => {
+      const period = parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS);
+
+      const costNativeFio = handlePriceForMultiYearItems({
+        prices: prices?.nativeFio,
+        period,
+      });
+
+      const { fio: costFio, usdc: costUsdc } = convertFioPrices(
+        costNativeFio,
+        roe,
+      );
+
       const newCartItem: CartItem = {
         domain,
         type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
         id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
-        period: 1,
-        costNativeFio: renewDomainFeePrice?.nativeFio,
-        costFio: renewDomainFeePrice.fio,
-        costUsdc: renewDomainFeePrice.usdc,
+        period,
+        costNativeFio,
+        costFio,
+        costUsdc,
         isWatchedDomain,
       };
       dispatch(
@@ -197,15 +204,7 @@ export const useContext = (): UseContextProps => {
       );
       history.push(ROUTES.CART);
     },
-    [
-      cartItems,
-      dispatch,
-      history,
-      renewDomainFeePrice.fio,
-      renewDomainFeePrice?.nativeFio,
-      renewDomainFeePrice.usdc,
-      refCode,
-    ],
+    [prices?.nativeFio, roe, dispatch, refCode, cartItems, history],
   );
 
   const handleRenewDomain = (domain: string) => renewDomain(domain);
@@ -261,14 +260,28 @@ export const useContext = (): UseContextProps => {
 
       if (existingCartItem) return history.push(ROUTES.CART);
 
+      const period =
+        existingCartItem?.period ||
+        parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS);
+
+      const costNativeFio = handlePriceForMultiYearItems({
+        prices: prices?.nativeFio,
+        period,
+      });
+
+      const { fio: costFio, usdc: costUsdc } = convertFioPrices(
+        costNativeFio,
+        roe,
+      );
+
       const newCartItem = {
         id: domain,
         domain,
-        costFio: fio,
-        costUsdc: usdc,
+        costFio,
+        costUsdc,
         costNativeFio: nativeFioDomainPrice,
         domainType: DOMAIN_TYPE.CUSTOM,
-        period: 1,
+        period,
         type: CART_ITEM_TYPE.DOMAIN,
       };
 
@@ -283,11 +296,11 @@ export const useContext = (): UseContextProps => {
     [
       cartItemsJSON,
       dispatch,
-      fio,
       history,
       nativeFioDomainPrice,
+      prices?.nativeFio,
       refCode,
-      usdc,
+      roe,
     ],
   );
 
@@ -406,7 +419,7 @@ export const useContext = (): UseContextProps => {
 
   const onBuyDomainAction = useCallback(
     () => history.push(ROUTES.FIO_DOMAINS_SELECTION),
-    [],
+    [history],
   );
 
   useEffect(() => {

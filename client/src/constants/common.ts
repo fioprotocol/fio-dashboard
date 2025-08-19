@@ -662,24 +662,39 @@ export const CART_ITEM_TYPES_WITH_PERIOD = [
   CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
 ];
 
-export const CART_ITEM_PERIOD_OPTIONS = [
-  {
-    id: '1',
+export const CART_ITEM_PERIOD_OPTIONS_IDS = {
+  ONE_YEAR: '1',
+  TEN_YEARS: '10',
+  FIFTY_YEARS: '50',
+  ONE_HUNDRED_YEARS: '100',
+};
+
+export const DEFAULT_CART_ITEM_PERIOD_OPTION = {
+  id: CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS,
+  name: '50 Years -\nLifetime Promo',
+};
+
+export const CART_ITEM_PERIOD_OPTIONS_OBJECT = {
+  [CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR]: {
     name: '1 Year',
   },
-  {
-    id: '2',
-    name: '2 Years',
-  },
-  {
-    id: '3',
-    name: '3 Years',
-  },
-  {
-    id: '10',
+  [CART_ITEM_PERIOD_OPTIONS_IDS.TEN_YEARS]: {
     name: '10 Years',
   },
-];
+  [DEFAULT_CART_ITEM_PERIOD_OPTION.id]: {
+    name: DEFAULT_CART_ITEM_PERIOD_OPTION.name,
+  },
+  [CART_ITEM_PERIOD_OPTIONS_IDS.ONE_HUNDRED_YEARS]: {
+    name: '100 Years',
+  },
+};
+
+export const CART_ITEM_PERIOD_OPTIONS = Object.entries(
+  CART_ITEM_PERIOD_OPTIONS_OBJECT,
+).map(([id, { name }]) => ({
+  id,
+  name,
+}));
 
 export const DEFAULT_BUNDLE_SET_VALUE = 1;
 export const DEFAULT_BUNDLE_AMOUNT = 100;
