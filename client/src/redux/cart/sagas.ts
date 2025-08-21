@@ -145,7 +145,6 @@ export function* updatePeriodItem(): Generator {
   });
 }
 
-// todo: use in Domain manage page and renew page
 export function* onDomainRenew(history: History): Generator {
   yield takeEvery(HANDLE_DOMAIN_RENEW, function*(action: Action) {
     const {
