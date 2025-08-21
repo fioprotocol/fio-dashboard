@@ -36,6 +36,7 @@ import { USERNAME_REGEX } from '../../constants/regExps';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_PERIOD_OPTIONS_IDS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
 
@@ -346,7 +347,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         costNativeFio: '0',
         domainType: DOMAIN_TYPE.PRIVATE,
         isFree: true,
-        period: 1,
+        period: parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR),
         type: CART_ITEM_TYPE.ADDRESS,
       };
       dispatch(

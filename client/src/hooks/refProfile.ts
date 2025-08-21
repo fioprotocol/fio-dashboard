@@ -18,14 +18,16 @@ import { getDomains } from '../redux/registrations/actions';
 import { addItem as addItemToCart } from '../redux/cart/actions';
 
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../utils';
-import { convertFioPrices } from '../util/prices';
+import { handleFullPriceForMultiYearItems } from '../util/prices';
 import { log } from '../util/general';
 import { isDomainExpired } from '../util/fio';
 
 import { DOMAIN_TYPE } from '../constants/fio';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_PERIOD_OPTIONS_IDS,
   CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
   REF_PROFILE_TYPE,
 } from '../constants/common';
 import { ROUTES } from '../constants/routes';
@@ -190,21 +192,30 @@ export const useRefProfileAddressWidget = ({
           }
         }
 
-        const price = isDomainRegistered
-          ? prices.nativeFio.address
-          : prices.nativeFio.combo;
-        const { fio, usdc } = convertFioPrices(price, roe);
+        const period = isDomainRegistered
+          ? parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR)
+          : parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
+
+        const {
+          fio: costFio,
+          usdc: costUsdc,
+          costNativeFio,
+        } = handleFullPriceForMultiYearItems({
+          prices: prices?.nativeFio,
+          period,
+          roe,
+        });
 
         const cartItem = {
           id: fch,
           address: addressValue,
           domain: domainValue,
-          costFio: fio,
-          costUsdc: usdc,
-          costNativeFio: price,
+          costFio,
+          costUsdc,
+          costNativeFio,
           domainType: DOMAIN_TYPE.PREMIUM,
           isFree: false,
-          period: 1,
+          period,
           type: isDomainRegistered
             ? CART_ITEM_TYPE.ADDRESS
             : CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
@@ -234,8 +245,7 @@ export const useRefProfileAddressWidget = ({
     [
       refDomainObjs,
       cartItems,
-      prices.nativeFio.address,
-      prices.nativeFio.combo,
+      prices?.nativeFio,
       roe,
       dispatch,
       refCode,

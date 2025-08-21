@@ -1,6 +1,8 @@
 import MathOp from '../util/math';
 import apis from '../api';
 
+import { handlePriceForMultiYearItems } from './cart';
+
 import {
   AdditionalAction,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
@@ -8,6 +10,7 @@ import {
 
 import {
   FioBalanceRes,
+  NativePrices,
   OrderDetailedTotalCost,
   Roe,
   WalletBalances,
@@ -117,13 +120,14 @@ export const getDefaultOracleFeePrices = ({
 }: {
   roe?: Roe;
   action: AdditionalAction.wrapFioDomain | AdditionalAction.wrapFioTokens;
-}) => convertFioPrices(DEFAULT_ORACLE_FEE_PRICES[action] || '0', roe || '1');
+}): WalletBalancesItem =>
+  convertFioPrices(DEFAULT_ORACLE_FEE_PRICES[action] || '0', roe || '1');
 
 export const combinePriceWithDivider = ({
   totalCostPrice,
 }: {
   totalCostPrice: OrderDetailedTotalCost;
-}) => {
+}): string => {
   const { freeTotalPrice, fioTotalPrice, usdcTotalPrice } =
     totalCostPrice || {};
 
@@ -144,4 +148,33 @@ export const defaultMaxFee = (
   const maxFee = new MathOp(fee).mul(multiple).round(0);
 
   return retNum ? maxFee.toNumber() : maxFee.toString();
+};
+
+export const handleFullPriceForMultiYearItems = ({
+  includeAddress,
+  registerOnlyAddress,
+  prices,
+  period,
+  roe,
+}: {
+  includeAddress?: boolean;
+  prices: NativePrices;
+  registerOnlyAddress?: boolean;
+  period: number;
+  roe: string;
+}): {
+  fio: string;
+  usdc: string;
+  costNativeFio: string;
+} => {
+  const costNativeFio = handlePriceForMultiYearItems({
+    prices,
+    period,
+    includeAddress,
+    registerOnlyAddress,
+  });
+
+  const { fio: costFio, usdc: costUsdc } = convertFioPrices(costNativeFio, roe);
+
+  return { fio: costFio, usdc: costUsdc, costNativeFio };
 };

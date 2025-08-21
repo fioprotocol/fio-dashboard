@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
-import { CART_ITEM_TYPE } from '../../../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS_IDS,
+  CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
+} from '../../../../constants/common';
 import { DOMAIN_TYPE } from '../../../../constants/fio';
 
 import { cartItems as cartItemsSelector } from '../../../../redux/cart/selectors';
@@ -15,7 +19,7 @@ import {
   usersFreeAddresses as usersFreeAddressesSelector,
 } from '../../../../redux/profile/selectors';
 
-import { convertFioPrices } from '../../../../util/prices';
+import { handleFullPriceForMultiYearItems } from '../../../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../../../utils';
 import {
   checkIsDomainItemExistsOnCart,
@@ -52,7 +56,7 @@ export const useContext = (
   >([]);
 
   const {
-    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
+    nativeFio: { address: nativeFioAddressPrice },
   } = prices;
 
   const fchId = setFioName(address, domain);
@@ -146,12 +150,7 @@ export const useContext = (
 
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
-  const totalNativeFio =
-    isCustomDomain && !existingCustomDomainFchCartItem
-      ? nativeFioComboPrice
-      : nativeFioAddressPrice;
-
-  const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+  const isComboItem = isCustomDomain && !existingCustomDomainFchCartItem;
 
   const firstRegFreeArr = [];
 
@@ -174,13 +173,31 @@ export const useContext = (
         freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
     );
 
+  const period = existingDomainInCartItem
+    ? existingDomainInCartItem.period
+    : isCustomDomain
+    ? parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id)
+    : parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR);
+
+  const {
+    fio: costFio,
+    usdc: costUsdc,
+    costNativeFio,
+  } = handleFullPriceForMultiYearItems({
+    prices: prices?.nativeFio,
+    period,
+    roe,
+    registerOnlyAddress: !isComboItem,
+    includeAddress: isComboItem,
+  });
+
   const selectedItemProps = {
     id: fchId,
     address,
     domain,
-    costFio: fio,
-    costUsdc: usdc,
-    costNativeFio: totalNativeFio,
+    costFio,
+    costUsdc,
+    costNativeFio,
     isFree:
       existingCartItem?.isFree ||
       (domainType === DOMAIN_TYPE.ALLOW_FREE &&
@@ -191,7 +208,7 @@ export const useContext = (
         !cartHasFreeItem),
     nativeFioAddressPrice,
     domainType,
-    period: existingDomainInCartItem ? existingDomainInCartItem.period : 1,
+    period,
     type: isCustomDomain
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
