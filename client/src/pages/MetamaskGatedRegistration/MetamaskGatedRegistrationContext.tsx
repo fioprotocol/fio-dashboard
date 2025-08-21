@@ -23,7 +23,10 @@ import { log } from '../../util/general';
 import { useContext as useContextMetamaskLogin } from '../../components/LoginForm/components/MetamaskLogin/MetamaskLoginContext';
 
 import { DOMAIN_TYPE, METAMASK_DOMAIN_NAME } from '../../constants/fio';
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS_IDS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { USER_PROFILE_TYPE } from '../../constants/profile';
 import { METAMASK_UNSUPPORTED_MOBILE_MESSAGE } from '../../constants/errors';
@@ -246,7 +249,7 @@ export const useContext = (): UseContext => {
           costNativeFio: prices.nativeFio.address,
           domainType: DOMAIN_TYPE.PRIVATE,
           isFree: true,
-          period: 1,
+          period: parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR),
           type: CART_ITEM_TYPE.ADDRESS,
         };
 

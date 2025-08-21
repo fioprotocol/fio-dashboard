@@ -14,22 +14,24 @@ import {
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import {
-  CART_ITEM_PERIOD_OPTIONS_IDS,
   CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { DOMAIN_ALREADY_EXISTS } from '../../constants/errors';
 
 import apis from '../../api';
 import useEffectOnce from '../../hooks/general';
-import { convertFioPrices } from '../../util/prices';
+import {
+  convertFioPrices,
+  handleFullPriceForMultiYearItems,
+} from '../../util/prices';
 import {
   checkAddressOrDomainIsExist,
   checkIsDomainItemExistsOnCart,
   validateFioDomain,
 } from '../../util/fio';
 import MathOp from '../../util/math';
-import { handlePriceForMultiYearItems } from '../../util/cart';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { SearchTerm } from '../../api/responses';
@@ -68,15 +70,18 @@ const handleDomainItem = async ({
   );
   const period = existingCartItem
     ? Number(existingCartItem.period)
-    : parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS);
+    : parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
 
-  const costNativeFio = handlePriceForMultiYearItems({
+  const {
+    fio: costFio,
+    usdc: costUsdc,
+    costNativeFio,
+  } = handleFullPriceForMultiYearItems({
     prices,
     period,
+    roe,
     includeAddress: existingCartItem?.type === CART_ITEM_TYPE.ADDRESS,
   });
-
-  const { fio, usdc } = convertFioPrices(costNativeFio, roe);
 
   const isDomainExist = await checkAddressOrDomainIsExist({
     domain: name,
@@ -86,8 +91,8 @@ const handleDomainItem = async ({
   return {
     id: name,
     domain: name,
-    costFio: fio,
-    costUsdc: usdc,
+    costFio,
+    costUsdc,
     costNativeFio,
     domainType: DOMAIN_TYPE.CUSTOM,
     isSelected: !!existingCartItem,
@@ -190,22 +195,22 @@ export const useContext = () => {
     if (suggestedItem?.id === id) {
       if (suggestedItem.period === periodNumber) return;
 
-      const { domain, renewDomain } = prices?.nativeFio;
-
-      const renewPeriod = new MathOp(periodNumber).sub(1).toNumber();
-      const renewDomainNativeCost = new MathOp(renewDomain)
-        .mul(renewPeriod)
-        .toString();
-      const multiDomainPrice = new MathOp(domain)
-        .add(renewDomainNativeCost)
-        .toString();
-      const fioPrices = convertFioPrices(multiDomainPrice, roe);
+      const {
+        fio: costFio,
+        usdc: costUsdc,
+        costNativeFio,
+      } = handleFullPriceForMultiYearItems({
+        prices: prices?.nativeFio,
+        period: periodNumber,
+        roe,
+      });
 
       setSuggestedItem({
         ...suggestedItem,
         period: periodNumber,
-        costFio: fioPrices.fio,
-        costUsdc: fioPrices.usdc,
+        costFio,
+        costUsdc,
+        costNativeFio,
       });
     }
 

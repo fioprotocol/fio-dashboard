@@ -12,11 +12,7 @@ import Loader from '../Loader/Loader';
 
 import { updateCartItemPeriod, deleteItem } from '../../redux/cart/actions';
 
-import {
-  cartId as cartIdSelector,
-  cartItems as cartItemsSelector,
-} from '../../redux/cart/selectors';
-import { userId as userIdSelector } from '../../redux/profile/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import { ROUTES } from '../../constants/routes';
@@ -50,9 +46,7 @@ type Props = {
 const Cart: React.FC<Props> = props => {
   const { isNoProfileFlow, isPriceChanged, hasGetPricesError, loading } = props;
 
-  const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
-  const userId = useSelector(userIdSelector);
   const refCode = useSelector(refProfileCode);
 
   const dispatch = useDispatch();
@@ -79,7 +73,7 @@ const Cart: React.FC<Props> = props => {
         }),
       );
     },
-    [cartId, dispatch, refCode, userId],
+    [dispatch, refCode],
   );
 
   const handleUpdateItemPeriod = useCallback(

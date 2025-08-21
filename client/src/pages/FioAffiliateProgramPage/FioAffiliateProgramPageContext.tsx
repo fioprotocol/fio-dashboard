@@ -110,7 +110,8 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
       onAffiliateUpdate,
     ],
   );
-  const handleRenewDomain = (domain: string) => dispatch(onDomainRenew(domain));
+  const handleRenewDomain = (domain: string) =>
+    dispatch(onDomainRenew({ domain }));
   const handleVisibilityChange = (domain: string) =>
     history.push({
       pathname: ROUTES.FIO_DOMAIN_STATUS_CHANGE,

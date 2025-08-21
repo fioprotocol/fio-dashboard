@@ -30,7 +30,9 @@ import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_PERIOD_OPTIONS_IDS,
   CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
 } from '../../constants/common';
 
 import {
@@ -41,7 +43,10 @@ import {
   validateFioAddress,
 } from '../../util/fio';
 
-import { convertFioPrices } from '../../util/prices';
+import {
+  convertFioPrices,
+  handleFullPriceForMultiYearItems,
+} from '../../util/prices';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { fireAnalyticsEventDebounced } from '../../util/analytics';
 import apis from '../../api';
@@ -115,7 +120,7 @@ const handleFCHItems = async ({
   setError: (error: string) => void;
 }) => {
   const {
-    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
+    nativeFio: { address: nativeFioAddressPrice },
   } = prices;
 
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
@@ -182,11 +187,23 @@ const handleFCHItems = async ({
         const isCustomDomain =
           domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
 
-        const totalNativeFio = isCustomDomain
-          ? nativeFioComboPrice
-          : nativeFioAddressPrice;
+        const period = existingCustomDomainFchCartItem
+          ? existingCustomDomainFchCartItem?.period
+          : domainType === DOMAIN_TYPE.CUSTOM
+          ? parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id)
+          : parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR);
 
-        const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+        const {
+          fio: costFio,
+          usdc: costUsdc,
+          costNativeFio,
+        } = handleFullPriceForMultiYearItems({
+          prices: prices?.nativeFio,
+          period,
+          roe,
+          registerOnlyAddress: !isCustomDomain,
+          includeAddress: isCustomDomain,
+        });
 
         const existingUsersFreeAddress =
           usersFreeAddresses &&
@@ -199,9 +216,9 @@ const handleFCHItems = async ({
           id: setFioName(addressName, domainName),
           address: addressName,
           domain: domainName,
-          costFio: fio,
-          costUsdc: usdc,
-          costNativeFio: totalNativeFio,
+          costFio,
+          costUsdc,
+          costNativeFio,
           nativeFioAddressPrice,
           domainType,
           isFree:
@@ -216,7 +233,7 @@ const handleFCHItems = async ({
           isExist:
             isAddressExist ||
             (swapAddressAndDomainPlaces && isUsernameOnCustomDomainExist),
-          period: 1,
+          period,
           type:
             domainType === DOMAIN_TYPE.CUSTOM
               ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
@@ -251,10 +268,6 @@ const handleSelectedDomain = ({
   roe: Roe;
   usersFreeAddresses: { name: string }[];
 }) => {
-  const {
-    nativeFio: { address: nativeFioAddressPrice, combo: nativeFioComboPrice },
-  } = prices;
-
   const existingCartItem = cartItems.find(
     cartItem => cartItem.id === fchItem.id,
   );
@@ -304,21 +317,29 @@ const handleSelectedDomain = ({
           !existingUsersFreeAddress)) &&
       !cartHasFreeItem);
 
-  const totalNativeFio =
+  const isComboItem =
     isCustomDomain ||
     (existingCartItem &&
       existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
-      !existingCartItem.hasCustomDomainInCart)
-      ? nativeFioComboPrice
-      : nativeFioAddressPrice;
+      !existingCartItem.hasCustomDomainInCart);
 
-  const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+  const {
+    fio: costFio,
+    usdc: costUsdc,
+    costNativeFio,
+  } = handleFullPriceForMultiYearItems({
+    prices: prices?.nativeFio,
+    period: fchItem.period,
+    roe,
+    registerOnlyAddress: !isComboItem,
+    includeAddress: isComboItem,
+  });
 
   return {
     ...fchItem,
-    costNativeFio: existingCartItem?.costNativeFio || totalNativeFio,
-    costFio: existingCartItem?.costFio || fio,
-    costUsdc: existingCartItem?.costUsdc || usdc,
+    costNativeFio: existingCartItem?.costNativeFio || costNativeFio,
+    costFio: existingCartItem?.costFio || costFio,
+    costUsdc: existingCartItem?.costUsdc || costUsdc,
     hasCustomDomainInCart:
       existingCartItem?.hasCustomDomainInCart ||
       (domainType === DOMAIN_TYPE.CUSTOM && !!existingCustomDomainFchCartItem),
@@ -750,18 +771,19 @@ export const useContext = (): UseContextProps => {
       toggleLoading(false);
     },
     [
-      setUsersItemsListIfChanged,
-      cartHasFreeItem,
-      cartItemsJSON,
-      customDomainsJSON,
-      hasFreeAddress,
+      previousAddressValue,
+      userDomainsJSON,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
-      previousAddressValue,
+      customDomainsJSON,
+      cartItemsJSON,
+      cartHasFreeItem,
+      hasFreeAddress,
       prices,
       roe,
-      userDomainsJSON,
       usersFreeAddresses,
+      isAffiliateProfile,
+      setUsersItemsListIfChanged,
     ],
   );
 

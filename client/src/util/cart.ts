@@ -132,14 +132,21 @@ export const getCartItemDescriptor = ({
 
 export const handlePriceForMultiYearItems = ({
   includeAddress,
+  registerOnlyAddress,
   prices,
   period,
 }: {
   includeAddress?: boolean;
+  registerOnlyAddress?: boolean;
   prices: NativePrices;
   period: number;
 }): string => {
-  const { domain, renewDomain, combo } = prices;
+  const { address, domain, renewDomain, combo } = prices;
+
+  if (registerOnlyAddress) {
+    return address;
+  }
+
   const renewPeriod = new MathOp(period).sub(1).toNumber();
   const renewDomainNativeCost = new MathOp(renewDomain)
     .mul(renewPeriod)

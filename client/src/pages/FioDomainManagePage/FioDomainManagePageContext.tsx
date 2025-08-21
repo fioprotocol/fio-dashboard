@@ -3,10 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { Account, EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+import { Account, EndPoint } from '@fioprotocol/fiosdk';
 
 import { getFee, toggleExpiredDomainBadge } from '../../redux/fio/actions';
-import { addItem as addItemToCart } from '../../redux/cart/actions';
+import {
+  addItem as addItemToCart,
+  onDomainRenew,
+} from '../../redux/cart/actions';
 
 import { showExpiredDomainWarningBadge as showExpiredDomainWarningBadgeSelector } from '../../redux/fio/selectors';
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
@@ -19,25 +22,20 @@ import { refProfileCode } from '../../redux/refProfile/selectors';
 
 import apis from '../../api';
 
-import { convertFioPrices } from '../../util/prices';
-import {
-  fireAnalyticsEvent,
-  getCartItemsDataForAnalytics,
-} from '../../util/analytics';
+import { handleFullPriceForMultiYearItems } from '../../util/prices';
+
 import {
   checkIsDomainItemExistsOnCart,
   isDomainExpired,
   isDomainWillExpireIn30Days,
 } from '../../util/fio';
 import { log } from '../../util/general';
-import { handlePriceForMultiYearItems } from '../../util/cart';
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
 
 import {
   CART_ITEM_TYPE,
-  ANALYTICS_EVENT_ACTIONS,
-  CART_ITEM_PERIOD_OPTIONS_IDS,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
@@ -158,53 +156,19 @@ export const useContext = (): UseContextProps => {
   const cartItemsJSON = JSON.stringify(cartItems);
   const fioDomainsJSON = JSON.stringify(fioDomains);
 
-  const {
-    nativeFio: { domain: nativeFioDomainPrice },
-  } = prices;
+  const period = parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
 
-  const { fio, usdc } = convertFioPrices(nativeFioDomainPrice, roe);
+  const { fio, usdc } = handleFullPriceForMultiYearItems({
+    prices: prices?.nativeFio,
+    period,
+    roe,
+  });
 
   const renewDomain = useCallback(
     (domain: string, isWatchedDomain = false) => {
-      const period = parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS);
-
-      const costNativeFio = handlePriceForMultiYearItems({
-        prices: prices?.nativeFio,
-        period,
-      });
-
-      const { fio: costFio, usdc: costUsdc } = convertFioPrices(
-        costNativeFio,
-        roe,
-      );
-
-      const newCartItem: CartItem = {
-        domain,
-        type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
-        id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
-        period,
-        costNativeFio,
-        costFio,
-        costUsdc,
-        isWatchedDomain,
-      };
-      dispatch(
-        addItemToCart({
-          item: newCartItem,
-          refCode,
-        }),
-      );
-      fireAnalyticsEvent(
-        ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-        getCartItemsDataForAnalytics([newCartItem]),
-      );
-      fireAnalyticsEvent(
-        ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
-        getCartItemsDataForAnalytics([...cartItems, newCartItem]),
-      );
-      history.push(ROUTES.CART);
+      dispatch(onDomainRenew({ domain, isWatchedDomain }));
     },
-    [prices?.nativeFio, roe, dispatch, refCode, cartItems, history],
+    [dispatch],
   );
 
   const handleRenewDomain = (domain: string) => renewDomain(domain);
@@ -262,24 +226,24 @@ export const useContext = (): UseContextProps => {
 
       const period =
         existingCartItem?.period ||
-        parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.FIFTY_YEARS);
+        parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
 
-      const costNativeFio = handlePriceForMultiYearItems({
+      const {
+        fio: costFio,
+        usdc: costUsdc,
+        costNativeFio,
+      } = handleFullPriceForMultiYearItems({
         prices: prices?.nativeFio,
         period,
-      });
-
-      const { fio: costFio, usdc: costUsdc } = convertFioPrices(
-        costNativeFio,
         roe,
-      );
+      });
 
       const newCartItem = {
         id: domain,
         domain,
         costFio,
         costUsdc,
-        costNativeFio: nativeFioDomainPrice,
+        costNativeFio,
         domainType: DOMAIN_TYPE.CUSTOM,
         period,
         type: CART_ITEM_TYPE.DOMAIN,
@@ -293,15 +257,7 @@ export const useContext = (): UseContextProps => {
       );
       return history.push(ROUTES.CART);
     },
-    [
-      cartItemsJSON,
-      dispatch,
-      history,
-      nativeFioDomainPrice,
-      prices?.nativeFio,
-      refCode,
-      roe,
-    ],
+    [cartItemsJSON, dispatch, history, prices?.nativeFio, refCode, roe],
   );
 
   const getDomainsWatchlistList = useCallback(async () => {

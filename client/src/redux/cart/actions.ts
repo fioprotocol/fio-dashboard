@@ -138,7 +138,13 @@ export const unsetWallet = (): CommonAction => ({
 });
 
 export const HANDLE_DOMAIN_RENEW = `${prefix}/HANDLE_DOMAIN_RENEW`;
-export const onDomainRenew = (domain: string): CommonAction => ({
+export const onDomainRenew = ({
+  domain,
+  isWatchedDomain,
+}: {
+  domain: string;
+  isWatchedDomain?: boolean;
+}): CommonAction => ({
   type: HANDLE_DOMAIN_RENEW,
-  data: domain,
+  data: { domain, isWatchedDomain },
 });

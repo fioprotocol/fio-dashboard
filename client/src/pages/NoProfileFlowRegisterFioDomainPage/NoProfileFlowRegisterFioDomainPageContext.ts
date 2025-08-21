@@ -8,10 +8,16 @@ import { addItem as addItemToCart } from '../../redux/cart/actions';
 
 import apis from '../../api';
 import { validateFioDomain } from '../../util/fio';
-import { convertFioPrices } from '../../util/prices';
+import {
+  convertFioPrices,
+  handleFullPriceForMultiYearItems,
+} from '../../util/prices';
 import { log } from '../../util/general';
 
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
+} from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { NON_VAILD_DOMAIN } from '../../constants/errors';
@@ -52,7 +58,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const { fio, usdc } = convertFioPrices(prices.nativeFio.domain, roe);
+  const { usdc } = convertFioPrices(prices.nativeFio.domain, roe);
 
   const onFocusOut = useCallback((value: string) => {
     if (!value) return;
@@ -116,15 +122,27 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
     async ({ address: domainValue }: { address: string }) => {
       if (!domainValue) return;
 
+      const period = parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
+
+      const {
+        fio: costFio,
+        usdc: costUsdc,
+        costNativeFio,
+      } = handleFullPriceForMultiYearItems({
+        prices: prices?.nativeFio,
+        period,
+        roe,
+      });
+
       try {
         const cartItem = {
           id: domainValue,
           domain: domainValue,
-          costFio: fio,
-          costUsdc: usdc,
-          costNativeFio: prices.nativeFio.domain,
+          costFio,
+          costUsdc,
+          costNativeFio,
           domainType: DOMAIN_TYPE.CUSTOM,
-          period: 1,
+          period,
           type: CART_ITEM_TYPE.DOMAIN,
         };
 
@@ -141,7 +159,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
         log.error(error);
       }
     },
-    [fio, usdc, prices.nativeFio, dispatch, publicKey, refCode, history],
+    [prices?.nativeFio, roe, dispatch, publicKey, refCode, history],
   );
 
   const addressWidgetContent = {

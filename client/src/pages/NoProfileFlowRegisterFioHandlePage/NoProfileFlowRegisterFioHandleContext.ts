@@ -9,10 +9,14 @@ import { addItem as addItemToCart } from '../../redux/cart/actions';
 import apis from '../../api';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { validateFioAddress } from '../../util/fio';
-import { convertFioPrices } from '../../util/prices';
+import { handleFullPriceForMultiYearItems } from '../../util/prices';
 import { log } from '../../util/general';
 
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS_IDS,
+  CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
+} from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { NON_VALID_FCH } from '../../constants/errors';
@@ -191,8 +195,7 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
           domainType: DomainItemType = isPremium
             ? DOMAIN_TYPE.PREMIUM
             : DOMAIN_TYPE.ALLOW_FREE,
-          type = CART_ITEM_TYPE.ADDRESS,
-          nativeFioItemPrice = prices.nativeFio.address;
+          type = CART_ITEM_TYPE.ADDRESS;
 
         if (domainValue) {
           const existingDomainInList = domainsList.find(
@@ -212,31 +215,45 @@ export const useContext = (componentProps: ComponentProps): UseContextProps => {
                 ? DOMAIN_TYPE.PREMIUM
                 : DOMAIN_TYPE.ALLOW_FREE;
             type = CART_ITEM_TYPE.ADDRESS;
-            nativeFioItemPrice = prices.nativeFio.address;
           } else {
             domainType = DOMAIN_TYPE.CUSTOM;
             type = CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
-            nativeFioItemPrice = prices.nativeFio.combo;
           }
         }
 
-        const { fio, usdc } = convertFioPrices(nativeFioItemPrice, roe);
+        let period = parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR);
+
+        if (domainType === DOMAIN_TYPE.CUSTOM) {
+          period = parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
+        }
+
+        const {
+          fio: costFio,
+          usdc: costUsdc,
+          costNativeFio,
+        } = handleFullPriceForMultiYearItems({
+          prices: prices?.nativeFio,
+          period,
+          roe,
+          includeAddress: domainType === DOMAIN_TYPE.CUSTOM,
+          registerOnlyAddress: type === CART_ITEM_TYPE.ADDRESS,
+        });
 
         const fch = setFioName(addressValue, domain);
         const cartItem = {
           id: fch,
           address: addressValue,
           domain,
-          costFio: fio,
-          costUsdc: usdc,
-          costNativeFio: nativeFioItemPrice,
+          costFio,
+          costUsdc,
+          costNativeFio,
           domainType,
           isFree:
             !domainValue &&
             !isPremium &&
             !cartHasFreeItem &&
             !existingPublicKeyFreeAddress,
-          period: 1,
+          period,
           type,
         };
 
