@@ -86,3 +86,53 @@
     }
   }
 }
+
+.accordion {
+  width: 100%;
+
+  & > div {
+    margin: 0;
+  }
+
+  .accordionContent {
+    background-color: $aqua-haze;
+  }
+
+  .accordionItemContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+
+    .accordionItemTitle {
+      cursor: pointer;
+      color: $light-indigo;
+      font-size: 1em;
+      margin-bottom: 0;
+      @include proxima-nova-semibold;
+    }
+
+    .iconContainer {
+      padding: 12px;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .titleIcon {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        color: $light-indigo;
+
+        &.isActiveIcon {
+          transform: rotate(180deg)
+        }
+      }
+    }
+  }
+}
