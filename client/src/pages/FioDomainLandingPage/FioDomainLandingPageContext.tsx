@@ -15,10 +15,11 @@ import {
 } from '../../redux/registrations/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 
-import { convertFioPrices } from '../../util/prices';
+import { handleFullPriceForMultiYearItems } from '../../util/prices';
 
 import { FormValues } from '../../components/FioDomainWidget/types';
 import { AnyObject } from '../../types';
+import { DEFAULT_CART_ITEM_PERIOD_OPTION } from '../../constants/common';
 
 export const useContext = () => {
   const history = useHistory();
@@ -28,7 +29,14 @@ export const useContext = () => {
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
   const prices = useSelector(pricesSelector);
-  const domainPrice = convertFioPrices(prices?.nativeFio.domain, roe).usdc;
+
+  const period = parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
+
+  const { usdc: domainPrice } = handleFullPriceForMultiYearItems({
+    prices: prices?.nativeFio,
+    period,
+    roe,
+  });
 
   useEffectOnce(() => {
     dispatch(getDomains({ refCode }));

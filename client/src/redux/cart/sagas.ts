@@ -1,6 +1,6 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 
-import { EndPoint, GenericAction } from '@fioprotocol/fiosdk';
+import { GenericAction } from '@fioprotocol/fiosdk';
 
 import { History } from 'history';
 
@@ -34,6 +34,7 @@ import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
+  DEFAULT_CART_ITEM_PERIOD_OPTION,
 } from '../../constants/common';
 
 import {
@@ -43,18 +44,14 @@ import {
 } from '../../util/analytics';
 import MathOp from '../../util/math';
 
-import { convertFioPrices, DEFAULT_FEE_PRICES } from '../../util/prices';
+import {
+  convertFioPrices,
+  handleFullPriceForMultiYearItems,
+} from '../../util/prices';
 
 import { Action } from '../types';
-import {
-  CartItem,
-  ContainedFlowQueryParams,
-  FeePrice,
-  Prices,
-  Roe,
-} from '../../types';
+import { CartItem, ContainedFlowQueryParams, Prices, Roe } from '../../types';
 import { refProfileCode } from '../refProfile/selectors';
-import { fees as feesSelector } from '../fio/selectors';
 import { cartItems as cartItemsSelector } from './selectors';
 
 export function* cartWasCleared(): Generator {
@@ -151,23 +148,36 @@ export function* updatePeriodItem(): Generator {
 // todo: use in Domain manage page and renew page
 export function* onDomainRenew(history: History): Generator {
   yield takeEvery(HANDLE_DOMAIN_RENEW, function*(action: Action) {
-    const { data: domain } = action;
+    const {
+      data: { domain, isWatchedDomain },
+    }: { data: { domain: string; isWatchedDomain?: boolean } } = action;
 
-    const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
+    const prices: Prices = yield select(pricesSelector);
+    const roe: Roe = yield select(roeSelector);
     const refCode: string = yield select(refProfileCode);
     const cartItems: CartItem[] = yield select(cartItemsSelector);
 
-    const renewDomainFeePrice =
-      fees[EndPoint.renewFioDomain] || DEFAULT_FEE_PRICES;
+    const period = parseFloat(DEFAULT_CART_ITEM_PERIOD_OPTION.id);
+
+    const {
+      fio: costFio,
+      usdc: costUsdc,
+      costNativeFio,
+    } = handleFullPriceForMultiYearItems({
+      prices: prices?.nativeFio,
+      period,
+      roe,
+    });
 
     const newCartItem: CartItem = {
       domain,
       type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
       id: `${domain}-${GenericAction.renewFioDomain}-${+new Date()}`,
-      period: 1,
-      costNativeFio: renewDomainFeePrice?.nativeFio,
-      costFio: renewDomainFeePrice?.fio,
-      costUsdc: renewDomainFeePrice?.usdc,
+      period,
+      costNativeFio,
+      costFio,
+      costUsdc,
+      isWatchedDomain,
     };
 
     yield put<Action>(

@@ -39,7 +39,10 @@ import { MORALIS_CHAIN_LIST } from '../../constants/ethereum';
 import { NFT_LABEL, TOKEN_LABEL } from '../../constants/ref';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { DOMAIN_TYPE } from '../../constants/fio';
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS_IDS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 import { convertFioPrices } from '../../util/prices';
 import { ROUTES } from '../../constants/routes';
 
@@ -364,7 +367,7 @@ export const useContext = (): UseContextProps => {
           costNativeFio: prices.nativeFio.address,
           domainType: isPremium ? DOMAIN_TYPE.PREMIUM : DOMAIN_TYPE.ALLOW_FREE,
           isFree: !isPremium && !cartHasFreeItem && !existingUsersFreeAddress,
-          period: 1,
+          period: parseFloat(CART_ITEM_PERIOD_OPTIONS_IDS.ONE_YEAR),
           type: CART_ITEM_TYPE.ADDRESS,
         };
 
@@ -391,13 +394,15 @@ export const useContext = (): UseContextProps => {
       }
     },
     [
-      prices.nativeFio,
-      refCode,
+      refDomainObjs,
+      prices?.nativeFio?.address,
       roe,
       cartHasFreeItem,
       existingUsersFreeAddress,
       dispatch,
+      refCode,
       gatedToken,
+      userId,
       isNoProfileFlow,
       history,
       lastAuthData,
