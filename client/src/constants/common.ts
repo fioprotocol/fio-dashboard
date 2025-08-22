@@ -684,9 +684,9 @@ export const CART_ITEM_PERIOD_OPTIONS_OBJECT = {
   [DEFAULT_CART_ITEM_PERIOD_OPTION.id]: {
     name: DEFAULT_CART_ITEM_PERIOD_OPTION.name,
   },
-  [CART_ITEM_PERIOD_OPTIONS_IDS.ONE_HUNDRED_YEARS]: {
-    name: '100 Years',
-  },
+  // [CART_ITEM_PERIOD_OPTIONS_IDS.ONE_HUNDRED_YEARS]: {
+  //   name: '100 Years',
+  // }, // 100 temporary disabled due to blockchain issue
 };
 
 export const CART_ITEM_PERIOD_OPTIONS = Object.entries(
