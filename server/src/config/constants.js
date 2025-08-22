@@ -157,7 +157,7 @@ const CART_ITEM_TYPE = {
   ADD_BUNDLES: 'add_bundles',
 };
 
-const DOMAIN_RENEW_PERIODS = [1, 10, 50, 100];
+const DOMAIN_RENEW_PERIODS = [1, 10, 50]; // 100 temporarily disabled due to blockchain issue
 
 const CART_ITEM_TYPES_WITH_PERIOD = [
   CART_ITEM_TYPE.DOMAIN,
