@@ -22,6 +22,7 @@ import {
   OrderItem,
   Roe,
 } from '../types';
+import { checkIsDomainExpired, checkIsTooLongDomainRenewal } from './fio';
 
 export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
   cart.length &&
@@ -387,4 +388,57 @@ export const cartItemsToOrderItems = ({
   }
 
   return orderItems;
+};
+
+export const handleDomainsExpiration = async ({
+  cartItems,
+}: {
+  cartItems: CartItem[];
+}): Promise<{
+  hasExpiredDomain: boolean;
+  hasTooLongDomainRenewal: boolean;
+}> => {
+  let hasExpiredDomain = false;
+  let hasTooLongDomainRenewal = false;
+
+  const domainsWithoutPeriod = cartItems
+    .filter(
+      ({ domain, type }) =>
+        domain && !CART_ITEM_TYPES_WITH_PERIOD.includes(type),
+    )
+    .map(({ domain }) => domain);
+
+  const domainsWithMultiYearPeriod = cartItems
+    .filter(
+      ({ domain, type }) =>
+        domain && CART_ITEM_TYPES_WITH_PERIOD.includes(type),
+    )
+    .reduce((acc, { domain, period }) => {
+      acc[domain] = (acc[domain] || 0) + (period || 0);
+      return acc;
+    }, {} as { [key: string]: number });
+
+  const uniqueDomains = [...new Set(domainsWithoutPeriod)];
+
+  for (const domain of uniqueDomains) {
+    const isExpired = await checkIsDomainExpired(domain);
+    if (isExpired) {
+      hasExpiredDomain = isExpired;
+      break;
+    }
+  }
+
+  for (const domainItem of Object.entries(domainsWithMultiYearPeriod)) {
+    const [domain, period] = domainItem;
+    const domainHasTooLongRenewalPeriod = await checkIsTooLongDomainRenewal({
+      domainName: domain,
+      period,
+    });
+    if (domainHasTooLongRenewalPeriod) {
+      hasTooLongDomainRenewal = domainHasTooLongRenewalPeriod;
+      break;
+    }
+  }
+
+  return { hasExpiredDomain, hasTooLongDomainRenewal };
 };

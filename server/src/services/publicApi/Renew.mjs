@@ -19,7 +19,7 @@ import { normalizePriceForBitPay } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import logger from '../../logger.mjs';
-import { normalizeFioHandle } from '../../utils/fio.mjs';
+import { normalizeFioHandle, handleTooLongDomainRenewal } from '../../utils/fio.mjs';
 export default class Renew extends Base {
   async execute(args) {
     try {
@@ -133,6 +133,22 @@ export default class Renew extends Base {
 
     if (!isAccountCouldBeRenewed) {
       return generateErrorResponse(this.res, addressCantBeRenewedRes);
+    }
+
+    if (type === 'domain') {
+      // Check if renewal would exceed the maximum allowed year (2100)
+      const hasTooLongRenewal = await handleTooLongDomainRenewal({
+        domainName: fioDomain,
+      });
+
+      if (hasTooLongRenewal) {
+        return generateErrorResponse(this.res, {
+          error:
+            'Domain renewal would exceed maximum allowed date. Maximum allowed date is 2100 year.',
+          errorCode: PUB_API_ERROR_CODES.DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD,
+          statusCode: HTTP_CODES.BAD_REQUEST,
+        });
+      }
     }
 
     const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);

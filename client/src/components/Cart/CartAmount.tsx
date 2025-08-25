@@ -25,6 +25,7 @@ type Props = {
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   showExpiredDomainWarningBadge: boolean;
+  showTooLongDomainRenewalWarning: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
@@ -44,6 +45,7 @@ const CartAmount: React.FC<Props> = props => {
     selectedPaymentProvider,
     disabled,
     showExpiredDomainWarningBadge,
+    showTooLongDomainRenewalWarning,
     onPaymentChoose,
   } = props;
 
@@ -81,6 +83,7 @@ const CartAmount: React.FC<Props> = props => {
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={disabled}
           showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
+          showTooLongDomainRenewalWarning={showTooLongDomainRenewalWarning}
           loading={loading}
           formsOfPayment={formsOfPayment}
         />

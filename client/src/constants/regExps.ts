@@ -17,5 +17,6 @@ export const ENDS_WITH_FORWARD_SLASH_REGEX = '^.*/$';
 
 export const DOMAIN_EXP_DEBUG_AFFIX = /testdomainexpiration/i;
 export const DOMAIN_EXP_IN_30_DAYS = /expsoon/i;
+export const DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD = /toolongdomainrenewalperiod/i;
 
 export const USERNAME_REGEX = /^[a-z0-9-]+$/;

@@ -14,4 +14,9 @@ export const WARNING_CONTENT = {
     message:
       'One or more FIO Handle Domain has expired. Certain FIO Handle actions are inactive until the domain is renewed. Renew today to restore the actions.',
   },
+  TOO_LONG_DOMAIN_RENEWAL: {
+    title: 'FIO Domain Renewal Limit Exceeded',
+    message:
+      'Currently renewal can only extend up to the year 2100. Please adjust your renewal period to end on or before that date.',
+  },
 };

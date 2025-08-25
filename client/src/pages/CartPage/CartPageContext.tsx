@@ -28,6 +28,7 @@ import { refProfileInfo } from '../../redux/refProfile/selectors';
 
 import {
   cartItemsToOrderItems,
+  handleDomainsExpiration,
   handlePriceForMultiYearItems,
   totalCost,
 } from '../../util/cart';
@@ -57,7 +58,7 @@ import { ORDER_USER_TYPES } from '../../constants/order';
 import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
-import { checkIsDomainExpired } from '../../util/fio';
+
 import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
 
@@ -90,6 +91,7 @@ type UseContextReturnType = {
   prices: Prices;
   roe: Roe;
   showExpiredDomainWarningBadge: boolean;
+  showTooLongDomainRenewalWarning: boolean;
   totalCartAmount: string;
   totalCartUsdcAmount: string;
   totalCartNativeAmount: string;
@@ -132,6 +134,10 @@ export const useContext = (): UseContextReturnType => {
   const [
     showExpiredDomainWarningBadge,
     toggleShowExpiredDomainWarningBadge,
+  ] = useState<boolean>(false);
+  const [
+    showTooLongDomainRenewalWarning,
+    setShowTooLongDomainRenewalWarning,
   ] = useState<boolean>(false);
   const [formsOfPayment, setFormsOfPayment] = useState<{
     [key: string]: boolean;
@@ -380,35 +386,19 @@ export const useContext = (): UseContextReturnType => {
     setSelectedPaymentProvider(null);
   };
 
-  const hasExpiredDomain = useCallback(async () => {
-    let hasExpiredDomain = false;
-
-    const domains = cartItems
-      .filter(cartItem => {
-        const { domain, type } = cartItem;
-        return (
-          domain &&
-          ![CART_ITEM_TYPE.DOMAIN, CART_ITEM_TYPE.DOMAIN_RENEWAL].includes(type)
-        );
-      })
-      .map(cartItem => cartItem.domain);
-
-    const uniqueDomains = [...new Set(domains)];
-
-    for (const domain of uniqueDomains) {
-      const isExpired = await checkIsDomainExpired(domain);
-      if (isExpired) {
-        hasExpiredDomain = isExpired;
-        break;
-      }
-    }
+  const handleDomainExpiration = useCallback(async () => {
+    const {
+      hasExpiredDomain,
+      hasTooLongDomainRenewal,
+    } = await handleDomainsExpiration({ cartItems });
 
     toggleShowExpiredDomainWarningBadge(hasExpiredDomain);
+    setShowTooLongDomainRenewalWarning(hasTooLongDomainRenewal);
   }, [cartItems]);
 
   useEffect(() => {
-    hasExpiredDomain();
-  }, [hasExpiredDomain]);
+    handleDomainExpiration();
+  }, [handleDomainExpiration]);
 
   useEffectOnce(() => {
     if (!isEmpty(userWallets)) {
@@ -447,6 +437,7 @@ export const useContext = (): UseContextReturnType => {
     prices,
     roe,
     showExpiredDomainWarningBadge,
+    showTooLongDomainRenewalWarning,
     formsOfPayment,
     onPaymentChoose,
   };

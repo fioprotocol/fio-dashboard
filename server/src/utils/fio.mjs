@@ -1,7 +1,12 @@
 import { GenericAction } from '@fioprotocol/fiosdk';
 
 import { FIO_ADDRESS_DELIMITER } from '../config/constants';
-import { DOMAIN_EXP_DEBUG_AFFIX, DOMAIN_EXP_IN_30_DAYS } from '../constants/fio.mjs';
+import {
+  DOMAIN_EXP_DEBUG_AFFIX,
+  DOMAIN_EXP_IN_30_DAYS,
+  DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD,
+  TOO_LONG_DOMAIN_RENEWAL_YEAR,
+} from '../constants/fio.mjs';
 import { SECOND_MS } from '../config/constants.js';
 
 import { convertToNewDate } from './general.mjs';
@@ -18,7 +23,7 @@ export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 
 export const isDomainExpired = (domainName, expiration) => {
   if (
-    process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED === 'true' &&
+    config.testingFlags.domainExpiration === 'true' &&
     domainName.includes(DOMAIN_EXP_DEBUG_AFFIX) &&
     !domainName.includes(DOMAIN_EXP_IN_30_DAYS)
   ) {
@@ -59,6 +64,38 @@ export const handleExpiredDomains = async ({ domainsList }) => {
     }
   }
   return domainsList;
+};
+
+export const handleTooLongDomainRenewal = async ({ domainName }) => {
+  const domainFromChain = await fioApi.getFioDomain(domainName);
+
+  if (!domainFromChain) {
+    return false;
+  }
+
+  const { expiration } = domainFromChain;
+
+  if (
+    config.testingFlags.domainExpiration === 'true' &&
+    DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD.includes(domainName)
+  ) {
+    return true;
+  }
+
+  // Create max year date (January 1st of the max year)
+  const maxRenewalDate = new Date(TOO_LONG_DOMAIN_RENEWAL_YEAR, 0, 1);
+
+  // Convert expiration timestamp to Date and add the period (years)
+  const expirationDate = new Date(convertToNewDate(expiration));
+
+  const renewalEndDate = new Date(expirationDate);
+  renewalEndDate.setFullYear(renewalEndDate.getFullYear() + 1); // Because we don't have a period for api renewal calls we add on year as the expiration year
+
+  // Reset time components for consistent comparison
+  renewalEndDate.setHours(0, 0, 0, 0);
+  maxRenewalDate.setHours(0, 0, 0, 0);
+
+  return renewalEndDate >= maxRenewalDate;
 };
 
 export const normalizeFioHandle = fioHandle => {

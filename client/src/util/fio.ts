@@ -20,14 +20,18 @@ import {
   DOMAIN_TYPE,
   getAccountByDashboardAction,
   getActionByDashboardAction,
+  TOO_LONG_DOMAIN_RENEWAL_YEAR,
 } from '../constants/fio';
 
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
 import {
   DOMAIN_EXP_DEBUG_AFFIX,
   DOMAIN_EXP_IN_30_DAYS,
+  DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD,
 } from '../constants/regExps';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
+
+import config from '../config';
 
 import {
   NftTokenResponse,
@@ -38,7 +42,7 @@ import {
 } from '../types';
 import { ActionDataParams, FioServerResponse } from '../types/fio';
 
-export const validateFioDomain = (domain: string) => {
+export const validateFioDomain = (domain: string): string | null => {
   if (!domain) {
     return 'Domain Field Should Be Filled';
   }
@@ -59,7 +63,10 @@ export const validateFioDomain = (domain: string) => {
   return null;
 };
 
-export const validateFioAddress = (address: string, domain: string) => {
+export const validateFioAddress = (
+  address: string,
+  domain: string,
+): string | null => {
   if (!address) {
     return 'FIO Handle Field Should Be Filled';
   }
@@ -229,7 +236,7 @@ export const isDomainExpired = (
   expiration: number | string,
 ): boolean => {
   if (
-    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE === 'true' &&
+    config.testingFlags.domainExpiration === 'true' &&
     DOMAIN_EXP_DEBUG_AFFIX.test(domainName) &&
     !DOMAIN_EXP_IN_30_DAYS.test(domainName)
   ) {
@@ -251,7 +258,7 @@ export const isDomainWillExpireIn30Days = (
   expiration: number | string,
 ): boolean => {
   if (
-    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE === 'true' &&
+    config.testingFlags.domainExpiration === 'true' &&
     DOMAIN_EXP_DEBUG_AFFIX.test(domainName) &&
     DOMAIN_EXP_IN_30_DAYS.test(domainName)
   ) {
@@ -268,6 +275,39 @@ export const isDomainWillExpireIn30Days = (
   today.setHours(0, 0, 0, 0);
 
   return expirationDay <= today;
+};
+
+export const isDomainHasTooLongRenewalPeriod = ({
+  domainName,
+  expiration,
+  period,
+}: {
+  domainName: string;
+  expiration: number | string;
+  period: number;
+}): boolean => {
+  if (
+    config.testingFlags.domainExpiration === 'true' &&
+    DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD.test(domainName)
+  ) {
+    return true;
+  }
+
+  // Create max year date (January 1st of the max year)
+  const maxRenewalDate = new Date(TOO_LONG_DOMAIN_RENEWAL_YEAR, 0, 1);
+
+  // Convert expiration timestamp to Date and add the period (years)
+  const expirationDate =
+    expiration !== null ? new Date(convertToNewDate(expiration)) : new Date();
+
+  const renewalEndDate = new Date(expirationDate);
+  renewalEndDate.setFullYear(renewalEndDate.getFullYear() + period);
+
+  // Reset time components for consistent comparison
+  renewalEndDate.setHours(0, 0, 0, 0);
+  maxRenewalDate.setHours(0, 0, 0, 0);
+
+  return renewalEndDate >= maxRenewalDate;
 };
 
 export const checkIsDomainItemExistsOnCart = (
@@ -338,7 +378,9 @@ export const prepareChainTransaction = async (
   };
 };
 
-export const getDomainExpiration = async (domainName: string) => {
+export const getDomainExpiration = async (
+  domainName: string,
+): Promise<number | null> => {
   try {
     const { expiration } = (await apis.fio.getFioDomain(domainName)) || {};
 
@@ -348,12 +390,25 @@ export const getDomainExpiration = async (domainName: string) => {
   }
 };
 
-export const checkIsDomainExpired = async (domainName: string) => {
+export const checkIsDomainExpired = async (
+  domainName: string,
+): Promise<boolean> => {
   if (!domainName) return null;
 
   const expiration = await getDomainExpiration(domainName);
 
   return expiration && isDomainExpired(domainName, expiration);
+};
+
+export const checkIsTooLongDomainRenewal = async ({
+  domainName,
+  period,
+}: {
+  domainName: string;
+  period: number;
+}): Promise<boolean> => {
+  const expiration = await getDomainExpiration(domainName);
+  return isDomainHasTooLongRenewalPeriod({ domainName, expiration, period });
 };
 
 export const normalizeFioHandle = (fioHandle: string): string => {

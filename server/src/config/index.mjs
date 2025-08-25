@@ -99,6 +99,9 @@ export default {
     wrapStatusCloseTimeout: process.env.WRAP_STATUS_JOB_CLOSE_TIMEOUT,
     wrapStatusInterval: process.env.WRAP_STATUS_JOB_INTERVAL,
   },
+  testingFlags: {
+    domainExpiration: process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED,
+  },
 
   ...dbConfig,
 };
