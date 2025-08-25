@@ -25,6 +25,7 @@ type Props = {
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   showExpiredDomainWarningBadge: boolean;
+  showTooLongDomainRenewalWarning: boolean;
   disabled?: boolean;
   loading: boolean;
   formsOfPayment: { [key: string]: boolean };
@@ -43,6 +44,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     selectedPaymentProvider,
     disabled,
     showExpiredDomainWarningBadge,
+    showTooLongDomainRenewalWarning,
     loading,
     formsOfPayment,
     onPaymentChoose,
@@ -87,6 +89,17 @@ const PaymentsBlock: React.FC<Props> = props => {
         show
         message={WARNING_CONTENT.EXPIRED_DOMAINS.message}
         title={WARNING_CONTENT.EXPIRED_DOMAINS.title}
+        type={BADGE_TYPES.WARNING}
+      />
+    );
+  }
+
+  if (showTooLongDomainRenewalWarning) {
+    return (
+      <NotificationBadge
+        show
+        message={WARNING_CONTENT.TOO_LONG_DOMAIN_RENEWAL.message}
+        title={WARNING_CONTENT.TOO_LONG_DOMAIN_RENEWAL.title}
         type={BADGE_TYPES.WARNING}
       />
     );

@@ -51,13 +51,13 @@ import {
   actionFromCartItem,
   cartItemsToOrderItems,
   walletSupportsCombo,
+  handleDomainsExpiration,
 } from '../../util/cart';
 import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
 import useQuery from '../../hooks/useQuery';
-import { isDomainExpired } from '../../util/fio';
 import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
@@ -356,41 +356,13 @@ export const useContext = (): {
             paymentWalletPublicKey || fioWallets[0].publicKey;
       }
 
-      let cartHasExpiredDomain = false;
-
-      const domains = displayOrderItems
-        .filter(cartItem => {
-          const { domain, type } = cartItem;
-          return (
-            domain &&
-            ![
-              CART_ITEM_TYPE.DOMAIN,
-              CART_ITEM_TYPE.DOMAIN_RENEWAL,
-              CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
-            ].includes(type)
-          );
-        })
-        .map(cartItem => cartItem.domain);
-
-      const uniqueDomains = [...new Set(domains)];
-
-      for (const domain of uniqueDomains) {
-        const { expiration } = (await apis.fio.getFioDomain(domain)) || {};
-
-        if (!expiration) {
-          cartHasExpiredDomain = true;
-        }
-
-        const isExpired = expiration && isDomainExpired(domain, expiration);
-
-        if (isExpired) {
-          cartHasExpiredDomain = true;
-          break;
-        }
-      }
+      const {
+        hasExpiredDomain,
+        hasTooLongDomainRenewal,
+      } = await handleDomainsExpiration({ cartItems });
 
       // There is no order, redirect to cart
-      if (!orderParams || cartHasExpiredDomain) {
+      if (!orderParams || hasExpiredDomain || hasTooLongDomainRenewal) {
         return history.push(ROUTES.CART);
       }
 
@@ -427,7 +399,7 @@ export const useContext = (): {
       setOrder(null);
       setCreateOrderLoading(false);
     },
-    [cartId, displayOrderItems, dispatch, history, refCode, setWallet],
+    [cartItems, cartId, refCode, history, dispatch, setWallet],
   );
 
   const cancelOrder = useCallback(

@@ -18,12 +18,16 @@ export const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
 
 export const DOMAIN_EXP_IN_30_DAYS = 'expsoon';
 
+export const DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD = 'toolongdomainrenewalperiod';
+
 export const FIO_API_URLS_TYPES = {
   DASHBOARD_API: 'DASHBOARD_API',
   DASHBOARD_HISTORY_URL: 'DASHBOARD_HISTORY_URL',
   WRAP_STATUS_PAGE_API: 'WRAP_STATUS_PAGE_API',
   WRAP_STATUS_PAGE_HISTORY_V2_URL: 'WRAP_STATUS_PAGE_HISTORY_V2_URL',
 };
+
+export const TOO_LONG_DOMAIN_RENEWAL_YEAR = 2100; // Temporary 2100 is the max year for domain renewal until BD-4750 will be fixed
 
 //Errors
 export const NON_VALID_FCH =
