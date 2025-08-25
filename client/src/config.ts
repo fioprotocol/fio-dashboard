@@ -28,6 +28,9 @@ const config = {
   ),
   exportOrdersCSVLimit:
     Number(process.env.REACT_APP_EXPORT_ORDERS_CSV_LIMIT) || 10000,
+  testingFlags: {
+    domainExpiration: process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE,
+  },
 };
 
 export default config;
