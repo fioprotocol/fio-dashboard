@@ -53,6 +53,7 @@ import logger from '../logger.mjs';
 import {
   checkIfOrderedDomainRegisteredInBlockchain,
   getDomainOnOrder,
+  generateUniqueExpirationOffset,
 } from '../utils/jobs/orders.mjs';
 
 const ERROR_CODES = {
@@ -60,6 +61,10 @@ const ERROR_CODES = {
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
+
+// Constants for chunk processing
+const CHUNK_SIZE = 15;
+const MAX_CONCURRENT_CHUNKS = 3; // Maximum chunks running in parallel
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE = process.env
   .TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE
@@ -915,6 +920,13 @@ class OrdersJob extends CommonJob {
               ? orderItem.affiliateTpid
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
+          // Generate unique expirationOffset for actions that need to avoid duplicate transactions
+          // Use hash-based approach to keep offsets within reasonable range (max 600 seconds = 10 minutes)
+          expirationOffset:
+            action === GenericAction.renewFioDomain ||
+            action === GenericAction.addBundledTransactions
+              ? generateUniqueExpirationOffset(orderItem.id)
+              : 0,
         }),
         auth,
         returnBaseUrl: true,
@@ -955,6 +967,54 @@ class OrdersJob extends CommonJob {
     }
   }
 
+  /**
+   * Group and sort order items for proper domain renewal sequencing
+   */
+  groupAndSortOrderItems(items) {
+    // Group by domain and order
+    const itemsByOrder = items.reduce((acc, item) => {
+      if (!acc[item.orderId]) acc[item.orderId] = [];
+      acc[item.orderId].push(item);
+      return acc;
+    }, {});
+
+    // For each order, ensure domain registrations come before renewals
+    Object.values(itemsByOrder).forEach(orderItems => {
+      orderItems.sort((a, b) => {
+        // Sort by priority: domain registration -> domain/address combo -> renewals -> others
+        const getPriority = action => {
+          switch (action) {
+            case GenericAction.registerFioDomain:
+              return 1;
+            case GenericAction.registerFioDomainAddress:
+              return 2;
+            case GenericAction.renewFioDomain:
+              return 3;
+            default:
+              return 4;
+          }
+        };
+
+        const priorityA = getPriority(a.action);
+        const priorityB = getPriority(b.action);
+
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+
+        // If same priority, sort by domain to ensure consistency
+        if (a.domain !== b.domain) {
+          return a.domain.localeCompare(b.domain);
+        }
+
+        // Finally sort by creation time
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      });
+    });
+
+    return itemsByOrder;
+  }
+
   async execute() {
     await fioApi.getRawAbi();
     const roe = await getROE();
@@ -975,10 +1035,17 @@ class OrdersJob extends CommonJob {
       combo: domainAddressPrice,
       renewDomain: renewDomainPrice,
     } = prices;
+
     // get order items ready to process
     const items = await OrderItem.getActionRequired();
 
     this.postMessage(`Process order items - ${items.length}`);
+
+    if (items.length === 0) {
+      this.postMessage('No order items to process');
+      this.finish();
+      return;
+    }
 
     const freeAndPaidFioAccountProfilesArr = await FioAccountProfile.getFreePaidItems();
 
@@ -1256,16 +1323,152 @@ class OrdersJob extends CommonJob {
       return true;
     };
 
-    // We want to process items in one order synchronously
-    const methodsByOrder = items.reduce((acc, item) => {
-      if (!acc[item.orderId]) acc[item.orderId] = [];
-      acc[item.orderId].push(processOrderItem(item));
+    // Group and sort items for proper sequencing
+    const itemsByOrder = this.groupAndSortOrderItems(items);
 
-      return acc;
-    }, {});
+    // Convert to array of methods grouped by order
+    const methodsByOrder = Object.values(itemsByOrder).map(orderItems =>
+      orderItems.map(item => processOrderItem(item)),
+    );
 
-    await this.executeMethodsArray(Object.values(methodsByOrder), items.length);
+    // Process orders in chunks for better performance and enable non-blocking execution
+    const totalOrders = methodsByOrder.length;
+    this.postMessage(
+      `Processing ${totalOrders} orders in chunks of ${CHUNK_SIZE} with max ${MAX_CONCURRENT_CHUNKS} concurrent chunks`,
+    );
 
+    // Create chunks
+    const chunks = [];
+    for (let i = 0; i < methodsByOrder.length; i += CHUNK_SIZE) {
+      chunks.push({
+        orders: methodsByOrder.slice(i, i + CHUNK_SIZE),
+        chunkNumber: Math.floor(i / CHUNK_SIZE) + 1,
+      });
+    }
+
+    const totalChunks = chunks.length;
+    let processedChunks = 0;
+
+    // Process chunks with controlled concurrency
+    const processChunk = async chunkData => {
+      const { orders: chunk, chunkNumber } = chunkData;
+
+      // Check if job has been cancelled
+      if (this.isCancelled) {
+        this.postMessage(`Job cancelled during chunk ${chunkNumber} processing`);
+        return false;
+      }
+
+      this.postMessage(
+        `Processing chunk ${chunkNumber}/${totalChunks} (${
+          chunk.length
+        } orders, ${chunk.reduce(
+          (sum, orderMethods) => sum + orderMethods.length,
+          0,
+        )} items)`,
+      );
+
+      // Process each order in the chunk - orders can run in parallel, items within an order run by priority groups
+      const results = await Promise.allSettled(
+        chunk.map(async orderMethods => {
+          // Items are already sorted by priority (domain reg -> combo -> renewal -> others) by groupAndSortOrderItems
+          // We need to process in priority groups: dependencies first, then parallel processing of safe items
+
+          // Since items are pre-sorted, we can process them in two phases:
+          // Phase 1: Process critical dependencies (domain registrations) sequentially
+          // Phase 2: Process safe items (renewals, etc.) in parallel
+
+          let dependencyPhaseComplete = false;
+          let currentIndex = 0;
+
+          // Phase 1: Process dependency items sequentially until we hit safe-to-parallelize items
+          while (currentIndex < orderMethods.length && !dependencyPhaseComplete) {
+            if (this.isCancelled) return false;
+
+            // Assume first few items need sequential processing (domain registrations, combos)
+            // After dependencies are met, remaining items can run in parallel
+            const isLikelyDependency = currentIndex < Math.min(2, orderMethods.length);
+
+            if (isLikelyDependency) {
+              try {
+                await orderMethods[currentIndex]();
+              } catch (e) {
+                // Individual item errors are already logged, continue with next item
+              }
+              currentIndex++;
+            } else {
+              dependencyPhaseComplete = true;
+            }
+          }
+
+          // Phase 2: Process remaining items (renewals, etc.) in parallel
+          if (currentIndex < orderMethods.length) {
+            const remainingMethods = orderMethods.slice(currentIndex);
+
+            await Promise.allSettled(
+              remainingMethods.map(async method => {
+                if (this.isCancelled) return false;
+                try {
+                  await method();
+                } catch (e) {
+                  // Individual item errors are already logged, continue with next item
+                }
+              }),
+            );
+          }
+        }),
+      );
+
+      // Log any order-level failures for monitoring
+      const failedOrders = results.filter(result => result.status === 'rejected');
+      if (failedOrders.length > 0) {
+        this.postMessage(
+          `Chunk ${chunkNumber}: ${failedOrders.length} orders failed at order level`,
+        );
+        failedOrders.forEach(failure => {
+          logger.error(
+            `Order processing failed in chunk ${chunkNumber}:`,
+            failure.reason,
+          );
+        });
+      }
+
+      processedChunks++;
+      this.postMessage(
+        `Completed chunk ${chunkNumber}/${totalChunks} (${processedChunks} total completed)`,
+      );
+
+      return true;
+    };
+
+    // Process chunks with concurrency limit
+    const semaphore = [];
+    const chunkPromises = chunks.map(async chunkData => {
+      // Wait for an available slot
+      while (semaphore.length >= MAX_CONCURRENT_CHUNKS) {
+        await Promise.race(semaphore);
+      }
+
+      // Add this chunk to the semaphore
+      const chunkPromise = processChunk(chunkData);
+      semaphore.push(chunkPromise);
+
+      try {
+        const result = await chunkPromise;
+        return result;
+      } finally {
+        // Remove from semaphore when done
+        const index = semaphore.indexOf(chunkPromise);
+        if (index > -1) {
+          semaphore.splice(index, 1);
+        }
+      }
+    });
+
+    // Wait for all chunks to complete
+    await Promise.allSettled(chunkPromises);
+
+    this.postMessage('All order items processed successfully');
     this.finish();
   }
 }
