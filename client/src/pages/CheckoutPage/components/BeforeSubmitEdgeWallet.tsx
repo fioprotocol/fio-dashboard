@@ -9,6 +9,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 import { defaultMaxFee } from '../../../util/prices';
 import { log } from '../../../util/general';
+import MathOp from '../../../util/math';
 
 import {
   CART_ITEM_TYPE,
@@ -51,7 +52,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
   }: SubmitActionParams<BeforeSubmitValues>) => {
     const signedTxs: BeforeSubmitData = {};
 
-    for (const item of fioAddressItems) {
+    for (const [index, item] of fioAddressItems.entries()) {
       await apis.fio.setWalletFioSdk(
         allWalletKeysInAccount[item.fioWallet.edgeId],
       );
@@ -60,6 +61,10 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
         !item.displayOrderItem.hasCustomDomainInCart &&
         item.displayOrderItem.type ===
           CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+
+      const expirationOffset = new MathOp(TRANSACTION_DEFAULT_OFFSET_EXPIRATION)
+        .add(index)
+        .toNumber();
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
@@ -78,7 +83,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
                 { retNum: true },
               ) as number,
               technologyProviderId: apis.fio.tpid,
-              expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+              expirationOffset,
             },
           )) as unknown) as SignedTxArgs,
           signingWalletPubKey:
