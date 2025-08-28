@@ -10,12 +10,14 @@ import {
 } from '../../../components/MetamaskConfirmAction';
 
 import { defaultMaxFee } from '../../../util/prices';
+import MathOp from '../../../util/math';
 
 import { TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS } from '../../../constants/fio';
 import {
   CART_ITEM_TYPE,
   CONFIRM_METAMASK_ACTION,
   WALLET_CREATED_FROM,
+  SECOND_MS,
 } from '../../../constants/common';
 
 import apis from '../../../api';
@@ -99,6 +101,13 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
           !fioAddressItem.displayOrderItem.hasCustomDomainInCart &&
           fioAddressItem.displayOrderItem.type ===
             CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+
+        const expirationOffset = new MathOp(
+          TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+        )
+          .add(index * SECOND_MS)
+          .toNumber();
+
         const fioHandleActionParams = {
           action: isComboRegistration
             ? Action.regDomainAddress
@@ -116,7 +125,7 @@ export const BeforeSubmitMetamaskWallet: React.FC<BeforeSubmitProps> = props => 
             ) as string,
           },
           derivationIndex: fioAddressItem?.fioWallet?.data?.derivationIndex,
-          timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+          timeoutOffset: expirationOffset,
           id: index,
         };
 

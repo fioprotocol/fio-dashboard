@@ -20,6 +20,7 @@ import {
   CART_ITEM_TYPE,
   CONFIRM_METAMASK_ACTION,
   DEFAULT_BUNDLE_SET_VALUE,
+  SECOND_MS,
   WALLET_CREATED_FROM,
 } from '../../../constants/common';
 
@@ -30,13 +31,7 @@ import {
 } from '../types';
 import { ActionParams } from '../../../types/fio';
 import { RegistrationResult } from '../../../types';
-import { FIO_ADDRESS_DELIMITER } from '../../../utils';
-
-const DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS = 10 * 1000;
-
-const TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS =
-  DEFAULT_OFFSET_TO_EXISTING_TRANSACTION_MS +
-  TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS;
+import MathOp from '../../../util/math';
 
 type Props = {
   analyticsData: PurchaseValues;
@@ -143,20 +138,13 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
     for (const [index, registration] of registrations.entries()) {
       if (!registration.isFree) {
+        const expirationOffset = new MathOp(
+          TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+        )
+          .add(index * SECOND_MS)
+          .toNumber();
+
         if (registration.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN) {
-          const [address, domain] = registration.fioName.split(
-            FIO_ADDRESS_DELIMITER,
-          );
-
-          const hasAdditionalHandlesOnDomain = registrations.some(
-            registrationItem => {
-              const [itemAddress, itemDomain] = registrationItem.fioName.split(
-                FIO_ADDRESS_DELIMITER,
-              );
-              return itemDomain === domain && itemAddress !== address;
-            },
-          );
-
           const fioAddressActionParams = {
             action: registration.isCombo
               ? Action.regDomainAddress
@@ -171,9 +159,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
-            timeoutOffset: hasAdditionalHandlesOnDomain
-              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            timeoutOffset: expirationOffset,
             id: index,
           };
 
@@ -181,13 +167,6 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
           actionParamsArr.push(fioAddressActionParams);
         } else if (registration.type === CART_ITEM_TYPE.ADD_BUNDLES) {
-          const hasTheSameItem = registrations.some(
-            registrationItem =>
-              registrationItem.fioName === registration.fioName &&
-              registrationItem.cartItemId !== registration.cartItemId &&
-              registrationItem.type === CART_ITEM_TYPE.ADD_BUNDLES,
-          );
-
           const addBundlesActionParams = {
             action: Action.addBundledTransactions,
             account: Account.address,
@@ -199,9 +178,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
-            timeoutOffset: hasTheSameItem
-              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            timeoutOffset: expirationOffset,
             id: index,
           };
 
@@ -209,13 +186,6 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
           actionParamsArr.push(addBundlesActionParams);
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
-          const hasTheSameItem = registrations.some(
-            registrationItem =>
-              registrationItem.fioName === registration.fioName &&
-              registrationItem.iteration > 0 &&
-              registrationItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
-          );
-
           const fioDomainActionParams = {
             action: Action.regDomain,
             account: Account.address,
@@ -227,9 +197,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
-            timeoutOffset: hasTheSameItem
-              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            timeoutOffset: expirationOffset,
             id: index,
           };
 
@@ -237,13 +205,6 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
 
           actionParamsArr.push(fioDomainActionParams);
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-          const hasTheSameItem = registrations.some(
-            registrationItem =>
-              registrationItem.fioName === registration.fioName &&
-              registrationItem.iteration > 0 &&
-              registrationItem.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
-          );
-
           const fioDomainRenewActionParams = {
             action: Action.renewDomain,
             account: Account.address,
@@ -254,9 +215,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
-            timeoutOffset: hasTheSameItem
-              ? TRANSACTION_OFFSET_TO_EXISTING_TRANSACTION_MS
-              : TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            timeoutOffset: expirationOffset,
             id: index,
           };
 
@@ -275,7 +234,7 @@ export const PurchaseMetamaskWallet: React.FC<Props> = props => {
             },
             derivationIndex:
               registration.signInFioWallet?.data?.derivationIndex,
-            timeoutOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS,
+            timeoutOffset: expirationOffset,
             id: index,
           };
 
