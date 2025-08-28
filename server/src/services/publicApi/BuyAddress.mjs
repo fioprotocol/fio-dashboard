@@ -3,9 +3,11 @@ import Sequelize from 'sequelize';
 
 import Base from '../Base';
 import {
+  BlockchainTransaction,
   Domain,
   Order,
   OrderItem,
+  OrderItemStatus,
   Payment,
   ReferrerProfile,
   ReferrerProfileApiToken,
@@ -172,13 +174,13 @@ export default class BuyAddress extends Base {
         });
       }
 
-      const isRegistrationAddressExist = await this.isSameAccountRegistrationExist(
+      const allowSameAccountRegistration = await this.allowSameAccountRegistration(
         publicKey,
         refProfile,
         normalizedFioHandle,
       );
 
-      if (isRegistrationAddressExist) {
+      if (!allowSameAccountRegistration) {
         return generateErrorResponse(this.res, {
           error: `You have already sent a request to register a FIO Handle for that domain`,
           errorCode: PUB_API_ERROR_CODES.ALREADY_SENT_REGISTRATION_REQ_FOR_ACCOUNT,
@@ -407,22 +409,115 @@ export default class BuyAddress extends Base {
     return enableCompareByDomainName ? !freeRegisteredAddressWithDomain : !orders.length;
   }
 
-  async isSameAccountRegistrationExist(publicKey, refProfile, address) {
+  async allowSameAccountRegistration(publicKey, refProfile, address) {
     const { fioAddress, fioDomain } = destructAddress(address);
 
+    // Step 1: Get all orders for this user/referrer (lightweight query)
     const orders = await Order.findAll({
+      attributes: ['id', 'status'],
       where: {
         publicKey,
         refProfileId: refProfile.id,
+        status: {
+          [Sequelize.Op.notIn]: [
+            Order.STATUS.SUCCESS,
+            Order.STATUS.FAILED,
+            Order.STATUS.CANCELED,
+          ],
+        },
       },
-      include: [OrderItem],
     });
 
-    const order = orders
-      .flatMap(it => it.OrderItems)
-      .find(({ address, domain }) => address === fioAddress && domain === fioDomain);
+    if (!orders.length) {
+      return true; // No existing orders, allow registration
+    }
 
-    return !!order;
+    // Step 2: Find matching OrderItems for these orders
+    const orderIds = orders.map(order => order.id);
+
+    const matchingOrderItems = await OrderItem.findAll({
+      where: {
+        orderId: { [Sequelize.Op.in]: orderIds },
+        address: fioAddress,
+        domain: fioDomain,
+      },
+      include: [
+        {
+          model: OrderItemStatus,
+          where: {
+            txStatus: {
+              [Sequelize.Op.notIn]: [
+                BlockchainTransaction.STATUS.FAILED,
+                BlockchainTransaction.STATUS.SUCCESS,
+              ],
+            },
+            paymentStatus: {
+              [Sequelize.Op.notIn]: [
+                Payment.STATUS.CANCELLED,
+                Payment.STATUS.EXPIRED,
+                Payment.STATUS.FAILED,
+              ],
+            },
+          },
+        },
+      ],
+    });
+
+    if (!matchingOrderItems.length) {
+      return true; // No matching order items, allow registration
+    }
+
+    // Step 3: Get Payment info for ALL matching orders
+    const matchingOrderIds = [...new Set(matchingOrderItems.map(item => item.orderId))];
+    const payments = await Payment.findAll({
+      attributes: ['id', 'processor', 'externalId', 'status', 'orderId'],
+      where: {
+        orderId: { [Sequelize.Op.in]: matchingOrderIds },
+      },
+    });
+
+    // Check ALL order items and their payments
+    let allowToRegister = true;
+
+    for (const orderItem of matchingOrderItems) {
+      const relatedPayments = payments.filter(p => p.orderId === orderItem.orderId);
+
+      for (const paymentInfo of relatedPayments) {
+        // If any payment is completed, block registration
+        if (paymentInfo.status === Payment.STATUS.COMPLETED) {
+          allowToRegister = false;
+          break;
+        }
+
+        // If payment is pending/new, check if it's actually still valid
+        if (
+          paymentInfo.status === Payment.STATUS.PENDING ||
+          paymentInfo.status === Payment.STATUS.NEW
+        ) {
+          if (
+            paymentInfo.processor === Payment.PROCESSOR.BITPAY &&
+            paymentInfo.externalId
+          ) {
+            const invoice = await Bitpay.getInvoice(paymentInfo.externalId);
+            // If invoice is NOT expired, this payment is still active - block registration
+            if (invoice && invoice.status !== 'expired') {
+              allowToRegister = false;
+              break;
+            }
+          } else {
+            // Non-BitPay pending/new payments block registration
+            allowToRegister = false;
+            break;
+          }
+        }
+
+        // Note: Cancelled/Failed/Expired payments don't block registration
+      }
+
+      if (!allowToRegister) break; // Exit early if we found a blocking payment
+    }
+
+    return allowToRegister;
   }
 
   async sendNotification(apiProfile, refProfile) {

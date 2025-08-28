@@ -323,6 +323,8 @@ class Fio {
         actionParams = {
           ...actionParams,
           fio_domain: options.domain,
+          expirationOffset:
+            TRANSACTION_DEFAULT_OFFSET_EXPIRATION + (options.expirationOffset || 0),
         };
         break;
       }
@@ -331,6 +333,8 @@ class Fio {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
           bundle_sets: DEFAULT_BUNDLE_SET_VALUE,
+          expirationOffset:
+            TRANSACTION_DEFAULT_OFFSET_EXPIRATION + (options.expirationOffset || 0),
         };
         break;
       }
@@ -501,6 +505,7 @@ class Fio {
         action: FIO_ACTION_NAMES[action],
         data: params,
         authPermission: auth.permission,
+        expirationOffset: params.expirationOffset,
       });
       logger.info(
         'FIO_ACTIONS_TO_END_POINT_MAP[action]',

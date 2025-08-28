@@ -73,180 +73,220 @@ class TxCheckJob extends CommonJob {
       return acc;
     }, {});
 
-    const processTxItems = items => async () => {
-      if (this.isCancelled) return false;
+    const processTxItem = item => async () => {
+      if (this.isCancelled)
+        return { success: false, itemId: item.id, reason: 'cancelled' };
 
-      const { orderId } = items[0];
+      const {
+        id,
+        address: itemAddress,
+        domain: itemDomain,
+        action,
+        btData = {},
+        btId,
+        params,
+        publicKey,
+        txId,
+        baseUrl,
+        orderId,
+      } = item;
+      this.postMessage(`Processing tx item id - ${id}`);
 
-      for (const item of items) {
-        const {
-          id,
-          address: itemAddress,
-          domain: itemDomain,
-          action,
-          btData = {},
-          btId,
-          params,
-          publicKey,
-          txId,
-          baseUrl,
-        } = item;
-        this.postMessage(`Processing tx item id - ${id}`);
+      const address = normalizeFioHandle(itemAddress);
+      const domain = normalizeFioHandle(itemDomain);
 
-        const address = normalizeFioHandle(itemAddress);
-        const domain = normalizeFioHandle(itemDomain);
+      try {
+        let status = BlockchainTransaction.STATUS.PENDING;
 
-        try {
-          let status = BlockchainTransaction.STATUS.PENDING;
+        switch (action) {
+          case GenericAction.renewFioDomain:
+          case GenericAction.addBundledTransactions: {
+            status = await this.isTxExpired({
+              txId,
+              itemId: item ? item.id : null,
+            });
 
-          switch (action) {
-            case GenericAction.renewFioDomain:
-            case GenericAction.addBundledTransactions: {
+            if (!btData.checkIteration) btData.checkIteration = 0;
+            ++btData.checkIteration;
+
+            if (status !== BlockchainTransaction.STATUS.EXPIRE) {
+              status = BlockchainTransaction.STATUS.SUCCESS;
+            }
+
+            if (
+              btData.checkIteration > MAX_CHECK_TIMES &&
+              status !== BlockchainTransaction.STATUS.SUCCESS
+            )
+              status = BlockchainTransaction.STATUS.FAILED;
+
+            break;
+          }
+          case GenericAction.registerFioDomainAddress:
+          case GenericAction.registerFioAddress:
+          case GenericAction.registerFioDomain: {
+            const isAddress =
+              action === GenericAction.registerFioAddress ||
+              action === GenericAction.registerFioDomainAddress;
+            const fioName = isAddress
+              ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
+              : domain;
+
+            let found;
+            let checkRes;
+            try {
+              let ownerAccount;
+
+              logger.info(`TX ITEM PROCESSING - BASE URL: ${baseUrl}`);
+
+              if (isAddress) {
+                checkRes = await fioApi.getFioAddress(fioName);
+                ownerAccount = checkRes && checkRes.owner_account;
+              } else {
+                checkRes = await fioApi.getFioDomain(fioName);
+                ownerAccount = checkRes && checkRes.account;
+              }
+
+              const { accountnm } = fioApi.accountHash(
+                (params && params.owner_fio_public_key) || publicKey,
+              );
+
+              logger.info(`TX ITEM PROCESSING - OWNER ACCOUNT: ${ownerAccount}`);
+              logger.info(`TX ITEM PROCESSING - ACCOUNTNM: ${accountnm}`);
+
+              if (accountnm === ownerAccount) {
+                found = true;
+              }
+            } catch (error) {
+              if (error.code !== ERROR_CODES.NOT_FOUND) {
+                throw error;
+              }
+            }
+
+            logger.info(`TX ITEM PROCESSING - FOUND: ${found}`);
+
+            if (found) status = BlockchainTransaction.STATUS.SUCCESS;
+
+            if (!btData.checkIteration) btData.checkIteration = 0;
+            ++btData.checkIteration;
+
+            if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
               status = await this.isTxExpired({
                 txId,
                 itemId: item ? item.id : null,
               });
-
-              if (!btData.checkIteration) btData.checkIteration = 0;
-              ++btData.checkIteration;
-
-              if (status !== BlockchainTransaction.STATUS.EXPIRE) {
-                status = BlockchainTransaction.STATUS.SUCCESS;
-              }
-
-              if (
-                btData.checkIteration > MAX_CHECK_TIMES &&
-                status !== BlockchainTransaction.STATUS.SUCCESS
-              )
-                status = BlockchainTransaction.STATUS.FAILED;
-
-              break;
             }
-            case GenericAction.registerFioDomainAddress:
-            case GenericAction.registerFioAddress:
-            case GenericAction.registerFioDomain: {
-              const isAddress =
-                action === GenericAction.registerFioAddress ||
-                action === GenericAction.registerFioDomainAddress;
-              const fioName = isAddress
-                ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
-                : domain;
 
-              let found;
-              let checkRes;
-              try {
-                let ownerAccount;
+            if (
+              btData.checkIteration > MAX_CHECK_TIMES &&
+              status !== BlockchainTransaction.STATUS.SUCCESS
+            )
+              status = BlockchainTransaction.STATUS.FAILED;
 
-                logger.info(`TX ITEM PROCESSING - BASE URL: ${baseUrl}`);
-
-                if (isAddress) {
-                  checkRes = await fioApi.getFioAddress(fioName);
-                  ownerAccount = checkRes && checkRes.owner_account;
-                } else {
-                  checkRes = await fioApi.getFioDomain(fioName);
-                  ownerAccount = checkRes && checkRes.account;
-                }
-
-                const { accountnm } = fioApi.accountHash(
-                  (params && params.owner_fio_public_key) || publicKey,
-                );
-
-                logger.info(`TX ITEM PROCESSING - OWNER ACCOUNT: ${ownerAccount}`);
-                logger.info(`TX ITEM PROCESSING - ACCOUNTNM: ${accountnm}`);
-
-                if (accountnm === ownerAccount) {
-                  found = true;
-                }
-              } catch (error) {
-                if (error.code !== ERROR_CODES.NOT_FOUND) {
-                  throw error;
-                }
-              }
-
-              logger.info(`TX ITEM PROCESSING - FOUND: ${found}`);
-
-              if (found) status = BlockchainTransaction.STATUS.SUCCESS;
-
-              if (!btData.checkIteration) btData.checkIteration = 0;
-              ++btData.checkIteration;
-
-              if (!found && status !== BlockchainTransaction.STATUS.SUCCESS) {
-                status = await this.isTxExpired({
-                  txId,
-                  itemId: item ? item.id : null,
-                });
-              }
-
-              if (
-                btData.checkIteration > MAX_CHECK_TIMES &&
-                status !== BlockchainTransaction.STATUS.SUCCESS
-              )
-                status = BlockchainTransaction.STATUS.FAILED;
-
-              break;
-            }
-            default:
-            //
+            break;
           }
-
-          try {
-            await BlockchainTransaction.sequelize.transaction(async t => {
-              await BlockchainTransaction.update(
-                {
-                  status,
-                  data: btData,
-                },
-                {
-                  where: {
-                    id: btId,
-                    orderItemId: id,
-                    status: BlockchainTransaction.STATUS.PENDING,
-                  },
-                  transaction: t,
-                },
-              );
-
-              await BlockchainTransactionEventLog.create(
-                {
-                  status,
-                  blockchainTransactionId: btId,
-                },
-                { transaction: t },
-              );
-
-              await OrderItemStatus.update(
-                {
-                  txStatus: status,
-                },
-                {
-                  where: {
-                    orderItemId: id,
-                    blockchainTransactionId: btId,
-                    txStatus: BlockchainTransaction.STATUS.PENDING,
-                  },
-                  transaction: t,
-                },
-              );
-              if (status === BlockchainTransaction.STATUS.SUCCESS) {
-                // todo: for now we have only 'twitter' domain fch that could be locked
-                if (domain === 'twitter')
-                  await LockedFch.deleteLockedFch(
-                    {
-                      fch: fioApi.setFioName(address, domain),
-                    },
-                    { transaction: t },
-                  );
-              }
-            });
-          } catch (error) {
-            logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);
-          }
-        } catch (e) {
-          logger.error(`TX ITEM PROCESSING ERROR ${item.id}`, e);
+          default:
+          //
         }
+
+        try {
+          await BlockchainTransaction.sequelize.transaction(async t => {
+            await BlockchainTransaction.update(
+              {
+                status,
+                data: btData,
+              },
+              {
+                where: {
+                  id: btId,
+                  orderItemId: id,
+                  status: BlockchainTransaction.STATUS.PENDING,
+                },
+                transaction: t,
+              },
+            );
+
+            await BlockchainTransactionEventLog.create(
+              {
+                status,
+                blockchainTransactionId: btId,
+              },
+              { transaction: t },
+            );
+
+            await OrderItemStatus.update(
+              {
+                txStatus: status,
+              },
+              {
+                where: {
+                  orderItemId: id,
+                  blockchainTransactionId: btId,
+                  txStatus: BlockchainTransaction.STATUS.PENDING,
+                },
+                transaction: t,
+              },
+            );
+            if (status === BlockchainTransaction.STATUS.SUCCESS) {
+              // todo: for now we have only 'twitter' domain fch that could be locked
+              if (domain === 'twitter')
+                await LockedFch.deleteLockedFch(
+                  {
+                    fch: fioApi.setFioName(address, domain),
+                  },
+                  { transaction: t },
+                );
+            }
+          });
+
+          return { success: true, itemId: id, orderId, status };
+        } catch (error) {
+          logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);
+          return { success: false, itemId: id, orderId, error: error.message };
+        }
+      } catch (e) {
+        logger.error(`TX ITEM PROCESSING ERROR ${item.id}`, e);
+        return { success: false, itemId: id, orderId, error: e.message };
+      }
+    };
+
+    const processOrderItems = items => async () => {
+      if (this.isCancelled) return { success: false, reason: 'cancelled' };
+
+      const { orderId } = items[0];
+
+      // Process all items in this order in parallel chunks of 10
+      const itemMethods = items.map(item => processTxItem(item));
+      const ITEM_CHUNK_SIZE = 10;
+
+      const results = [];
+
+      for (let i = 0; i < itemMethods.length; i += ITEM_CHUNK_SIZE) {
+        const chunk = itemMethods.slice(i, i + ITEM_CHUNK_SIZE);
+
+        // Process items in this chunk in parallel using Promise.allSettled
+        const chunkResults = await Promise.allSettled(chunk.map(method => method()));
+        results.push(...chunkResults);
       }
 
-      // Update Order status
+      // Process results and collect status information
+      const processedResults = results.map(result => {
+        if (result.status === 'fulfilled') {
+          const { success, itemId, status: txStatus, error } = result.value;
+          if (success) {
+            this.postMessage(
+              `Item ${itemId} processed successfully with status: ${txStatus}`,
+            );
+          } else {
+            logger.error(`Item ${itemId} processing failed: ${error}`);
+          }
+          return result.value;
+        } else {
+          logger.error(`Item processing rejected: ${result.reason}`);
+          return { success: false, error: result.reason };
+        }
+      });
+
+      // Update Order status after all items in the order are processed
       try {
         const items = await OrderItemStatus.getAllItemsStatuses(orderId);
         await updateOrderStatus(
@@ -254,46 +294,63 @@ class TxCheckJob extends CommonJob {
           null,
           items.map(({ txStatus }) => txStatus),
         );
+
+        return { success: true, orderId, processedResults };
       } catch (error) {
         logger.error(
           `TX ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
           error,
         );
+        return { success: false, orderId, error: error.message };
       }
-
-      return true;
     };
 
-    const methods = Object.values(bcTxOrderItems).map(items => processTxItems(items));
+    const orderMethods = Object.values(bcTxOrderItems).map(items =>
+      processOrderItems(items),
+    );
 
-    // Process methods in chunks to avoid rate limiting
-    const CHUNK_SIZE = 10;
+    // Process order groups in chunks to avoid rate limiting
+    const ORDER_CHUNK_SIZE = 5; // Reduced to 5 since each order can have multiple items
     const CHUNK_DELAY_MS = 500;
 
     this.postMessage(
-      `Processing ${methods.length} order groups in chunks of ${CHUNK_SIZE}`,
+      `Processing ${orderMethods.length} order groups in chunks of ${ORDER_CHUNK_SIZE}`,
     );
 
-    for (let i = 0; i < methods.length; i += CHUNK_SIZE) {
+    for (let i = 0; i < orderMethods.length; i += ORDER_CHUNK_SIZE) {
       // Check if job has been cancelled
       if (this.isCancelled) {
         this.postMessage('Job cancelled during chunk processing');
         return false;
       }
 
-      const chunk = methods.slice(i, i + CHUNK_SIZE);
-      const chunkNumber = Math.floor(i / CHUNK_SIZE) + 1;
-      const totalChunks = Math.ceil(methods.length / CHUNK_SIZE);
+      const chunk = orderMethods.slice(i, i + ORDER_CHUNK_SIZE);
+      const chunkNumber = Math.floor(i / ORDER_CHUNK_SIZE) + 1;
+      const totalChunks = Math.ceil(orderMethods.length / ORDER_CHUNK_SIZE);
 
       this.postMessage(
         `Processing chunk ${chunkNumber}/${totalChunks} (${chunk.length} order groups)`,
       );
 
-      // Process all methods in this chunk in parallel
-      await Promise.all(chunk.map(method => method()));
+      // Process all order groups in this chunk in parallel using Promise.allSettled
+      const results = await Promise.allSettled(chunk.map(method => method()));
+
+      // Log results
+      results.forEach(result => {
+        if (result.status === 'fulfilled') {
+          const { success, orderId, error } = result.value;
+          if (success) {
+            this.postMessage(`Order ${orderId} processed successfully`);
+          } else {
+            logger.error(`Order ${orderId} processing failed: ${error}`);
+          }
+        } else {
+          logger.error(`Order processing rejected: ${result.reason}`);
+        }
+      });
 
       // Add delay between chunks to avoid rate limiting (except for the last chunk)
-      if (i + CHUNK_SIZE < methods.length) {
+      if (i + ORDER_CHUNK_SIZE < orderMethods.length) {
         this.postMessage(`Waiting ${CHUNK_DELAY_MS}ms before next chunk...`);
         await new Promise(resolve => setTimeout(resolve, CHUNK_DELAY_MS));
       }
