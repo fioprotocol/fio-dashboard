@@ -67,13 +67,20 @@ export class FioApiUrl extends Base {
     });
 
     const dynamicFetch = Number(await Var.getValByKey(VARS_KEYS.API_URLS_DYNAMIC_FETCH));
-    if (!dynamicFetch) return urls.map(item => item.url);
+    const blockedApiUrlsList = await Var.getValByKey(VARS_KEYS.API_URLS_BLOCKED);
+    const blockedApiUrlsListArray = JSON.parse(blockedApiUrlsList);
+
+    const filteredUrls = urls.filter(
+      item =>
+        !blockedApiUrlsListArray.some(blockedUrl => item.url.startsWith(blockedUrl)),
+    );
+    if (!dynamicFetch) return filteredUrls.map(item => item.url);
 
     const defaultLocData = getLocByCountry();
     const locData = getLocByCountry({ code: location, tz });
     const sorted = sortByDistance(
       { x: locData.latitude, y: locData.longitude },
-      urls.map(({ url, data }) =>
+      filteredUrls.map(({ url, data }) =>
         data && data.location_latitude
           ? { url, x: data.location_latitude, y: data.location_longitude }
           : { url, x: defaultLocData.latitude, y: defaultLocData.longitude },
