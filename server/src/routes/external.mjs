@@ -10,6 +10,7 @@ import GetExternalProviderNfts from '../services/external/GetExternalProviderNft
 import GetExternalProviderNftsMetadata from '../services/external/GetExternalProviderNftsMetadata.mjs';
 import GetExternalAllTokens from '../services/external/GetExternalAllTokens.mjs';
 import AbstractEmailVerification from '../services/external/AbstractEmailVerification.mjs';
+import CheckServerTime from '../services/fio/CheckServerTime.mjs';
 
 export default {
   prices: makeServiceRunner(GetPrices, req => req.query),
@@ -28,4 +29,5 @@ export default {
     AbstractEmailVerification,
     req => req.query,
   ),
+  checkServerTime: makeServiceRunner(CheckServerTime, req => req.query),
 };

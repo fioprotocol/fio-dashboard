@@ -34,7 +34,7 @@ const ApiObj = {
   admin: new Admin(apiClient),
   auth: new Auth(apiClient),
   fioReg: new FioReg(apiClient),
-  fio: new Fio(),
+  fio: new Fio(apiClient),
   vars: new Var(apiClient),
 };
 

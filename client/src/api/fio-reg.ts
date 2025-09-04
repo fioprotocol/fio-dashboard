@@ -30,4 +30,13 @@ export default class FioReg extends Base {
       tz: getUserTz(),
     });
   }
+  checkServerTime({
+    fioApiUrls,
+  }: {
+    fioApiUrls: string[];
+  }): Promise<FioRegApiUrlsResponse> {
+    return this.apiClient.get('external/check-fio-api-url-time', {
+      fioApiUrls,
+    });
+  }
 }

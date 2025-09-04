@@ -28,7 +28,7 @@ export type Api = {
 };
 
 const ApiObj = {
-  fio: new Fio(),
+  fio: new Fio(apiClient),
   fioReg: new FioReg(apiClient),
   chainCode: new ChainCode(apiClient),
   client: apiClient,
