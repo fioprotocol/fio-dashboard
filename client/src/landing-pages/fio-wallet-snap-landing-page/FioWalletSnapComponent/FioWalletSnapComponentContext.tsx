@@ -14,6 +14,7 @@ import {
   DECRYPT_OBT_DATA_CONTENT_NAME,
 } from './constants';
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+import { apiClient } from '../../../api';
 import { AnyType } from '../../../types';
 
 const DEFAULT_ORACLE_FEE_AMOUNT = '150000000000';
@@ -245,7 +246,7 @@ export const useContext = (
         };
         break;
       case Action.recordObt: {
-        const payeePublicKey = await new FioApi().getFioPublicAddress(
+        const payeePublicKey = await new FioApi(apiClient).getFioPublicAddress(
           fioActionFormParams.payeeFioHandle,
         );
         params.account = Account.reqObt;
@@ -303,9 +304,9 @@ export const useContext = (
             },
           };
           params.contentType = ContentType.newFundsContent;
-          const payerFioPublicKey = await new FioApi().getFioPublicAddress(
-            fioActionFormParams.payerFioHandle,
-          );
+          const payerFioPublicKey = await new FioApi(
+            apiClient,
+          ).getFioPublicAddress(fioActionFormParams.payerFioHandle);
           params.payerFioPublicKey = payerFioPublicKey.public_address;
         }
         break;
@@ -353,7 +354,7 @@ export const useContext = (
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
-          amount: new FioApi().amountToSUF(fioActionFormParams.amount),
+          amount: new FioApi(apiClient).amountToSUF(fioActionFormParams.amount),
           tpid: 'dashboard@fiotestnet',
         };
         break;
@@ -375,7 +376,7 @@ export const useContext = (
         params.account = Account.token;
         params.data = {
           ...params.data,
-          amount: new FioApi().amountToSUF(fioActionFormParams.amount),
+          amount: new FioApi(apiClient).amountToSUF(fioActionFormParams.amount),
           payee_public_key: fioActionFormParams.payeeFioPublicKey,
         };
         break;
@@ -384,7 +385,7 @@ export const useContext = (
         params.data = {
           ...params.data,
           fio_address: fioActionFormParams.fioHandle,
-          amount: new FioApi().amountToSUF(fioActionFormParams.amount),
+          amount: new FioApi(apiClient).amountToSUF(fioActionFormParams.amount),
           tpid: 'dashboard@fiotestnet',
         };
         break;
@@ -402,7 +403,7 @@ export const useContext = (
         params.account = Account.oracle;
         params.data = {
           ...params.data,
-          amount: new FioApi().amountToSUF(fioActionFormParams.amount),
+          amount: new FioApi(apiClient).amountToSUF(fioActionFormParams.amount),
           chain_code: fioActionFormParams.chainCode,
           public_address: fioActionFormParams.publicAddress,
           max_oracle_fee: DEFAULT_ORACLE_FEE_AMOUNT,

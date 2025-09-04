@@ -283,6 +283,12 @@ router.post('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.create)
 router.delete('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.delete);
 router.get('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.list);
 
+router.get(
+  '/external/check-fio-api-url-time',
+  checkUserAuth,
+  routes.external.checkServerTime,
+);
+
 let WRAPPED_DOMAIN_ABI;
 let WRAPPED_TOKEN_ABI;
 try {

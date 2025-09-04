@@ -34,7 +34,6 @@ import {
   FIO_PROXY_LIST,
   getEndPointByGenericAction,
 } from '../constants/fio';
-import { MINUTE_MS } from '../constants/common';
 
 import {
   AnyObject,
@@ -47,6 +46,9 @@ import {
   WalletKeys,
 } from '../types';
 import { FioDomainDoubletResponse } from './responses';
+
+import FioReg from './fio-reg';
+import ApiClient from './client';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -149,8 +151,10 @@ export default class Fio {
   tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   affiliateTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   fioChainIdEnvironment: string = process.env.REACT_APP_FIO_CHAIN_ID || '';
+  apiClient: ApiClient;
 
-  constructor() {
+  constructor(apiClient: ApiClient) {
+    this.apiClient = apiClient;
     this.publicFioSDK = new FIOSDK({
       apiUrls: this.baseurls,
       fetchJson: window.fioCorsFixfetch,
@@ -230,21 +234,18 @@ export default class Fio {
 
   checkUrls = async (): Promise<string[]> => {
     const checkedUrls: string[] = [];
-    const checkUrl = async (apiUrl: string, index: number): Promise<void> => {
-      try {
-        const response = await superagent.get(`${apiUrl}chain/get_info`);
 
-        const { head_block_time }: { head_block_time: string } = response.body;
-        if (
-          new Date().getTime() - new Date(head_block_time + 'Z').getTime() <
-          MINUTE_MS
-        )
-          checkedUrls[index] = apiUrl;
-      } catch (err) {
-        log.error(err.message);
-      }
-    };
-    await Promise.allSettled(this.baseurls.map((url, i) => checkUrl(url, i)));
+    try {
+      const checkedUrlsResponse = await new FioReg(
+        this.apiClient,
+      ).checkServerTime({
+        fioApiUrls: this.baseurls,
+      });
+
+      checkedUrls.push(...checkedUrlsResponse);
+    } catch (err) {
+      log.error(err.message);
+    }
 
     if (checkedUrls.length === 0)
       throw new Error('No active valid api url is set.');
