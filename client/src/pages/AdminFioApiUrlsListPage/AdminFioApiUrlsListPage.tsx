@@ -1,9 +1,10 @@
 import React, { useCallback, useState, useEffect, ChangeEvent } from 'react';
 
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import BlockIcon from '@mui/icons-material/Block';
 
 import Loader from '../../components/Loader/Loader';
 import FioApiUrlModal from './components/createNewFioApiUrl/FioApiUrlModal';
@@ -24,6 +25,8 @@ import {
   MinVersionFormValuesProps,
 } from './types';
 import { FioApiUrl } from '../../types';
+
+import { BlockedApiUrlsComponent } from './components/BlockedApiUrlsComponent';
 
 import classes from './AdminFioApiUrlsListPage.module.scss';
 
@@ -50,6 +53,7 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
   const [isVarUpdating, toggleIsVarUpdating] = useState<boolean>(false);
   const [fioApiUrlsMinVersion, setMinVersion] = useState<string>('');
   const [fioApiUrlsDynamicFetch, setDynamicFetch] = useState<number>(0);
+  const [blockedApiUrlsList, setBlockedApiUrlsList] = useState<string[]>([]);
 
   const openFioApiUrlModal = useCallback(() => setShowModal(true), []);
   const closeFioApiUrlModal = useCallback(() => {
@@ -187,6 +191,10 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
     getFioApiUrlsList();
   }, [getFioApiUrlsList]);
 
+  useEffect(() => {
+    getFioApiUrlsList();
+  }, [blockedApiUrlsList]);
+
   const dashaboardApiUrlsList = fioApiUrlsList.filter(
     fioApiUrlItem => fioApiUrlItem.type === FIO_API_URLS_TYPES.DASHBOARD_API,
   );
@@ -231,7 +239,21 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
                       >
                         <DragHandleIcon />
                         <div>{i + 1}</div>
-                        <div>{fioApiUrl.url}</div>
+                        <div className="d-flex align-items-center">
+                          {fioApiUrl.url}
+                          {fioApiUrl.isBlocked ? (
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id="block-tooltip">
+                                  Blocked url
+                                </Tooltip>
+                              }
+                            >
+                              <BlockIcon className="text-danger ml-3" />
+                            </OverlayTrigger>
+                          ) : null}
+                        </div>
                         <div>
                           {fioApiUrl.createdAt
                             ? formatDateToLocale(fioApiUrl.createdAt)
@@ -317,6 +339,10 @@ const AdminFioApiUrlsListPage: React.FC<PageProps> = props => {
 
         {loading && <Loader />}
       </div>
+      <BlockedApiUrlsComponent
+        blockedApiUrlsList={blockedApiUrlsList}
+        setBlockedApiUrlsList={setBlockedApiUrlsList}
+      />
 
       <FioApiUrlModal
         initialValues={apiUrlData || newApiUrlData}
