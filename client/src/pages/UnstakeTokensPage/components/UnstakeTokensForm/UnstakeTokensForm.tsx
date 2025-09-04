@@ -161,6 +161,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
         const hasLowBalance =
           (!selectedAddress || notEnoughBundles) &&
           new MathOp(fee.nativeFio || 0).gt(walletAvailableTokens);
+
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
           (formRenderProps.hasSubmitErrors &&
@@ -169,7 +170,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           loading ||
           hasLowBalance ||
           notEnoughStaked ||
-          (!!selectedAddress && notEnoughBundles) ||
+          (!!selectedAddress && notEnoughBundles && hasLowBalance) ||
           !fioAddresses.length; // temporary added while fio stake api can't allow accounts without FIO Handles
 
         return (
@@ -245,8 +246,10 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               </>
             )}
             <TransactionDetails
-              feeInFio={fee.nativeFio}
-              amountInFio={apis.fio.amountToSUF(amount)}
+              feeInFio={
+                selectedAddress && notEnoughBundles ? fee.nativeFio : null
+              }
+              amountInFio={null}
               bundles={
                 selectedAddress && !notEnoughBundles
                   ? {
