@@ -186,17 +186,23 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           ? fioAddresses.find(({ name }) => name === fioAddress)
           : null;
 
-        const hasLowBalance =
-          (walletMaxAvailableAmount === '0' ||
-            (!!walletMaxAvailableAmount &&
-              new MathOp(apis.fio.amountToSUF(amount)).gt(
-                walletMaxAvailableAmount,
-              ))) &&
-          !isWalletFioAddressesLoading;
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.STAKE
             : false;
+
+        const hasLowBalance =
+          (walletMaxAvailableAmount === '0' ||
+            (!!walletMaxAvailableAmount &&
+              new MathOp(
+                !!selectedAddress && !notEnoughBundles
+                  ? apis.fio.amountToSUF(amount)
+                  : new MathOp(apis.fio.amountToSUF(amount))
+                      .add(fee.nativeFio || 0)
+                      .toString(),
+              ).gt(walletMaxAvailableAmount))) &&
+          !isWalletFioAddressesLoading;
+
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
           (formRenderProps.hasSubmitErrors &&
@@ -204,7 +210,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
-          (!!selectedAddress && notEnoughBundles) ||
+          (!!selectedAddress && notEnoughBundles && hasLowBalance) ||
           isWalletFioAddressesLoading ||
           !fioAddresses.length; // temporary added while fio stake api can't allow accounts without FIO Handles
 
@@ -231,10 +237,24 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              availableValue={apis.fio.sufToAmount(walletAvailableAmount)}
+              availableValue={
+                !!selectedAddress && !notEnoughBundles
+                  ? apis.fio.sufToAmount(walletAvailableAmount)
+                  : apis.fio.sufToAmount(
+                      new MathOp(walletAvailableAmount)
+                        .sub(fee.nativeFio || 0)
+                        .toString(),
+                    )
+              }
               maxValue={
                 walletMaxAvailableAmount
-                  ? apis.fio.sufToAmount(walletMaxAvailableAmount)
+                  ? selectedAddress && !notEnoughBundles
+                    ? apis.fio.sufToAmount(walletMaxAvailableAmount)
+                    : apis.fio.sufToAmount(
+                        new MathOp(walletMaxAvailableAmount)
+                          .sub(fee.nativeFio || 0)
+                          .toString(),
+                      )
                   : '0'
               }
             />
@@ -282,7 +302,9 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               }
             />
             <TransactionDetails
-              feeInFio={fee.nativeFio}
+              feeInFio={
+                selectedAddress && notEnoughBundles ? fee.nativeFio : null
+              }
               amountInFio={apis.fio.amountToSUF(amount)}
               bundles={
                 selectedAddress && !notEnoughBundles
