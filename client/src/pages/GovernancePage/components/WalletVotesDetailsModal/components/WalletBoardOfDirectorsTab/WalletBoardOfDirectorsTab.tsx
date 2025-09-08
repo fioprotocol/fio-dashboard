@@ -26,7 +26,7 @@ import {
   getNextGovernanceDate,
   voteFormatDate,
 } from '../../../../../../util/general';
-import apis from '../../../../../../api';
+
 import { DetailedProxy } from '../../../../../../types';
 
 type Props = {
@@ -66,7 +66,6 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
     <>
       {activeWallet?.hasProxy ? (
         <ProxyVoteDetails
-          power={apis.fio.sufToAmount(activeWallet?.balance)}
           name={proxy?.owner}
           handle={proxy?.fioAddress}
           hasDetails

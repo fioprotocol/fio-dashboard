@@ -13,6 +13,7 @@ import { ScrollBar } from '../ScrollBar/ScrollBar';
 import { ROUTES } from '../../../../../../constants/routes';
 
 import apis from '../../../../../../api';
+import MathOp from '../../../../../../util/math';
 
 import { DetailedProxy } from '../../../../../../types';
 import {
@@ -31,7 +32,13 @@ type Props = {
 export const WalletBlockProducersTab: React.FC<Props> = props => {
   const { activeWallet, listOfBlockProducers, proxy } = props;
 
-  const votingPower = apis.fio.sufToAmount(activeWallet?.balance);
+  // Calculate total voting power from all votes
+  const votingPower = apis.fio.sufToAmount(
+    activeWallet?.votes?.reduce(
+      (acc, vote) => new MathOp(acc).add(vote.lastVoteWeight).toString(),
+      '0',
+    ) || '0',
+  );
 
   const votes = activeWallet?.proxyVotes?.votes || activeWallet?.votes;
 
@@ -41,7 +48,6 @@ export const WalletBlockProducersTab: React.FC<Props> = props => {
     <div>
       {activeWallet?.hasProxy ? (
         <ProxyVoteDetails
-          power={votingPower}
           name={proxy?.owner}
           handle={proxy?.fioAddress}
           hasDetails={true}
