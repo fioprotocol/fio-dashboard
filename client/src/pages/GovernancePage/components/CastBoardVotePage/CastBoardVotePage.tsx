@@ -176,11 +176,6 @@ export const CastBoardVotePage: React.FC<GovernancePageContextProps> = props => 
                 dropdownClassNames={classes.dropdown}
                 withoutMarginBottom
               />
-              <p className={classes.votingPower}>
-                Current Voting Power:{' '}
-                <span>{selectedFioHandle?.remaining || 0}</span>{' '}
-                <span className={classes.violet}>Bundles</span>
-              </p>
             </>
           )}
           <p className={classes.label}>Transaction Details</p>
