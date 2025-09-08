@@ -10,7 +10,6 @@ import { InfoBadgeComponent } from '../../../InfoBadgeComponent/InfoBadgeCompone
 import classes from './ProxyVoteDetails.module.scss';
 
 type Props = {
-  power: string;
   name: string;
   handle: string;
   hasDetails: boolean;
