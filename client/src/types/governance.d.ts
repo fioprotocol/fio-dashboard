@@ -10,16 +10,16 @@ type LinkItemProps = {
 
 export type CandidateProps = {
   checked?: boolean;
-  country: string;
+  country?: string;
   id: string;
   image: string;
-  lastVoteCount: number;
-  lastVoteUpdate: string;
-  links: LinkItemProps[];
+  lastVoteCount?: number | null;
+  lastVoteUpdate?: string | null;
+  links?: LinkItemProps[];
   name: string;
   status: string;
-  text: string;
-  url: string;
+  text?: string;
+  url?: string;
 };
 
 export type JiraCandidates = {
@@ -41,6 +41,12 @@ export type JiraCandidates = {
     issuelinks: {
       outwardIssue: {
         key: string;
+        fields: {
+          summary: string;
+          status: {
+            name: string;
+          };
+        };
       };
       type: {
         outward: string;
@@ -56,7 +62,7 @@ export type JiraCandidates = {
 
 export type CandidatesVotes = {
   boardVotingPowerLastUpdate: string;
-  candidatesIdsList: string[];
+  candidatesList: CandidateProps[];
   currentBoardVotingPower: number;
 };
 
