@@ -20,6 +20,8 @@ import { ScrollBar } from '../ScrollBar/ScrollBar';
 
 import { ROUTES } from '../../../../../../constants/routes';
 
+import noImageIconSrc from '../../../../../../assets/images/no-photo.svg';
+
 import {
   getNextGovernanceDate,
   voteFormatDate,
@@ -50,9 +52,15 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
     returnDefaultFormat: true,
   });
 
-  const candidates = listOfCandidates.filter(candidateItem =>
-    candidatesVotes?.candidatesIdsList?.includes(candidateItem.id),
-  );
+  const candidates = candidatesVotes?.candidatesList?.map(candidate => {
+    const candidateFromCurrentList = listOfCandidates.find(
+      listCandidate => listCandidate.id === candidate.id,
+    );
+
+    if (!candidateFromCurrentList) return candidate;
+
+    return candidateFromCurrentList;
+  });
 
   return (
     <>
@@ -98,14 +106,18 @@ export const WalletBoardOfDirectorsTab: React.FC<Props> = props => {
                         <img
                           src={image}
                           alt={`candidate ${id}`}
-                          className={classes.img}
+                          className={`${classes.img} ${
+                            image === noImageIconSrc ? classes.withoutPhoto : ''
+                          }`}
                         />
                         <div className={classes.nameContainer}>
                           <p className={classes.name}>{name}</p>
                           <p className={classes.lastVoted}>
                             Last Vote Count:{' '}
                             <span>
-                              {voteFormatDate(new Date(lastVoteUpdate))}
+                              {lastVoteUpdate !== null
+                                ? voteFormatDate(new Date(lastVoteUpdate))
+                                : 'N/A'}
                             </span>
                           </p>
                           <p className={classes.lastVoted}>
