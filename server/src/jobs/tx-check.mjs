@@ -8,6 +8,7 @@ import {
   LockedFch,
   FioApiUrl,
   Var,
+  Payment,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
@@ -22,6 +23,7 @@ import { FIO_API_URLS_TYPES } from '../constants/fio.mjs';
 import { normalizeFioHandle } from '../utils/fio.mjs';
 
 import logger from '../logger.mjs';
+import { updateFioPaymentWithActualTotal } from '../utils/payment.mjs';
 
 const MAX_CHECK_TIMES = 10;
 
@@ -237,6 +239,30 @@ class TxCheckJob extends CommonJob {
                 );
             }
           });
+
+          // If transaction was marked as SUCCESS, update FIO payment with actual total
+          if (status === BlockchainTransaction.STATUS.SUCCESS) {
+            try {
+              // Get payment ID for this order item
+              const orderItemStatus = await OrderItemStatus.findOne({
+                where: { orderItemId: id },
+                include: [{ model: Payment, required: true }],
+              });
+
+              if (
+                orderItemStatus &&
+                orderItemStatus.Payment &&
+                orderItemStatus.Payment.processor === Payment.PROCESSOR.FIO
+              ) {
+                await updateFioPaymentWithActualTotal(orderItemStatus.Payment.id);
+              }
+            } catch (paymentUpdateError) {
+              logger.error(
+                `FIO PAYMENT UPDATE ERROR after tx success ${item.id}`,
+                paymentUpdateError,
+              );
+            }
+          }
 
           return { success: true, itemId: id, orderId, status };
         } catch (error) {
