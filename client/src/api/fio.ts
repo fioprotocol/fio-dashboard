@@ -35,6 +35,8 @@ import {
   getEndPointByGenericAction,
 } from '../constants/fio';
 
+import { MINUTE_MS } from '../constants/common';
+
 import {
   AnyObject,
   DetailedProxy,
@@ -152,6 +154,9 @@ export default class Fio {
   affiliateTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   fioChainIdEnvironment: string = process.env.REACT_APP_FIO_CHAIN_ID || '';
   apiClient: ApiClient;
+  private validatedApiUrls: string[] = [];
+  private lastUrlValidationTime: number = 0;
+  private static readonly URL_VALIDATION_CACHE_TTL = 5 * MINUTE_MS; // 5 minutes
 
   constructor(apiClient: ApiClient) {
     this.apiClient = apiClient;
@@ -233,6 +238,15 @@ export default class Fio {
   };
 
   checkUrls = async (): Promise<string[]> => {
+    // Check if we have valid cached URLs that haven't expired
+    const now = Date.now();
+    const cacheExpired =
+      now - this.lastUrlValidationTime > Fio.URL_VALIDATION_CACHE_TTL;
+
+    if (this.validatedApiUrls.length > 0 && !cacheExpired) {
+      return this.validatedApiUrls;
+    }
+
     const checkedUrls: string[] = [];
 
     try {
@@ -254,6 +268,10 @@ export default class Fio {
     for (const url of checkedUrls) {
       if (url) newSet.push(url);
     }
+
+    // Cache the validated URLs
+    this.validatedApiUrls = newSet;
+    this.lastUrlValidationTime = now;
 
     return newSet;
   };
