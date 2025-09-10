@@ -8,10 +8,11 @@ export const checkIfOrderedDomainRegisteredInBlockchain = async (
   domainOnOrder,
   options,
 ) => {
-  const { errorMessage, onFail } = options;
+  const { errorMessage, onFail, fioApi } = options;
 
   const orderedDomain = OrderItem.format(domainOnOrder.get({ plain: true }));
 
+  // First check if the database shows the transaction failed
   if (
     orderedDomain &&
     orderedDomain.orderItemStatus &&
@@ -24,6 +25,32 @@ export const checkIfOrderedDomainRegisteredInBlockchain = async (
     }
     throw new Error(errorMessage);
   }
+
+  // Check if domain registration is successfully completed in database
+  const isSuccessInDb =
+    orderedDomain &&
+    orderedDomain.orderItemStatus &&
+    orderedDomain.orderItemStatus.txStatus === BlockchainTransaction.STATUS.SUCCESS;
+
+  // If already successful in database, return true
+  if (isSuccessInDb) {
+    return true;
+  }
+
+  // If not yet marked as successful in database, check actual blockchain state
+  if (fioApi) {
+    try {
+      const domainOnBlockchain = await fioApi.getFioDomain(domainOnOrder.domain);
+      // If domain exists on blockchain, it's registered successfully
+      return !!domainOnBlockchain;
+    } catch (error) {
+      // If there's an error checking blockchain, fall back to database status
+      return false;
+    }
+  }
+
+  // Fallback to database status
+  return isSuccessInDb;
 };
 
 export const getDomainOnOrder = (orderItem, action) => {
