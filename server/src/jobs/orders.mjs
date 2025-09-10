@@ -27,6 +27,7 @@ import BitPay from '../external/payment-processor/bitpay.mjs';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
+import { updateFioPaymentWithActualTotal } from '../utils/payment.mjs';
 import { getROE } from '../external/roe.mjs';
 import { sleep } from '../tools.mjs';
 import {
@@ -195,6 +196,7 @@ class OrdersJob extends CommonJob {
         currency,
         data,
       });
+
       await PaymentEventLog.create({
         status: eventStatus || PaymentEventLog.STATUS.SUCCESS,
         statusNotes,
@@ -959,6 +961,19 @@ class OrdersJob extends CommonJob {
         null,
         items.map(({ txStatus }) => txStatus),
       );
+
+      // For FIO payments, update payment total with actual fees from successful transactions
+      try {
+        const orderPayment = await Payment.getOrderPayment(orderId);
+        if (orderPayment && orderPayment.processor === Payment.PROCESSOR.FIO) {
+          await updateFioPaymentWithActualTotal(orderPayment.id);
+        }
+      } catch (actualTotalError) {
+        logger.error(
+          `FIO PAYMENT ACTUAL TOTAL UPDATE ERROR - ORDER ${orderId}`,
+          actualTotalError,
+        );
+      }
     } catch (error) {
       logger.error(
         `ORDER ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
@@ -1369,6 +1384,7 @@ class OrdersJob extends CommonJob {
       );
 
       // Process each order in the chunk - orders can run in parallel, items within an order run by priority groups
+
       const results = await Promise.allSettled(
         chunk.map(async orderMethods => {
           // Items are already sorted by priority (domain reg -> combo -> renewal -> others) by groupAndSortOrderItems
