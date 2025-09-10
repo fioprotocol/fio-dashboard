@@ -81,6 +81,8 @@ class OrdersJob extends CommonJob {
     super();
     this.feesJson = {};
     this.feesUpdatedAt = null;
+    // Track orders where domain registration has been confirmed successful
+    this.orderDomainRegistrationCompleted = new Set();
   }
 
   async getFeeForAction(action, forceUpdate = false) {
@@ -610,11 +612,30 @@ class OrdersJob extends CommonJob {
   async checkIfDomainOnOrderRegistered({ orderItem, action, errorMessage }) {
     const domainOnOrder = await getDomainOnOrder(orderItem, action);
     if (domainOnOrder) {
-      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
-      await checkIfOrderedDomainRegisteredInBlockchain(domainOnOrder, {
-        errorMessage,
-        onFail: err => this.handleFail(orderItem, err),
-      });
+      // Check if this order's domain registration has been confirmed successful
+      const orderKey = `${orderItem.orderId}-${domainOnOrder.domain}`;
+      const isDomainRegistrationConfirmed = this.orderDomainRegistrationCompleted.has(
+        orderKey,
+      );
+
+      if (!isDomainRegistrationConfirmed) {
+        await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      }
+
+      // Check if domain is registered
+      const isDomainRegistered = await checkIfOrderedDomainRegisteredInBlockchain(
+        domainOnOrder,
+        {
+          errorMessage,
+          onFail: err => this.handleFail(orderItem, err),
+          fioApi,
+        },
+      );
+
+      // If domain registration is confirmed successful, mark this order so future renewals skip sleep
+      if (isDomainRegistered) {
+        this.orderDomainRegistrationCompleted.add(orderKey);
+      }
     }
   }
 
