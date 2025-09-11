@@ -1438,13 +1438,20 @@ class OrdersJob extends CommonJob {
             }
           }
 
-          // Phase 2: Process remaining items (renewals, etc.) in parallel
+          // Phase 2: Process remaining items (renewals, etc.) in parallel with staggered timing
           if (currentIndex < orderMethods.length) {
             const remainingMethods = orderMethods.slice(currentIndex);
 
             await Promise.allSettled(
-              remainingMethods.map(async method => {
+              remainingMethods.map(async (method, index) => {
                 if (this.isCancelled) return false;
+
+                // Add small staggered delay to prevent identical concurrent transactions
+                // This ensures even identical actions get slightly different timestamps
+                if (index > 0) {
+                  await new Promise(resolve => setTimeout(resolve, index * 5)); // 5ms stagger
+                }
+
                 try {
                   await method();
                 } catch (e) {
