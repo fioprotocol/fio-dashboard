@@ -683,7 +683,7 @@ const Routes = (): React.ReactElement => {
                 component={NoProfileFlowRenewFioHandlePage}
                 exact
               />
-              <SentryRoute
+              <PrivateRoute
                 path={ROUTES.GOVERNANCE}
                 component={GovernancePage}
               />

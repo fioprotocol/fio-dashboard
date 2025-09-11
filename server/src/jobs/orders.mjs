@@ -27,6 +27,7 @@ import BitPay from '../external/payment-processor/bitpay.mjs';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
+import { updateFioPaymentWithActualTotal } from '../utils/payment.mjs';
 import { getROE } from '../external/roe.mjs';
 import { sleep } from '../tools.mjs';
 import {
@@ -80,6 +81,8 @@ class OrdersJob extends CommonJob {
     super();
     this.feesJson = {};
     this.feesUpdatedAt = null;
+    // Track orders where domain registration has been confirmed successful
+    this.orderDomainRegistrationCompleted = new Set();
   }
 
   async getFeeForAction(action, forceUpdate = false) {
@@ -195,6 +198,7 @@ class OrdersJob extends CommonJob {
         currency,
         data,
       });
+
       await PaymentEventLog.create({
         status: eventStatus || PaymentEventLog.STATUS.SUCCESS,
         statusNotes,
@@ -608,11 +612,33 @@ class OrdersJob extends CommonJob {
   async checkIfDomainOnOrderRegistered({ orderItem, action, errorMessage }) {
     const domainOnOrder = await getDomainOnOrder(orderItem, action);
     if (domainOnOrder) {
+      // Check if this order's domain registration has been confirmed successful
+      const orderKey = `${orderItem.orderId}-${domainOnOrder.domain}`;
+      const isDomainRegistrationConfirmed = this.orderDomainRegistrationCompleted.has(
+        orderKey,
+      );
+
+      // If already confirmed, no need to check again
+      if (isDomainRegistrationConfirmed) {
+        return;
+      }
+
       await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
-      await checkIfOrderedDomainRegisteredInBlockchain(domainOnOrder, {
-        errorMessage,
-        onFail: err => this.handleFail(orderItem, err),
-      });
+
+      // Check if domain is registered
+      const isDomainRegistered = await checkIfOrderedDomainRegisteredInBlockchain(
+        domainOnOrder,
+        {
+          errorMessage,
+          onFail: err => this.handleFail(orderItem, err),
+          fioApi,
+        },
+      );
+
+      // If domain registration is confirmed successful, mark this order so future renewals skip sleep
+      if (isDomainRegistered) {
+        this.orderDomainRegistrationCompleted.add(orderKey);
+      }
     }
   }
 
@@ -959,6 +985,19 @@ class OrdersJob extends CommonJob {
         null,
         items.map(({ txStatus }) => txStatus),
       );
+
+      // For FIO payments, update payment total with actual fees from successful transactions
+      try {
+        const orderPayment = await Payment.getOrderPayment(orderId);
+        if (orderPayment && orderPayment.processor === Payment.PROCESSOR.FIO) {
+          await updateFioPaymentWithActualTotal(orderPayment.id);
+        }
+      } catch (actualTotalError) {
+        logger.error(
+          `FIO PAYMENT ACTUAL TOTAL UPDATE ERROR - ORDER ${orderId}`,
+          actualTotalError,
+        );
+      }
     } catch (error) {
       logger.error(
         `ORDER ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
@@ -1369,6 +1408,7 @@ class OrdersJob extends CommonJob {
       );
 
       // Process each order in the chunk - orders can run in parallel, items within an order run by priority groups
+
       const results = await Promise.allSettled(
         chunk.map(async orderMethods => {
           // Items are already sorted by priority (domain reg -> combo -> renewal -> others) by groupAndSortOrderItems
@@ -1401,13 +1441,20 @@ class OrdersJob extends CommonJob {
             }
           }
 
-          // Phase 2: Process remaining items (renewals, etc.) in parallel
+          // Phase 2: Process remaining items (renewals, etc.) in parallel with staggered timing
           if (currentIndex < orderMethods.length) {
             const remainingMethods = orderMethods.slice(currentIndex);
 
             await Promise.allSettled(
-              remainingMethods.map(async method => {
+              remainingMethods.map(async (method, index) => {
                 if (this.isCancelled) return false;
+
+                // Add small staggered delay to prevent identical concurrent transactions
+                // This ensures even identical actions get slightly different timestamps
+                if (index > 0) {
+                  await new Promise(resolve => setTimeout(resolve, index * 5)); // 5ms stagger
+                }
+
                 try {
                   await method();
                 } catch (e) {

@@ -177,11 +177,15 @@ export const useGetPublicKeyCandidatesVotes = ({
       const candidatesVotesResults = {
         currentBoardVotingPower: fields?.customfield_10183,
         boardVotingPowerLastUpdate: fields?.customfield_10184,
-        candidatesIdsList: fields?.issuelinks
+        candidatesList: fields?.issuelinks
           .filter(issueLink => issueLink?.type?.outward === 'votes on')
-          .map(({ outwardIssue: { key } }) => key?.replace('FB-', '')),
+          .map(({ outwardIssue: { key, fields } }) => ({
+            id: key?.replace('FB-', '') || '',
+            name: fields?.summary || '',
+            image: noImageIconSrc,
+            status: fields?.status?.name || '',
+          })),
       };
-
       setCandidatesVotes(candidatesVotesResults);
     } catch (error) {
       log.error(error);
