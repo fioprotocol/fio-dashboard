@@ -618,9 +618,12 @@ class OrdersJob extends CommonJob {
         orderKey,
       );
 
-      if (!isDomainRegistrationConfirmed) {
-        await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
+      // If already confirmed, no need to check again
+      if (isDomainRegistrationConfirmed) {
+        return;
       }
+
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
 
       // Check if domain is registered
       const isDomainRegistered = await checkIfOrderedDomainRegisteredInBlockchain(
