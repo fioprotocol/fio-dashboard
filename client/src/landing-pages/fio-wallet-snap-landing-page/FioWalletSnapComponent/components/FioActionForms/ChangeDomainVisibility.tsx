@@ -8,6 +8,7 @@ import TextInput, {
 import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
 import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 import CustomDropdown from '../../../../../components/CustomDropdown';
+import { AnyType } from '../../../../../types';
 
 type ErrorsProps = {
   fioDomain?: string;
@@ -35,7 +36,7 @@ const validateForm = ({
 };
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: AnyType) => void;
 };
 
 export const ChangeDomainVisibility: React.FC<Props> = props => {

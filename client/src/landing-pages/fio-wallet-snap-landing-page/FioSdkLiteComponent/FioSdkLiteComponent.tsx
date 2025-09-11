@@ -181,7 +181,9 @@ export const FioSdkLiteComponent: React.FC<Props> = () => {
                 <p>
                   Transaction:{' '}
                   <a
-                    href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${executedTxn.transaction_id}`}
+                    href={`${
+                      process.env.REACT_APP_FIO_BLOCKS_TX_URL
+                    }${executedTxn.transaction_id as string}`}
                     target="_blank"
                     rel="noreferrer"
                   >

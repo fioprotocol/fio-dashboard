@@ -16,6 +16,7 @@ import {
   MAX_TOKEN_LENGTH,
 } from '../../../../../constants/fio';
 import { CHAIN_CODES } from '../../../../../constants/common';
+import { AnyType } from '../../../../../types';
 
 type ErrorsProps = {
   chainCode?: string;
@@ -79,7 +80,7 @@ const validateToken = ({
 };
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: AnyType) => void;
 };
 
 export const RemovePublicAddress: React.FC<Props> = props => {
