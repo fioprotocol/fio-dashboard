@@ -28,7 +28,7 @@ import Users from './users';
 import Vars from './vars';
 import WrapStatus from './wrap-status';
 
-const apiClient = new ApiClient(config.apiPrefix);
+export const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
 const fioCorsFixfetch = window.fetch;
@@ -89,7 +89,7 @@ const apis = {
   edge: new Edge(apiClient),
   fioHistory: new FioHistory(),
   fioReg: new FioReg(apiClient),
-  fio: new Fio(),
+  fio: new Fio(apiClient),
   general: new General(apiClient),
   generatePdfFile: new GeneratePdfFile(apiClient),
   healthCheck: new HealthCheck(apiClient),

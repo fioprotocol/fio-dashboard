@@ -97,6 +97,7 @@ export type FioRegCaptchaResponse = {
   error?: string;
 };
 export type FioRegApiUrlsResponse = string[];
+export type FioRegCheckServerTimeResponse = string[];
 
 export type ExternalProviderNftsResponse = {
   token_address: string;

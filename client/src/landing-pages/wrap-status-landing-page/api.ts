@@ -25,7 +25,7 @@ export type Api = {
 };
 
 const ApiObj = {
-  fio: new Fio(),
+  fio: new Fio(apiClient),
   fioReg: new FioReg(apiClient),
   client: apiClient,
   wrapStatus: new WrapStatus(apiClient),

@@ -13,6 +13,7 @@ import { Account, Action, ContentType } from '@fioprotocol/fiosdk';
 import { DecryptedContent } from '@fioprotocol/fio-sdk-lite/dist/types';
 
 import FioApi, { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+import { apiClient } from '../../../api';
 
 import { FIO_CHAIN_CODE } from '../../../constants/fio';
 import { DEFAULT_BUNDLE_SET_VALUE } from '../../../constants/common';
@@ -46,7 +47,7 @@ window.fioCorsFixfetch = async (
   }
 };
 
-const fioApi = new FioApi();
+const fioApi = new FioApi(apiClient);
 fioApi.setApiUrls([`${BASE_URL}/v1/`]);
 
 fioApi.setTpid(process.env.REACT_APP_DEFAULT_TPID);

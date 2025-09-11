@@ -752,6 +752,7 @@ export type FioApiUrl = {
   type: string;
   url: string;
   createdAt: string;
+  isBlocked?: boolean;
 };
 
 export type FioApiUrls = {

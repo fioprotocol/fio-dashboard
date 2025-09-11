@@ -5,6 +5,7 @@ import Base from '../Base';
 import {
   BlockchainTransaction,
   Domain,
+  FreeAddress,
   Order,
   OrderItem,
   OrderItemStatus,
@@ -41,7 +42,7 @@ import { PUB_API_ERROR_CODES } from '../../constants/pubApiErrorCodes';
 import { CURRENCY_CODES } from '../../constants/fio.mjs';
 import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES, REGSITE_NOTIF_EMAIL_KEY } from '../../constants/general.mjs';
-import { DAY_MS } from '../../config/constants.js';
+import { DAY_MS, FIO_ADDRESS_DELIMITER } from '../../config/constants.js';
 
 export default class BuyAddress extends Base {
   async execute(args) {
@@ -200,9 +201,9 @@ export default class BuyAddress extends Base {
             !refDomain.isPremium &&
             (await this.isFreeAddressNotExist({
               userId: user.id,
+              freeId: user.username,
               publicKey,
               fioDomain,
-              refProfileId: refProfile.id,
               enableCompareByDomainName: refDomain.isFirstRegFree,
             }));
         } else {
@@ -214,9 +215,9 @@ export default class BuyAddress extends Base {
             !dashboardDomain.isPremium &&
             (await this.isFreeAddressNotExist({
               userId: user.id,
+              freeId: user.username,
               publicKey,
               fioDomain,
-              refProfileId: refProfile.id,
               enableCompareByDomainName:
                 dashboardDomain && dashboardDomain.isFirstRegFree,
             }));
@@ -378,17 +379,22 @@ export default class BuyAddress extends Base {
 
   async isFreeAddressNotExist({
     userId,
+    freeId,
     publicKey,
     fioDomain,
-    refProfileId,
     enableCompareByDomainName,
   }) {
+    const freeAddressesByUserId = freeId ? await FreeAddress.getItems({ freeId }) : [];
+    const freeAddressesByPublicKey = publicKey
+      ? await FreeAddress.getItems({ freeId: publicKey })
+      : [];
+
+    const freeAddresses = [...freeAddressesByUserId, ...freeAddressesByPublicKey];
+
     const orders = await Order.findAll({
       attributes: ['id'],
       where: {
         userId,
-        publicKey,
-        refProfileId,
         status: {
           [Sequelize.Op.in]: [
             Order.STATUS.SUCCESS,
@@ -396,17 +402,25 @@ export default class BuyAddress extends Base {
             Order.STATUS.NEW,
           ],
         },
-        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
         total: '0',
       },
       include: [{ model: OrderItem, attributes: ['id', 'domain'] }],
     });
 
-    const freeRegisteredAddressWithDomain = enableCompareByDomainName
+    const freeRegisteredAddressWithDomainInOrders = enableCompareByDomainName
       ? orders.find(order => order.OrderItems.find(({ domain }) => domain === fioDomain))
       : null;
 
-    return enableCompareByDomainName ? !freeRegisteredAddressWithDomain : !orders.length;
+    const freeRegisteredAddressWithDomainInFreeAddresses = enableCompareByDomainName
+      ? freeAddresses.find(
+          freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === fioDomain,
+        )
+      : null;
+
+    return enableCompareByDomainName
+      ? !freeRegisteredAddressWithDomainInOrders &&
+          !freeRegisteredAddressWithDomainInFreeAddresses
+      : !orders.length && !freeAddresses.length;
   }
 
   async allowSameAccountRegistration(publicKey, refProfile, address) {

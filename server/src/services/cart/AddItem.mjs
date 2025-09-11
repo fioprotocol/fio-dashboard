@@ -72,6 +72,22 @@ export default class AddItem extends Base {
     };
   }
 
+  checkForDuplicateItem(newItem, existingItems) {
+    const { id, type, address, domain } = newItem;
+
+    // Check for duplicates in register actions
+    const duplicateItem = existingItems.find(
+      item =>
+        item.id === id ||
+        (item.address === address &&
+          item.domain === domain &&
+          type !== CART_ITEM_TYPE.DOMAIN_RENEWAL &&
+          type !== CART_ITEM_TYPE.ADD_BUNDLES),
+    );
+
+    return !!duplicateItem;
+  }
+
   async execute({ item, publicKey, token, refCode }) {
     try {
       let newItem = this.setNewItemProps(item);
@@ -112,6 +128,14 @@ export default class AddItem extends Base {
       }
 
       const existingCart = await Cart.getActive({ userId, guestId });
+
+      // Check for duplicate items (prevent duplicates for register actions)
+      if (existingCart && existingCart.items) {
+        const isDuplicate = this.checkForDuplicateItem(newItem, existingCart.items);
+        if (isDuplicate) {
+          throw new Error(`Duplicate cart item: ${newItem.id} - ${newItem.type}`);
+        }
+      }
 
       const { prices, roe, updatedAt } = existingCart
         ? existingCart.options
