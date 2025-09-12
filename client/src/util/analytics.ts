@@ -28,12 +28,12 @@ import {
 
 const DEBOUNCE_TIMEOUT = 1000;
 
-export const getGAClientId = () => {
+export const getGAClientId = (): string | null => {
   const gaClientId = Cookies.get('_ga');
   if (gaClientId) return gaClientId.split('GA1.1.')[1];
   return null;
 };
-export const getGASessionId = () => {
+export const getGASessionId = (): string | null => {
   const gaId = process.env.REACT_APP_GOOGLE_ANALYTICS_ID?.split('-')[1];
   const gaSessionId = Cookies.get(`_ga_${gaId}`);
   const gaSessionParam = gaSessionId

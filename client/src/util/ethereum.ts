@@ -5,8 +5,8 @@ let providers: EIP6963ProviderDetail[] = [];
 export const METAMASK_PROVIDER_NAME = 'MetaMask';
 
 export const store = {
-  value: () => providers,
-  subscribe: (callback?: () => void) => {
+  value: (): EIP6963ProviderDetail[] => providers,
+  subscribe: (callback?: () => void): (() => void) => {
     function onAnnouncement(event: CustomEvent<EIP6963ProviderDetail>) {
       if (providers.map(p => p.info.uuid).includes(event.detail.info.uuid))
         return;

@@ -32,7 +32,7 @@ export const setCookies = (
   }
 };
 
-export const setExpirationTime = (days: number) => {
+export const setExpirationTime = (days: number): string => {
   const date = new Date();
   date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
   return date.toISOString();

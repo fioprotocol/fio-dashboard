@@ -117,7 +117,7 @@ export const exportOrdersData = async ({
   ordersCount,
   onProgress,
   onError,
-}: OrdersExportConfig) => {
+}: OrdersExportConfig): Promise<void> => {
   let offset = 0;
   let hasMoreData = true;
   let processedOrders = 0;
@@ -208,7 +208,7 @@ export const exportOrdersData = async ({
 const processOrdersChunk = async (
   orders: OrderDetails[],
   writer: CSVWriter,
-) => {
+): Promise<void> => {
   const mappedData = orders.map(order => ({
     'Order ID': order.number,
     Type: order.orderUserType
@@ -228,7 +228,7 @@ const processOrdersChunk = async (
 const processOrderItemsChunk = async (
   orderItems: OrderItemPdf[],
   writer: CSVWriter,
-) => {
+): Promise<void> => {
   const mappedData = transformOrderItemsPDF(orderItems).map(orderItem => ({
     'Order ID': orderItem.number,
     'Item Type': PAYMENT_ITEM_TYPE_LABEL[orderItem.action],

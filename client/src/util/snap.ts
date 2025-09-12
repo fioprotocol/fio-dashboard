@@ -2,6 +2,7 @@ import { MetaMaskInpageProvider } from '@metamask/providers';
 
 import { defaultSnapOrigin } from '../landing-pages/fio-wallet-snap-landing-page/constants';
 import { log } from './general';
+import { AnyType } from '../types';
 
 export type GetSnapsResponse = Record<string, Snap>;
 
@@ -17,7 +18,7 @@ export const connectSnap = async (
   snapId: string = defaultSnapOrigin,
   params: Record<'version' | string, unknown> = {},
   provider?: MetaMaskInpageProvider,
-) => {
+): Promise<void> => {
   await (provider ?? window.ethereum).request({
     method: 'wallet_requestSnaps',
     params: {
@@ -70,7 +71,7 @@ export const getPublicKey = async (
 
 export const signTxn = async (
   provider: MetaMaskInpageProvider,
-  params: any,
+  params: AnyType,
 ): Promise<string> => {
   const txn: string = (await provider.request({
     method: 'wallet_invokeSnap',
@@ -113,7 +114,7 @@ export const decryptContent = async (
     encryptionPublicKey: string;
     contentType: string;
   },
-) => {
+): Promise<AnyType> => {
   return await provider.request({
     method: 'wallet_invokeSnap',
     params: {

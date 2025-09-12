@@ -5,7 +5,7 @@ import { USER_PROFILE_TYPE } from '../constants/profile';
 
 import { useMetaMaskProvider } from './useMetaMaskProvider';
 
-export const useIsMetaMaskUser = () => {
+export const useIsMetaMaskUser = (): boolean => {
   const user = useSelector(userSelector);
   const metaMaskProvider = useMetaMaskProvider();
 
