@@ -7,13 +7,12 @@ import Modal from '../../../../components/Modal/Modal';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
 import { CommandComponent } from './CommandComponent';
 
-import apis from '../../../../api';
-
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { WRAP_ITEM_STATUS } from '../../../../constants/wrap';
 import { WRAP_STATUS_CONTENT } from '../constants';
 
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
+import { renderFioPriceFromSuf } from '../../../../util/fio';
 
 import { AnyType, WrapStatusWrapItem } from '../../../../types';
 
@@ -158,7 +157,7 @@ const DetailsModal: React.FC<Props> = props => {
                 <div className="mr-3">
                   <b>Amount:</b>
                 </div>
-                <div>{apis.fio.sufToAmount(amount || 0) + ' FIO'}</div>
+                <div>{renderFioPriceFromSuf(amount || 0) + ' FIO'}</div>
               </div>
             )}
             {domain && (

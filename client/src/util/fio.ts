@@ -421,3 +421,6 @@ export const normalizeFioHandle = (fioHandle: string): string => {
 
   return normalizedFioHandle;
 };
+
+export const renderFioPriceFromSuf = (price: string | number): string =>
+  new MathOp(apis.fio.sufToAmount(price)).round(2, 1).toString();

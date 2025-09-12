@@ -15,8 +15,7 @@ import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { DOMAIN_TYPE } from '../../../../constants/fio';
 
 import MathOp from '../../../../util/math';
-
-import apis from '../../../../api';
+import { renderFioPriceFromSuf } from '../../../../util/fio';
 
 import { OrderItemDetailed } from '../../../../types';
 
@@ -79,7 +78,7 @@ export const OrderItem: FC<Props> = props => {
     domain,
     type,
     period,
-    costFio: fee_collected ? apis.fio.sufToAmount(fee_collected) : null,
+    costFio: fee_collected ? renderFioPriceFromSuf(fee_collected) : null,
     costUsdc,
     costNativeFio: fee_collected ? new MathOp(fee_collected).toString() : null,
     id,
