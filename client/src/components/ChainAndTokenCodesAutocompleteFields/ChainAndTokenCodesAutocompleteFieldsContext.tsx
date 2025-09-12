@@ -10,7 +10,7 @@ import { sleep } from '../../utils';
 
 import { ASTERISK_SIGN } from '../../constants/common';
 
-import { ChainCodeProps } from '../../types';
+import { ChainCodeProps, TokenCodeProps } from '../../types';
 import { ChainAndTokenCodesAutocompleteFieldsProps } from './types';
 
 const DEBOUNCE_TIMEOUT = 500;
@@ -19,7 +19,18 @@ const LOADER_TIMEOUT = 1000;
 
 export const useContext = (
   props: ChainAndTokenCodesAutocompleteFieldsProps,
-) => {
+): {
+  chainCodeFieldValue: string;
+  chainCodesList: ChainCodeProps[];
+  forceResetTokenField: boolean;
+  loading: boolean;
+  tokenCodesList: TokenCodeProps[];
+  onChainCodeChange: (chainCodeValue: string) => Promise<void>;
+  onChainCodeClear: () => void;
+  onBlur: (fieldName: string) => void;
+  onTokenCodeChange: (tokenCodeValue: string) => void;
+  setSelectedTokensToList: () => void;
+} => {
   const {
     chainCodeFieldName,
     chainCodeInitialValue,

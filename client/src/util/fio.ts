@@ -39,6 +39,7 @@ import {
   PublicAddressDoublet,
   AnyObject,
   CartItem,
+  DomainItemType,
 } from '../types';
 import { ActionDataParams, FioServerResponse } from '../types/fio';
 
@@ -105,7 +106,7 @@ export const checkAddressOrDomainIsExist = async ({
   address?: string;
   domain: string;
   fireAnalytics: (eventName: string) => void;
-}) => {
+}): Promise<boolean> => {
   if (domain) {
     try {
       fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
@@ -197,7 +198,14 @@ export const statusBadgeColours = (
 
 export const isFioChain = (chain: string): boolean => chain === CHAIN_CODES.FIO;
 
-export const transformNonPremiumDomains = (domains: Partial<AdminDomain>[]) =>
+export const transformNonPremiumDomains = (
+  domains: Partial<AdminDomain>[],
+): {
+  name: string;
+  domainType: DomainItemType;
+  rank: number;
+  isFirstRegFree: boolean;
+}[] =>
   domains
     .filter(domain => !domain.isPremium)
     .map(domain => ({
@@ -207,7 +215,9 @@ export const transformNonPremiumDomains = (domains: Partial<AdminDomain>[]) =>
       isFirstRegFree: domain?.isFirstRegFree,
     }));
 
-export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>
+export const transformPremiumDomains = (
+  domains: Partial<AdminDomain>[],
+): { name: string; domainType: DomainItemType; rank: number }[] =>
   domains
     .filter(domain => domain.isPremium)
     .map(domain => ({
@@ -219,7 +229,12 @@ export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>
 export const transformCustomDomains = (
   domains: { username?: string; name?: string; rank: number }[],
   swapAddressAndDomainPlaces?: boolean,
-) =>
+): {
+  name: string;
+  domainType: DomainItemType;
+  rank: number;
+  swapAddressAndDomainPlaces: boolean;
+}[] =>
   domains.map(customDomain => {
     const { username = '', name = '' } = customDomain;
 

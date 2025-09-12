@@ -32,7 +32,7 @@ import MathOp from '../../../../util/math';
 import apis from '../../../../api';
 
 import { SelectedItemComponentProps } from './SelectedItemComponent';
-import { CartItem, UserDomainType } from '../../../../types';
+import { CartItem, DomainItemType, UserDomainType } from '../../../../types';
 import { FioDomainDoubletResponse } from '../../../../api/responses';
 
 type useContextProps = {
@@ -131,7 +131,7 @@ export const useContext = (
 
   const userDomains = allDomains.userDomains || [];
 
-  const domainType = !isEmpty(allDomains)
+  const domainType: DomainItemType = !isEmpty(allDomains)
     ? [
         ...nonPremiumDomains,
         ...premiumDomains,

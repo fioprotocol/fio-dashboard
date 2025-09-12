@@ -172,7 +172,7 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
   };
 };
 
-export const useRefreshBalancesAndFioNames = () => {
+export const useRefreshBalancesAndFioNames = (): void => {
   const fioWallets = useSelector(fioWalletsSelector);
 
   const dispatch = useDispatch();

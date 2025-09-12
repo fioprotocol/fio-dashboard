@@ -31,7 +31,7 @@ const PurchaseComponent: React.FC<ContextProps> = props => {
   );
 };
 
-const PurchasePage = () => (
+const PurchasePage = (): React.ReactElement => (
   <OrderDetailsContainer>
     {(containerProps: ContextProps) => (
       <PurchaseComponent {...containerProps} />

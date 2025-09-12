@@ -193,14 +193,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
 
             if (jsonResult.fields) {
               // Handle specific error structure with "fields" array
-              const fieldErrors = jsonResult.fields.map((field: any) => ({
+              const fieldErrors = jsonResult.fields.map((field: AnyType) => ({
                 name: field.name,
                 value: field.value,
                 error: field.error,
               }));
 
               throw new Error(
-                `${errorMessage}: ${JSON.stringify(fieldErrors)}`,
+                `${errorMessage as string}: ${JSON.stringify(fieldErrors)}`,
               );
             } else if (jsonResult.error && jsonResult.error.what) {
               throw new Error(jsonResult.error.what);
