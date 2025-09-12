@@ -7,6 +7,7 @@ import { FIO_CHAIN_CODE, WALLET_HISTORY_NODE_LIMIT } from '../constants/fio';
 import MathOp from './math';
 import { getUTCDate, log } from './general';
 import config from '../config';
+import { renderFioPriceFromSuf } from './fio';
 
 import { FioWalletTxHistory, TransactionItemProps } from '../types';
 import { TransactionDetailsProps } from '../components/TransactionDetails/TransactionDetails';
@@ -79,7 +80,7 @@ const processTransaction = (
   // Transfer funds transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER_PUB_KEY && data.amount != null) {
     nativeAmount = data.amount.toString();
-    const amount = apis.fio.sufToAmount(nativeAmount);
+    const amount = renderFioPriceFromSuf(nativeAmount);
     actorSender = data.actor;
     if (data.payee_public_key === publicKey) {
       ourReceiveAddresses.push(publicKey);

@@ -12,6 +12,7 @@ import { getPagePrintScreenDimensions } from '../util/screen';
 import { transformOrderItemsPDF } from '../util/purchase';
 import config from '../config';
 import { formatDateToLocale } from '../helpers/stringFormatters';
+import { renderFioPriceFromSuf } from '../util/fio';
 
 import { log } from './general';
 import { CSVWriter } from './csvWriter';
@@ -233,7 +234,9 @@ const processOrderItemsChunk = async (
     'Item Type': PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
     Amount: `${orderItem.price} ${orderItem.priceCurrency}`,
     FIO:
-      orderItem.price === '0' ? '0' : apis.fio.sufToAmount(orderItem.nativeFio),
+      orderItem.price === '0'
+        ? '0'
+        : renderFioPriceFromSuf(orderItem.nativeFio),
     'Fee Collected': `${orderItem.feeCollected} FIO`,
     Status:
       BC_TX_STATUS_LABELS[orderItem.txStatus] ||

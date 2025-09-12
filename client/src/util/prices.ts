@@ -7,6 +7,7 @@ import {
   AdditionalAction,
   DEFAULT_MAX_FEE_MULTIPLE_AMOUNT,
 } from '../constants/fio';
+import { renderFioPriceFromSuf } from './fio';
 
 import {
   FioBalanceRes,
@@ -23,7 +24,7 @@ export function convertFioPrices(
 ): WalletBalancesItem {
   if (!nativeFio) return { nativeFio: '0', fio: '0', usdc: '0' };
 
-  const fioAmount = apis.fio.sufToAmount(nativeFio || 0);
+  const fioAmount = renderFioPriceFromSuf(nativeFio || 0);
 
   return {
     nativeFio,
