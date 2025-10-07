@@ -13,12 +13,14 @@ import {
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
   ERROR_MESSAGE_FOR_DECRYPT_CONTENT,
+  FIO_ADDRESS_NOT_REGISTERED,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
   UNSUPPORTED_LEDGER_APP_VERSION_MESSAGE,
   UNSUPPORTED_LEDGER_APP_VERSION_NAME,
 } from '../constants/errors';
 import { ROUTES } from '../constants/routes';
 import { CONFIRM_LEDGER_ACTIONS } from '../constants/common';
+import { AnyType } from '../types';
 
 const HARDENED = 0x80000000;
 
@@ -52,11 +54,16 @@ export const formatLedgerSignature = (witnessSignatureHex: string): string => {
 export const handleLedgerError = ({
   error,
   action,
+  data,
   onCancel,
   showGenericErrorModal,
 }: {
-  error: Error & { code: number };
+  error: Error & {
+    code: number;
+    json?: { fields: { [fieldName: string]: AnyType } };
+  };
   action: string;
+  data?: AnyType;
   onCancel: () => void;
   showGenericErrorModal: (
     msg: string,
@@ -104,6 +111,19 @@ export const handleLedgerError = ({
       msg = CANNOT_UPDATE_FIO_HANDLE;
       title = CANNOT_UPDATE_FIO_HANDLE_TITLE;
     }
+  }
+
+  if (
+    error &&
+    error.message &&
+    typeof error.message === 'string' &&
+    error.message.includes(FIO_ADDRESS_NOT_REGISTERED) &&
+    action === CONFIRM_LEDGER_ACTIONS.STAKE &&
+    error.json?.fields[0]?.value === data?.proxy
+  ) {
+    msg = `Proxy ${data?.proxy as string} is not registered. Please select another proxy and try again.`;
+    title = 'Stake failed';
+    buttonText = 'Close';
   }
 
   if (action === CONFIRM_LEDGER_ACTIONS.DETAILED_FIO_REQUEST) {
