@@ -73,6 +73,8 @@ export const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
 export const TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS =
   'FIO Address NFTs are being burned';
 
+export const FIO_ADDRESS_NOT_REGISTERED = 'FIO Address not registered';
+
 export const CANNOT_DECRYPT_CONTENT_ERROR = 'decrypt failed';
 
 export const CANNOT_TRANSFER_ERROR =
