@@ -10,6 +10,12 @@ import { BlockchainTransaction } from './BlockchainTransaction';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog';
 import { OrderItemStatus } from './OrderItemStatus';
 
+import config from '../config/index.mjs';
+
+const {
+  fioChain: { defaultTpid },
+} = config;
+
 const { DataTypes: DT } = Sequelize;
 
 export class OrderItem extends Base {
@@ -239,10 +245,10 @@ export class OrderItem extends Base {
 
     return actions.map(action => {
       if (!action.tpid) {
-        action.tpid = process.env.DEFAULT_TPID;
+        action.tpid = defaultTpid;
       }
       if (!action.affiliateTpid) {
-        action.affiliateTpid = process.env.DEFAULT_TPID;
+        action.affiliateTpid = defaultTpid;
       }
       return action;
     });

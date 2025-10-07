@@ -24,6 +24,7 @@ export default class GetSiteSettings extends Base {
             [Sequelize.Op.in]: [
               VARS_KEYS.VOTE_FIO_HANDLE,
               VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE,
+              VARS_KEYS.FIO_PROXIES_LIST,
               ABIS_VAR_KEY,
             ],
           },
@@ -34,7 +35,16 @@ export default class GetSiteSettings extends Base {
         const key = varData.key;
 
         if (!acc[key]) {
-          acc[key] = varData.value;
+          if (key === VARS_KEYS.FIO_PROXIES_LIST) {
+            try {
+              acc[key] = JSON.parse(varData.value || '[]');
+            } catch (parseError) {
+              logger.error(`Get site settings: failed to parse ${key}`, parseError);
+              acc[key] = [];
+            }
+          } else {
+            acc[key] = varData.value;
+          }
         }
 
         return acc;
@@ -69,6 +79,6 @@ export default class GetSiteSettings extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['data.FIO_RAW_ABIS', 'data.FIO_PROXIES_LIST'];
   }
 }

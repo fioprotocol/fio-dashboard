@@ -88,6 +88,8 @@ export default {
     ordersInterval: process.env.ORDERS_JOB_INTERVAL,
     paymentsCloseTimeout: process.env.PAYMENTS_JOB_CLOSE_TIMEOUT,
     paymentsInterval: process.env.PAYMENTS_JOB_INTERVAL,
+    fioProxiesCloseTimeout: process.env.FIO_PROXIES_JOB_CLOSE_TIMEOUT,
+    fioProxiesInterval: process.env.FIO_PROXIES_JOB_INTERVAL,
     retryForkedTransactions: process.env.RETRY_FORKED_TRANSACTIONS_JOB_INTERVAL,
     retryForkedTransactionsCloseTimeout:
       process.env.RETRY_FORKED_TRANSACTIONS_JOB_CLOSE_TIMEOUT,
@@ -101,6 +103,11 @@ export default {
   },
   testingFlags: {
     domainExpiration: process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED,
+  },
+  fioChain: {
+    id: process.env.FIO_CHAIN_ID,
+    defaultTpid: process.env.DEFAULT_TPID,
+    masterFioSdkKey: process.env.MASTER_FIOSDK_KEY,
   },
 
   ...dbConfig,

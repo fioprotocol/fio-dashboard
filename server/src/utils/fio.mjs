@@ -7,7 +7,8 @@ import {
   DOMAIN_HAS_TOO_LONG_RENEWAL_PERIOD,
   TOO_LONG_DOMAIN_RENEWAL_YEAR,
 } from '../constants/fio.mjs';
-import { SECOND_MS } from '../config/constants.js';
+import { SECOND_MS, FIO_PROXY_LIST } from '../config/constants.js';
+import { HTTP_CODES } from '../constants/general.mjs';
 
 import { convertToNewDate } from './general.mjs';
 import { fioApi, FIO_ACTION_NAMES } from '../external/fio.mjs';
@@ -107,6 +108,117 @@ export const normalizeFioHandle = fioHandle => {
   normalizedFioHandle = normalizedFioHandle.toLowerCase();
 
   return normalizedFioHandle;
+};
+
+const sanitizeProxyList = proxies => {
+  return Array.from(
+    new Set(
+      proxies
+        .filter(Boolean)
+        .map(proxy => proxy.trim())
+        .filter(Boolean),
+    ),
+  );
+};
+
+const pickProxiesSource = ({ chainProxies, fallbackProxies }) =>
+  !chainProxies.length && fallbackProxies.length ? fallbackProxies : chainProxies;
+
+const parseStatusCode = candidate => {
+  if (candidate == null) return null;
+  const numeric = Number(candidate);
+  return Number.isFinite(numeric) ? numeric : null;
+};
+
+const getStatusFromResult = result => {
+  const status =
+    parseStatusCode(result && result.statusCode) ||
+    parseStatusCode(result && result.status) ||
+    parseStatusCode(result && result.code);
+
+  if (status != null) return status;
+
+  return result && result.public_address ? HTTP_CODES.SUCCESS : HTTP_CODES.NOT_FOUND;
+};
+
+const getStatusFromError = error =>
+  parseStatusCode(error.statusCode) ||
+  parseStatusCode(error.status) ||
+  parseStatusCode(error.code) ||
+  parseStatusCode(error.errorCode) ||
+  parseStatusCode(error.response.status) ||
+  parseStatusCode(error.json.status) ||
+  500;
+
+const extractErrorMessage = response => {
+  if (!response) return null;
+
+  if (response.code === HTTP_CODES.NOT_FOUND) {
+    if (response.json.message) return response.json.message;
+    if (response.message) return response.message;
+    return null;
+  }
+
+  if (response.code === HTTP_CODES.BAD_REQUEST) {
+    if (response.message) return response.message;
+    if (response.json.message) return response.json.message;
+    return null;
+  }
+
+  if (response.message) return response.message;
+  if (response.json.message) return response.json.message;
+  if (response.json.error) return response.json.error;
+  return null;
+};
+
+const resolveProxyStatus = async proxy => {
+  try {
+    const result = await fioApi.getPublicAddressByFioAddress(proxy);
+    const status = getStatusFromResult(result);
+
+    return {
+      proxy,
+      status,
+      error: status === HTTP_CODES.SUCCESS ? null : extractErrorMessage(result),
+    };
+  } catch (error) {
+    const status = getStatusFromError(error);
+    return {
+      proxy,
+      status,
+      error: status === HTTP_CODES.SUCCESS ? null : extractErrorMessage(error),
+    };
+  }
+};
+
+export const fetchFioProxyStatuses = async ({
+  chainId = process.env.FIO_CHAIN_ID,
+} = {}) => {
+  const chainRows = await fioApi.getProxyRows();
+
+  const chainProxies = sanitizeProxyList(
+    (chainRows || [])
+      .filter(row => row.is_proxy && row.fioaddress)
+      .map(row => row.fioaddress),
+  );
+
+  const fallbackProxies = sanitizeProxyList(FIO_PROXY_LIST[chainId] || []);
+
+  const proxiesToCheck = pickProxiesSource({
+    chainProxies,
+    fallbackProxies,
+  });
+
+  const proxiesStatuses = [];
+  for (const proxy of proxiesToCheck) {
+    // Sequential requests reduce the chance of hitting API rate limits.
+    // The list is small (< 50), so the performance impact is minimal.
+    // eslint-disable-next-line no-await-in-loop
+    const result = await resolveProxyStatus(proxy);
+    proxiesStatuses.push(result);
+  }
+
+  return proxiesStatuses;
 };
 
 /**

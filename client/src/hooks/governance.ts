@@ -159,9 +159,9 @@ export const useGetPublicKeyCandidatesVotes = ({
   const boardPublicKey =
     proxyPublicKey != null
       ? proxyPublicKey
-      : settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] &&
+      : (settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] as string) &&
         config.fioChainId === FIO_CHAIN_ID.TESTNET
-      ? settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE]
+      ? (settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] as string)
       : publicKey;
 
   const getCandidates = useCallback(async (jiraPublicKey: string) => {
