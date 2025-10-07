@@ -7,6 +7,7 @@ import { compose } from '../../utils';
 
 import { getFee, refreshBalance } from '../../redux/fio/actions';
 import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
+import { siteSetings } from '../../redux/settings/selectors';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -57,6 +58,7 @@ const reduxConnect = connect(
 
       return fioWalletsBalances.wallets[fioWallet.publicKey];
     },
+    siteSettings: siteSetings,
   }),
   {
     refreshBalance,

@@ -21,6 +21,7 @@ import { FIO_API_URLS_TYPES, NON_VALID_FCH } from '../constants/fio.mjs';
 import { isDomain } from '../utils/fio.mjs';
 import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
+import config from '../config/index.mjs';
 
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toString();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
@@ -80,6 +81,12 @@ const FEE_ACTIONS = {
   [GenericAction.transferTokens]: GenericAction.transferTokens,
 };
 
+const DEFAULT_TABLE_ROWS_LIMIT = 2000;
+
+const {
+  fioChain: { id: fioChainId, defaultTpid, masterFioSdkKey },
+} = config;
+
 class Fio {
   async checkUrls(apiUrls) {
     const checkedUrls = [];
@@ -124,17 +131,13 @@ class Fio {
   }
 
   getMasterPublicKey() {
-    const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
-      process.env.MASTER_FIOSDK_KEY,
-    );
+    const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(masterFioSdkKey);
     return masterPubKey;
   }
 
   async getMasterFioSDK({ currentBaseUrl = null }) {
     if (!this.masterFioSDK) {
-      const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
-        process.env.MASTER_FIOSDK_KEY,
-      );
+      const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(masterFioSdkKey);
       let apiUrls = await FioApiUrl.getApiUrls({
         type: FIO_API_URLS_TYPES.DASHBOARD_API,
       });
@@ -147,7 +150,7 @@ class Fio {
 
       const validApiUrls = await this.checkUrls(apiUrls);
       this.masterFioSDK = new FIOSDK({
-        privateKey: process.env.MASTER_FIOSDK_KEY,
+        privateKey: masterFioSdkKey,
         publicKey: masterPubKey,
         apiUrls: validApiUrls,
         fetchJson: fetch,
@@ -280,7 +283,7 @@ class Fio {
   }
 
   getActionParams(options) {
-    let actionParams = { tpid: options.tpid || process.env.DEFAULT_TPID };
+    let actionParams = { tpid: options.tpid || defaultTpid };
     if (options.fee) actionParams.max_fee = options.fee;
 
     switch (options.action) {
@@ -677,9 +680,9 @@ class Fio {
     const chainId = await publicFioSDK.transactions.getChainInfo();
 
     if (!chainId) throw new Error('Missing FIO chain environment');
-    if (chainId.chain_id !== process.env.FIO_CHAIN_ID)
+    if (chainId.chain_id !== fioChainId)
       throw new Error(
-        `Mismatch of preferred FIO chain: ${process.env.FIO_CHAIN_ID} and Public FIO SDK chain: ${chainId.chain_id}`,
+        `Mismatch of preferred FIO chain: ${fioChainId} and Public FIO SDK chain: ${chainId.chain_id}`,
       );
   }
 
@@ -690,8 +693,7 @@ class Fio {
 
   async getPublicAddressByFioAddress(fioAddress) {
     const publicFioSDK = await this.getPublicFioSDK();
-    const res = await publicFioSDK.getFioPublicAddress({ fioAddress });
-    return res.public_address;
+    return await publicFioSDK.getFioPublicAddress({ fioAddress });
   }
 
   async getTableRows({ params, apiUrlType }) {
@@ -770,6 +772,43 @@ class Fio {
     if (rows && rows.length) {
       return rows[0].clientkey;
     }
+  }
+
+  async getProxyRows() {
+    const rows = [];
+
+    const getRows = async ({ limit = DEFAULT_TABLE_ROWS_LIMIT, offset = 0 } = {}) =>
+      await this.getTableRows({
+        params: {
+          code: Account.eosio,
+          scope: Account.eosio,
+          table: 'voters',
+          limit,
+          lower_bound: String(offset),
+          reverse: false,
+          json: true,
+        },
+        apiUrlType: FIO_API_URLS_TYPES.DASHBOARD_API,
+      });
+
+    const collectRows = async ({ limit = DEFAULT_TABLE_ROWS_LIMIT, offset = 0 } = {}) => {
+      const response = await getRows({ limit, offset });
+
+      if (response && response.rows && response.rows.length) {
+        rows.push(...response.rows);
+      }
+
+      const hasMore = Boolean(response && response.more);
+      const nextOffset = offset + ((response.rows && response.rows.length) || limit);
+
+      if (hasMore) {
+        await collectRows({ limit, offset: nextOffset });
+      }
+    };
+
+    await collectRows();
+
+    return rows;
   }
 
   async getFioDomain(domainName) {
