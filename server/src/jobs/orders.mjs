@@ -935,6 +935,14 @@ class OrdersJob extends CommonJob {
         });
       }
 
+      const needsUniqueExpiration =
+        action === GenericAction.renewFioDomain ||
+        action === GenericAction.addBundledTransactions;
+
+      const additionalExpirationOffset = needsUniqueExpiration
+        ? await generateUniqueExpirationOffset(orderItem.id)
+        : 0;
+
       result = await fioApi.executeAction({
         action,
         params: fioApi.getActionParams({
@@ -947,12 +955,7 @@ class OrdersJob extends CommonJob {
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
           // Generate unique expirationOffset for actions that need to avoid duplicate transactions
-          // Use hash-based approach to keep offsets within reasonable range (max 600 seconds = 10 minutes)
-          expirationOffset:
-            action === GenericAction.renewFioDomain ||
-            action === GenericAction.addBundledTransactions
-              ? generateUniqueExpirationOffset(orderItem.id)
-              : 0,
+          expirationOffset: additionalExpirationOffset,
         }),
         auth,
         returnBaseUrl: true,
