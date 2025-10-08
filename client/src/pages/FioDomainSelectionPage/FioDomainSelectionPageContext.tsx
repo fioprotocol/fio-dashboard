@@ -132,7 +132,7 @@ const validateDomainItems = async ({
     )
   ).filter(Boolean);
 
-export const useContext = () => {
+export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);

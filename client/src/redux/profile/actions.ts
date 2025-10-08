@@ -152,7 +152,7 @@ export const alternateLogin = (params: {
   signature: string;
   referrerCode?: string;
   timeZone?: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [
     ALTERNATE_LOGIN_REQUEST,
     ALTERNATE_LOGIN_SUCCESS,

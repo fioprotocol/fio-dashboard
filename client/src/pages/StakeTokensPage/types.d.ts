@@ -8,6 +8,7 @@ import {
   Roe,
   WalletBalances,
 } from '../../types';
+import { SiteSetting } from '../../types/settings';
 
 type MatchProps = {
   publicKey: string;
@@ -53,4 +54,5 @@ export interface ContainerProps extends ContainerOwnProps {
   refreshBalance: (publicKey: string) => void;
   getFee: () => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
+  siteSettings: SiteSetting;
 }

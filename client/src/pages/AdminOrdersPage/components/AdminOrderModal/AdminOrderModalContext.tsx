@@ -4,6 +4,7 @@ import apis from '../../../../admin/api';
 
 import MathOp from '../../../../util/math';
 import { setFioName } from '../../../../utils';
+import { renderFioPriceFromSuf } from '../../../../util/fio';
 import { transformOrderItems } from '../../../../util/purchase';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
@@ -53,9 +54,9 @@ const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
   if (eventData) {
     if (eventData.fioTxId) notes += `\nTX ID: ${eventData.fioTxId}`;
     if (eventData.fioFee)
-      notes += `\nFee collected: ${apis.fio
-        .sufToAmount(eventData.fioFee)
-        .toString()} ${CURRENCY_CODES.FIO}`;
+      notes += `\nFee collected: ${renderFioPriceFromSuf(eventData.fioFee)} ${
+        CURRENCY_CODES.FIO
+      }`;
     if (eventData.error) notes += `\n${JSON.stringify(eventData.error)}`;
   }
 
@@ -167,7 +168,7 @@ const setHistory = (
         statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
         statusMsg += `\nFee collected: ${
           bt?.feeCollected
-            ? `${apis.fio.sufToAmount(bt.feeCollected)} FIO`
+            ? `${renderFioPriceFromSuf(bt.feeCollected)} FIO`
             : 'N/A'
         }`;
       } else {

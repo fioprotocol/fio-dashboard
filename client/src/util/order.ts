@@ -12,6 +12,7 @@ import { getPagePrintScreenDimensions } from '../util/screen';
 import { transformOrderItemsPDF } from '../util/purchase';
 import config from '../config';
 import { formatDateToLocale } from '../helpers/stringFormatters';
+import { renderFioPriceFromSuf } from '../util/fio';
 
 import { log } from './general';
 import { CSVWriter } from './csvWriter';
@@ -116,7 +117,7 @@ export const exportOrdersData = async ({
   ordersCount,
   onProgress,
   onError,
-}: OrdersExportConfig) => {
+}: OrdersExportConfig): Promise<void> => {
   let offset = 0;
   let hasMoreData = true;
   let processedOrders = 0;
@@ -207,7 +208,7 @@ export const exportOrdersData = async ({
 const processOrdersChunk = async (
   orders: OrderDetails[],
   writer: CSVWriter,
-) => {
+): Promise<void> => {
   const mappedData = orders.map(order => ({
     'Order ID': order.number,
     Type: order.orderUserType
@@ -227,13 +228,15 @@ const processOrdersChunk = async (
 const processOrderItemsChunk = async (
   orderItems: OrderItemPdf[],
   writer: CSVWriter,
-) => {
+): Promise<void> => {
   const mappedData = transformOrderItemsPDF(orderItems).map(orderItem => ({
     'Order ID': orderItem.number,
     'Item Type': PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
     Amount: `${orderItem.price} ${orderItem.priceCurrency}`,
     FIO:
-      orderItem.price === '0' ? '0' : apis.fio.sufToAmount(orderItem.nativeFio),
+      orderItem.price === '0'
+        ? '0'
+        : renderFioPriceFromSuf(orderItem.nativeFio),
     'Fee Collected': `${orderItem.feeCollected} FIO`,
     Status:
       BC_TX_STATUS_LABELS[orderItem.txStatus] ||

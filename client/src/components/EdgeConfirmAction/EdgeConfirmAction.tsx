@@ -16,6 +16,7 @@ import {
   LIMIT_EXCEEDED_ERROR,
   LIMIT_EXCEEDED_ERROR_TITLE,
   LIMIT_EXCEEDED_CODE,
+  FIO_ADDRESS_NOT_REGISTERED,
 } from '../../constants/errors';
 
 import { waitForEdgeAccountStop } from '../../util/edge';
@@ -126,6 +127,16 @@ const EdgeConfirmAction: React.FC<Props> = props => {
             if (e.message === CANNOT_DECRYPT_CONTENT_ERROR) {
               message = ERROR_MESSAGE_FOR_DECRYPT_CONTENT.message;
               title = ERROR_MESSAGE_FOR_DECRYPT_CONTENT.title;
+            }
+
+            if (
+              action === CONFIRM_FIO_ACTIONS.STAKE &&
+              e.message === FIO_ADDRESS_NOT_REGISTERED &&
+              additionalData?.proxy &&
+              e.json?.fields[0]?.value === additionalData?.proxy
+            ) {
+              message = `Proxy ${additionalData?.proxy as string} is not registered. Please select another proxy and try again.`;
+              title = 'Stake failed';
             }
           }
 

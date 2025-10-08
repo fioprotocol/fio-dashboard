@@ -8,6 +8,7 @@ import Modal from '../../../../components/Modal/Modal';
 import useContext from './AdminOrderModalContext';
 
 import { setFioName } from '../../../../utils';
+import { renderFioPriceFromSuf } from '../../../../util/fio';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
 import {
@@ -89,7 +90,7 @@ const AdminOrderModal: React.FC<Props> = ({
 
     if (orderPayment.currency === CURRENCY_CODES.FIO) {
       orderPaymentPrice =
-        apis.fio.sufToAmount(orderPayment.price) +
+        renderFioPriceFromSuf(orderPayment.price) +
         ` ${orderPayment.currency.toUpperCase()}`;
 
       orderPaymentPrice += ` (${apis.fio.convertFioToUsdc(

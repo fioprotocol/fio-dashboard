@@ -9,6 +9,7 @@ import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
 import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
 import { NFT_CHAIN_CODE_LIST } from '../../../../../constants/common';
 import CustomDropdown from '../../../../../components/CustomDropdown';
+import { AnyType } from '../../../../../types';
 
 type ErrorsProps = {
   fioHandle?: string;
@@ -50,7 +51,7 @@ const validateForm = ({
 };
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: AnyType) => void;
 };
 
 export const AddNftForm: React.FC<Props> = props => {

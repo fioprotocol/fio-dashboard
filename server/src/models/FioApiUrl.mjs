@@ -70,10 +70,15 @@ export class FioApiUrl extends Base {
     const blockedApiUrlsList = await Var.getValByKey(VARS_KEYS.API_URLS_BLOCKED);
     const blockedApiUrlsListArray = JSON.parse(blockedApiUrlsList);
 
-    const filteredUrls = urls.filter(
-      item =>
-        !blockedApiUrlsListArray.some(blockedUrl => item.url.startsWith(blockedUrl)),
-    );
+    const filteredUrls =
+      blockedApiUrlsListArray && blockedApiUrlsListArray.length
+        ? urls.filter(
+            item =>
+              !blockedApiUrlsListArray.some(blockedUrl =>
+                item.url.startsWith(blockedUrl),
+              ),
+          )
+        : urls;
     if (!dynamicFetch) return filteredUrls.map(item => item.url);
 
     const defaultLocData = getLocByCountry();

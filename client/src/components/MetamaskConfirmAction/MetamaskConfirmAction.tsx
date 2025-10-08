@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { Action } from '@fioprotocol/fiosdk';
 
 import { MetamaskConnectionModal } from '../Modal/MetamaskConnectionModal';
 
@@ -20,6 +21,7 @@ import {
   CANNOT_UPDATE_FIO_HANDLE,
   CANNOT_UPDATE_FIO_HANDLE_TITLE,
   ERROR_MESSAGE_FOR_DECRYPT_CONTENT,
+  FIO_ADDRESS_NOT_REGISTERED,
   TRANSFER_ERROR_BECAUSE_OF_NOT_BURNED_NFTS,
 } from '../../constants/errors';
 import { ROUTES } from '../../constants/routes';
@@ -193,14 +195,14 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
 
             if (jsonResult.fields) {
               // Handle specific error structure with "fields" array
-              const fieldErrors = jsonResult.fields.map((field: any) => ({
+              const fieldErrors = jsonResult.fields.map((field: AnyType) => ({
                 name: field.name,
                 value: field.value,
                 error: field.error,
               }));
 
               throw new Error(
-                `${errorMessage}: ${JSON.stringify(fieldErrors)}`,
+                `${errorMessage as string}: ${JSON.stringify(fieldErrors)}`,
               );
             } else if (jsonResult.error && jsonResult.error.what) {
               throw new Error(jsonResult.error.what);
@@ -282,6 +284,23 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
           setErrorObj({ message, title, buttonText });
         }
 
+        if (
+          error &&
+          typeof error?.message === 'string' &&
+          error?.message.includes(FIO_ADDRESS_NOT_REGISTERED) &&
+          'action' in actionParams &&
+          actionParams?.action === Action.stake &&
+          error?.message.includes(actionParams?.data?.tpid)
+        ) {
+          setErrorObj({
+            message: `Proxy ${
+              'data' in actionParams ? actionParams?.data?.tpid : ''
+            } is not registered. Please select another proxy and try again.`,
+            title: 'Stake failed',
+            buttonText: 'Close',
+          });
+        }
+
         if (isDecryptContent) {
           setErrorObj({
             message: ERROR_MESSAGE_FOR_DECRYPT_CONTENT.message,
@@ -294,16 +313,17 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
       }
     }
   }, [
-    isDecryptContent,
+    setProcessing,
     actionParams,
-    analyticAction,
-    analyticsData,
+    handleActionParams,
+    isDecryptContent,
+    metaMaskProvider,
     returnOnlySignedTxn,
+    analyticsData,
     derivationIndex,
     onSuccess,
+    analyticAction,
     onCancel,
-    setProcessing,
-    handleActionParams,
   ]);
 
   useEffectOnce(

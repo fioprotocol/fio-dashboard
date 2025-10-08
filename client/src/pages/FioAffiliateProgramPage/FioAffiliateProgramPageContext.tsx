@@ -169,8 +169,10 @@ export const useContext = (): FioAffiliateProgramPageContextProps => {
       .slice(0, !hasNextPage ? fioDomains.length : visibleItemsCount),
     user,
     selectedFioDomain,
-    link: `${window.location.origin}/ref/${user?.affiliateProfile?.code}`,
-    fchLink: `${window.location.origin}/ref/handle/${user?.affiliateProfile?.code}`,
+    link: `${window.location.origin}/ref/${user?.affiliateProfile
+      ?.code as string}`,
+    fchLink: `${window.location.origin}/ref/handle/${user?.affiliateProfile
+      ?.code as string}`,
     tpid: user?.affiliateProfile?.tpid,
   };
 };

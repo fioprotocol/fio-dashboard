@@ -8,6 +8,7 @@ import TextInput, {
 } from '../../../../../components/Input/TextInput';
 import { COLOR_TYPE } from '../../../../../components/Input/ErrorBadge';
 import SubmitButton from '../../../../../components/common/SubmitButton/SubmitButton';
+import { AnyType } from '../../../../../types';
 
 type ErrorsProps = {
   fioRequestId?: string;
@@ -28,7 +29,7 @@ const validateForm = ({
 };
 
 type Props = {
-  onSubmit: (values: any) => void;
+  onSubmit: (values: AnyType) => void;
 };
 
 export const CancelFioRequest: React.FC<Props> = props => {

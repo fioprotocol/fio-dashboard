@@ -18,6 +18,7 @@ import { formatDateToLocale } from '../../../helpers/stringFormatters';
 import apis from '../../../landing-pages/wrap-status-landing-page/api';
 
 import { log } from '../../../util/general';
+import { renderFioPriceFromSuf } from '../../../util/fio';
 
 import { ROUTES } from '../../../constants/routes';
 import {
@@ -510,7 +511,7 @@ const WrapStatus: React.FC<PageProps> = props => {
                       {wrapItem.domain
                         ? wrapItem.domain
                         : wrapItem.amount
-                        ? apis.fio.sufToAmount(wrapItem.amount || 0) + ' FIO'
+                        ? renderFioPriceFromSuf(wrapItem.amount || 0) + ' FIO'
                         : 'N/A'}
                     </th>
                     <th>

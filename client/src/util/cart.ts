@@ -170,7 +170,7 @@ export const handlePriceForMultiYearItems = ({
 export const actionFromCartItem = (
   cartItemType: string,
   isComboSupport: boolean,
-) =>
+): GenericAction =>
   cartItemType === CART_ITEM_TYPE.DOMAIN_RENEWAL
     ? GenericAction.renewFioDomain
     : cartItemType === CART_ITEM_TYPE.ADD_BUNDLES
@@ -256,7 +256,7 @@ export const groupCartItemsByPaymentWallet = <T extends GroupedCartItem>(
   return { groups, hasPublicCartItems };
 };
 
-export const walletSupportsCombo = (wallet: FioWalletDoublet) =>
+export const walletSupportsCombo = (wallet: FioWalletDoublet): boolean =>
   wallet.from !== WALLET_CREATED_FROM.LEDGER;
 
 export const cartItemsToOrderItems = ({
@@ -269,7 +269,7 @@ export const cartItemsToOrderItems = ({
   prices: NativePrices;
   supportCombo: boolean;
   roe: Roe;
-}) => {
+}): OrderItem[] => {
   const orderItems: OrderItem[] = [];
 
   for (const cartItem of cartItems) {

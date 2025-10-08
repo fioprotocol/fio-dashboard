@@ -55,6 +55,9 @@ import {
   checkIfOrderedDomainRegisteredInBlockchain,
   getDomainOnOrder,
   generateUniqueExpirationOffset,
+  isDuplicateTxError,
+  rescheduleItemReady,
+  getDuplicateRetryCount,
 } from '../utils/jobs/orders.mjs';
 
 const ERROR_CODES = {
@@ -62,10 +65,11 @@ const ERROR_CODES = {
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
+const MAX_DUPLICATE_RETRIES = 5;
 
-// Constants for chunk processing
-const CHUNK_SIZE = 15;
-const MAX_CONCURRENT_CHUNKS = 3; // Maximum chunks running in parallel
+// Constants for processing
+const MAX_ITEMS_PER_ORDER_PER_FETCH = 5; // Maximum items from single order per database fetch
+const ITEMS_FETCH_LIMIT = 50; // Number of items to fetch from DB at once
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE = process.env
   .TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE
@@ -782,6 +786,11 @@ class OrdersJob extends CommonJob {
     if (!result.transaction_id) {
       const { notes } = fioApi.checkTxError(result);
 
+      // If duplicate error, do not mutate result; let outer layer reschedule without refund
+      if (isDuplicateTxError(result)) {
+        return result;
+      }
+
       currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
 
       if (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE && !balanceDifference) {
@@ -935,6 +944,14 @@ class OrdersJob extends CommonJob {
         });
       }
 
+      const needsUniqueExpiration =
+        action === GenericAction.renewFioDomain ||
+        action === GenericAction.addBundledTransactions;
+
+      const additionalExpirationOffset = needsUniqueExpiration
+        ? await generateUniqueExpirationOffset(orderItem.id)
+        : 0;
+
       result = await fioApi.executeAction({
         action,
         params: fioApi.getActionParams({
@@ -947,30 +964,30 @@ class OrdersJob extends CommonJob {
               : orderItem.tpid,
           fee: await this.getFeeForAction(action),
           // Generate unique expirationOffset for actions that need to avoid duplicate transactions
-          // Use hash-based approach to keep offsets within reasonable range (max 600 seconds = 10 minutes)
-          expirationOffset:
-            action === GenericAction.renewFioDomain ||
-            action === GenericAction.addBundledTransactions
-              ? generateUniqueExpirationOffset(orderItem.id)
-              : 0,
+          expirationOffset: additionalExpirationOffset,
         }),
         auth,
         returnBaseUrl: true,
         currentBaseUrl: orderItem.baseUrl,
       });
 
-      // No tx id. Refund order payment for fio action.
-      if (!result.transaction_id && !disableRefund)
-        await this.spend({
-          fioName: fioApi.setFioName(address, domain),
-          action,
-          orderId,
-          spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-          price,
-          currency: Payment.CURRENCY.USDC,
-          data: { error: result },
-          notes: `${JSON.stringify(result)}`,
-        });
+      // No tx id.
+      if (!result.transaction_id && !disableRefund) {
+        const isPaid = price && price !== '0';
+        // For duplicate errors on paid actions, skip inline refund here and let caller decide (reschedule or fail)
+        if (!(isDuplicateTxError(result) && isPaid)) {
+          await this.spend({
+            fioName: fioApi.setFioName(address, domain),
+            action,
+            orderId,
+            spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+            price,
+            currency: Payment.CURRENCY.USDC,
+            data: { error: result },
+            notes: `${JSON.stringify(result)}`,
+          });
+        }
+      }
     }
 
     return result;
@@ -1006,54 +1023,6 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  /**
-   * Group and sort order items for proper domain renewal sequencing
-   */
-  groupAndSortOrderItems(items) {
-    // Group by domain and order
-    const itemsByOrder = items.reduce((acc, item) => {
-      if (!acc[item.orderId]) acc[item.orderId] = [];
-      acc[item.orderId].push(item);
-      return acc;
-    }, {});
-
-    // For each order, ensure domain registrations come before renewals
-    Object.values(itemsByOrder).forEach(orderItems => {
-      orderItems.sort((a, b) => {
-        // Sort by priority: domain registration -> domain/address combo -> renewals -> others
-        const getPriority = action => {
-          switch (action) {
-            case GenericAction.registerFioDomain:
-              return 1;
-            case GenericAction.registerFioDomainAddress:
-              return 2;
-            case GenericAction.renewFioDomain:
-              return 3;
-            default:
-              return 4;
-          }
-        };
-
-        const priorityA = getPriority(a.action);
-        const priorityB = getPriority(b.action);
-
-        if (priorityA !== priorityB) {
-          return priorityA - priorityB;
-        }
-
-        // If same priority, sort by domain to ensure consistency
-        if (a.domain !== b.domain) {
-          return a.domain.localeCompare(b.domain);
-        }
-
-        // Finally sort by creation time
-        return new Date(a.createdAt) - new Date(b.createdAt);
-      });
-    });
-
-    return itemsByOrder;
-  }
-
   async execute() {
     await fioApi.getRawAbi();
     const roe = await getROE();
@@ -1074,17 +1043,6 @@ class OrdersJob extends CommonJob {
       combo: domainAddressPrice,
       renewDomain: renewDomainPrice,
     } = prices;
-
-    // get order items ready to process
-    const items = await OrderItem.getActionRequired();
-
-    this.postMessage(`Process order items - ${items.length}`);
-
-    if (items.length === 0) {
-      this.postMessage('No order items to process');
-      this.finish();
-      return;
-    }
 
     const freeAndPaidFioAccountProfilesArr = await FioAccountProfile.getFreePaidItems();
 
@@ -1108,414 +1066,385 @@ class OrdersJob extends CommonJob {
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK,
       ) || {};
 
-    const processOrderItem = orderItem => async () => {
-      if (this.isCancelled) return false;
+    // Continuously fetch and process items from different orders until no more items
+    let totalProcessed = 0;
+    let iteration = 0;
 
-      const {
-        action,
-        id,
-        code,
-        orderId,
-        address,
-        domain,
-        data,
-        price,
-        blockchainTransactionId,
-        label,
-        nativeFio,
-        freeActor,
-        freePermission,
-        paidActor,
-        paidPermission,
-      } = orderItem;
+    while (!this.isCancelled) {
+      iteration++;
 
-      const hasSignedTx = data && !!data.signedTx;
+      // Fetch next batch of items (max MAX_ITEMS_PER_ORDER_PER_FETCH per order)
+      const items = await OrderItem.getActionRequired(
+        BlockchainTransaction.STATUS.READY,
+        ITEMS_FETCH_LIMIT,
+        MAX_ITEMS_PER_ORDER_PER_FETCH,
+      );
 
-      this.postMessage(`Processing item id - ${id}`);
+      if (items.length === 0) {
+        this.postMessage('No more items to process');
+        break;
+      }
 
-      try {
-        if (
-          (action === GenericAction.registerFioAddress ||
-            action === GenericAction.registerFioDomainAddress) &&
-          !(await fioApi.validateFioAddress(address, domain))
-        ) {
-          await this.handleFail(orderItem, NON_VALID_FCH, {
-            errorType: ORDER_ERROR_TYPES.default,
-          });
-          return this.updateOrderStatus(orderId);
-        }
+      this.postMessage(
+        `Iteration ${iteration}: Processing ${items.length} items from ${
+          new Set(items.map(i => i.orderId)).size
+        } different orders`,
+      );
 
-        const fioName = fioApi.setFioName(address, domain);
-        let auth = {
-          actor: paidActor || paidFioActor,
-          permission: paidPermission || paidFioPermision,
-        };
-        const freeAuth = {
-          actor: freeActor || freeFioActor,
-          permission: freePermission || freeFioPermission,
-        };
+      totalProcessed += items.length;
 
-        const domainOwner = await FioAccountProfile.getDomainOwner(domain);
-        const useDomainOwnerAuthParams =
-          domainOwner && action === GenericAction.registerFioAddress;
+      const processOrderItem = orderItem => async () => {
+        if (this.isCancelled) return false;
 
-        if (useDomainOwnerAuthParams) {
-          const { actor, permission } = domainOwner;
-          auth = { actor, permission };
-        }
+        const {
+          action,
+          id,
+          code,
+          orderId,
+          address,
+          domain,
+          data,
+          price,
+          blockchainTransactionId,
+          label,
+          nativeFio,
+          freeActor,
+          freePermission,
+          paidActor,
+          paidPermission,
+        } = orderItem;
 
-        const domainExistingInDashboardDomains = dashboardDomains.find(
-          dashboardDomain => dashboardDomain.name === domain,
-        );
+        const hasSignedTx = data && !!data.signedTx;
 
-        const domainExistingInRefProfile = code
-          ? allRefProfileDomains.find(
-              refProfileDomain =>
-                refProfileDomain.code === code && refProfileDomain.name === domain,
-            )
-          : null;
+        this.postMessage(`Processing item id - ${id}`);
 
-        const registeringDomainExistingInAppDomainsList =
-          code && domainExistingInRefProfile
-            ? domainExistingInRefProfile
-            : domainExistingInDashboardDomains;
-        this.postMessage(`PRICE:, ${price}`);
-        this.postMessage(`!price || price === "0", ${!price || price === '0'}`);
-        this.postMessage(
-          `registeringDomainExistingInAppDomainsList,
-          ${JSON.stringify(registeringDomainExistingInAppDomainsList, null, 4)}`,
-        );
-        this.postMessage(
-          `action === GenericAction.registerFioAddress,
-          ${action === GenericAction.registerFioAddress}`,
-        );
-        this.postMessage(`domainOwner, ${domainOwner}`);
-        this.postMessage(`!domainOwner, ${!domainOwner}`);
-        this.postMessage(`ORDER ITEM: ${JSON.stringify(orderItem)}`);
-        // Handle free addresses
-        if (
-          (!price || price === '0') &&
-          registeringDomainExistingInAppDomainsList &&
-          !registeringDomainExistingInAppDomainsList.isPremium &&
-          action === GenericAction.registerFioAddress &&
-          !domainOwner
-        ) {
-          return this.registerFree({
-            fioName,
-            auth: freeAuth,
-            orderItem,
-            fallbackFreeFioActor,
-            fallbackFreeFioPermission,
-            registeringDomainExistingInAppDomainsList,
-            processOrderItem,
-            allRefProfileDomains,
-          });
-        }
-
-        if (
-          (!price || price === '0' || !nativeFio || nativeFio === '0') &&
-          !domainOwner
-        ) {
-          let nativeFio = null;
-
-          switch (action) {
-            case GenericAction.registerFioDomainAddress:
-              nativeFio = domainAddressPrice;
-              break;
-            case GenericAction.registerFioAddress:
-              nativeFio = addressPrice;
-              break;
-            case GenericAction.addBundledTransactions:
-              nativeFio = addBundlesPrice;
-              break;
-            case GenericAction.registerFioDomain:
-              nativeFio = domainPrice;
-              break;
-            case GenericAction.renewFioDomain:
-              nativeFio = renewDomainPrice;
-              break;
-            default:
-              null;
-          }
-          const { usdc } = convertFioPrices(nativeFio, roe);
-
-          if (!nativeFio)
-            throw new Error('Item price should not be free. Updated prices failed.');
-
-          orderItem.price = usdc;
-          orderItem.nativeFio = nativeFio;
-
-          await OrderItem.update({ price: usdc, nativeFio }, { where: { id } });
-        }
-
-        // Check if fee/roe changed and handle changes
-        if (!useDomainOwnerAuthParams) await this.checkPriceChanges(orderItem, roe);
-
-        let partnerDomainOwner = false;
-        if (
-          ((data && data.isNoProfileFlow) ||
-            orderItem.userProfileType === User.USER_PROFILE_TYPE.ALTERNATIVE) &&
-          domainOwner &&
-          [METAMASK_DOMAIN_NAME].includes(domain)
-        ) {
-          const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
-            freeId: orderItem.freeId,
-          });
-
-          const existingUsersFreeAddress =
-            userHasFreeAddressOnPublicKey &&
-            userHasFreeAddressOnPublicKey.find(
-              freeAddress => freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
-            );
-
+        try {
           if (
-            userHasFreeAddressOnPublicKey &&
-            userHasFreeAddressOnPublicKey.length &&
-            existingUsersFreeAddress
+            (action === GenericAction.registerFioAddress ||
+              action === GenericAction.registerFioDomainAddress) &&
+            !(await fioApi.validateFioAddress(address, domain))
           ) {
-            logger.error(USER_HAS_FREE_ERROR);
-
-            await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
-              errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+            await this.handleFail(orderItem, NON_VALID_FCH, {
+              errorType: ORDER_ERROR_TYPES.default,
             });
             return this.updateOrderStatus(orderId);
           }
 
-          partnerDomainOwner = true;
-        }
+          const fioName = fioApi.setFioName(address, domain);
+          let auth = {
+            actor: paidActor || paidFioActor,
+            permission: paidPermission || paidFioPermision,
+          };
+          const freeAuth = {
+            actor: freeActor || freeFioActor,
+            permission: freePermission || freeFioPermission,
+          };
 
-        if (
-          orderItem.processor === Payment.PROCESSOR.FIO &&
-          !hasSignedTx &&
-          !domainOwner
-        ) {
-          logger.error(NO_REQUIRED_SIGNED_TX);
+          const domainOwner = await FioAccountProfile.getDomainOwner(domain);
+          const useDomainOwnerAuthParams =
+            domainOwner && action === GenericAction.registerFioAddress;
 
-          await this.handleFail(orderItem, NO_REQUIRED_SIGNED_TX, {
-            errorType: ORDER_ERROR_TYPES.noSignedTxProvided,
-          });
-          return this.updateOrderStatus(orderId);
-        }
+          if (useDomainOwnerAuthParams) {
+            const { actor, permission } = domainOwner;
+            auth = { actor, permission };
+          }
 
-        try {
-          const result = await this.executeOrderItemAction(
-            orderItem,
-            auth,
-            hasSignedTx,
-            useDomainOwnerAuthParams,
+          const domainExistingInDashboardDomains = dashboardDomains.find(
+            dashboardDomain => dashboardDomain.name === domain,
           );
 
-          if (result.transaction_id) {
-            this.postMessage(
-              `Processing item transactions created - ${id} / ${result.transaction_id}`,
-            );
-            await OrderItem.setPending(result, id, blockchainTransactionId);
+          const domainExistingInRefProfile = code
+            ? allRefProfileDomains.find(
+                refProfileDomain =>
+                  refProfileDomain.code === code && refProfileDomain.name === domain,
+              )
+            : null;
 
-            if (partnerDomainOwner) {
-              const freeAddressRecord = new FreeAddress({
-                name: fioName,
-                freeId: orderItem.freeId,
+          const registeringDomainExistingInAppDomainsList =
+            code && domainExistingInRefProfile
+              ? domainExistingInRefProfile
+              : domainExistingInDashboardDomains;
+          this.postMessage(`PRICE:, ${price}`);
+          this.postMessage(`!price || price === "0", ${!price || price === '0'}`);
+          this.postMessage(
+            `registeringDomainExistingInAppDomainsList,
+            ${JSON.stringify(registeringDomainExistingInAppDomainsList, null, 4)}`,
+          );
+          this.postMessage(
+            `action === GenericAction.registerFioAddress,
+            ${action === GenericAction.registerFioAddress}`,
+          );
+          this.postMessage(`domainOwner, ${domainOwner}`);
+          this.postMessage(`!domainOwner, ${!domainOwner}`);
+          this.postMessage(`ORDER ITEM: ${JSON.stringify(orderItem)}`);
+          // Handle free addresses
+          if (
+            (!price || price === '0') &&
+            registeringDomainExistingInAppDomainsList &&
+            !registeringDomainExistingInAppDomainsList.isPremium &&
+            action === GenericAction.registerFioAddress &&
+            !domainOwner
+          ) {
+            return this.registerFree({
+              fioName,
+              auth: freeAuth,
+              orderItem,
+              fallbackFreeFioActor,
+              fallbackFreeFioPermission,
+              registeringDomainExistingInAppDomainsList,
+              processOrderItem,
+              allRefProfileDomains,
+            });
+          }
+
+          if (
+            (!price || price === '0' || !nativeFio || nativeFio === '0') &&
+            !domainOwner
+          ) {
+            let nativeFio = null;
+
+            switch (action) {
+              case GenericAction.registerFioDomainAddress:
+                nativeFio = domainAddressPrice;
+                break;
+              case GenericAction.registerFioAddress:
+                nativeFio = addressPrice;
+                break;
+              case GenericAction.addBundledTransactions:
+                nativeFio = addBundlesPrice;
+                break;
+              case GenericAction.registerFioDomain:
+                nativeFio = domainPrice;
+                break;
+              case GenericAction.renewFioDomain:
+                nativeFio = renewDomainPrice;
+                break;
+              default:
+                null;
+            }
+            const { usdc } = convertFioPrices(nativeFio, roe);
+
+            if (!nativeFio)
+              throw new Error('Item price should not be free. Updated prices failed.');
+
+            orderItem.price = usdc;
+            orderItem.nativeFio = nativeFio;
+
+            await OrderItem.update({ price: usdc, nativeFio }, { where: { id } });
+          }
+
+          // Check if fee/roe changed and handle changes
+          if (!useDomainOwnerAuthParams) await this.checkPriceChanges(orderItem, roe);
+
+          let partnerDomainOwner = false;
+          if (
+            ((data && data.isNoProfileFlow) ||
+              orderItem.userProfileType === User.USER_PROFILE_TYPE.ALTERNATIVE) &&
+            domainOwner &&
+            [METAMASK_DOMAIN_NAME].includes(domain)
+          ) {
+            const userHasFreeAddressOnPublicKey = await FreeAddress.getItems({
+              freeId: orderItem.freeId,
+            });
+
+            const existingUsersFreeAddress =
+              userHasFreeAddressOnPublicKey &&
+              userHasFreeAddressOnPublicKey.find(
+                freeAddress =>
+                  freeAddress.name.split(FIO_ADDRESS_DELIMITER)[1] === domain,
+              );
+
+            if (
+              userHasFreeAddressOnPublicKey &&
+              userHasFreeAddressOnPublicKey.length &&
+              existingUsersFreeAddress
+            ) {
+              logger.error(USER_HAS_FREE_ERROR);
+
+              await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+                errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
               });
-              await freeAddressRecord.save();
+              return this.updateOrderStatus(orderId);
             }
 
+            partnerDomainOwner = true;
+          }
+
+          if (
+            orderItem.processor === Payment.PROCESSOR.FIO &&
+            !hasSignedTx &&
+            !domainOwner
+          ) {
+            logger.error(NO_REQUIRED_SIGNED_TX);
+
+            await this.handleFail(orderItem, NO_REQUIRED_SIGNED_TX, {
+              errorType: ORDER_ERROR_TYPES.noSignedTxProvided,
+            });
             return this.updateOrderStatus(orderId);
           }
 
-          // transaction failed
-          const { notes, code, data: errorData } = fioApi.checkTxError(result);
+          try {
+            const result = await this.executeOrderItemAction(
+              orderItem,
+              auth,
+              hasSignedTx,
+              useDomainOwnerAuthParams,
+            );
 
-          // try to execute using fallback account when no funds
-          if (
-            (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE ||
-              notes === INSUFFICIENT_BALANCE) &&
-            auth.actor !== fallbackPaidFioActor
-          ) {
-            await sendInsufficientFundsNotification(fioName, label, auth);
+            if (result.transaction_id) {
+              this.postMessage(
+                `Processing item transactions created - ${id} / ${result.transaction_id}`,
+              );
+              await OrderItem.setPending(result, id, blockchainTransactionId);
 
-            if (!useDomainOwnerAuthParams)
-              return processOrderItem({
-                ...orderItem,
-                paidActor: fallbackPaidFioActor
-                  ? fallbackPaidFioActor
-                  : process.env.REG_FALLBACK_ACCOUNT,
-                paidPermission: fallbackPaidFioPermision
-                  ? fallbackPaidFioPermision
-                  : process.env.REG_FALLBACK_PERMISSION,
-              })();
+              if (partnerDomainOwner) {
+                const freeAddressRecord = new FreeAddress({
+                  name: fioName,
+                  freeId: orderItem.freeId,
+                });
+                await freeAddressRecord.save();
+              }
+
+              return this.updateOrderStatus(orderId);
+            }
+
+            // transaction failed
+            const isPaid = price && price !== '0';
+            const isAllowedAction =
+              action === GenericAction.renewFioDomain ||
+              action === GenericAction.addBundledTransactions;
+            if (isDuplicateTxError(result) && isPaid && isAllowedAction) {
+              const currentRetries = await getDuplicateRetryCount(
+                blockchainTransactionId,
+              );
+              if (currentRetries < MAX_DUPLICATE_RETRIES) {
+                this.postMessage(
+                  `Duplicate tx for item ${id}; rescheduling (${currentRetries +
+                    1}/${MAX_DUPLICATE_RETRIES}).`,
+                );
+                await rescheduleItemReady(orderItem);
+                return this.updateOrderStatus(orderId);
+              }
+              // Max retries reached – fall through to normal failure handling
+            }
+
+            const { notes, code, data: errorData } = fioApi.checkTxError(result);
+
+            // try to execute using fallback account when no funds
+            if (
+              (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE ||
+                notes === INSUFFICIENT_BALANCE) &&
+              auth.actor !== fallbackPaidFioActor
+            ) {
+              await sendInsufficientFundsNotification(fioName, label, auth);
+
+              if (!useDomainOwnerAuthParams)
+                return processOrderItem({
+                  ...orderItem,
+                  paidActor: fallbackPaidFioActor
+                    ? fallbackPaidFioActor
+                    : process.env.REG_FALLBACK_ACCOUNT,
+                  paidPermission: fallbackPaidFioPermision
+                    ? fallbackPaidFioPermision
+                    : process.env.REG_FALLBACK_PERMISSION,
+                })();
+            }
+
+            await this.handleFail(orderItem, notes, { code, ...errorData });
+
+            // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
+            if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP) {
+              // If we skipped the inline ACTION_REFUND inside executeOrderItemAction due to duplicate handling,
+              // and we have reached max retries, create the ACTION_REFUND here as well for accounting symmetry.
+              if (isDuplicateTxError(result) && isPaid) {
+                await this.spend({
+                  fioName: fioApi.setFioName(address, domain),
+                  action,
+                  orderId,
+                  spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+                  price,
+                  currency: Payment.CURRENCY.USDC,
+                  data: { error: result },
+                  notes: `${JSON.stringify(result)}`,
+                });
+              }
+              await this.refundUser(orderItem, errorData);
+            }
+          } catch (error) {
+            logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
           }
-
-          await this.handleFail(orderItem, notes, { code, ...errorData });
-
-          // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
-          if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
-            await this.refundUser(orderItem, errorData);
-        } catch (error) {
-          logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
+        } catch (e) {
+          logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, e);
         }
-      } catch (e) {
-        logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, e);
-      }
 
-      await this.updateOrderStatus(orderId);
+        await this.updateOrderStatus(orderId);
 
-      return true;
-    };
+        return true;
+      };
 
-    // Group and sort items for proper sequencing
-    const itemsByOrder = this.groupAndSortOrderItems(items);
+      // Group items by order to handle dependencies properly
+      const itemsByOrder = items.reduce((acc, item) => {
+        if (!acc[item.orderId]) acc[item.orderId] = [];
+        acc[item.orderId].push(item);
+        return acc;
+      }, {});
 
-    // Convert to array of methods grouped by order
-    const methodsByOrder = Object.values(itemsByOrder).map(orderItems =>
-      orderItems.map(item => processOrderItem(item)),
-    );
+      // Process each order's items with proper dependency handling
+      await Promise.allSettled(
+        Object.values(itemsByOrder).map(async orderItems => {
+          if (this.isCancelled) return false;
 
-    // Process orders in chunks for better performance and enable non-blocking execution
-    const totalOrders = methodsByOrder.length;
-    this.postMessage(
-      `Processing ${totalOrders} orders in chunks of ${CHUNK_SIZE} with max ${MAX_CONCURRENT_CHUNKS} concurrent chunks`,
-    );
-
-    // Create chunks
-    const chunks = [];
-    for (let i = 0; i < methodsByOrder.length; i += CHUNK_SIZE) {
-      chunks.push({
-        orders: methodsByOrder.slice(i, i + CHUNK_SIZE),
-        chunkNumber: Math.floor(i / CHUNK_SIZE) + 1,
-      });
-    }
-
-    const totalChunks = chunks.length;
-    let processedChunks = 0;
-
-    // Process chunks with controlled concurrency
-    const processChunk = async chunkData => {
-      const { orders: chunk, chunkNumber } = chunkData;
-
-      // Check if job has been cancelled
-      if (this.isCancelled) {
-        this.postMessage(`Job cancelled during chunk ${chunkNumber} processing`);
-        return false;
-      }
-
-      this.postMessage(
-        `Processing chunk ${chunkNumber}/${totalChunks} (${
-          chunk.length
-        } orders, ${chunk.reduce(
-          (sum, orderMethods) => sum + orderMethods.length,
-          0,
-        )} items)`,
-      );
-
-      // Process each order in the chunk - orders can run in parallel, items within an order run by priority groups
-
-      const results = await Promise.allSettled(
-        chunk.map(async orderMethods => {
-          // Items are already sorted by priority (domain reg -> combo -> renewal -> others) by groupAndSortOrderItems
-          // We need to process in priority groups: dependencies first, then parallel processing of safe items
-
-          // Since items are pre-sorted, we can process them in two phases:
-          // Phase 1: Process critical dependencies (domain registrations) sequentially
-          // Phase 2: Process safe items (renewals, etc.) in parallel
-
-          let dependencyPhaseComplete = false;
+          // Items are already sorted by priority within each order from database
+          // Process dependencies first (domain registrations), then other items
           let currentIndex = 0;
+          let dependencyPhaseComplete = false;
 
-          // Phase 1: Process dependency items sequentially until we hit safe-to-parallelize items
-          while (currentIndex < orderMethods.length && !dependencyPhaseComplete) {
+          // Phase 1: Process critical dependencies sequentially
+          while (currentIndex < orderItems.length && !dependencyPhaseComplete) {
             if (this.isCancelled) return false;
 
-            // Assume first few items need sequential processing (domain registrations, combos)
-            // After dependencies are met, remaining items can run in parallel
-            const isLikelyDependency = currentIndex < Math.min(2, orderMethods.length);
+            const item = orderItems[currentIndex];
 
-            if (isLikelyDependency) {
+            // Domain registrations and combos must be processed sequentially
+            const isCriticalDependency =
+              item.action === GenericAction.registerFioDomain ||
+              item.action === GenericAction.registerFioDomainAddress;
+
+            if (isCriticalDependency) {
               try {
-                await orderMethods[currentIndex]();
+                await processOrderItem(item)();
               } catch (e) {
-                // Individual item errors are already logged, continue with next item
+                logger.error(`Error processing item ${item.id}:`, e);
               }
               currentIndex++;
             } else {
+              // No more critical dependencies, move to next phase
               dependencyPhaseComplete = true;
             }
           }
 
-          // Phase 2: Process remaining items (renewals, etc.) in parallel with staggered timing
-          if (currentIndex < orderMethods.length) {
-            const remainingMethods = orderMethods.slice(currentIndex);
+          // Phase 2: Process remaining items (renewals, etc.) sequentially
+          // They can be processed after dependencies are met
+          for (let i = currentIndex; i < orderItems.length; i++) {
+            if (this.isCancelled) break;
 
-            await Promise.allSettled(
-              remainingMethods.map(async (method, index) => {
-                if (this.isCancelled) return false;
-
-                // Add small staggered delay to prevent identical concurrent transactions
-                // This ensures even identical actions get slightly different timestamps
-                if (index > 0) {
-                  await new Promise(resolve => setTimeout(resolve, index * 5)); // 5ms stagger
-                }
-
-                try {
-                  await method();
-                } catch (e) {
-                  // Individual item errors are already logged, continue with next item
-                }
-              }),
-            );
+            try {
+              await processOrderItem(orderItems[i])();
+            } catch (e) {
+              logger.error(`Error processing item ${orderItems[i].id}:`, e);
+            }
           }
+
+          return true;
         }),
       );
 
-      // Log any order-level failures for monitoring
-      const failedOrders = results.filter(result => result.status === 'rejected');
-      if (failedOrders.length > 0) {
-        this.postMessage(
-          `Chunk ${chunkNumber}: ${failedOrders.length} orders failed at order level`,
-        );
-        failedOrders.forEach(failure => {
-          logger.error(
-            `Order processing failed in chunk ${chunkNumber}:`,
-            failure.reason,
-          );
-        });
-      }
+      this.postMessage(`Iteration ${iteration}: Completed`);
+    }
 
-      processedChunks++;
-      this.postMessage(
-        `Completed chunk ${chunkNumber}/${totalChunks} (${processedChunks} total completed)`,
-      );
-
-      return true;
-    };
-
-    // Process chunks with concurrency limit
-    const semaphore = [];
-    const chunkPromises = chunks.map(async chunkData => {
-      // Wait for an available slot
-      while (semaphore.length >= MAX_CONCURRENT_CHUNKS) {
-        await Promise.race(semaphore);
-      }
-
-      // Add this chunk to the semaphore
-      const chunkPromise = processChunk(chunkData);
-      semaphore.push(chunkPromise);
-
-      try {
-        const result = await chunkPromise;
-        return result;
-      } finally {
-        // Remove from semaphore when done
-        const index = semaphore.indexOf(chunkPromise);
-        if (index > -1) {
-          semaphore.splice(index, 1);
-        }
-      }
-    });
-
-    // Wait for all chunks to complete
-    await Promise.allSettled(chunkPromises);
-
-    this.postMessage('All order items processed successfully');
+    this.postMessage(
+      `All order items processed successfully. Total processed: ${totalProcessed}`,
+    );
     this.finish();
   }
 }

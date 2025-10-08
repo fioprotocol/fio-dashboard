@@ -237,7 +237,7 @@ export const reorder = (
   list: AnyObject[],
   startIndex: number,
   endIndex: number,
-) => {
+): AnyObject[] => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
@@ -245,7 +245,7 @@ export const reorder = (
   return result;
 };
 
-export const removeTrailingSlashFromUrl = (url: string) => {
+export const removeTrailingSlashFromUrl = (url: string): string => {
   if (typeof url === 'string' && url.endsWith('/')) {
     url = url.slice(0, -1);
   }
@@ -253,7 +253,7 @@ export const removeTrailingSlashFromUrl = (url: string) => {
   return url;
 };
 
-export const transformBaseUrl = () =>
+export const transformBaseUrl = (): string =>
   removeTrailingSlashFromUrl(config.baseUrl);
 
 export const loadImage = async (url?: string): Promise<string | null> => {
@@ -273,7 +273,7 @@ export const loadImage = async (url?: string): Promise<string | null> => {
   });
 };
 
-export const extractLastValueFormUrl = (url: string) => {
+export const extractLastValueFormUrl = (url: string): string => {
   const path = new URL(url).pathname;
 
   const pathWithoutParams = path.split('?')[0];
@@ -294,7 +294,7 @@ export const extractLastValueFormUrl = (url: string) => {
   return lastValue;
 };
 
-export const isURL = (str: string) => {
+export const isURL = (str: string): boolean => {
   const urlPattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[:?\d]*)\S*$/;
 
   return urlPattern.test(str);
@@ -383,7 +383,7 @@ export const getNextGovernanceDate = ({
   return `${month} ${day}th ${time} (UTC-5), ${year}`;
 };
 
-export const voteFormatDate = (date: Date) =>
+export const voteFormatDate = (date: Date): string =>
   date
     .toLocaleDateString('en', {
       day: '2-digit',
@@ -489,7 +489,7 @@ export const fetchWithRateLimit = async ({
   }
 };
 
-export const getUserTz = () => {
+export const getUserTz = (): string => {
   try {
     if (Intl) {
       return Intl.DateTimeFormat().resolvedOptions().timeZone;

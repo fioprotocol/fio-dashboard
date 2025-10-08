@@ -89,8 +89,17 @@ export default class Renew extends Base {
     if (!publicKey) {
       if (type === 'account') {
         try {
-          publicKey = await fioApi.getPublicAddressByFioAddress(normalizedFioHandle);
+          const getPublicAddressResult = await fioApi.getPublicAddressByFioAddress(
+            normalizedFioHandle,
+          );
+
+          if (getPublicAddressResult && getPublicAddressResult.public_address) {
+            publicKey = getPublicAddressResult.public_address;
+          } else {
+            throw new Error('Public address not found');
+          }
         } catch (e) {
+          logger.error(e);
           return generateErrorResponse(this.res, addressCantBeRenewedRes);
         }
       } else {

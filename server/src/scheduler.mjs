@@ -111,6 +111,14 @@ const availableJobsParams = {
     closeWorkerAfterMs:
       parseInt(cronJobs.retryForkedTransactionsCloseTimeout) || ONE_HOUR_IN_MILISECONDS, // 60 min
   },
+  fioProxies: {
+    path: path.join(JOBS_PATH, 'fio-proxies.mjs'),
+    name: 'fio-proxies',
+    interval: cronJobs.fioProxiesInterval || ONE_DAY_IN_MILISECONDS, // 1 day
+    timeout: 0,
+    closeWorkerAfterMs:
+      parseInt(cronJobs.fioProxiesCloseTimeout) || ONE_HOUR_IN_MILISECONDS, // 60 min
+  },
 };
 
 const jobsToLaunch = cronJobs.jobsList;

@@ -20,8 +20,14 @@ import { handleFullPriceForMultiYearItems } from '../../util/prices';
 import { FormValues } from '../../components/FioDomainWidget/types';
 import { AnyObject } from '../../types';
 import { DEFAULT_CART_ITEM_PERIOD_OPTION } from '../../constants/common';
+import { AdminDomain } from '../../api/responses';
 
-export const useContext = () => {
+export const useContext = (): {
+  onSubmit: (values: FormValues) => void;
+  domainPrice: string;
+  availableDomains: AdminDomain[];
+  openseaDomains: AnyObject[];
+} => {
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -42,7 +48,7 @@ export const useContext = () => {
     dispatch(getDomains({ refCode }));
   }, []);
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = (values: FormValues): void => {
     let domainSelectionRoute = ROUTES.FIO_DOMAINS_SELECTION;
 
     if (values.domain) {

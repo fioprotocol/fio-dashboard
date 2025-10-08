@@ -35,7 +35,7 @@ const DEFAULT_EXTRA_FIXED_AMOUNT = 2;
 export const calculateGasFee = (
   gasPrice: string | number, // wei
   gasLimit: number = DEFAULT_GAS_LIMIT,
-) => {
+): string => {
   const gasFee =
     parseFloat(ethers.utils.formatEther(gasPrice).toString()) * gasLimit;
   const decimalsPart = gasFee.toString().split('.')[1];
@@ -111,7 +111,7 @@ const CustomFeeInputsTab = ({
   handleChangeModalValue,
   valueTitle,
   isNFT,
-}: TabProps) => {
+}: TabProps): React.ReactElement => {
   const advancedTabName = TabsList[1].title;
 
   const [isGasLimitFieldDirty, setIsGasLimitFieldDirty] = useState(false);
