@@ -1,10 +1,12 @@
 import {
   BlockchainTransaction,
+  BlockchainTransactionEventLog,
   OrderItem,
   OrderItemStatus,
   Var,
 } from '../../models/index.mjs';
 import { VARS_KEYS } from '../../config/constants.js';
+import logger from '../../logger.mjs';
 
 export const checkIfOrderedDomainRegisteredInBlockchain = async (
   domainOnOrder,
@@ -143,4 +145,90 @@ export const generateUniqueExpirationOffset = async () => {
 
   lastNormalizedExpirationSec = desired;
   return desired - nowSec;
+};
+
+// Detects FIO duplicate transaction error shape
+export const isDuplicateTxError = result => {
+  try {
+    if (!result || typeof result !== 'object') return false;
+    const err = result.error || {};
+    const isConflict = result.code === 409 && result.message === 'Conflict';
+    const isTxDuplicate = err && (err.name === 'tx_duplicate' || err.code === 3040008);
+    const detailsDuplicate = Array.isArray(err.details)
+      ? err.details.some(
+          d =>
+            d &&
+            typeof d.message === 'string' &&
+            d.message.toLowerCase().includes('duplicate transaction'),
+        )
+      : false;
+    return Boolean(
+      isTxDuplicate ||
+        (isConflict && (isTxDuplicate || detailsDuplicate)) ||
+        detailsDuplicate,
+    );
+  } catch (_) {
+    return false;
+  }
+};
+
+// Reschedule item by ensuring statuses remain READY for next chunk and increment retry counter
+export const rescheduleItemReady = async (
+  orderItem,
+  statusNotes = 'Duplicate transaction. Rescheduled for next chunk.',
+) => {
+  try {
+    const { id: orderItemId, blockchainTransactionId } = orderItem;
+    await BlockchainTransaction.sequelize.transaction(async t => {
+      // Lock bc tx and increment duplicateRetries in data
+      const bcTx = await BlockchainTransaction.findOne({
+        where: { id: blockchainTransactionId, orderItemId },
+        transaction: t,
+        lock: t.LOCK.UPDATE,
+      });
+      const prevData = (bcTx && bcTx.data) || {};
+      const retries = Number(prevData.duplicateRetries || 0) + 1;
+      const newData = { ...prevData, duplicateRetries: retries };
+
+      await BlockchainTransaction.update(
+        { status: BlockchainTransaction.STATUS.READY, data: newData },
+        {
+          where: { id: blockchainTransactionId, orderItemId },
+          transaction: t,
+        },
+      );
+      await OrderItemStatus.update(
+        { txStatus: BlockchainTransaction.STATUS.READY },
+        {
+          where: { orderItemId, blockchainTransactionId },
+          transaction: t,
+        },
+      );
+
+      await BlockchainTransactionEventLog.create(
+        {
+          status: BlockchainTransaction.STATUS.READY,
+          statusNotes,
+          blockchainTransactionId,
+        },
+        { transaction: t },
+      );
+    });
+  } catch (e) {
+    logger.error('Reschedule item to READY failed', e);
+  }
+};
+
+export const getDuplicateRetryCount = async blockchainTransactionId => {
+  try {
+    const bcTx = await BlockchainTransaction.findOne({
+      where: { id: blockchainTransactionId },
+      attributes: ['id', 'data'],
+    });
+    const count = (bcTx && bcTx.data && bcTx.data.duplicateRetries) || 0;
+    return Number(count) || 0;
+  } catch (e) {
+    logger.error('Get duplicate retry count failed', e);
+    return 0;
+  }
 };

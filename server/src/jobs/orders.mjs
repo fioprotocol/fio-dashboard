@@ -55,6 +55,9 @@ import {
   checkIfOrderedDomainRegisteredInBlockchain,
   getDomainOnOrder,
   generateUniqueExpirationOffset,
+  isDuplicateTxError,
+  rescheduleItemReady,
+  getDuplicateRetryCount,
 } from '../utils/jobs/orders.mjs';
 
 const ERROR_CODES = {
@@ -62,6 +65,7 @@ const ERROR_CODES = {
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
+const MAX_DUPLICATE_RETRIES = 5;
 
 // Constants for processing
 const MAX_ITEMS_PER_ORDER_PER_FETCH = 5; // Maximum items from single order per database fetch
@@ -782,6 +786,11 @@ class OrdersJob extends CommonJob {
     if (!result.transaction_id) {
       const { notes } = fioApi.checkTxError(result);
 
+      // If duplicate error, do not mutate result; let outer layer reschedule without refund
+      if (isDuplicateTxError(result)) {
+        return result;
+      }
+
       currentWallet && (await this.enableCheckBalanceNotificationCreate(currentWallet));
 
       if (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE && !balanceDifference) {
@@ -962,18 +971,23 @@ class OrdersJob extends CommonJob {
         currentBaseUrl: orderItem.baseUrl,
       });
 
-      // No tx id. Refund order payment for fio action.
-      if (!result.transaction_id && !disableRefund)
-        await this.spend({
-          fioName: fioApi.setFioName(address, domain),
-          action,
-          orderId,
-          spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-          price,
-          currency: Payment.CURRENCY.USDC,
-          data: { error: result },
-          notes: `${JSON.stringify(result)}`,
-        });
+      // No tx id.
+      if (!result.transaction_id && !disableRefund) {
+        const isPaid = price && price !== '0';
+        // For duplicate errors on paid actions, skip inline refund here and let caller decide (reschedule or fail)
+        if (!(isDuplicateTxError(result) && isPaid)) {
+          await this.spend({
+            fioName: fioApi.setFioName(address, domain),
+            action,
+            orderId,
+            spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+            price,
+            currency: Payment.CURRENCY.USDC,
+            data: { error: result },
+            notes: `${JSON.stringify(result)}`,
+          });
+        }
+      }
     }
 
     return result;
@@ -1295,6 +1309,25 @@ class OrdersJob extends CommonJob {
             }
 
             // transaction failed
+            const isPaid = price && price !== '0';
+            const isAllowedAction =
+              action === GenericAction.renewFioDomain ||
+              action === GenericAction.addBundledTransactions;
+            if (isDuplicateTxError(result) && isPaid && isAllowedAction) {
+              const currentRetries = await getDuplicateRetryCount(
+                blockchainTransactionId,
+              );
+              if (currentRetries < MAX_DUPLICATE_RETRIES) {
+                this.postMessage(
+                  `Duplicate tx for item ${id}; rescheduling (${currentRetries +
+                    1}/${MAX_DUPLICATE_RETRIES}).`,
+                );
+                await rescheduleItemReady(orderItem);
+                return this.updateOrderStatus(orderId);
+              }
+              // Max retries reached – fall through to normal failure handling
+            }
+
             const { notes, code, data: errorData } = fioApi.checkTxError(result);
 
             // try to execute using fallback account when no funds
@@ -1320,8 +1353,23 @@ class OrdersJob extends CommonJob {
             await this.handleFail(orderItem, notes, { code, ...errorData });
 
             // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
-            if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
+            if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP) {
+              // If we skipped the inline ACTION_REFUND inside executeOrderItemAction due to duplicate handling,
+              // and we have reached max retries, create the ACTION_REFUND here as well for accounting symmetry.
+              if (isDuplicateTxError(result) && isPaid) {
+                await this.spend({
+                  fioName: fioApi.setFioName(address, domain),
+                  action,
+                  orderId,
+                  spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+                  price,
+                  currency: Payment.CURRENCY.USDC,
+                  data: { error: result },
+                  notes: `${JSON.stringify(result)}`,
+                });
+              }
               await this.refundUser(orderItem, errorData);
+            }
           } catch (error) {
             logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
           }
