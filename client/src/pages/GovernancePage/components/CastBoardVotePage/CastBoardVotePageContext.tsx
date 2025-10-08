@@ -69,7 +69,7 @@ export const useContext = (props: Props): UseContextProps => {
   const loading = useSelector(loadingSelector);
   const settings = useSelector(siteSetings);
 
-  const voteFioHandle = settings[VARS_KEYS.VOTE_FIO_HANDLE];
+  const voteFioHandle = settings[VARS_KEYS.VOTE_FIO_HANDLE] as string;
 
   const [selectedFioWalletId, setSelectedFioWalletId] = useState<string | null>(
     overviewWallets[0]?.id || null,

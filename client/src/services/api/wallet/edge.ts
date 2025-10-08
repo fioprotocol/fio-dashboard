@@ -22,11 +22,12 @@ export interface EdgeWalletApiProvider extends WalletApiProvider {
 export const edgeWalletProvider: EdgeWalletApiProvider = {
   name: WALLET_CREATED_FROM.EDGE,
   account: null,
-  authenticate: async ({ account, username, password }) => {
+  authenticate: async ({ account, username, password }): Promise<void> => {
     if (!account) {
       try {
         account = await apis.edge.login(username, password);
       } catch (error) {
+        // eslint-disable-next-line no-throw-literal
         throw { ...error, code: 'AUTHENTICATION_FAILED' };
       }
     }
@@ -44,7 +45,9 @@ export const edgeWalletProvider: EdgeWalletApiProvider = {
         : [],
     };
   },
-  logout: async (options: { fromEdgeConfirm?: boolean } = {}) => {
+  logout: async (
+    options: { fromEdgeConfirm?: boolean } = {},
+  ): Promise<void> => {
     if (
       edgeWalletProvider.account &&
       edgeWalletProvider.account.loggedIn &&

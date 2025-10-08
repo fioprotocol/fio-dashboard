@@ -58,6 +58,7 @@ import { ORDER_USER_TYPES } from '../../constants/order';
 import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
+import { renderFioPriceFromSuf } from '../../util/fio';
 
 import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
@@ -165,7 +166,7 @@ export const useContext = (): UseContextReturnType => {
     costUsdc: totalCartUsdcAmount,
   } = totalCost(cartItems || [], roe);
 
-  const totalCartAmount = apis.fio.sufToAmount(totalCartNativeAmount);
+  const totalCartAmount = renderFioPriceFromSuf(totalCartNativeAmount);
 
   const hasLowBalance = useCallback(() => {
     const hasNoComboSupportWallet = userWallets.find(

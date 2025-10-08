@@ -50,7 +50,7 @@ import {
   SOCIAL_MEDIA_URLS,
 } from '../constants/socialMediaLinks';
 
-const getJiraCandidatesUrl = (publicKey?: string) => {
+const getJiraCandidatesUrl = (publicKey?: string): string => {
   if (!publicKey) {
     return GET_JIRA_CANDIDATES_URL;
   }
@@ -159,9 +159,9 @@ export const useGetPublicKeyCandidatesVotes = ({
   const boardPublicKey =
     proxyPublicKey != null
       ? proxyPublicKey
-      : settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] &&
+      : (settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] as string) &&
         config.fioChainId === FIO_CHAIN_ID.TESTNET
-      ? settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE]
+      ? (settings[VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE] as string)
       : publicKey;
 
   const getCandidates = useCallback(async (jiraPublicKey: string) => {
@@ -201,7 +201,10 @@ export const useGetPublicKeyCandidatesVotes = ({
   return { loading, candidatesVotes };
 };
 
-export const useDetailedProxies = () => {
+export const useDetailedProxies = (): {
+  proxyList: DetailedProxy[];
+  loading: boolean;
+} => {
   const [proxyList, setProxyList] = useState<DetailedProxy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -397,7 +400,12 @@ export const useOveriewWallets = (): {
   };
 };
 
-export const useModalState = <T>() => {
+export const useModalState = <T>(): {
+  isOpen: boolean;
+  open: (data?: T) => void;
+  close: () => void;
+  data: T | undefined;
+} => {
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<T>();
 

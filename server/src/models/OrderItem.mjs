@@ -10,6 +10,12 @@ import { BlockchainTransaction } from './BlockchainTransaction';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog';
 import { OrderItemStatus } from './OrderItemStatus';
 
+import config from '../config/index.mjs';
+
+const {
+  fioChain: { defaultTpid },
+} = config;
+
 const { DataTypes: DT } = Sequelize;
 
 export class OrderItem extends Base {
@@ -187,62 +193,111 @@ export class OrderItem extends Base {
   }
 
   // Used to get order items needed to process
-  // Common status is READY or RETRY
+  // Fetches items distributed across different orders in round-robin fashion
+  // This prevents large orders from blocking smaller ones and reduces memory usage
+  // Optimized for performance with large datasets
+  //
   static async getActionRequired(
     status = BlockchainTransaction.STATUS.READY,
-    limit = 20,
+    limit = 50,
+    maxItemsPerOrder = 5,
   ) {
     const [actions] = await OrderItem.sequelize.query(`
-        SELECT 
-          oi.id, 
-          oi.address, 
-          oi.domain, 
-          oi.action, 
-          oi.params, 
-          oi.data, 
-          oi.price,
-          oi."nativeFio",
-          o.id "orderId", 
-          o.roe, 
-          o."publicKey", 
-          o.total,
-          o."userId",
-          u."freeId",
-          u."userProfileType",
-          p.processor,
-          ois."blockchainTransactionId",
-          ois."paymentId",
-          rp.label,
-          rp."code", 
-          rp.tpid,
-          drp.tpid as "affiliateTpid",
-          fapfree.actor as "freeActor",
-          fapfree.permission as "freePermission",
-          fappaid.actor as "paidActor",
-          fappaid.permission as "paidPermission",
-          bt."baseUrl"
-        FROM "order-items" oi
-          INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
-          INNER JOIN orders o ON o.id = oi."orderId"
-          LEFT JOIN "users" u ON u.id = o."userId"
-          LEFT JOIN "payments" p ON p."orderId" = oi."orderId" AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
-          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId" AND rp.type = '${ReferrerProfile.TYPE.REF}'
-          LEFT JOIN "referrer-profiles" drp ON drp.id = o."refProfileId"
-          LEFT JOIN "fio-account-profiles" fapfree ON fapfree.id = rp."freeFioAccountProfileId"
-          LEFT JOIN "fio-account-profiles" fappaid ON fappaid.id = rp."paidFioAccountProfileId"
-          LEFT JOIN "blockchain-transactions" bt ON ois."blockchainTransactionId" = bt.id
-        WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
-          AND ois."txStatus" = ${status}
-        ORDER BY oi.id
-        LIMIT ${limit}
+        WITH eligible_orders AS MATERIALIZED (
+          SELECT
+            o.id AS "orderId",
+            ROW_NUMBER() OVER (ORDER BY o.id) AS order_rank
+          FROM orders o
+          WHERE EXISTS (
+            SELECT 1
+            FROM "order-items" oi
+            JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
+            WHERE oi."orderId" = o.id
+              AND ois."paymentStatus" = ${Payment.STATUS.COMPLETED}
+              AND ois."txStatus" = ${status}
+          )
+          ORDER BY o.id
+          LIMIT 1000
+        ),
+        ranked_items AS (
+          SELECT
+            ti.*,
+            eo.order_rank,
+            ROW_NUMBER() OVER () AS row_num  -- Simpler: already ordered by LATERAL
+          FROM eligible_orders eo
+          CROSS JOIN LATERAL (
+            SELECT
+              oi.id,
+              oi.address,
+              oi.domain,
+              oi.action,
+              oi.params,
+              oi.data,
+              oi.price,
+              oi."nativeFio",
+              oi."createdAt",
+              o.id        AS "orderId",
+              o.roe,
+              o."publicKey",
+              o.total,
+              o."userId",
+              u."freeId",
+              u."userProfileType",
+              p.processor,
+              ois."blockchainTransactionId",
+              ois."paymentId",
+              rp.label,
+              rp."code",
+              rp.tpid,
+              drp.tpid            AS "affiliateTpid",
+              fapfree.actor       AS "freeActor",
+              fapfree.permission  AS "freePermission",
+              fappaid.actor       AS "paidActor",
+              fappaid.permission  AS "paidPermission",
+              bt."baseUrl"
+            FROM "order-items" oi
+            JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
+            JOIN orders o ON o.id = oi."orderId"
+            LEFT JOIN "users" u ON u.id = o."userId"
+            LEFT JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+            LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId" AND rp.type = '${ReferrerProfile.TYPE.REF}'
+            LEFT JOIN "referrer-profiles" drp ON drp.id = o."refProfileId"
+            LEFT JOIN "fio-account-profiles" fapfree ON fapfree.id = rp."freeFioAccountProfileId"
+            LEFT JOIN "fio-account-profiles" fappaid ON fappaid.id = rp."paidFioAccountProfileId"
+            LEFT JOIN "blockchain-transactions" bt ON ois."blockchainTransactionId" = bt.id
+            WHERE oi."orderId" = eo."orderId"
+              AND ois."paymentStatus" = ${Payment.STATUS.COMPLETED}
+              AND ois."txStatus" = ${status}
+            ORDER BY
+              CASE
+                WHEN oi.action = 'registerFioDomain' THEN 1
+                WHEN oi.action = 'registerFioDomainAddress' THEN 2
+                WHEN oi.action = 'renewFioDomain' THEN 3
+                ELSE 4
+              END,
+              oi.domain,
+              oi."createdAt"
+            LIMIT ${maxItemsPerOrder}
+          ) ti
+        )
+        SELECT
+          id, address, domain, action, params, data, price, "nativeFio", "createdAt",
+          "orderId", roe, "publicKey", total, "userId", "freeId", "userProfileType",
+          processor, "blockchainTransactionId", "paymentId", label, code, tpid,
+          "affiliateTpid", "freeActor", "freePermission", "paidActor", "paidPermission", "baseUrl"
+        FROM ranked_items
+        ORDER BY
+          ((row_num - 1) * 1000 + order_rank),
+          id
+        LIMIT ${limit};
       `);
 
     return actions.map(action => {
       if (!action.tpid) {
-        action.tpid = process.env.DEFAULT_TPID;
+        action.tpid = defaultTpid;
       }
       if (!action.affiliateTpid) {
-        action.affiliateTpid = process.env.DEFAULT_TPID;
+        action.affiliateTpid = defaultTpid;
       }
       return action;
     });

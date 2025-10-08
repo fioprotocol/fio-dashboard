@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import shuffle from 'lodash/shuffle';
 
 import FioLoader from '../../components/common/FioLoader/FioLoader';
@@ -16,13 +16,14 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
-import { log } from '../../util/general';
 
-import apis from '../../api';
+import { VARS_KEYS } from '../../constants/vars';
+import { HTTP_CODES } from '../../constants/network';
 
 import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
+import { FioProxyItem } from '../../types/settings';
 
 import classes from './styles/StakeTokensPage.module.scss';
 
@@ -37,6 +38,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     refreshBalance,
     getFee,
     refreshWalletDataPublicKey,
+    siteSettings,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -46,28 +48,63 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
   ] = useState<StakeTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
   const [proxyList, setProxyList] = useState<string[]>([]);
-  const [proxyLoading, toggleProxyLoading] = useState<boolean>(false);
+  const [proxyLoading, toggleProxyLoading] = useState<boolean>(true);
+
+  const proxiesSettingValue = siteSettings[
+    VARS_KEYS.FIO_PROXIES_LIST
+  ] as FioProxyItem[];
+
+  const isProxyStatusRecord = useCallback(
+    (value: unknown): value is FioProxyItem => {
+      if (typeof value !== 'object' || value === null) return false;
+      const candidate = value as {
+        proxy?: unknown;
+        status?: unknown;
+      };
+      return (
+        typeof candidate.proxy === 'string' &&
+        typeof candidate.status === 'number'
+      );
+    },
+    [],
+  );
+
+  const extractProxies = useCallback(
+    (value: FioProxyItem[]): string[] => {
+      if (Array.isArray(value)) {
+        return value
+          .map(item => {
+            if (typeof item === 'string') return item;
+            if (isProxyStatusRecord(item) && item.status === HTTP_CODES.SUCCESS)
+              return item.proxy;
+            return null;
+          })
+          .filter((proxy): proxy is string => Boolean(proxy));
+      }
+
+      return [];
+    },
+    [isProxyStatusRecord],
+  );
+
+  useEffect(() => {
+    if (proxiesSettingValue === undefined) {
+      return;
+    }
+
+    const extractedProxies = extractProxies(proxiesSettingValue);
+
+    setProxyList(shuffle(extractedProxies));
+    toggleProxyLoading(false);
+  }, [extractProxies, proxiesSettingValue]);
 
   const [walletFioAddresses, isWalletFioAddressesLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
   );
 
-  const getProxyList = async () => {
-    try {
-      toggleProxyLoading(true);
-      const proxies = await apis.fio.getProxies();
-      setProxyList(shuffle(proxies));
-    } catch (error) {
-      log.error(error);
-    } finally {
-      toggleProxyLoading(false);
-    }
-  };
-
   useEffect(() => {
     getFee();
     setStakeTokensData(null);
-    getProxyList();
   }, [getFee]);
 
   useEffect(() => {
@@ -88,23 +125,27 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     setProcessing(false);
   };
   const onSuccess = (res: TrxResponsePaidBundles) => {
-    setStakeTokensData(null);
-    setProcessing(false);
-    setResultsData({
-      feeCollected: convertFioPrices(res?.fee_collected, roe),
-      bundlesCollected: res?.bundlesCollected,
-      name: fioWallet.publicKey,
-      publicKey: fioWallet.publicKey,
-      other: {
-        ...stakeTokensData,
-        ...res,
-      },
-      payWith: {
-        walletName: fioWallet.name,
-        walletBalances: balance.available,
-      },
-    });
-    refreshWalletDataPublicKey(fioWallet.publicKey);
+    if (res) {
+      setStakeTokensData(null);
+      setProcessing(false);
+      setResultsData({
+        feeCollected: convertFioPrices(res?.fee_collected, roe),
+        bundlesCollected: res?.bundlesCollected,
+        name: fioWallet.publicKey,
+        publicKey: fioWallet.publicKey,
+        other: {
+          ...stakeTokensData,
+          ...res,
+        },
+        payWith: {
+          walletName: fioWallet.name,
+          walletBalances: balance.available,
+        },
+      });
+      refreshWalletDataPublicKey(fioWallet.publicKey);
+    } else {
+      setProcessing(false);
+    }
   };
 
   const onResultsRetry = () => {

@@ -31,7 +31,6 @@ import { camelizeFioRequestsData, isDomain } from '../utils';
 import {
   DEFAULT_FIO_RECORDS_LIMIT,
   DEFAULT_TABLE_RAWS_LIMIT,
-  FIO_PROXY_LIST,
   getEndPointByGenericAction,
 } from '../constants/fio';
 
@@ -706,35 +705,6 @@ export default class Fio {
       this.clearWalletFioSdk();
       throw err;
     }
-  };
-
-  getProxies = async () => {
-    let proxies;
-    try {
-      const rows: Proxy[] = await this.getProxyRows();
-
-      const rowsProxies = rows
-        .filter(row => row.is_proxy && row.fioaddress)
-        .map(row => row.fioaddress);
-
-      const defaultProxyList = FIO_PROXY_LIST[this.fioChainIdEnvironment] || [];
-
-      const rowsProxiesList =
-        rowsProxies.length < defaultProxyList.length
-          ? defaultProxyList
-          : rowsProxies;
-
-      proxies = [...rowsProxiesList];
-    } catch (err) {
-      this.logError(err);
-    }
-
-    return (
-      proxies ||
-      FIO_PROXY_LIST[this.fioChainIdEnvironment] || [
-        `${process.env.REACT_APP_FIO_DEFAULT_PROXY}`,
-      ]
-    );
   };
 
   getDetailedProxies = async (): Promise<DetailedProxy[]> => {

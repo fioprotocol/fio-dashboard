@@ -10,10 +10,10 @@ class MathOp {
       if (!isNaN(+x) && Big(x)) {
         this.value = x;
       } else {
-        throw new Error(`${x} is not a number`);
+        throw new Error(`${x as string} is not a number`);
       }
     } catch (err) {
-      log.error(`${err.message}. Received input - ${x}`);
+      log.error(`${err.message as string}. Received input - ${x as string}`);
       throw err;
     }
   }

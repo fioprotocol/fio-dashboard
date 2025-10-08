@@ -206,6 +206,7 @@ const LedgerConnect: React.FC<Props> = props => {
       handleLedgerError({
         error: e,
         action,
+        data,
         onCancel,
         showGenericErrorModal,
       });

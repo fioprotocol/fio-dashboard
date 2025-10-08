@@ -1,4 +1,5 @@
 import { useState, useLayoutEffect, useDebugValue, useEffect } from 'react';
+import { BaseProvider } from '@metamask/providers';
 
 import { store, METAMASK_PROVIDER_NAME } from '../util/ethereum';
 
@@ -49,7 +50,7 @@ function useSyncExternalStore<T>(
   return value;
 }
 
-export const useMetaMaskProvider = () => {
+export const useMetaMaskProvider = (): BaseProvider | undefined => {
   const providers = useSyncExternalStore(store.subscribe, store.value);
 
   return providers.find(p => p.info.name === METAMASK_PROVIDER_NAME)?.provider;

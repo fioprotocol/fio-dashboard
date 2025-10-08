@@ -2,6 +2,7 @@ import { GenericAction } from '@fioprotocol/fiosdk';
 
 import MathOp from './math';
 import apis from '../api';
+import { renderFioPriceFromSuf } from '../util/fio';
 
 import { OrderItem, OrderItemPdf } from '../types';
 
@@ -20,7 +21,7 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
           item.data.hasCustomDomainFee,
           item.order.roe,
         ),
-        feeCollected: apis.fio.sufToAmount(item.data.hasCustomDomainFee || 0),
+        feeCollected: renderFioPriceFromSuf(item.data.hasCustomDomainFee || 0),
       };
 
       orderItems.push(customDomainItem);
@@ -36,7 +37,7 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
             .toString(),
           item.order.roe,
         ),
-        feeCollected: apis.fio.sufToAmount(
+        feeCollected: renderFioPriceFromSuf(
           (item.blockchainTransactions?.find(
             ({ action }) => action === GenericAction.registerFioDomain,
           )
@@ -51,7 +52,7 @@ export const transformOrderItems = (items: OrderItem[]): OrderItem[] => {
     } else {
       orderItems.push({
         ...item,
-        feeCollected: apis.fio.sufToAmount(
+        feeCollected: renderFioPriceFromSuf(
           item.blockchainTransactions?.[0]?.feeCollected || 0,
         ),
       });
@@ -78,7 +79,7 @@ export const transformOrderItemsPDF = (
           item.data.hasCustomDomainFee,
           item.roe,
         ),
-        feeCollected: apis.fio.sufToAmount(item.data.hasCustomDomainFee || 0),
+        feeCollected: renderFioPriceFromSuf(item.data.hasCustomDomainFee || 0),
       };
 
       orderItems.push(customDomainItem);
@@ -94,12 +95,12 @@ export const transformOrderItemsPDF = (
             .toString(),
           item.roe,
         ),
-        feeCollected: apis.fio.sufToAmount(item.feeCollected || 0),
+        feeCollected: renderFioPriceFromSuf(item.feeCollected || 0),
       });
     } else {
       orderItems.push({
         ...item,
-        feeCollected: apis.fio.sufToAmount(item.feeCollected || 0),
+        feeCollected: renderFioPriceFromSuf(item.feeCollected || 0),
       });
     }
   });

@@ -39,7 +39,7 @@ export type CartItemProps = {
   isFree?: boolean;
 };
 
-export const CartItemPrice = (props: CartItemProps) => {
+export const CartItemPrice = (props: CartItemProps): React.ReactElement => {
   const { costFio, costUsdc, isFree } = props;
 
   return (

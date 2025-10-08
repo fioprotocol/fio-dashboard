@@ -86,7 +86,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
   );
 };
 
-const OrderDetailsPage = (props: { history: History }) => (
+const OrderDetailsPage = (props: { history: History }): React.ReactElement => (
   <OrderDetailsContainer>
     {(containerProps: ContextProps) => (
       <OrderDetails

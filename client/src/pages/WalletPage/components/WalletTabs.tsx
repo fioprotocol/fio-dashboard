@@ -44,17 +44,23 @@ export const WALLET_TABS_LIST = [
   {
     eventKey: 'fioRequests',
     title: 'FIO Requests',
-    renderTab: (props: Props) => <FioRequestsTab {...props} />,
+    renderTab: (props: Props): React.ReactElement => (
+      <FioRequestsTab {...props} />
+    ),
   },
   {
     eventKey: 'fioData',
     title: 'FIO Data',
-    renderTab: (props: Props) => <FioObtDataTab {...props} />,
+    renderTab: (props: Props): React.ReactElement => (
+      <FioObtDataTab {...props} />
+    ),
   },
   {
     eventKey: 'transactions',
     title: 'Transactions',
-    renderTab: (props: Props) => <TransactionList {...props} />,
+    renderTab: (props: Props): React.ReactElement => (
+      <TransactionList {...props} />
+    ),
   },
 ];
 
