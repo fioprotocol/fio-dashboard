@@ -646,7 +646,10 @@ class WalletDataJob extends CommonJob {
       include: [
         {
           model: User,
-          where: { status: { [Op.ne]: User.STATUS.BLOCKED } },
+          where: {
+            status: { [Op.ne]: User.STATUS.BLOCKED },
+            email: { [Op.ne]: null },
+          },
         },
         { model: PublicWalletData, as: 'publicWalletData' },
       ],
@@ -662,6 +665,9 @@ class WalletDataJob extends CommonJob {
     return DomainsWatchlist.listAll({
       include: {
         model: User,
+        where: {
+          email: { [Op.ne]: null },
+        },
       },
       offset,
       limit: ITEMS_PER_FETCH,
@@ -723,6 +729,7 @@ class WalletDataJob extends CommonJob {
 
     const processDomainWatchlist = domainsWatchlistItem => async () => {
       if (this.isCancelled) return false;
+      if (!domainsWatchlistItem.User || !domainsWatchlistItem.User.email) return false;
 
       if (DEBUG_INFO)
         this.postMessage(`Process domain watchlist - ${domainsWatchlistItem.id}`);
