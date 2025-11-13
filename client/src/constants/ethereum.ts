@@ -23,7 +23,7 @@ export const NETWORKS_LIST: {
   [key: string]: { name: string; currency: string; chainID: number };
 } = {
   Ethereum: {
-    name: 'Ethereum Mainnet',
+    name: 'Ethereum',
     currency: 'ETH',
     chainID: 1,
   },
@@ -38,12 +38,12 @@ export const NETWORKS_LIST: {
     chainID: 11155111,
   },
   Polygon: {
-    name: 'Polygon Mainnet',
+    name: 'Polygon',
     currency: 'POL',
     chainID: 137,
   },
   Amoy: {
-    name: 'Polygon Testnet',
+    name: 'Polygon Amoy',
     currency: 'POLYGON',
     chainID: 80002,
   },
@@ -66,6 +66,16 @@ export const NETWORKS_LIST: {
     name: 'Fantom',
     currency: 'FTM',
     chainID: 250,
+  },
+  BaseSepolia: {
+    name: 'Base Sepolia',
+    currency: 'BASE',
+    chainID: 84532,
+  },
+  Base: {
+    name: 'Base',
+    currency: 'BASE',
+    chainID: 8453,
   },
 };
 

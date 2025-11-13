@@ -29,10 +29,15 @@ const isValidNetwork = (network: NetworkType, isNFT: boolean): boolean => {
   return (
     network?.name &&
     (isNFT
-      ? network.chainId === NETWORKS_LIST.Polygon.chainID ||
-        network.chainId === NETWORKS_LIST.Amoy.chainID
-      : network.chainId === NETWORKS_LIST.Ethereum.chainID ||
-        network.chainId === NETWORKS_LIST.Sepolia.chainID)
+      ? [NETWORKS_LIST.Polygon.chainID, NETWORKS_LIST.Amoy.chainID].includes(
+          network.chainId,
+        )
+      : [
+          NETWORKS_LIST.Ethereum.chainID,
+          NETWORKS_LIST.Sepolia.chainID,
+          NETWORKS_LIST.BaseSepolia.chainID,
+          NETWORKS_LIST.Base.chainID,
+        ].includes(network.chainId))
   );
 };
 

@@ -30,9 +30,13 @@ export type WrapTokensValues = {
   publicAddress: string;
 };
 
+export type SelectedNetworkType = {
+  id: string;
+  name: string;
+};
+
 export type InitialValues = {
   tpid: string;
-  chainCode: string;
 };
 
 export type WrapTokensFormProps = {
