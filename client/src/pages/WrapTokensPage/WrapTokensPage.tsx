@@ -73,7 +73,6 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
   );
 
   const onSend = async (values: WrapTokensValues) => {
-    console.log('VALUES', values);
     setSendData({ ...values });
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.WRAP_TOKENS, values);
   };

@@ -46,12 +46,8 @@ const DEFAULT_LIMIT = 6;
 
 const newObject: { [key: string]: number } = {};
 for (const network in NETWORKS_LIST) {
-  const { currency, chainID } = NETWORKS_LIST[network];
-  if (currency === NETWORKS_LIST['Polygon'].currency) {
-    newObject[currency] = NETWORKS_LIST['Polygon'].chainID;
-  } else {
-    newObject[currency] = chainID;
-  }
+  const { chainCode, chainID } = NETWORKS_LIST[network];
+  newObject[chainCode] = chainID;
 }
 
 const convertDescriptionToArray = (

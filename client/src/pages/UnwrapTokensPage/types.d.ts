@@ -20,7 +20,6 @@ export type UnWrapTokensValues = {
 };
 
 export type InitialValues = {
-  chainCode: string;
   fee: FeePriceOptionItem;
 };
 

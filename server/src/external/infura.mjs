@@ -1,12 +1,21 @@
 import superagent from 'superagent';
 
-export default class InfuraApi {
-  constructor() {
-    this.ethApiUrl = process.env.ETH_INFURA_BASE_URL;
-    this.infuraApiKey = process.env.INFURA_API_KEY;
-    this.polygonApiUrl = process.env.POLYGON_INFURA_BASE_URL;
-  }
+import config from '../config/index.mjs';
+import { CHAIN_CODES } from '../constants/chain.mjs';
 
+const { infura } = config || {};
+
+const { baseUrl, ethBaseUrl, polygonBaseUrl, apiKey } = infura || {};
+
+const getBaseUrl = ({ chainCode }) => {
+  if (chainCode === CHAIN_CODES.ETH) return ethBaseUrl;
+  if (chainCode === CHAIN_CODES.POL || chainCode === CHAIN_CODES.MATIC)
+    return polygonBaseUrl;
+  if (chainCode === CHAIN_CODES.BASE) return baseUrl;
+  throw new Error(`Invalid chain code: ${chainCode}`);
+};
+
+export default class InfuraApi {
   // base gas price value + 10%
   calculateAverageGasPrice(val) {
     return Math.ceil(val + val * 0.1);
@@ -17,9 +26,9 @@ export default class InfuraApi {
     return Math.ceil(val + val * 0.2);
   }
 
-  async getGasOracle({ isPolygon = false }) {
+  async getGasOracle({ chainCode }) {
     const lowGasPrice = await this._request({
-      isPolygon,
+      chainCode,
       body: {
         jsonrpc: '2.0',
         method: 'eth_gasPrice',
@@ -35,10 +44,8 @@ export default class InfuraApi {
     };
   }
 
-  _request({ isPolygon, method = 'post', params, body }) {
-    const req = superagent[method](
-      `${isPolygon ? this.polygonApiUrl : this.ethApiUrl}${this.infuraApiKey}`,
-    );
+  _request({ chainCode, method = 'post', params, body }) {
+    const req = superagent[method](`${getBaseUrl({ chainCode })}${apiKey}`);
 
     if (params) req.query(params);
     if (body) req.send(body);

@@ -184,6 +184,7 @@ const QUERY_PARAMS_NAMES = {
 const WRAP_STATUS_NETWORKS = {
   ETH: 'ETH',
   POLYGON: 'POLYGON',
+  BASE: 'BASE',
   FIO: 'FIO',
   MATIC: 'MATIC',
 };

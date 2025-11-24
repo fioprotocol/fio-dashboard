@@ -31,12 +31,12 @@ import { FeePrice } from '../../../../types';
 import classes from './WrapTokensForm.module.scss';
 import Dropdown from '../../../../components/Input/Dropdown';
 
-const NETWORK_TYPES: SelectedNetworkType[] = [
+const networkOptions: SelectedNetworkType[] = [
   NETWORKS_LIST.Ethereum,
   NETWORKS_LIST.Base,
 ].map(network => ({
   name: network.name,
-  id: network.currency,
+  id: network.chainCode,
 }));
 
 const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
@@ -57,11 +57,6 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
     string | null
   >(null);
-
-  const networkOptions = NETWORK_TYPES.map(network => ({
-    id: network.id,
-    name: network.name,
-  }));
 
   useEffect(() => {
     setUnitedFee(

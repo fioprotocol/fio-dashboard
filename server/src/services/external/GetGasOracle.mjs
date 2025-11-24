@@ -6,16 +6,16 @@ import X from '../Exception.mjs';
 export default class GetGasOracle extends Base {
   static get validationRules() {
     return {
-      isPolygon: ['boolean'],
+      chainCode: ['required', 'string'],
       isInfuraProvider: ['boolean'],
     };
   }
-  async execute({ isPolygon, isInfuraProvider }) {
+  async execute({ chainCode, isInfuraProvider }) {
     try {
       let res = null;
 
       if (isInfuraProvider) {
-        res = await new Infura().getGasOracle({ isPolygon });
+        res = await new Infura().getGasOracle({ chainCode });
       }
 
       if (!res) {

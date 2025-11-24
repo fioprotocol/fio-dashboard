@@ -11,6 +11,8 @@ import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import FeesModalInput from '../../../../components/ConnectWallet/FeesModal/FeesModalInput';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
+import { WRAP_TYPE } from '../../../../constants/wrap';
+import { DOMAIN_WRAP_NETWORKS_LIST } from '../../../../constants/common';
 
 import { formValidation } from './validation';
 
@@ -157,7 +159,8 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               valueTitle="POL"
-              isNFT
+              chainCode={DOMAIN_WRAP_NETWORKS_LIST[0].chain_code}
+              wrapType={WRAP_TYPE.NFT}
             />
 
             <SubmitButton
