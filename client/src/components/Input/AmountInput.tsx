@@ -59,7 +59,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     input,
     meta,
     availableTitle = 'Available FIO Balance',
-    availableValue = '0',
+    availableValue = null,
     maxValue = availableValue,
     showMaxInfoBadge = true,
     isUnwrap = false,
@@ -190,6 +190,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         show={
           showMaxInfoBadge &&
           isMaxValue &&
+          availableValue !== null &&
           new MathOp(maxValue).gt(0) &&
           new MathOp(maxValue).lt(availableValue)
         }
@@ -298,7 +299,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         color={errorColor}
         submitError={submitError}
       />
-      {new MathOp(availableValue || 0).gt(0) && (
+      {availableValue !== null && (
         <div className={classes.additionalSubInfo}>
           <span>{availableTitle + ': '}</span>
           <b>

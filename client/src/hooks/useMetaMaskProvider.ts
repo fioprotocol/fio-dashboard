@@ -31,7 +31,7 @@ function useSyncExternalStore<T>(
     if (checkIfSnapshotChanged(inst)) {
       forceUpdate({ inst });
     }
-  }, [subscribe, value, getSnapshot]);
+  }, [subscribe, value, getSnapshot, inst]);
 
   useEffect(() => {
     if (checkIfSnapshotChanged(inst)) {
@@ -44,7 +44,7 @@ function useSyncExternalStore<T>(
     };
 
     return subscribe(handleStoreChange);
-  }, [subscribe]);
+  }, [inst, subscribe]);
 
   useDebugValue(value);
   return value;

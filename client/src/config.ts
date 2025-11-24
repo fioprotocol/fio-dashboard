@@ -31,6 +31,26 @@ const config = {
   testingFlags: {
     domainExpiration: process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE,
   },
+  wrap: {
+    ETH: {
+      contractAddress: process.env.REACT_APP_ETH_TOKENS_CONTRACT_ADDRESS,
+      chainId: process.env.REACT_APP_ETH_CHAIN_ID
+        ? Number(process.env.REACT_APP_ETH_CHAIN_ID)
+        : null,
+    },
+    BASE: {
+      contractAddress: process.env.REACT_APP_BASE_TOKENS_CONTRACT_ADDRESS,
+      chainId: process.env.REACT_APP_BASE_CHAIN_ID
+        ? Number(process.env.REACT_APP_BASE_CHAIN_ID)
+        : null,
+    },
+    POLYGON: {
+      contractAddress: process.env.REACT_APP_POLYGON_NFTS_CONTRACT_ADDRESS,
+      chainId: process.env.REACT_APP_POLYGON_CHAIN_ID
+        ? Number(process.env.REACT_APP_POLYGON_CHAIN_ID)
+        : null,
+    },
+  },
 };
 
 export default config;

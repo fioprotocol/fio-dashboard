@@ -1,81 +1,75 @@
+import config from '../config';
+
+const { wrap } = config || {};
+
 export interface IERC20 {
   symbol: string;
-  address: string;
   decimals: number;
   name: string;
 }
 
 export const W_FIO_TOKEN: IERC20 = {
-  address: process.env.REACT_APP_WRAPPED_FIO_TOKEN_CONTRACT_ADDRESS,
   symbol: 'wFIO',
   name: 'wFIO',
   decimals: 9,
 };
 
 export const W_FIO_DOMAIN_NFT: IERC20 = {
-  address: process.env.REACT_APP_WRAPPED_FIO_DOMAIN_CONTRACT_ADDRESS,
   symbol: 'FIO',
   name: 'FIO',
   decimals: 0,
 };
 
 export const NETWORKS_LIST: {
-  [key: string]: { name: string; currency: string; chainID: number };
+  [key: string]: {
+    name: string;
+    chainCode: string;
+    chainID: number;
+    contractAddress?: string;
+  };
 } = {
   Ethereum: {
     name: 'Ethereum',
-    currency: 'ETH',
-    chainID: 1,
+    chainCode: 'ETH',
+    chainID: wrap.ETH.chainId,
+    contractAddress: wrap.ETH.contractAddress,
   },
   Rinkeby: {
     name: 'Rinkeby',
-    currency: 'RIN',
+    chainCode: 'RIN',
     chainID: 4,
-  },
-  Sepolia: {
-    name: 'Sepolia',
-    currency: 'SETH',
-    chainID: 11155111,
   },
   Polygon: {
     name: 'Polygon',
-    currency: 'POL',
-    chainID: 137,
-  },
-  Amoy: {
-    name: 'Polygon Amoy',
-    currency: 'POLYGON',
-    chainID: 80002,
+    chainCode: 'POL',
+    chainID: wrap.POLYGON.chainId,
+    contractAddress: wrap.POLYGON.contractAddress,
   },
   ArbitrumOne: {
     name: 'ArbitrumOne',
-    currency: 'ARB1',
+    chainCode: 'ARB1',
     chainID: 42161,
   },
   BinanceSmartChain: {
     name: 'Binance Smart Chain',
-    currency: 'BSC',
+    chainCode: 'BSC',
     chainID: 56,
   },
   Avalanche: {
     name: 'Avalanche',
-    currency: 'AVAX',
+    chainCode: 'AVAX',
     chainID: 43114,
   },
   Fantom: {
     name: 'Fantom',
-    currency: 'FTM',
+    chainCode: 'FTM',
     chainID: 250,
-  },
-  BaseSepolia: {
-    name: 'Base Sepolia',
-    currency: 'BASE',
-    chainID: 84532,
   },
   Base: {
     name: 'Base',
-    currency: 'BASE',
-    chainID: 8453,
+    chainCode: 'BASE',
+    chainID: wrap.BASE.chainId,
+    contractAddress: wrap.BASE.contractAddress,
   },
 };
 
@@ -105,6 +99,7 @@ export const MORALIS_CHAIN_LIST = [
     name: 'Polygon Mumbai',
     chainName: 'MUMBAI',
   },
+  { chainId: 80002, name: 'Polygon Amoy', chainName: 'POLYGON_AMOY' },
   {
     chainId: 56,
     name: 'Binance Smart Chain',

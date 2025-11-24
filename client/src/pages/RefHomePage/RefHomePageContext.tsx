@@ -285,8 +285,19 @@ export const useContext = (): UseContextProps => {
       };
 
       // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
-      const handleChainChanged = (_hexChainId: string) => {
-        window.location.reload();
+      const handleChainChanged = async (_hexChainId: string) => {
+        try {
+          const currentProvider = provider || metaMaskProvider;
+          if (!currentProvider) return;
+          const updatedWeb3Provider = new ethers.providers.Web3Provider(
+            currentProvider,
+          );
+          const updatedNetwork = await updatedWeb3Provider.getNetwork();
+          setWeb3Provider(updatedWeb3Provider);
+          setNetwork(updatedNetwork);
+        } catch (error) {
+          log.error('chainChanged handling error', error);
+        }
       };
 
       provider.on('accountsChanged', handleAccountsChanged);
@@ -303,11 +314,14 @@ export const useContext = (): UseContextProps => {
     }
   }, [
     provider,
+    metaMaskProvider,
     connectionError,
     handleDisconnect,
     setAddress,
     setConnectionError,
     setIsWalletConnected,
+    setWeb3Provider,
+    setNetwork,
   ]);
 
   const onFocusOut = (value: string) => {

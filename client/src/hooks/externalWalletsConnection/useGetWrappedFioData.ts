@@ -6,6 +6,8 @@ import { Contract } from '@ethersproject/contracts';
 import apis from '../../api';
 import { log } from '../../util/general';
 import MathOp from '../../util/math';
+import { getChainContractAddress } from '../../util/wrap';
+
 import {
   NETWORKS_LIST,
   W_FIO_DOMAIN_NFT,
@@ -29,15 +31,10 @@ const isValidNetwork = (network: NetworkType, isNFT: boolean): boolean => {
   return (
     network?.name &&
     (isNFT
-      ? [NETWORKS_LIST.Polygon.chainID, NETWORKS_LIST.Amoy.chainID].includes(
+      ? [NETWORKS_LIST.Polygon.chainID].includes(network.chainId)
+      : [NETWORKS_LIST.Ethereum.chainID, NETWORKS_LIST.Base.chainID].includes(
           network.chainId,
-        )
-      : [
-          NETWORKS_LIST.Ethereum.chainID,
-          NETWORKS_LIST.Sepolia.chainID,
-          NETWORKS_LIST.BaseSepolia.chainID,
-          NETWORKS_LIST.Base.chainID,
-        ].includes(network.chainId))
+        ))
   );
 };
 
@@ -133,12 +130,12 @@ export function useGetWrappedFioData(
                 setAbi(resAbi);
               } catch (e) {
                 log.error(
-                  `wrapped FIO ${isNFT ? 'domains' : 'tokens'} fetch ABI error`,
+                  `wrapped FIO ${isNFT ? 'NFTs' : 'tokens'} fetch ABI error`,
                   e,
                 );
               }
             const newTokenContract = new ethers.Contract(
-              isNFT ? W_FIO_DOMAIN_NFT.address : W_FIO_TOKEN.address,
+              getChainContractAddress({ chainId: network.chainId }),
               contractAbi || defaultAbi,
               web3Provider.getSigner(),
             );

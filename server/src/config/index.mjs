@@ -109,6 +109,12 @@ export default {
     defaultTpid: process.env.DEFAULT_TPID,
     masterFioSdkKey: process.env.MASTER_FIOSDK_KEY,
   },
+  infura: {
+    baseUrl: process.env.BASE_INFURA_BASE_URL,
+    ethBaseUrl: process.env.ETH_INFURA_BASE_URL,
+    polygonBaseUrl: process.env.POLYGON_INFURA_BASE_URL,
+    apiKey: process.env.INFURA_API_KEY,
+  },
 
   ...dbConfig,
 };
