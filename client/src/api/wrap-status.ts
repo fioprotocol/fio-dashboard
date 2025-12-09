@@ -5,9 +5,10 @@ import { WrapStatusListItemsResponse } from './responses';
 type WrapParams = {
   limit?: number | null;
   offset?: number | null;
+  chain?: string;
   filters?: {
-    createdAt: string;
-    dateRange: { startDate: number; endDate: number };
+    createdAt?: string;
+    dateRange?: { startDate: number; endDate: number };
   };
 };
 

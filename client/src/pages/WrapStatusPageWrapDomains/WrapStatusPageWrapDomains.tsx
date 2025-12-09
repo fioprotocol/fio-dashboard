@@ -2,13 +2,22 @@ import React from 'react';
 
 import WrapStatus from '../../components/WrapStatusPages/WrapStatusPage/WrapStatus';
 
+import {
+  OPERATION_TYPES,
+  ASSET_TYPES,
+  WRAP_STATUS_CHAIN_CODES,
+} from '../../components/WrapStatusPages/WrapStatusPage/constants';
+
 import { PageProps } from './types';
 
 const WrapStatusPageWrapDomains: React.FC<PageProps> = props => {
   return (
-    <>
-      <WrapStatus isWrap={true} isTokens={false} {...props} />
-    </>
+    <WrapStatus
+      operationType={OPERATION_TYPES.WRAP}
+      assetType={ASSET_TYPES.DOMAINS}
+      chainCode={WRAP_STATUS_CHAIN_CODES.POL}
+      {...props}
+    />
   );
 };
 
