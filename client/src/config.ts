@@ -37,18 +37,24 @@ const config = {
       chainId: process.env.REACT_APP_ETH_CHAIN_ID
         ? Number(process.env.REACT_APP_ETH_CHAIN_ID)
         : null,
+      providerHistoryTxUrl: process.env.REACT_APP_ETH_HISTORY_URL,
+      providerHistoryAddressUrl: process.env.REACT_APP_ETH_ADDRESS_URL,
     },
     BASE: {
       contractAddress: process.env.REACT_APP_BASE_TOKENS_CONTRACT_ADDRESS,
       chainId: process.env.REACT_APP_BASE_CHAIN_ID
         ? Number(process.env.REACT_APP_BASE_CHAIN_ID)
         : null,
+      providerHistoryTxUrl: process.env.REACT_APP_BASE_HISTORY_URL,
+      providerHistoryAddressUrl: process.env.REACT_APP_BASE_ADDRESS_URL,
     },
     POLYGON: {
       contractAddress: process.env.REACT_APP_POLYGON_NFTS_CONTRACT_ADDRESS,
       chainId: process.env.REACT_APP_POLYGON_CHAIN_ID
         ? Number(process.env.REACT_APP_POLYGON_CHAIN_ID)
         : null,
+      providerHistoryTxUrl: process.env.REACT_APP_POLYGON_HISTORY_URL,
+      providerHistoryAddressUrl: process.env.REACT_APP_POLYGON_ADDRESS_URL,
     },
   },
 };
