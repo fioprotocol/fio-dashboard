@@ -270,6 +270,12 @@ router.get('/edge-cr', routes.external.getEdgeApiCreds);
 
 router.get('/site-settings', routes.general.getSiteSettings);
 
+router.get('/jira-candidates', checkUserAuth, routes.external.getJiraCandidates);
+router.get(
+  '/jira-candidates/:publicKey',
+  checkUserAuth,
+  routes.external.getJiraCandidates,
+);
 // TODO: commented due to DASH-711 task. We hide it until figure out with hash
 // router.get('/fetch-image-hash', routes.general.imageToHash);
 

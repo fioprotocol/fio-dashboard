@@ -11,6 +11,7 @@ import GetExternalProviderNftsMetadata from '../services/external/GetExternalPro
 import GetExternalAllTokens from '../services/external/GetExternalAllTokens.mjs';
 import AbstractEmailVerification from '../services/external/AbstractEmailVerification.mjs';
 import CheckServerTime from '../services/fio/CheckServerTime.mjs';
+import GetJiraCandidates from '../services/external/GetJiraCandidates.mjs';
 
 export default {
   prices: makeServiceRunner(GetPrices, req => req.query),
@@ -30,4 +31,5 @@ export default {
     req => req.query,
   ),
   checkServerTime: makeServiceRunner(CheckServerTime, req => req.query),
+  getJiraCandidates: makeServiceRunner(GetJiraCandidates, req => req.query),
 };
