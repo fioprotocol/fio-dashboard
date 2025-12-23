@@ -6,10 +6,7 @@ import shuffle from 'lodash/shuffle';
 
 import { useSelector } from 'react-redux';
 
-import {
-  GET_JIRA_CANDIDATES_URL,
-  GET_BLOCK_PRODUCERS_URL,
-} from '../constants/governance';
+import { GET_BLOCK_PRODUCERS_URL } from '../constants/governance';
 import { FIO_CHAIN_ID } from '../constants/fio';
 import { ROUTES } from '../constants/routes';
 
@@ -38,7 +35,6 @@ import {
   BlockProducersResult,
   CandidateProps,
   CandidatesVotes,
-  JiraCandidates,
   OverviewWallet,
   ProxyDetailedProxy,
   WalletsFioRequest,
@@ -50,14 +46,6 @@ import {
   SOCIAL_MEDIA_URLS,
 } from '../constants/socialMediaLinks';
 
-const getJiraCandidatesUrl = (publicKey?: string): string => {
-  if (!publicKey) {
-    return GET_JIRA_CANDIDATES_URL;
-  }
-
-  return `https://jira.fio.net/search?jql=filter=10081 AND summary ~ "${publicKey}"&maxResults=1000`;
-};
-
 export const useGetCandidates = (): {
   loading: boolean;
   candidatesList: CandidateProps[];
@@ -68,9 +56,8 @@ export const useGetCandidates = (): {
   const getCandidates = useCallback(async () => {
     try {
       toggleLoading(true);
-      const results = await superagent.get(getJiraCandidatesUrl());
 
-      const jiraCandidates: JiraCandidates = results.body?.issues;
+      const jiraCandidates = await apis.jira.getJiraCandidates();
 
       const candidates = jiraCandidates.map(candidate => {
         const id = candidate.key?.replace('FB-', '');
@@ -168,11 +155,11 @@ export const useGetPublicKeyCandidatesVotes = ({
     try {
       toggleLoading(true);
 
-      const results = await superagent.get(getJiraCandidatesUrl(jiraPublicKey));
+      const jiraCandidates = await apis.jira.getJiraCandidatesForPublicKey({
+        publicKey: jiraPublicKey,
+      });
 
-      const jiraCandidatesResults: JiraCandidates = results.body?.issues;
-
-      const { fields } = jiraCandidatesResults[0] || {};
+      const { fields } = jiraCandidates[0] || {};
 
       const candidatesVotesResults = {
         currentBoardVotingPower: fields?.customfield_10183,

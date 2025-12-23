@@ -16,6 +16,7 @@ import General from './general';
 import GeneratePdfFile from './generatePdf';
 import HealthCheck from './health-check';
 import InfuraApi from './infura';
+import Jira from './jira';
 import ExternalProviderNfts from './external-provider-nfts';
 import Metamask from './metamask';
 import Notifications from './notifications';
@@ -64,6 +65,7 @@ export type Api = {
   generatePdfFile: GeneratePdfFile;
   healthCheck: HealthCheck;
   infura: InfuraApi;
+  jira: Jira;
   externalProviderNfts: ExternalProviderNfts;
   metamask: Metamask;
   notifications: Notifications;
@@ -94,6 +96,7 @@ const apis = {
   generatePdfFile: new GeneratePdfFile(apiClient),
   healthCheck: new HealthCheck(apiClient),
   infura: new InfuraApi(apiClient),
+  jira: new Jira(apiClient),
   externalProviderNfts: new ExternalProviderNfts(apiClient),
   metamask: new Metamask(apiClient),
   notifications: new Notifications(apiClient),
