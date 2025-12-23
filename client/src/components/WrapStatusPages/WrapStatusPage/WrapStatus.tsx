@@ -167,7 +167,11 @@ const WrapStatus: React.FC<PageProps> = props => {
                 </div>
               ) : (
                 <CustomDropdown
-                  value={selectedDateFilter.createdAt}
+                  value={
+                    selectedDateFilter.dateRange
+                      ? 'custom'
+                      : selectedDateFilter.createdAt
+                  }
                   options={WRAP_DATE_FILTER_OPTIONS}
                   onChange={handleChangeDateFilter}
                   isDark
@@ -389,6 +393,7 @@ const WrapStatus: React.FC<PageProps> = props => {
         onClose={closeDetailsModal}
         operationType={operationType}
         assetType={assetType}
+        chainCode={selectedParams.chainCode}
       />
     </div>
   );

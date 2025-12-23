@@ -285,6 +285,8 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
   }, []);
 
   const closeDatePicker = useCallback(() => {
+    // When closing, if dates were set via "Set" button, they're already in selectedDateFilter
+    // Just close the picker and clear the temporary dateRange state
     toggleShowDatePicker(false);
     setDateRange([null, null]);
   }, []);
@@ -372,6 +374,8 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
   );
 
   const setFilterWithDateRange = useCallback(() => {
+    // Update selectedDateFilter with the date range (so "Show" button works)
+    // but keep the picker open - dropdown will update when picker is closed
     if (startDate && endDate) {
       setSelectedDateFilter({
         createdAt: null,
@@ -380,7 +384,7 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
           endDate: endDate.setHours(23, 59, 59, 999),
         },
       });
-      toggleShowDatePicker(false);
+      // Keep picker open - user can still adjust dates or click "Close"
     }
   }, [startDate, endDate]);
 
@@ -628,127 +632,131 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
         : [chainCode as ChainCode];
 
     const allWrapData: WrapStatusWrapItem[] = [];
+    const MAX_LIMIT_PER_REQUEST = 50; // Match server MAX_LIMIT
+
+    // Helper function to fetch all pages for a given chain
+    const fetchAllDataForChain = async (
+      chain: ChainCode | null,
+    ): Promise<WrapStatusWrapItem[]> => {
+      const chainData: WrapStatusWrapItem[] = [];
+      let offset = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        let wrapData: Partial<WrapStatusListItemsResponse> = {};
+
+        try {
+          if (operationType === OPERATION_TYPES.WRAP) {
+            if (assetType === ASSET_TYPES.TOKENS) {
+              wrapData = await apis.wrapStatus.getWrapStatusPageData({
+                action: OPERATION_TYPES.WRAP,
+                assetType: ASSET_TYPES.TOKENS,
+                chain,
+                limit: MAX_LIMIT_PER_REQUEST,
+                offset,
+                filters: dateFilters,
+              });
+            } else {
+              wrapData = await apis.wrapStatus.getWrapStatusPageData({
+                action: OPERATION_TYPES.WRAP,
+                assetType: ASSET_TYPES.DOMAINS,
+                chain,
+                limit: MAX_LIMIT_PER_REQUEST,
+                offset,
+                filters: dateFilters,
+              });
+            }
+          } else if (operationType === OPERATION_TYPES.UNWRAP) {
+            if (assetType === ASSET_TYPES.TOKENS) {
+              wrapData = await apis.wrapStatus.getWrapStatusPageData({
+                action: OPERATION_TYPES.UNWRAP,
+                assetType: ASSET_TYPES.TOKENS,
+                chain,
+                limit: MAX_LIMIT_PER_REQUEST,
+                offset,
+                filters: dateFilters,
+              });
+            } else {
+              wrapData = await apis.wrapStatus.getWrapStatusPageData({
+                action: OPERATION_TYPES.UNWRAP,
+                assetType: ASSET_TYPES.DOMAINS,
+                chain,
+                limit: MAX_LIMIT_PER_REQUEST,
+                offset,
+                filters: dateFilters,
+              });
+            }
+          } else if (operationType === OPERATION_TYPES.BURNED) {
+            wrapData = await apis.wrapStatus.getWrapStatusPageData({
+              action: OPERATION_TYPES.BURNED,
+              assetType: ASSET_TYPES.DOMAINS,
+              chain,
+              limit: MAX_LIMIT_PER_REQUEST,
+              offset,
+              filters: dateFilters,
+            });
+          }
+
+          if (wrapData.list && wrapData.list.length > 0) {
+            // API already filters by chain, so no need for client-side filtering
+            // Just add all items returned by the API
+            chainData.push(...wrapData.list);
+
+            // Check if there's more data to fetch
+            const totalFetched = offset + wrapData.list.length;
+            const maxCount = wrapData.maxCount || 0;
+            hasMore =
+              totalFetched < maxCount &&
+              wrapData.list.length === MAX_LIMIT_PER_REQUEST;
+            offset += MAX_LIMIT_PER_REQUEST;
+          } else {
+            log.info(`No more data for chain ${chain} at offset ${offset}`);
+            hasMore = false;
+          }
+        } catch (err) {
+          log.error(err);
+          hasMore = false;
+        }
+      }
+
+      return chainData;
+    };
 
     // Fetch data for each chain
+    log.info('Starting export');
+
     for (const chain of chainsToExport) {
-      let wrapData: Partial<WrapStatusListItemsResponse> = {};
-
       try {
-        if (operationType === OPERATION_TYPES.WRAP) {
-          if (assetType === ASSET_TYPES.TOKENS) {
-            wrapData = await apis.wrapStatus.wrapTokensList({
-              filters: dateFilters,
-            });
-          } else {
-            wrapData = await apis.wrapStatus.wrapDomainsList({
-              filters: dateFilters,
-            });
-          }
-        } else if (operationType === OPERATION_TYPES.UNWRAP) {
-          if (assetType === ASSET_TYPES.TOKENS) {
-            wrapData = await apis.wrapStatus.unwrapTokensList({
-              filters: dateFilters,
-            });
-          } else {
-            wrapData = await apis.wrapStatus.unwrapDomainsList({
-              filters: dateFilters,
-            });
-          }
-        } else if (operationType === OPERATION_TYPES.BURNED) {
-          wrapData = await apis.wrapStatus.getBurnedDomainsList({
-            filters: dateFilters,
-          });
-        }
-
-        if (wrapData.list) {
-          // Filter by chain if specific chain is selected
-          const filteredList =
-            chain && chainCode !== EXPORT_ALL_CHAINS
-              ? wrapData.list.filter(
-                  item => item.chain?.toUpperCase() === chain.toUpperCase(),
-                )
-              : wrapData.list;
-          allWrapData.push(...filteredList);
-        }
+        log.info(`Fetching data for chain: ${chain}`);
+        const chainData = await fetchAllDataForChain(chain);
+        log.info(`Fetched ${chainData.length} items for chain: ${chain}`);
+        allWrapData.push(...chainData);
       } catch (err) {
-        log.error(err);
+        log.error(`Error fetching data for chain ${chain}:`, err);
       }
     }
 
-    const preparedWrapDataListToCsv: {
-      number: number;
-      transactionId: string;
-      chain?: string;
-      from?: string;
-      to?: string;
-      amount?: string;
-      domain?: string;
-      status?: string;
-      firstTransaction?: string;
-      lastTransaction?: string;
-    }[] = [];
-
-    let index = 0;
-    for (const wrapItem of allWrapData) {
-      const {
-        amount,
-        approvals,
-        blockTimestamp,
-        chain,
-        domain,
-        from,
-        status,
-        to,
-        transactionId,
-      } = wrapItem;
-
-      const wrapObjectToCsv: {
-        number: number;
-        transactionId: string;
-        chain?: string;
-        from?: string;
-        to?: string;
-        amount?: string;
-        domain?: string;
-        status?: string;
-        firstTransaction?: string;
-        lastTransaction?: string;
-      } = {
-        number: index + 1,
-        transactionId,
-      };
-
-      // Add chain to export
-      if (chain) {
-        wrapObjectToCsv.chain = chain;
+    // If exporting all chains and got no data, try fetching without chain filter
+    if (
+      chainCode === EXPORT_ALL_CHAINS &&
+      allWrapData.length === 0 &&
+      chainsToExport.length > 0
+    ) {
+      log.info(
+        'No data found for individual chains, trying without chain filter',
+      );
+      try {
+        const allChainsData = await fetchAllDataForChain(null);
+        log.info(`Fetched ${allChainsData.length} items without chain filter`);
+        allWrapData.push(...allChainsData);
+      } catch (err) {
+        log.error('Error fetching data without chain filter:', err);
       }
-
-      if (assetType === ASSET_TYPES.TOKENS) {
-        wrapObjectToCsv.amount = amount;
-      }
-
-      if (assetType === ASSET_TYPES.DOMAINS) {
-        wrapObjectToCsv.domain = domain;
-      }
-
-      if (from) {
-        wrapObjectToCsv.from = from;
-      }
-      if (to) {
-        wrapObjectToCsv.to = to;
-      }
-
-      wrapObjectToCsv.status = WRAP_STATUS_CONTENT[status]?.text || status;
-      wrapObjectToCsv.firstTransaction = blockTimestamp;
-      wrapObjectToCsv.lastTransaction = approvals?.blockTimeStamp;
-
-      preparedWrapDataListToCsv.push(wrapObjectToCsv);
-
-      index++;
     }
+
+    log.info(`Total data fetched: ${allWrapData.length} items`);
 
     const currentDate = new Date();
-
     const chainLabel = chainCode === EXPORT_ALL_CHAINS ? 'All' : chainCode;
 
     const burnHeaders = [
@@ -773,23 +781,82 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
       'Last transaction',
     ];
 
-    try {
-      if (preparedWrapDataListToCsv.length > 0) {
-        new ExportToCsv({
-          showLabels: true,
-          filename: `${operationType}-${assetType}-${chainLabel}_Total-${
-            preparedWrapDataListToCsv.length
-          }_${currentDate.getFullYear()}-${currentDate.getMonth() +
-            1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`,
-          headers:
-            operationType === OPERATION_TYPES.BURNED ? burnHeaders : headers,
-        }).generateCsv(preparedWrapDataListToCsv);
+    const preparedWrapDataListToCsv: Record<string, string | number>[] = [];
+
+    let index = 0;
+    for (const wrapItem of allWrapData) {
+      const {
+        amount,
+        approvals,
+        blockTimestamp,
+        chain,
+        domain,
+        from,
+        status,
+        to,
+        transactionId,
+      } = wrapItem;
+
+      // Build object with keys matching headers exactly and in the same order
+      const wrapObjectToCsv: Record<string, string | number> = {};
+
+      if (operationType === OPERATION_TYPES.BURNED) {
+        // Burned headers: '#', 'TransactionId', 'Chain', 'Domain', 'Status', 'First transaction', 'Last transaction'
+        wrapObjectToCsv['#'] = index + 1;
+        wrapObjectToCsv.TransactionId = transactionId || '';
+        wrapObjectToCsv.Chain = chain || '';
+        wrapObjectToCsv.Domain = domain || '';
+        wrapObjectToCsv.Status =
+          WRAP_STATUS_CONTENT[status]?.text || status || '';
+        wrapObjectToCsv['First transaction'] = blockTimestamp || '';
+        wrapObjectToCsv['Last transaction'] = approvals?.blockTimeStamp || '';
+      } else {
+        // Regular headers: '#', 'TransactionId', 'Chain', 'From', 'To', 'Amount'/'Domain', 'Status', 'First transaction', 'Last transaction'
+        wrapObjectToCsv['#'] = index + 1;
+        wrapObjectToCsv.TransactionId = transactionId || '';
+        wrapObjectToCsv.Chain = chain || '';
+        wrapObjectToCsv.From = from || '';
+        wrapObjectToCsv.To = to || '';
+        if (assetType === ASSET_TYPES.TOKENS) {
+          wrapObjectToCsv.Amount = amount || '';
+        } else {
+          wrapObjectToCsv.Domain = domain || '';
+        }
+        wrapObjectToCsv.Status =
+          WRAP_STATUS_CONTENT[status]?.text || status || '';
+        wrapObjectToCsv['First transaction'] = blockTimestamp || '';
+        wrapObjectToCsv['Last transaction'] = approvals?.blockTimeStamp || '';
       }
-    } catch (err) {
-      log.error(err);
+
+      preparedWrapDataListToCsv.push(wrapObjectToCsv);
+
+      index++;
     }
 
-    toggleIsExportingCsv(false);
+    try {
+      if (preparedWrapDataListToCsv.length > 0) {
+        const filename = `${operationType}-${assetType}-${chainLabel}_Total-${
+          preparedWrapDataListToCsv.length
+        }_${currentDate.getFullYear()}-${currentDate.getMonth() +
+          1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}`;
+        const csvHeaders =
+          operationType === OPERATION_TYPES.BURNED ? burnHeaders : headers;
+
+        const csvExporter = new ExportToCsv({
+          showLabels: true,
+          filename,
+          headers: csvHeaders,
+        });
+
+        csvExporter.generateCsv(preparedWrapDataListToCsv);
+      } else {
+        log.info('No data to export');
+      }
+    } catch (err) {
+      log.error('Error generating CSV:', err);
+    } finally {
+      toggleIsExportingCsv(false);
+    }
   }, [exportFilters]);
 
   return {

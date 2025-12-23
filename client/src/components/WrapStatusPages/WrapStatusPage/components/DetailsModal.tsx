@@ -35,10 +35,17 @@ type Props = {
   onClose: () => void;
   operationType: OperationType;
   assetType: AssetType;
+  chainCode: string;
 };
 
 const DetailsModal: React.FC<Props> = props => {
-  const { itemData, onClose, operationType, assetType } = props;
+  const {
+    chainCode: defaultChainCode,
+    itemData,
+    onClose,
+    operationType,
+    assetType,
+  } = props;
 
   const isWrap = operationType === OPERATION_TYPES.WRAP;
   const isBurned = operationType === OPERATION_TYPES.BURNED;
@@ -79,7 +86,7 @@ const DetailsModal: React.FC<Props> = props => {
     obtid = Object.entries(counts).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
   }
 
-  const chainCode = approvals?.chainCode;
+  const chainCode = approvals?.chainCode || defaultChainCode;
 
   const wrapTokenFailedCommand = `npm run oracle wrap tokens chainCode:${chainCode} amount:${amount} address:${to} obtId:${obtid}`;
   const wrapDomainFailedCommand = `npm run oracle wrap nfts chainCode:${chainCode} nftName:${domain} address:${to} obtId:${obtid}`;
@@ -98,7 +105,9 @@ const DetailsModal: React.FC<Props> = props => {
     : unwrapDomainFailedCommand;
 
   const explorerTxUrl = getExplorerTxUrl(chain);
-  const explorerAddressUrl = getExplorerAddressUrl(chain);
+
+  const voterExplorerTxUrl = getExplorerTxUrl(chainCode);
+  const voterExplorerAddressUrl = getExplorerAddressUrl(chainCode);
 
   return (
     <Modal
@@ -243,7 +252,7 @@ const DetailsModal: React.FC<Props> = props => {
                         <div className="d-flex flex-row">
                           <p className="mr-2">Oracle:</p>
                           <a
-                            href={explorerAddressUrl + voter.account}
+                            href={voterExplorerAddressUrl + voter.account}
                             target="_blank"
                             rel="noreferrer"
                           >
@@ -253,7 +262,7 @@ const DetailsModal: React.FC<Props> = props => {
                         <div className="d-flex flex-row ml-4">
                           <p className="mr-2">Trx:</p>
                           <a
-                            href={explorerTxUrl + voter.transactionHash}
+                            href={voterExplorerTxUrl + voter.transactionHash}
                             target="_blank"
                             rel="noreferrer"
                           >
@@ -276,7 +285,7 @@ const DetailsModal: React.FC<Props> = props => {
                     </div>
                     <div className={classes.trxId}>
                       <a
-                        href={explorerTxUrl + approvals.txId}
+                        href={voterExplorerTxUrl + approvals.txId}
                         target="_blank"
                         rel="noreferrer"
                       >
