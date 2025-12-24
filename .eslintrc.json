@@ -1,0 +1,59 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ],
+  "plugins": [
+    "prettier",
+    "import"
+  ],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "all",
+        "printWidth": 90,
+        "singleQuote": true
+      }
+    ],
+    "no-unused-vars": "error",
+    "prefer-const": "error",
+    "no-underscore-dangle": 0,
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "no-console": "error",
+    "import/order": ["error", {
+      "alphabetize": {
+        "order": "ignore",
+        "caseInsensitive": true
+      },
+      "newlines-between": "always-and-inside-groups",
+      "groups": [
+        "builtin",
+        "external",
+        "internal",
+        [
+          "sibling", "parent"
+        ],
+        "index",
+        "object",
+        "type"
+      ]}]
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    }
+  },
+  "ignorePatterns": ["scripts/install-ledger.js"],
+  "root": true
+}
+

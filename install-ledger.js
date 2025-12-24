@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -9,7 +11,7 @@ const tempPath = path.join(nodeModulesPath, '.temp-ledger-fio');
 // Check if already installed
 if (fs.existsSync(path.join(pkgPath, 'package.json'))) {
   console.log('ledgerjs-hw-app-fio already installed, skipping...');
-  return;
+  process.exit(0);
 }
 
 console.log('Installing ledgerjs-hw-app-fio from GitHub...');

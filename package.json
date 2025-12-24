@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npm i github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
-    "postinstall": "node scripts/install-ledger.js",
+    "postinstall": "node install-ledger.js",
     "client:start": "cd ./client && react-app-rewired start",
     "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build && react-snap",
     "client:build:no-snap": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
