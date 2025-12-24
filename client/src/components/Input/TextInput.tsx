@@ -78,6 +78,7 @@ export type TextInputProps = {
   additionalOnchangeAction?: (val: string) => void;
   wFioBalance?: string;
   connectWalletProps: ConnectProviderType;
+  connectWalletTargetChainId?: number;
   withoutBottomMargin?: boolean;
   hasItalicLabel?: boolean;
   hasErrorForced?: boolean;
@@ -118,6 +119,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     additionalOnchangeAction,
     connectWalletProps,
     showConnectWalletButton,
+    connectWalletTargetChainId,
     connectWalletModalText,
     wFioBalance,
     withoutBottomMargin,
@@ -305,6 +307,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             isWalletConnected={isWalletConnected}
             description={connectWalletModalText}
             wFioBalance={wFioBalance}
+            targetChainId={connectWalletTargetChainId}
             {...connectWalletProps}
           />
         ) : null}

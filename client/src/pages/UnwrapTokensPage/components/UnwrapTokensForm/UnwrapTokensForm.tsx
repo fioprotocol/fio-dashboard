@@ -13,17 +13,31 @@ import TextInput from '../../../../components/Input/TextInput';
 
 import MathOp from '../../../../util/math';
 import { formValidation } from './validation';
+import { switchEthereumChain } from '../../../../util/ethereum';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { CURRENCY_CODES } from '../../../../constants/common';
+import { NETWORKS_LIST } from '../../../../constants/ethereum';
+import { WRAP_TYPE } from '../../../../constants/wrap';
+import { log } from '../../../../util/general';
 
 import { WrapTokensFormProps } from '../../types';
 
 import classes from '../../styles/UnwrapTokensForm.module.scss';
+import Dropdown from '../../../../components/Input/Dropdown';
 
-const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
+const networkOptions: { id: string; name: string; chainId: number }[] = [
+  NETWORKS_LIST.Ethereum,
+  NETWORKS_LIST.Base,
+].map(network => ({
+  name: network.name,
+  id: network.chainCode,
+  chainId: network.chainID,
+}));
+
+const UnwrapTokensForm: React.FC<WrapTokensFormProps> = props => {
   const {
     loading,
     initialValues,
@@ -42,10 +56,37 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
     <Form
       onSubmit={onSubmit}
       validate={formValidation.validateForm}
-      initialValues={initialValues}
+      initialValues={{
+        ...initialValues,
+        chainCode: networkOptions[0]?.id,
+      }}
     >
       {(formRenderProps: FormRenderProps) => {
         const { validating, values } = formRenderProps;
+        const selectedNetwork = Object.values(NETWORKS_LIST).find(
+          networkItem => networkItem.chainCode === values.chainCode,
+        );
+
+        const handleChainChange = async (chainCode: string) => {
+          const selectedNetwork = Object.values(NETWORKS_LIST).find(
+            networkItem => networkItem.chainCode === chainCode,
+          );
+
+          if (!selectedNetwork) {
+            log.error(`Unsupported chain code: ${chainCode}`);
+            return;
+          }
+
+          try {
+            await switchEthereumChain({
+              provider: providerData?.provider,
+              targetChainId: selectedNetwork.chainID,
+              currentChainId: providerData?.network?.chainId,
+            });
+          } catch (e) {
+            log.error('Error switching network', e);
+          }
+        };
 
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
@@ -69,6 +110,20 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               onActionButtonClick={() => setModalInfoError(null)}
             />
             <Field
+              name="chainCode"
+              component={Dropdown}
+              options={networkOptions}
+              defaultOptionValue={networkOptions[0]}
+              placeholder="Select Network"
+              label="Target Network"
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              isWhite
+              isHigh
+              isSimple
+              hideError
+              additionalOnchangeAction={handleChainChange}
+            />
+            <Field
               name="publicAddress"
               type="text"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
@@ -78,6 +133,7 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               showConnectWalletButton
               connectWalletProps={providerData}
               connectWalletModalText="Please connect your Ethereum wallet where you have wFio which you would like to unwrap (exchange) for FIO."
+              connectWalletTargetChainId={selectedNetwork?.chainID}
               showPasteButton={false}
               disabled={true}
               placeholder="Connect a Wallet"
@@ -135,8 +191,10 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               title="Fees"
               subTitle="Manually set fees by selecting one of the basics options or for a more advanced option, set your own."
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              valueTitle="ETH"
+              valueTitle={values.chainCode}
               errorColor={COLOR_TYPE.WARN}
+              chainCode={values.chainCode}
+              wrapType={WRAP_TYPE.TOKEN}
             />
 
             <SubmitButton
@@ -152,4 +210,4 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
   );
 };
 
-export default UnwrapDomainForm;
+export default UnwrapTokensForm;

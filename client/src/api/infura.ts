@@ -8,12 +8,12 @@ export type GasOracleResult = {
 
 export default class InfuraApi extends Base {
   async getGasOracle({
-    isPolygon = false,
+    chainCode,
   }: {
-    isPolygon: boolean;
+    chainCode: string;
   }): Promise<GasOracleResult> {
     return this.apiClient.get('gas-oracle', {
-      isPolygon,
+      chainCode,
       isInfuraProvider: true,
     });
   }

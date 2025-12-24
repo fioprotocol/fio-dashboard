@@ -69,10 +69,12 @@ export default function usePagination(
 
   const handleChangeOffset = useCallback(
     (offsetValue: string) => {
-      queryParams.set(OFFSET_QUERY_PARAMETER_NAME, offsetValue);
-      history.push({ search: queryParams.toString() });
+      // Get fresh query params from current URL to preserve all existing params (like chain)
+      const freshQueryParams = new URLSearchParams(window.location.search);
+      freshQueryParams.set(OFFSET_QUERY_PARAMETER_NAME, offsetValue);
+      history.push({ search: freshQueryParams.toString() });
     },
-    [history, queryParams],
+    [history],
   );
 
   const limit =
@@ -118,15 +120,17 @@ export default function usePagination(
 
   // initialize (redirect) url query, if no params present in it
   useEffectOnce(() => {
-    const limit = queryParams.get(LIMIT_QUERY_PARAMETER_NAME);
-    const offset = queryParams.get(OFFSET_QUERY_PARAMETER_NAME);
+    // Get fresh query params to preserve any existing params (like chain)
+    const freshQueryParams = new URLSearchParams(window.location.search);
+    const limit = freshQueryParams.get(LIMIT_QUERY_PARAMETER_NAME);
+    const offset = freshQueryParams.get(OFFSET_QUERY_PARAMETER_NAME);
     if (!limit || !offset) {
-      queryParams.set(
+      freshQueryParams.set(
         LIMIT_QUERY_PARAMETER_NAME,
         limit || maxItemsPerPage + '',
       );
-      queryParams.set(OFFSET_QUERY_PARAMETER_NAME, offset || '0');
-      history.push({ search: queryParams.toString() });
+      freshQueryParams.set(OFFSET_QUERY_PARAMETER_NAME, offset || '0');
+      history.push({ search: freshQueryParams.toString() });
     }
   }, []);
 

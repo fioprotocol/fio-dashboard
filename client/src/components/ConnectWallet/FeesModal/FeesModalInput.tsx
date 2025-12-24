@@ -18,6 +18,8 @@ import Loader from '../../Loader/Loader';
 import useLoadFeePriceSuggestions from '../../../hooks/externalWalletsConnection/useLoadFeesSuggestions';
 import MathOp from '../../../util/math';
 
+import { WRAP_TYPE } from '../../../constants/wrap';
+
 import classes from './FeesModalInput.module.scss';
 
 export type FeePriceOptionsList = Array<FeePriceOptionItem>;
@@ -62,7 +64,7 @@ export const calculateGasFee = (
 };
 
 type Props = {
-  isNFT?: boolean;
+  chainCode?: string;
   gasPrice?: string;
   gasLimit?: string;
   name?: string;
@@ -76,6 +78,7 @@ type Props = {
   };
   modalTitle?: string;
   modalSubTitle?: string;
+  wrapType?: keyof typeof WRAP_TYPE;
   handleConfirmValidate?: (
     val?: FeePriceOptionItem,
   ) => Promise<{
@@ -306,6 +309,7 @@ const SelectModal: React.FC<Props &
   FieldRenderProps<Props> &
   ModalProps> = props => {
   const {
+    chainCode,
     input,
     meta,
     handleConfirmValidate,
@@ -316,7 +320,7 @@ const SelectModal: React.FC<Props &
     subTitle = 'Manually set fees by selecting one of the basics options or for a more advanced option, set your own.',
     showErrorBorder,
     show = false,
-    isNFT,
+    wrapType,
     onHide,
     valueTitle,
   } = props;
@@ -328,7 +332,11 @@ const SelectModal: React.FC<Props &
   const {
     feePriceOptionsList: options,
     isLoading: isSuggestionsLoading,
-  } = useLoadFeePriceSuggestions(show, isNFT);
+  } = useLoadFeePriceSuggestions({
+    startLoad: show,
+    chainCode,
+    type: wrapType,
+  });
 
   const [inputValue, setInputValue] = useState<FeePriceOptionItem>(value);
   const [confirmError, setConfirmError] = useState<string | null>(null);
@@ -413,8 +421,8 @@ const SelectModal: React.FC<Props &
                 modalInputValue: inputValue,
                 isLoading: loading,
                 isSuggestionsLoading,
-                isNFT,
                 valueTitle,
+                wrapType,
               }}
             />
           </TabsContainer>
@@ -441,8 +449,8 @@ const SelectModal: React.FC<Props &
 
 const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
+    chainCode,
     input,
-    isNFT,
     meta,
     hideError,
     loading,
@@ -451,6 +459,7 @@ const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     prefixLabel = 'Fees',
     valueTitle,
     showErrorBorder,
+    wrapType,
     handleConfirmValidate,
   } = props;
   const {
@@ -469,7 +478,11 @@ const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
     feePriceOptionsList: options,
     isLoading: isSuggestionsLoading,
-  } = useLoadFeePriceSuggestions(true, isNFT);
+  } = useLoadFeePriceSuggestions({
+    startLoad: true,
+    chainCode,
+    type: wrapType,
+  });
 
   const mediumFees = options.find(o => o.name === 'Medium');
 

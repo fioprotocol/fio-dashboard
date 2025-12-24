@@ -4,11 +4,17 @@ import { ethers } from 'ethers';
 import { FeePriceOptionsList } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
 import apis from '../../api';
 import { log } from '../../util/general';
+import { WRAP_TYPE } from '../../constants/wrap';
 
-export function useLoadFeePriceSuggestions(
-  startLoad: boolean = false,
-  isNFT: boolean = false,
-): {
+export function useLoadFeePriceSuggestions({
+  startLoad,
+  chainCode,
+  type,
+}: {
+  startLoad: boolean;
+  chainCode: string;
+  type: keyof typeof WRAP_TYPE;
+}): {
   feePriceOptionsList: FeePriceOptionsList;
   isLoading: boolean;
 } {
@@ -16,13 +22,12 @@ export function useLoadFeePriceSuggestions(
   const [feePriceOptionsList, setFeePriceOptionsList] = useState<
     FeePriceOptionsList
   >([]); // wei
-
   useEffect(() => {
     const getGasData = async () => {
       try {
         setIsLoading(true);
         // could be used EtherScan as alternative
-        const gasData = await apis.infura.getGasOracle({ isPolygon: isNFT });
+        const gasData = await apis.infura.getGasOracle({ chainCode });
 
         const dataList: FeePriceOptionsList = [
           {
@@ -48,16 +53,13 @@ export function useLoadFeePriceSuggestions(
         setFeePriceOptionsList(dataList);
         setIsLoading(false);
       } catch (e) {
-        log.error(
-          `Wrapped fio ${isNFT ? 'Domain' : 'Token'} fee suggestion error`,
-          e,
-        );
+        log.error(`Wrapped FIO ${type} fee suggestion error`, e);
         setIsLoading(false);
       }
     };
 
     if (startLoad) getGasData();
-  }, [startLoad, isNFT]);
+  }, [startLoad, type, chainCode]);
 
   return {
     feePriceOptionsList,

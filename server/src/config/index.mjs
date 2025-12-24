@@ -48,20 +48,28 @@ export default {
   },
   wrap: {
     ethBaseUrl: process.env.WRAP_STATUS_PAGE_ETH_INFURA_BASE_URL,
-    infuraBaseUrl: process.env.WRAP_STATUS_PAGE_POLYGON_INFURA_BASE_URL,
+    infuraBaseChainUrl: process.env.WRAP_STATUS_PAGE_BASE_INFURA_BASE_URL,
+    infuraPolygonBaseUrl: process.env.WRAP_STATUS_PAGE_POLYGON_INFURA_BASE_URL,
     infuraApiKey: process.env.INFURA_API_KEY,
     fioNftPolygonContract: process.env.WRAP_STATUS_PAGE_FIO_NFT_POLYGON_CONTRACT,
     fioTokenEthContract: process.env.WRAP_STATUS_PAGE_FIO_TOKEN_ETH_CONTRACT,
+    fioTokenBaseContract: process.env.WRAP_STATUS_PAGE_FIO_TOKEN_BASE_CONTRACT,
     fioHistoryOffset: process.env.WRAP_STATUS_PAGE_FIO_HISTORY_OFFSET,
     fioHistoryV2Offset: process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_OFFSET,
     blocksRangeLimitPoly: parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY),
     blocksRangeLimitEth: parseInt(process.env.BLOCKS_RANGE_LIMIT_ETH),
+    blocksRangeLimitBase: parseInt(process.env.BLOCKS_RANGE_LIMIT_BASE),
     oracleVotesLogsLimit: parseInt(process.env.ORACLE_VOTES_LOGS_LIMIT),
     fioHistoryV2: {
       maxRetries: parseInt(process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_MAX_RETRIES),
       chunkSize: parseInt(process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_CHUNK_SIZE),
       chunkDelayMs: parseInt(process.env.WRAP_STATUS_PAGE_FIO_HISTORY_V2_CHUNK_DELAY_MS),
     },
+    polygonFirstBlockNumber: parseInt(
+      process.env.WRAP_STATUS_PAGE_POYGON_FIRST_BLOCK_NUMBER,
+    ),
+    ethFirstBlockNumber: parseInt(process.env.WRAP_STATUS_PAGE_ETH_FIRST_BLOCK_NUMBER),
+    baseFirstBlockNumber: parseInt(process.env.WRAP_STATUS_PAGE_BASE_FIRST_BLOCK_NUMBER),
   },
   user: {
     fioDashUsernameDelimiter: `.fio.dash.${process.env.EDGE_ACC_DELIMITER || ''}`,
@@ -108,6 +116,12 @@ export default {
     id: process.env.FIO_CHAIN_ID,
     defaultTpid: process.env.DEFAULT_TPID,
     masterFioSdkKey: process.env.MASTER_FIOSDK_KEY,
+  },
+  infura: {
+    baseUrl: process.env.BASE_INFURA_BASE_URL,
+    ethBaseUrl: process.env.ETH_INFURA_BASE_URL,
+    polygonBaseUrl: process.env.POLYGON_INFURA_BASE_URL,
+    apiKey: process.env.INFURA_API_KEY,
   },
 
   ...dbConfig,

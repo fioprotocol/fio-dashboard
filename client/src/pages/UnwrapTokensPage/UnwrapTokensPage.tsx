@@ -20,11 +20,7 @@ import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
 import { W_FIO_TOKEN } from '../../constants/ethereum';
-import {
-  CHAIN_CODE_LIST,
-  CHAIN_CODES,
-  ANALYTICS_EVENT_ACTIONS,
-} from '../../constants/common';
+import { CHAIN_CODES, ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 import { LINKS } from '../../constants/labels';
 
 import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
@@ -34,12 +30,7 @@ import { ContainerProps, InitialValues, UnWrapTokensValues } from './types';
 
 import classes from './styles/UnwrapTokensPage.module.scss';
 
-const ETHEREUM_NETWORK_DATA = CHAIN_CODE_LIST.find(
-  o => o.id === CHAIN_CODES.ETH,
-);
-
 const initialValues: InitialValues = {
-  chainCode: ETHEREUM_NETWORK_DATA.id,
   fee: null,
 };
 
@@ -62,7 +53,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
     network,
     addressInPage,
   );
-
+  console.log('network', network);
   const [fioAddressesList, setFioAddressesList] = useState([]);
   const [modalInfoError, setModalInfoError] = useState(null);
 
@@ -74,11 +65,12 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
   }, [fioAddresses]);
 
   const onSubmit = async (data: UnWrapTokensValues) => {
-    const { amount, fee, fioAddress } = data;
+    const { amount, fee, fioAddress, chainCode } = data;
 
     if (wFioBalance) {
       try {
         const signer = web3Provider.getSigner();
+
         const wFioWithSigner = tokenContract.connect(signer);
 
         const wFioAmount = ethers.utils.parseUnits(
@@ -96,9 +88,9 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
         );
 
         const results = {
-          amount: data.amount,
-          chainCode: ETHEREUM_NETWORK_DATA.id,
-          receivingAddress: data.fioAddress,
+          amount,
+          chainCode,
+          receivingAddress: fioAddress,
           publicAddress: transaction.from,
           other: {
             ...data,
@@ -113,8 +105,6 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
 
         if (fioWallet?.publicKey)
           refreshWalletDataPublicKey(fioWallet.publicKey);
-
-        // const receipt = await transaction.wait(); this will wait for transaction completion in chain
       } catch (err) {
         if (err.code === 'ACTION_REJECTED') {
           setModalInfoError(
@@ -179,12 +169,6 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
             {fioWallet.name}
           </p>
         ) : null}
-        <p className={classes.subtitle}>
-          <span className={classes.subtitleThin}>
-            FIO Tokens are wrapped on the
-          </span>{' '}
-          {ETHEREUM_NETWORK_DATA.id} network
-        </p>
         <p className={classes.subtitle}>
           <span className={classes.subtitleThin}>
             FIO Tokens will be unwrapped to the

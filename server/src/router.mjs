@@ -221,11 +221,7 @@ router.post(
 router.post('/verify-twitter', routes.twitter.verify);
 router.get('/verify-abstract-email', routes.external.abstractEmailVerification);
 
-router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
-router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
-router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
-router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
-router.get('/wrap-status/domains/burn', routes.history.burnedDomains);
+router.get('/wrap-status/page/data', routes.history.getWrapStatusPageData);
 
 router.post('/cart-add-item', checkGuestOrUserAuth, routes.cart.addItem);
 router.delete('/cart-clear-cart', checkGuestOrUserAuth, routes.cart.clearCart);
@@ -274,6 +270,12 @@ router.get('/edge-cr', routes.external.getEdgeApiCreds);
 
 router.get('/site-settings', routes.general.getSiteSettings);
 
+router.get('/jira-candidates', checkUserAuth, routes.external.getJiraCandidates);
+router.get(
+  '/jira-candidates/:publicKey',
+  checkUserAuth,
+  routes.external.getJiraCandidates,
+);
 // TODO: commented due to DASH-711 task. We hide it until figure out with hash
 // router.get('/fetch-image-hash', routes.general.imageToHash);
 
