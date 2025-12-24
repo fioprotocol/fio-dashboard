@@ -8,6 +8,7 @@ import DangerModal from '../../Modal/DangerModal';
 import { LoadingIcon } from '../../Input/StaticInputParts';
 
 import { log } from '../../../util/general';
+import { switchEthereumChain } from '../../../util/ethereum';
 import { AnyObject } from '../../../types';
 import {
   ConnectionErrorType,
@@ -27,6 +28,7 @@ type Props = {
   inputValue?: string;
   description?: string;
   wFioBalance?: string;
+  targetChainId?: number;
 } & ConnectProviderType;
 
 export const OPENED_METAMASK_WINDOW_ERROR_CODE = -32002;
@@ -48,6 +50,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
     setIsWalletConnected,
     isWalletConnected,
     description = 'Please connect your Polygon wallet with the FIO domain that you would like to unwrap to the FIO network.',
+    targetChainId,
   } = props;
 
   const [
@@ -71,24 +74,48 @@ const ConnectWalletButton: React.FC<Props> = props => {
       return;
     }
 
-    const web3Provider = new ethers.providers.Web3Provider(metaMaskProvider);
-    const network = await web3Provider.getNetwork();
+    let web3ProviderInstance = new ethers.providers.Web3Provider(
+      metaMaskProvider,
+    );
 
     try {
+      if (targetChainId) {
+        const currentNetwork = await web3ProviderInstance.getNetwork();
+        if (currentNetwork?.chainId !== targetChainId) {
+          try {
+            await switchEthereumChain({
+              provider: metaMaskProvider,
+              targetChainId,
+              currentChainId: currentNetwork?.chainId,
+            });
+          } catch (switchError) {
+            log.error('wallet_switchEthereumChain error', switchError);
+            setConnectionError(switchError as ConnectionErrorType);
+            setShowProviderLoadingIcon(false);
+            return;
+          }
+          web3ProviderInstance = new ethers.providers.Web3Provider(
+            metaMaskProvider,
+          );
+        }
+      }
+
       await metaMaskProvider.request({
         method: 'eth_requestAccounts',
       });
 
-      const signer = web3Provider.getSigner();
-      const address = await signer.getAddress();
+      const signer = web3ProviderInstance.getSigner();
+      const walletAddress = await signer.getAddress();
+      const networkData = await web3ProviderInstance.getNetwork();
 
       setProvider(metaMaskProvider);
-      setWeb3Provider(web3Provider);
-      setAddress(address);
-      setNetwork(network);
+      setWeb3Provider(web3ProviderInstance);
+      setAddress(walletAddress);
+      setNetwork(networkData);
 
       closeSelectProviderModal();
       setIsWalletConnected(true);
+      setShowProviderLoadingIcon(false);
     } catch (error) {
       setConnectionError(error);
       setShowProviderLoadingIcon(false);
@@ -101,24 +128,34 @@ const ConnectWalletButton: React.FC<Props> = props => {
     setProvider,
     setWeb3Provider,
     metaMaskProvider,
+    targetChainId,
   ]);
 
-  const handleDisconnect = async (
-    setIsWalletConnectedStateInInput: (val?: boolean) => void,
-    handleAddressChangeInForm: (address: string) => void,
-    provider?: AnyObject,
-  ) => {
-    if (provider?.disconnect && typeof provider.disconnect === 'function') {
-      await provider.disconnect();
-    }
-    setProvider(null);
-    setAddress(null);
-    setNetwork(null);
-    setConnectionError(null);
-    setIsWalletConnectedStateInInput(false);
-    setIsFormInputFilled(false);
-    handleAddressChangeInForm(null);
-  };
+  const handleDisconnect = useCallback(
+    async (
+      setIsWalletConnectedStateInInput: (val?: boolean) => void,
+      handleAddressChangeInForm: (address: string) => void,
+      provider?: AnyObject,
+    ) => {
+      if (provider?.disconnect && typeof provider.disconnect === 'function') {
+        await provider.disconnect();
+      }
+      setProvider(null);
+      setAddress(null);
+      setNetwork(null);
+      setConnectionError(null);
+      setIsWalletConnectedStateInInput(false);
+      setIsFormInputFilled(false);
+      handleAddressChangeInForm(null);
+    },
+    [
+      setProvider,
+      setAddress,
+      setNetwork,
+      setConnectionError,
+      setIsFormInputFilled,
+    ],
+  );
 
   const disconnectWallet = useCallback(async () => {
     return handleDisconnect(
@@ -172,8 +209,19 @@ const ConnectWalletButton: React.FC<Props> = props => {
       };
 
       // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
-      const handleChainChanged = (_hexChainId: string) => {
-        window.location.reload();
+      const handleChainChanged = async (_hexChainId: string) => {
+        try {
+          const currentProvider = provider || metaMaskProvider;
+          if (!currentProvider) return;
+          const updatedWeb3Provider = new ethers.providers.Web3Provider(
+            currentProvider,
+          );
+          const updatedNetwork = await updatedWeb3Provider.getNetwork();
+          setWeb3Provider(updatedWeb3Provider);
+          setNetwork(updatedNetwork);
+        } catch (error) {
+          log.error('chainChanged handling error', error);
+        }
       };
 
       provider.on('accountsChanged', handleAccountsChanged);
@@ -191,11 +239,15 @@ const ConnectWalletButton: React.FC<Props> = props => {
   }, [
     handleAddressChange,
     provider,
+    metaMaskProvider,
     setIsWalletConnected,
     connectionError,
     handleDisconnect,
     setAddress,
     setConnectionError,
+    setNetwork,
+    setWeb3Provider,
+    address,
   ]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 export const QUERY_PARAMS_NAMES = {
   ADDRESS: 'address',
+  CHAIN: 'chain',
   DOMAIN: 'domain',
   EMAIL: 'email',
   ENDPOINT: 'endpoint',

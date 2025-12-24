@@ -16,7 +16,6 @@ import apis from '../../api';
 import { useFioAddresses, useWalletBalances } from '../../util/hooks';
 import useEffectOnce from '../../hooks/general';
 import MathOp from '../../util/math';
-
 import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -33,14 +32,7 @@ import {
   WrapTokensValues,
 } from './types';
 
-import classes from './styles/WrapTokensPage.module.scss';
-
-const NETWORK_TYPES = [
-  {
-    name: 'Ethereum Network',
-    id: 'ETH',
-  },
-];
+import classes from './WrapTokensPage.module.scss';
 
 const WrapTokensPage: React.FC<ContainerProps> = props => {
   const {
@@ -131,7 +123,6 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
 
   const initialValues: InitialValues = {
     tpid: walletFioAddresses[0]?.name,
-    chainCode: NETWORK_TYPES[0].id,
   };
 
   if (resultsData)
@@ -175,12 +166,6 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
         <p className={classes.subtitle}>
           <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
           {fioWallet.name}
-        </p>
-        <p className={classes.subtitle}>
-          <span className={classes.subtitleThin}>
-            FIO Tokens are wrapped on the
-          </span>{' '}
-          {NETWORK_TYPES[0].name}
         </p>
         <p className={classes.subtitle}>
           <span className={classNames(classes.subtitleThin, classes.textSmall)}>

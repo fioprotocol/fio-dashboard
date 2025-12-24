@@ -1,4 +1,5 @@
 import { WRAP_STATUS_NETWORKS } from '../config/constants';
+import { CHAIN_CODES } from '../constants/chain.mjs';
 import { convertToNewDate } from './general.mjs';
 
 const DEFAULT_ORACLE_APPROVAL_COUNT = 3;
@@ -58,9 +59,16 @@ export const normalizeWrapData = wrapItem => {
   const { blockNumber: confirmBlockNumber, blockTimeStamp, transactionHash } =
     confirmData || {};
 
-  const isComplete =
+  // Check if we have wrap confirmation from EVM chain (preferred)
+  let isComplete =
     confirmData &&
-    (!Object.keys(confirmData).includes('isComplete') || !!data.confirmData.isComplete);
+    (confirmData.isComplete === undefined ? true : Boolean(confirmData.isComplete));
+
+  // If no wrap confirmation, check if we have enough oracle confirmations (3+)
+  // This matches the logic used in unwrap operations - same approval count check
+  if (!isComplete && oravotes && oravotes.length >= DEFAULT_ORACLE_APPROVAL_COUNT) {
+    isComplete = true;
+  }
 
   const status = parseActionStatus({ blockTimestamp: timestamp + 'Z', isComplete });
 
@@ -76,7 +84,7 @@ export const normalizeWrapData = wrapItem => {
   if (chain_code) {
     approvals.chainCode =
       chain_code === WRAP_STATUS_NETWORKS.MATIC || chain_code === WRAP_STATUS_NETWORKS.POL
-        ? WRAP_STATUS_NETWORKS.POLYGON
+        ? CHAIN_CODES.POL
         : chain_code;
   }
 
@@ -110,6 +118,7 @@ export const normalizeUnwrapData = unwrapItem => {
     address,
     amount,
     blockNumber,
+    chainCode,
     confirmData,
     data,
     domain,
@@ -169,11 +178,7 @@ export const normalizeUnwrapData = unwrapItem => {
     approvals,
     blockNumber,
     blockTimestamp: blockTimestampDate ? blockTimestampDate : null,
-    chain: amount
-      ? WRAP_STATUS_NETWORKS.ETH
-      : domain
-      ? WRAP_STATUS_NETWORKS.POLYGON
-      : 'N/A',
+    chain: chainCode || 'N/A',
     domain,
     from: address,
     status,
@@ -185,6 +190,7 @@ export const normalizeUnwrapData = unwrapItem => {
 export const normalizeBurnData = burnDomainItem => {
   const {
     blockNumber,
+    chainCode,
     confirmData,
     data,
     domain,
@@ -195,7 +201,7 @@ export const normalizeBurnData = burnDomainItem => {
   const { timestamp } = data || {};
 
   const approvals = {
-      chainCode: WRAP_STATUS_NETWORKS.POLYGON,
+      chainCode,
     },
     voters = [];
 
@@ -204,7 +210,7 @@ export const normalizeBurnData = burnDomainItem => {
 
   const isComplete =
     confirmData &&
-    (!Object.keys(confirmData).includes('isComplete') || !!data.confirmData.isComplete);
+    (confirmData.isComplete === undefined ? true : Boolean(confirmData.isComplete));
 
   const status = parseActionStatus({
     blockTimestamp: timestamp + 'Z',
@@ -307,7 +313,7 @@ export const extractDomainBurnTokeIdfromObtid = input => {
     return null;
   }
 
-  const pattern = /^(\d+)AutomaticDomainBurn/;
+  const pattern = /^(\d+)Automatic(?:Domain|NFT)Burn/;
   const match = input.match(pattern);
 
   if (match) {

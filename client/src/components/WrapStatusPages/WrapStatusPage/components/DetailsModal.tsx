@@ -9,7 +9,19 @@ import { CommandComponent } from './CommandComponent';
 
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { WRAP_ITEM_STATUS } from '../../../../constants/wrap';
-import { WRAP_STATUS_CONTENT } from '../constants';
+import {
+  WRAP_STATUS_CONTENT,
+  OPERATION_TYPES,
+  ASSET_TYPES,
+  OperationType,
+  AssetType,
+} from '../constants';
+
+import {
+  getExplorerTxUrl,
+  getExplorerAddressUrl,
+  getActionTitle,
+} from '../utils';
 
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 import { renderFioPriceFromSuf } from '../../../../util/fio';
@@ -21,13 +33,23 @@ import classes from './../WrapStatus.module.scss';
 type Props = {
   itemData?: WrapStatusWrapItem;
   onClose: () => void;
-  isWrap: boolean;
-  isTokens: boolean;
-  isBurned: boolean;
+  operationType: OperationType;
+  assetType: AssetType;
+  chainCode: string;
 };
 
 const DetailsModal: React.FC<Props> = props => {
-  const { itemData, onClose, isWrap, isTokens, isBurned } = props;
+  const {
+    chainCode: defaultChainCode,
+    itemData,
+    onClose,
+    operationType,
+    assetType,
+  } = props;
+
+  const isWrap = operationType === OPERATION_TYPES.WRAP;
+  const isBurned = operationType === OPERATION_TYPES.BURNED;
+  const isTokens = assetType === ASSET_TYPES.TOKENS;
 
   const {
     actionType,
@@ -64,11 +86,13 @@ const DetailsModal: React.FC<Props> = props => {
     obtid = Object.entries(counts).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
   }
 
-  const wrapTokenFailedCommand = `npm run oracle wrap tokens amount:${amount} address:${to} obtId:${obtid}`;
-  const wrapDomainFailedCommand = `npm run oracle wrap domain domain:${domain} address:${to} obtId:${obtid}`;
-  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens amount:${amount} address:${to} obtId:${obtid}`;
-  const unwrapDomainFailedCommand = `npm run oracle unwrap domain domain:${domain} address:${to} obtId:${obtid}`;
-  const burnDomainFailedCommand = `npm run oracle burn domain domain:${domain} tokenId:${tokenId} obtId:${obtid}`;
+  const chainCode = approvals?.chainCode || defaultChainCode;
+
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens chainCode:${chainCode} amount:${amount} address:${to} obtId:${obtid}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap nfts chainCode:${chainCode} nftName:${domain} address:${to} obtId:${obtid}`;
+  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens chainCode:${chainCode} amount:${amount} address:${to} obtId:${obtid}`;
+  const unwrapDomainFailedCommand = `npm run oracle unwrap nfts chainCode:${chainCode} nftName:${domain} address:${to} obtId:${obtid}`;
+  const burnDomainFailedCommand = `npm run oracle burn nfts chainCode:${chainCode} nftName:${domain} tokenId:${tokenId} obtId:${obtid}`;
 
   const wrapCommand = isWrap
     ? isTokens
@@ -79,6 +103,11 @@ const DetailsModal: React.FC<Props> = props => {
     : isBurned
     ? burnDomainFailedCommand
     : unwrapDomainFailedCommand;
+
+  const explorerTxUrl = getExplorerTxUrl(chain);
+
+  const voterExplorerTxUrl = getExplorerTxUrl(chainCode);
+  const voterExplorerAddressUrl = getExplorerAddressUrl(chainCode);
 
   return (
     <Modal
@@ -91,13 +120,10 @@ const DetailsModal: React.FC<Props> = props => {
     >
       <div className="d-flex flex-column w-100">
         <h3 className="d-flex mt-2 mb-3 justify-content-between">
-          <div>
-            {isWrap ? 'Wrap ' : isBurned ? 'Burn ' : 'Unwrap '}
-            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
-          </div>
+          <div>{getActionTitle({ operationType, assetType })}</div>
           {itemData ? (
-            <Badge variant={WRAP_STATUS_CONTENT[itemData.status].type}>
-              {WRAP_STATUS_CONTENT[itemData.status].text}
+            <Badge variant={WRAP_STATUS_CONTENT[itemData.status]?.type}>
+              {WRAP_STATUS_CONTENT[itemData.status]?.text}
             </Badge>
           ) : null}
         </h3>
@@ -112,10 +138,7 @@ const DetailsModal: React.FC<Props> = props => {
                   href={
                     (isWrap || isBurned
                       ? process.env.REACT_APP_FIO_BLOCKS_TX_URL
-                      : isTokens
-                      ? process.env.REACT_APP_ETH_HISTORY_URL
-                      : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                    itemData.transactionId
+                      : explorerTxUrl) + itemData.transactionId
                   }
                   target="_blank"
                   rel="noreferrer"
@@ -229,12 +252,7 @@ const DetailsModal: React.FC<Props> = props => {
                         <div className="d-flex flex-row">
                           <p className="mr-2">Oracle:</p>
                           <a
-                            href={
-                              (isTokens
-                                ? process.env.REACT_APP_ETH_ADDRESS_URL
-                                : process.env.REACT_APP_POLYGON_ADDRESS_URL) +
-                              voter.account
-                            }
+                            href={voterExplorerAddressUrl + voter.account}
                             target="_blank"
                             rel="noreferrer"
                           >
@@ -244,12 +262,7 @@ const DetailsModal: React.FC<Props> = props => {
                         <div className="d-flex flex-row ml-4">
                           <p className="mr-2">Trx:</p>
                           <a
-                            href={
-                              (isTokens
-                                ? process.env.REACT_APP_ETH_HISTORY_URL
-                                : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                              voter.transactionHash
-                            }
+                            href={voterExplorerTxUrl + voter.transactionHash}
                             target="_blank"
                             rel="noreferrer"
                           >
@@ -264,7 +277,7 @@ const DetailsModal: React.FC<Props> = props => {
             )}
 
             <div>
-              {approvals.txId && (
+              {approvals?.txId && (
                 <>
                   <div className="d-flex justify-content-between my-2">
                     <div className="mr-3">
@@ -272,12 +285,7 @@ const DetailsModal: React.FC<Props> = props => {
                     </div>
                     <div className={classes.trxId}>
                       <a
-                        href={
-                          (isTokens
-                            ? process.env.REACT_APP_ETH_HISTORY_URL
-                            : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                          approvals.txId
-                        }
+                        href={voterExplorerTxUrl + approvals.txId}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -291,9 +299,9 @@ const DetailsModal: React.FC<Props> = props => {
                 <div className="mr-3">
                   <b>Chain:</b>
                 </div>
-                <div>{approvals.chainCode}</div>
+                <div>{approvals?.chainCode}</div>
               </div>
-              {approvals.blockNumber && (
+              {approvals?.blockNumber && (
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>Block Number:</b>
@@ -301,7 +309,7 @@ const DetailsModal: React.FC<Props> = props => {
                   <div>{approvals.blockNumber}</div>
                 </div>
               )}
-              {approvals.blockTimeStamp && (
+              {approvals?.blockTimeStamp && (
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>Block Time:</b>
@@ -317,7 +325,7 @@ const DetailsModal: React.FC<Props> = props => {
                   <div>{JSON.stringify(approvals.voters)}</div>
                 </div>
               )}
-              {Object.keys(approvals).includes('isComplete') && (
+              {approvals && Object.keys(approvals).includes('isComplete') && (
                 <>
                   <div className="d-flex justify-content-between my-2">
                     <div className="mr-3">
@@ -328,7 +336,7 @@ const DetailsModal: React.FC<Props> = props => {
                 </>
               )}
               <CommandComponent commandString={wrapCommand} show={isFailed} />
-              {approvals.txIds && (
+              {approvals?.txIds && (
                 <>
                   <div className="mr-3 mt-3">
                     <b>Approvals:</b>

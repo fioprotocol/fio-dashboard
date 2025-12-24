@@ -11,6 +11,8 @@ import AmountInput from '../../../../components/Input/AmountInput';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { TransactionDetails } from '../../../../components/TransactionDetails/TransactionDetails';
 
+import { NETWORKS_LIST } from '../../../../constants/ethereum';
+
 import { formValidation } from './validation';
 import { useWalletBalances } from '../../../../util/hooks';
 import MathOp from '../../../../util/math';
@@ -19,10 +21,23 @@ import useInitializeProviderConnection from '../../../../hooks/externalWalletsCo
 
 import apis from '../../../../api';
 
-import { WrapTokensFormProps, WrapTokensValues } from '../../types';
+import {
+  SelectedNetworkType,
+  WrapTokensFormProps,
+  WrapTokensValues,
+} from '../../types';
 import { FeePrice } from '../../../../types';
 
-import classes from '../../styles/WrapTokensForm.module.scss';
+import classes from './WrapTokensForm.module.scss';
+import Dropdown from '../../../../components/Input/Dropdown';
+
+const networkOptions: SelectedNetworkType[] = [
+  NETWORKS_LIST.Ethereum,
+  NETWORKS_LIST.Base,
+].map(network => ({
+  name: network.name,
+  id: network.chainCode,
+}));
 
 const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
   const {
@@ -79,7 +94,7 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
     <Form
       onSubmit={handleSubmit}
       validate={formValidation.validateForm}
-      initialValues={initialValues}
+      initialValues={{ ...initialValues, chainCode: networkOptions[0]?.id }}
     >
       {(formRenderProps: FormRenderProps) => {
         const {
@@ -104,6 +119,20 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
             onSubmit={formRenderProps.handleSubmit}
             className={classes.form}
           >
+            <Field
+              name="chainCode"
+              component={Dropdown}
+              options={networkOptions}
+              defaultOptionValue={networkOptions[0]}
+              placeholder="Select Network"
+              label="Target Network"
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              isWhite
+              isHigh
+              isSimple
+              hideError
+            />
+
             <Field
               name="publicAddress"
               type="text"
