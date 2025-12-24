@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npm i github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
-    "postinstall": "cd node_modules/ledgerjs-hw-app-fio && npm i --legacy-peer-deps && npm run prepublish",
+    "postinstall": "node scripts/install-ledger.js",
     "client:start": "cd ./client && react-app-rewired start",
     "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build && react-snap",
     "client:build:no-snap": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
@@ -183,7 +183,6 @@
     "jsonpath": "1.1.1",
     "jsonwebtoken": "8.5.1",
     "jspdf": "2.5.1",
-    "ledgerjs-hw-app-fio": "https://gitpkg.vercel.app/vacuumlabs/ledger-fio/ledgerjs-fio?memo_hotfix",
     "livr": "2.4.0",
     "livr-extra-rules": "1.3.0",
     "moralis": "2.23.2",
