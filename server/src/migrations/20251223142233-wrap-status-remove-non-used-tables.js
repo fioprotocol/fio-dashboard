@@ -5,48 +5,29 @@ module.exports = {
   async up(queryInterface) {
     return queryInterface.sequelize.transaction(async t => {
       // Drop tables in reverse dependency order (child tables first)
-      await queryInterface.dropTable('wrap-status-fio-unwrap-nfts-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-fio-unwrap-tokens-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-fio-unwrap-nfts-oravotes', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-fio-unwrap-tokens-oravotes', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-fio-wrap-nft-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-fio-wrap-tokens-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-fio-burned-domains-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-polygon-burned-domains-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-polygon-oracles-confirmations-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-polygon-unwrap-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-polygon-wrap-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-eth-oracles-confirmations-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-eth-unwrap-logs', {
-        transaction: t,
-      });
-      await queryInterface.dropTable('wrap-status-eth-wrap-logs', {
-        transaction: t,
-      });
+      // Using IF EXISTS to make migration idempotent
+      const tablesToDrop = [
+        'wrap-status-fio-unwrap-nfts-logs',
+        'wrap-status-fio-unwrap-tokens-logs',
+        'wrap-status-fio-unwrap-nfts-oravotes',
+        'wrap-status-fio-unwrap-tokens-oravotes',
+        'wrap-status-fio-wrap-nft-logs',
+        'wrap-status-fio-wrap-tokens-logs',
+        'wrap-status-fio-burned-domains-logs',
+        'wrap-status-polygon-burned-domains-logs',
+        'wrap-status-polygon-oracles-confirmations-logs',
+        'wrap-status-polygon-unwrap-logs',
+        'wrap-status-polygon-wrap-logs',
+        'wrap-status-eth-oracles-confirmations-logs',
+        'wrap-status-eth-unwrap-logs',
+        'wrap-status-eth-wrap-logs',
+      ];
+
+      for (const tableName of tablesToDrop) {
+        await queryInterface.sequelize.query(`DROP TABLE IF EXISTS "${tableName}";`, {
+          transaction: t,
+        });
+      }
     });
   },
 
