@@ -3,105 +3,119 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (QI, DT) => {
-    await QI.createTable('wrap-status-fio-chain-events', {
-      id: {
-        type: DT.BIGINT,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-      },
-      actionType: {
-        type: DT.STRING(50),
-        allowNull: false,
-        field: 'action_type',
-        comment:
-          'wrapTokens | wrapDomain | unwrapTokens | unwrapDomain | burndomain | oravote',
-      },
-      blockNumber: {
-        type: DT.BIGINT,
-        allowNull: false,
-        defaultValue: 0,
-        field: 'block_number',
-      },
-      transactionId: {
-        type: DT.STRING(64),
-        allowNull: true,
-        field: 'transaction_id',
-      },
-      timestamp: {
-        type: DT.DATE,
-        allowNull: false,
-      },
-      actor: {
-        type: DT.STRING(13),
-        allowNull: true,
-        comment: 'FIO account name (max 12 chars)',
-      },
-      actionData: {
-        type: DT.JSONB,
-        allowNull: false,
-        field: 'action_data',
-      },
-      oracleId: {
-        type: DT.BIGINT,
-        allowNull: true,
-        field: 'oracle_id',
-        comment: 'References oracle table entry for wrap operations',
-      },
-      createdAt: {
-        type: DT.DATE,
-        allowNull: false,
-        defaultValue: DT.NOW,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DT.DATE,
-        allowNull: false,
-        defaultValue: DT.NOW,
-        field: 'updated_at',
-      },
-    });
+    // Check if table already exists
+    const [tables] = await QI.sequelize.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' AND table_name = 'wrap-status-fio-chain-events';
+    `);
 
-    // Add unique constraint (NULLS NOT DISTINCT for PostgreSQL 15+)
-    // For older PostgreSQL versions, this will still work but nulls are considered distinct
-    await QI.addConstraint('wrap-status-fio-chain-events', {
-      fields: ['transaction_id', 'action_type'],
-      type: 'unique',
-      name: 'unique_fio_action',
-    });
+    if (tables.length === 0) {
+      await QI.createTable('wrap-status-fio-chain-events', {
+        id: {
+          type: DT.BIGINT,
+          primaryKey: true,
+          autoIncrement: true,
+          allowNull: false,
+        },
+        actionType: {
+          type: DT.STRING(50),
+          allowNull: false,
+          field: 'action_type',
+          comment:
+            'wrapTokens | wrapDomain | unwrapTokens | unwrapDomain | burndomain | oravote',
+        },
+        blockNumber: {
+          type: DT.BIGINT,
+          allowNull: false,
+          defaultValue: 0,
+          field: 'block_number',
+        },
+        transactionId: {
+          type: DT.STRING(64),
+          allowNull: true,
+          field: 'transaction_id',
+        },
+        timestamp: {
+          type: DT.DATE,
+          allowNull: false,
+        },
+        actor: {
+          type: DT.STRING(13),
+          allowNull: true,
+          comment: 'FIO account name (max 12 chars)',
+        },
+        actionData: {
+          type: DT.JSONB,
+          allowNull: false,
+          field: 'action_data',
+        },
+        oracleId: {
+          type: DT.BIGINT,
+          allowNull: true,
+          field: 'oracle_id',
+          comment: 'References oracle table entry for wrap operations',
+        },
+        createdAt: {
+          type: DT.DATE,
+          allowNull: false,
+          defaultValue: DT.NOW,
+          field: 'created_at',
+        },
+        updatedAt: {
+          type: DT.DATE,
+          allowNull: false,
+          defaultValue: DT.NOW,
+          field: 'updated_at',
+        },
+      });
+    }
 
-    // Add indexes
-    await QI.addIndex('wrap-status-fio-chain-events', ['action_type'], {
-      name: 'idx_fio_events_action_type',
-    });
+    // Add unique constraint if it doesn't exist
+    const [constraints] = await QI.sequelize.query(`
+      SELECT constraint_name FROM information_schema.table_constraints 
+      WHERE table_name = 'wrap-status-fio-chain-events' AND constraint_name = 'unique_fio_action';
+    `);
 
-    await QI.addIndex('wrap-status-fio-chain-events', ['block_number'], {
-      name: 'idx_fio_events_block_number',
-    });
+    if (constraints.length === 0) {
+      await QI.addConstraint('wrap-status-fio-chain-events', {
+        fields: ['transaction_id', 'action_type'],
+        type: 'unique',
+        name: 'unique_fio_action',
+      });
+    }
 
-    await QI.addIndex('wrap-status-fio-chain-events', ['transaction_id'], {
-      name: 'idx_fio_events_transaction',
-    });
+    // Add indexes if they don't exist
+    await QI.sequelize.query(`
+      CREATE INDEX IF NOT EXISTS idx_fio_events_action_type ON "wrap-status-fio-chain-events" (action_type);
+    `);
 
-    await QI.addIndex('wrap-status-fio-chain-events', ['timestamp'], {
-      name: 'idx_fio_events_timestamp',
-    });
+    await QI.sequelize.query(`
+      CREATE INDEX IF NOT EXISTS idx_fio_events_block_number ON "wrap-status-fio-chain-events" (block_number);
+    `);
 
-    await QI.addIndex('wrap-status-fio-chain-events', ['actor'], {
-      name: 'idx_fio_events_actor',
-    });
+    await QI.sequelize.query(`
+      CREATE INDEX IF NOT EXISTS idx_fio_events_transaction ON "wrap-status-fio-chain-events" (transaction_id);
+    `);
+
+    await QI.sequelize.query(`
+      CREATE INDEX IF NOT EXISTS idx_fio_events_timestamp ON "wrap-status-fio-chain-events" (timestamp);
+    `);
+
+    await QI.sequelize.query(`
+      CREATE INDEX IF NOT EXISTS idx_fio_events_actor ON "wrap-status-fio-chain-events" (actor);
+    `);
 
     // Partial index for oracle_id (only when not null)
     await QI.sequelize.query(`
-      CREATE INDEX idx_fio_events_oracle_id ON "wrap-status-fio-chain-events" (oracle_id) WHERE oracle_id IS NOT NULL;
+      CREATE INDEX IF NOT EXISTS idx_fio_events_oracle_id ON "wrap-status-fio-chain-events" (oracle_id) WHERE oracle_id IS NOT NULL;
     `);
 
     // GIN index for JSONB
     await QI.sequelize.query(`
-      CREATE INDEX idx_fio_events_data ON "wrap-status-fio-chain-events" USING GIN (action_data);
+      CREATE INDEX IF NOT EXISTS idx_fio_events_data ON "wrap-status-fio-chain-events" USING GIN (action_data);
     `);
 
-    // Create trigger function for updated_at
+    // Create trigger function for updated_at (CREATE OR REPLACE handles idempotency)
     await QI.sequelize.query(`
       CREATE OR REPLACE FUNCTION update_fio_events_updated_at()
       RETURNS TRIGGER AS $$
@@ -112,7 +126,11 @@ module.exports = {
       $$ language 'plpgsql';
     `);
 
-    // Create trigger
+    // Create trigger if it doesn't exist
+    await QI.sequelize.query(`
+      DROP TRIGGER IF EXISTS update_fio_events_updated_at_trigger ON "wrap-status-fio-chain-events";
+    `);
+
     await QI.sequelize.query(`
       CREATE TRIGGER update_fio_events_updated_at_trigger
       BEFORE UPDATE ON "wrap-status-fio-chain-events"
