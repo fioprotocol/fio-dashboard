@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, ReactNode } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { ExportToCsv } from 'export-to-csv';
 
@@ -7,7 +7,6 @@ import apis from '../../../landing-pages/wrap-status-landing-page/api';
 
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-import useQuery from '../../../hooks/useQuery';
 
 import {
   OPERATION_TYPES,
@@ -129,10 +128,15 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
   } = props;
 
   const history = useHistory();
-  const queryParams = useQuery();
+  const location = useLocation();
+
+  // Get query params directly from location.search (no state delay)
+  const queryParams = useMemo(() => new URLSearchParams(location.search), [
+    location.search,
+  ]);
 
   // Get chain from URL or use default for the current operation/asset
-  const getValidChainCode = useCallback((): ChainCode | null => {
+  const validChainCode = useMemo((): ChainCode | null => {
     const chainFromUrl = queryParams.get(QUERY_PARAMS_NAMES.CHAIN);
     const supportedChains = getSupportedChains({ operationType, assetType });
 
@@ -144,8 +148,6 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
     }
     return defaultChainCode || getDefaultChain({ operationType, assetType });
   }, [queryParams, operationType, assetType, defaultChainCode]);
-
-  const validChainCode = getValidChainCode();
 
   // Current page params from props and URL
   const currentPageParams: PageParamsState = useMemo(
@@ -165,11 +167,10 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
   // Only sync selected params when operation/asset type changes (page navigation)
   // Don't sync on location.search changes to preserve user's dropdown selections
   useEffect(() => {
-    const newChainCode = getValidChainCode();
     setSelectedParams({
       operationType,
       assetType,
-      chainCode: newChainCode,
+      chainCode: validChainCode,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [operationType, assetType]);
@@ -190,12 +191,13 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
     createdAt: null,
     dateRange: null,
   });
-  // Applied filters for API (converted dates and chain for actual API calls)
-  const [appliedFilters, setAppliedFilters] = useState<FiltersState>({
-    createdAt: null,
-    dateRange: null,
-    chain: validChainCode,
-  });
+  // Applied date filters for API (converted dates - chain comes from URL)
+  const [appliedDateFilters, setAppliedDateFilters] = useState<DateFilterState>(
+    {
+      createdAt: null,
+      dateRange: null,
+    },
+  );
   const [dateRange, setDateRange] = useState<[Date, Date]>([null, null]);
   const [showDatePicker, toggleShowDatePicker] = useState<boolean>(false);
 
@@ -221,6 +223,17 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
 
   const [startDate, endDate] = dateRange;
   const [exportStartDate, exportEndDate] = exportDateRange;
+
+  // Derive appliedFilters from URL (chain) + state (date filters)
+  // Chain comes directly from URL - no sync needed, no useEffect
+  // When URL changes, validChainCode changes, appliedFilters recomputes
+  const appliedFilters: FiltersState = useMemo(
+    () => ({
+      ...appliedDateFilters,
+      chain: validChainCode,
+    }),
+    [appliedDateFilters, validChainCode],
+  );
 
   // Pass applied filters to pagination - this triggers data refetch when filters change
   const { paginationComponent } = usePagination(getData, 25, appliedFilters);
@@ -528,20 +541,18 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
 
   // Navigation action
   const handleOpenLink = useCallback(() => {
-    // Save the original selection for comparison
+    // Save the original selection for comparison (used for isNavigationDisabled check)
     setAppliedDateFilter({ ...selectedDateFilter });
 
-    // Convert and apply the selected date filter for API (include chain)
+    // Convert the selected date filter for API and update applied date filters
     const convertedFilters = convertDateFilterForApi(selectedDateFilter);
-    setAppliedFilters({
-      ...convertedFilters,
-      chain: selectedParams.chainCode,
-    });
+    setAppliedDateFilters(convertedFilters);
 
-    // Build URL with chain parameter
+    // Build URL with chain parameter, preserving existing params (limit, offset)
     const routeKey = getRouteKeyFromParams(selectedParams);
     if (routeKey && ROUTES[routeKey]) {
-      const newQueryParams = new URLSearchParams();
+      // Preserve existing query params (important for pagination's limit/offset)
+      const newQueryParams = new URLSearchParams(location.search);
       if (selectedParams.chainCode) {
         newQueryParams.set(QUERY_PARAMS_NAMES.CHAIN, selectedParams.chainCode);
       }
@@ -552,6 +563,9 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
         searchString ? `?${searchString}` : ''
       }`;
 
+      // Navigate if route or chain changed - this updates the URL
+      // The chain in appliedFilters will update automatically via useMemo
+      // since validChainCode reads from queryParams which react to URL changes
       if (
         routeKey !== currentRouteKey ||
         selectedParams.chainCode !== currentPageParams.chainCode
@@ -565,6 +579,7 @@ export const useContext = (props: PageProps): WrapStatusContextProps => {
     currentPageParams,
     history,
     convertDateFilterForApi,
+    location.search,
   ]);
 
   // Export data handler

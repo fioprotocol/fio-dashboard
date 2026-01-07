@@ -37,7 +37,7 @@
 
 .tableContainer {
   width: 100%;
-  margin-top: 30px;
+  margin: 30px auto 0;
   max-width: 1300px;
   padding: 0 5%;
 
@@ -161,6 +161,27 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
+  // Fix react-datepicker clear button overlapping with text
+  :global(.react-datepicker__close-icon) {
+    right: 5px;
+    padding: 0;
+
+    &::after {
+      background-color: #6c757d;
+      font-size: 14px;
+      height: 18px;
+      width: 18px;
+      line-height: 16px;
+    }
+  }
+
+  :global(.react-datepicker__input-container) {
+    input {
+      padding-right: 30px; // Make room for the clear button
+      min-width: 220px; // Enough width to show full date range
+    }
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;

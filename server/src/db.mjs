@@ -93,6 +93,7 @@ for (const modelName in models) {
   }
 }
 
-sequelize.sync();
+// Note: sequelize.sync() removed - using migrations for schema management instead.
+// sync() can cause race conditions when multiple processes (API + cron jobs) start simultaneously.
 
 export default sequelize;
