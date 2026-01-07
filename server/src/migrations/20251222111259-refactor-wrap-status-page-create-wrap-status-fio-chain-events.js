@@ -9,7 +9,7 @@ module.exports = {
       WHERE table_schema = 'public' AND table_name = 'wrap-status-fio-chain-events';
     `);
 
-    if (tables.length === 0) {
+    if (!tables || tables.length === 0) {
       await QI.createTable('wrap-status-fio-chain-events', {
         id: {
           type: DT.BIGINT,
@@ -76,7 +76,7 @@ module.exports = {
       WHERE table_name = 'wrap-status-fio-chain-events' AND constraint_name = 'unique_fio_action';
     `);
 
-    if (constraints.length === 0) {
+    if (!constraints || constraints.length === 0) {
       await QI.addConstraint('wrap-status-fio-chain-events', {
         fields: ['transaction_id', 'action_type'],
         type: 'unique',
@@ -150,7 +150,9 @@ module.exports = {
       DROP FUNCTION IF EXISTS update_fio_events_updated_at();
     `);
 
-    // Drop table
-    await QI.dropTable('wrap-status-fio-chain-events');
+    // Drop table if exists
+    await QI.sequelize.query(`
+      DROP TABLE IF EXISTS "wrap-status-fio-chain-events";
+    `);
   },
 };
