@@ -10,7 +10,7 @@ module.exports = {
       AND column_name IN ('isWrap', 'isBurn');
     `);
 
-    if (columns.length > 0) {
+    if (columns && columns.length > 0) {
       // Remove duplicate rows by networkId, keeping one row per networkId
       // Priority: 1) isWrap=false AND isBurn=false, 2) highest blockNumber, 3) lowest id
       await QI.sequelize.query(`
@@ -45,16 +45,29 @@ module.exports = {
   },
 
   down: async (QI, DT) => {
-    // Recreate columns for rollback
-    await QI.addColumn('wrap-status-block-numbers', 'isWrap', {
-      type: DT.BOOLEAN,
-      defaultValue: false,
-    });
+    // Check if columns already exist before adding
+    const [columns] = await QI.sequelize.query(`
+      SELECT column_name FROM information_schema.columns 
+      WHERE table_name = 'wrap-status-block-numbers' 
+      AND column_name IN ('isWrap', 'isBurn');
+    `);
 
-    await QI.addColumn('wrap-status-block-numbers', 'isBurn', {
-      type: DT.BOOLEAN,
-      defaultValue: false,
-    });
+    const existingColumns = columns ? columns.map(col => col.column_name) : [];
+
+    // Recreate columns for rollback (only if they don't exist)
+    if (!existingColumns.includes('isWrap')) {
+      await QI.addColumn('wrap-status-block-numbers', 'isWrap', {
+        type: DT.BOOLEAN,
+        defaultValue: false,
+      });
+    }
+
+    if (!existingColumns.includes('isBurn')) {
+      await QI.addColumn('wrap-status-block-numbers', 'isBurn', {
+        type: DT.BOOLEAN,
+        defaultValue: false,
+      });
+    }
 
     // Set isWrap: true for networkId 1 (ETH) and 2 (POLYGON)
     await QI.sequelize.query(`
@@ -71,7 +84,7 @@ module.exports = {
       LIMIT 1;
     `);
 
-    if (results.length === 0) {
+    if (!results || results.length === 0) {
       await QI.bulkInsert('wrap-status-block-numbers', [
         {
           networkId: 2,

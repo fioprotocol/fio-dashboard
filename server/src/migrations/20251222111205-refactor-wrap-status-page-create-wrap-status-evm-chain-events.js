@@ -9,7 +9,7 @@ module.exports = {
       WHERE table_schema = 'public' AND table_name = 'wrap-status-evm-chain-events';
     `);
 
-    if (tables.length === 0) {
+    if (!tables || tables.length === 0) {
       await QI.createTable('wrap-status-evm-chain-events', {
         id: {
           type: DT.BIGINT,
@@ -75,7 +75,7 @@ module.exports = {
       WHERE table_name = 'wrap-status-evm-chain-events' AND constraint_name = 'unique_evm_event';
     `);
 
-    if (constraints.length === 0) {
+    if (!constraints || constraints.length === 0) {
       await QI.addConstraint('wrap-status-evm-chain-events', {
         fields: ['network_id', 'transaction_hash', 'event_type', 'block_number'],
         type: 'unique',
@@ -140,7 +140,9 @@ module.exports = {
       DROP FUNCTION IF EXISTS update_evm_events_updated_at();
     `);
 
-    // Drop table (indexes and constraints will be dropped automatically)
-    await QI.dropTable('wrap-status-evm-chain-events');
+    // Drop table if exists (indexes and constraints will be dropped automatically)
+    await QI.sequelize.query(`
+      DROP TABLE IF EXISTS "wrap-status-evm-chain-events";
+    `);
   },
 };

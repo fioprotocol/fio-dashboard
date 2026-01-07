@@ -10,7 +10,7 @@ module.exports = {
       SELECT id FROM "wrap-status-networks" WHERE id = ${WRAP_STATUS_NETWORKS_IDS.BASE};
     `);
 
-    if (networks.length === 0) {
+    if (!networks || networks.length === 0) {
       // Add BASE network (id: 4)
       await queryInterface.bulkInsert('wrap-status-networks', [
         {
@@ -27,7 +27,7 @@ module.exports = {
       SELECT "networkId" FROM "wrap-status-block-numbers" WHERE "networkId" = ${WRAP_STATUS_NETWORKS_IDS.BASE};
     `);
 
-    if (blockNumbers.length === 0) {
+    if (!blockNumbers || blockNumbers.length === 0) {
       // Add block number record for BASE network (networkId: 4)
       await queryInterface.bulkInsert('wrap-status-block-numbers', [
         {
