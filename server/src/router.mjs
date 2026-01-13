@@ -1,7 +1,6 @@
 import fs from 'fs';
 
 import express from 'express';
-import superagent from 'superagent';
 
 import routes from './routes';
 
@@ -170,19 +169,6 @@ router.get('/account/wallet/fio-requests', checkUserAuth, routes.account.fioRequ
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 router.get('/ref-profile/settings/:code?', routes.refProfiles.settings);
 
-router.post('/fio-api/chain/get_table_rows', async (req, res) => {
-  const sReq = superagent.post(`${process.env.FIO_BASE_URL}chain/get_table_rows`);
-
-  sReq.send(req.body);
-
-  const result = await sReq.then(res => {
-    if (!res.status) throw res.body.error;
-    return res.body;
-  });
-
-  return res.status(200).send(result);
-});
-
 router.post('/contacts', checkUserAuth, routes.contacts.create);
 router.get('/contacts', checkUserAuth, routes.contacts.list);
 
@@ -279,7 +265,8 @@ router.get(
 // TODO: commented due to DASH-711 task. We hide it until figure out with hash
 // router.get('/fetch-image-hash', routes.general.imageToHash);
 
-router.get('/get-url-content', routes.general.getUrlContent);
+// TODO: temporary closed
+// router.get('/get-url-content', routes.general.getUrlContent);
 
 router.post('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.create);
 router.delete('/domains-watchlist', checkUserAuth, routes.domainsWatchlist.delete);
