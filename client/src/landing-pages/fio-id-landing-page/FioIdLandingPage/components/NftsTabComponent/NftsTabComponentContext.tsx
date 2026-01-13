@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import apis from '../../../api';
 
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
-import { loadImage, log } from '../../../../../util/general';
+import { loadImage } from '../../../../../util/general';
 import useEffectOnce from '../../../../../hooks/general';
 
 import noImageIconSrc from '../../../../../assets/images/no-photo.svg';
@@ -197,7 +197,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         }
       }
 
-      let fetchedImageFileString = null;
+      const fetchedImageFileString: null | string = null;
 
       const fioImageUrl = await loadImage(url);
       const externalProviderImageUrl = await loadImage(
@@ -207,35 +207,36 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         nftItemObj.externalProviderMetadata?.externalUrl,
       );
 
-      if (!fioImageUrl && !externalProviderImageUrl && !externalProviderLink) {
-        try {
-          const contentUrl =
-            url ||
-            nftItemObj.externalProviderMetadata?.imageSrc ||
-            nftItemObj.externalProviderMetadata?.externalUrl ||
-            null;
-          if (contentUrl !== null) {
-            const imageContentRes = await apis.general.getUrlContent(
-              contentUrl,
-            );
-            const tempContainer = document.createElement('div');
-            tempContainer.innerHTML = imageContentRes;
+      // TODO: temporary closed
+      // if (!fioImageUrl && !externalProviderImageUrl && !externalProviderLink) {
+      //   try {
+      //     const contentUrl =
+      //       url ||
+      //       nftItemObj.externalProviderMetadata?.imageSrc ||
+      //       nftItemObj.externalProviderMetadata?.externalUrl ||
+      //       null;
+      //     if (contentUrl !== null) {
+      //       const imageContentRes = await apis.general.getUrlContent(
+      //         contentUrl,
+      //       );
+      //       const tempContainer = document.createElement('div');
+      //       tempContainer.innerHTML = imageContentRes;
 
-            const firstImageElement = tempContainer.querySelector('img');
-            const firstSvgElement = tempContainer.querySelector('svg');
+      //       const firstImageElement = tempContainer.querySelector('img');
+      //       const firstSvgElement = tempContainer.querySelector('svg');
 
-            if (firstSvgElement) {
-              fetchedImageFileString = `data:image/svg+xml,${encodeURIComponent(
-                firstSvgElement.outerHTML,
-              )}`;
-            } else if (firstImageElement) {
-              fetchedImageFileString = firstImageElement.getAttribute('src');
-            }
-          }
-        } catch (err) {
-          log.error(err);
-        }
-      }
+      //       if (firstSvgElement) {
+      //         fetchedImageFileString = `data:image/svg+xml,${encodeURIComponent(
+      //           firstSvgElement.outerHTML,
+      //         )}`;
+      //       } else if (firstImageElement) {
+      //         fetchedImageFileString = firstImageElement.getAttribute('src');
+      //       }
+      //     }
+      //   } catch (err) {
+      //     log.error(err);
+      //   }
+      // }
 
       const viewNftLink =
         fioImageUrl || externalProviderImageUrl || externalProviderLink;
