@@ -204,7 +204,6 @@ router.post(
   routes.generatePdf.createOrderPdf,
 );
 
-router.post('/verify-twitter', routes.twitter.verify);
 router.get('/verify-abstract-email', routes.external.abstractEmailVerification);
 
 router.get('/wrap-status/page/data', routes.history.getWrapStatusPageData);

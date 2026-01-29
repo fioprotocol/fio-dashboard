@@ -18,7 +18,6 @@ import payments from './payments';
 import publicApi from './publicApi';
 import refProfiles from './refProfiles';
 import registration from './registration.mjs';
-import twitter from './twitter.mjs';
 import users from './users';
 import vars from './vars.mjs';
 
@@ -43,7 +42,6 @@ export default {
   publicApi,
   refProfiles,
   registration,
-  twitter,
   users,
   vars,
 };
