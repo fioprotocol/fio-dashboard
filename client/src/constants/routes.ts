@@ -2,7 +2,6 @@ import { REF_PROFILE_SLUG_NAME } from './ref';
 
 const ROUTES: { [route: string]: string } = {
   HOME: '/',
-  TWITTER_HANDLE: '/twitter-handle',
   DASHBOARD: '/myfio',
   NOT_FOUND: '/404',
   UNAVAILABLE: '/unavailable',

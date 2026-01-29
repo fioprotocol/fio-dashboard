@@ -202,12 +202,6 @@ export type UserOrdersListResponse = {
 };
 export type UserUpdateEmailNotificationResponse = DefaultSuccessResponse;
 export type HealthCheckResponse = { success: boolean };
-export type VerifyTwitterResponse = {
-  verified?: boolean;
-  isLocked?: boolean;
-  token?: string;
-  expires?: number;
-};
 
 export type VarsResponse = {
   id: string;
