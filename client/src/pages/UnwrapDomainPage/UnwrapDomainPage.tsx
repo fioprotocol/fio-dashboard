@@ -13,31 +13,27 @@ import { useFioAddresses } from '../../util/hooks';
 import useInitializeProviderConnection from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 import useGetWrappedFioData from '../../hooks/externalWalletsConnection/useGetWrappedFioData';
 import { log } from '../../util/general';
+import { switchEthereumChain } from '../../util/ethereum';
 
 import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
-import {
-  ANALYTICS_EVENT_ACTIONS,
-  CHAIN_CODES,
-  DOMAIN_WRAP_NETWORKS_LIST,
-} from '../../constants/common';
+import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../../constants/common';
+import { NETWORKS_LIST } from '../../constants/ethereum';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { ContainerProps, InitialValues, UnWrapDomainValues } from './types';
 
 import classes from './styles/UnwrapDomainPage.module.scss';
 
-const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
-  o => o.chain_code === 'POL',
-);
+const POLYGON_NETWORK = NETWORKS_LIST.Polygon;
 
 const initialValues: InitialValues = {
-  chainCode: POLYGON_NETWORK_DATA.chain_code,
+  chainCode: POLYGON_NETWORK.chainCode,
   fee: null,
 };
 
-const UnwrapTokensPage: React.FC<ContainerProps> = props => {
+const UnwrapDomainsPage: React.FC<ContainerProps> = props => {
   const { loading, history, roe } = props;
 
   const [fioAddresses] = useFioAddresses();
@@ -48,7 +44,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
   const [addressInPage, updateAddressInPage] = useState(null);
 
   const providerData = useInitializeProviderConnection();
-  const { web3Provider, network } = providerData;
+  const { web3Provider, network, provider } = providerData;
   const {
     wFioBalance,
     tokenContract,
@@ -56,6 +52,22 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
     isWrongNetwork,
   } = useGetWrappedFioData(web3Provider, network, addressInPage, true);
 
+  useEffect(() => {
+    const switchToPolygon = async () => {
+      if (provider && network && network.chainId !== POLYGON_NETWORK.chainID) {
+        try {
+          await switchEthereumChain({
+            provider,
+            targetChainId: POLYGON_NETWORK.chainID,
+            currentChainId: network.chainId,
+          });
+        } catch (e) {
+          log.error('Error switching to Polygon network', e);
+        }
+      }
+    };
+    switchToPolygon();
+  }, [provider, network]);
   const [fioAddressesList, setFioAddressesList] = useState([]);
   const [modalInfoError, setModalInfoError] = useState(null);
 
@@ -91,7 +103,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
         );
 
         const results = {
-          chainCode: POLYGON_NETWORK_DATA.chain_code,
+          chainCode: POLYGON_NETWORK.chainCode,
           receivingAddress: data.fioAddress,
           fioDomain: nfts?.length
             ? nfts.find(o => o.id === data.wrappedDomainTokenId)?.name
@@ -167,7 +179,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
           <span className={classes.subtitleThin}>
             FIO domains are wrapped on the
           </span>{' '}
-          {POLYGON_NETWORK_DATA.name} network
+          {POLYGON_NETWORK.name} network
         </p>
         <p className={classes.subtitle}>
           <span className={classes.subtitleThin}>
@@ -201,4 +213,4 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
   );
 };
 
-export default UnwrapTokensPage;
+export default UnwrapDomainsPage;
