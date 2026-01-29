@@ -53,7 +53,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
     network,
     addressInPage,
   );
-  console.log('network', network);
+
   const [fioAddressesList, setFioAddressesList] = useState([]);
   const [modalInfoError, setModalInfoError] = useState(null);
 
