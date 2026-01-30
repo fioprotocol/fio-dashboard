@@ -228,7 +228,7 @@ export default class Renew extends Base {
     // )(() => Bitpay.getInvoice(payment.externalPaymentId));
     const charge = {
       amount: normalizedPriceUsdc,
-      id: null,
+      id: 'disabled',
       paymentCodes: {},
       paymentSubtotals: {},
       paymentDisplaySubTotals: {},

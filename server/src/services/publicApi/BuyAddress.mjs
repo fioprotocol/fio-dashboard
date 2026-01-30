@@ -369,7 +369,7 @@ export default class BuyAddress extends Base {
       // )(() => Bitpay.getInvoice(payment.externalPaymentId));
       charge = {
         amount: normalizedPriceUsdc,
-        id: null,
+        id: 'disabled',
         paymentCodes: {},
         paymentSubtotals: {},
         paymentDisplaySubTotals: {},
