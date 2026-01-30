@@ -2,7 +2,7 @@ import { FIOSDK, GenericAction } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
 import {
-  createCallWithRetry,
+  // createCallWithRetry,
   destructAddress,
   formatChainDomain,
   generateErrorResponse,
@@ -17,7 +17,7 @@ import { ORDER_USER_TYPES } from '../../constants/order.mjs';
 import { HTTP_CODES } from '../../constants/general.mjs';
 import { normalizePriceForBitPay } from '../../utils/payment.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
-import Bitpay from '../../external/payment-processor/bitpay.mjs';
+// import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import logger from '../../logger.mjs';
 import { normalizeFioHandle, handleTooLongDomainRenewal } from '../../utils/fio.mjs';
 export default class Renew extends Base {
@@ -217,14 +217,22 @@ export default class Renew extends Base {
       );
     });
 
-    const payment = await Payment.createForOrder(order, Payment.PROCESSOR.BITPAY, [
+    const payment = await Payment.createForOrder(order, Payment.PROCESSOR.FIO, [
       orderItem,
     ]);
 
-    const charge = await createCallWithRetry(
-      6,
-      1000,
-    )(() => Bitpay.getInvoice(payment.externalPaymentId));
+    // DASH-1447: Bitpay should be skipped for now
+    // const charge = await createCallWithRetry(
+    //   6,
+    //   1000,
+    // )(() => Bitpay.getInvoice(payment.externalPaymentId));
+    const charge = {
+      amount: normalizedPriceUsdc,
+      id: null,
+      paymentCodes: {},
+      paymentSubtotals: {},
+      paymentDisplaySubTotals: {},
+    };
 
     return { order, orderItem, payment, charge };
   }
