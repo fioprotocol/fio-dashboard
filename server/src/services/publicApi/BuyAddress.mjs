@@ -16,13 +16,13 @@ import {
 } from '../../models';
 import { fioApi } from '../../external/fio';
 import { getROE } from '../../external/roe';
-import Bitpay from '../../external/payment-processor/bitpay.mjs';
+// import Bitpay from '../../external/payment-processor/bitpay.mjs';
 import emailSender from '../emailSender.mjs';
 import logger from '../../logger.mjs';
 import { templates } from '../../emails/emailTemplate.mjs';
 
 import {
-  createCallWithRetry,
+  // createCallWithRetry,
   destructAddress,
   findDomainInRefProfile,
   formatChainAddress,
@@ -353,17 +353,27 @@ export default class BuyAddress extends Base {
 
     const payment = await Payment.createForOrder(
       order,
-      isFree ? Payment.PROCESSOR.FIO : Payment.PROCESSOR.BITPAY,
+      // DASH-1447: Bitpay should be skipped for now
+      // isFree ? Payment.PROCESSOR.FIO : Payment.PROCESSOR.BITPAY,
+      Payment.PROCESSOR.FIO,
       [orderItem],
     );
 
     let charge;
 
     if (!isFree) {
-      charge = await createCallWithRetry(
-        6,
-        1000,
-      )(() => Bitpay.getInvoice(payment.externalPaymentId));
+      // DASH-1447: Bitpay should be skipped for now
+      // charge = await createCallWithRetry(
+      //   6,
+      //   1000,
+      // )(() => Bitpay.getInvoice(payment.externalPaymentId));
+      charge = {
+        amount: normalizedPriceUsdc,
+        id: null,
+        paymentCodes: {},
+        paymentSubtotals: {},
+        paymentDisplaySubTotals: {},
+      };
     }
 
     if (isFree) {
@@ -512,12 +522,13 @@ export default class BuyAddress extends Base {
             paymentInfo.processor === Payment.PROCESSOR.BITPAY &&
             paymentInfo.externalId
           ) {
-            const invoice = await Bitpay.getInvoice(paymentInfo.externalId);
-            // If invoice is NOT expired, this payment is still active - block registration
-            if (invoice && invoice.status !== 'expired') {
-              allowToRegister = false;
-              break;
-            }
+            // DASH-1447: Bitpay should be skipped for now
+            // const invoice = await Bitpay.getInvoice(paymentInfo.externalId);
+            // // If invoice is NOT expired, this payment is still active - block registration
+            // if (invoice && invoice.status !== 'expired') {
+            //   allowToRegister = false;
+            //   break;
+            // }
           } else {
             // Non-BitPay pending/new payments block registration
             allowToRegister = false;
