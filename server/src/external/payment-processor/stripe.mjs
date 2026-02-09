@@ -31,6 +31,7 @@ const PI_TYPES = {
   partially_funded: 'payment_intent.partially_funded',
   payment_failed: 'payment_intent.payment_failed',
   requires_action: 'payment_intent.requires_action',
+  charge_succeeded: 'charge.succeeded',
   charge_failed: 'charge.failed',
 };
 
@@ -72,7 +73,14 @@ class Stripe extends PaymentProcessor {
         client_secret,
         outcome,
         payment_intent,
+        payment_method_details,
       } = object;
+
+      // For charge events, format payment_method_details so getCreditCardName can read it
+      const chargesData =
+        object.object === OBJ_TYPES.charge && payment_method_details
+          ? { data: [{ payment_method_details }] }
+          : charges;
 
       data = {
         ...data,
@@ -85,7 +93,7 @@ class Stripe extends PaymentProcessor {
           ? new MathOp(amount_received).div(100).toString()
           : amount_received,
         amount_received_cents: amount_received,
-        charges,
+        charges: chargesData,
         currency,
         net: null,
         fee: application_fee_amount,
@@ -107,15 +115,30 @@ class Stripe extends PaymentProcessor {
     };
   }
 
-  isCompleted(status) {
-    return status === STRIPE_STATUSES.COMPLETED;
+  isCompleted(status, webhookType) {
+    // Only mark as completed on charge.succeeded, not payment_intent.succeeded
+    // This ensures we capture the payment_method_details from the charge webhook
+    return (
+      status === STRIPE_STATUSES.COMPLETED && webhookType === PI_TYPES.charge_succeeded
+    );
   }
 
   mapPaymentStatus(stripeStatus, webhookType, reason) {
-    if (this.isCompleted(stripeStatus)) {
+    if (this.isCompleted(stripeStatus, webhookType)) {
       return {
         payment: PAYMENTS_STATUSES.COMPLETED,
         event: PAYMENT_EVENT_STATUSES.SUCCESS,
+      };
+    }
+
+    // payment_intent.succeeded should be treated as pending until charge.succeeded confirms it
+    if (
+      stripeStatus === STRIPE_STATUSES.COMPLETED &&
+      webhookType === PI_TYPES.succeeded
+    ) {
+      return {
+        payment: PAYMENTS_STATUSES.PENDING,
+        event: PAYMENT_EVENT_STATUSES.PENDING,
       };
     }
 

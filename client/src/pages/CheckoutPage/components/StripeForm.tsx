@@ -11,7 +11,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 
-import { StripePaymentElementChangeEvent } from '@stripe/stripe-js/types/stripe-js/elements/payment';
+import { StripePaymentElementChangeEvent } from '@stripe/stripe-js';
 
 import classnames from 'classnames';
 
