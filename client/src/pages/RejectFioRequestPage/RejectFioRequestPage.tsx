@@ -103,7 +103,7 @@ const RejectFioRequestPage: React.FC<Props &
     };
 
     const gotToFioWalletsListRputeParams = {
-      pathname: ROUTES.TOKENS,
+      pathname: ROUTES.FIO_WALLETS,
       state: {},
     };
 
@@ -147,7 +147,7 @@ const RejectFioRequestPage: React.FC<Props &
   };
 
   if (!fioRecordType && !fioRecordDecrypted) {
-    history.push(ROUTES.TOKENS);
+    history.push(ROUTES.FIO_WALLETS);
     return null;
   }
 

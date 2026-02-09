@@ -98,7 +98,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
               </Link>
             </ActionButtonContainer>
             <ActionButtonContainer show={showActionButtons}>
-              <Link to={ROUTES.TOKENS}>
+              <Link to={ROUTES.FIO_WALLETS}>
                 <SubmitButton
                   hasAutoHeight
                   isButtonType

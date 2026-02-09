@@ -31,6 +31,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_WALLET_OLD: '/fio-wallet/:publicKey', // ?publicKey=
   FIO_WALLET_DETAILS: '/fio-wallet-details',
   FIO_TOKENS_RECEIVE: '/receive-fio-tokens', // ?publicKey=
+  FIO_WALLETS: '/fio-wallets',
   TOKENS: '/tokens',
   IMPORT_WALLET: '/import',
   FIO_AFFILIATE_PROGRAM_LANDING: '/affiliate-program',
@@ -161,7 +162,7 @@ const ADMIN_ROUTES: { [route: string]: string } = {
 export { ROUTES, ADMIN_ROUTES };
 
 export const TOKENS_TAB_ROUTES: string[] = [
-  ROUTES.TOKENS,
+  ROUTES.FIO_WALLETS,
   ROUTES.FIO_WALLET,
   ROUTES.SEND,
   ROUTES.FIO_TOKENS_REQUEST,

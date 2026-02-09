@@ -142,7 +142,7 @@ const WalletSettings: React.FC<Props> = props => {
         const res = await apis.account.deleteWallet(fioWallet.publicKey, nonce);
         if (res.success) {
           dispatch(deleteWalletAction({ publicKey: fioWallet.publicKey }));
-          history.push(ROUTES.TOKENS, { walletDeleted: true });
+          history.push(ROUTES.FIO_WALLETS, { walletDeleted: true });
           onClose();
         } else {
           dispatch(showGenericErrorModal());
