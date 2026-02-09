@@ -132,7 +132,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
   const onBack = () => {
     const url = fioWallet?.publicKey
       ? `${ROUTES.FIO_WALLET}?publicKey=${fioWallet.publicKey}`
-      : ROUTES.TOKENS;
+      : ROUTES.FIO_WALLETS;
 
     history.push(url);
   };

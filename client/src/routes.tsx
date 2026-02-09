@@ -431,8 +431,13 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <PrivateRoute
+              <SentryRoute
                 path={ROUTES.TOKENS}
+                component={() => <Redirect to={ROUTES.FIO_WALLETS} />}
+                exact
+              />
+              <PrivateRoute
+                path={ROUTES.FIO_WALLETS}
                 component={WalletsPage}
                 exact
               />

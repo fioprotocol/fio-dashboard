@@ -13,14 +13,14 @@ import classes from './Navigation.module.scss';
 const userNavItems: string[] = [
   LINKS.FIO_ADDRESSES,
   LINKS.FIO_DOMAINS,
-  LINKS.TOKENS,
+  LINKS.FIO_WALLETS,
   LINKS.FIO_AFFILIATE_PROGRAM_LANDING,
   LINKS.GOVERNANCE,
 ];
 const userWithAffiliateNavItems: string[] = [
   LINKS.FIO_ADDRESSES,
   LINKS.FIO_DOMAINS,
-  LINKS.TOKENS,
+  LINKS.FIO_WALLETS,
   LINKS.FIO_AFFILIATE_PROGRAM_ENABLED,
   LINKS.GOVERNANCE,
 ];
@@ -40,7 +40,10 @@ type RenderNavItemsProps = {
 };
 
 const isActiveTab = (location: Location, navItem: string) => {
-  if (ROUTES[navItem] === ROUTES.TOKENS && location?.pathname !== ROUTES.HOME) {
+  if (
+    ROUTES[navItem] === ROUTES.FIO_WALLETS &&
+    location?.pathname !== ROUTES.HOME
+  ) {
     const regexp = new RegExp(location?.pathname.split('/')[1]); //get first part of path /fio-wallet/ /send/ /stake/ etc
     return TOKENS_TAB_ROUTES.some(path => regexp.test(path));
   }

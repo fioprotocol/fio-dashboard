@@ -52,12 +52,12 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
   useEffect(() => {
     getFee();
     setStakeTokensData(null);
-  }, []);
+  }, [getFee]);
 
   useEffect(() => {
     if (!fioWallet?.publicKey) {
       history.push({
-        pathname: ROUTES.TOKENS,
+        pathname: ROUTES.FIO_WALLETS,
       });
     } else {
       refreshBalance(fioWallet.publicKey);
