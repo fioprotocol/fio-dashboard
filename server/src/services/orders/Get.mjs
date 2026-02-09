@@ -1,7 +1,5 @@
-import Sequelize from 'sequelize';
-
 import Base from '../Base';
-import { Order, User } from '../../models';
+import { Order } from '../../models';
 
 import X from '../Exception.mjs';
 
@@ -20,26 +18,18 @@ export default class OrdersGet extends Base {
       publicKey,
     };
 
-    const userWhere = {
-      userProfileType: {
-        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
-      },
-    };
+    // Logged-in user: restrict to their own orders
     if (userId) {
       where.userId = userId;
-      userWhere.id = userId;
     }
-
-    // do not get orders created by primary|alternate users
-    if (!userId) {
-      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
-    }
+    // For guests (no-profile flow) and unauthenticated users,
+    // find order by orderId + publicKey only.
+    // Payment data is stripped below based on ownership.
 
     const order = await Order.orderInfo(id, {
       useFormatDetailed: true,
       onlyOrderPayment: true,
       removePaymentData: true,
-      userWhere,
       orderWhere: where,
     });
     if (!order)
@@ -50,9 +40,17 @@ export default class OrdersGet extends Base {
         },
       });
 
-    if (!userId && order.guestId !== guestId) {
+    // Show payment details only if:
+    // 1. User is logged in, OR
+    // 2. Guest session matches the order's guestId (same guest who placed the order)
+    // Otherwise strip all payment data.
+    const isOrderOwnerGuest = guestId && order.guestId === guestId;
+    if (!userId && !isOrderOwnerGuest) {
       delete order.payment;
     }
+
+    // Never expose guestId to the client
+    delete order.guestId;
 
     return { data: order };
   }
