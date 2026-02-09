@@ -183,7 +183,7 @@ export default class PaymentsWebhook extends Base {
         });
 
         // Set item is ready to process if payment is completed
-        if (paymentProcessor.isCompleted(webhookData.status)) {
+        if (paymentProcessor.isCompleted(webhookData.status, webhookData.type)) {
           logger.info(
             `WEBHOOK: Payment completed - ${paymentProcessor.getWebhookIdentifier(
               webhookData,
