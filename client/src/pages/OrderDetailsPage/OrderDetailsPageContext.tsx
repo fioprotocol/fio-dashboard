@@ -115,7 +115,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
             totalFioNativeCostPrice: totalCostPrice?.fioNativeTotal ?? '0',
             orderNumber: number,
             roe,
-            isFree: true,
+            isFree: totalCostPrice?.fioNativeTotal === '0',
           },
         ];
 

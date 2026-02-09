@@ -191,6 +191,7 @@ export class Order extends Base {
 
   static async list({
     userId,
+    guestId,
     search,
     offset,
     limit = DEFAULT_ORDERS_LIMIT,
@@ -198,14 +199,18 @@ export class Order extends Base {
     publicKey,
   }) {
     const where = {};
-    const userWhere = {
-      userProfileType: {
-        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
-      },
-    };
+    const userWhere = {};
 
     if (userId) {
       where.userId = userId;
+      userWhere.userProfileType = {
+        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+      };
+    } else if (guestId) {
+      where.guestId = guestId;
+    } else {
+      // No auth - restrict to WITHOUT_REGISTRATION users only
+      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
     }
 
     if (search) {
@@ -220,19 +225,13 @@ export class Order extends Base {
       where.publicKey = publicKey;
     }
 
-    // do not get orders created by primary|alternate users
-    if (!userId) {
-      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
-    }
+    const userInclude = Object.keys(userWhere).length
+      ? { model: User, required: true, where: userWhere }
+      : { model: User, required: true };
 
     return this.findAll({
       where,
-      include: [
-        OrderItem,
-        Payment,
-        ReferrerProfile,
-        { model: User, required: true, where: userWhere },
-      ],
+      include: [OrderItem, Payment, ReferrerProfile, userInclude],
       order: [['createdAt', 'DESC']],
       offset: offset,
       limit,
@@ -420,6 +419,10 @@ export class Order extends Base {
 
       delete detailedOrder.data;
       delete detailedOrder.user;
+
+      // Preserve guestId from raw order for authorization checks in calling services.
+      // Callers must delete it before sending to the client.
+      detailedOrder.guestId = orderObj.guestId || null;
 
       if (removePaymentData && detailedOrder.payment) {
         delete detailedOrder.payment.paymentData;

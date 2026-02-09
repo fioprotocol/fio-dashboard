@@ -31,6 +31,7 @@ export default class OrdersList extends Base {
 
     const ordersList = await Order.list({
       userId,
+      guestId,
       offset,
       limit,
       isProcessed: true,
@@ -45,26 +46,38 @@ export default class OrdersList extends Base {
 
     if (userId) {
       ordersCountWhere.userId = userId;
+    } else if (guestId) {
+      ordersCountWhere.guestId = guestId;
     }
     if (publicKey) {
       ordersCountWhere.publicKey = publicKey;
     }
 
+    const countInclude = [];
+    if (userId) {
+      countInclude.push({
+        model: User,
+        where: {
+          userProfileType: {
+            [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+          },
+        },
+        required: true,
+      });
+    } else if (!guestId) {
+      countInclude.push({
+        model: User,
+        where: {
+          userProfileType: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+        },
+        required: true,
+      });
+    }
+
     const totalOrdersCount = await Order.ordersCount({
       col: userId ? 'userId' : 'publicKey',
       where: ordersCountWhere,
-      include: [
-        {
-          model: User,
-          where: {
-            userProfileType:
-              !userId && publicKey
-                ? User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION
-                : { [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION },
-          },
-          required: true,
-        },
-      ],
+      include: countInclude,
     });
 
     const orders = [];
@@ -72,7 +85,9 @@ export default class OrdersList extends Base {
     for (const order of ordersList) {
       const formatedOrder = await Order.formatToMinData(order.get({ plain: true }));
 
-      if (!userId && order.guestId !== guestId) {
+      // Strip sensitive payment data for all non-logged-in users (guests and unauthenticated).
+      // Per requirements: only logged-in users see full payment details (e.g. card last 4 digits).
+      if (!userId) {
         delete formatedOrder.payment;
       }
 
