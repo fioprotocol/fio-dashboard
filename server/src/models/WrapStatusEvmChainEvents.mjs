@@ -127,7 +127,8 @@ export class WrapStatusEvmChainEvents extends Base {
     }));
 
     return this.bulkCreate(records, {
-      updateOnDuplicate: ['eventData', 'updatedAt'],
+      conflictAttributes: ['networkId', 'transactionHash', 'eventType', 'blockNumber'],
+      updateOnDuplicate: ['blockTimestamp', 'eventData', 'updatedAt'],
       ignoreDuplicates: false,
     });
   }
