@@ -191,7 +191,7 @@ const UnwrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               title="Fees"
               subTitle="Manually set fees by selecting one of the basics options or for a more advanced option, set your own."
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              valueTitle={values.chainCode}
+              valueTitle={selectedNetwork?.nativeTokenChainCode}
               errorColor={COLOR_TYPE.WARN}
               chainCode={values.chainCode}
               wrapType={WRAP_TYPE.TOKEN}
