@@ -1,5 +1,6 @@
 import React from 'react';
 import { Elements } from '@stripe/react-stripe-js';
+import { StripeElementsOptions } from '@stripe/stripe-js';
 import { useHistory } from 'react-router';
 
 import Loader from '../../../components/Loader/Loader';
@@ -97,15 +98,17 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
 
   if (!payment || !payment.secret) return <Loader />;
 
+  const elementsOptions: StripeElementsOptions = {
+    ...STRIPE_ELEMENT_OPTIONS,
+    clientSecret: payment.secret,
+    locale: 'en',
+  };
+
   return (
     <Elements
       key={payment.secret}
       stripe={STRIPE_PROMISE}
-      options={{
-        ...STRIPE_ELEMENT_OPTIONS,
-        clientSecret: payment.secret,
-        locale: 'en',
-      }}
+      options={elementsOptions}
     >
       <StripeForm
         displayOrderItems={displayOrderItems}

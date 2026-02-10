@@ -48,8 +48,15 @@ export function useWebsocket({
 
   const createWebSocketConnection = useCallback(() => {
     let query = `?${QUERY_PARAMS_NAMES.ENDPOINT}=${endpoint}&${queryString}`;
-    if (AUTH_REQ_ENDPOINTS[endpoint] && !params.isNoProfileFlow) {
-      query += `&${QUERY_PARAMS_NAMES.TOKEN}=${apis.client.token}`;
+    if (AUTH_REQ_ENDPOINTS[endpoint]) {
+      if (params.isNoProfileFlow) {
+        const guestToken = apis.client.getGuestToken();
+        if (guestToken) {
+          query += `&${QUERY_PARAMS_NAMES.TOKEN}=${guestToken}`;
+        }
+      } else {
+        query += `&${QUERY_PARAMS_NAMES.TOKEN}=${apis.client.token}`;
+      }
     }
     setWs(new WebSocket(`${config.wsBaseUrl}ws${query}`));
   }, [endpoint, params?.isNoProfileFlow, queryString]);

@@ -17,19 +17,34 @@ const WS_ENDPOINTS = {
   ORDER_STATUS: 'ORDER_STATUS',
 };
 
-const checkAuth = async token => {
-  const { payload } = await runService(AuthCheckResolver, {
-    params: { token: `Bearer ${token}`, supportedTypes: [AUTH_TYPE.USER] },
+const checkAuth = async (token, supportedTypes = [AUTH_TYPE.USER]) => {
+  const { type, payload } = await runService(AuthCheckResolver, {
+    params: { token: `Bearer ${token}`, supportedTypes },
   });
+
+  if (type === AUTH_TYPE.GUEST) {
+    return { guestId: payload.id };
+  }
 
   return { id: payload.id };
 };
 
 const runWs = async (service, wsConnection, context, params, isPrivate = true) => {
   try {
-    if (isPrivate && !params.isNoProfileFlow) {
-      const userParams = await checkAuth(params.token);
-      context = { ...context, ...userParams };
+    if (isPrivate) {
+      if (params.isNoProfileFlow) {
+        if (!params.token) {
+          throw new Exception({
+            code: 'PERMISSION_DENIED',
+            fields: { token: 'REQUIRED' },
+          });
+        }
+        const guestParams = await checkAuth(params.token, [AUTH_TYPE.GUEST]);
+        context = { ...context, ...guestParams };
+      } else {
+        const userParams = await checkAuth(params.token);
+        context = { ...context, ...userParams };
+      }
     }
 
     const restParams = omit(params, ['endpoint', 'token']);

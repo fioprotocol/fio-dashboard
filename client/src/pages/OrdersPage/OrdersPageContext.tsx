@@ -150,7 +150,7 @@ export const useContext = (): OrdersPageProps => {
       const { width, height } = getPagePrintScreenDimensions({ isPrint: true });
 
       const winPrint = window.open(
-        null,
+        '',
         'PRINT',
         `width=${width},height=${height},toolbar=0,scrollbars=0,status=0`,
       );

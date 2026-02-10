@@ -557,22 +557,40 @@ export class FioChainProcessor {
     const logPrefix = '[FIO] Processing oracle votes';
     logger.info(logPrefix);
 
-    const startPosition = await WrapStatusFioChainEvents.count({
-      where: { action_type: 'oravote' },
-    });
+    const {
+      staleIds,
+      newStartPosition,
+      _debug,
+    } = await WrapStatusFioChainEvents.getOravoteRefreshInfo();
     const defaultLimit = config.wrap.oracleVotesLogsLimit;
 
-    logger.info(`${logPrefix} Startingfrom position ${startPosition}`);
+    logger.info(
+      `${logPrefix} network=${_debug.isMainnet ? 'mainnet' : 'testnet'}, ` +
+        `minId=${_debug.minOracleId}, ` +
+        `incomplete (isComplete=0, unwrap): ${_debug.incompleteCount}, ` +
+        `candidates: ${_debug.candidateCount}, stale: ${staleIds.length}`,
+    );
+    if (_debug.staleDetails.length > 0) {
+      for (const s of _debug.staleDetails) {
+        logger.info(
+          `${logPrefix} Stale oravote id=${s.oracleId}: voters=${s.voterCount}, txs=${s.txCount}`,
+        );
+      }
+    }
 
-    const getFioOraclesVotes = async ({ startPosition, limit }) => {
+    const getFioOraclesVotes = async ({ lowerBound, upperBound, limit }) => {
       const params = {
         code: Account.oracle,
         scope: Account.oracle,
         table: 'oravotes',
-        lower_bound: startPosition ? startPosition.toString() : '',
+        lower_bound: lowerBound ? lowerBound.toString() : '',
         limit,
         json: true,
       };
+
+      if (upperBound !== undefined) {
+        params.upper_bound = upperBound.toString();
+      }
 
       const response = await this.rateLimiter.executeWithRetry(
         () =>
@@ -588,16 +606,53 @@ export class FioChainProcessor {
       return response.rows;
     };
 
-    let limit = defaultLimit;
-    let oravotesList = await getFioOraclesVotes({ startPosition, limit });
-    while (oravotesList.length === limit) {
-      limit += defaultLimit;
-      logger.info(`${logPrefix} Increasing limit to ${limit}`);
-      oravotesList = await getFioOraclesVotes({ startPosition, limit });
+    const oravotesList = [];
+
+    // 1. Fetch only the specific stale oravotes by their IDs
+    if (staleIds.length > 0) {
+      logger.info(`${logPrefix} Fetching ${staleIds.length} stale oravote(s)`);
+
+      for (const staleId of staleIds) {
+        const rows = await getFioOraclesVotes({
+          lowerBound: staleId,
+          upperBound: staleId,
+          limit: 1,
+        });
+
+        if (rows.length > 0) {
+          oravotesList.push(...rows);
+          logger.info(
+            `${logPrefix} Fetched stale oravote id=${staleId}: ` +
+              `voters=${rows[0].voters ? rows[0].voters.length : 0}, ` +
+              `isComplete=${rows[0].isComplete}`,
+          );
+        }
+      }
+    }
+
+    // 2. Fetch new oravotes from after the last known one
+    logger.info(`${logPrefix} Fetching new oravotes from position ${newStartPosition}`);
+    let currentBound = newStartPosition;
+    let hasMore = true;
+
+    while (hasMore) {
+      const batch = await getFioOraclesVotes({
+        lowerBound: currentBound,
+        limit: defaultLimit,
+      });
+
+      if (!batch.length) break;
+
+      oravotesList.push(...batch);
+      hasMore = batch.length === defaultLimit;
+
+      if (hasMore) {
+        currentBound = batch[batch.length - 1].id + 1;
+      }
     }
 
     const events = oravotesList.map(row => ({
-      action_type: 'oravote', // Custom name for oracle votes
+      action_type: 'oravote',
       block_number: 0,
       transaction_id: null,
       timestamp: new Date(),
@@ -606,10 +661,17 @@ export class FioChainProcessor {
       oracle_id: row.id,
     }));
 
-    logger.info(`${logPrefix} Found ${events.length} oracle votes`);
+    logger.info(
+      `${logPrefix} Total: ${events.length} (stale: ${
+        staleIds.length
+      }, new: ${events.length - staleIds.length})`,
+    );
 
     if (events.length > 0) {
-      await WrapStatusFioChainEvents.addEvents(events);
+      const { created, updated } = await WrapStatusFioChainEvents.addOrUpdateOravotes(
+        events,
+      );
+      logger.info(`${logPrefix} Created ${created}, updated ${updated} oracle votes`);
     }
   }
 

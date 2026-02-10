@@ -26,6 +26,7 @@ export const NETWORKS_LIST: {
     chainCode: string;
     chainID: number;
     contractAddress?: string;
+    nativeTokenChainCode?: string;
   };
 } = {
   Ethereum: {
@@ -33,6 +34,7 @@ export const NETWORKS_LIST: {
     chainCode: 'ETH',
     chainID: wrap.ETH.chainId,
     contractAddress: wrap.ETH.contractAddress,
+    nativeTokenChainCode: 'ETH',
   },
   Rinkeby: {
     name: 'Rinkeby',
@@ -70,6 +72,7 @@ export const NETWORKS_LIST: {
     chainCode: 'BASE',
     chainID: wrap.BASE.chainId,
     contractAddress: wrap.BASE.contractAddress,
+    nativeTokenChainCode: 'ETH',
   },
 };
 

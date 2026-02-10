@@ -7,16 +7,12 @@ import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
 import FioLoader from './components/common/FioLoader/FioLoader';
 
-import { REACT_SNAP_AGENT } from './constants/twitter';
+import { REACT_SNAP_AGENT } from './constants/react-snap-agent';
 import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 import useMaintenance from './hooks/useMaintenance';
 import { useGTMGlobalTags } from './hooks/googleTagManager';
 import { SentryRoute } from './sentry';
-
-const TwitterPage = lazy(() =>
-  import(/* webpackChunkName: 'twitterPage' */ './pages/TwitterPage'),
-);
 
 const DashboardPage = lazy(() =>
   import(/* webpackChunkName: 'dashboardPage' */ './pages/DashboardPage'),
@@ -349,11 +345,6 @@ const Routes = (): React.ReactElement => {
               />
 
               <SentryRoute path={ROUTES.HOME} component={HomePage} exact />
-              <SentryRoute
-                path={ROUTES.TWITTER_HANDLE}
-                component={TwitterPage}
-                exact
-              />
               {navigator.userAgent !== REACT_SNAP_AGENT && (
                 <SentryRoute
                   path={ROUTES.NOT_FOUND}
@@ -440,8 +431,13 @@ const Routes = (): React.ReactElement => {
                 exact
               />
 
-              <PrivateRoute
+              <SentryRoute
                 path={ROUTES.TOKENS}
+                component={() => <Redirect to={ROUTES.FIO_WALLETS} />}
+                exact
+              />
+              <PrivateRoute
+                path={ROUTES.FIO_WALLETS}
                 component={WalletsPage}
                 exact
               />

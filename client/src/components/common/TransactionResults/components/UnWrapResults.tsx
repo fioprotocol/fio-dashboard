@@ -17,6 +17,7 @@ import { AnyObject, Roe } from '../../../../types';
 import { ResultDetails } from '../../../ResultDetails/ResultDetails';
 import { TransactionDetails } from '../../../TransactionDetails/TransactionDetails';
 import { PriceComponent } from '../../../PriceComponent';
+import { getExplorerTxUrl } from '../../../WrapStatusPages/WrapStatusPage/utils';
 
 import { useConvertFioToUsdc } from '../../../../util/hooks';
 
@@ -125,11 +126,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
             label: 'ID',
             value: transaction_id,
             wrap: true,
-            link: `${
-              isTokens
-                ? process.env.REACT_APP_ETH_HISTORY_URL
-                : process.env.REACT_APP_POLYGON_HISTORY_URL
-            }${transaction_id as string}`,
+            link: `${getExplorerTxUrl(chainCode)}${transaction_id as string}`,
           },
         ]}
       />
