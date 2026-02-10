@@ -1,8 +1,4 @@
-import {
-  loadStripe,
-  Appearance,
-  StripeElementsOptions,
-} from '@stripe/stripe-js';
+import { loadStripe, Appearance } from '@stripe/stripe-js';
 
 import jsColors from '../../assets/styles/colorsToJs.module.scss';
 
@@ -13,7 +9,7 @@ export const STRIPE_PROMISE = loadStripe(
 );
 
 const APPEARANCE_STRIPE_OPTIONS: Appearance = {
-  theme: 'none',
+  theme: 'stripe',
 
   variables: {
     colorText: jsColors['baltic-sea'],
@@ -39,7 +35,7 @@ const APPEARANCE_STRIPE_OPTIONS: Appearance = {
   },
 };
 
-export const STRIPE_ELEMENT_OPTIONS: StripeElementsOptions = {
+export const STRIPE_ELEMENT_OPTIONS = {
   fonts: [
     {
       family: 'Proxima Nova Bold',
@@ -48,5 +44,5 @@ export const STRIPE_ELEMENT_OPTIONS: StripeElementsOptions = {
     },
   ],
   appearance: APPEARANCE_STRIPE_OPTIONS,
-  loader: 'always',
+  loader: 'always' as const,
 };

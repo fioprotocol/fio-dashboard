@@ -322,7 +322,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
   };
 
   if (!publicKey || !fioRequestId)
-    return <Redirect to={{ pathname: ROUTES.TOKENS }} />;
+    return <Redirect to={{ pathname: ROUTES.FIO_WALLETS }} />;
 
   if (error)
     return (

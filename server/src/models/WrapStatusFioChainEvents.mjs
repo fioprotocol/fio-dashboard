@@ -3,8 +3,14 @@ import Sequelize from 'sequelize';
 import { Action } from '@fioprotocol/fiosdk';
 
 import Base from './Base';
+import config from '../config/index.mjs';
+import { FIO_CHAIN_ID } from '../config/constants.js';
 
 const { DataTypes: DT, Op } = Sequelize;
+
+// Early mainnet oravotes (before this ID) had issues due to the initial feature
+// rollout and will always appear stale. Skip them to avoid needless API calls.
+const MAINNET_MIN_ORAVOTE_ID = 60;
 
 export class WrapStatusFioChainEvents extends Base {
   static init(sequelize) {
@@ -133,9 +139,197 @@ export class WrapStatusFioChainEvents extends Base {
     }));
 
     return this.bulkCreate(records, {
-      updateOnDuplicate: ['actionData', 'updatedAt'],
+      conflictAttributes: ['transactionId', 'actionType'],
+      updateOnDuplicate: [
+        'blockNumber',
+        'timestamp',
+        'actor',
+        'actionData',
+        'oracleId',
+        'updatedAt',
+      ],
       ignoreDuplicates: false,
     });
+  }
+
+  /**
+   * Detect which oravotes need re-fetching from the FIO chain.
+   * Checks unwrap oravotes (obt_id starts with "0x") where isComplete = 0.
+   * Compares voter count against the actual FIO unwrap confirmation tx count.
+   * A mismatch means the oravote is stale and needs re-fetching.
+   * @returns {Promise<{staleIds: number[], newStartPosition: number}>}
+   */
+  static async getOravoteRefreshInfo() {
+    // On mainnet, skip early oravotes that had issues during the initial rollout.
+    const isMainnet = config.fioChain.id === FIO_CHAIN_ID.MAINNET;
+    const minOracleId = isMainnet ? MAINNET_MIN_ORAVOTE_ID : 0;
+
+    const oravoteBaseWhere = {
+      actionType: 'oravote',
+      oracleId: minOracleId > 0 ? { [Op.gte]: minOracleId } : { [Op.ne]: null },
+    };
+
+    const lastOravote = await this.findOne({
+      where: oravoteBaseWhere,
+      order: [['oracleId', 'DESC']],
+    });
+
+    if (!lastOravote || !lastOravote.oracleId) {
+      return { staleIds: [], newStartPosition: minOracleId || 0 };
+    }
+
+    const lastOracleId = parseInt(lastOravote.oracleId);
+
+    // Step 1: Find unwrap oravotes where isComplete is 0 (still in progress).
+    // Only unwrap oravotes (obt_id starts with "0x") — wrap oravotes use FIO
+    // tx hashes and have no matching FIO unwrap events.
+    const incompleteOravotes = await this.findAll({
+      where: {
+        ...oravoteBaseWhere,
+        [Op.and]: [
+          Sequelize.literal(`("action_data"->>'isComplete')::int = 0`),
+          Sequelize.literal(`"action_data"->>'obt_id' LIKE '0x%'`),
+        ],
+      },
+      attributes: ['oracleId', 'actionData'],
+    });
+
+    if (incompleteOravotes.length === 0) {
+      return { staleIds: [], newStartPosition: lastOracleId + 1 };
+    }
+
+    // Step 2: Collect obt_ids and voter counts
+    const oravoteInfo = [];
+    const obtIds = [];
+
+    for (const oravote of incompleteOravotes) {
+      const obtId = oravote.actionData && oravote.actionData.obt_id;
+      const voterCount =
+        oravote.actionData && oravote.actionData.voters
+          ? oravote.actionData.voters.length
+          : 0;
+
+      if (obtId) {
+        oravoteInfo.push({
+          oracleId: parseInt(oravote.oracleId),
+          obtId,
+          voterCount,
+        });
+        obtIds.push(obtId);
+      }
+    }
+
+    if (obtIds.length === 0) {
+      return { staleIds: [], newStartPosition: lastOracleId + 1 };
+    }
+
+    // Step 3: Count FIO unwrap confirmation txs for these obt_ids (single query)
+    const unwrapConfirmations = await this.findAll({
+      where: {
+        actionType: { [Op.in]: [Action.unwrapTokens, Action.unwrapDomain] },
+        [Op.and]: [
+          Sequelize.where(
+            Sequelize.fn(
+              'jsonb_extract_path_text',
+              Sequelize.col('action_data'),
+              'obt_id',
+            ),
+            { [Op.in]: obtIds },
+          ),
+        ],
+      },
+      attributes: ['actionData'],
+    });
+
+    const txCountByObtId = {};
+    for (const event of unwrapConfirmations) {
+      const obtId = event.actionData && event.actionData.obt_id;
+      if (obtId) {
+        txCountByObtId[obtId] = (txCountByObtId[obtId] || 0) + 1;
+      }
+    }
+
+    // Step 4: Find oravotes where tx count differs from voter count (stale data)
+    const staleIds = oravoteInfo
+      .filter(({ obtId, voterCount }) => (txCountByObtId[obtId] || 0) !== voterCount)
+      .map(({ oracleId }) => oracleId);
+
+    return {
+      staleIds,
+      newStartPosition: lastOracleId + 1,
+      // Diagnostic info for logging
+      _debug: {
+        isMainnet,
+        minOracleId,
+        incompleteCount: incompleteOravotes.length,
+        candidateCount: oravoteInfo.length,
+        staleDetails: oravoteInfo
+          .filter(({ obtId, voterCount }) => (txCountByObtId[obtId] || 0) !== voterCount)
+          .map(({ oracleId, obtId, voterCount }) => ({
+            oracleId,
+            voterCount,
+            txCount: txCountByObtId[obtId] || 0,
+          })),
+      },
+    };
+  }
+
+  /**
+   * Upsert oravote events by oracle_id.
+   * Standard addEvents() cannot be used for oravotes because transaction_id
+   * is NULL, and PostgreSQL treats NULLs as distinct in unique constraints,
+   * so ON CONFLICT (transaction_id, action_type) never matches.
+   * @param {Array} events - Array of oravote event objects
+   * @returns {Promise<Array>}
+   */
+  static async addOrUpdateOravotes(events) {
+    if (!events || events.length === 0) return { created: 0, updated: 0 };
+
+    let createdCount = 0;
+    let updatedCount = 0;
+
+    for (const event of events) {
+      const oracleId = event.oracle_id || event.oracleId;
+      const actionData = event.action_data || event.actionData;
+
+      if (!oracleId) continue;
+
+      const [instance, created] = await this.findOrCreate({
+        where: {
+          oracleId,
+          actionType: 'oravote',
+        },
+        defaults: {
+          actionType: 'oravote',
+          blockNumber: event.block_number || event.blockNumber || 0,
+          transactionId: event.transaction_id || event.transactionId || null,
+          timestamp: event.timestamp || new Date(),
+          actor: event.actor || null,
+          actionData,
+          oracleId,
+        },
+      });
+
+      if (created) {
+        createdCount++;
+      } else {
+        await instance.update({ actionData });
+        updatedCount++;
+      }
+    }
+
+    // Clean up orphan oravote records with NULL oracleId (duplicates from
+    // the old addEvents code that couldn't properly upsert oravotes).
+    if (createdCount > 0 || updatedCount > 0) {
+      await this.destroy({
+        where: {
+          actionType: 'oravote',
+          oracleId: { [Op.is]: null },
+        },
+      });
+    }
+
+    return { created: createdCount, updated: updatedCount };
   }
 
   /**

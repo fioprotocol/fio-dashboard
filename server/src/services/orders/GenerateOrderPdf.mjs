@@ -1,10 +1,9 @@
 import puppeteer from 'puppeteer';
-import Sequelize from 'sequelize';
 
 import Base from '../Base';
 import X from '../Exception.mjs';
 
-import { Order, User } from '../../models';
+import { Order } from '../../models';
 
 import { PRINT_SCREEN_PARAMS } from '../../config/constants';
 import config from '../../config';
@@ -51,26 +50,25 @@ export default class GenerateOrderPdf extends Base {
         publicKey,
       };
 
-      const userWhere = {
-        userProfileType: {
-          [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
-        },
-      };
+      // Logged-in user: restrict to their own orders
       if (userId) {
         where.userId = userId;
-        userWhere.id = userId;
+      } else if (!guestId) {
+        // No userId and no guestId means fully unauthenticated — block access
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {
+            id: 'NOT_FOUND',
+          },
+        });
       }
-
-      // do not get orders created by primary|alternate users
-      if (!userId) {
-        userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
-      }
+      // For guests (no-profile flow), find order by orderId + publicKey only.
+      // Payment data is stripped below if guestId doesn't match.
 
       const order = await Order.orderInfo(orderId, {
         useFormatDetailed: true,
         onlyOrderPayment: true,
         removePaymentData: true,
-        userWhere,
         orderWhere: where,
       });
       if (!order)
@@ -81,9 +79,17 @@ export default class GenerateOrderPdf extends Base {
           },
         });
 
-      if (!userId && order.guestId !== guestId) {
+      // Show payment details only if:
+      // 1. User is logged in, OR
+      // 2. Guest session matches the order's guestId (same guest who placed the order)
+      // Otherwise strip all payment data.
+      const isOrderOwnerGuest = guestId && order.guestId === guestId;
+      if (!userId && !isOrderOwnerGuest) {
         delete order.payment;
       }
+
+      // Never expose guestId internally beyond this point
+      delete order.guestId;
 
       // Generate HTML content for the PDF
       const htmlContent = this.generateOrderHtmlContent(order, timezone);

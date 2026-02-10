@@ -170,7 +170,7 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
   const renderDangerNotice = () => (
     <p className={classes.dangerNotice}>
       Please, make sure that you have exported your private keys for each
-      <Link className="ml-1" to={ROUTES.TOKENS}>
+      <Link className="ml-1" to={ROUTES.FIO_WALLETS}>
         wallet
       </Link>{' '}
       to prevent loss of those holdings.

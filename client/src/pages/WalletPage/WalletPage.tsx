@@ -55,7 +55,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
   return (
     <>
       <BackButton
-        link={ROUTES.TOKENS}
+        link={ROUTES.FIO_WALLETS}
         text="Back"
         classNames={classes.backButton}
       />

@@ -74,7 +74,7 @@ const SendPage: React.FC<ContainerProps> = props => {
   useEffect(() => {
     if (!fioWallet?.publicKey) {
       history.push({
-        pathname: ROUTES.TOKENS,
+        pathname: ROUTES.FIO_WALLETS,
       });
     } else {
       refreshBalance(fioWallet.publicKey);

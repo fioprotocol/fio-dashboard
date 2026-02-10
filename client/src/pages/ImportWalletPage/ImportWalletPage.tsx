@@ -50,10 +50,10 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
       );
       if (importedWallet != null && importedWallet.id)
         history.push(
-          `${ROUTES.TOKENS}?${QUERY_PARAMS_NAMES.IMPORTED}=${importedPublicKey}`,
+          `${ROUTES.FIO_WALLETS}?${QUERY_PARAMS_NAMES.IMPORTED}=${importedPublicKey}`,
         );
     }
-  }, [fioWallets, addWalletLoading, importedPublicKey]);
+  }, [fioWallets, addWalletLoading, importedPublicKey, history]);
 
   const importWallet = async ({ edgeAccount, data }: SubmitActionParams) => {
     const { privateSeed, name } = data;

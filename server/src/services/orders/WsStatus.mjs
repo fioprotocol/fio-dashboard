@@ -1,14 +1,6 @@
-import Sequelize from 'sequelize';
-
 import WsBase from '../WsBase';
 
-import {
-  Order,
-  OrderItemStatus,
-  Payment,
-  BlockchainTransaction,
-  User,
-} from '../../models';
+import { Order, OrderItemStatus, Payment, BlockchainTransaction } from '../../models';
 
 import BitPay from '../../external/payment-processor/bitpay.mjs';
 
@@ -40,24 +32,25 @@ export default class WsStatus extends WsBase {
 
   async watch({ data: { orderNumber } }) {
     const userId = this.context.id;
+    const guestId = this.context.guestId;
 
     const where = {
       number: orderNumber,
     };
 
-    const userWhere = {
-      userProfileType: {
-        [Sequelize.Op.not]: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
-      },
-    };
+    // Logged-in user: authorize by userId
+    // Guest (no-profile flow): authorize by guestId
     if (userId) {
       where.userId = userId;
-      userWhere.id = userId;
-    }
-
-    // do not get orders created by primary|alternate users
-    if (!userId) {
-      userWhere.userProfileType = User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION;
+    } else if (guestId) {
+      where.guestId = guestId;
+    } else {
+      logger.error('WS ERROR. Order status. No userId or guestId in context.');
+      this.send(JSON.stringify({ error: 'PERMISSION_DENIED' }));
+      this.CLOSED = true;
+      this.wsConnection.isAlive = false;
+      this.wsConnection.close();
+      return;
     }
 
     try {
@@ -65,7 +58,6 @@ export default class WsStatus extends WsBase {
         (await Order.findOne({
           raw: true,
           where,
-          include: [{ model: User, where: userWhere, required: true }],
         })) || {};
 
       if (!orderId) {
@@ -73,7 +65,10 @@ export default class WsStatus extends WsBase {
           `WS ERROR. Order status. Can't find order id for order number ${orderNumber}.`,
         );
         this.send(JSON.stringify({ error: 'NOT_FOUND' }));
-        return this.onClose();
+        this.CLOSED = true;
+        this.wsConnection.isAlive = false;
+        this.wsConnection.close();
+        return;
       }
 
       // Update Order status
@@ -94,8 +89,6 @@ export default class WsStatus extends WsBase {
       const order = await Order.orderInfo(orderId, {
         useFormatDetailed: true,
         onlyOrderPayment: true,
-        orderWhere: where,
-        userWhere,
       });
 
       try {
@@ -119,6 +112,9 @@ export default class WsStatus extends WsBase {
             if (order.payment) {
               delete order.payment.paymentData;
             }
+
+            // Never expose guestId to the client
+            delete order.guestId;
 
             this.messageData.results = order;
           } catch (e) {
