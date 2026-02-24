@@ -25,6 +25,8 @@ export default class GetSiteSettings extends Base {
               VARS_KEYS.VOTE_FIO_HANDLE,
               VARS_KEYS.MOCKED_PUBLIC_KEYS_FOR_BOARD_VOTE,
               VARS_KEYS.FIO_PROXIES_LIST,
+              VARS_KEYS.SET_WALLETS_AMOUNT,
+              VARS_KEYS.MAX_DOMAINS_WATCHLIST_PER_USER,
               ABIS_VAR_KEY,
             ],
           },

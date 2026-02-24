@@ -19,6 +19,7 @@ import {
 } from '../../redux/registrations/selectors';
 import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
+import { siteSetings as siteSettingsSelector } from '../../redux/settings/selectors';
 
 import apis from '../../api';
 
@@ -37,13 +38,19 @@ import {
   CART_ITEM_TYPE,
   DEFAULT_CART_ITEM_PERIOD_OPTION,
 } from '../../constants/common';
+import {
+  MAX_DOMAINS_WATCHLIST_ERROR,
+  MAX_DOMAINS_WATCHLIST_ERROR_TITLE,
+} from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
+import { VARS_KEYS } from '../../constants/vars';
 import {
   EMPTY_STATE_CONTENT,
   SUCCESS_MESSAGES,
   WARNING_CONTENT,
 } from './constants';
+import { DEFAULT_ITEMS_LIMIT } from '../../constants/common';
 
 import {
   CartItem,
@@ -53,11 +60,14 @@ import {
 } from '../../types';
 import { FioDomainDoubletResponse } from '../../api/responses';
 import { WarningContentItem } from '../../components/ManagePageContainer/types';
+import { showGenericErrorModal } from '../../redux/modal/actions';
 
 type UseContextProps = {
   domainWatchlistIsDeleting: boolean;
   domainWatchlistLoading: boolean;
   domainsWatchlistList: FioNameItemProps[];
+  domainWatchlistHasMoreItems: boolean;
+  domainWatchlistOnLoadMore: () => void;
   emptyStateContent: {
     title: string;
     message: string;
@@ -105,8 +115,13 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const refCode = useSelector(refProfileCode);
   const roe = useSelector(roeSelector);
+  const siteSettings = useSelector(siteSettingsSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
+
+  const maxDomainsWatchlist = Number(
+    siteSettings[VARS_KEYS.MAX_DOMAINS_WATCHLIST_PER_USER],
+  );
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -150,6 +165,11 @@ export const useContext = (): UseContextProps => {
     showWarningDomainExpireIn30DaysBadge,
     toggleShowWarningDomainExpireIn30DaysBadge,
   ] = useState<boolean>(false);
+  const [domainWatchListOffset, setDomainWatchListOffset] = useState(0);
+  const [
+    domainWatchlistHasMoreItems,
+    setHasMoreDomainWatchlistItems,
+  ] = useState(true);
 
   const isDesktop = useCheckIfDesktop();
 
@@ -209,8 +229,22 @@ export const useContext = (): UseContextProps => {
   }, []);
 
   const openDomainWatchlistModal = useCallback(() => {
+    if (
+      maxDomainsWatchlist &&
+      domainsWatchlistList.length >= maxDomainsWatchlist
+    ) {
+      dispatch(
+        showGenericErrorModal(
+          MAX_DOMAINS_WATCHLIST_ERROR(maxDomainsWatchlist),
+          MAX_DOMAINS_WATCHLIST_ERROR_TITLE,
+          'Close',
+        ),
+      );
+      return;
+    }
     toggleShowAddDomainWatchlistModal(true);
-  }, []);
+  }, [dispatch, domainsWatchlistList.length, maxDomainsWatchlist]);
+
   const closeDomainWatchlistModal = useCallback(() => {
     toggleShowAddDomainWatchlistModal(false);
   }, []);
@@ -264,11 +298,14 @@ export const useContext = (): UseContextProps => {
     try {
       toggleDomainWatchlistLoading(true);
 
-      const domainsWatchlist = await apis.domainsWatchlist.list();
+      const domainsWatchlist = await apis.domainsWatchlist.list({
+        limit: DEFAULT_ITEMS_LIMIT,
+        offset: domainWatchListOffset,
+      });
 
       const domainsWatchlistItems: FioNameItemProps[] = [];
 
-      for (const domainsWatchlistItem of domainsWatchlist) {
+      for (const domainsWatchlistItem of domainsWatchlist?.list || []) {
         const tableRowsParams = apis.fio.setTableRowsParams(
           domainsWatchlistItem.domain,
         );
@@ -310,13 +347,21 @@ export const useContext = (): UseContextProps => {
         }
       }
 
-      setDomainsWatchlistList(domainsWatchlistItems);
+      setDomainsWatchlistList([
+        ...domainsWatchlistList,
+        ...domainsWatchlistItems,
+      ]);
+      setDomainWatchListOffset(domainWatchListOffset + DEFAULT_ITEMS_LIMIT);
+      setHasMoreDomainWatchlistItems(
+        domainsWatchlist?.maxCount >
+          domainWatchListOffset + DEFAULT_ITEMS_LIMIT,
+      );
 
       toggleDomainWatchlistLoading(false);
     } catch (err) {
       toggleDomainWatchlistLoading(false);
     }
-  }, []);
+  }, [domainWatchListOffset, domainsWatchlistList]);
 
   const domainWatchlistItemCreate = useCallback(
     async domain => {
@@ -378,6 +423,10 @@ export const useContext = (): UseContextProps => {
     [history],
   );
 
+  const domainWatchlistOnLoadMore = useCallback(() => {
+    getDomainsWatchlistList();
+  }, [getDomainsWatchlistList]);
+
   useEffect(() => {
     dispatch(getFee(EndPoint.renewFioDomain));
   }, [dispatch]);
@@ -430,6 +479,8 @@ export const useContext = (): UseContextProps => {
     domainWatchlistIsDeleting,
     domainWatchlistLoading,
     domainsWatchlistList,
+    domainWatchlistHasMoreItems,
+    domainWatchlistOnLoadMore,
     emptyStateContent: EMPTY_STATE_CONTENT,
     isDesktop,
     prices: {

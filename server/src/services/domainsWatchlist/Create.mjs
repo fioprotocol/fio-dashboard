@@ -1,7 +1,9 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { DomainsWatchlist } from '../../models';
+import { DomainsWatchlist, Var } from '../../models';
+
+import { VARS_KEYS } from '../../config/constants';
 
 export default class DomainWatchlistCreate extends Base {
   static get validationRules() {
@@ -27,6 +29,23 @@ export default class DomainWatchlistCreate extends Base {
           code: 'This domain already exists!',
         },
       });
+    }
+
+    const maxDomains = Number(
+      await Var.getValByKey(VARS_KEYS.MAX_DOMAINS_WATCHLIST_PER_USER),
+    );
+    if (maxDomains) {
+      const domainCount = await DomainsWatchlist.count({
+        where: { userId },
+      });
+      if (domainCount >= maxDomains) {
+        throw new X({
+          code: 'LIMIT_EXCEEDED',
+          fields: {
+            domain: 'MAX_DOMAINS_WATCHLIST_REACHED',
+          },
+        });
+      }
     }
 
     const domainWatchlist = new DomainsWatchlist({

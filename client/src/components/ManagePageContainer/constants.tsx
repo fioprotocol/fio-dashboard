@@ -45,8 +45,6 @@ export const PAGE_NAME: {
   DOMAIN: DOMAIN,
 } as const;
 
-export const ITEMS_LIMIT = 25;
-
 export const BUTTONS_TITLE = {
   addBundles: 'Add',
   renew: 'Renew',
