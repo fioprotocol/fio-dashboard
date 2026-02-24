@@ -60,12 +60,14 @@ export class DomainsWatchlist extends Base {
     return attributes.default;
   }
 
-  static async list({ userId }) {
+  static async list({ userId, limit, offset }) {
     const where = { userId };
 
     return this.findAll({
       where,
       order: [['createdAt', 'DESC']],
+      limit,
+      offset,
     });
   }
 

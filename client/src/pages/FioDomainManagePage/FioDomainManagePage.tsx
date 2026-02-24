@@ -18,6 +18,8 @@ const FioDomainManagePage: React.FC = () => {
     domainWatchlistIsDeleting,
     domainsWatchlistList,
     domainWatchlistLoading,
+    domainWatchlistHasMoreItems,
+    domainWatchlistOnLoadMore,
     emptyStateContent,
     isDesktop,
     prices,
@@ -78,6 +80,8 @@ const FioDomainManagePage: React.FC = () => {
         domainsWatchlistList={domainsWatchlistList}
         domainWatchlistIsDeleting={domainWatchlistIsDeleting}
         domainWatchlistLoading={domainWatchlistLoading}
+        domainWatchlistHasMoreItems={domainWatchlistHasMoreItems}
+        domainWatchlistOnLoadMore={domainWatchlistOnLoadMore}
         isDesktop={isDesktop}
         pageName={PAGE_NAME.DOMAIN}
         prices={prices}

@@ -14,6 +14,7 @@ import DangerModal from '../../../../components/Modal/DangerModal';
 import { ActionButton } from '../../../../components/common/ActionButton';
 import { DomainItemComponent } from '../../../../components/ManagePageContainer/components/ItemCopmonent';
 import { DomainsWatchlistSettingsItem } from '../../../../components/ManagePageContainer/components/SettingsItem';
+import InfiniteScroll from '../../../../components/InfiniteScroll/InfiniteScroll';
 
 import { AddDomainToWatchListModal } from '../AddDomainToWatchListModal';
 import { ListNameTitle } from '../ListNameTitle';
@@ -27,6 +28,8 @@ import classes from './WatchListDomainsComponent.module.scss';
 type Props = {
   domainsWatchlistList: FioNameItemProps[];
   domainWatchlistLoading: boolean;
+  domainWatchlistHasMoreItems: boolean;
+  domainWatchlistOnLoadMore: () => void;
   isDesktop: boolean;
   domainWatchlistIsDeleting: boolean;
   pageName: FioNameType;
@@ -63,6 +66,8 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
     domainWatchlistIsDeleting,
     domainsWatchlistList,
     domainWatchlistLoading,
+    domainWatchlistHasMoreItems,
+    domainWatchlistOnLoadMore,
     isDesktop,
     pageName,
     prices,
@@ -123,23 +128,29 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
             />
           </div>
         </div>
-        <ListItemsComponent
-          listItems={
-            isDesktop ? (
-              <DesktopView
-                {...listItemsDefaultProps}
-                onSettingsOpen={onSettingsOpen}
-                onRenewDomain={handleRenewDomain}
-              />
-            ) : (
-              <MobileView
-                {...listItemsDefaultProps}
-                hideTableHeader
-                onItemModalOpen={onItemModalOpen}
-              />
-            )
-          }
-        />
+        <InfiniteScroll
+          loading={domainWatchlistLoading}
+          hasNextPage={domainWatchlistHasMoreItems}
+          onLoadMore={domainWatchlistOnLoadMore}
+        >
+          <ListItemsComponent
+            listItems={
+              isDesktop ? (
+                <DesktopView
+                  {...listItemsDefaultProps}
+                  onSettingsOpen={onSettingsOpen}
+                  onRenewDomain={handleRenewDomain}
+                />
+              ) : (
+                <MobileView
+                  {...listItemsDefaultProps}
+                  hideTableHeader
+                  onItemModalOpen={onItemModalOpen}
+                />
+              )
+            }
+          />
+        </InfiniteScroll>
       </div>
       <AddDomainToWatchListModal
         domainsWatchlistList={domainsWatchlistList}
