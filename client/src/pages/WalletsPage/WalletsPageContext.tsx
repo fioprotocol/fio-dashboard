@@ -10,13 +10,19 @@ import { toggleIsWalletCreated } from '../../redux/account/actions';
 
 import { fioWalletsBalances as fioWalletsBalancesSelector } from '../../redux/fio/selectors';
 import { user as userSelector } from '../../redux/profile/selectors';
+import { siteSetings as siteSettingsSelector } from '../../redux/settings/selectors';
 
 import {
   PAGE_TYPES,
   PAGE_TYPES_PROPS,
 } from '../../components/WelcomeComponent/constants';
+import {
+  MAX_WALLETS_ERROR,
+  MAX_WALLETS_ERROR_TITLE,
+} from '../../constants/errors';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { USER_PROFILE_TYPE } from '../../constants/profile';
+import { VARS_KEYS } from '../../constants/vars';
 
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 import useQuery from '../../hooks/useQuery';
@@ -26,6 +32,7 @@ import {
   FioWalletDoublet,
   WalletsBalances,
 } from '../../types';
+import { showGenericErrorModal } from '../../redux/modal/actions';
 
 const AUTOCLOSE_CREATE_WALLET_TIME = 10000;
 
@@ -52,8 +59,10 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
+  const siteSettings = useSelector(siteSettingsSelector);
   const user = useSelector(userSelector);
 
+  const maxWallets = Number(siteSettings[VARS_KEYS.SET_WALLETS_AMOUNT]);
   const [showCreateWalletModal, setShowCreateWalletModal] = useState<boolean>(
     false,
   );
@@ -94,8 +103,18 @@ export const useContext = (): UseContextProps => {
   const closeDeletedWallet = useCallback(() => setShowWalletDeleted(false), []);
 
   const onAdd = useCallback(() => {
+    if (maxWallets && fioWallets.length >= maxWallets) {
+      dispatch(
+        showGenericErrorModal(
+          MAX_WALLETS_ERROR(maxWallets),
+          MAX_WALLETS_ERROR_TITLE,
+          'Close',
+        ),
+      );
+      return;
+    }
     setShowCreateWalletModal(true);
-  }, []);
+  }, [dispatch, fioWallets.length, maxWallets]);
 
   const onWalletCreated = useCallback(() => {
     setShowCreateWalletModal(false);
