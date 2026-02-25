@@ -10,6 +10,7 @@ import {
   activateAffiliateSuccess,
   alternateLoginSuccess,
   guestLoginSuccess,
+  setWalletsSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess, edgePinUpdateSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
@@ -66,5 +67,6 @@ export default function* rootSaga(history: History, api: Api) {
     updatePeriodItem(),
     onDomainRenew(history),
     getSettingsSuccess(),
+    setWalletsSuccess(),
   ]);
 }
