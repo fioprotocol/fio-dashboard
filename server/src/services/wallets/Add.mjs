@@ -1,7 +1,9 @@
 import Base from '../Base';
 
-import { Wallet, Nonce } from '../../models';
+import { Wallet, Nonce, Var } from '../../models';
 import X from '../Exception';
+
+import { VARS_KEYS } from '../../config/constants';
 
 export default class WalletsAdd extends Base {
   static get validationRules() {
@@ -45,6 +47,21 @@ export default class WalletsAdd extends Base {
           publicKey: 'NOT_UNIQUE',
         },
       });
+    }
+
+    const maxWallets = Number(await Var.getValByKey(VARS_KEYS.SET_WALLETS_AMOUNT));
+    if (maxWallets) {
+      const walletCount = await Wallet.count({
+        where: { userId: this.context.id },
+      });
+      if (walletCount >= maxWallets) {
+        throw new X({
+          code: 'LIMIT_EXCEEDED',
+          fields: {
+            wallet: 'MAX_WALLETS_REACHED',
+          },
+        });
+      }
     }
 
     const deletedWallet = await Wallet.findOne({

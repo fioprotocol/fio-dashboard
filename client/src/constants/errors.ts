@@ -88,6 +88,10 @@ export const LIMIT_EXCEEDED_ERROR =
   "You've hit the daily limit of attempts. Please wait until tomorrow to try again.";
 export const LIMIT_EXCEEDED_ERROR_TITLE = 'Limit Exceeded';
 
+export const MAX_WALLETS_ERROR = (max: number) =>
+  `You've reached the maximum number of wallets allowed (${max}). Please remove an existing wallet before adding a new one.`;
+export const MAX_WALLETS_ERROR_TITLE = 'Wallet Limit Reached';
+
 export const MAX_DOMAINS_WATCHLIST_ERROR = (max: number) =>
   `You've reached the maximum number of domains on your watchlist (${max}). Please remove an existing domain before adding a new one.`;
 export const MAX_DOMAINS_WATCHLIST_ERROR_TITLE = 'Watchlist Limit Reached';
