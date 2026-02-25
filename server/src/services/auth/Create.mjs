@@ -10,11 +10,12 @@ import {
   Nonce,
   Notification,
   ReferrerProfile,
+  Var,
   Wallet,
   Cart,
 } from '../../models';
 
-import { DAY_MS } from '../../config/constants.js';
+import { DAY_MS, VARS_KEYS } from '../../config/constants.js';
 import logger from '../../logger.mjs';
 import emailSender from '../emailSender.mjs';
 import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
@@ -102,7 +103,10 @@ export default class AuthCreate extends Base {
           data: { pagesToShow: ['/myfio'] },
         }).save();
 
-        for (const { edgeId, name, publicKey } of edgeWallets) {
+        const maxWallets = Number(await Var.getValByKey(VARS_KEYS.SET_WALLETS_AMOUNT));
+        const walletsToSave = maxWallets ? edgeWallets.slice(0, maxWallets) : edgeWallets;
+
+        for (const { edgeId, name, publicKey } of walletsToSave) {
           const newWallet = new Wallet({
             edgeId,
             name,
@@ -159,7 +163,10 @@ export default class AuthCreate extends Base {
     let verified = false;
 
     if (!wallets.length && edgeWallets) {
-      for (const edgeWallet of edgeWallets) {
+      const maxWallets = Number(await Var.getValByKey(VARS_KEYS.SET_WALLETS_AMOUNT));
+      const walletsToSave = maxWallets ? edgeWallets.slice(0, maxWallets) : edgeWallets;
+
+      for (const edgeWallet of walletsToSave) {
         const newWallet = new Wallet({ ...edgeWallet, userId: user.id });
         await newWallet.save();
 
