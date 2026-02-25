@@ -40,11 +40,12 @@ export function* notify(history: History): Generator {
   yield takeEvery('*', function*(action: Action) {
     if (
       (action.error &&
-        action.type !== PROFILE_FAILURE &&
-        action.type !== AUTH_CHECK_FAILURE &&
-        action.type !== ADMIN_PROFILE_FAILURE &&
-        action.type !== LOGIN_FAILURE &&
-        action.type !== LOGIN_EDGE_FAILURE &&
+      action.type !== PROFILE_FAILURE &&
+      action.type !== AUTH_CHECK_FAILURE &&
+      action.type !== ADMIN_PROFILE_FAILURE &&
+      action.type !== LOGIN_FAILURE &&
+      action.type !== LOGIN_EDGE_FAILURE &&
+      action.error?.fields?.contact !== 'MAX_CONTACTS_REACHED' && // Do not show error for contacts create on limit exceeded
         action.type !== NOTIFICATIONS_LIST_FAILURE &&
         action.type !== CONFIRM_PIN_FAILURE &&
         action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE &&
