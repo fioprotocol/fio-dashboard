@@ -567,20 +567,9 @@ export type FioWalletData = {
   obtData: FioRecord[];
 };
 
-export type FioWalletTxHistory = {
-  lastTxActionTime: string | null;
-  txs: TransactionItemProps[];
-};
-
 export type UsersFioWalletsData = {
   [userId: string]: {
     [walletPublicKey: string]: FioWalletData;
-  };
-};
-
-export type UsersWalletsTxHistory = {
-  [userId: string]: {
-    [walletPublicKey: string]: FioWalletTxHistory;
   };
 };
 
