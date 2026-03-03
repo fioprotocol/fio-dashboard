@@ -7,7 +7,7 @@ import X from '../Exception';
 export default class GetJiraCandidates extends Base {
   static get validationRules() {
     return {
-      publicKey: ['string'],
+      publicKey: ['string', 'fio_public_key'],
     };
   }
 

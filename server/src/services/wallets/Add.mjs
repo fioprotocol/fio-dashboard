@@ -14,7 +14,7 @@ export default class WalletsAdd extends Base {
           nested_object: {
             edgeId: 'string',
             name: 'string',
-            publicKey: 'string',
+            publicKey: ['string', 'fio_public_key'],
             from: 'string',
             data: 'any_object',
           },

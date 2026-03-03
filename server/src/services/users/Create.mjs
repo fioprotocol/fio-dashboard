@@ -31,7 +31,7 @@ export default class UsersCreate extends Base {
                 list_of_objects: {
                   edgeId: 'string',
                   name: 'string',
-                  publicKey: 'string',
+                  publicKey: ['string', 'fio_public_key'],
                 },
               },
             ],

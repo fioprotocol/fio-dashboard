@@ -50,7 +50,7 @@ export default class AddItem extends Base {
           },
         },
       ],
-      publicKey: ['string'], // no profile flow
+      publicKey: ['string', 'fio_public_key'], // no profile flow
       token: ['string'],
       refCode: ['string'],
     };

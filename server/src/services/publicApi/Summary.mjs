@@ -184,7 +184,7 @@ export default class Summary extends Base {
 
   static get validationRules() {
     return {
-      publicKey: 'string',
+      publicKey: ['string', 'fio_public_key'],
       referralCode: 'string',
       externId: 'string',
       address: 'string',
