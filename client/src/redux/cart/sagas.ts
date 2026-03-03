@@ -5,6 +5,7 @@ import { GenericAction } from '@fioprotocol/fiosdk';
 import { History } from 'history';
 
 import { addManual as createNotification } from '../notifications/actions';
+import { showGenericErrorModal } from '../modal/actions';
 import {
   containedFlowQueryParams as getContainedFlowQueryParams,
   isContainedFlow as getIsContainedFlow,
@@ -16,6 +17,7 @@ import {
 } from '../registrations/selectors';
 
 import {
+  ADD_ITEM_FAILURE,
   ADD_ITEM_SUCCESS,
   addItem as addItemToCart,
   CLEAR_CART_SUCCESS,
@@ -29,6 +31,11 @@ import {
   NOTIFICATIONS_CONTENT,
   NOTIFICATIONS_CONTENT_TYPE,
 } from '../../constants/notifications';
+import {
+  DUPLICATE_ORDER_CODE,
+  ITEM_ALREADY_PROCESSING_MESSAGE,
+  ITEM_ALREADY_PROCESSING_TITLE,
+} from '../../constants/errors';
 import { CONTAINED_FLOW_NOTIFICATION_MESSAGES } from '../../constants/containedFlow';
 import { ROUTES } from '../../constants/routes';
 import {
@@ -100,6 +107,26 @@ export function* addItem(): Generator {
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([cartItem]),
     );
+  });
+}
+
+export function* addItemFailed(): Generator {
+  yield takeEvery(ADD_ITEM_FAILURE, function*(action: Action) {
+    const { error } = action;
+
+    let message = 'This item could not be added to the cart.';
+    let title = null;
+    let buttonText = null;
+
+    if (error?.code === DUPLICATE_ORDER_CODE) {
+      if (error.fields?.addItem === 'ITEM_IS_ALREADY_IN_PROCESSING_ORDER') {
+        message = ITEM_ALREADY_PROCESSING_MESSAGE;
+        title = ITEM_ALREADY_PROCESSING_TITLE;
+        buttonText = 'Close';
+      }
+    }
+
+    yield put<Action>(showGenericErrorModal(message, title, buttonText));
   });
 }
 

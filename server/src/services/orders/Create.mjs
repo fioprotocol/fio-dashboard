@@ -14,8 +14,14 @@ import {
 import X from '../Exception.mjs';
 
 import { calculateCartTotalCost, cartItemsToOrderItems } from '../../utils/cart.mjs';
+import {
+  findDuplicateRegistrations,
+  checkRenewalYearLimit,
+} from '../../utils/order-validation.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { checkPrices } from '../../utils/prices.mjs';
+import { fioApi } from '../../external/fio.mjs';
+import { CART_ITEM_TYPE, ERROR_CODES } from '../../config/constants';
 import { ORDER_USER_TYPES } from '../../constants/order';
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -125,6 +131,50 @@ export default class OrdersCreate extends Base {
       userId: user.id,
       guestId: this.context.guestId,
     });
+
+    const activeOrderItems = await Order.getActiveOrderItemsByUser({
+      userId: user.id,
+    });
+
+    if (activeOrderItems.length) {
+      const duplicateRegs = findDuplicateRegistrations({
+        cartItems: cart.items,
+        activeOrderItems,
+      });
+
+      if (duplicateRegs.length) {
+        throw new X({
+          code: ERROR_CODES.DUPLICATE_ORDER,
+          fields: {
+            items: duplicateRegs.map(item => item.id),
+          },
+        });
+      }
+    }
+
+    for (const cartItem of cart.items) {
+      if (cartItem.type !== CART_ITEM_TYPE.DOMAIN_RENEWAL || !cartItem.period) continue;
+
+      const otherCartItems = cart.items.filter(item => item !== cartItem);
+      const domainFromChain = await fioApi.getFioDomain(cartItem.domain);
+
+      const { exceedsLimit } = checkRenewalYearLimit({
+        domain: cartItem.domain,
+        renewalPeriod: Number(cartItem.period),
+        chainExpirationDate: domainFromChain && domainFromChain.expiration,
+        activeOrderItems,
+        cartItems: otherCartItems,
+      });
+
+      if (exceedsLimit) {
+        throw new X({
+          code: ERROR_CODES.DUPLICATE_ORDER,
+          fields: {
+            reason: 'RENEWAL_EXCEEDS_MAX_YEARS',
+          },
+        });
+      }
+    }
 
     const {
       userRefProfile,
