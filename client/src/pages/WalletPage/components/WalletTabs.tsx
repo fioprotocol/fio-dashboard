@@ -12,7 +12,7 @@ import {
   FioRecord,
   FioWalletData,
   FioWalletDoublet,
-  FioWalletTxHistory,
+  TransactionItemProps,
 } from '../../../types';
 import { SiteSetting } from '../../../types/settings';
 
@@ -20,7 +20,9 @@ type Props = {
   fioWallet: FioWalletDoublet;
   fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
-  walletTxHistory: FioWalletTxHistory;
+  transactions: TransactionItemProps[];
+  transactionsLoading: boolean;
+  transactionsHasNextPage: boolean;
   hasNoTransactions: boolean;
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
@@ -29,6 +31,7 @@ type Props = {
   siteSetings: SiteSetting;
   sentFioRequestsLoading: boolean;
   receivedFioRequestsLoading: boolean;
+  loadMoreTransactions: () => void;
   tabAction: (tabKey: string) => void;
 };
 

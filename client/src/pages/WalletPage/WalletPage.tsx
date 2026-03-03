@@ -120,7 +120,9 @@ const WalletPage: React.FC = () => {
     fioWallet,
     fioWalletBalance,
     fioWalletData,
-    fioWalletTxHistory,
+    transactions,
+    transactionsLoading,
+    transactionsHasNextPage,
     walletsSafeDeleteAmount,
     hasNoTransactions,
     isOpenLockedList,
@@ -136,6 +138,7 @@ const WalletPage: React.FC = () => {
     userType,
     welcomeComponentProps,
     closeWalletNameEdit,
+    loadMoreTransactions,
     onKeyShow,
     onShowPrivateModalClose,
     onWalletUpdated,
@@ -191,7 +194,10 @@ const WalletPage: React.FC = () => {
           fioCryptoHandles={fioCryptoHandles}
           hasNoTransactions={hasNoTransactions}
           walletData={fioWalletData}
-          walletTxHistory={fioWalletTxHistory}
+          transactions={transactions}
+          transactionsLoading={transactionsLoading}
+          transactionsHasNextPage={transactionsHasNextPage}
+          loadMoreTransactions={loadMoreTransactions}
           receivedFioRequests={receivedFioRequests}
           sentFioRequests={sentFioRequests}
           obtData={obtData}
