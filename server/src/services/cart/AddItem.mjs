@@ -2,6 +2,7 @@ import Base from '../Base.mjs';
 import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
+import { Order } from '../../models/Order.mjs';
 import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
 import { GatedRegistrtionTokens } from '../../models/GatedRegistrationTokens.mjs';
 
@@ -13,9 +14,18 @@ import {
   handleFioHandleCartItemsWithCustomDomain,
   getItemCost,
 } from '../../utils/cart.mjs';
+import {
+  isCartItemDuplicateRegistration,
+  getCartWarnings,
+} from '../../utils/order-validation.mjs';
 import { fioApi } from '../../external/fio.mjs';
 
-import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
+import {
+  CART_ITEM_TYPE,
+  DOMAIN_RENEW_PERIODS,
+  ERROR_CODES,
+} from '../../config/constants';
+
 import { checkPrices } from '../../utils/prices.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { normalizeFioHandle } from '../../utils/fio.mjs';
@@ -129,11 +139,27 @@ export default class AddItem extends Base {
 
       const existingCart = await Cart.getActive({ userId, guestId });
 
-      // Check for duplicate items (prevent duplicates for register actions)
+      // Check for duplicates in the cart itself
       if (existingCart && existingCart.items) {
         const isDuplicate = this.checkForDuplicateItem(newItem, existingCart.items);
         if (isDuplicate) {
           throw new Error(`Duplicate cart item: ${newItem.id} - ${newItem.type}`);
+        }
+      }
+
+      // Check for duplicates against active (in-progress) orders
+      const activeOrderItems = userId
+        ? await Order.getActiveOrderItemsByUser({ userId })
+        : [];
+
+      if (activeOrderItems.length) {
+        if (isCartItemDuplicateRegistration({ item: newItem, activeOrderItems })) {
+          throw new X({
+            code: ERROR_CODES.DUPLICATE_ORDER,
+            fields: {
+              addItem: 'ITEM_IS_ALREADY_IN_PROCESSING_ORDER',
+            },
+          });
         }
       }
 
@@ -236,8 +262,12 @@ export default class AddItem extends Base {
         if (guestId) cartFields.guestId = guestId;
 
         const cart = await Cart.create(cartFields);
+        const cartData = Cart.format(cart.get({ plain: true }));
+        const warnings = userId
+          ? await getCartWarnings({ cartItems: cartData.items, activeOrderItems })
+          : null;
 
-        return { data: Cart.format(cart.get({ plain: true })) };
+        return { data: { ...cartData, warnings } };
       }
 
       const items = existingCart.items;
@@ -266,10 +296,18 @@ export default class AddItem extends Base {
         publicKey: noProfileResolvedUser ? publicKey : null,
       });
 
+      const cartData = Cart.format(existingCart.get({ plain: true }));
+      const warnings = userId
+        ? await getCartWarnings({ cartItems: cartData.items, activeOrderItems })
+        : null;
+
       return {
-        data: Cart.format(existingCart.get({ plain: true })),
+        data: { ...cartData, warnings },
       };
     } catch (error) {
+      if (error instanceof X) {
+        throw error;
+      }
       logger.error(error);
       throw new X({
         code: 'SERVER_ERROR',

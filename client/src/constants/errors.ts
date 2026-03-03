@@ -134,3 +134,17 @@ export const WALLET_API_PROVIDER_ERRORS_CODE = {
 export const CAPTCHA_ERRORS_CODE = {
   VERIFICATION_FAILED: 'VERIFICATION_FAILED',
 };
+
+export const DUPLICATE_ORDER_CODE = 'DUPLICATE_ORDER';
+export const DUPLICATE_ORDER_TITLE = 'Duplicate Order Detected';
+export const DUPLICATE_ORDER_MESSAGE =
+  'One or more items in your cart are already being processed in an existing order. Please wait for the order to complete before placing a new one.';
+export const ITEM_ALREADY_PROCESSING_MESSAGE =
+  'This item is already being processed in an existing order. Please wait for the order to complete.';
+export const ITEM_ALREADY_PROCESSING_TITLE = 'Item Already Processing';
+
+export const RENEWAL_EXCEEDS_MAX_YEARS_TITLE = 'Renewal Limit Exceeded';
+export const RENEWAL_EXCEEDS_MAX_YEARS_MESSAGE =
+  'This renewal would exceed the maximum allowed expiration year. Please reduce the renewal period.';
+export const getRenewalExceedsMaxYearsMessage = (maxYears: number): string =>
+  `This renewal would exceed the maximum allowed expiration year. You can renew for up to ${maxYears} more year(s).`;

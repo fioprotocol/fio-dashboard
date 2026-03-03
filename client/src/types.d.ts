@@ -77,6 +77,11 @@ export type CartItem = {
   signInFioWallet?: FioWalletDoublet;
 };
 
+export type CartWarnings = {
+  duplicateRegistrations?: string[];
+  hasPendingRenewals?: boolean;
+};
+
 export type Notification = {
   id: number;
   type: string;

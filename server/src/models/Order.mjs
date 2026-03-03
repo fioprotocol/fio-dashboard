@@ -1068,6 +1068,46 @@ export class Order extends Base {
     };
   }
 
+  static async getActiveOrderItemsByUser({ userId }) {
+    if (!userId) return [];
+
+    return this.sequelize.query(
+      `SELECT oi.action, oi.address, oi.domain
+       FROM "order-items" oi
+       JOIN orders o ON o.id = oi."orderId"
+       JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
+       WHERE o."userId" = :userId
+         AND o."deletedAt" IS NULL
+         AND oi."deletedAt" IS NULL
+         AND o.status NOT IN (:terminalOrderStatuses)
+         AND ois."txStatus" NOT IN (:terminalTxStatuses)
+         AND ois."paymentStatus" NOT IN (:terminalPaymentStatuses)`,
+      {
+        replacements: {
+          userId,
+          terminalOrderStatuses: [
+            Order.STATUS.NEW,
+            Order.STATUS.SUCCESS,
+            Order.STATUS.FAILED,
+            Order.STATUS.CANCELED,
+            Order.STATUS.PARTIALLY_SUCCESS,
+          ],
+          terminalTxStatuses: [
+            BlockchainTransaction.STATUS.SUCCESS,
+            BlockchainTransaction.STATUS.FAILED,
+            BlockchainTransaction.STATUS.CANCEL,
+          ],
+          terminalPaymentStatuses: [
+            Payment.STATUS.CANCELLED,
+            Payment.STATUS.EXPIRED,
+            Payment.STATUS.FAILED,
+          ],
+        },
+        type: this.sequelize.QueryTypes.SELECT,
+      },
+    );
+  }
+
   static generateNumber(id) {
     return hashids.encode(id);
   }

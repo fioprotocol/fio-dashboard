@@ -2,10 +2,12 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { Cart } from '../../models/Cart.mjs';
+import { Order } from '../../models/Order.mjs';
 
 import logger from '../../logger.mjs';
 
 import { handlePriceForMultiYearItems, convertFioPrices } from '../../utils/cart.mjs';
+import { getCartWarnings } from '../../utils/order-validation.mjs';
 
 import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
 
@@ -100,8 +102,19 @@ export default class UpdateItemPeriod extends Base {
 
       await cart.update({ items: cartItems });
 
+      const cartData = Cart.format(cart.get({ plain: true }));
+
+      let warnings = null;
+      if (userId && cartData.items && cartData.items.length) {
+        const activeOrderItems = await Order.getActiveOrderItemsByUser({ userId });
+        warnings = await getCartWarnings({
+          cartItems: cartData.items,
+          activeOrderItems,
+        });
+      }
+
       return {
-        data: Cart.format(cart.get({ plain: true })),
+        data: { ...cartData, warnings },
       };
     } catch (error) {
       logger.error(error);

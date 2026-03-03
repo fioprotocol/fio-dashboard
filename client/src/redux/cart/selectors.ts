@@ -1,7 +1,7 @@
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
-import { CartItem } from '../../types';
+import { CartItem, CartWarnings } from '../../types';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 
@@ -10,6 +10,9 @@ export const cartId = (state: ReduxState): string =>
 
 export const cartItems = (state: ReduxState): CartItem[] =>
   state[prefix].cartItems || [];
+
+export const cartWarnings = (state: ReduxState): CartWarnings | null =>
+  state[prefix].cartWarnings || null;
 
 export const paymentWalletPublicKey = (state: ReduxState): string =>
   state[prefix].paymentWalletPublicKey || '';
