@@ -38,7 +38,7 @@ export default class AuthCreate extends Base {
             {
               edgeId: ['string'],
               name: ['string'],
-              publicKey: ['string'],
+              publicKey: ['string', 'fio_public_key'],
               from: ['string'],
             },
           ],

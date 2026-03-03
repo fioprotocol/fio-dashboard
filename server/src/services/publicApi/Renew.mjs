@@ -241,7 +241,7 @@ export default class Renew extends Base {
     return {
       address: ['required', 'string'],
       referralCode: ['required', 'string'],
-      publicKey: ['string'],
+      publicKey: ['string', 'fio_public_key'],
     };
   }
 

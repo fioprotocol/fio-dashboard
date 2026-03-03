@@ -8,7 +8,7 @@ import X from '../Exception';
 export default class WalletsDelete extends Base {
   static get validationRules() {
     return {
-      publicKey: 'string',
+      publicKey: ['required', 'string', 'fio_public_key'],
       nonce: [
         'required',
         {

@@ -6,7 +6,7 @@ import X from '../Exception.mjs';
 export default class GetFreeAddress extends Base {
   static get validationRules() {
     return {
-      publicKey: ['string'],
+      publicKey: ['string', 'fio_public_key'],
     };
   }
 

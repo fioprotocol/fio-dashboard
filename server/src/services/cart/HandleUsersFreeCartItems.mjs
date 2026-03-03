@@ -11,7 +11,7 @@ import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
     return {
-      publicKey: ['string'],
+      publicKey: ['string', 'fio_public_key'],
       refCode: ['string'],
     };
   }
