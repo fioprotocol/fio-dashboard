@@ -48,6 +48,7 @@ import {
   isNoProfileFlow as isNoProfileFlowSelector,
   refProfileCode as refProfileCodeSelector,
 } from '../refProfile/selectors';
+import { siteSetings as siteSettingsSelector } from '../settings/selectors';
 import {
   user as userSelector,
   isNewUser as isNewUserSelectors,
@@ -62,6 +63,7 @@ import {
   WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST_TITLE,
 } from '../../constants/errors';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
+import { VARS_KEYS } from '../../constants/vars';
 import { METAMASK_DOMAIN_NAME } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
@@ -401,11 +403,14 @@ export function* activateAffiliateSuccess(history: History): Generator {
 export function* setWalletsSuccess(): Generator {
   yield takeEvery(SET_WALLETS_SUCCESS, function*(action: Action) {
     if (action.data?.walletsLimitExceeded) {
+      const siteSettings = (yield select(siteSettingsSelector)) as ReturnType<
+        typeof siteSettingsSelector
+      >;
+      const maxWallets = Number(siteSettings[VARS_KEYS.SET_WALLETS_AMOUNT]);
+
       yield put(
         showGenericErrorModal(
-          WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST(
-            action.data.walletsLimitExceeded,
-          ),
+          WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST(maxWallets),
           WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST_TITLE,
           'Close',
         ),
