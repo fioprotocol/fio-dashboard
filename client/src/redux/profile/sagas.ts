@@ -3,7 +3,7 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 
 import { log } from '../../util/general';
 
-import { setWallets } from '../account/actions';
+import { setWallets, SET_WALLETS_SUCCESS } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
 import {
   loadAdminProfile,
@@ -24,7 +24,7 @@ import {
   GUEST_LOGIN_SUCCESS,
 } from './actions';
 
-import { closeLoginModal } from '../modal/actions';
+import { closeLoginModal, showGenericErrorModal } from '../modal/actions';
 import { listNotifications } from '../notifications/actions';
 import {
   handleUsersFreeCartItems,
@@ -48,6 +48,7 @@ import {
   isNoProfileFlow as isNoProfileFlowSelector,
   refProfileCode as refProfileCodeSelector,
 } from '../refProfile/selectors';
+import { siteSetings as siteSettingsSelector } from '../settings/selectors';
 import {
   user as userSelector,
   isNewUser as isNewUserSelectors,
@@ -57,7 +58,12 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_LOGIN_METHOD,
 } from '../../constants/common';
+import {
+  WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST,
+  WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST_TITLE,
+} from '../../constants/errors';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
+import { VARS_KEYS } from '../../constants/vars';
 import { METAMASK_DOMAIN_NAME } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { REF_PROFILE_SLUG_NAME } from '../../constants/ref';
@@ -391,5 +397,24 @@ export function* activateAffiliateSuccess(history: History): Generator {
   yield takeEvery(ACTIVATE_AFFILIATE_SUCCESS, function*() {
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.AFFILIATE_ENABLED);
     yield history.push(ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED);
+  });
+}
+
+export function* setWalletsSuccess(): Generator {
+  yield takeEvery(SET_WALLETS_SUCCESS, function*(action: Action) {
+    if (action.data?.walletsLimitExceeded) {
+      const siteSettings = (yield select(siteSettingsSelector)) as ReturnType<
+        typeof siteSettingsSelector
+      >;
+      const maxWallets = Number(siteSettings[VARS_KEYS.SET_WALLETS_AMOUNT]);
+
+      yield put(
+        showGenericErrorModal(
+          WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST(maxWallets),
+          WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST_TITLE,
+          'Close',
+        ),
+      );
+    }
   });
 }

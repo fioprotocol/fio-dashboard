@@ -74,7 +74,6 @@ export default function configureStore(api: Api, history: History): Store {
         },
         fioWalletsData: {
           walletsData: store.getState().fioWalletsData.walletsData,
-          walletsTxHistory: store.getState().fioWalletsData.walletsTxHistory,
         },
       };
 

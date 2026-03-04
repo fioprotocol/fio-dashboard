@@ -54,17 +54,18 @@ export class Nonce extends Base {
       .digest('hex');
   }
 
-  static async verify({ userId, challenge, signatures }) {
+  static async verify({ userId, challenge, signatures }, seqOptions = {}) {
     const nonce = await this.findOne({
       where: {
         userId,
         value: challenge,
       },
       order: [['createdAt', 'DESC']],
+      ...seqOptions,
     });
 
     if (!nonce || this.isExpired(nonce.createdAt)) {
-      nonce && this.isExpired(nonce.createdAt) && (await nonce.destroy());
+      nonce && this.isExpired(nonce.createdAt) && (await nonce.destroy(seqOptions));
 
       return false;
     }
@@ -74,6 +75,7 @@ export class Nonce extends Base {
       where: { userId },
       raw: true,
       attributes: ['publicKey'],
+      ...seqOptions,
     });
     for (const wallet of wallets) {
       for (const signature of signatures) {
@@ -88,7 +90,7 @@ export class Nonce extends Base {
       if (verified) break;
     }
 
-    if (verified) await nonce.destroy();
+    if (verified) await nonce.destroy(seqOptions);
 
     return verified;
   }

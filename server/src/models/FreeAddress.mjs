@@ -32,7 +32,7 @@ export class FreeAddress extends Base {
     );
   }
 
-  static async getItems(params) {
+  static async getItems(params, seqOptions = {}) {
     const { userId, publicKey, freeId, name } = params;
     const where = {};
     if (name) where.name = name;
@@ -43,11 +43,15 @@ export class FreeAddress extends Base {
     }
 
     if (userId) {
-      const { freeId } = await User.findOne({ where: { id: userId }, raw: true });
+      const { freeId } = await User.findOne({
+        where: { id: userId },
+        raw: true,
+        ...seqOptions,
+      });
       where.freeId = freeId;
     }
 
-    return this.findAll({ where });
+    return this.findAll({ where, ...seqOptions });
   }
 
   static format({ id, name, publicKey, createdAt, freeId }) {

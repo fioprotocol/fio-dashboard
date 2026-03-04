@@ -3,13 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { recalculateOnPriceUpdate, clearCart } from '../../redux/cart/actions';
+import {
+  recalculateOnPriceUpdate,
+  clearCart,
+  getCart,
+} from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
   cartId as cartIdSelector,
   cartItems as cartItemsSelector,
+  cartWarnings as cartWarningsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   loading as loadingCartSelector,
 } from '../../redux/cart/selectors';
@@ -54,6 +59,7 @@ import {
   NOT_FOUND_CART_MESSAGE,
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
+import { DUPLICATE_ORDER_CODE } from '../../constants/errors';
 import { ORDER_USER_TYPES } from '../../constants/order';
 import { VARS_KEYS } from '../../constants/vars';
 
@@ -91,6 +97,7 @@ type UseContextReturnType = {
   paymentWalletPublicKey: string;
   prices: Prices;
   roe: Roe;
+  showDuplicateOrderWarning: boolean;
   showExpiredDomainWarningBadge: boolean;
   showTooLongDomainRenewalWarning: boolean;
   totalCartAmount: string;
@@ -105,6 +112,7 @@ type UseContextReturnType = {
 export const useContext = (): UseContextReturnType => {
   const cartId = useSelector(cartIdSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const warnings = useSelector(cartWarningsSelector);
   const hasGetPricesError = useSelector(hasGetPricesErrorSelector);
   const isAuth = useSelector(isAuthenticated);
   const loading = useSelector(loadingSelector);
@@ -140,6 +148,9 @@ export const useContext = (): UseContextReturnType => {
     showTooLongDomainRenewalWarning,
     setShowTooLongDomainRenewalWarning,
   ] = useState<boolean>(false);
+  const [hasDuplicateOrderError, setHasDuplicateOrderError] = useState<boolean>(
+    false,
+  );
   const [formsOfPayment, setFormsOfPayment] = useState<{
     [key: string]: boolean;
   }>(null);
@@ -373,6 +384,12 @@ export const useContext = (): UseContextReturnType => {
           ),
         );
         dispatch(clearCart());
+      } else if (e?.code === DUPLICATE_ORDER_CODE) {
+        if (e?.fields?.reason === 'RENEWAL_EXCEEDS_MAX_YEARS') {
+          setShowTooLongDomainRenewalWarning(true);
+        } else {
+          setHasDuplicateOrderError(true);
+        }
       } else {
         dispatch(showGenericErrorModal());
       }
@@ -387,15 +404,29 @@ export const useContext = (): UseContextReturnType => {
     setSelectedPaymentProvider(null);
   };
 
+  const showDuplicateOrderWarning =
+    hasDuplicateOrderError || !!warnings?.duplicateRegistrations?.length;
+
   const handleDomainExpiration = useCallback(async () => {
     const {
       hasExpiredDomain,
       hasTooLongDomainRenewal,
     } = await handleDomainsExpiration({ cartItems });
 
+    const hasRenewalItemsInCart = cartItems.some(
+      item => item.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
+    );
+
     toggleShowExpiredDomainWarningBadge(hasExpiredDomain);
-    setShowTooLongDomainRenewalWarning(hasTooLongDomainRenewal);
-  }, [cartItems]);
+    setShowTooLongDomainRenewalWarning(
+      hasTooLongDomainRenewal ||
+        (!!warnings?.hasPendingRenewals && hasRenewalItemsInCart),
+    );
+  }, [cartItems, warnings]);
+
+  useEffect(() => {
+    dispatch(getCart());
+  }, [dispatch]);
 
   useEffect(() => {
     handleDomainExpiration();
@@ -437,6 +468,7 @@ export const useContext = (): UseContextReturnType => {
     paymentWalletPublicKey,
     prices,
     roe,
+    showDuplicateOrderWarning,
     showExpiredDomainWarningBadge,
     showTooLongDomainRenewalWarning,
     formsOfPayment,

@@ -80,7 +80,14 @@ import {
   NOT_FOUND_CART_MESSAGE,
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
-import { CAPTCHA_ERRORS_CODE } from '../../constants/errors';
+import {
+  CAPTCHA_ERRORS_CODE,
+  DUPLICATE_ORDER_CODE,
+  DUPLICATE_ORDER_MESSAGE,
+  DUPLICATE_ORDER_TITLE,
+  RENEWAL_EXCEEDS_MAX_YEARS_MESSAGE,
+  RENEWAL_EXCEEDS_MAX_YEARS_TITLE,
+} from '../../constants/errors';
 
 import {
   RegistrationResult,
@@ -383,6 +390,24 @@ export const useContext = (): {
             ),
           );
           dispatch(clearCart());
+        } else if (e?.code === DUPLICATE_ORDER_CODE) {
+          if (e?.fields?.reason === 'RENEWAL_EXCEEDS_MAX_YEARS') {
+            dispatch(
+              showGenericErrorModal(
+                RENEWAL_EXCEEDS_MAX_YEARS_MESSAGE,
+                RENEWAL_EXCEEDS_MAX_YEARS_TITLE,
+                'Close',
+              ),
+            );
+          } else {
+            dispatch(
+              showGenericErrorModal(
+                DUPLICATE_ORDER_MESSAGE,
+                DUPLICATE_ORDER_TITLE,
+                'Close',
+              ),
+            );
+          }
         } else {
           dispatch(showGenericErrorModal());
         }

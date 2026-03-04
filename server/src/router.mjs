@@ -140,7 +140,7 @@ router.post(
 router.get('/vars/:key', routes.vars.get);
 
 router.get('/notifications', checkUserAuth, routes.notifications.list);
-router.post('/notifications', checkUserAuth, routes.notifications.create);
+// router.post('/notifications', checkUserAuth, routes.notifications.create); // Disabled until we will need it.
 router.put('/notifications', checkUserAuth, routes.notifications.update);
 
 router.get('/reg/domains/list', routes.registration.domainsList);

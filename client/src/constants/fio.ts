@@ -29,7 +29,7 @@ export const TRANSACTION_DEFAULT_OFFSET_EXPIRATION_MS =
 export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
 
 export const DEFAULT_HISTORY_ITEMS_LIMIT = 1000;
-export const WALLET_HISTORY_NODE_LIMIT = 20;
+export const WALLET_HISTORY_NODE_LIMIT = 100;
 
 export const TOO_LONG_DOMAIN_RENEWAL_YEAR = 2100; // Temporary 2100 is the max year for domain renewal until BD-4750 will be fixed
 

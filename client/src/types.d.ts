@@ -77,6 +77,11 @@ export type CartItem = {
   signInFioWallet?: FioWalletDoublet;
 };
 
+export type CartWarnings = {
+  duplicateRegistrations?: string[];
+  hasPendingRenewals?: boolean;
+};
+
 export type Notification = {
   id: number;
   type: string;
@@ -562,20 +567,9 @@ export type FioWalletData = {
   obtData: FioRecord[];
 };
 
-export type FioWalletTxHistory = {
-  lastTxActionTime: string | null;
-  txs: TransactionItemProps[];
-};
-
 export type UsersFioWalletsData = {
   [userId: string]: {
     [walletPublicKey: string]: FioWalletData;
-  };
-};
-
-export type UsersWalletsTxHistory = {
-  [userId: string]: {
-    [walletPublicKey: string]: FioWalletTxHistory;
   };
 };
 

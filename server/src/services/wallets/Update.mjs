@@ -8,7 +8,7 @@ export default class WalletsUpdate extends Base {
     return {
       name: 'string',
       data: 'any_object',
-      publicKey: 'string',
+      publicKey: ['string', 'fio_public_key'],
     };
   }
 

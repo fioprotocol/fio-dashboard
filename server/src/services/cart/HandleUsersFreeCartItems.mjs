@@ -11,7 +11,7 @@ import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 export default class HandleUsersFreeCartItems extends Base {
   static get validationRules() {
     return {
-      publicKey: ['string'],
+      publicKey: ['string', 'fio_public_key'],
       refCode: ['string'],
     };
   }
@@ -21,55 +21,65 @@ export default class HandleUsersFreeCartItems extends Base {
       const userId = this.context.id || null;
       const guestId = this.context.guestId || null;
 
-      const cart = await Cart.getActive({ userId, guestId });
-
-      if (!cart) {
-        return {
-          data: { items: [] },
-        };
-      }
-
-      let noProfileResolvedUser = null;
-      if (!userId && publicKey) {
-        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
-          publicKey,
-          refCode,
+      return await Cart.sequelize.transaction(async t => {
+        const cart = await Cart.getActive(
+          { userId, guestId },
+          { transaction: t, lock: t.LOCK.UPDATE },
         );
-        noProfileResolvedUser = resolvedUser;
-      }
 
-      const {
-        userRefProfile,
-        domainsList,
-        freeDomainToOwner,
-        userHasFreeAddress,
-        noAuth,
-      } = await Cart.getDataForCartItemsUpdate({
-        refCode,
-        noProfileResolvedUser,
-        publicKey,
-        userId,
-        items: cart.items,
+        if (!cart) {
+          return {
+            data: { items: [] },
+          };
+        }
+
+        let noProfileResolvedUser = null;
+        if (!userId && publicKey) {
+          const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+            publicKey,
+            refCode,
+            undefined,
+            { transaction: t },
+          );
+          noProfileResolvedUser = resolvedUser;
+        }
+
+        const {
+          userRefProfile,
+          domainsList,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          noAuth,
+        } = await Cart.getDataForCartItemsUpdate({
+          refCode,
+          noProfileResolvedUser,
+          publicKey,
+          userId,
+          items: cart.items,
+        });
+
+        const handledFreeCartItems = handleFreeItems({
+          cartItems: cart.items,
+          domainsList,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          userRefCode: userRefProfile && userRefProfile.code,
+          noAuth,
+        });
+
+        await cart.update(
+          {
+            items: handledFreeCartItems,
+            userId,
+            publicKey: noProfileResolvedUser ? publicKey : null,
+          },
+          { transaction: t },
+        );
+
+        return {
+          data: Cart.format(cart.get({ plain: true })),
+        };
       });
-
-      const handledFreeCartItems = handleFreeItems({
-        cartItems: cart.items,
-        domainsList,
-        freeDomainToOwner,
-        userHasFreeAddress,
-        userRefCode: userRefProfile && userRefProfile.code,
-        noAuth,
-      });
-
-      await cart.update({
-        items: handledFreeCartItems,
-        userId,
-        publicKey: noProfileResolvedUser ? publicKey : null,
-      });
-
-      return {
-        data: Cart.format(cart.get({ plain: true })),
-      };
     } catch (error) {
       logger.error(error);
       throw new X({

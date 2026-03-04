@@ -103,56 +103,67 @@ export const getExistUsersByPublicKeyOrCreateNew = async (
   publicKey,
   refCode = '',
   timeZone,
+  { transaction: externalTransaction } = {},
 ) => {
-  const existingWallets = await Wallet.list({
-    publicKey,
-  });
+  const run = async t => {
+    const existingWallets = await Wallet.list({ publicKey }, true, {
+      transaction: t,
+      lock: t.LOCK.UPDATE,
+    });
 
-  if (existingWallets && existingWallets.length > 0) {
-    const users = [];
+    if (existingWallets && existingWallets.length > 0) {
+      const users = [];
 
-    for (const existingWalletItem of existingWallets) {
-      const user = await User.info(existingWalletItem.userId);
-      users.push(user.json());
+      for (const existingWalletItem of existingWallets) {
+        const user = await User.info(existingWalletItem.userId, { transaction: t });
+        users.push(user.json());
+      }
+
+      return users;
     }
 
-    return users;
+    const refProfile = await ReferrerProfile.findOneWhere(
+      { code: refCode },
+      { transaction: t },
+    );
+
+    const refProfileId = refProfile ? refProfile.id : null;
+
+    const user = new User({
+      status: User.STATUS.ACTIVE,
+      refProfileId,
+      isOptIn: false,
+      timeZone,
+      userProfileType: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
+      freeId: publicKey,
+    });
+
+    await user.save({ transaction: t });
+
+    await new Notification({
+      type: Notification.TYPE.INFO,
+      contentType: Notification.CONTENT_TYPE.ACCOUNT_CREATE,
+      userId: user.id,
+      data: { pagesToShow: ['/myfio'] },
+    }).save({ transaction: t });
+
+    const newWallet = new Wallet({
+      name: 'My FIO wallet',
+      from: WALLET_CREATED_FROM.WITHOUT_REGISTRATION,
+      publicKey,
+      userId: user.id,
+    });
+
+    await newWallet.save({ transaction: t });
+
+    return [user.json()];
+  };
+
+  if (externalTransaction) {
+    return run(externalTransaction);
   }
 
-  const refProfile = await ReferrerProfile.findOneWhere({
-    code: refCode,
-  });
-
-  const refProfileId = refProfile ? refProfile.id : null;
-
-  const user = new User({
-    status: User.STATUS.ACTIVE,
-    refProfileId,
-    isOptIn: false,
-    timeZone,
-    userProfileType: User.USER_PROFILE_TYPE.WITHOUT_REGISTRATION,
-    freeId: publicKey,
-  });
-
-  await user.save();
-
-  await new Notification({
-    type: Notification.TYPE.INFO,
-    contentType: Notification.CONTENT_TYPE.ACCOUNT_CREATE,
-    userId: user.id,
-    data: { pagesToShow: ['/myfio'] },
-  }).save();
-
-  const newWallet = new Wallet({
-    name: 'My FIO wallet',
-    from: WALLET_CREATED_FROM.WITHOUT_REGISTRATION,
-    publicKey,
-    userId: user.id,
-  });
-
-  await newWallet.save();
-
-  return [user.json()];
+  return Wallet.sequelize.transaction(run);
 };
 
 export function emailToUsername(email) {
