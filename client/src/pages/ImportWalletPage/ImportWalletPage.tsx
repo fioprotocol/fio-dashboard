@@ -14,8 +14,13 @@ import {
   FIO_WALLET_TYPE,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
+import {
+  MAX_WALLETS_ERROR,
+  MAX_WALLETS_ERROR_TITLE,
+} from '../../constants/errors';
 import { ROUTES } from '../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { VARS_KEYS } from '../../constants/vars';
 
 import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
 import { ContainerProps, ImportWalletValues } from './types';
@@ -31,9 +36,12 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
     addWalletLoading,
     fioWallets,
     history,
+    siteSetings,
     addWallet,
     showGenericErrorModal,
   } = props;
+
+  const maxWallets = Number(siteSetings[VARS_KEYS.SET_WALLETS_AMOUNT]);
 
   const [processing, setProcessing] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -85,6 +93,15 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
   };
 
   const onSubmit = async (values: ImportWalletValues) => {
+    if (maxWallets && fioWallets.length >= maxWallets) {
+      showGenericErrorModal(
+        MAX_WALLETS_ERROR(maxWallets),
+        MAX_WALLETS_ERROR_TITLE,
+        'Close',
+      );
+      return {};
+    }
+
     const errors = await validate(values);
 
     if (errors != null) {
