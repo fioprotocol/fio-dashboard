@@ -404,6 +404,7 @@ export default class BuyAddress extends Base {
         paymentId: payment.id,
         orderItems: [orderItem],
         fioNativePrice: nativeFio,
+        transaction: t,
       });
     }
 

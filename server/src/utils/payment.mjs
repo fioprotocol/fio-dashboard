@@ -143,10 +143,12 @@ export const prepareOrderWithFioPaymentForExecution = async ({
   paymentId,
   orderItems,
   fioNativePrice,
+  transaction,
 }) => {
-  // Get current payment value before update
+  const txOpts = transaction ? { transaction } : {};
+
   try {
-    const currentPayment = await Payment.findByPk(paymentId);
+    const currentPayment = await Payment.findByPk(paymentId, txOpts);
     if (currentPayment) {
       logger.info(
         `PAYMENT_CURRENT_VALUE - PaymentID: ${paymentId}, CurrentPrice: ${currentPayment.price}, CurrentStatus: ${currentPayment.status}`,
@@ -165,6 +167,7 @@ export const prepareOrderWithFioPaymentForExecution = async ({
   try {
     await Payment.update(paymentUpdateParams, {
       where: { id: paymentId },
+      ...txOpts,
     });
     logger.info(
       `PAYMENT_PROGNOSED_PRICE_UPDATED - PaymentID: ${paymentId}, EstimatedPrice: ${fioNativePrice} (client estimate, not final)`,
@@ -175,12 +178,15 @@ export const prepareOrderWithFioPaymentForExecution = async ({
   }
 
   for (const orderItem of orderItems) {
-    const bcTx = await BlockchainTransaction.create({
-      action: orderItem.action,
-      status: BlockchainTransaction.STATUS.READY,
-      data: { params: orderItem.params },
-      orderItemId: orderItem.id,
-    });
+    const bcTx = await BlockchainTransaction.create(
+      {
+        action: orderItem.action,
+        status: BlockchainTransaction.STATUS.READY,
+        data: { params: orderItem.params },
+        orderItemId: orderItem.id,
+      },
+      txOpts,
+    );
 
     await OrderItemStatus.update(
       {
@@ -194,13 +200,13 @@ export const prepareOrderWithFioPaymentForExecution = async ({
           paymentId,
           txStatus: BlockchainTransaction.STATUS.NONE,
         },
+        ...txOpts,
       },
     );
   }
 
-  // Final verification - check if payment was modified by concurrent process
   try {
-    const finalPayment = await Payment.findByPk(paymentId);
+    const finalPayment = await Payment.findByPk(paymentId, txOpts);
     if (finalPayment && finalPayment.price !== fioNativePrice) {
       const expectedPrice = parseFloat(fioNativePrice);
       const actualPrice = parseFloat(finalPayment.price);
