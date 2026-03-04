@@ -155,10 +155,11 @@ export class User extends Base {
     return fiojs.Ecc.verify(signature, challenge, publicKey);
   }
 
-  static async findActive(id) {
+  static async findActive(id, seqOptions = {}) {
     const user = await this.findByPk(id, {
       raw: true,
       where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
+      ...seqOptions,
     });
 
     if (!user) return null;
@@ -229,8 +230,8 @@ export class User extends Base {
     return userObj;
   }
 
-  static info(id) {
-    return this.findByPk(id);
+  static info(id, seqOptions = {}) {
+    return this.findByPk(id, seqOptions);
   }
 
   static usersCount({ where, include }) {

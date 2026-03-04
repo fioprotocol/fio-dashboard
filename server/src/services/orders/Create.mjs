@@ -68,148 +68,154 @@ export default class OrdersCreate extends Base {
     let user;
     let isNoProfileFlow = false;
 
-    if (this.context.id) {
-      user = await User.findActive(this.context.id);
-    } else if (publicKey && refCode) {
-      // No profile flow
-      isNoProfileFlow = true;
-      const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
-        publicKey,
+    return await Order.sequelize.transaction(async t => {
+      if (this.context.id) {
+        user = await User.findActive(this.context.id, { transaction: t });
+      } else if (publicKey && refCode) {
+        // No profile flow is used when user is not logged in and public key is provided
+        isNoProfileFlow = true;
+        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+          publicKey,
+          refCode,
+          undefined,
+          { transaction: t },
+        );
+        user = resolvedUser;
+      }
+
+      const cart = await Cart.getActive(
+        {
+          userId: isNoProfileFlow ? null : user && user.id,
+          guestId: this.context.guestId,
+          checkPrices: true,
+        },
+        { transaction: t, lock: t.LOCK.UPDATE },
+      );
+
+      if (!user || !cart) {
+        if (!user)
+          logger.error(
+            `Error user not found: cartId - ${cart &&
+              cart.id}, refCode - ${refCode}, publicKey - ${publicKey}`,
+          );
+        if (!cart)
+          logger.error(
+            `Error cart not found: refCode - ${refCode}, publicKey - ${publicKey}`,
+          );
+
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {},
+        });
+      }
+
+      if (isNoProfileFlow && publicKey !== cart.publicKey) {
+        logger.error(
+          `Public key in the cart is different from the provided in the api call: cart publicKey - ${cart.publicKey}, publicKey - ${publicKey}`,
+        );
+
+        throw new X({
+          code: 'NOT_FOUND',
+          fields: {},
+        });
+      }
+
+      const { prices, roe } = cart.options;
+
+      checkPrices(prices, roe);
+
+      const orderItems = [];
+
+      const refProfile = isNoProfileFlow
+        ? await ReferrerProfile.findOneWhere({ code: refCode }, { transaction: t })
+        : null;
+
+      await Order.removeIrrelevant(
+        { userId: user.id, guestId: this.context.guestId },
+        { transaction: t },
+      );
+
+      const activeOrderItems = await Order.getActiveOrderItemsByUser(
+        { userId: user.id },
+        { transaction: t },
+      );
+
+      if (activeOrderItems.length) {
+        const duplicateRegs = findDuplicateRegistrations({
+          cartItems: cart.items,
+          activeOrderItems,
+        });
+
+        if (duplicateRegs.length) {
+          throw new X({
+            code: ERROR_CODES.DUPLICATE_ORDER,
+            fields: {
+              items: duplicateRegs.map(item => item.id),
+            },
+          });
+        }
+      }
+
+      for (const cartItem of cart.items) {
+        if (cartItem.type !== CART_ITEM_TYPE.DOMAIN_RENEWAL || !cartItem.period) continue;
+
+        const otherCartItems = cart.items.filter(item => item !== cartItem);
+        const domainFromChain = await fioApi.getFioDomain(cartItem.domain);
+
+        const { exceedsLimit } = checkRenewalYearLimit({
+          domain: cartItem.domain,
+          renewalPeriod: Number(cartItem.period),
+          chainExpirationDate: domainFromChain && domainFromChain.expiration,
+          activeOrderItems,
+          cartItems: otherCartItems,
+        });
+
+        if (exceedsLimit) {
+          throw new X({
+            code: ERROR_CODES.DUPLICATE_ORDER,
+            fields: {
+              reason: 'RENEWAL_EXCEEDS_MAX_YEARS',
+            },
+          });
+        }
+      }
+
+      const {
+        userRefProfile,
+        domainsList,
+        freeDomainToOwner,
+        userHasFreeAddress,
+      } = await Cart.getDataForCartItemsUpdate({
         refCode,
-      );
-      user = resolvedUser;
-    }
-
-    const cart = await Cart.getActive({
-      userId: isNoProfileFlow ? null : user && user.id,
-      guestId: this.context.guestId,
-      checkPrices: true,
-    });
-
-    if (!user || !cart) {
-      if (!user)
-        logger.error(
-          `Error user not found: cartId - ${cart &&
-            cart.id}, refCode - ${refCode}, publicKey - ${publicKey}`,
-        );
-      if (!cart)
-        logger.error(
-          `Error cart not found: refCode - ${refCode}, publicKey - ${publicKey}`,
-        );
-
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {},
+        noProfileResolvedUser: isNoProfileFlow ? user : null,
+        publicKey,
+        userId: isNoProfileFlow ? null : user.id,
+        items: cart.items,
       });
-    }
 
-    if (isNoProfileFlow && publicKey !== cart.publicKey) {
-      logger.error(
-        `Public key in the cart is different from the provided in the api call: cart publicKey - ${cart.publicKey}, publicKey - ${publicKey}`,
+      const wallet = await Wallet.findOneWhere(
+        { userId: user.id, publicKey },
+        { transaction: t },
       );
 
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {},
-      });
-    }
-
-    const { prices, roe } = cart.options;
-
-    checkPrices(prices, roe);
-
-    let order;
-    let payment = null;
-    const orderItems = [];
-
-    // only to track which ref profile was used to create an order on no profile flow
-    const refProfile = isNoProfileFlow
-      ? await ReferrerProfile.findOneWhere({ code: refCode })
-      : null;
-
-    await Order.removeIrrelevant({
-      userId: user.id,
-      guestId: this.context.guestId,
-    });
-
-    const activeOrderItems = await Order.getActiveOrderItemsByUser({
-      userId: user.id,
-    });
-
-    if (activeOrderItems.length) {
-      const duplicateRegs = findDuplicateRegistrations({
+      const items = await cartItemsToOrderItems({
         cartItems: cart.items,
-        activeOrderItems,
+        prices,
+        roe,
+        walletType: wallet && wallet.from,
+        paymentProcessor,
+        domainsList,
+        freeDomainToOwner,
+        userHasFreeAddress,
+        userRefCode: userRefProfile && userRefProfile.code,
       });
 
-      if (duplicateRegs.length) {
-        throw new X({
-          code: ERROR_CODES.DUPLICATE_ORDER,
-          fields: {
-            items: duplicateRegs.map(item => item.id),
-          },
-        });
-      }
-    }
-
-    for (const cartItem of cart.items) {
-      if (cartItem.type !== CART_ITEM_TYPE.DOMAIN_RENEWAL || !cartItem.period) continue;
-
-      const otherCartItems = cart.items.filter(item => item !== cartItem);
-      const domainFromChain = await fioApi.getFioDomain(cartItem.domain);
-
-      const { exceedsLimit } = checkRenewalYearLimit({
-        domain: cartItem.domain,
-        renewalPeriod: Number(cartItem.period),
-        chainExpirationDate: domainFromChain && domainFromChain.expiration,
-        activeOrderItems,
-        cartItems: otherCartItems,
+      const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
+        cartItems: items.map(({ nativeFio }) => ({ costNativeFio: nativeFio })),
+        roe,
       });
 
-      if (exceedsLimit) {
-        throw new X({
-          code: ERROR_CODES.DUPLICATE_ORDER,
-          fields: {
-            reason: 'RENEWAL_EXCEEDS_MAX_YEARS',
-          },
-        });
-      }
-    }
-
-    const {
-      userRefProfile,
-      domainsList,
-      freeDomainToOwner,
-      userHasFreeAddress,
-    } = await Cart.getDataForCartItemsUpdate({
-      refCode,
-      noProfileResolvedUser: isNoProfileFlow ? user : null,
-      publicKey,
-      userId: isNoProfileFlow ? null : user.id,
-      items: cart.items,
-    });
-
-    const wallet = await Wallet.findOneWhere({ userId: user.id, publicKey });
-
-    const items = await cartItemsToOrderItems({
-      cartItems: cart.items,
-      prices,
-      roe,
-      walletType: wallet && wallet.from,
-      paymentProcessor,
-      domainsList,
-      freeDomainToOwner,
-      userHasFreeAddress,
-      userRefCode: userRefProfile && userRefProfile.code,
-    });
-
-    const { costUsdc: totalCostUsdc } = calculateCartTotalCost({
-      cartItems: items.map(({ nativeFio }) => ({ costNativeFio: nativeFio })),
-      roe,
-    });
-
-    await Order.sequelize.transaction(async t => {
-      order = await Order.create(
+      const order = await Order.create(
         {
           status: Order.STATUS.NEW,
           total: totalCostUsdc,
@@ -264,18 +270,20 @@ export default class OrdersCreate extends Base {
         );
         orderItems.push(orderItem);
       }
+
+      const payment = await Payment.createForOrder(order, paymentProcessor, orderItems, {
+        transaction: t,
+      });
+
+      return {
+        data: {
+          id: order.id,
+          number: order.number,
+          publicKey: order.publicKey,
+          payment,
+        },
+      };
     });
-
-    payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
-
-    return {
-      data: {
-        id: order.id,
-        number: order.number,
-        publicKey: order.publicKey,
-        payment,
-      },
-    };
   }
 
   static get paramsSecret() {

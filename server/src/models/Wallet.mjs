@@ -56,11 +56,12 @@ export class Wallet extends Base {
     });
   }
 
-  static list(where, paranoid = true) {
+  static list(where, paranoid = true, seqOptions = {}) {
     return this.findAll({
       where,
       paranoid,
       order: [['id', 'ASC']],
+      ...seqOptions,
     });
   }
 

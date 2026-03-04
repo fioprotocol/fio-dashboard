@@ -2,8 +2,8 @@ import Sequelize from 'sequelize';
 import pick from 'lodash/pick';
 
 export default class Base extends Sequelize.Model {
-  static findOneWhere(where) {
-    return this.findOne({ where });
+  static findOneWhere(where, seqOptions = {}) {
+    return this.findOne({ where, ...seqOptions });
   }
 
   json(fields = this.constructor.attrs()) {
