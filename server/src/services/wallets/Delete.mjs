@@ -22,20 +22,6 @@ export default class WalletsDelete extends Base {
   }
 
   async execute({ publicKey, nonce }) {
-    const wallet = await Wallet.findOneWhere({
-      publicKey,
-      userId: this.context.id,
-    });
-
-    if (!wallet) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
-          publicKey: 'NOT_FOUND',
-        },
-      });
-    }
-
     if (!(await Nonce.verify({ ...nonce, userId: this.context.id }))) {
       throw new X({
         code: 'AUTHENTICATION_FAILED',
@@ -43,37 +29,56 @@ export default class WalletsDelete extends Base {
       });
     }
 
-    if (wallet.from !== Wallet.CREATED_FROM.LEDGER) {
-      const wallets = await Wallet.list({
-        userId: this.context.id,
-        from: { [Sequelize.Op.ne]: Wallet.CREATED_FROM.LEDGER },
-      });
+    return await Wallet.sequelize.transaction(async t => {
+      const wallet = await Wallet.findOneWhere(
+        { publicKey, userId: this.context.id },
+        { transaction: t, lock: t.LOCK.UPDATE },
+      );
 
-      if (wallets.length < 2) {
+      if (!wallet) {
         throw new X({
-          code: 'FORBIDDEN',
+          code: 'NOT_FOUND',
           fields: {
-            publicKey: 'FORBIDDEN',
+            publicKey: 'NOT_FOUND',
           },
         });
       }
-    }
 
-    const publicWalletData = await PublicWalletData.findOne({
-      where: {
-        walletId: wallet.id,
-      },
+      if (wallet.from !== Wallet.CREATED_FROM.LEDGER) {
+        const wallets = await Wallet.list(
+          {
+            userId: this.context.id,
+            from: { [Sequelize.Op.ne]: Wallet.CREATED_FROM.LEDGER },
+          },
+          true,
+          { transaction: t, lock: t.LOCK.UPDATE },
+        );
+
+        if (wallets.length < 2) {
+          throw new X({
+            code: 'FORBIDDEN',
+            fields: {
+              publicKey: 'FORBIDDEN',
+            },
+          });
+        }
+      }
+
+      const publicWalletData = await PublicWalletData.findOne({
+        where: { walletId: wallet.id },
+        transaction: t,
+      });
+
+      await wallet.destroy({ transaction: t });
+
+      if (publicWalletData) {
+        await publicWalletData.destroy({ force: true, transaction: t });
+      }
+
+      return {
+        data: { success: true },
+      };
     });
-
-    await wallet.destroy();
-
-    if (publicWalletData) {
-      await publicWalletData.destroy({ force: true });
-    }
-
-    return {
-      data: { success: true },
-    };
   }
 
   static get paramsSecret() {

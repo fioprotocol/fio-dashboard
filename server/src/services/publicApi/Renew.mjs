@@ -160,66 +160,80 @@ export default class Renew extends Base {
       }
     }
 
-    const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);
+    const { order, charge } = await Order.sequelize.transaction(async t => {
+      const [user] = await getExistUsersByPublicKeyOrCreateNew(
+        publicKey,
+        referralCode,
+        undefined,
+        { transaction: t },
+      );
 
-    const { order, charge } = await this.createRenewOrder({
-      publicKey,
-      refProfileId: refProfile.id,
-      address: fioAddress,
-      domain: fioDomain,
-      userId: user.id,
+      return this.createRenewOrder({
+        publicKey,
+        refProfileId: refProfile.id,
+        address: fioAddress,
+        domain: fioDomain,
+        userId: user.id,
+        transaction: t,
+      });
     });
 
     return generateSuccessResponse(this.res, { accountId: order.id, charge });
   }
 
-  async createRenewOrder({ publicKey, refProfileId, address, domain, userId }) {
+  async createRenewOrder({
+    publicKey,
+    refProfileId,
+    address,
+    domain,
+    userId,
+    transaction: t,
+  }) {
     const roe = await getROE();
     const prices = await fioApi.getPrices();
     const nativeFio = address ? prices.addBundles : prices.renewDomain;
     const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
     const normalizedPriceUsdc = normalizePriceForBitPay(priceUsdc);
 
-    let orderItem, order;
+    const order = await Order.create(
+      {
+        status: Order.STATUS.NEW,
+        total: normalizedPriceUsdc,
+        roe,
+        publicKey,
+        refProfileId,
+        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+        userId,
+      },
+      { transaction: t },
+    );
 
-    await Order.sequelize.transaction(async t => {
-      order = await Order.create(
-        {
-          status: Order.STATUS.NEW,
-          total: normalizedPriceUsdc,
-          roe,
-          publicKey,
-          refProfileId,
-          data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
-          userId,
-        },
-        { transaction: t },
-      );
+    order.number = Order.generateNumber(order.id);
 
-      order.number = Order.generateNumber(order.id);
+    await order.save({ transaction: t });
 
-      await order.save({ transaction: t });
+    const orderItem = await OrderItem.create(
+      {
+        orderId: order.id,
+        address,
+        domain,
+        action: address
+          ? GenericAction.addBundledTransactions
+          : GenericAction.renewFioDomain,
+        nativeFio: nativeFio.toString(),
+        price: normalizedPriceUsdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+      },
+      { transaction: t },
+    );
 
-      orderItem = await OrderItem.create(
-        {
-          orderId: order.id,
-          address,
-          domain,
-          action: address
-            ? GenericAction.addBundledTransactions
-            : GenericAction.renewFioDomain,
-          nativeFio: nativeFio.toString(),
-          price: normalizedPriceUsdc,
-          priceCurrency: CURRENCY_CODES.USDC,
-          data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
-        },
-        { transaction: t },
-      );
-    });
-
-    const payment = await Payment.createForOrder(order, Payment.PROCESSOR.FIO, [
-      orderItem,
-    ]);
+    const payment = await Payment.createForOrder(
+      order,
+      Payment.PROCESSOR.FIO,
+      [orderItem],
+      { transaction: t },
+    );
 
     // DASH-1447: Bitpay should be skipped for now
     // const charge = await createCallWithRetry(

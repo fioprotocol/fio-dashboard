@@ -42,7 +42,7 @@ export class UserDevice extends Base {
     });
   }
 
-  static async add(userId, device) {
+  static async add(userId, device, seqOptions = {}) {
     try {
       let deviceId = null;
       let token = device.token;
@@ -60,14 +60,13 @@ export class UserDevice extends Base {
         token = deviceData.token;
       }
 
-      // Create new device record if it doesn't exist
       const userDevice = new UserDevice({
         userId,
         deviceId,
         info: device.info,
       });
 
-      await userDevice.save();
+      await userDevice.save(seqOptions);
 
       return { token, deviceId };
     } catch (error) {
@@ -76,7 +75,7 @@ export class UserDevice extends Base {
     }
   }
 
-  static async check(user, device) {
+  static async check(user, device, seqOptions = {}) {
     let deviceId = null;
     let token = device.token;
 
@@ -98,6 +97,7 @@ export class UserDevice extends Base {
             userId: user.id,
             deviceId,
           },
+          ...seqOptions,
         });
       }
 
@@ -106,6 +106,7 @@ export class UserDevice extends Base {
           where: {
             userId: user.id,
           },
+          ...seqOptions,
         });
 
         if (userDevices && userDevices.length > 0) {
@@ -123,8 +124,7 @@ export class UserDevice extends Base {
           );
         }
 
-        // Add device for this user (creates new or associates existing)
-        const result = await this.add(user.id, device);
+        const result = await this.add(user.id, device, seqOptions);
 
         token = result.token;
       }

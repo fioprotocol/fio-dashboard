@@ -189,83 +189,100 @@ export default class BuyAddress extends Base {
         });
       }
 
-      const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);
+      const { order, charge, errorResponse } = await Order.sequelize.transaction(
+        async t => {
+          const [user] = await getExistUsersByPublicKeyOrCreateNew(
+            publicKey,
+            referralCode,
+            undefined,
+            { transaction: t },
+          );
 
-      let isFreeRegistration = false;
+          let isFreeRegistration = false;
 
-      if (apiToken && apiProfile && domainFromChain) {
-        const refDomain = findDomainInRefProfile(refProfile, fioDomain);
+          if (apiToken && apiProfile && domainFromChain) {
+            const refDomain = findDomainInRefProfile(refProfile, fioDomain);
 
-        if (refDomain) {
-          isFreeRegistration =
-            !refDomain.isPremium &&
-            (await this.isFreeAddressNotExist({
-              userId: user.id,
-              freeId: user.username,
-              publicKey,
-              fioDomain,
-              enableCompareByDomainName: refDomain.isFirstRegFree,
-            }));
-        } else {
-          const dashboardDomains = await Domain.getDashboardDomains();
-          const dashboardDomain = dashboardDomains.find(it => it.name === fioDomain);
+            if (refDomain) {
+              isFreeRegistration =
+                !refDomain.isPremium &&
+                (await this.isFreeAddressNotExist({
+                  userId: user.id,
+                  freeId: user.username,
+                  publicKey,
+                  fioDomain,
+                  enableCompareByDomainName: refDomain.isFirstRegFree,
+                }));
+            } else {
+              const dashboardDomains = await Domain.getDashboardDomains();
+              const dashboardDomain = dashboardDomains.find(it => it.name === fioDomain);
 
-          isFreeRegistration =
-            dashboardDomain &&
-            !dashboardDomain.isPremium &&
-            (await this.isFreeAddressNotExist({
-              userId: user.id,
-              freeId: user.username,
-              publicKey,
-              fioDomain,
-              enableCompareByDomainName:
-                dashboardDomain && dashboardDomain.isFirstRegFree,
-            }));
-        }
+              isFreeRegistration =
+                dashboardDomain &&
+                !dashboardDomain.isPremium &&
+                (await this.isFreeAddressNotExist({
+                  userId: user.id,
+                  freeId: user.username,
+                  publicKey,
+                  fioDomain,
+                  enableCompareByDomainName:
+                    dashboardDomain && dashboardDomain.isFirstRegFree,
+                }));
+            }
 
-        if (isFreeRegistration && apiProfile.dailyFreeLimit) {
-          const TODAY_START = new Date().setHours(0, 0, 0, 0);
-          const NOW = new Date();
-          const freeRegs = await Order.count({
-            where: {
-              status: {
-                [Sequelize.Op.in]: [
-                  Order.STATUS.SUCCESS,
-                  Order.STATUS.TRANSACTION_PENDING,
-                  Order.STATUS.NEW,
-                ],
-              },
-              total: '0',
-              refProfileId: refProfile.id,
-              data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
-              createdAt: {
-                [Sequelize.Op.gt]: TODAY_START,
-                [Sequelize.Op.lt]: NOW,
-              },
-            },
-          });
+            if (isFreeRegistration && apiProfile.dailyFreeLimit) {
+              const TODAY_START = new Date().setHours(0, 0, 0, 0);
+              const NOW = new Date();
+              const freeRegs = await Order.count({
+                where: {
+                  status: {
+                    [Sequelize.Op.in]: [
+                      Order.STATUS.SUCCESS,
+                      Order.STATUS.TRANSACTION_PENDING,
+                      Order.STATUS.NEW,
+                    ],
+                  },
+                  total: '0',
+                  refProfileId: refProfile.id,
+                  data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+                  createdAt: {
+                    [Sequelize.Op.gt]: TODAY_START,
+                    [Sequelize.Op.lt]: NOW,
+                  },
+                },
+                transaction: t,
+              });
 
-          if (freeRegs >= apiProfile.dailyFreeLimit) {
-            await this.sendNotification(apiProfile, refProfile);
+              if (freeRegs >= apiProfile.dailyFreeLimit) {
+                await this.sendNotification(apiProfile, refProfile);
 
-            return generateErrorResponse(this.res, {
-              error: 'Daily limit of Free FIO Handles reached.',
-              errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
-              statusCode: HTTP_CODES.BAD_REQUEST, // FORBIDDEN, fix server to send proper code
-            });
+                return {
+                  errorResponse: {
+                    error: 'Daily limit of Free FIO Handles reached.',
+                    errorCode: PUB_API_ERROR_CODES.FREE_API_LIMIT_REACHED,
+                    statusCode: HTTP_CODES.BAD_REQUEST,
+                  },
+                };
+              }
+            }
           }
-        }
-      }
 
-      const { order, charge } = await this.createFreeAddressBuyOrder({
-        publicKey,
-        userId: user.id,
-        refProfileId: refProfile.id,
-        address: fioAddress,
-        domain: fioDomain,
-        isFree: isFreeRegistration,
-        isDomainExist: !!domainFromChain,
-      });
+          return this.createFreeAddressBuyOrder({
+            publicKey,
+            userId: user.id,
+            refProfileId: refProfile.id,
+            address: fioAddress,
+            domain: fioDomain,
+            isFree: isFreeRegistration,
+            isDomainExist: !!domainFromChain,
+            transaction: t,
+          });
+        },
+      );
+
+      if (errorResponse) {
+        return generateErrorResponse(this.res, errorResponse);
+      }
 
       return generateSuccessResponse(this.res, { accountId: order.id, charge });
     }
@@ -278,14 +295,22 @@ export default class BuyAddress extends Base {
       });
     }
 
-    const [user] = await getExistUsersByPublicKeyOrCreateNew(publicKey, referralCode);
+    const { order, charge } = await Order.sequelize.transaction(async t => {
+      const [user] = await getExistUsersByPublicKeyOrCreateNew(
+        publicKey,
+        referralCode,
+        undefined,
+        { transaction: t },
+      );
 
-    const { order, charge } = await this.createFreeAddressBuyOrder({
-      publicKey,
-      userId: user.id,
-      refProfileId: refProfile.id,
-      address: fioAddress,
-      domain: fioDomain,
+      return this.createFreeAddressBuyOrder({
+        publicKey,
+        userId: user.id,
+        refProfileId: refProfile.id,
+        address: fioAddress,
+        domain: fioDomain,
+        transaction: t,
+      });
     });
 
     return generateSuccessResponse(this.res, { accountId: order.id, charge });
@@ -299,6 +324,7 @@ export default class BuyAddress extends Base {
     domain,
     isFree,
     isDomainExist,
+    transaction: t,
   }) {
     const roe = await getROE();
     const prices = await fioApi.getPrices();
@@ -310,46 +336,42 @@ export default class BuyAddress extends Base {
     const priceUsdc = fioApi.convertFioToUsdc(nativeFio, roe);
     const normalizedPriceUsdc = isFree ? priceUsdc : normalizePriceForBitPay(priceUsdc);
 
-    let orderItem, order;
+    const order = await Order.create(
+      {
+        status: Order.STATUS.NEW,
+        total: isFree ? '0' : normalizedPriceUsdc,
+        roe,
+        publicKey,
+        userId,
+        refProfileId,
+        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+      },
+      { transaction: t },
+    );
 
-    await Order.sequelize.transaction(async t => {
-      order = await Order.create(
-        {
-          status: Order.STATUS.NEW,
-          total: isFree ? '0' : normalizedPriceUsdc,
-          roe,
-          publicKey,
-          userId,
-          refProfileId,
-          data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
-        },
-        { transaction: t },
-      );
+    order.number = Order.generateNumber(order.id);
 
-      order.number = Order.generateNumber(order.id);
+    await order.save({ transaction: t });
 
-      await order.save({ transaction: t });
+    const action = address
+      ? isDomainExist
+        ? GenericAction.registerFioAddress
+        : GenericAction.registerFioDomainAddress
+      : GenericAction.registerFioDomain;
 
-      const action = address
-        ? isDomainExist
-          ? GenericAction.registerFioAddress
-          : GenericAction.registerFioDomainAddress
-        : GenericAction.registerFioDomain;
-
-      orderItem = await OrderItem.create(
-        {
-          orderId: order.id,
-          address,
-          domain,
-          action,
-          nativeFio: isFree ? '0' : nativeFio.toString(),
-          price: isFree ? 0 : normalizedPriceUsdc,
-          priceCurrency: CURRENCY_CODES.USDC,
-          data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
-        },
-        { transaction: t },
-      );
-    });
+    const orderItem = await OrderItem.create(
+      {
+        orderId: order.id,
+        address,
+        domain,
+        action,
+        nativeFio: isFree ? '0' : nativeFio.toString(),
+        price: isFree ? 0 : normalizedPriceUsdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data: { orderUserType: ORDER_USER_TYPES.PARTNER_API_CLIENT },
+      },
+      { transaction: t },
+    );
 
     const payment = await Payment.createForOrder(
       order,
@@ -357,6 +379,7 @@ export default class BuyAddress extends Base {
       // isFree ? Payment.PROCESSOR.FIO : Payment.PROCESSOR.BITPAY,
       Payment.PROCESSOR.FIO,
       [orderItem],
+      { transaction: t },
     );
 
     let charge;

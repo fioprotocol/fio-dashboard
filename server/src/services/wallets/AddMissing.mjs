@@ -24,63 +24,67 @@ export default class WalletsAddMissing extends Base {
   }
 
   async execute({ fioWallet: { name, edgeId, publicKey, from }, username }) {
-    const user = await User.findOne({
-      where: {
-        username,
-      },
+    await Wallet.sequelize.transaction(async t => {
+      const user = await User.findOne({
+        where: { username },
+        transaction: t,
+      });
+
+      if (!user) {
+        logger.error('WalletsAddMissing: username not found');
+        throw new X({
+          code: 'AUTHENTICATION_FAILED',
+          fields: {},
+        });
+      }
+
+      const userWallets = await Wallet.findAll({
+        raw: true,
+        where: { userId: user.id },
+        paranoid: false,
+        transaction: t,
+        lock: t.LOCK.UPDATE,
+      });
+
+      if (userWallets.some(wallet => wallet.deletedAt === null)) {
+        logger.error('WalletsAddMissing: auth wallet exists');
+        throw new X({
+          code: 'AUTHENTICATION_FAILED',
+          fields: {},
+        });
+      }
+
+      if (userWallets.find(wallet => wallet.missing)) {
+        logger.error('WalletsAddMissing: missing wallet already exists');
+        throw new X({
+          code: 'AUTHENTICATION_FAILED',
+          fields: {},
+        });
+      }
+
+      if (userWallets.find(wallet => wallet.publicKey === publicKey)) {
+        logger.error('WalletsAddMissing: public key and user id pair not unique');
+        throw new X({
+          code: 'AUTHENTICATION_FAILED',
+          fields: {},
+        });
+      }
+
+      const newWallet = new Wallet({
+        edgeId,
+        name,
+        publicKey,
+        userId: user.id,
+        from,
+        missing: true,
+        deletedAt: new Date(),
+      });
+
+      await newWallet.save({ transaction: t });
+
+      logger.info('WalletsAddMissing: missing wallet created');
     });
 
-    if (!user) {
-      logger.error('WalletsAddMissing: username not found');
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: {},
-      });
-    }
-
-    const userWallets = await Wallet.findAll({
-      raw: true,
-      where: { userId: user.id },
-      paranoid: false,
-    });
-
-    if (userWallets.some(wallet => wallet.deletedAt === null)) {
-      logger.error('WalletsAddMissing: auth wallet exists');
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: {},
-      });
-    }
-
-    if (userWallets.find(wallet => wallet.missing)) {
-      logger.error('WalletsAddMissing: missing wallet already exists');
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: {},
-      });
-    }
-
-    if (userWallets.find(wallet => wallet.publicKey === publicKey)) {
-      logger.error('WalletsAddMissing: public key and user id pair not unique');
-      throw new X({
-        code: 'AUTHENTICATION_FAILED',
-        fields: {},
-      });
-    }
-
-    const newWallet = new Wallet({
-      edgeId,
-      name,
-      publicKey,
-      userId: user.id,
-      from,
-      missing: true,
-      deletedAt: new Date(),
-    });
-
-    await newWallet.save();
-
-    logger.info('WalletsAddMissing: missing wallet created');
     throw new X({
       code: 'AUTHENTICATION_FAILED',
       fields: {},
