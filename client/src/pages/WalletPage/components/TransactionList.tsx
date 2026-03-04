@@ -1,53 +1,27 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
 
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import TransactionItem from './TransactionItem';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
-import Loader from '../../../components/Loader/Loader';
 
-import {
-  FioWalletDoublet,
-  FioWalletTxHistory,
-  TransactionItemProps,
-} from '../../../types';
+import { TransactionItemProps } from '../../../types';
 
 import classes from '../styles/TransactionList.module.scss';
 
 type Props = {
-  fioWallet: FioWalletDoublet;
-  walletTxHistory: FioWalletTxHistory;
+  transactions: TransactionItemProps[];
+  transactionsLoading: boolean;
+  transactionsHasNextPage: boolean;
+  loadMoreTransactions: () => void;
 };
 
-const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
-const MARGIN_BETWEEN_ITEMS = 10;
-
-const TransactionList: React.FC<Props> = props => {
-  const { walletTxHistory } = props;
-  const { lastTxActionTime = null } = walletTxHistory || {};
-
-  const transactionList: TransactionItemProps[] = walletTxHistory
-    ? walletTxHistory.txs
-    : [];
-  const [visibleTransactionsCount, setVisibleTransactionsCount] = useState(
-    MIN_VISIBLE_TRANSACTIONS_COUNT,
-  );
-  const [height, setHeight] = useState<number>(0);
-
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setHeight(elementRef?.current?.clientHeight || 0);
-  }, []);
-
-  // when no history fetched yet
-  if (lastTxActionTime === null)
-    return (
-      <div className={classes.loader}>
-        <Loader />
-      </div>
-    );
-
-  if (!transactionList || !transactionList.length)
+const TransactionList: React.FC<Props> = ({
+  transactions,
+  transactionsLoading,
+  transactionsHasNextPage,
+  loadMoreTransactions,
+}) => {
+  if ((!transactions || !transactions.length) && !transactionsLoading)
     return (
       <div className={classes.infoBadge}>
         <InfoBadge
@@ -57,34 +31,18 @@ const TransactionList: React.FC<Props> = props => {
       </div>
     );
 
-  const loadMore = () => {
-    setVisibleTransactionsCount(
-      visibleTransactionsCount + MIN_VISIBLE_TRANSACTIONS_COUNT,
-    );
-  };
-
-  const hasNextPage = visibleTransactionsCount < transactionList.length;
-
   return (
     <div className={classes.container}>
       <InfiniteScroll
-        loading={false}
-        hasNextPage={hasNextPage}
-        onLoadMore={loadMore}
-        maxHeight={
-          (height + MARGIN_BETWEEN_ITEMS) * MIN_VISIBLE_TRANSACTIONS_COUNT
-        }
+        loading={transactionsLoading}
+        hasNextPage={transactionsHasNextPage}
+        onLoadMore={loadMoreTransactions}
       >
-        {transactionList
-          .slice(
-            0,
-            !hasNextPage ? transactionList.length : visibleTransactionsCount,
-          )
-          .map(item => (
-            <div ref={elementRef} key={item.txId}>
-              <TransactionItem {...item} />
-            </div>
-          ))}
+        {transactions?.map(item => (
+          <div key={item.txId}>
+            <TransactionItem {...item} />
+          </div>
+        ))}
       </InfiniteScroll>
     </div>
   );

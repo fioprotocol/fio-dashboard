@@ -30,20 +30,21 @@ export default class WalletsUpdateList extends Base {
   }
 
   async execute({ data: { fioWallets, archivedWalletIds = [] } }) {
-    const SET_WALLETS_AMOUNT = await Var.getValByKey(VARS_KEYS.SET_WALLETS_AMOUNT);
-    if (fioWallets.length > SET_WALLETS_AMOUNT) {
-      throw new X({
-        code: 'LIMIT_EXCEEDED',
-        fields: {
-          fioWallets: 'TOO_MANY_WALLETS',
-        },
-      });
-    }
+    const SET_WALLETS_AMOUNT = Number(
+      await Var.getValByKey(VARS_KEYS.SET_WALLETS_AMOUNT),
+    );
+    const walletsToSync = SET_WALLETS_AMOUNT
+      ? fioWallets.slice(0, SET_WALLETS_AMOUNT)
+      : fioWallets;
+    const walletsLimitExceeded =
+      SET_WALLETS_AMOUNT && fioWallets.length > SET_WALLETS_AMOUNT
+        ? SET_WALLETS_AMOUNT
+        : null;
 
     const SET_WALLETS_LIMIT = await Var.getValByKey(VARS_KEYS.SET_WALLETS_LIMIT);
     const updateWallets = async () => {
       const wallets = await Wallet.list({ userId: this.context.id }, false);
-      for (const { edgeId, name, publicKey } of fioWallets) {
+      for (const { edgeId, name, publicKey } of walletsToSync) {
         if (!edgeId || !publicKey) continue;
 
         const wallet = wallets.find(({ edgeId: itemEdgeId }) => edgeId === itemEdgeId);
@@ -99,7 +100,10 @@ export default class WalletsUpdateList extends Base {
     );
 
     return {
-      data: { success: actionCompleted },
+      data: {
+        success: actionCompleted,
+        walletsLimitExceeded: !!walletsLimitExceeded,
+      },
     };
   }
 

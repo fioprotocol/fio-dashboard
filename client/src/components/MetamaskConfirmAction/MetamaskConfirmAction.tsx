@@ -96,10 +96,26 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     buttonText?: string;
   }>(null);
 
-  const getApiUrl = async () => {
-    const validApiUrls = await apis.fio.checkUrls();
-    return validApiUrls[0]?.replace('/v1/', '');
-  };
+  const signTxnWithRetry = useCallback(
+    async (sendActionParams: ActionParams[]): Promise<string> => {
+      const apiUrls = await apis.fio.checkUrls();
+
+      for (let i = 0; i < apiUrls.length; i++) {
+        const apiUrl = apiUrls[i].replace('/v1/', '');
+        try {
+          return await signTxn(metaMaskProvider, {
+            actionParams: sendActionParams,
+            apiUrl,
+          });
+        } catch (err) {
+          log.error(`signTxn failed on ${apiUrl}:`, err);
+          if (canceledRegexp.test(err.message)) throw err;
+          if (i === apiUrls.length - 1) throw err;
+        }
+      }
+    },
+    [metaMaskProvider],
+  );
 
   const submitAction = useCallback(async () => {
     try {
@@ -142,15 +158,11 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         }
       }
 
-      const sendActionParams = Array.isArray(uActionParams)
+      const sendActionParams = (Array.isArray(uActionParams)
         ? uActionParams
-        : [uActionParams];
+        : [uActionParams]) as ActionParams[];
 
-      const apiUrl = await getApiUrl();
-      const signedTxnsResponse = await signTxn(metaMaskProvider, {
-        actionParams: sendActionParams,
-        apiUrl,
-      });
+      const signedTxnsResponse = await signTxnWithRetry(sendActionParams);
 
       const signedTxns: {
         successed: SignedTxArgs[];
@@ -168,55 +180,10 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
       if (returnOnlySignedTxn) {
         onSuccess(signedTxns.successed);
       } else {
-        const pushTransactionResult = async (
-          signedTxn: SignedTxArgs,
-        ): Promise<
-          | FioServerResponse
-          | {
-              reason: string;
-            }
-        > => {
-          const apiUrl = await getApiUrl();
-          const pushResult = await fetch(
-            `${apiUrl}/v1/chain/push_transaction`,
-            {
-              body: JSON.stringify(signedTxn),
-              method: 'POST',
-            },
-          );
-
-          if (
-            pushResult.status === 400 ||
-            pushResult.status === 403 ||
-            pushResult.status === 500
-          ) {
-            const jsonResult = await pushResult.json();
-            const errorMessage = jsonResult.message || 'Something went wrong';
-
-            if (jsonResult.fields) {
-              // Handle specific error structure with "fields" array
-              const fieldErrors = jsonResult.fields.map((field: AnyType) => ({
-                name: field.name,
-                value: field.value,
-                error: field.error,
-              }));
-
-              throw new Error(
-                `${errorMessage as string}: ${JSON.stringify(fieldErrors)}`,
-              );
-            } else if (jsonResult.error && jsonResult.error.what) {
-              throw new Error(jsonResult.error.what);
-            } else {
-              throw new Error(errorMessage);
-            }
-          }
-
-          const jsonResult = await pushResult.json();
-          return jsonResult;
-        };
-
         const results = await Promise.allSettled(
-          signedTxns.successed.map(pushTransactionResult),
+          signedTxns.successed.map(txn =>
+            apis.fio.pushTransactionWithRetry(txn),
+          ),
         );
 
         const successedResults: FioServerResponse[] = [];
@@ -225,7 +192,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
         results.forEach(result => {
           if (result.status === 'fulfilled' && result.value !== null) {
             if ('transaction_id' in result.value) {
-              successedResults.push(result.value);
+              successedResults.push(result.value as FioServerResponse);
             }
           } else if (result.status === 'rejected') {
             if (typeof result.reason === 'string') {
@@ -324,6 +291,7 @@ export const MetamaskConfirmAction: React.FC<Props> = props => {
     onSuccess,
     analyticAction,
     onCancel,
+    signTxnWithRetry,
   ]);
 
   useEffectOnce(

@@ -4,8 +4,17 @@ import X from '../Exception';
 import emailSender from '../emailSender';
 import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
 
-import { User, UserDevice, Notification, ReferrerProfile, Wallet } from '../../models';
+import {
+  User,
+  UserDevice,
+  Notification,
+  ReferrerProfile,
+  Var,
+  Wallet,
+} from '../../models';
 import logger from '../../logger.mjs';
+
+import { VARS_KEYS } from '../../config/constants';
 
 export default class UsersCreate extends Base {
   static get validationRules() {
@@ -22,7 +31,7 @@ export default class UsersCreate extends Base {
                 list_of_objects: {
                   edgeId: 'string',
                   name: 'string',
-                  publicKey: 'string',
+                  publicKey: ['string', 'fio_public_key'],
                 },
               },
             ],
@@ -66,7 +75,10 @@ export default class UsersCreate extends Base {
         data: { pagesToShow: ['/myfio'] },
       }).save();
 
-      for (const { edgeId, name, publicKey } of fioWallets) {
+      const maxWallets = Number(await Var.getValByKey(VARS_KEYS.SET_WALLETS_AMOUNT));
+      const walletsToSave = maxWallets ? fioWallets.slice(0, maxWallets) : fioWallets;
+
+      for (const { edgeId, name, publicKey } of walletsToSave) {
         const newWallet = new Wallet({
           edgeId,
           name,

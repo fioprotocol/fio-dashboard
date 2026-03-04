@@ -123,7 +123,7 @@ export class Cart extends Base {
     if (userId) where.userId = userId;
     if (guestId) where.guestId = guestId;
 
-    const cart = this.findOne({ where, ...seqOptions });
+    const cart = await this.findOne({ where, ...seqOptions });
 
     if (cart && withOpt) {
       await this.getCartOptions(cart, { checkPrices, seqOptions });
@@ -132,11 +132,14 @@ export class Cart extends Base {
     return cart;
   }
 
-  static async updateGuestCartUser(userId, guestId) {
+  static async updateGuestCartUser(userId, guestId, seqOptions = {}) {
     try {
-      if (await this.findOne({ where: { guestId } })) {
-        await this.destroy({ where: { userId } });
-        await this.update({ userId, guestId: null }, { where: { guestId } });
+      if (await this.findOne({ where: { guestId }, ...seqOptions })) {
+        await this.destroy({ where: { userId }, ...seqOptions });
+        await this.update(
+          { userId, guestId: null },
+          { where: { guestId }, ...seqOptions },
+        );
       }
     } catch (e) {
       logger.error(e);

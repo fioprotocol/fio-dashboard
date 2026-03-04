@@ -2,6 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { Cart } from '../../models/Cart.mjs';
+import { Order } from '../../models/Order.mjs';
 
 import { fioApi } from '../../external/fio.mjs';
 import { getROE } from '../../external/roe.mjs';
@@ -9,6 +10,7 @@ import { getROE } from '../../external/roe.mjs';
 import logger from '../../logger.mjs';
 
 import { recalculateCartItems } from '../../utils/cart.mjs';
+import { getCartWarnings } from '../../utils/order-validation.mjs';
 
 export default class RecalculateOnPriceUpdate extends Base {
   async execute() {
@@ -87,8 +89,19 @@ export default class RecalculateOnPriceUpdate extends Base {
         options: { prices, roe, updatedAt: new Date() },
       });
 
+      const cartData = Cart.format(cart.get({ plain: true }));
+
+      let warnings = null;
+      if (userId && cartData.items && cartData.items.length) {
+        const activeOrderItems = await Order.getActiveOrderItemsByUser({ userId });
+        warnings = await getCartWarnings({
+          cartItems: cartData.items,
+          activeOrderItems,
+        });
+      }
+
       return {
-        data: Cart.format(cart.get({ plain: true })),
+        data: { ...cartData, warnings },
       };
     } catch (error) {
       logger.error(error);

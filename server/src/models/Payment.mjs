@@ -174,66 +174,83 @@ export class Payment extends Base {
     }
   }
 
-  static async createForOrder(order, paymentProcessorKey, orderItems) {
+  static async createForOrder(
+    order,
+    paymentProcessorKey,
+    orderItems,
+    { transaction: externalTransaction } = {},
+  ) {
     const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
 
-    let orderPayment = await Payment.findOne({
-      where: {
-        status: Payment.STATUS.NEW,
-        spentType: Payment.SPENT_TYPE.ORDER,
-        orderId: order.id,
-      },
-    });
+    const run = async t => {
+      let orderPayment = await Payment.findOne({
+        where: {
+          status: Payment.STATUS.NEW,
+          spentType: Payment.SPENT_TYPE.ORDER,
+          orderId: order.id,
+        },
+        transaction: t,
+      });
 
+      let extPaymentParams = {};
+
+      if (!orderPayment) {
+        orderPayment = await Payment.create(
+          {
+            status: Payment.STATUS.NEW,
+            processor: paymentProcessorKey,
+            externalId: '',
+            orderId: order.id,
+          },
+          { transaction: t },
+        );
+
+        if (paymentProcessor) {
+          const user = await User.findByPk(order.userId, { transaction: t });
+
+          extPaymentParams = await paymentProcessor.create({
+            amount: order.total,
+            orderNumber: order.number,
+            buyer: user && user.email,
+          });
+
+          orderPayment.externalId = extPaymentParams.externalPaymentId;
+          orderPayment.amount = extPaymentParams.amount;
+          orderPayment.currency = extPaymentParams.currency;
+          orderPayment.data = {
+            ...orderPayment.data,
+            secret: extPaymentParams.secret,
+          };
+
+          await orderPayment.save({ transaction: t });
+        }
+      }
+
+      for (const orderItem of orderItems) {
+        await OrderItemStatus.create(
+          {
+            txStatus: BlockchainTransaction.STATUS.NONE,
+            paymentStatus: orderPayment.status,
+            blockchainTransactionId: null,
+            paymentId: orderPayment.id,
+            orderItemId: orderItem.id,
+          },
+          { transaction: t },
+        );
+      }
+
+      return { orderPayment, extPaymentParams };
+    };
+
+    let orderPayment;
     let extPaymentParams = {};
 
     try {
-      await Payment.sequelize.transaction(async t => {
-        if (!orderPayment) {
-          orderPayment = await Payment.create(
-            {
-              status: Payment.STATUS.NEW,
-              processor: paymentProcessorKey,
-              externalId: '',
-              orderId: order.id,
-            },
-            { transaction: t },
-          );
-
-          if (paymentProcessor) {
-            const user = await User.findByPk(order.userId);
-
-            extPaymentParams = await paymentProcessor.create({
-              amount: order.total,
-              orderNumber: order.number,
-              buyer: user && user.email,
-            });
-
-            orderPayment.externalId = extPaymentParams.externalPaymentId;
-            orderPayment.amount = extPaymentParams.amount;
-            orderPayment.currency = extPaymentParams.currency;
-            orderPayment.data = {
-              ...orderPayment.data,
-              secret: extPaymentParams.secret,
-            };
-
-            await orderPayment.save({ transaction: t });
-          }
-        }
-
-        for (const orderItem of orderItems) {
-          await OrderItemStatus.create(
-            {
-              txStatus: BlockchainTransaction.STATUS.NONE,
-              paymentStatus: orderPayment.status,
-              blockchainTransactionId: null,
-              paymentId: orderPayment.id,
-              orderItemId: orderItem.id,
-            },
-            { transaction: t },
-          );
-        }
-      });
+      if (externalTransaction) {
+        ({ orderPayment, extPaymentParams } = await run(externalTransaction));
+      } else {
+        ({ orderPayment, extPaymentParams } = await Payment.sequelize.transaction(run));
+      }
     } catch (e) {
       if (paymentProcessor && extPaymentParams.secret) {
         await paymentProcessor.cancel(extPaymentParams.externalPaymentId);

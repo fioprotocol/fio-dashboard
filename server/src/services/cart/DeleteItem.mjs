@@ -24,106 +24,114 @@ export default class DeleteItem extends Base {
     const guestId = this.context.guestId || null;
 
     try {
-      const cart = await Cart.getActive({ userId, guestId });
-      if (!cart) {
-        return { data: { items: [] } };
-      }
-
-      const { prices, roe } = cart.options;
-
-      const publicKey = cart.publicKey;
-
-      let noProfileResolvedUser = null;
-      if (!userId && publicKey) {
-        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
-          publicKey,
-          refCode,
+      return await Cart.sequelize.transaction(async t => {
+        const cart = await Cart.getActive(
+          { userId, guestId },
+          { transaction: t, lock: t.LOCK.UPDATE },
         );
-        noProfileResolvedUser = resolvedUser;
-      }
+        if (!cart) {
+          return { data: { items: [] } };
+        }
 
-      const {
-        userRefProfile,
-        domainsList,
-        freeDomainToOwner,
-        userHasFreeAddress,
-        noAuth,
-      } = await Cart.getDataForCartItemsUpdate({
-        refCode,
-        noProfileResolvedUser,
-        publicKey,
-        userId,
-        items: cart.items,
-      });
+        const { prices, roe } = cart.options;
 
-      const {
-        addBundles: addBundlesPrice,
-        address: addressPrice,
-        domain: domainPrice,
-        renewDomain: renewDomainPrice,
-      } = prices;
+        const publicKey = cart.publicKey;
 
-      const isEmptyPrices =
-        !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+        let noProfileResolvedUser = null;
+        if (!userId && publicKey) {
+          const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+            publicKey,
+            refCode,
+            undefined,
+            { transaction: t },
+          );
+          noProfileResolvedUser = resolvedUser;
+        }
 
-      if (isEmptyPrices) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            prices: 'PRICES_ARE_EMPTY',
+        const {
+          userRefProfile,
+          domainsList,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          noAuth,
+        } = await Cart.getDataForCartItemsUpdate({
+          refCode,
+          noProfileResolvedUser,
+          publicKey,
+          userId,
+          items: cart.items,
+        });
+
+        const {
+          addBundles: addBundlesPrice,
+          address: addressPrice,
+          domain: domainPrice,
+          renewDomain: renewDomainPrice,
+        } = prices;
+
+        const isEmptyPrices =
+          !addBundlesPrice || !addressPrice || !domainPrice || !renewDomainPrice;
+
+        if (isEmptyPrices) {
+          throw new X({
+            code: 'ERROR',
+            fields: {
+              prices: 'PRICES_ARE_EMPTY',
+            },
+          });
+        }
+
+        if (!roe) {
+          throw new X({
+            code: 'ERROR',
+            fields: {
+              roe: 'ROE_IS_EMPTY',
+            },
+          });
+        }
+
+        const items = cart.items;
+
+        const existingItem = items.find(item => item.id === itemId);
+
+        const updatedItems = handleFreeCartDeleteItem({
+          cartItems: items,
+          domainsList,
+          existingItem,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          userRefCode: userRefProfile && userRefProfile.code,
+          noAuth,
+        });
+
+        const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
+          {
+            cartItems: updatedItems,
+            item: existingItem,
+            prices,
+            roe,
           },
-        });
-      }
+        );
 
-      if (!roe) {
-        throw new X({
-          code: 'ERROR',
-          fields: {
-            roe: 'ROE_IS_EMPTY',
-          },
-        });
-      }
+        const cartItemWithoutDeletedItem = handledCartItemsWithExistingFioHandleCustomDomain.filter(
+          cartItem => cartItem.id !== itemId,
+        );
 
-      const items = cart.items;
+        if (cartItemWithoutDeletedItem.length > 0) {
+          await cart.update({ items: cartItemWithoutDeletedItem }, { transaction: t });
 
-      const existingItem = items.find(item => item.id === itemId);
-
-      const updatedItems = handleFreeCartDeleteItem({
-        cartItems: items,
-        domainsList,
-        existingItem,
-        freeDomainToOwner,
-        userHasFreeAddress,
-        userRefCode: userRefProfile && userRefProfile.code,
-        noAuth,
+          return {
+            data: Cart.format(cart.get({ plain: true })),
+          };
+        } else {
+          await cart.destroy({ transaction: t });
+          return { data: { items: [] } };
+        }
       });
-
-      const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
-        {
-          cartItems: updatedItems,
-          item: existingItem,
-          prices,
-          roe,
-        },
-      );
-
-      const cartItemWithoutDeletedItem = handledCartItemsWithExistingFioHandleCustomDomain.filter(
-        cartItem => cartItem.id !== itemId,
-      );
-
-      if (cartItemWithoutDeletedItem.length > 0) {
-        await cart.update({
-          items: cartItemWithoutDeletedItem,
-        });
-
-        return {
-          data: Cart.format(cart.get({ plain: true })),
-        };
-      } else {
-        await cart.destroy();
-        return { data: { items: [] } };
-      }
     } catch (error) {
+      if (error instanceof X) {
+        throw error;
+      }
       logger.error(error);
       throw new X({
         code: 'CART_UPDATE',

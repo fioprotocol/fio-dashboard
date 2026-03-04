@@ -832,3 +832,5 @@ export const SECOND_MS = 1000; // 1 sec
 export const MINUTE_MS = 1000 * 60; // 1 min
 
 export const DEFAULT_MAX_RETRIES = 5;
+
+export const DEFAULT_ITEMS_LIMIT = 25; // 25 items per call

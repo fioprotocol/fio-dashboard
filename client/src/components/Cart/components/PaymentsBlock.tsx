@@ -24,6 +24,7 @@ type Props = {
   totalCartUsdcAmount: string;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
+  showDuplicateOrderWarning: boolean;
   showExpiredDomainWarningBadge: boolean;
   showTooLongDomainRenewalWarning: boolean;
   disabled?: boolean;
@@ -43,6 +44,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     userWallets,
     selectedPaymentProvider,
     disabled,
+    showDuplicateOrderWarning,
     showExpiredDomainWarningBadge,
     showTooLongDomainRenewalWarning,
     loading,
@@ -81,6 +83,17 @@ const PaymentsBlock: React.FC<Props> = props => {
     priceIsLowerThanOneDollar = new MathOp(totalCartUsdcAmount).lt(1);
   } catch (err) {
     //
+  }
+
+  if (showDuplicateOrderWarning) {
+    return (
+      <NotificationBadge
+        show
+        message={WARNING_CONTENT.DUPLICATE_ORDER.message}
+        title={WARNING_CONTENT.DUPLICATE_ORDER.title}
+        type={BADGE_TYPES.WARNING}
+      />
+    );
   }
 
   if (showExpiredDomainWarningBadge) {

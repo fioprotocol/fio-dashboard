@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 
 import { noProfileLoaded as noProfileLoadedSelector } from '../../redux/profile/selectors';
 
-import { ITEMS_LIMIT, PAGE_NAME, WELCOME_COMPONENT_TYPE } from './constants';
+import { PAGE_NAME, WELCOME_COMPONENT_TYPE } from './constants';
+import { DEFAULT_ITEMS_LIMIT } from '../../constants/common';
 
 import { useCheckIfDesktop } from '../../screenType';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
@@ -92,7 +93,9 @@ export const useContext = (props: Props): UseContextProps => {
     isSelectedFioNameItemExpired,
     toggleIsSelectedFioNameItemExpired,
   ] = useState<boolean>(false);
-  const [visibleItemsCount, setVisibleItemsCount] = useState(ITEMS_LIMIT);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(
+    DEFAULT_ITEMS_LIMIT,
+  );
 
   const isDesktop = useCheckIfDesktop();
 
@@ -148,7 +151,7 @@ export const useContext = (props: Props): UseContextProps => {
   };
 
   const loadMore = useCallback(() => {
-    setVisibleItemsCount(visibleItemsCount + ITEMS_LIMIT);
+    setVisibleItemsCount(visibleItemsCount + DEFAULT_ITEMS_LIMIT);
   }, [visibleItemsCount]);
 
   const onItemModalOpen = useCallback((fioNameItem: FioNameItemProps) => {

@@ -88,6 +88,19 @@ export const LIMIT_EXCEEDED_ERROR =
   "You've hit the daily limit of attempts. Please wait until tomorrow to try again.";
 export const LIMIT_EXCEEDED_ERROR_TITLE = 'Limit Exceeded';
 
+export const MAX_WALLETS_ERROR = (max: number) =>
+  `You've reached the maximum number of wallets allowed (${max}). Please remove an existing wallet before adding a new one.`;
+export const MAX_WALLETS_ERROR_TITLE = 'Wallet Limit Reached';
+
+export const WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST = (max: number) =>
+  `Your account has more wallets than our limit (${max}). We added only ${max} to our system. Your other wallets are still on the blockchain. If you need to add them, remove some you don't use anymore.`;
+export const WALLETS_LIMIT_EXCEEDED_ON_UPDATE_LIST_TITLE =
+  'Wallet Limit Reached';
+
+export const MAX_DOMAINS_WATCHLIST_ERROR = (max: number) =>
+  `You've reached the maximum number of domains on your watchlist (${max}). Please remove an existing domain before adding a new one.`;
+export const MAX_DOMAINS_WATCHLIST_ERROR_TITLE = 'Watchlist Limit Reached';
+
 export const LOW_BUNDLES_TEXT = {
   buttonText: LOW_BALANCE_TEXT.buttonText,
   messageText:
@@ -121,3 +134,17 @@ export const WALLET_API_PROVIDER_ERRORS_CODE = {
 export const CAPTCHA_ERRORS_CODE = {
   VERIFICATION_FAILED: 'VERIFICATION_FAILED',
 };
+
+export const DUPLICATE_ORDER_CODE = 'DUPLICATE_ORDER';
+export const DUPLICATE_ORDER_TITLE = 'Duplicate Order Detected';
+export const DUPLICATE_ORDER_MESSAGE =
+  'One or more items in your cart are already being processed in an existing order. Please wait for the order to complete before placing a new one.';
+export const ITEM_ALREADY_PROCESSING_MESSAGE =
+  'This item is already being processed in an existing order. Please wait for the order to complete.';
+export const ITEM_ALREADY_PROCESSING_TITLE = 'Item Already Processing';
+
+export const RENEWAL_EXCEEDS_MAX_YEARS_TITLE = 'Renewal Limit Exceeded';
+export const RENEWAL_EXCEEDS_MAX_YEARS_MESSAGE =
+  'This renewal would exceed the maximum allowed expiration year. Please reduce the renewal period.';
+export const getRenewalExceedsMaxYearsMessage = (maxYears: number): string =>
+  `This renewal would exceed the maximum allowed expiration year. You can renew for up to ${maxYears} more year(s).`;

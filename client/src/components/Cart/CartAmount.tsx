@@ -24,6 +24,7 @@ type Props = {
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
+  showDuplicateOrderWarning: boolean;
   showExpiredDomainWarningBadge: boolean;
   showTooLongDomainRenewalWarning: boolean;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
@@ -44,6 +45,7 @@ const CartAmount: React.FC<Props> = props => {
     userWallets,
     selectedPaymentProvider,
     disabled,
+    showDuplicateOrderWarning,
     showExpiredDomainWarningBadge,
     showTooLongDomainRenewalWarning,
     onPaymentChoose,
@@ -82,6 +84,7 @@ const CartAmount: React.FC<Props> = props => {
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={disabled}
+          showDuplicateOrderWarning={showDuplicateOrderWarning}
           showExpiredDomainWarningBadge={showExpiredDomainWarningBadge}
           showTooLongDomainRenewalWarning={showTooLongDomainRenewalWarning}
           loading={loading}

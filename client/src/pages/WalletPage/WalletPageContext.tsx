@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
@@ -7,19 +7,19 @@ import {
   profileRefreshed as profileRefreshedSelector,
   user as userSelector,
 } from '../../redux/profile/selectors';
-import {
-  fioWalletsData as fioWalletsDataSelector,
-  fioWalletsTxHistory as fioWalletsTxHistorySelector,
-} from '../../redux/fioWalletsData/selectors';
+import { fioWalletsData as fioWalletsDataSelector } from '../../redux/fioWalletsData/selectors';
 import { siteSetings as siteSetingsSelector } from '../../redux/settings/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
-import { useWalletTxHistory } from './useWalletTxHistory';
 import { useGetAllFioNamesAndWallets } from '../../hooks/fio';
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 import { log } from '../../util/general';
+import {
+  fetchTransactionActions,
+  transformActions,
+} from '../../util/transactions';
 
 import {
   PAGE_TYPES,
@@ -39,9 +39,10 @@ import {
   FioRecord,
   FioWalletData,
   FioWalletDoublet,
-  FioWalletTxHistory,
+  TransactionItemProps,
   WalletBalances,
 } from '../../types';
+import { FioHistoryV2NodeAction } from '../../types/fio';
 import { SiteSetting } from '../../types/settings';
 
 type UseContextProps = {
@@ -50,7 +51,9 @@ type UseContextProps = {
   fioWallet: FioWalletDoublet;
   fioWalletBalance: WalletBalances;
   fioWalletData: FioWalletData;
-  fioWalletTxHistory: FioWalletTxHistory;
+  transactions: TransactionItemProps[];
+  transactionsLoading: boolean;
+  transactionsHasNextPage: boolean;
   walletsSafeDeleteAmount: number;
   hasNoTransactions: boolean;
   isOpenLockedList: boolean;
@@ -70,6 +73,7 @@ type UseContextProps = {
     pageType: PAGE_TYPES_PROPS;
   } & AllFioNamesAndWalletsProps;
   closeWalletNameEdit: () => void;
+  loadMoreTransactions: () => void;
   onKeyShow: () => void;
   onShowPrivateModalClose: () => void;
   onWalletUpdated: () => void;
@@ -78,7 +82,6 @@ type UseContextProps = {
 
 export const useContext = (): UseContextProps => {
   const fioWalletsData = useSelector(fioWalletsDataSelector);
-  const fioWalletsTxHistory = useSelector(fioWalletsTxHistorySelector);
   const profileRefreshed = useSelector(profileRefreshedSelector);
   const siteSettings = useSelector(siteSetingsSelector);
   const user = useSelector(userSelector);
@@ -100,6 +103,12 @@ export const useContext = (): UseContextProps => {
   ] = useState<boolean>(false);
   const [obtDataLoading, toggleObtDataLoading] = useState<boolean>(false);
 
+  const [rawActions, setRawActions] = useState<FioHistoryV2NodeAction[]>([]);
+  const [beforeTimeStamp, setBeforeTimeStamp] = useState<string | null>(null);
+  const [transactionsHasNextPage, setTransactionsHasNextPage] = useState(true);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [fioHistoryUrls, setFioHistoryUrls] = useState<string[]>([]);
+
   const queryParams = useQuery();
   const publicKey =
     queryParams.get(QUERY_PARAMS_NAMES.PUBLIC_KEY) ||
@@ -117,7 +126,6 @@ export const useContext = (): UseContextProps => {
     fioWalletsBalances,
     userId,
   } = allFioNamesAndWallets;
-  useWalletTxHistory({ walletPublicKey: publicKey });
 
   const fioCryptoHandles = fioAddresses.filter(
     fioAddress => fioAddress.walletPublicKey === publicKey,
@@ -130,17 +138,51 @@ export const useContext = (): UseContextProps => {
     userId && fioWalletsData[userId]
       ? fioWalletsData[userId][fioWallet?.publicKey]
       : null;
-  const fioWalletTxHistory =
-    userId && fioWalletsTxHistory && fioWalletsTxHistory[userId]
-      ? fioWalletsTxHistory[userId][fioWallet?.publicKey]
-      : null;
-
   const fioWalletBalance =
     fioWalletsBalances.wallets[fioWallet?.publicKey] || DEFAULT_BALANCES;
 
+  const transactions = useMemo(
+    () =>
+      rawActions.length > 0
+        ? transformActions({ actions: rawActions, publicKey: publicKey || '' })
+        : [],
+    [rawActions, publicKey],
+  );
+
+  const loadMoreTransactions = useCallback(async () => {
+    if (!publicKey) return;
+
+    setTransactionsLoading(true);
+
+    try {
+      let historyUrls = fioHistoryUrls;
+
+      if (historyUrls.length === 0) {
+        historyUrls = await apis.fioReg.historyUrls();
+        setFioHistoryUrls(historyUrls);
+      }
+
+      const result = await fetchTransactionActions({
+        publicKey,
+        params: { before: beforeTimeStamp },
+        fioHistoryUrls: historyUrls,
+      });
+
+      setTransactionsHasNextPage(result.hasNextPage);
+
+      if (result.actions.length > 0) {
+        setRawActions(prev => [...prev, ...result.actions]);
+
+        const lastAction = result.actions[result.actions.length - 1];
+        setBeforeTimeStamp(lastAction.timestamp);
+      }
+    } finally {
+      setTransactionsLoading(false);
+    }
+  }, [publicKey, beforeTimeStamp, fioHistoryUrls]);
+
   const hasNoTransactions =
-    fioWalletBalance.total.nativeFio === '0' &&
-    fioWalletTxHistory?.txs.length === 0;
+    fioWalletBalance.total.nativeFio === '0' && transactions.length === 0;
 
   const getReceivedFioRequests = useCallback(async () => {
     try {
@@ -219,7 +261,8 @@ export const useContext = (): UseContextProps => {
 
   useEffectOnce(() => {
     getFioRequests();
-  }, [getFioRequests]);
+    loadMoreTransactions();
+  }, [getFioRequests, loadMoreTransactions]);
 
   const onShowPrivateModalClose = useCallback(
     () => toggleShowWalletSettings(false),
@@ -249,7 +292,9 @@ export const useContext = (): UseContextProps => {
     fioWallet,
     fioWalletBalance,
     fioWalletData,
-    fioWalletTxHistory,
+    transactions,
+    transactionsLoading,
+    transactionsHasNextPage,
     walletsSafeDeleteAmount:
       fioWallets.filter(({ from }) => from !== WALLET_CREATED_FROM.LEDGER)
         .length - 1,
@@ -267,6 +312,7 @@ export const useContext = (): UseContextProps => {
     userType: user.userProfileType,
     welcomeComponentProps,
     closeWalletNameEdit,
+    loadMoreTransactions,
     onKeyShow,
     onShowPrivateModalClose,
     onWalletUpdated,

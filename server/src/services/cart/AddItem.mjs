@@ -2,6 +2,7 @@ import Base from '../Base.mjs';
 import X from '../Exception.mjs';
 
 import { Cart } from '../../models/Cart.mjs';
+import { Order } from '../../models/Order.mjs';
 import { ReferrerProfile } from '../../models/ReferrerProfile.mjs';
 import { GatedRegistrtionTokens } from '../../models/GatedRegistrationTokens.mjs';
 
@@ -13,9 +14,18 @@ import {
   handleFioHandleCartItemsWithCustomDomain,
   getItemCost,
 } from '../../utils/cart.mjs';
+import {
+  isCartItemDuplicateRegistration,
+  getCartWarnings,
+} from '../../utils/order-validation.mjs';
 import { fioApi } from '../../external/fio.mjs';
 
-import { CART_ITEM_TYPE, DOMAIN_RENEW_PERIODS } from '../../config/constants';
+import {
+  CART_ITEM_TYPE,
+  DOMAIN_RENEW_PERIODS,
+  ERROR_CODES,
+} from '../../config/constants';
+
 import { checkPrices } from '../../utils/prices.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { normalizeFioHandle } from '../../utils/fio.mjs';
@@ -40,7 +50,7 @@ export default class AddItem extends Base {
           },
         },
       ],
-      publicKey: ['string'], // no profile flow
+      publicKey: ['string', 'fio_public_key'], // no profile flow
       token: ['string'],
       refCode: ['string'],
     };
@@ -118,158 +128,198 @@ export default class AddItem extends Base {
         });
       }
 
-      let noProfileResolvedUser = null;
-      if (!userId && publicKey) {
-        const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
-          publicKey,
-          refCode,
-        );
-        noProfileResolvedUser = resolvedUser;
-      }
-
-      const existingCart = await Cart.getActive({ userId, guestId });
-
-      // Check for duplicate items (prevent duplicates for register actions)
-      if (existingCart && existingCart.items) {
-        const isDuplicate = this.checkForDuplicateItem(newItem, existingCart.items);
-        if (isDuplicate) {
-          throw new Error(`Duplicate cart item: ${newItem.id} - ${newItem.type}`);
+      return await Cart.sequelize.transaction(async t => {
+        let noProfileResolvedUser = null;
+        if (!userId && publicKey) {
+          const [resolvedUser] = await getExistUsersByPublicKeyOrCreateNew(
+            publicKey,
+            refCode,
+            undefined,
+            { transaction: t },
+          );
+          noProfileResolvedUser = resolvedUser;
         }
-      }
 
-      const { prices, roe, updatedAt } = existingCart
-        ? existingCart.options
-        : await Cart.getCartOptions({ options: {} });
+        const existingCart = await Cart.getActive(
+          { userId, guestId },
+          { transaction: t, lock: t.LOCK.UPDATE },
+        );
 
-      const {
-        userRefProfile,
-        domainsList,
-        freeDomainToOwner,
-        userHasFreeAddress,
-        noAuth,
-      } = await Cart.getDataForCartItemsUpdate({
-        refCode,
-        noProfileResolvedUser,
-        publicKey,
-        userId,
-        domain,
-      });
+        if (existingCart && existingCart.items) {
+          const isDuplicate = this.checkForDuplicateItem(newItem, existingCart.items);
+          if (isDuplicate) {
+            throw new Error(`Duplicate cart item: ${newItem.id} - ${newItem.type}`);
+          }
+        }
 
-      // do not allow refCode other than auth user has
-      if (userId) refCode = userRefProfile ? userRefProfile.code : null;
+        const activeOrderItems = userId
+          ? await Order.getActiveOrderItemsByUser({ userId }, { transaction: t })
+          : [];
 
-      const dashboardDomains = refCode ? await Domain.getDashboardDomains() : domainsList;
+        if (activeOrderItems.length) {
+          if (isCartItemDuplicateRegistration({ item: newItem, activeOrderItems })) {
+            throw new X({
+              code: ERROR_CODES.DUPLICATE_ORDER,
+              fields: {
+                addItem: 'ITEM_IS_ALREADY_IN_PROCESSING_ORDER',
+              },
+            });
+          }
+        }
 
-      const gatedRefProfiles = await ReferrerProfile.sequelize.query(
-        `SELECT code FROM "referrer-profiles"
-         WHERE "type" = :refType
-         AND "settings"->>'domains' ILIKE :domainPattern
-         AND "settings"->'gatedRegistration'->>'isOn' = 'true'
-         AND "settings" IS NOT NULL
-         AND "deletedAt" IS NULL`,
-        {
-          replacements: {
-            refType: ReferrerProfile.TYPE.REF,
-            domainPattern: `%"name":${JSON.stringify(domain)}%`,
-          },
-          type: ReferrerProfile.sequelize.QueryTypes.SELECT,
-        },
-      );
+        const { prices, roe, updatedAt } = existingCart
+          ? existingCart.options
+          : await Cart.getCartOptions({ options: {} });
 
-      const domainExists = dashboardDomains.find(
-        dashboardDomain => dashboardDomain.name === domain,
-      );
-
-      const isRefCodeEqualGatedRefProfile =
-        refCode &&
-        gatedRefProfiles.length &&
-        !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
-
-      if (
-        ((gatedRefProfiles.length && (isRefCodeEqualGatedRefProfile || !domainExists)) ||
-          freeDomainToOwner[domain]) &&
-        type === CART_ITEM_TYPE.ADDRESS
-      ) {
-        const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
-          where: { token },
+        const {
+          userRefProfile,
+          domainsList,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          noAuth,
+        } = await Cart.getDataForCartItemsUpdate({
+          refCode,
+          noProfileResolvedUser,
+          publicKey,
+          userId,
+          domain,
         });
 
-        if (!gatedRegistrationToken) {
-          throw new X({
-            code: 'SERVER_ERROR',
-            fields: {
-              token: 'NOT_FOUND',
+        if (userId) refCode = userRefProfile ? userRefProfile.code : null;
+
+        const dashboardDomains = refCode
+          ? await Domain.getDashboardDomains()
+          : domainsList;
+
+        const gatedRefProfiles = await ReferrerProfile.sequelize.query(
+          `SELECT code FROM "referrer-profiles"
+           WHERE "type" = :refType
+           AND "settings"->>'domains' ILIKE :domainPattern
+           AND "settings"->'gatedRegistration'->>'isOn' = 'true'
+           AND "settings" IS NOT NULL
+           AND "deletedAt" IS NULL`,
+          {
+            replacements: {
+              refType: ReferrerProfile.TYPE.REF,
+              domainPattern: `%"name":${JSON.stringify(domain)}%`,
             },
+            type: ReferrerProfile.sequelize.QueryTypes.SELECT,
+            transaction: t,
+          },
+        );
+
+        const domainExists = dashboardDomains.find(
+          dashboardDomain => dashboardDomain.name === domain,
+        );
+
+        const isRefCodeEqualGatedRefProfile =
+          refCode &&
+          gatedRefProfiles.length &&
+          !!gatedRefProfiles.find(gatedRefProfile => gatedRefProfile.code === refCode);
+
+        if (
+          ((gatedRefProfiles.length &&
+            (isRefCodeEqualGatedRefProfile || !domainExists)) ||
+            freeDomainToOwner[domain]) &&
+          type === CART_ITEM_TYPE.ADDRESS
+        ) {
+          const gatedRegistrationToken = await GatedRegistrtionTokens.findOne({
+            where: { token },
+            transaction: t,
           });
+
+          if (!gatedRegistrationToken) {
+            throw new X({
+              code: 'SERVER_ERROR',
+              fields: {
+                token: 'NOT_FOUND',
+              },
+            });
+          }
+
+          await gatedRegistrationToken.destroy({ force: true, transaction: t });
         }
 
-        await gatedRegistrationToken.destroy({ force: true });
-      }
+        checkPrices(prices, roe);
 
-      checkPrices(prices, roe);
+        const costs = getItemCost({ item: newItem, prices, roe });
+        newItem = { ...newItem, ...costs };
 
-      const costs = getItemCost({ item: newItem, prices, roe });
-      newItem = { ...newItem, ...costs };
+        const handledFreeCartItem = handleFreeCartAddItem({
+          cartItems: existingCart ? existingCart.items : [],
+          domainsList,
+          item: newItem,
+          freeDomainToOwner,
+          userHasFreeAddress,
+          userRefCode: userRefProfile && userRefProfile.code,
+          noAuth,
+        });
 
-      const handledFreeCartItem = handleFreeCartAddItem({
-        cartItems: existingCart ? existingCart.items : [],
-        domainsList,
-        item: newItem,
-        freeDomainToOwner,
-        userHasFreeAddress,
-        userRefCode: userRefProfile && userRefProfile.code,
-        noAuth,
-      });
+        if (!existingCart) {
+          const cartFields = {
+            items: [handledFreeCartItem],
+            publicKey: noProfileResolvedUser ? publicKey : null,
+            options: {
+              prices,
+              roe,
+              updatedAt,
+            },
+          };
 
-      if (!existingCart) {
-        const cartFields = {
-          items: [handledFreeCartItem],
-          publicKey: noProfileResolvedUser ? publicKey : null,
-          options: {
+          if (userId) cartFields.userId = userId;
+          if (guestId) cartFields.guestId = guestId;
+
+          const cart = await Cart.create(cartFields, { transaction: t });
+          const cartData = Cart.format(cart.get({ plain: true }));
+          const warnings = userId
+            ? await getCartWarnings({ cartItems: cartData.items, activeOrderItems })
+            : null;
+
+          return { data: { ...cartData, warnings } };
+        }
+
+        const items = existingCart.items;
+
+        const handledCartItemsWithExistingCustomDomain = handleFioHandleOnExistingCustomDomain(
+          {
+            cartItems: items,
+            newItem: handledFreeCartItem,
             prices,
             roe,
-            updatedAt,
           },
+        );
+
+        const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
+          {
+            cartItems: handledCartItemsWithExistingCustomDomain,
+            item: newItem,
+            prices,
+            roe,
+          },
+        );
+
+        await existingCart.update(
+          {
+            items: handledCartItemsWithExistingFioHandleCustomDomain,
+            userId,
+            publicKey: noProfileResolvedUser ? publicKey : null,
+          },
+          { transaction: t },
+        );
+
+        const cartData = Cart.format(existingCart.get({ plain: true }));
+        const warnings = userId
+          ? await getCartWarnings({ cartItems: cartData.items, activeOrderItems })
+          : null;
+
+        return {
+          data: { ...cartData, warnings },
         };
-
-        if (userId) cartFields.userId = userId;
-        if (guestId) cartFields.guestId = guestId;
-
-        const cart = await Cart.create(cartFields);
-
-        return { data: Cart.format(cart.get({ plain: true })) };
-      }
-
-      const items = existingCart.items;
-
-      const handledCartItemsWithExistingCustomDomain = handleFioHandleOnExistingCustomDomain(
-        {
-          cartItems: items,
-          newItem: handledFreeCartItem,
-          prices,
-          roe,
-        },
-      );
-
-      const handledCartItemsWithExistingFioHandleCustomDomain = handleFioHandleCartItemsWithCustomDomain(
-        {
-          cartItems: handledCartItemsWithExistingCustomDomain,
-          item: newItem,
-          prices,
-          roe,
-        },
-      );
-
-      await existingCart.update({
-        items: handledCartItemsWithExistingFioHandleCustomDomain,
-        userId,
-        publicKey: noProfileResolvedUser ? publicKey : null,
       });
-
-      return {
-        data: Cart.format(existingCart.get({ plain: true })),
-      };
     } catch (error) {
+      if (error instanceof X) {
+        throw error;
+      }
       logger.error(error);
       throw new X({
         code: 'SERVER_ERROR',

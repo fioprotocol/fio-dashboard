@@ -1,3 +1,8 @@
+import {
+  DUPLICATE_ORDER_MESSAGE,
+  DUPLICATE_ORDER_TITLE,
+} from '../../constants/errors';
+
 export const EMPTY_STATE_CONTENT = {
   title: 'No FIO Handles',
   message: 'There are no FIO Handles in all your wallets',
@@ -18,5 +23,9 @@ export const WARNING_CONTENT = {
     title: 'FIO Domain Renewal Limit Exceeded',
     message:
       'Currently renewal can only extend up to the year 2100. Please adjust your renewal period to end on or before that date.',
+  },
+  DUPLICATE_ORDER: {
+    title: DUPLICATE_ORDER_TITLE,
+    message: DUPLICATE_ORDER_MESSAGE,
   },
 };

@@ -275,6 +275,49 @@ export default class Fio {
     return newSet;
   };
 
+  pushTransactionWithRetry = async (
+    signedTxn: SignedTxArgs,
+  ): Promise<AnyObject> => {
+    const apiUrls = await this.checkUrls();
+
+    for (let i = 0; i < apiUrls.length; i++) {
+      const apiUrl = apiUrls[i];
+
+      try {
+        const pushResult = await fetch(`${apiUrl}chain/push_transaction`, {
+          body: JSON.stringify(signedTxn),
+          method: 'POST',
+        });
+
+        if ([400, 403, 500].includes(pushResult.status)) {
+          const jsonResult = await pushResult.json();
+          const errorMessage =
+            (jsonResult.message as string) || 'Something went wrong';
+
+          if (jsonResult.fields) {
+            const fieldErrors = jsonResult.fields.map((field: AnyObject) => ({
+              name: field.name,
+              value: field.value,
+              error: field.error,
+            }));
+            throw new Error(`${errorMessage}: ${JSON.stringify(fieldErrors)}`);
+          } else if (jsonResult.error?.what) {
+            throw new Error(jsonResult.error.what);
+          } else {
+            throw new Error(errorMessage);
+          }
+        }
+
+        return await pushResult.json();
+      } catch (err) {
+        this.logError(err);
+        if (i === apiUrls.length - 1) {
+          throw err;
+        }
+      }
+    }
+  };
+
   validateAction = (): void => {
     this.checkWallet();
   };

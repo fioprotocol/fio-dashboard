@@ -18,6 +18,7 @@ import {
   OrderDetails,
   OrderItemsToCsv,
   CartItem,
+  DomainWatchlistItem,
 } from '../types';
 
 export type DefaultSuccessResponse = { success: true };
@@ -74,10 +75,9 @@ export type ContactsListResponse = string[];
 export type ContactsCreateResponse = string;
 
 export type DomainsWatchlistListResponse = {
-  id: string;
-  domain: string;
-  createdAt: string;
-}[];
+  list: DomainWatchlistItem[];
+  maxCount: number;
+};
 
 export type FioRegPricesResponse = {
   pricing: {

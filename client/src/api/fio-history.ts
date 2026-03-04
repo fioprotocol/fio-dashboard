@@ -4,15 +4,10 @@ import { DEFAULT_HISTORY_ITEMS_LIMIT } from '../constants/fio';
 import { AnyObject } from '../types';
 import { FioHistoryV2NodeActionResponse } from '../types/fio';
 import { DEFAULT_MAX_RETRIES } from '../constants/common';
-
 export default class FioHistory {
-  historyNodeUrls: string[] = [];
   historyNodeActions = {
     getActions: 'get_actions',
   };
-  setHistoryNodeUrls(historyUrls: string[]): void {
-    this.historyNodeUrls = historyUrls;
-  }
 
   async requestHistoryV2({
     apiUrl,
@@ -31,10 +26,10 @@ export default class FioHistory {
 
   // Skip parameter could fail with value more than 10000 - FIO History server will return Elastic search error.
   async getHistoryV2Actions({
-    nodeIndex,
+    apiUrl,
     params,
   }: {
-    nodeIndex: number;
+    apiUrl: string;
     // See all params here https://fio.cryptolions.io/v2/docs/static/index.html#/history/get_v2_history_get_actions
     params: {
       account: string;
@@ -50,16 +45,7 @@ export default class FioHistory {
       sort?: string | number;
       track?: boolean;
     };
-  }): Promise<
-    Partial<
-      {
-        error?: { noNodeForIndex: boolean };
-      } & FioHistoryV2NodeActionResponse
-    >
-  > {
-    if (!this.historyNodeUrls[nodeIndex])
-      return { error: { noNodeForIndex: true } };
-
+  }): Promise<FioHistoryV2NodeActionResponse> {
     const actionParams = {
       ...params,
     };
@@ -82,7 +68,6 @@ export default class FioHistory {
     ).toString();
     const uri = `${this.historyNodeActions.getActions}?${queryString}`;
 
-    const apiUrl = this.historyNodeUrls[nodeIndex];
     const result = await this.requestHistoryV2({ apiUrl, uri });
 
     return result;

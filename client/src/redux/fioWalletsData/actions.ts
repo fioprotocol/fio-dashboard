@@ -1,4 +1,4 @@
-import { FioWalletData, FioWalletTxHistory } from '../../types';
+import { FioWalletData } from '../../types';
 import { CommonAction } from '../types';
 
 export const prefix = 'fioWalletsData';
@@ -11,19 +11,6 @@ export const updateFioWalletsData = (
   userId: string,
 ): CommonAction => ({
   type: UPDATE_WALLET_DATA,
-  publicKey,
-  userId,
-  data,
-});
-
-export const UPDATE_WALLET_TX_HISTORY = `${prefix}/UPDATE_WALLET_TX_HISTORY`;
-
-export const updateWalletsTxHistory = (
-  data: FioWalletTxHistory,
-  publicKey: string,
-  userId: string,
-): CommonAction => ({
-  type: UPDATE_WALLET_TX_HISTORY,
   publicKey,
   userId,
   data,

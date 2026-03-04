@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 
-import { CartItem } from '../../types';
+import { CartItem, CartWarnings } from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action = {}) {
@@ -72,6 +72,20 @@ export default combineReducers({
         return action.data.items;
       case actions.CLEAR_CART_SUCCESS:
         return [];
+      default:
+        return state;
+    }
+  },
+  cartWarnings(state: CartWarnings | null = null, action = {}) {
+    switch (action.type) {
+      case actions.GET_CART_REQUEST_SUCCESS:
+      case actions.RECALCULATE_CART_ITEMS_ON_PRICES_UPDATE_SUCCESS:
+      case actions.ADD_ITEM_SUCCESS:
+      case actions.UPDATE_CART_ITEM_PERIOD_SUCCESS:
+        return action.data.warnings || null;
+      case actions.DELETE_ITEM_SUCCESS:
+      case actions.CLEAR_CART_SUCCESS:
+        return null;
       default:
         return state;
     }

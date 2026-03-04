@@ -23,7 +23,7 @@ import { checkPrices } from '../../utils/prices.mjs';
 export default class OrderUpdatePubKey extends Base {
   static get validationRules() {
     return {
-      publicKey: 'string',
+      publicKey: ['required', 'string', 'fio_public_key'],
     };
   }
 

@@ -10,11 +10,13 @@ import {
   activateAffiliateSuccess,
   alternateLoginSuccess,
   guestLoginSuccess,
+  setWalletsSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess, edgePinUpdateSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
 import {
   addItem,
+  addItemFailed,
   cartWasCleared,
   deleteItem,
   updatePeriodItem,
@@ -62,9 +64,11 @@ export default function* rootSaga(history: History, api: Api) {
     getRefProfileSuccess(),
     cartWasCleared(),
     addItem(),
+    addItemFailed(),
     deleteItem(),
     updatePeriodItem(),
     onDomainRenew(history),
     getSettingsSuccess(),
+    setWalletsSuccess(),
   ]);
 }
