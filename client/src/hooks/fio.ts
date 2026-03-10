@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import {
-  getAllFioPubAddresses,
+  getAllFioHandlesWithPublicAddresses,
   refreshBalance,
   refreshFioNames,
   resetMappedPubAddressError,
@@ -125,15 +125,16 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
         dispatch(getUserWallets()),
         ...fioWallets.map(wallet => dispatch(refreshBalance(wallet.publicKey))),
         ...fioWallets.map(wallet =>
-          dispatch(refreshFioNames(wallet.publicKey)),
-        ),
-        ...fioAddresses.map(address =>
-          dispatch(getAllFioPubAddresses(address.name, 0, 0)),
+          dispatch(
+            getAllFioHandlesWithPublicAddresses({
+              publicKey: wallet.publicKey,
+            }),
+          ),
         ),
       ]);
     }
     setInitialLoadComplete(true);
-  }, [dispatch, fioAddresses, fioWallets]);
+  }, [dispatch, fioWallets]);
 
   useEffectOnce(() => {
     fetchData();

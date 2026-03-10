@@ -226,7 +226,7 @@ export const useContext = (): UseContextProps => {
 
   const onBuyFioHandleAction = useCallback(
     () => history.push(ROUTES.FIO_ADDRESSES_SELECTION),
-    [],
+    [history],
   );
 
   return {
