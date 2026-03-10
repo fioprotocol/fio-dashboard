@@ -3,7 +3,6 @@ import {
   AbiResponse,
   Action,
   EndPoint,
-  FioAddressesResponse,
   fioConstants,
   FioDomainsResponse,
   FioItem,
@@ -46,7 +45,12 @@ import {
   Roe,
   WalletKeys,
 } from '../types';
-import { FioDomainDoubletResponse } from './responses';
+import { FioHandle, FioHandleWithPublicAddresses } from '../types/fio';
+
+import {
+  FioDomainDoubletResponse,
+  FioHandleTableRowResponse,
+} from './responses';
 
 import FioReg from './fio-reg';
 import ApiClient from './client';
@@ -437,7 +441,9 @@ export default class Fio {
     return this.publicFioSDK.isAvailable({ fioName });
   };
 
-  getTableRows = async (params: GetTableRawsParams) => {
+  getTableRows = async <T = AnyObject>(
+    params: GetTableRawsParams,
+  ): Promise<{ rows: T[]; more: boolean }> => {
     const getTableRowsRequest = async ({
       params,
       url,
@@ -551,17 +557,18 @@ export default class Fio {
     publicKey: string,
     limit: number,
     offset: number,
-  ): Promise<FioAddressesResponse> => {
-    let res: FioAddressesResponse = {
+  ): Promise<{ fio_addresses: FioHandle[]; more: number }> => {
+    // TODO: update type on FIO SDK to have the correct response type
+    let res: { fio_addresses: FioHandle[]; more: number } = {
       fio_addresses: [],
       more: 0,
     };
     try {
-      res = await this.publicFioSDK.getFioAddresses({
+      res = (await this.publicFioSDK.getFioAddresses({
         fioPublicKey: publicKey,
         limit,
         offset,
-      });
+      })) as { fio_addresses: FioHandle[]; more: number };
     } catch (e) {
       this.logError(e);
     }
@@ -607,6 +614,110 @@ export default class Fio {
     } catch (e) {
       this.logError(e);
     }
+  };
+
+  getAllFioHandlesWithPublicAddresses = async ({
+    publicKey,
+  }: {
+    publicKey: string;
+  }): Promise<{ fio_addresses: FioHandleWithPublicAddresses[] }> => {
+    const LIMIT = 1000;
+
+    const accountHash = FIOSDK.accountHash(publicKey).accountnm;
+
+    const params = {
+      code: Account.address,
+      scope: Account.address,
+      table: 'fionames',
+      lower_bound: accountHash,
+      upper_bound: accountHash,
+      key_type: 'name',
+      index_position: '4',
+      json: true,
+      limit: LIMIT,
+    };
+
+    const fioHandles: FioHandleWithPublicAddresses[] = [];
+
+    const getFioHandlesByPublicKey = async (publicKey: string) => {
+      const {
+        rows,
+        more,
+      }: {
+        rows: FioHandleTableRowResponse[];
+        more: boolean;
+      } = await this.getTableRows(params);
+
+      if (rows && rows.length) {
+        fioHandles.push(
+          ...rows.map(row => ({
+            fio_address: row.name,
+            public_addresses: row.addresses,
+            expiration: new Date(row.expiration).toISOString(),
+            remaining_bundled_tx: row.bundleeligiblecountdown,
+          })),
+        );
+      }
+
+      // When there are more items to fetch, we can't simply use an offset to paginate,
+      // because results are queried by account hash, not offset. The current v1 API
+      // implementation does not support pagination via offset for this use case.
+      // Here, the only way to paginate is by adjusting the lower_bound and upper_bound values based on the account hash.
+      // So we need to use previous implementation as a fallback.
+      if (more) {
+        const offset = rows.length ? rows.length : 0;
+
+        const getAllFioHandlesByOffset = async (offset: number) => {
+          const fioHandlesByOffset = await this.getFioAddresses(
+            publicKey,
+            LIMIT,
+            offset,
+          );
+
+          for (const fioAddress of fioHandlesByOffset.fio_addresses) {
+            const mappedPublicAddressesOffset = 0;
+
+            const getAllMappedPublicAddresses = async (
+              offset: number,
+            ): Promise<PublicAddress[]> => {
+              const publicAddresses: PublicAddress[] = [];
+              const mappedPublicAddresses = await this.getPublicAddresses(
+                fioAddress.fio_address,
+                LIMIT,
+                offset,
+              );
+
+              publicAddresses.push(...mappedPublicAddresses.public_addresses);
+
+              if (mappedPublicAddresses.more) {
+                await getAllMappedPublicAddresses(offset + LIMIT);
+              }
+
+              return publicAddresses;
+            };
+
+            const mappedPublicAddresses = await getAllMappedPublicAddresses(
+              mappedPublicAddressesOffset,
+            );
+
+            fioHandles.push({
+              ...fioAddress,
+              public_addresses: mappedPublicAddresses,
+            });
+          }
+
+          if (fioHandlesByOffset.more) {
+            await getAllFioHandlesByOffset(offset + LIMIT);
+          }
+        };
+
+        await getAllFioHandlesByOffset(offset);
+      }
+    };
+
+    await getFioHandlesByPublicKey(publicKey);
+
+    return { fio_addresses: fioHandles };
   };
 
   getFioPublicAddress = async (

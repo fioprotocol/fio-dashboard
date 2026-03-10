@@ -1,3 +1,5 @@
+import { PublicAddress } from '@fioprotocol/fiosdk';
+
 export type NFT_ITEM = {
   chain_code: string;
   contract_address: string;
@@ -129,4 +131,17 @@ export type FioHistoryV2NodeActionResponse = {
     relation: string;
   };
   actions: FioHistoryV2NodeAction[];
+};
+
+export type FioHandle = {
+  fio_address: string;
+  expiration: string;
+  remaining_bundled_tx: number;
+};
+
+export type FioHandleWithPublicAddresses = {
+  fio_address: string;
+  public_addresses: PublicAddress[];
+  expiration: string;
+  remaining_bundled_tx: number;
 };

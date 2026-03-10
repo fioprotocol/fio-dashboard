@@ -341,6 +341,22 @@ export type FioDomainDoubletResponse = {
   expiration: number;
 };
 
+export type FioHandleTableRowResponse = {
+  id: number;
+  name: string;
+  namehash: string;
+  domain: string;
+  domainhash: string;
+  expiration: number;
+  owner_account: string;
+  addresses: {
+    token_code: string;
+    chain_code: string;
+    public_address: string;
+  }[];
+  bundleeligiblecountdown: number;
+};
+
 export type GenericStatusResponse = {
   success: boolean;
 };
