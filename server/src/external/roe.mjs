@@ -6,12 +6,16 @@ import MathOp from '../services/math.mjs';
 
 import logger from '../logger';
 
+import config from '../config/index.mjs';
+
 const ROE_VAR_KEY = 'ROE';
-const roeEndpoint = process.env.FIO_ROE_URL || 'https://ascendex.com/api/pro/v1/';
+const CMC_FIO_ID = '5865';
+const roeEndpoint =
+  'https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=fio-protocol';
 const timeout = 1000 * 60 * 15; // 15 min
 
 /**
- * Get the ROE from the AscendEx API
+ * Get the ROE from the CoinMarketCap API
  *
  * @returns {Promise<string | null>} The ROE
  */
@@ -21,20 +25,21 @@ export const getROE = async () => {
   if (!roeVar || Var.updateRequired(roeVar.updatedAt, timeout)) {
     try {
       const {
-        body: {
-          data: { data },
-        },
-      } = await superagent.get(`${roeEndpoint}trades?symbol=FIO/USDT`);
-      if (data.length) {
-        let sum = '0';
-        for (const tradeItem of data) {
-          sum = new MathOp(sum).add(tradeItem.p).toString();
-        }
-        const avgPrice = new MathOp(sum).div(data.length).toString();
+        body: { data },
+      } = await superagent
+        .get(roeEndpoint)
+        .set('X-CMC_PRO_API_KEY', config.coinmarketcap.apiKey)
+        .set('cache-control', 'no-cache');
 
-        await Var.setValue(ROE_VAR_KEY, avgPrice);
+      const price =
+        data[CMC_FIO_ID] && data[CMC_FIO_ID].quote && data[CMC_FIO_ID].quote.USD
+          ? data[CMC_FIO_ID].quote.USD.price
+          : null;
 
-        return avgPrice;
+      if (price && price > 0) {
+        const priceStr = new MathOp(price).toString();
+        await Var.setValue(ROE_VAR_KEY, priceStr);
+        return priceStr;
       }
     } catch (e) {
       logger.error('ROE UPDATE ERROR ===');
