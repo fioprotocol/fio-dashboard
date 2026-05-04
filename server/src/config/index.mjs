@@ -124,5 +124,9 @@ export default {
     apiKey: process.env.INFURA_API_KEY,
   },
 
+  coinmarketcap: {
+    apiKey: process.env.COINMARKETCAP_API_KEY,
+  },
+
   ...dbConfig,
 };
