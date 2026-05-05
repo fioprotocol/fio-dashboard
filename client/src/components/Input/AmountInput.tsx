@@ -151,7 +151,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   useEffect(() => {
     toggleClearInput(value !== '');
-    setIsMaxValue(new MathOp(value || 0).gte(maxValue));
+    maxValue && setIsMaxValue(new MathOp(value || 0).gte(maxValue));
   }, [value, maxValue]);
 
   useEffect(() => {
