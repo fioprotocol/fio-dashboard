@@ -2,8 +2,10 @@ import superagent from 'superagent';
 
 import Base from '../Base';
 
-import { MINUTE_MS } from '../../config/constants';
+import { MINUTE_MS, SECOND_MS } from '../../config/constants';
 import logger from '../../logger';
+
+const REQUEST_TIMEOUT_MS = 30 * SECOND_MS;
 
 export default class CheckServerTime extends Base {
   static get validationRules() {
@@ -22,7 +24,9 @@ export default class CheckServerTime extends Base {
     const checkedUrls = [];
     const checkUrl = async (apiUrl, index) => {
       try {
-        const response = await superagent.get(`${apiUrl}chain/get_info`);
+        const response = await superagent
+          .get(`${apiUrl}chain/get_info`)
+          .timeout({ response: REQUEST_TIMEOUT_MS, deadline: REQUEST_TIMEOUT_MS });
 
         const { head_block_time } = response.body;
 
@@ -35,7 +39,7 @@ export default class CheckServerTime extends Base {
     await Promise.allSettled(urlsArray.map((url, i) => checkUrl(url, i)));
 
     return {
-      data: checkedUrls,
+      data: checkedUrls.filter(Boolean),
     };
   }
 
