@@ -53,6 +53,7 @@ export default combineReducers({
       case actions.GET_FIO_DOMAINS_REQUEST:
       case actions.FIO_SIGNATURE_REQUEST:
       case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_REQUEST:
       case actions.GET_WALLETS_FIO_ADDRESSES_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
@@ -67,6 +68,8 @@ export default combineReducers({
       case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
       case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
       case actions.GET_WALLETS_FIO_ADDRESSES_FAILURE:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_FAILURE:
         return false;
       default:
         return state;
@@ -255,6 +258,7 @@ export default combineReducers({
       case actions.GET_FIO_ADDRESSES_REQUEST:
       case actions.REFRESH_FIO_NAMES_REQUEST:
       case actions.GET_WALLETS_FIO_ADDRESSES_REQUEST:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_REQUEST:
         return true;
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
@@ -262,6 +266,8 @@ export default combineReducers({
       case actions.REFRESH_FIO_NAMES_FAILURE:
       case actions.GET_WALLETS_FIO_ADDRESSES_FAILURE:
       case actions.GET_FIO_ADDRESSES_FAILURE:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_FAILURE:
         return false;
       default:
         return state;
@@ -274,7 +280,8 @@ export default combineReducers({
       }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
-      case actions.GET_FIO_ADDRESSES_SUCCESS: {
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS: {
         const fioAddresses = [...state];
         for (const item of action.data.fio_addresses) {
           const fioAddress = {
@@ -354,6 +361,26 @@ export default combineReducers({
   },
   mappedPublicAddresses(state: MappedPublicAddresses = {}, action) {
     switch (action.type) {
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS: {
+        const newState = { ...state };
+        for (const item of action.data.fio_addresses) {
+          const publicAddresses = item.public_addresses.filter(
+            (pubAddress: PublicAddress) =>
+              pubAddress.chain_code.toUpperCase() !== FIO_CHAIN_CODE,
+          );
+          newState[item.fio_address] = {
+            publicAddresses: publicAddresses.map(
+              (pubAddress: PublicAddress) => ({
+                chainCode: pubAddress.chain_code,
+                tokenCode: pubAddress.token_code,
+                publicAddress: pubAddress.public_address,
+              }),
+            ),
+            more: false, // We set false because we already got all public addresses fro this FIO Handle
+          };
+        }
+        return newState;
+      }
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS: {
         const currentFioAddress = state[action.fioAddress];
 
@@ -468,6 +495,8 @@ export default combineReducers({
         return action.error?.errorCode || action.error?.code;
       }
       case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_REQUEST:
+      case actions.GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS:
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
       case actions.RESET_MAPPED_PUB_ADDRESS_ERROR:
         return null;

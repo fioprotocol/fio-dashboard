@@ -63,7 +63,7 @@ export function useFioAddresses(
     } else if (wallets.length > 0) {
       dispatch(getWalletsFioAddresses(wallets.map(wallet => wallet.publicKey)));
     }
-  }, [publicKey, isAuth, walletsKeysDiffString, dispatch]);
+  }, [publicKey, isAuth, walletsKeysDiffString, dispatch, wallets]);
 
   useEffect(() => {
     setResultFioAddressesList(
@@ -158,16 +158,19 @@ export function usePubAddressesFromWallet(
   const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
   const [fioCryptoHandles] = useFioAddresses(walletPublicKey);
 
-  const fetchPublicAddresses = (items: FioAddressDoublet[]) => {
-    for (const { name } of items) {
-      dispatch(getAllFioPubAddresses(name, 0, 0));
-    }
-  };
+  const fetchPublicAddresses = useCallback(
+    (items: FioAddressDoublet[]) => {
+      for (const { name } of items) {
+        dispatch(getAllFioPubAddresses(name, 0, 0));
+      }
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     if (fioCryptoHandles.length < 1) return;
     fetchPublicAddresses(fioCryptoHandles);
-  }, [fioCryptoHandles.length]);
+  }, [fetchPublicAddresses, fioCryptoHandles, fioCryptoHandles.length]);
 
   return fioAddressToPubAddresses;
 }
