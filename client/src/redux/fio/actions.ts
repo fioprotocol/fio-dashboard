@@ -51,6 +51,25 @@ export const refreshFioNames = (publicKey: string): CommonPromiseAction => ({
   publicKey,
 });
 
+export const GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_REQUEST = `${prefix}/GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_REQUEST`;
+export const GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS = `${prefix}/GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS`;
+export const GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_FAILURE = `${prefix}/GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_FAILURE`;
+
+export const getAllFioHandlesWithPublicAddresses = ({
+  publicKey,
+}: {
+  publicKey: string;
+}): CommonPromiseAction => ({
+  types: [
+    GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_REQUEST,
+    GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_SUCCESS,
+    GET_ALL_FIO_HANDLES_WITH_PUBLIC_ADDRESSES_FAILURE,
+  ],
+  promise: (api: Api) =>
+    api.fio.getAllFioHandlesWithPublicAddresses({ publicKey }),
+  publicKey,
+});
+
 export const RESET_FIO_NAMES = `${prefix}/RESET_FIO_NAMES`;
 
 export const resetFioNames = (): CommonAction => ({
