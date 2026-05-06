@@ -4,6 +4,12 @@ import { useFioAddresses } from '../../util/hooks';
 
 import classes from './ContainedFlowWrapper.module.scss';
 
+// TODO: could be changed to getAllFioHandlesWithPublicAddresses but needs more testing
+const FioAddressesLoader: React.FC = () => {
+  useFioAddresses();
+  return null;
+};
+
 type Props = {
   isAuthenticated: boolean;
   isContainedFlow: boolean;
@@ -11,8 +17,7 @@ type Props = {
 };
 
 const ContainedFlowWrapper: React.FC<Props> = props => {
-  const { children, containedFlowLinkError } = props;
-  useFioAddresses();
+  const { children, containedFlowLinkError, isContainedFlow } = props;
 
   if (containedFlowLinkError)
     return (
@@ -23,7 +28,12 @@ const ContainedFlowWrapper: React.FC<Props> = props => {
       </div>
     );
 
-  return <>{children}</>;
+  return (
+    <>
+      {isContainedFlow && <FioAddressesLoader />}
+      {children}
+    </>
+  );
 };
 
 export default ContainedFlowWrapper;
