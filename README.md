@@ -32,7 +32,7 @@ c) Pre-setup default domains on admin Defaults — they will be shown on the FIO
 
 ## Deploy process
 
-If you use the current AWS flow — any push to the production `main` branch will trigger the build pipeline.
+If you use the current AWS flow — any push to the production `main` branch will trigger the build pipeline. How the flow should go `develop` => `staging` => `main`.
 
 > **Warning!** After deploy check the `notification` table and verify manually that it looks fine and there are no duplications or wrong emails. If all is good — go to admin Defaults and toggle Outbound Emails to OFF to run them back.
 
