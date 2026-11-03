@@ -14,6 +14,7 @@ export type WarningContentItem = {
   title: string;
   message: string;
   show: boolean;
+  type?: string; // BADGE_TYPES value, defaults to WARNING
   onClose?: () => void;
 };
 

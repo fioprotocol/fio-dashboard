@@ -89,7 +89,7 @@ export const ManagePageContainer: React.FC<ContainerProps> = props => {
             {warningContent.map(content => (
               <NotificationBadge
                 key={`${content.title}-${content.message}`}
-                type={BADGE_TYPES.WARNING}
+                type={content.type || BADGE_TYPES.WARNING}
                 title={content.title}
                 message={content.message}
                 show={content.show}

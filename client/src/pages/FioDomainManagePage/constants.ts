@@ -3,6 +3,12 @@ export const EMPTY_STATE_CONTENT = {
   message: 'There are no FIO Domains in all your wallets',
 };
 
+export const LOAD_ERROR_CONTENT = {
+  title: 'Could not load FIO Domains',
+  message:
+    'Some of your FIO Domains could not be loaded from the FIO blockchain. Please refresh the page or try again later.',
+};
+
 export const WARNING_CONTENT = {
   DOMAIN_RENEW: {
     title: 'Domain Renewal',
