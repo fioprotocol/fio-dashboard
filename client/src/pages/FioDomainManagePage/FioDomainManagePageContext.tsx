@@ -17,7 +17,10 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { fioDomains as fioDomainsSelector } from '../../redux/fio/selectors';
+import {
+  fioDomains as fioDomainsSelector,
+  fioDomainsLoadFailed as fioDomainsLoadFailedSelector,
+} from '../../redux/fio/selectors';
 import { refProfileCode } from '../../redux/refProfile/selectors';
 import { siteSetings as siteSettingsSelector } from '../../redux/settings/selectors';
 
@@ -45,8 +48,10 @@ import {
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { ROUTES } from '../../constants/routes';
 import { VARS_KEYS } from '../../constants/vars';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 import {
   EMPTY_STATE_CONTENT,
+  LOAD_ERROR_CONTENT,
   SUCCESS_MESSAGES,
   WARNING_CONTENT,
 } from './constants';
@@ -118,6 +123,7 @@ export const useContext = (): UseContextProps => {
   const siteSettings = useSelector(siteSettingsSelector);
   const showWarningMessage = useSelector(showExpiredDomainWarningBadgeSelector);
   const fioDomains = useSelector(fioDomainsSelector);
+  const fioDomainsLoadFailed = useSelector(fioDomainsLoadFailedSelector);
 
   const maxDomainsWatchlist = Number(
     siteSettings[VARS_KEYS.MAX_DOMAINS_WATCHLIST_PER_USER],
@@ -481,7 +487,10 @@ export const useContext = (): UseContextProps => {
     domainsWatchlistList,
     domainWatchlistHasMoreItems,
     domainWatchlistOnLoadMore,
-    emptyStateContent: EMPTY_STATE_CONTENT,
+    // A failed chain read must not look like "you own no domains".
+    emptyStateContent: fioDomainsLoadFailed
+      ? LOAD_ERROR_CONTENT
+      : EMPTY_STATE_CONTENT,
     isDesktop,
     prices: {
       costFio: fio,
@@ -495,6 +504,12 @@ export const useContext = (): UseContextProps => {
     showAddDomainWatchlistModal,
     successMessage,
     warningContent: [
+      {
+        ...LOAD_ERROR_CONTENT,
+        // Partial failure: some domains listed, others missing.
+        show: fioDomainsLoadFailed && fioDomains.length > 0,
+        type: BADGE_TYPES.ERROR,
+      },
       {
         ...warningContnet,
         show:

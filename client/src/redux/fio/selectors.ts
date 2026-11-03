@@ -37,6 +37,8 @@ export const fioAddresses = (state: ReduxState): FioAddressDoublet[] =>
   state[prefix].fioAddresses;
 export const fioDomains = (state: ReduxState): FioDomainDoublet[] =>
   state[prefix].fioDomains;
+export const fioDomainsLoadFailed = (state: ReduxState): boolean =>
+  Object.keys(state[prefix].fioDomainsLoadFailed).length > 0;
 export const hasMoreAddresses = (
   state: ReduxState,
 ): { [publicKey: string]: number } => state[prefix].hasMoreAddresses;
