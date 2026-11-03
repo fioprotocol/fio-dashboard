@@ -592,7 +592,14 @@ export default class Fio {
         offset,
       });
     } catch (e) {
-      this.logError(e);
+      // 404 = the key owns no domains. Anything else is a real failure:
+      // rethrow so GET_FIO_DOMAINS_FAILURE is dispatched and the UI can show
+      // an error instead of an empty list. The SDK reports the HTTP status
+      // as `code` ({ code, json, message }) on this path, `errorCode` on others.
+      if ((e?.errorCode ?? e?.code) !== 404) {
+        this.logError(e);
+        throw e;
+      }
     }
 
     return res;
