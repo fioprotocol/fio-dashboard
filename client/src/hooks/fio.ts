@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import {
   getAllFioHandlesWithPublicAddresses,
+  getFioDomains,
   refreshBalance,
   refreshFioNames,
   resetMappedPubAddressError,
@@ -130,6 +131,11 @@ export const useGetAllFioNamesAndWallets = (): AllFioNamesAndWalletsProps => {
               publicKey: wallet.publicKey,
             }),
           ),
+        ),
+        // Domains are not covered by getAllFioHandlesWithPublicAddresses
+        // (fionames table only). limit 0 = all domains of the wallet.
+        ...fioWallets.map(wallet =>
+          dispatch(getFioDomains(wallet.publicKey, 0, 0)),
         ),
       ]);
     }

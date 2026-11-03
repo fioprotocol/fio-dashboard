@@ -339,6 +339,24 @@ export default combineReducers({
         return state;
     }
   },
+  fioDomainsLoadFailed(state: { [publicKey: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.GET_FIO_DOMAINS_SUCCESS:
+      case actions.REFRESH_FIO_NAMES_SUCCESS: {
+        if (!state[action.publicKey]) return state;
+        const next = { ...state };
+        delete next[action.publicKey];
+        return next;
+      }
+      case actions.GET_FIO_DOMAINS_FAILURE:
+        return { ...state, [action.publicKey]: true };
+      case actions.RESET_FIO_NAMES:
+      case LOGOUT_SUCCESS:
+        return {};
+      default:
+        return state;
+    }
+  },
   hasMoreAddresses(state: { [publicKey: string]: number } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
