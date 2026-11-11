@@ -21,6 +21,7 @@ const MODAL_CONTENT_LIST = [
   'Approve and install the FIO Wallet.',
   'Let FIO Wallet access the FIO Private key.',
   'Sign the request to verify you are the owner of the private key.',
+  'Done: the FIO Wallet creates a native FIO wallet (public key starting with "FIO") inside MetaMask. Your FIO Tokens, Domains and Handles are shown in the FIO App under Wallets, not in MetaMask.',
 ];
 
 type Props = {

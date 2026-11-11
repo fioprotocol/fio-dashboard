@@ -22,6 +22,7 @@ import {
   COLOR_TYPE,
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
+import useLoadingTimeout from '../../../hooks/useLoadingTimeout';
 import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
@@ -56,6 +57,8 @@ export const StripeForm: React.FC<{
 }> = ({ displayOrderItems, orderNumber, onFinish, beforeSubmit, payment }) => {
   const stripe = useStripe();
   const elements = useElements();
+  // Stripe.js failing to load (blocked script, network) used to spin forever.
+  const stripeLoadTimedOut = useLoadingTimeout(!stripe || !elements);
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -167,6 +170,16 @@ export const StripeForm: React.FC<{
     // Reset payment element completeness when payment method changes
     setIsPaymentElementComplete(paymentMethod !== PAYMENT_METHODS.CARD);
   }, [paymentMethod]);
+
+  if ((!stripe || !elements) && stripeLoadTimedOut)
+    return (
+      <ErrorBadge
+        hasError={true}
+        color={COLOR_TYPE.WARN}
+        type={ERROR_UI_TYPE.BADGE}
+        error="Card payment could not be loaded. Please check your connection, disable any script blockers for this site and reload the page."
+      />
+    );
 
   if (!stripe || !elements) return <Loader />;
 

@@ -135,6 +135,11 @@ export const CAPTCHA_ERRORS_CODE = {
   VERIFICATION_FAILED: 'VERIFICATION_FAILED',
 };
 
+export const PAYMENT_METHOD_UNAVAILABLE_CODE = 'PAYMENT_METHOD_UNAVAILABLE';
+export const PAYMENT_METHOD_UNAVAILABLE_TITLE = 'Payment Method Unavailable';
+export const PAYMENT_METHOD_UNAVAILABLE_MESSAGE =
+  'This payment method is currently not available. Please pay with FIO Tokens, or contact support if you need help getting FIO.';
+
 export const DUPLICATE_ORDER_CODE = 'DUPLICATE_ORDER';
 export const DUPLICATE_ORDER_TITLE = 'Duplicate Order Detected';
 export const DUPLICATE_ORDER_MESSAGE =
