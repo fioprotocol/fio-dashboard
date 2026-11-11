@@ -19,7 +19,17 @@ export const NeedTokensBadge: FC<Props> = ({ className }) => {
         </div>
         <p className={classes.title}>Need FIO Tokens?</p>
         <p className={classes.description}>
-          Easily get FIO tokens with a credit/debit card or crypto.
+          See where FIO Tokens are available in your region. If you can&apos;t
+          get them,{' '}
+          <a
+            href={config.supportUrl}
+            className={classes.link}
+            target="_blank"
+            rel="noreferrer"
+          >
+            contact support
+          </a>
+          .
         </p>
         <div className={classes.actionButtons}>
           <a

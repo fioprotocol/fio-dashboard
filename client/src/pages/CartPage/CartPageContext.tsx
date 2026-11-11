@@ -59,12 +59,21 @@ import {
   NOT_FOUND_CART_MESSAGE,
   NOT_FOUND_CART_TITLE,
 } from '../../constants/cart';
-import { DUPLICATE_ORDER_CODE } from '../../constants/errors';
+import {
+  DUPLICATE_ORDER_CODE,
+  PAYMENT_METHOD_UNAVAILABLE_CODE,
+  PAYMENT_METHOD_UNAVAILABLE_MESSAGE,
+  PAYMENT_METHOD_UNAVAILABLE_TITLE,
+} from '../../constants/errors';
 import { ORDER_USER_TYPES } from '../../constants/order';
 import { VARS_KEYS } from '../../constants/vars';
 
 import { log } from '../../util/general';
 import { renderFioPriceFromSuf } from '../../util/fio';
+import {
+  FORMS_OF_PAYMENT_ALL_OFF,
+  parseFormsOfPayment,
+} from '../../util/formsOfPayment';
 
 import { convertFioPrices } from '../../util/prices';
 import apis from '../../api';
@@ -156,13 +165,17 @@ export const useContext = (): UseContextReturnType => {
   }>(null);
 
   const getFormOfPaymentsVars = useCallback(async () => {
-    const formOfPaymentVars = await apis.vars.getVar(
-      VARS_KEYS.FORMS_OF_PAYMENT,
-    );
+    try {
+      const formOfPaymentVars = await apis.vars.getVar(
+        VARS_KEYS.FORMS_OF_PAYMENT,
+      );
 
-    const parsedFormOfPayments = JSON.parse(formOfPaymentVars.value);
-
-    setFormsOfPayment(parsedFormOfPayments);
+      setFormsOfPayment(parseFormsOfPayment(formOfPaymentVars?.value));
+    } catch (e) {
+      log.error(e);
+      // Fail closed: never offer a provider we could not confirm is enabled.
+      setFormsOfPayment({ ...FORMS_OF_PAYMENT_ALL_OFF });
+    }
   }, []);
 
   useEffectOnce(() => {
@@ -390,6 +403,15 @@ export const useContext = (): UseContextReturnType => {
         } else {
           setHasDuplicateOrderError(true);
         }
+      } else if (e?.code === PAYMENT_METHOD_UNAVAILABLE_CODE) {
+        dispatch(
+          showGenericErrorModal(
+            PAYMENT_METHOD_UNAVAILABLE_MESSAGE,
+            PAYMENT_METHOD_UNAVAILABLE_TITLE,
+            'Close',
+          ),
+        );
+        void getFormOfPaymentsVars();
       } else {
         dispatch(showGenericErrorModal());
       }

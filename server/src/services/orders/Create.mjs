@@ -8,6 +8,7 @@ import {
   Payment,
   ReferrerProfile,
   User,
+  Var,
   Wallet,
 } from '../../models';
 
@@ -20,8 +21,12 @@ import {
 } from '../../utils/order-validation.mjs';
 import { getExistUsersByPublicKeyOrCreateNew } from '../../utils/user.mjs';
 import { checkPrices } from '../../utils/prices.mjs';
+import {
+  isPaymentProcessorEnabled,
+  parseFormsOfPayment,
+} from '../../utils/forms-of-payment.mjs';
 import { fioApi } from '../../external/fio.mjs';
-import { CART_ITEM_TYPE, ERROR_CODES } from '../../config/constants';
+import { CART_ITEM_TYPE, ERROR_CODES, VARS_KEYS } from '../../config/constants';
 import { ORDER_USER_TYPES } from '../../constants/order';
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -192,6 +197,29 @@ export default class OrdersCreate extends Base {
         userId: isNoProfileFlow ? null : user.id,
         items: cart.items,
       });
+
+      if (paymentProcessor !== Payment.PROCESSOR.FIO) {
+        const formsOfPayment = parseFormsOfPayment(
+          await Var.getValByKey(VARS_KEYS.FORMS_OF_PAYMENT),
+        );
+        const activeRefProfile = isNoProfileFlow ? refProfile : userRefProfile;
+        const isAffiliate =
+          !!activeRefProfile && activeRefProfile.type === ReferrerProfile.TYPE.AFFILIATE;
+
+        if (
+          !isPaymentProcessorEnabled({
+            paymentProcessor,
+            formsOfPayment,
+            isAffiliate,
+          })
+        ) {
+          throw new X({
+            code: ERROR_CODES.PAYMENT_METHOD_UNAVAILABLE,
+            fields: { paymentProcessor: 'PAYMENT_METHOD_UNAVAILABLE' },
+            status: 400,
+          });
+        }
+      }
 
       const wallet = await Wallet.findOneWhere(
         { userId: user.id, publicKey },

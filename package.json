@@ -25,6 +25,7 @@
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs",
+    "test:unit": "mocha --exit --reporter spec --ui qunit server/tests/unit/*.mjs",
     "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_API_BASE_URL=http://localhost:3004/ PORT=3004 REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
     "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build:no-snap",
     "landing-page-fio-id:as:start": "export REACT_APP_LANDING_PAGE=fio-id REACT_APP_API_BASE_URL=http://localhost:3003/ PORT=3003 && npm run client:start",

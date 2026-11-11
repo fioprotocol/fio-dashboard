@@ -85,6 +85,9 @@ import {
   DUPLICATE_ORDER_CODE,
   DUPLICATE_ORDER_MESSAGE,
   DUPLICATE_ORDER_TITLE,
+  PAYMENT_METHOD_UNAVAILABLE_CODE,
+  PAYMENT_METHOD_UNAVAILABLE_MESSAGE,
+  PAYMENT_METHOD_UNAVAILABLE_TITLE,
   RENEWAL_EXCEEDS_MAX_YEARS_MESSAGE,
   RENEWAL_EXCEEDS_MAX_YEARS_TITLE,
 } from '../../constants/errors';
@@ -408,6 +411,14 @@ export const useContext = (): {
               ),
             );
           }
+        } else if (e?.code === PAYMENT_METHOD_UNAVAILABLE_CODE) {
+          dispatch(
+            showGenericErrorModal(
+              PAYMENT_METHOD_UNAVAILABLE_MESSAGE,
+              PAYMENT_METHOD_UNAVAILABLE_TITLE,
+              'Close',
+            ),
+          );
         } else {
           dispatch(showGenericErrorModal());
         }
@@ -890,7 +901,7 @@ export const useContext = (): {
     payment,
     paymentOption,
     paymentProvider,
-    paymentProviderError: null,
+    paymentProviderError: orderError,
     isFree,
     beforeSubmitProps,
     fioLoading,

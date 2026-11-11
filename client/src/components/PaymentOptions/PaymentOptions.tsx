@@ -11,6 +11,7 @@ import {
 } from '../BitPayButton';
 
 import MathOp from '../../util/math';
+import { isBitpayEnabled, isStripeEnabled } from '../../util/formsOfPayment';
 
 import { PAYMENT_OPTIONS, PAYMENT_PROVIDER } from '../../constants/purchase';
 
@@ -75,12 +76,9 @@ const PAYMENT_OPTIONS_PROPS = {
     buttonText: 'Pay with Credit/Debit Card',
     icon: <CreditCardIcon className={classes.icon} />,
     disabled: cartItems?.length === 0 || disabled,
+    // Hidden until FORMS_OF_PAYMENT confirms the provider is on (null = not loaded yet).
     hideButton:
-      (formsOfPayment &&
-        (!formsOfPayment.stripe ||
-          (formsOfPayment.stripe &&
-            isAffiliateEnabled &&
-            !formsOfPayment.stripeAffiliate))) ||
+      !isStripeEnabled(formsOfPayment, isAffiliateEnabled) ||
       !totalCartUsdcAmount ||
       (totalCartUsdcAmount && new MathOp(totalCartUsdcAmount).lt(0.5)),
     provider: PAYMENT_PROVIDER.STRIPE,
@@ -101,7 +99,7 @@ const PAYMENT_OPTIONS_PROPS = {
     isTextCentered: true,
     disabled: cartItems?.length === 0 || disabled,
     hideButton:
-      (formsOfPayment && !formsOfPayment.bitpay) ||
+      !isBitpayEnabled(formsOfPayment) ||
       !totalCartUsdcAmount ||
       (totalCartUsdcAmount && new MathOp(totalCartUsdcAmount).lte(1)),
     underButton: <BitPayCurrencies width={BITPAY_LOGO_WIDTH.currencies} />,
