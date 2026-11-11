@@ -12,6 +12,8 @@ import {
 } from '../../../components/Input/ErrorBadge';
 import { StripeForm } from './StripeForm';
 
+import useLoadingTimeout from '../../../hooks/useLoadingTimeout';
+
 import { setFioName } from '../../../utils';
 import { actionFromCartItem } from '../../../util/cart';
 
@@ -22,6 +24,10 @@ import {
 import { DOMAIN_TYPE } from '../../../constants/fio';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
 import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../../constants/common';
+import {
+  PAYMENT_METHOD_UNAVAILABLE_CODE,
+  PAYMENT_METHOD_UNAVAILABLE_MESSAGE,
+} from '../../../constants/errors';
 
 import { BeforeSubmitData, StripePaymentOptionProps } from '../types';
 import { CartItem } from '../../../types';
@@ -38,6 +44,10 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
   } = props;
 
   const history = useHistory();
+  const isWaitingForPayment = !payment || !payment.secret;
+  const paymentLoadingTimedOut = useLoadingTimeout(
+    isWaitingForPayment && !paymentProviderError,
+  );
 
   const onFinish = (success: boolean, beforeSubmitData: BeforeSubmitData) => {
     if (success) {
@@ -79,14 +89,18 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     }
   };
 
-  if (paymentProviderError)
+  if (paymentProviderError || paymentLoadingTimedOut)
     return (
       <div className="d-flex justify-content-center flex-column">
         <ErrorBadge
           hasError={true}
           color={COLOR_TYPE.WARN}
           type={ERROR_UI_TYPE.BADGE}
-          error={`Sorry, we can't load credit card payment option because of an error. Please click Back button and try again`}
+          error={
+            paymentProviderError?.code === PAYMENT_METHOD_UNAVAILABLE_CODE
+              ? PAYMENT_METHOD_UNAVAILABLE_MESSAGE
+              : `Sorry, we can't load credit card payment option because of an error. Please click Back button and try again`
+          }
         />
         <SubmitButton
           onClick={() => history.goBack()}
@@ -96,7 +110,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       </div>
     );
 
-  if (!payment || !payment.secret) return <Loader />;
+  if (isWaitingForPayment) return <Loader />;
 
   const elementsOptions: StripeElementsOptions = {
     ...STRIPE_ELEMENT_OPTIONS,

@@ -10,8 +10,28 @@ import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 import { WARNING_CONTENT } from '../../../pages/FioAddressManagePage/constants';
 
 import MathOp from '../../../util/math';
+import {
+  FormsOfPayment,
+  shouldShowNoPaymentMethod,
+} from '../../../util/formsOfPayment';
+import config from '../../../config';
 
 import { CartItem, FioWalletDoublet, PaymentProvider } from '../../../types';
+
+const NoPaymentMethodMessage: React.FC = () => (
+  <>
+    Card and crypto payments are not available right now, so this order can only
+    be paid with FIO Tokens, and your wallet does not have enough.{' '}
+    <a href={config.getTokensUrl} target="_blank" rel="noreferrer">
+      See how to get FIO Tokens
+    </a>
+    . If you can't get FIO Tokens in your region,{' '}
+    <a href={config.supportUrl} target="_blank" rel="noreferrer">
+      contact support
+    </a>{' '}
+    and we'll help.
+  </>
+);
 
 type Props = {
   isAffiliateEnabled?: boolean;
@@ -29,7 +49,7 @@ type Props = {
   showTooLongDomainRenewalWarning: boolean;
   disabled?: boolean;
   loading: boolean;
-  formsOfPayment: { [key: string]: boolean };
+  formsOfPayment: FormsOfPayment | null;
 };
 
 const PaymentsBlock: React.FC<Props> = props => {
@@ -119,6 +139,26 @@ const PaymentsBlock: React.FC<Props> = props => {
   }
 
   if (
+    shouldShowNoPaymentMethod({
+      hasLowBalance,
+      isFree,
+      loading,
+      cartItemsCount: cartItems?.length || 0,
+      formsOfPayment,
+      isAffiliateEnabled,
+    })
+  ) {
+    return (
+      <NotificationBadge
+        message={<NoPaymentMethodMessage />}
+        show
+        title="No payment method available"
+        type={BADGE_TYPES.ERROR}
+      />
+    );
+  }
+
+  if (
     hasLowBalance &&
     !isFree &&
     !loading &&
@@ -160,28 +200,6 @@ const PaymentsBlock: React.FC<Props> = props => {
         message={`${beginningOfTheMessage} ${stripeMessagePart} ${cryptoMessagePart} ${endOfTheMessage}`}
         show
         title="Minimum cart total not met"
-        type={BADGE_TYPES.ERROR}
-      />
-    );
-  }
-
-  if (
-    hasLowBalance &&
-    formsOfPayment &&
-    (!formsOfPayment.stripe ||
-      (formsOfPayment.stripe &&
-        isAffiliateEnabled &&
-        !formsOfPayment.stripeAffiliate)) &&
-    !formsOfPayment.bitpay &&
-    !isFree &&
-    !loading &&
-    cartItems.length
-  ) {
-    return (
-      <NotificationBadge
-        message="FIO Tokens low balance. You need to deposit FIO Tokens."
-        show
-        title="Not enough funds."
         type={BADGE_TYPES.ERROR}
       />
     );

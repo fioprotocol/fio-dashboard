@@ -48,6 +48,10 @@ const accordionContent = [
     text: `To enable the FIO MetaMask Snap, visit the FIO App and connect to MetaMask. By doing so, you'll be prompted to install the Snap as a plugin to your existing MetaMask wallet. Once activated, your MetaMask will be equipped to interact with the FIO App allowing you to explore and use everything FIO has to offer.`,
   },
   {
+    title: 'Where are my FIO Tokens, Domains and Handles?',
+    text: `When you connect with MetaMask, the FIO Snap creates a native FIO wallet for you inside MetaMask. Its public key starts with "FIO" and is not your Ethereum address. MetaMask itself does not display FIO Tokens, FIO Domains or FIO Handles: you see your balance and everything you own in the FIO App under Wallets, and all FIO fees are paid from that native FIO wallet.`,
+  },
+  {
     title:
       'Is my private key or recovery phrase exposed when using the FIO MetaMask Snap?',
     text: `No, your private key and recovery phrase are safeguarded within your MetaMask wallet. The FIO MetaMask Snap doesn't have access to them. It operates like a dapp, merely requesting signatures from MetaMask. This means it extends your wallet's capabilities without compromising the security of your private details.`,
