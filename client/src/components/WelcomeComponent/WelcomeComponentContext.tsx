@@ -19,6 +19,7 @@ import {
 } from './constants';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { USER_PROFILE_TYPE } from '../../constants/profile';
+import { WRAPPING_DISABLED } from '../../constants/wrap';
 
 import {
   hasRecoveryQuestions as hasRecoveryQuestionsSelector,
@@ -124,6 +125,7 @@ export const useContext = (
       let firstItem = WELCOME_COMPONENT_ITEM_CONTENT.OPEN_SEA;
       let secondItem = null;
       if (
+        !WRAPPING_DISABLED &&
         hasDomains &&
         WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN.types.some(
           itemType => itemType === pageType,

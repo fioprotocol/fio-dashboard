@@ -10,6 +10,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import SettingsIcon from '@mui/icons-material/Settings';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 
+import { WrapLink } from '../../../WrappingUnavailable';
+
 import { BUTTONS_TITLE } from '../../constants';
 import { ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
@@ -83,7 +85,7 @@ const WrapActionButton: React.FC<DefautProps & {
 }> = props => {
   const { isExpired, isHidden, isSmallDesktop, name } = props;
   return (
-    <Link
+    <WrapLink
       to={`${ROUTES.WRAP_DOMAIN}?name=${name}`}
       className={classnames(classes.actionButton, isHidden && classes.isHidden)}
     >
@@ -94,7 +96,7 @@ const WrapActionButton: React.FC<DefautProps & {
         <RefreshIcon />
         {!isSmallDesktop && BUTTONS_TITLE.wrap}
       </Button>
-    </Link>
+    </WrapLink>
   );
 };
 
