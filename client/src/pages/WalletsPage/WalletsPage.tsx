@@ -14,6 +14,7 @@ import Title from './components/Title';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NotificationBadge from '../../components/NotificationBadge/NotificationBadge';
 import { WelcomeComponent } from '../../components/WelcomeComponent';
+import { WrapLink } from '../../components/WrappingUnavailable';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
@@ -40,12 +41,12 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
   return (
     <Title title="FIO Wallets">
       <ActionButtonsContainer>
-        <Link to={ROUTES.UNWRAP_TOKENS} className={classes.actionButton}>
+        <WrapLink to={ROUTES.UNWRAP_TOKENS} className={classes.actionButton}>
           <Button>
             <ReplayIcon />
             <span>Unwrap Tokens</span>
           </Button>
-        </Link>
+        </WrapLink>
 
         {!isAlternativeAccountType ? (
           <Link to={ROUTES.IMPORT_WALLET} className={classes.actionButton}>

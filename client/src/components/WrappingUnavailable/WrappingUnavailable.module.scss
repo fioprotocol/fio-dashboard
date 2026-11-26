@@ -1,0 +1,9 @@
+.container {
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.5;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}

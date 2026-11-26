@@ -8,8 +8,13 @@ import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import PageTitle from '../../../PageTitle/PageTitle';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import NotificationBadge from '../../../NotificationBadge';
+import { WrapLink } from '../../../WrappingUnavailable';
 
 import { LINKS } from '../../../../constants/labels';
+import {
+  WRAPPING_DISABLED,
+  WRAPPING_DISABLED_MESSAGE,
+} from '../../../../constants/wrap';
 import { ROUTES } from '../../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 import { WARNING_CONTENT } from '../../../../pages/FioAddressManagePage/constants';
@@ -188,14 +193,17 @@ export const DomainSettingsItem: React.FC<DomainSettingsItemProps> = props => {
           another network chain. Simply paste a public address or connect a
           wallet and initiate wrapping.
         </p>
-        <Link
+        {WRAPPING_DISABLED && (
+          <p className={classes.text}>{WRAPPING_DISABLED_MESSAGE}</p>
+        )}
+        <WrapLink
           to={`${ROUTES.WRAP_DOMAIN}?name=${fioName}`}
           className={classes.buttonLink}
         >
           <Button className={classes.button} disabled={isExpired}>
             Start Wrapping
           </Button>
-        </Link>
+        </WrapLink>
       </div>
     </div>
   );
