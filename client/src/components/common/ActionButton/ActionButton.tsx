@@ -10,6 +10,7 @@ import classes from './ActionButton.module.scss';
 
 type Props = {
   className?: string;
+  disabled?: boolean;
   icon?: ReactNode;
   title?: string;
   largeScreenTitle?: string;
@@ -17,7 +18,7 @@ type Props = {
 };
 
 export const ActionButton: React.FC<Props> = props => {
-  const { className, icon, title, largeScreenTitle, onClick } = props;
+  const { className, disabled, icon, title, largeScreenTitle, onClick } = props;
 
   const isSmallDesktop = useCheckIfSmallDesktop();
 
@@ -28,6 +29,7 @@ export const ActionButton: React.FC<Props> = props => {
       hasNoSidePaddings
       className={classnames(classes.button, className)}
       title={title}
+      disabled={disabled}
       onClick={onClick}
       text={
         <>

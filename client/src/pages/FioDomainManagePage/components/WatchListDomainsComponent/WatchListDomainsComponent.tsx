@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 
-import { Link } from 'react-router-dom';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ReplayIcon from '@mui/icons-material/Replay';
 
@@ -15,6 +14,7 @@ import { ActionButton } from '../../../../components/common/ActionButton';
 import { DomainItemComponent } from '../../../../components/ManagePageContainer/components/ItemCopmonent';
 import { DomainsWatchlistSettingsItem } from '../../../../components/ManagePageContainer/components/SettingsItem';
 import InfiniteScroll from '../../../../components/InfiniteScroll/InfiniteScroll';
+import { WrapLink } from '../../../../components/WrappingUnavailable';
 
 import { AddDomainToWatchListModal } from '../AddDomainToWatchListModal';
 import { ListNameTitle } from '../ListNameTitle';
@@ -113,13 +113,13 @@ export const WatchListDomainsComponent: React.FC<Props> = props => {
         <div className={classes.headerContainer}>
           <ListNameTitle title="Domain Watchlist" className={classes.title} />
           <div className={classes.actionButtons}>
-            <Link to={ROUTES.UNWRAP_DOMAIN}>
+            <WrapLink to={ROUTES.UNWRAP_DOMAIN}>
               <ActionButton
                 title="Unwrap"
                 icon={<ReplayIcon />}
                 largeScreenTitle="Unwrap Domain"
               />
-            </Link>
+            </WrapLink>
             <ActionButton
               title="Add to Watchlist"
               icon={<AddCircleIcon />}

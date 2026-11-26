@@ -19,6 +19,7 @@ import WalletTabs from './components/WalletTabs';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import { WelcomeComponent } from '../../components/WelcomeComponent';
 import { WrapIcon } from '../../components/WrapIcon';
+import { WrapLink } from '../../components/WrappingUnavailable';
 import BackButton from '../../components/common/BackButton/BackButton';
 
 import { ROUTES } from '../../constants/routes';
@@ -88,7 +89,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
             </Button>
           </Link>
 
-          <Link
+          <WrapLink
             to={`${ROUTES.WRAP_TOKENS}?publicKey=${publicKey}`}
             className={classes.actionButton}
           >
@@ -96,9 +97,9 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
               <WrapIcon />
               <span>Wrap</span>
             </Button>
-          </Link>
+          </WrapLink>
 
-          <Link
+          <WrapLink
             to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${publicKey}`}
             className={classes.actionButton}
           >
@@ -106,7 +107,7 @@ const TitleComponent: React.FC<TitleComponentProps> = props => {
               <ReplayIcon />
               <span>Unwrap</span>
             </Button>
-          </Link>
+          </WrapLink>
         </ActionButtonsContainer>
       </Title>
     </>
