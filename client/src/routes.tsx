@@ -6,9 +6,11 @@ import MainLayout from './pages/MainLayout';
 import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
 import FioLoader from './components/common/FioLoader/FioLoader';
+import { WrappingUnavailable } from './components/WrappingUnavailable';
 
 import { REACT_SNAP_AGENT } from './constants/react-snap-agent';
 import { ROUTES } from './constants/routes';
+import { WRAPPING_DISABLED } from './constants/wrap';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 import useMaintenance from './hooks/useMaintenance';
 import { useGTMGlobalTags } from './hooks/googleTagManager';
@@ -505,23 +507,31 @@ const Routes = (): React.ReactElement => {
 
               <PrivateRoute
                 path={ROUTES.WRAP_TOKENS}
-                component={WrapTokensPage}
+                component={
+                  WRAPPING_DISABLED ? WrappingUnavailable : WrapTokensPage
+                }
                 exact
               />
               <PrivateRoute
                 path={ROUTES.WRAP_DOMAIN}
-                component={WrapDomainPage}
+                component={
+                  WRAPPING_DISABLED ? WrappingUnavailable : WrapDomainPage
+                }
                 exact
               />
 
               <PrivateRoute
                 path={ROUTES.UNWRAP_TOKENS}
-                component={UnwrapTokensPage}
+                component={
+                  WRAPPING_DISABLED ? WrappingUnavailable : UnwrapTokensPage
+                }
                 exact
               />
               <PrivateRoute
                 path={ROUTES.UNWRAP_DOMAIN}
-                component={UnwrapDomainPage}
+                component={
+                  WRAPPING_DISABLED ? WrappingUnavailable : UnwrapDomainPage
+                }
                 exact
               />
 
